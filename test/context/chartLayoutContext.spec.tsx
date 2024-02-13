@@ -5,6 +5,7 @@ import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
   useClipPathId,
+  useMaybeXAxis,
   useViewBox,
   useXAxisOrThrow,
   useYAxisOrThrow,
@@ -284,6 +285,92 @@ describe('ChartLayoutContextProvider', () => {
         expect.assertions(2);
         const MockConsumer = () => {
           const xAxis = useXAxisOrThrow('a');
+          expect(xAxis).toEqual({
+            width: 200,
+            height: 10,
+          });
+          expect(xAxis).toBe(exampleXAxisMap.a);
+          return null;
+        };
+        render(
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+      });
+    });
+
+    describe('useMaybeXAxis', () => {
+      let originalConsoleError;
+      beforeAll(() => {
+        originalConsoleError = console.error;
+        console.error = vi.fn();
+      });
+
+      afterAll(() => {
+        console.error = originalConsoleError;
+        originalConsoleError = null;
+      });
+
+      it('should return undefined when reading axis but the xAxisMap is undefined', () => {
+        expect.assertions(1);
+        const MockConsumer = () => {
+          const xAxis = useMaybeXAxis('wrong ID');
+          expect(xAxis).toBe(undefined);
+          return null;
+        };
+
+        render(
+          <ChartLayoutContextProvider {...mockContextProviderProps}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+      });
+
+      it('should return undefined when reading axis outside of Recharts context', () => {
+        expect.assertions(1);
+        const MockConsumer = () => {
+          const xAxis = useMaybeXAxis('wrong ID');
+          expect(xAxis).toBe(undefined);
+          return null;
+        };
+        render(<MockConsumer />);
+      });
+
+      it('should return undefined when reading axis but the xAxisMap is empty object', () => {
+        expect.assertions(1);
+        const MockConsumer = () => {
+          const xAxis = useMaybeXAxis('wrong ID');
+          expect(xAxis).toBe(undefined);
+          return null;
+        };
+
+        const xAxisMap: XAxisMap = {};
+        render(
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, xAxisMap }}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+      });
+
+      it('should return undefined when axes are set but the ID is wrong', () => {
+        expect.assertions(1);
+        const MockConsumer = () => {
+          const xAxis = useMaybeXAxis('wrong ID');
+          expect(xAxis).toBe(undefined);
+          return null;
+        };
+        render(
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>,
+        );
+      });
+
+      it('should read xAxis from context', () => {
+        expect.assertions(2);
+        const MockConsumer = () => {
+          const xAxis = useMaybeXAxis('a');
           expect(xAxis).toEqual({
             width: 200,
             height: 10,
