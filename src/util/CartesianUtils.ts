@@ -1,4 +1,6 @@
-import _ from 'lodash';
+import mapValues from 'lodash/mapValues';
+import every from 'lodash/every';
+
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType, Size } from './types';
@@ -230,11 +232,11 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
   return {
     ...scales,
     apply(coord: any, { bandAware, position }: any = {}) {
-      return _.mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
+      return mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
     },
 
     isInRange(coord: any) {
-      return _.every(coord, (value, label) => scales[label].isInRange(value));
+      return every(coord, (value, label) => scales[label].isInRange(value));
     },
   } as LabeledScales<Record<string, any>>;
 };

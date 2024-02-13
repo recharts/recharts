@@ -1,5 +1,9 @@
-import React, { isValidElement, cloneElement } from 'react';
-import _ from 'lodash';
+import React, { isValidElement, cloneElement, SVGProps } from 'react';
+import isFunction from 'lodash/isFunction';
+import isPlainObject from 'lodash/isPlainObject';
+import isBoolean from 'lodash/isBoolean';
+import isEqual from 'lodash/isEqual';
+
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
@@ -27,7 +31,7 @@ export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   option: OptionType;
   isActive: boolean;
   activeClassName?: string;
-  propTransformer?: (option: OptionType, props: ExtraProps) => ShapePropsType;
+  propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
 
 function defaultPropTransformer<OptionType, ExtraProps, ShapePropsType>(option: OptionType, props: ExtraProps) {
@@ -65,6 +69,14 @@ function ShapeSelector<ShapePropsType>({
   }
 }
 
+export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElement> {
+  if (isValidElement(option)) {
+    return option.props;
+  }
+
+  return option;
+}
+
 export function Shape<OptionType, ExtraProps, ShapePropsType>({
   option,
   shapeType,
@@ -76,13 +88,12 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   let shape: React.JSX.Element;
 
   if (isValidElement(option)) {
-    shape = cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+    shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
+  } else if (isFunction(option)) {
     shape = option(props);
-  } else if (_.isPlainObject(option) && !_.isBoolean(option)) {
-    const shapeProps = props as unknown as ExtraProps;
-    const elementProps = propTransformer(option, shapeProps);
-    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
+  } else if (isPlainObject(option) && !isBoolean(option)) {
+    const nextProps = propTransformer(option, props);
+    shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {
     const elementProps = props as unknown as ShapePropsType;
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={elementProps} />;
@@ -129,15 +140,15 @@ type GetActiveShapeIndexForTooltip = {
 };
 
 export function isFunnel(graphicalItem: GraphicalItem, _item: unknown): _item is FunnelItem {
-  return 'trapezoids' in graphicalItem.props;
+  return _item != null && 'trapezoids' in graphicalItem.props;
 }
 
 export function isPie(graphicalItem: GraphicalItem, _item: unknown): _item is PieItem {
-  return 'sectors' in graphicalItem.props;
+  return _item != null && 'sectors' in graphicalItem.props;
 }
 
 export function isScatter(graphicalItem: GraphicalItem, _item: unknown): _item is ScatterItem {
-  return 'points' in graphicalItem.props;
+  return _item != null && 'points' in graphicalItem.props;
 }
 
 export function compareFunnel(shapeData: FunnelItem, activeTooltipItem: FunnelItem) {
@@ -220,7 +231,7 @@ export function getActiveShapeIndexForTooltip({
   const tooltipPayload = getActiveShapeTooltipPayload(graphicalItem, activeTooltipItem);
 
   const activeItemMatches = itemData.filter((datum: unknown, dataIndex: number) => {
-    const valuesMatch = _.isEqual(tooltipPayload, datum);
+    const valuesMatch = isEqual(tooltipPayload, datum);
 
     const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: unknown) => {
       const comparison = getComparisonFn(graphicalItem, activeTooltipItem);

@@ -27,13 +27,13 @@ export class AccessibilityManager {
   private offset: InitiableOptions['offset'];
 
   public setDetails({
-    coordinateList = [],
+    coordinateList = null,
     container = null,
     layout = null,
     offset = null,
     mouseHandlerCallback = null,
   }: InitiableOptions) {
-    this.coordinateList = coordinateList ?? this.coordinateList;
+    this.coordinateList = coordinateList ?? this.coordinateList ?? [];
     this.container = container ?? this.container;
     this.layout = layout ?? this.layout;
     this.offset = offset ?? this.offset;
@@ -78,6 +78,10 @@ export class AccessibilityManager {
     }
   }
 
+  public setIndex(newIndex: number) {
+    this.activeIndex = newIndex;
+  }
+
   private spoofMouse() {
     if (this.layout !== 'horizontal') {
       return;
@@ -92,8 +96,11 @@ export class AccessibilityManager {
     const { x, y, height } = this.container.getBoundingClientRect();
     const { coordinate } = this.coordinateList[this.activeIndex];
 
-    const pageX = x + coordinate;
-    const pageY = y + this.offset.top + height / 2;
+    const scrollOffsetX = window?.scrollX || 0;
+    const scrollOffsetY = window?.scrollY || 0;
+
+    const pageX = x + coordinate + scrollOffsetX;
+    const pageY = y + this.offset.top + height / 2 + scrollOffsetY;
 
     this.mouseHandlerCallback({ pageX, pageY });
   }

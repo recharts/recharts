@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Dot /> Don't Render any circle when cx is invalid 1`] = `
+exports[`<Dot /> > Don't Render any circle when cx is invalid 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Dot /> Don't Render any circle when cx is invalid 1`] = `
 </div>
 `;
 
-exports[`<Dot /> Render 1 circle in simple Dot 1`] = `
+exports[`<Dot /> > Render 1 circle in simple Dot 1`] = `
 <div>
   <svg
     class="recharts-surface"

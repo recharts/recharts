@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react';
+import { vi } from 'vitest';
 import { appendOffsetOfLegend } from '../../../src/util/ChartUtils';
 import { ChartOffset } from '../../../src/util/types';
 import { getLegendProps } from '../../../src/util/getLegendProps';
 
-jest.mock('../../../src/util/getLegendProps');
+vi.mock('../../../src/util/getLegendProps');
 
-const spy = jest.mocked(getLegendProps);
+const spy = vi.mocked(getLegendProps);
 
 function mockLegendProps(props: null | Omit<ReturnType<typeof getLegendProps>, 'item'>) {
   spy.mockReturnValueOnce({ ...props, item: <p /> });

@@ -2,8 +2,9 @@
  * @fileOverview Reference Line
  */
 import React, { ReactElement, SVGProps } from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
+import isFunction from 'lodash/isFunction';
+import some from 'lodash/some';
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
@@ -14,6 +15,7 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
+import { useClipPathId, useViewBox, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -21,6 +23,13 @@ interface InternalReferenceLineProps {
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   clipPathId?: number | string;
 }
+
+export type Segment = {
+  x?: number | string;
+  y?: number | string;
+};
+
+export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
@@ -31,12 +40,9 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   x?: number | string;
   y?: number | string;
 
-  segment?: Array<{
-    x?: number | string;
-    y?: number | string;
-  }>;
+  segment?: ReadonlyArray<Segment>;
 
-  position?: 'middle' | 'start' | 'end';
+  position?: ReferenceLinePosition;
 
   className?: number | string;
   yAxisId?: number | string;
@@ -45,14 +51,20 @@ interface ReferenceLineProps extends InternalReferenceLineProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = SVGProps<SVGLineElement> & ReferenceLineProps;
+/**
+ * This excludes `viewBox` prop from svg for two reasons:
+ * 1. The components wants viewBox of object type, and svg wants string
+ *    - so there's a conflict, and the component will throw if it gets string
+ * 2. Internally the component calls `filterProps` which filters the viewBox away anyway
+ */
+export type Props = Omit<SVGProps<SVGLineElement>, 'viewBox'> & ReferenceLineProps;
 
 const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   let line;
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (_.isFunction(option)) {
+  } else if (isFunction(option)) {
     line = option(props);
   } else {
     line = <line {...props} className="recharts-reference-line-line" />;
@@ -61,18 +73,29 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
   return line;
 };
 
+type EndPointsPropsSubset = {
+  alwaysShow?: boolean;
+  ifOverflow?: IfOverflow;
+  segment?: ReadonlyArray<Segment>;
+  x?: number | string;
+  y?: number | string;
+};
 // TODO: ScaleHelper
-const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegment: boolean, props: Props) => {
-  const {
-    viewBox: { x, y, width, height },
-    position,
-  } = props;
+export const getEndPoints = (
+  scales: any,
+  isFixedX: boolean,
+  isFixedY: boolean,
+  isSegment: boolean,
+  viewBox: CartesianViewBox,
+  position: Props['position'],
+  xAxisOrientation: XAxisProps['orientation'],
+  yAxisOrientation: YAxisProps['orientation'],
+  props: EndPointsPropsSubset,
+) => {
+  const { x, y, width, height } = viewBox;
 
   if (isFixedY) {
-    const {
-      y: yCoord,
-      yAxis: { orientation },
-    } = props;
+    const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
 
     if (ifOverflowMatches(props, 'discard') && !scales.y.isInRange(coord)) {
@@ -83,13 +106,10 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
       { x: x + width, y: coord },
       { x, y: coord },
     ];
-    return orientation === 'left' ? points.reverse() : points;
+    return yAxisOrientation === 'left' ? points.reverse() : points;
   }
   if (isFixedX) {
-    const {
-      x: xCoord,
-      xAxis: { orientation },
-    } = props;
+    const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
 
     if (ifOverflowMatches(props, 'discard') && !scales.x.isInRange(coord)) {
@@ -100,14 +120,14 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
       { x: coord, y: y + height },
       { x: coord, y },
     ];
-    return orientation === 'top' ? points.reverse() : points;
+    return xAxisOrientation === 'top' ? points.reverse() : points;
   }
   if (isSegment) {
     const { segment } = props;
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (ifOverflowMatches(props, 'discard') && _.some(points, p => !scales.isInRange(p))) {
+    if (ifOverflowMatches(props, 'discard') && some(points, p => !scales.isInRange(p))) {
       return null;
     }
 
@@ -118,7 +138,15 @@ const getEndPoints = (scales: any, isFixedX: boolean, isFixedY: boolean, isSegme
 };
 
 export function ReferenceLine(props: Props) {
-  const { x: fixedX, y: fixedY, segment, xAxis, yAxis, shape, className, alwaysShow, clipPathId } = props;
+  const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
+
+  const clipPathId = useClipPathId();
+  const xAxis = useXAxisOrThrow(xAxisId);
+  const yAxis = useYAxisOrThrow(yAxisId);
+  const viewBox = useViewBox();
+  if (!clipPathId || !viewBox) {
+    return null;
+  }
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
@@ -128,7 +156,17 @@ export function ReferenceLine(props: Props) {
   const isY = isNumOrStr(fixedY);
   const isSegment = segment && segment.length === 2;
 
-  const endPoints = getEndPoints(scales, isX, isY, isSegment, props);
+  const endPoints = getEndPoints(
+    scales,
+    isX,
+    isY,
+    isSegment,
+    viewBox,
+    props.position,
+    xAxis.orientation,
+    yAxis.orientation,
+    props,
+  );
   if (!endPoints) {
     return null;
   }
@@ -147,7 +185,7 @@ export function ReferenceLine(props: Props) {
   };
 
   return (
-    <Layer className={classNames('recharts-reference-line', className)}>
+    <Layer className={clsx('recharts-reference-line', className)}>
       {renderLine(shape, lineProps)}
       {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
     </Layer>

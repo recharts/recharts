@@ -1,6 +1,7 @@
 import React, { CSSProperties, SVGProps, useMemo } from 'react';
-import classNames from 'classnames';
-import _ from 'lodash';
+
+import isNil from 'lodash/isNil';
+import clsx from 'clsx';
 import { isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';
@@ -24,7 +25,7 @@ type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths => {
   try {
     let words: string[] = [];
-    if (!_.isNil(children)) {
+    if (!isNil(children)) {
       if (breakAll) {
         words = children.toString().split('');
       } else {
@@ -155,7 +156,7 @@ const calculateWordsByLines = (
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
-  const words = !_.isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
+  const words = !isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
   return [{ words }];
 };
 
@@ -253,16 +254,18 @@ export const Text = ({
       {...filterProps(textProps, true)}
       x={x}
       y={y}
-      className={classNames('recharts-text', className)}
+      className={clsx('recharts-text', className)}
       textAnchor={textAnchor}
       fill={fill.includes('url') ? DEFAULT_FILL : fill}
     >
-      {wordsByLines.map((line, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={index}>
-          {line.words.join(breakAll ? '' : ' ')}
-        </tspan>
-      ))}
+      {wordsByLines.map((line, index) => {
+        const words = line.words.join(breakAll ? '' : ' ');
+        return (
+          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={words}>
+            {words}
+          </tspan>
+        );
+      })}
     </text>
   );
 };

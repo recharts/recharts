@@ -2,8 +2,10 @@
  * @fileOverview Cartesian Axis
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
-import _ from 'lodash';
-import classNames from 'classnames';
+
+import isFunction from 'lodash/isFunction';
+import get from 'lodash/get';
+import clsx from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -207,8 +209,8 @@ export class CartesianAxis extends Component<Props, IState> {
   renderAxisLine() {
     const { x, y, width, height, orientation, mirror, axisLine } = this.props;
     let props: SVGProps<SVGLineElement> = {
-      ...filterProps(this.props),
-      ...filterProps(axisLine),
+      ...filterProps(this.props, false),
+      ...filterProps(axisLine, false),
       fill: 'none',
     };
 
@@ -232,7 +234,7 @@ export class CartesianAxis extends Component<Props, IState> {
       };
     }
 
-    return <line {...props} className={classNames('recharts-cartesian-axis-line', _.get(axisLine, 'className'))} />;
+    return <line {...props} className={clsx('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
@@ -240,7 +242,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -265,12 +267,12 @@ export class CartesianAxis extends Component<Props, IState> {
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();
-    const axisProps = filterProps(this.props);
-    const customTickProps = filterProps(tick);
+    const axisProps = filterProps(this.props, false);
+    const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,
       fill: 'none',
-      ...filterProps(tickLine),
+      ...filterProps(tickLine, false),
     };
     const items = finalTicks.map((entry, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
@@ -291,21 +293,21 @@ export class CartesianAxis extends Component<Props, IState> {
       return (
         <Layer
           className="recharts-cartesian-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.value}-${entry.coordinate}-${entry.tickCoord}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && (
             <line
               {...tickLineProps}
               {...lineCoord}
-              className={classNames('recharts-cartesian-axis-tick-line', _.get(tickLine, 'className'))}
+              className={clsx('recharts-cartesian-axis-tick-line', get(tickLine, 'className'))}
             />
           )}
           {tick &&
             CartesianAxis.renderTickItem(
               tick,
               tickProps,
-              `${_.isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
+              `${isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
             )}
         </Layer>
       );
@@ -324,7 +326,7 @@ export class CartesianAxis extends Component<Props, IState> {
     const { ticks, ...noTicksProps } = this.props;
     let finalTicks = ticks;
 
-    if (_.isFunction(ticksGenerator)) {
+    if (isFunction(ticksGenerator)) {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 
@@ -334,7 +336,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     return (
       <Layer
-        className={classNames('recharts-cartesian-axis', className)}
+        className={clsx('recharts-cartesian-axis', className)}
         ref={ref => {
           this.layerReference = ref;
         }}

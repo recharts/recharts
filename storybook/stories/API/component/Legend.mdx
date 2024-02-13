@@ -1,0 +1,22 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Legend.stories';
+
+# Legend
+
+The Legend component is used to display legend of the chart.
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+
+## Parent Components
+The Legend can be used within a `<AreaChart />`, `<BarChart />`, `<LineChart />`, `<ComposedChart />`, `<PieChart />`, `<RadarChart />`, `<RadialBarChart />` or a `<ScatterChart />`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />

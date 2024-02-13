@@ -8,7 +8,18 @@ import {
   stackOffsetWiggle,
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
-import _ from 'lodash';
+import max from 'lodash/max';
+import min from 'lodash/min';
+import isNil from 'lodash/isNil';
+import isFunction from 'lodash/isFunction';
+import isString from 'lodash/isString';
+import get from 'lodash/get';
+import flatMap from 'lodash/flatMap';
+import isNan from 'lodash/isNaN';
+import upperFirst from 'lodash/upperFirst';
+import isEqual from 'lodash/isEqual';
+import sortBy from 'lodash/sortBy';
+
 import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
@@ -37,15 +48,15 @@ import { getLegendProps } from './getLegendProps';
 export { getLegendProps };
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any) {
-  if (_.isNil(obj) || _.isNil(dataKey)) {
+  if (isNil(obj) || isNil(dataKey)) {
     return defaultValue;
   }
 
   if (isNumOrStr(dataKey)) {
-    return _.get(obj, dataKey, defaultValue);
+    return get(obj, dataKey, defaultValue);
   }
 
-  if (_.isFunction(dataKey)) {
+  if (isFunction(dataKey)) {
     return dataKey(obj);
   }
 
@@ -65,16 +76,16 @@ export function getDomainOfDataByKey<T>(
   type: BaseAxisProps['type'],
   filterNil?: boolean,
 ): NumberDomain | CategoricalDomain {
-  const flattenData: unknown[] = _.flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
+  const flattenData: unknown[] = flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
 
   if (type === 'number') {
     // @ts-expect-error parseFloat type only accepts strings
     const domain: number[] = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
 
-    return domain.length ? [_.min(domain), _.max(domain)] : [Infinity, -Infinity];
+    return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
   }
 
-  const validateData = filterNil ? flattenData.filter(entry => !_.isNil(entry)) : flattenData;
+  const validateData = filterNil ? flattenData.filter(entry => !isNil(entry)) : flattenData;
 
   // Supports x-axis of Date type
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
@@ -131,10 +142,10 @@ export const calculateActiveTickIndex = (
           break;
         }
       } else {
-        const min = Math.min(before, after);
-        const max = Math.max(before, after);
+        const minValue = Math.min(before, after);
+        const maxValue = Math.max(before, after);
 
-        if (coordinate > (min + cur) / 2 && coordinate <= (max + cur) / 2) {
+        if (coordinate > (minValue + cur) / 2 && coordinate <= (maxValue + cur) / 2) {
           ({ index } = unsortedTicks[i]);
           break;
         }
@@ -194,7 +205,7 @@ export interface FormattedGraphicalItem {
     data?: ReadonlyArray<any>;
   };
   childIndex: number;
-  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: unknown }>;
+  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
 }
 
 export type BarSetup = {
@@ -242,7 +253,7 @@ export const getBarSizeList = ({
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: _.isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(selfSize) ? globalSize : selfSize,
         });
       }
     }
@@ -418,7 +429,7 @@ export const appendOffsetOfLegend = (
 };
 
 const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (_.isNil(axisType)) {
+  if (isNil(axisType)) {
     return true;
   }
 
@@ -457,12 +468,12 @@ export const getDomainOfErrorBars = (
     return data.reduce<NumberDomain>(
       (result: NumberDomain, entry: object): NumberDomain => {
         const entryValue = getValueByDataKey(entry, dataKey, 0);
-        const mainValue = _.isArray(entryValue) ? [_.min(entryValue), _.max(entryValue)] : [entryValue, entryValue];
+        const mainValue = Array.isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
             const errorValue = getValueByDataKey(entry, k, 0);
-            const lowerValue = mainValue[0] - Math.abs(_.isArray(errorValue) ? errorValue[0] : errorValue);
-            const upperValue = mainValue[1] + Math.abs(_.isArray(errorValue) ? errorValue[1] : errorValue);
+            const lowerValue = mainValue[0] - Math.abs(Array.isArray(errorValue) ? errorValue[0] : errorValue);
+            const upperValue = mainValue[1] + Math.abs(Array.isArray(errorValue) ? errorValue[1] : errorValue);
 
             return [Math.min(lowerValue, prevErrorArr[0]), Math.max(upperValue, prevErrorArr[1])];
           },
@@ -487,7 +498,7 @@ export const parseErrorBarsOfAxis = (
 ): NumberDomain | null => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
-    .filter(entry => !_.isNil(entry));
+    .filter(entry => !isNil(entry));
 
   if (domains && domains.length) {
     return domains.reduce(
@@ -560,12 +571,17 @@ export const isCategoricalAxis = (layout: LayoutType | PolarLayoutType, axisType
 /**
  * Calculate the Coordinates of grid
  * @param  {Array} ticks           The ticks in axis
- * @param {Number} min             The minimun value of axis
- * @param {Number} max             The maximun value of axis
+ * @param {Number} minValue        The minimun value of axis
+ * @param {Number} maxValue        The maximun value of axis
  * @param {boolean} syncWithTicks  Synchronize grid lines with ticks or not
  * @return {Array}                 Coordinates
  */
-export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: number, syncWithTicks: Boolean) => {
+export const getCoordinatesOfGrid = (
+  ticks: Array<TickItem>,
+  minValue: number,
+  maxValue: number,
+  syncWithTicks: Boolean,
+) => {
   if (syncWithTicks) {
     return ticks.map(entry => entry.coordinate);
   }
@@ -573,10 +589,10 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
   let hasMin, hasMax;
 
   const values = ticks.map(entry => {
-    if (entry.coordinate === min) {
+    if (entry.coordinate === minValue) {
       hasMin = true;
     }
-    if (entry.coordinate === max) {
+    if (entry.coordinate === maxValue) {
       hasMax = true;
     }
 
@@ -584,10 +600,10 @@ export const getCoordinatesOfGrid = (ticks: Array<TickItem>, min: number, max: n
   });
 
   if (!hasMin) {
-    values.push(min);
+    values.push(minValue);
   }
   if (!hasMax) {
-    values.push(max);
+    values.push(maxValue);
   }
 
   return values;
@@ -637,7 +653,7 @@ export const getTicksOfAxis = (
       };
     });
 
-    return result.filter((row: TickItem) => !_.isNaN(row.coordinate));
+    return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
   // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
@@ -668,31 +684,32 @@ export const getTicksOfAxis = (
 /**
  * combine the handlers
  * @param  {Function} defaultHandler Internal private handler
- * @param  {Function} parentHandler  Handler function specified in parent component
- * @param  {Function} childHandler   Handler function specified in child component
+ * @param  {Function} childHandler Handler function specified in child component
  * @return {Function}                The combined handler
  */
-export const combineEventHandlers = (defaultHandler: Function, parentHandler: Function, childHandler: Function) => {
-  let customizedHandler: Function;
 
-  if (_.isFunction(childHandler)) {
-    customizedHandler = childHandler;
-  } else if (_.isFunction(parentHandler)) {
-    customizedHandler = parentHandler;
+const handlerWeakMap = new WeakMap();
+export const combineEventHandlers = (defaultHandler: Function, childHandler: Function | undefined): Function => {
+  if (typeof childHandler !== 'function') {
+    return defaultHandler;
   }
 
-  if (_.isFunction(defaultHandler) || customizedHandler) {
-    return (arg1: any, arg2: any, arg3: any, arg4: any) => {
-      if (_.isFunction(defaultHandler)) {
-        defaultHandler(arg1, arg2, arg3, arg4);
-      }
-      if (_.isFunction(customizedHandler)) {
-        customizedHandler(arg1, arg2, arg3, arg4);
-      }
-    };
+  if (!handlerWeakMap.has(defaultHandler)) {
+    handlerWeakMap.set(defaultHandler, new WeakMap());
+  }
+  const childWeakMap = handlerWeakMap.get(defaultHandler);
+
+  if (childWeakMap.has(childHandler)) {
+    return childWeakMap.get(childHandler);
   }
 
-  return null;
+  const combineHandler = (...args: any[]) => {
+    defaultHandler(...args);
+    childHandler(...args);
+  };
+
+  childWeakMap.set(childHandler, combineHandler);
+  return combineHandler;
 };
 
 /**
@@ -736,8 +753,8 @@ export const parseScale = (
 
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   }
-  if (_.isString(scale)) {
-    const name = `scale${_.upperFirst(scale)}`;
+  if (isString(scale)) {
+    const name = `scale${upperFirst(scale)}`;
 
     return {
       scale: ((d3Scales as Record<string, any>)[name] || d3Scales.scalePoint)(),
@@ -745,7 +762,7 @@ export const parseScale = (
     };
   }
 
-  return _.isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
+  return isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {
@@ -757,12 +774,12 @@ export const checkDomainOfScale = (scale: any) => {
 
   const len = domain.length;
   const range = scale.range();
-  const min = Math.min(range[0], range[1]) - EPS;
-  const max = Math.max(range[0], range[1]) + EPS;
+  const minValue = Math.min(range[0], range[1]) - EPS;
+  const maxValue = Math.max(range[0], range[1]) + EPS;
   const first = scale(domain[0]);
   const last = scale(domain[len - 1]);
 
-  if (first < min || first > max || last < min || last > max) {
+  if (first < minValue || first > maxValue || last < minValue || last > maxValue) {
     scale.domain([domain[0], domain[len - 1]]);
   }
 };
@@ -793,24 +810,24 @@ export const truncateByDomain = (value: [number, number], domain: number[]) => {
     return value;
   }
 
-  const min = Math.min(domain[0], domain[1]);
-  const max = Math.max(domain[0], domain[1]);
+  const minValue = Math.min(domain[0], domain[1]);
+  const maxValue = Math.max(domain[0], domain[1]);
 
   const result = [value[0], value[1]];
-  if (!isNumber(value[0]) || value[0] < min) {
-    result[0] = min;
+  if (!isNumber(value[0]) || value[0] < minValue) {
+    result[0] = minValue;
   }
 
-  if (!isNumber(value[1]) || value[1] > max) {
-    result[1] = max;
+  if (!isNumber(value[1]) || value[1] > maxValue) {
+    result[1] = maxValue;
   }
 
-  if (result[0] > max) {
-    result[0] = max;
+  if (result[0] > maxValue) {
+    result[0] = maxValue;
   }
 
-  if (result[1] < min) {
-    result[1] = min;
+  if (result[1] < minValue) {
+    result[1] = minValue;
   }
 
   return result;
@@ -835,7 +852,7 @@ export const offsetSign: OffsetAccessor = series => {
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {
@@ -870,7 +887,7 @@ export const offsetPositive: OffsetAccessor = series => {
     let positive = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = _.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {
@@ -1055,7 +1072,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     }
     const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
-    scale.domain([_.min(tickValues), _.max(tickValues)]);
+    scale.domain([min(tickValues), max(tickValues)]);
 
     return { niceTicks: tickValues };
   }
@@ -1086,7 +1103,7 @@ export const getCateCoordinateOfLine = ({
 }) => {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !_.isNil(entry[axis.dataKey])) {
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
       if (matchedTick) {
@@ -1097,9 +1114,9 @@ export const getCateCoordinateOfLine = ({
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, !_.isNil(dataKey) ? dataKey : axis.dataKey);
+  const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
-  return !_.isNil(value) ? axis.scale(value) : null;
+  return !isNil(value) ? axis.scale(value) : null;
 };
 
 export const getCateCoordinateOfBar = ({
@@ -1122,7 +1139,7 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.domain[index]);
 
-  return !_.isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 export const getBaseValueOfBar = ({
@@ -1133,17 +1150,17 @@ export const getBaseValueOfBar = ({
   const domain = numericAxis.scale.domain();
 
   if (numericAxis.type === 'number') {
-    const min = Math.min(domain[0], domain[1]);
-    const max = Math.max(domain[0], domain[1]);
+    const minValue = Math.min(domain[0], domain[1]);
+    const maxValue = Math.max(domain[0], domain[1]);
 
-    if (min <= 0 && max >= 0) {
+    if (minValue <= 0 && maxValue >= 0) {
       return 0;
     }
-    if (max < 0) {
-      return max;
+    if (maxValue < 0) {
+      return maxValue;
     }
 
-    return min;
+    return minValue;
   }
 
   return domain[0];
@@ -1170,8 +1187,8 @@ export const getStackedDataOfItem = <StackedData>(
 const getDomainOfSingle = (data: Array<Array<any>>): number[] =>
   data.reduce(
     (result: number[], entry: Array<any>): number[] => [
-      _.min(entry.concat([result[0]]).filter(isNumber)),
-      _.max(entry.concat([result[1]]).filter(isNumber)),
+      min(entry.concat([result[0]]).filter(isNumber)),
+      max(entry.concat([result[1]]).filter(isNumber)),
     ],
     [Infinity, -Infinity],
   );
@@ -1205,11 +1222,11 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allowDataOverflow?: boolean) => {
-  if (_.isFunction(specifiedDomain)) {
+  if (isFunction(specifiedDomain)) {
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
 
-  if (!_.isArray(specifiedDomain)) {
+  if (!Array.isArray(specifiedDomain)) {
     return dataDomain;
   }
 
@@ -1222,7 +1239,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
     domain[0] = dataDomain[0] - value;
-  } else if (_.isFunction(specifiedDomain[0])) {
+  } else if (isFunction(specifiedDomain[0])) {
     domain[0] = specifiedDomain[0](dataDomain[0]);
   } else {
     domain[0] = dataDomain[0];
@@ -1234,7 +1251,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 
     domain[1] = dataDomain[1] + value;
-  } else if (_.isFunction(specifiedDomain[1])) {
+  } else if (isFunction(specifiedDomain[1])) {
     domain[1] = specifiedDomain[1](dataDomain[1]);
   } else {
     domain[1] = dataDomain[1];
@@ -1267,7 +1284,7 @@ export const getBandSizeOfAxis = (
   }
 
   if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = _.sortBy(ticks, o => o.coordinate);
+    const orderedTicks = sortBy(ticks, o => o.coordinate);
     let bandSize = Infinity;
 
     for (let i = 1, len = orderedTicks.length; i < len; i++) {
@@ -1297,7 +1314,7 @@ export const parseDomainOfCategoryAxis = <T>(
   if (!specifiedDomain || !specifiedDomain.length) {
     return calculatedDomain;
   }
-  if (_.isEqual(specifiedDomain, _.get(axisChild, 'type.defaultProps.domain'))) {
+  if (isEqual(specifiedDomain, get(axisChild, 'type.defaultProps.domain'))) {
     return calculatedDomain;
   }
 
@@ -1305,10 +1322,10 @@ export const parseDomainOfCategoryAxis = <T>(
 };
 
 export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
-  const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
+  const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
 
   return {
-    ...filterProps(graphicalItem),
+    ...filterProps(graphicalItem, false),
     dataKey,
     unit,
     formatter,
@@ -1318,5 +1335,6 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
     type: tooltipType,
     payload,
     chartType,
+    hide,
   };
 };

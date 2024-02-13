@@ -1,7 +1,7 @@
 import React, { SVGProps } from 'react';
 import { FunnelProps, FunnelTrapezoidItem } from '../numberAxis/Funnel';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
-import { Shape } from './ActiveShapeUtils';
+import { Shape, getPropsFromShapeOption } from './ActiveShapeUtils';
 
 // Trapezoid props is expecting x, y, height as numbers.
 // When props are being spread in from a user defined component in Funnel,
@@ -16,7 +16,7 @@ export function typeGuardTrapezoidProps(option: SVGProps<SVGPathElement>, props:
   const height = parseInt(heightValue, 10);
   return {
     ...props,
-    ...option,
+    ...getPropsFromShapeOption(option),
     height,
     x,
     y,

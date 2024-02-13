@@ -1,8 +1,13 @@
 /**
  * @fileOverview Y Axis
  */
+import React from 'react';
 import type { FunctionComponent, SVGProps } from 'react';
+import clsx from 'clsx';
 import { BaseAxisProps, AxisInterval } from '../util/types';
+import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { CartesianAxis } from './CartesianAxis';
+import { getTicksOfAxis } from '../util/ChartUtils';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -31,7 +36,25 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
 
-export const YAxis: FunctionComponent<Props> = () => null;
+export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  const axisOptions = useYAxisOrThrow(yAxisId);
+
+  if (axisOptions == null) {
+    return null;
+  }
+
+  return (
+    // @ts-expect-error the axisOptions type is not exactly what CartesianAxis is expecting.
+    <CartesianAxis
+      {...axisOptions}
+      className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
+      viewBox={{ x: 0, y: 0, width, height }}
+      ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
+    />
+  );
+};
 
 YAxis.displayName = 'YAxis';
 YAxis.defaultProps = {

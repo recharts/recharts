@@ -2,7 +2,7 @@
  * @fileOverview Cross
  */
 import React, { SVGProps } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { isNumber } from '../util/DataUtils';
 import { filterProps } from '../util/ReactUtils';
 
@@ -41,7 +41,7 @@ export const Cross: React.FC<Props> = ({
   return (
     <path
       {...filterProps(props, true)}
-      className={classNames('recharts-cross', className)}
+      className={clsx('recharts-cross', className)}
       d={getPath(x, y, width, height, top, left)}
     />
   );

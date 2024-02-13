@@ -1,9 +1,11 @@
 import React from 'react';
+import { vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Surface, Pie, Sector, LabelProps } from '../../src';
+import { Surface, Pie, Sector, LabelProps, SectorProps, PieChart } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
+import { generateMockData } from '../helper/generateMockData';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -69,7 +71,7 @@ describe('<Pie />', () => {
         <Pie
           isAnimationActive={false}
           activeIndex={0}
-          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
           innerRadius={0}
@@ -169,6 +171,157 @@ describe('<Pie />', () => {
     );
 
     expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
+  });
+
+  test.each([{ data: undefined }, { data: [] }])(
+    'when data is $data then activeShape function does not receive payload',
+    ({ data }) => {
+      const activeShape = vi.fn();
+      render(
+        <PieChart width={400} height={400}>
+          <Pie
+            isAnimationActive={false}
+            activeIndex={0}
+            activeShape={activeShape}
+            inactiveShape={{ fill: '#ff7322' }}
+            cx={250}
+            cy={250}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="y"
+            data={data}
+          />
+        </PieChart>,
+      );
+
+      expect(activeShape).toHaveBeenCalledTimes(1);
+      expect(activeShape).toHaveBeenCalledWith({
+        cx: 250,
+        cy: 250,
+        endAngle: 72,
+        innerRadius: 50,
+        name: 'A',
+        outerRadius: 100,
+        startAngle: 0,
+        stroke: undefined,
+        tabIndex: -1,
+        value: 40,
+      });
+    },
+  );
+
+  test('when data is defined and matching dataKey then activeShape receives payload prop', () => {
+    const activeShape = vi.fn();
+    render(
+      <PieChart width={400} height={400}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={0}
+          activeShape={activeShape}
+          inactiveShape={{ fill: '#ff7322' }}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+          dataKey="y"
+          data={generateMockData(5, 0.603)}
+        />
+      </PieChart>,
+    );
+
+    expect(activeShape).toHaveBeenCalledTimes(1);
+    expect(activeShape).toHaveBeenCalledWith({
+      cornerRadius: undefined,
+      cx: 255,
+      cy: 255,
+      endAngle: 77.15833835039133,
+      fill: '#808080',
+      innerRadius: 0,
+      label: 'Iter: 0',
+      maxRadius: 275.77164466275354,
+      midAngle: 38.579169175195666,
+      middleRadius: 100,
+      name: 0,
+      outerRadius: 200,
+      paddingAngle: 0,
+      payload: {
+        cx: 250,
+        cy: 250,
+        fill: '#808080',
+        label: 'Iter: 0',
+        payload: {
+          label: 'Iter: 0',
+          x: 199,
+          y: 712,
+          z: 1643,
+        },
+        stroke: '#fff',
+        x: 199,
+        y: 712,
+        z: 1643,
+      },
+      percent: 0.2143287176399759,
+      startAngle: 0,
+      stroke: '#fff',
+      tabIndex: -1,
+      tooltipPayload: [
+        {
+          dataKey: 'y',
+          name: 0,
+          payload: {
+            cx: 250,
+            cy: 250,
+            fill: '#808080',
+            label: 'Iter: 0',
+            payload: {
+              label: 'Iter: 0',
+              x: 199,
+              y: 712,
+              z: 1643,
+            },
+            stroke: '#fff',
+            x: 199,
+            y: 712,
+            z: 1643,
+          },
+          type: undefined,
+          value: 712,
+        },
+      ],
+      tooltipPosition: {
+        x: 333.17472424710405,
+        y: 192.64045791629607,
+      },
+      value: 712,
+      x: 199,
+      y: 712,
+      z: 1643,
+    });
+  });
+
+  test('when data is defined but dataKey does not match anything then activeShape is never called', () => {
+    const activeShape = vi.fn();
+    render(
+      <PieChart width={400} height={400}>
+        <Pie
+          isAnimationActive={false}
+          activeIndex={0}
+          activeShape={activeShape}
+          inactiveShape={{ fill: '#ff7322' }}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          sectors={sectors}
+          dataKey="this-key-does-not-exist-in-data"
+          data={generateMockData(5, 0.603)}
+        />
+      </PieChart>,
+    );
+
+    expect(activeShape).toHaveBeenCalledTimes(0);
   });
 
   test('should not render customized inactive sectors if there is no active index', () => {
@@ -364,9 +517,9 @@ describe('<Pie />', () => {
 
   test('Pie event handler', async () => {
     expect.assertions(3);
-    const onMouseEnter = jest.fn();
-    const onMouseLeave = jest.fn();
-    const onClick = jest.fn();
+    const onMouseEnter = vi.fn();
+    const onMouseLeave = vi.fn();
+    const onClick = vi.fn();
     const { container } = render(
       <Surface width={500} height={500}>
         <Pie

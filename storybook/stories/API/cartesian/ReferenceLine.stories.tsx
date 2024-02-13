@@ -130,6 +130,6 @@ export const API = {
     stroke: 'blue',
     strokeWidth: 2,
     strokeDasharray: '4 1',
-    label: { fill: 'red', fontSize: 20 },
+    label: 'My example label',
   },
 };

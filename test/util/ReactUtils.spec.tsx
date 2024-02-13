@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 
 import { Bar, Line, LineChart } from '../../src';
 import {
@@ -17,35 +18,41 @@ import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 
 describe('ReactUtils untest tests', () => {
   describe('filterProps', () => {
-    test('should call filterProps wtesth any boolean and return a null result', () => {
-      expect(filterProps(true)).toBeNull();
-      expect(filterProps(false)).toBeNull();
+    test.each([true, false, 125, null, undefined])('should return null when called with %s', input => {
+      expect(filterProps(input, false)).toBeNull();
     });
 
-    test('should call filterProps wtesth a non-object and return null', () => {
-      expect(filterProps(125 as {})).toBeNull();
+    test('should filter out non-svg properties from react element props', () => {
+      expect(filterProps(<input id="test" value={1} />, false)).toEqual({ id: 'test' });
     });
 
-    test('should call filterProps wtesth a react element extract properties and filter out non-svg properties', () => {
-      expect(filterProps(<input id="test" value={1} />)).toEqual({ id: 'test' });
-    });
-
-    test('should pass props and filter out non wanted properties', () => {
-      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', dx: 1, dy: 1 })).toEqual({
+    test('should filter out non wanted properties', () => {
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', dx: 1, dy: 1 }, false)).toEqual({
         dx: 1,
         dy: 1,
       });
     });
 
-    test('should expect viewBox on type "svg"', () => {
+    test('should return viewBox string on type "svg"', () => {
       expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0' }, false, 'svg')).toEqual({
         viewBox: '0 0 0 0',
       });
     });
 
+    test('should return viewBox object on type "svg"', () => {
+      // I think this is a bug because SVG wants a string viewBox and this will let the object through
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: { x: 1, y: 2 } }, false, 'svg')).toEqual({
+        viewBox: { x: 1, y: 2 },
+      });
+    });
+
+    test('should filter away viewBox object on undefined type', () => {
+      expect(filterProps({ test: '1234', helloWorld: 1234, viewBox: { x: 1, y: 2 } }, false)).toEqual({});
+    });
+
     test('should include events when includeEvents is true', () => {
       expect(
-        filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: jest.fn() }, true, 'svg'),
+        filterProps({ test: '1234', helloWorld: 1234, viewBox: '0 0 0 0', onClick: vi.fn() }, true, 'svg'),
       ).toEqual({
         viewBox: '0 0 0 0',
         onClick: expect.any(Function),
@@ -53,17 +60,20 @@ describe('ReactUtils untest tests', () => {
     });
 
     test('should filter out "points" attribute when included without an svg type that explicitly uses "points"', () => {
-      expect(filterProps({ test: '1234', points: '1234', onClick: jest.fn() }, true)).toEqual({
+      expect(filterProps({ test: '1234', points: '1234', onClick: vi.fn() }, true)).toEqual({
         onClick: expect.any(Function),
       });
     });
 
     test('filterProps return presentation attributes', () => {
-      const result = filterProps({
-        stroke: '#000',
-        fill: '#000',
-        r: 6,
-      });
+      const result = filterProps(
+        {
+          stroke: '#000',
+          fill: '#000',
+          r: 6,
+        },
+        false,
+      );
 
       expect(Object.keys(result ?? {})).toContain('stroke');
       expect(Object.keys(result ?? {})).toContain('fill');
@@ -120,7 +130,7 @@ describe('ReactUtils untest tests', () => {
     test('adaptEventHandlers return event attributes', () => {
       const result = adaptEventHandlers({
         a: 1,
-        onMouseEnter: jest.fn(),
+        onMouseEnter: vi.fn(),
       });
       expect(Object.keys(result ?? {})).toContain('onMouseEnter');
       expect(Object.keys(result ?? {})).not.toContain('a');
@@ -128,7 +138,7 @@ describe('ReactUtils untest tests', () => {
 
     test('adaptEventHandlers return null when input is not a react element', () => {
       expect(adaptEventHandlers(null as any)).toEqual(null);
-      expect(adaptEventHandlers(jest.fn())).toEqual(null);
+      expect(adaptEventHandlers(vi.fn())).toEqual(null);
       expect(adaptEventHandlers(1 as any)).toEqual(null);
     });
   });
@@ -154,7 +164,7 @@ describe('ReactUtils untest tests', () => {
 
     test('validateWidthHeight return false when input is not a react element', () => {
       expect(validateWidthHeight({ a: 1 })).toEqual(false);
-      expect(validateWidthHeight(jest.fn())).toEqual(false);
+      expect(validateWidthHeight(vi.fn())).toEqual(false);
     });
   });
 

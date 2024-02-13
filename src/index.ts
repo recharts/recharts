@@ -1,6 +1,7 @@
 // "export type" declarations on separate lines are in use
 // to workaround babel issue(s) 11465 12578
 //
+
 // see https://github.com/babel/babel/issues/11464#issuecomment-617606898
 export { Surface } from './container/Surface';
 export type { Props as SurfaceProps } from './container/Surface';
@@ -96,6 +97,7 @@ export { ScatterChart } from './chart/ScatterChart';
 export { AreaChart } from './chart/AreaChart';
 export { RadialBarChart } from './chart/RadialBarChart';
 export { ComposedChart } from './chart/ComposedChart';
+export { SunburstChart } from './chart/SunburstChart';
 
 export { Funnel } from './numberAxis/Funnel';
 export type { FunnelProps } from './numberAxis/Funnel';

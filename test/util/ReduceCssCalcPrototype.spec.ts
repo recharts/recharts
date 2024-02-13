@@ -1,5 +1,3 @@
-import oldReduceCSSCalc from 'reduce-css-calc';
-import { log } from 'console';
 import { reduceCSSCalc, safeEvaluateExpression } from '../../src/util/ReduceCSSCalc';
 
 describe('number calculate', () => {
@@ -84,7 +82,7 @@ const cssLengthPair = cssLengthUnits.reduce<string[][]>((result, unit1, index1) 
   return result;
 }, []);
 
-describe('reduce-css-calc', () => {
+describe('reduceCSSCalc', () => {
   cssLengthPair.forEach(([unit1, unit2]) => {
     [
       { capHeight: `123${unit1}`, lineHeight: `456${unit2}`, wordsByLines: 3 },
@@ -101,16 +99,7 @@ describe('reduce-css-calc', () => {
           `calc(${capHeight} * -${lineHeight})`,
           `calc(${capHeight} / -${lineHeight})`,
         ].forEach(calcString => {
-          try {
-            const newCalc = reduceCSSCalc(calcString);
-            const prevCalc = oldReduceCSSCalc(calcString);
-
-            if (!(prevCalc.includes('calc') || prevCalc.includes(' '))) {
-              expect(prevCalc).toEqual(newCalc);
-            }
-          } catch (e) {
-            log('prevCalc throw error');
-          }
+          expect(() => reduceCSSCalc(calcString)).not.toThrow();
         });
       });
     });

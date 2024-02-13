@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, LabelList } from '../../src';
+import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
 
 const data = [
   { value: 100, name: '展现' },
@@ -59,7 +59,7 @@ describe('<Funnel />', () => {
           data={data}
           activeIndex={1}
           isAnimationActive={false}
-          activeShape={payload => (
+          activeShape={(payload: FunnelProps) => (
             <rect
               className="custom-active-shape"
               x={payload.x}

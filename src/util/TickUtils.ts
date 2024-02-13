@@ -23,7 +23,21 @@ export function getTickBoundaries(viewBox: CartesianViewBox, sign: number, sizeK
   };
 }
 
-export function isVisible(sign: number, tickPosition: number, size: number, start: number, end: number): boolean {
+export function isVisible(
+  sign: number,
+  tickPosition: number,
+  getSize: () => number,
+  start: number,
+  end: number,
+): boolean {
+  /* Since getSize() is expensive (it reads the ticks' size from the DOM), we do this check first to avoid calculating
+   * the tick's size. */
+  if (sign * tickPosition < sign * start || sign * tickPosition > sign * end) {
+    return false;
+  }
+
+  const size = getSize();
+
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 

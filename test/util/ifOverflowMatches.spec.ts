@@ -17,6 +17,8 @@ describe('ifOverflowMatches', () => {
     expect(ifOverflowMatches({ ifOverflow: 'visible', alwaysShow: false }, 'visible')).toBe(true);
     expect(ifOverflowMatches({ ifOverflow: 'visible' }, 'hidden')).toBe(false);
     expect(ifOverflowMatches({ ifOverflow: 'visible' }, 'extendDomain')).toBe(false);
+    expect(ifOverflowMatches({ ifOverflow: 'visible' }, 'discard')).toBe(false);
+    expect(ifOverflowMatches({ ifOverflow: 'discard' }, 'discard')).toBe(true);
   });
 
   it('should ignore ifOverflow prop when alwaysShow is true', () => {

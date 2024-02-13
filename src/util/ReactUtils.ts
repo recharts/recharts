@@ -1,4 +1,9 @@
-import _ from 'lodash';
+import get from 'lodash/get';
+import isNil from 'lodash/isNil';
+import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
+import isObject from 'lodash/isObject';
+
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { DotProps } from '..';
@@ -78,12 +83,12 @@ let lastChildren: ReactNode | null = null;
 let lastResult: ReactNode[] | null = null;
 
 export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
-  if (children === lastChildren && _.isArray(lastResult)) {
+  if (children === lastChildren && Array.isArray(lastResult)) {
     return lastResult as T[];
   }
   let result: T[] = [];
   Children.forEach(children, child => {
-    if (_.isNil(child)) return;
+    if (isNil(child)) return;
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
@@ -106,14 +111,14 @@ export function findAllByType<
   const result: DetailedElement[] = [];
   let types: string[] = [];
 
-  if (_.isArray(type)) {
+  if (Array.isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
   }
 
   toArray(children).forEach(child => {
-    const childType = _.get(child, 'type.displayName') || _.get(child, 'type.name');
+    const childType = get(child, 'type.displayName') || get(child, 'type.name');
     if (types.indexOf(childType) !== -1) {
       result.push(child as DetailedElement);
     }
@@ -142,14 +147,14 @@ export const withoutType = (children: ReactNode, type: string | string[]) => {
   const newChildren: ReactNode[] = [];
   let types: string[];
 
-  if (_.isArray(type)) {
+  if (Array.isArray(type)) {
     types = type.map(t => getDisplayName(t));
   } else {
     types = [getDisplayName(type)];
   }
 
   toArray(children).forEach(child => {
-    const displayName = _.get(child, 'type.displayName');
+    const displayName = get(child, 'type.displayName');
 
     if (displayName && types.indexOf(displayName) !== -1) {
       return;
@@ -260,7 +265,7 @@ const SVG_TAGS: string[] = [
   'vkern',
 ];
 
-const isSvgElement = (child: any) => child && child.type && _.isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
+const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
 export const isDotProps = (dot: LineDot | AreaDot): dot is DotProps =>
   dot && typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
@@ -287,7 +292,7 @@ export const isValidSpreadableProp = (
   const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
 
   return (
-    (!_.isFunction(property) &&
+    (!isFunction(property) &&
       ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
     (includeEvents && EventKeys.includes(key))
   );
@@ -311,8 +316,8 @@ export const filterSvgElements = (children: React.ReactElement[]): React.ReactEl
 };
 
 export const filterProps = (
-  props: Record<string, any> | Component | FunctionComponent | boolean,
-  includeEvents?: boolean,
+  props: Record<string, any> | Component | FunctionComponent | boolean | unknown,
+  includeEvents: boolean,
   svgElementType?: FilteredSvgElementType,
 ) => {
   if (!props || typeof props === 'function' || typeof props === 'boolean') {
@@ -325,7 +330,7 @@ export const filterProps = (
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!_.isObject(inputProps)) {
+  if (!isObject(inputProps)) {
     return null;
   }
 
@@ -369,8 +374,8 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   if (count === 1) {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return isSingleChildEqual(
-      _.isArray(nextChildren) ? nextChildren[0] : nextChildren,
-      _.isArray(prevChildren) ? prevChildren[0] : prevChildren,
+      Array.isArray(nextChildren) ? nextChildren[0] : nextChildren,
+      Array.isArray(prevChildren) ? prevChildren[0] : prevChildren,
     );
   }
 
@@ -378,7 +383,7 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
     const nextChild: any = nextChildren[i];
     const prevChild: any = prevChildren[i];
 
-    if (_.isArray(nextChild) || _.isArray(prevChild)) {
+    if (Array.isArray(nextChild) || Array.isArray(prevChild)) {
       if (!isChildrenEqual(nextChild, prevChild)) {
         return false;
       }
@@ -392,10 +397,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
 };
 
 export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (_.isNil(nextChild) && _.isNil(prevChild)) {
+  if (isNil(nextChild) && isNil(prevChild)) {
     return true;
   }
-  if (!_.isNil(nextChild) && !_.isNil(prevChild)) {
+  if (!isNil(nextChild) && !isNil(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 

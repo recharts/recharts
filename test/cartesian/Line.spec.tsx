@@ -11,7 +11,7 @@ describe('<Line />', () => {
     { x: 170, y: 50, value: 100 },
   ];
 
-  it('Render a path in a simple Line', () => {
+  it('Renders a path in a simple Line', () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <Line isAnimationActive={false} points={data} />
@@ -19,6 +19,19 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+  });
+
+  it('Does not fall into infinite loop if strokeDasharray is 0', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <Line points={data} strokeDasharray="0" />
+      </Surface>,
+    );
+
+    const line = container.querySelectorAll('.recharts-line-curve');
+    expect(line).toHaveLength(1);
+
+    expect(line[0].getAttribute('stroke-dasharray')).toEqual('0px 0px');
   });
 
   it('Does not throw when dot is null', () => {

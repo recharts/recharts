@@ -20,8 +20,10 @@ import {
   curveStepAfter,
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
-import classNames from 'classnames';
-import _ from 'lodash';
+import upperFirst from 'lodash/upperFirst';
+import isFunction from 'lodash/isFunction';
+
+import clsx from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber } from '../util/DataUtils';
@@ -74,11 +76,11 @@ const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType) => {
-  if (_.isFunction(type)) {
+  if (isFunction(type)) {
     return type;
   }
 
-  const name = `curve${_.upperFirst(type)}`;
+  const name = `curve${upperFirst(type)}`;
 
   if ((name === 'curveMonotone' || name === 'curveBump') && layout) {
     return CURVE_FACTORIES[`${name}${layout === 'vertical' ? 'Y' : 'X'}`];
@@ -110,7 +112,7 @@ const getPath = ({ type = 'linear', points = [], baseLine, layout, connectNulls 
   const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
   let lineFunction;
 
-  if (_.isArray(baseLine)) {
+  if (Array.isArray(baseLine)) {
     const formatBaseLine = connectNulls ? baseLine.filter(base => defined(base)) : baseLine;
     const areaPoints = formatPoints.map((entry, index) => ({ ...entry, base: formatBaseLine[index] }));
     if (layout === 'vertical') {
@@ -152,9 +154,9 @@ export const Curve: React.FC<Props> = props => {
 
   return (
     <path
-      {...filterProps(props)}
+      {...filterProps(props, false)}
       {...adaptEventHandlers(props)}
-      className={classNames('recharts-curve', className)}
+      className={clsx('recharts-curve', className)}
       d={realPath}
       ref={pathRef}
     />

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Trapezoid /> Don't render any Trapezoid when props are invalid 1`] = `
+exports[`<Trapezoid /> > Don't render any Trapezoid when props are invalid 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Trapezoid /> Don't render any Trapezoid when props are invalid 1`] = `
 </div>
 `;
 
-exports[`<Trapezoid /> Render 1 Trapezoid in simple Trapezoid 1`] = `
+exports[`<Trapezoid /> > Render 1 Trapezoid in simple Trapezoid 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -38,7 +38,7 @@ exports[`<Trapezoid /> Render 1 Trapezoid in simple Trapezoid 1`] = `
 </div>
 `;
 
-exports[`<Trapezoid /> Render 1 Trapezoid with animation in simple Trapezoid 1`] = `
+exports[`<Trapezoid /> > Render 1 Trapezoid with animation in simple Trapezoid 1`] = `
 <div>
   <svg
     class="recharts-surface"

@@ -1,0 +1,23 @@
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/blocks';
+import * as ComponentStories from './Sector.stories';
+
+# Sector
+
+The Sector is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+This is a building block used internally to recharts to create `<Pie />`, etc.
+
+```jsx
+<Customized component={<Sector {...sectorProps} />} />
+```
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Sector.
+
+<Controls of={ComponentStories.API} />

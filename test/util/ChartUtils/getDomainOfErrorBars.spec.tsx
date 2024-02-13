@@ -1,12 +1,13 @@
 import React, { ReactElement, ReactNode } from 'react';
+import { vi } from 'vitest';
 import { findAllByType } from '../../../src/util/ReactUtils';
 import { getDomainOfErrorBars } from '../../../src/util/ChartUtils';
 import { ErrorBar } from '../../../src/cartesian/ErrorBar';
 import { AxisType, LayoutType } from '../../../src/util/types';
 
-jest.mock('../../../src/util/ReactUtils');
+vi.mock('../../../src/util/ReactUtils');
 
-const spy = jest.mocked(findAllByType);
+const spy = vi.mocked(findAllByType);
 
 function mockErrorBarElements(items: ReactNode[]): ReactElement {
   spy.mockReturnValueOnce(items);

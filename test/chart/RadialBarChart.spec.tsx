@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { fireEvent, render } from '@testing-library/react';
+import { RadialBarChart, RadialBar, Legend, Sector, Tooltip, Cell, SectorProps, XAxis, YAxis } from '../../src';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<RadialBarChart />', () => {
   const data = [
@@ -31,6 +31,32 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
     expect(container.querySelectorAll('.recharts-radial-bar-sector')).toHaveLength(data.length);
+  });
+
+  test('Adds className when set on radial bar and radial bar background', () => {
+    const label = { orientation: 'outer' };
+    const { container } = render(
+      <RadialBarChart
+        width={500}
+        height={300}
+        cx={150}
+        cy={150}
+        innerRadius={20}
+        outerRadius={140}
+        barSize={10}
+        data={data}
+      >
+        <RadialBar
+          className="test-radial-bar"
+          label={label}
+          background={{ className: 'test-custom-background' }}
+          dataKey="uv"
+          isAnimationActive={false}
+        />
+      </RadialBarChart>,
+    );
+    expect(container.querySelectorAll('.test-radial-bar')).toHaveLength(1);
+    expect(container.querySelectorAll('.test-custom-background')).toHaveLength(data.length);
   });
 
   test("Don't renders any sectors when no RadialBar is added", () => {
@@ -188,8 +214,8 @@ describe('<RadialBarChart />', () => {
         data={data}
       >
         <RadialBar background dataKey="uv" isAnimationActive={false}>
-          {data.map((_, index) => (
-            <Cell key={`cell-${index}`} className="unit-test-class" />
+          {data.map(cell => (
+            <Cell key={`cell-${cell.name}`} className="unit-test-class" />
           ))}
         </RadialBar>
       </RadialBarChart>,
@@ -213,7 +239,7 @@ describe('<RadialBarChart />', () => {
           background
           dataKey="uv"
           isAnimationActive={false}
-          activeShape={props => <Sector {...props} fill="red" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="red" />}
         />
         <Tooltip />
       </RadialBarChart>,
@@ -221,9 +247,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -248,9 +272,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -275,9 +297,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -302,9 +322,7 @@ describe('<RadialBarChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(0);
@@ -328,12 +346,68 @@ describe('<RadialBarChart />', () => {
     );
 
     const sectorNodes = container.querySelectorAll('.recharts-sector');
-    const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
 
-    mouseOverEvent.fire();
+    const [sector] = Array.from(sectorNodes);
+    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
+  });
+
+  describe('RadialBarChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <RadialBarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </RadialBarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <RadialBarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </RadialBarChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
+      ),
+    );
+
+    /**
+     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
+     * TODO un-skip this level if fixing the exception.
+     */
+    it.skip(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <RadialBarChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </RadialBarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });

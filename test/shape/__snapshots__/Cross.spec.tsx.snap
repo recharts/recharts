@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Cross /> Don't render any path when props is invalid 1`] = `
+exports[`<Cross /> > Don't render any path when props is invalid 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -14,7 +14,7 @@ exports[`<Cross /> Don't render any path when props is invalid 1`] = `
 </div>
 `;
 
-exports[`<Cross /> Render 1 path in Cross 1`] = `
+exports[`<Cross /> > Render 1 path in Cross 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -38,7 +38,7 @@ exports[`<Cross /> Render 1 path in Cross 1`] = `
 </div>
 `;
 
-exports[`<Cross /> Renders path with default values when no props are provided 1`] = `
+exports[`<Cross /> > Renders path with default values when no props are provided 1`] = `
 <div>
   <svg
     class="recharts-surface"

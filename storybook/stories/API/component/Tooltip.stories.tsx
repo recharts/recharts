@@ -5,6 +5,14 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 const TooltipProps: StorybookArgs = {
+  active: {
+    description:
+      'When set to true, the tooltip will remain visible, even after the user has moved off of the chart. Set `defaultIndex` if you want the tooltip to always be visible.',
+    defaultValue: false,
+  },
+  defaultIndex: {
+    description: 'The index where the Tooltip should appear *before* the user has interacted with the chart.',
+  },
   separator: {
     description: 'The separator between name and value.',
     defaultValue: ' : ',
@@ -83,17 +91,6 @@ const TooltipProps: StorybookArgs = {
         detail: '{ x: boolean, y: boolean }',
       },
       category: 'Styles',
-    },
-  },
-  active: {
-    description:
-      'If set true, the tooltip is displayed. If set false, the tooltip is hidden. Usually calculated internally.',
-    defaultValue: false,
-    table: {
-      category: 'Internal',
-      type: {
-        summary: 'boolean',
-      },
     },
   },
   position: {
@@ -187,16 +184,6 @@ const TooltipProps: StorybookArgs = {
       category: 'Content',
       type: {
         summary: 'boolean',
-      },
-    },
-  },
-  animationBegin: {
-    description: 'Specifies (in milliseconds) when the animation should begin.',
-    defaultValue: 0,
-    table: {
-      category: 'Styles',
-      type: {
-        summary: 'number',
       },
     },
   },

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Surface, CartesianAxis } from '../../src';
 
 const CustomizeLabel = ({ x, y }: any) => (
@@ -82,7 +83,7 @@ describe('<CartesianAxis />', () => {
   it('gets font states from its ComputedStyle', () => {
     const myStyle = { fontSize: '14px', letterSpacing: '0.5em' } as CSSStyleDeclaration;
 
-    jest.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
+    vi.spyOn(window, 'getComputedStyle').mockReturnValue(myStyle);
 
     render(
       <Surface width={500} height={500}>

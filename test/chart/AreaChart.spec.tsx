@@ -1,8 +1,9 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-
+import { vi, SpyInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { assertNotNull } from '../helper/assertNotNull';
+import { testChartLayoutContext } from '../util/context';
 
 describe('AreaChart', () => {
   const data = [
@@ -55,8 +56,6 @@ describe('AreaChart', () => {
   });
 
   test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const ActiveDot: FC<{ cx?: number; cy?: number }> = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -77,19 +76,14 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
   });
 
   test('Renders customized active dot when activeDot is set to be a function', () => {
-    jest.useFakeTimers();
-
     const activeDotRenderer: ComponentProps<typeof Area>['activeDot'] = ({ cx, cy }) => (
       <circle cx={cx} cy={cy} r={10} className="customized-active-dot" />
     );
@@ -104,11 +98,8 @@ describe('AreaChart', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
     const dot = container.querySelectorAll('.customized-active-dot');
     expect(dot).toHaveLength(1);
@@ -161,16 +152,16 @@ describe('AreaChart', () => {
   describe('<AreaChart /> - Pure Rendering', () => {
     const pureElements = [Area];
 
-    const spies: jest.SpyInstance[] = [];
+    const spies: SpyInstance[] = [];
     // CartesianAxis is what is actually render for XAxis and YAxis
-    let axisSpy: jest.SpyInstance;
+    let axisSpy: SpyInstance;
 
     // spy on each pure element before each test, and restore the spy afterwards
     beforeEach(() => {
       pureElements.forEach((el, i) => {
-        spies[i] = jest.spyOn(el.prototype, 'render');
+        spies[i] = vi.spyOn(el.prototype, 'render');
       });
-      axisSpy = jest.spyOn(CartesianAxis.prototype, 'render');
+      axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
     });
     afterEach(() => {
       pureElements.forEach((el, i) => spies[i].mockRestore());
@@ -210,12 +201,9 @@ describe('AreaChart', () => {
       expect(axisSpy).toHaveBeenCalledTimes(2);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
-
-      const mouseDownEvent = mockMouseEvent('mousedown', brushSlide!, { pageX: 0, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      assertNotNull(brushSlide);
+      fireEvent.mouseDown(brushSlide);
+      fireEvent.mouseMove(brushSlide, { clientX: 200, clientY: 200 });
       fireEvent.mouseUp(window);
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
@@ -226,12 +214,10 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       const leftBrushTraveler = container.querySelector('.recharts-brush-traveller');
-
-      const mouseDownEvent = mockMouseEvent('mousedown', leftBrushTraveler!, { pageX: 0, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 400, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      assertNotNull(leftBrushTraveler);
+      assertNotNull(window);
+      fireEvent.mouseDown(leftBrushTraveler);
+      fireEvent.mouseMove(window, { clientX: 400, clientY: 0 });
       fireEvent.mouseUp(window);
 
       expect(leftBrushTraveler?.firstChild).toHaveAttribute('x', '390'); // not sure why the drag end at x: 390
@@ -242,17 +228,157 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       const rightBrushTraveler = container.querySelectorAll('.recharts-brush-traveller')[1];
-
-      const mouseDownEvent = mockMouseEvent('mousedown', rightBrushTraveler!, { pageX: 400, pageY: 0 });
-      const mouseMoveEvent = mockMouseEvent('mousemove', window, { pageX: 0, pageY: 0 });
-
-      mouseDownEvent.fire();
-      mouseMoveEvent.fire();
+      assertNotNull(rightBrushTraveler);
+      fireEvent.mouseDown(rightBrushTraveler, { clientX: 400, clientY: 0 });
+      fireEvent.mouseMove(window, { clientX: 0, clientY: 0 });
       fireEvent.mouseUp(window);
 
       // not sure why the drag ended at x: 65, but it did close to the 1st point but not 2nd
       expect(rightBrushTraveler?.firstChild).toHaveAttribute('x', '65');
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
     });
+  });
+
+  describe('AreaChart layout context', () => {
+    it(
+      'should provide viewBox and offset and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <AreaChart width={100} height={50} barSize={20}>
+            {props.children}
+          </AreaChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap, offset }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toEqual({});
+          expect(yAxisMap).toEqual({});
+          expect(offset).toEqual({
+            bottom: 5,
+            brushBottom: 5,
+            height: 40,
+            left: 5,
+            right: 5,
+            top: 5,
+            width: 90,
+          });
+        },
+      ),
+    );
+
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <AreaChart width={100} height={50} barSize={20}>
+            {props.children}
+          </AreaChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
+      ),
+    );
+
+    it(
+      'should provide axisMaps if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <AreaChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </AreaChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "xAxis",
+                "bandSize": 0,
+                "categoricalDomain": [],
+                "dataKey": "number",
+                "domain": [
+                  0,
+                  -Infinity,
+                ],
+                "duplicateDomain": undefined,
+                "height": 30,
+                "hide": false,
+                "isCategorical": true,
+                "layout": "horizontal",
+                "mirror": false,
+                "niceTicks": [
+                  0,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                ],
+                "orientation": "bottom",
+                "originalDomain": [
+                  0,
+                  "auto",
+                ],
+                "padding": {
+                  "left": 0,
+                  "right": 0,
+                },
+                "realScaleType": "linear",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "number",
+                "width": 30,
+                "x": 65,
+                "xAxisId": 0,
+                "y": 15,
+              },
+            }
+          `);
+          expect(yAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "yAxis",
+                "bandSize": 0,
+                "categoricalDomain": undefined,
+                "dataKey": "name",
+                "domain": [],
+                "duplicateDomain": undefined,
+                "height": 10,
+                "hide": false,
+                "isCategorical": false,
+                "layout": "horizontal",
+                "mirror": false,
+                "orientation": "left",
+                "originalDomain": undefined,
+                "padding": {
+                  "bottom": 0,
+                  "top": 0,
+                },
+                "realScaleType": "point",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "category",
+                "width": 60,
+                "x": 5,
+                "y": 5,
+                "yAxisId": 0,
+              },
+            }
+          `);
+        },
+      ),
+    );
   });
 });

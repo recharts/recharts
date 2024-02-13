@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius is [ 5, 10, 8, 15 ] 1`] = `
+exports[`<Rectangle /> > Should render 1 rectangle in simple Rectangle when radius is [ 5, 10, 8, 15 ] 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -27,7 +27,7 @@ exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius
 </div>
 `;
 
-exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius is 5 1`] = `
+exports[`<Rectangle /> > Should render 1 rectangle in simple Rectangle when radius is 5 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -58,7 +58,7 @@ exports[`<Rectangle /> Should render 1 rectangle in simple Rectangle when radius
 </div>
 `;
 
-exports[`<Rectangle /> Should render 4 arc when height < 0 1`] = `
+exports[`<Rectangle /> > Should render 4 arc when height < 0 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -89,7 +89,7 @@ exports[`<Rectangle /> Should render 4 arc when height < 0 1`] = `
 </div>
 `;
 
-exports[`<Rectangle /> Shouldn't render any path when x, y, width or height is not a number 1`] = `
+exports[`<Rectangle /> > Shouldn't render any path when x, y, width or height is not a number 1`] = `
 <div>
   <svg
     class="recharts-surface"
@@ -103,7 +103,7 @@ exports[`<Rectangle /> Shouldn't render any path when x, y, width or height is n
 </div>
 `;
 
-exports[`<Rectangle /> Shouldn't render anything when height === 0 || width === 0 1`] = `
+exports[`<Rectangle /> > Shouldn't render anything when height === 0 || width === 0 1`] = `
 <div>
   <svg
     class="recharts-surface"

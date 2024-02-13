@@ -2,9 +2,11 @@
  * @fileOverview Render a group of bar
  */
 import React, { Key, PureComponent, ReactElement } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
-import _ from 'lodash';
+import isEqual from 'lodash/isEqual';
+import isNil from 'lodash/isNil';
+
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -178,7 +180,7 @@ export class Bar extends PureComponent<Props, State> {
       } else {
         value = getValueByDataKey(entry, dataKey);
 
-        if (!_.isArray(value)) {
+        if (!Array.isArray(value)) {
           value = [baseValue, value];
         }
       }
@@ -285,7 +287,7 @@ export class Bar extends PureComponent<Props, State> {
 
   renderRectanglesStatically(data: BarRectangleItem[]) {
     const { shape, dataKey, activeIndex, activeBar } = this.props;
-    const baseProps = filterProps(this.props);
+    const baseProps = filterProps(this.props, false);
 
     return (
       data &&
@@ -306,7 +308,7 @@ export class Bar extends PureComponent<Props, State> {
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${i}`} // eslint-disable-line react/no-array-index-key
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
           >
             <BarRectangle {...props} />
           </Layer>
@@ -378,7 +380,7 @@ export class Bar extends PureComponent<Props, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !_.isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
       return this.renderRectanglesWithAnimation();
     }
 
@@ -387,7 +389,7 @@ export class Bar extends PureComponent<Props, State> {
 
   renderBackground() {
     const { data, dataKey, activeIndex } = this.props;
-    const backgroundProps = filterProps(this.props.background);
+    const backgroundProps = filterProps(this.props.background, false);
 
     return data.map((entry, i) => {
       const { value, background, ...rest } = entry;
@@ -448,9 +450,9 @@ export class Bar extends PureComponent<Props, State> {
 
     return (
       <Layer {...errorBarProps}>
-        {errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) =>
+        {errorBarItems.map((item: ReactElement<ErrorBarProps>) =>
           React.cloneElement(item, {
-            key: `error-bar-${i}`, // eslint-disable-line react/no-array-index-key
+            key: `error-bar-${clipPathId}-${item.props.dataKey}`,
             data,
             xAxis,
             yAxis,
@@ -471,11 +473,11 @@ export class Bar extends PureComponent<Props, State> {
     }
 
     const { isAnimationFinished } = this.state;
-    const layerClass = classNames('recharts-bar', className);
+    const layerClass = clsx('recharts-bar', className);
     const needClipX = xAxis && xAxis.allowDataOverflow;
     const needClipY = yAxis && yAxis.allowDataOverflow;
     const needClip = needClipX || needClipY;
-    const clipPathId = _.isNil(id) ? this.id : id;
+    const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

@@ -2,8 +2,9 @@
  * @fileOverview Default Legend Content
  */
 import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
-import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+
+import clsx from 'clsx';
 import { warn } from '../util/LogUtils';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
@@ -48,6 +49,7 @@ export interface Payload {
   formatter?: Formatter;
   inactive?: boolean;
   legendIcon?: ReactElement<SVGElement>;
+  dataKey?: DataKey<any>;
 }
 interface InternalProps {
   content?: ContentType;
@@ -59,12 +61,12 @@ interface InternalProps {
   payload?: Array<Payload>;
   inactiveColor?: string;
   formatter?: Formatter;
-  onMouseEnter?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
-  onMouseLeave?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
-  onClick?: (data: Payload & { dataKey?: DataKey<any> }, index: number, event: MouseEvent) => void;
+  onMouseEnter?: (data: Payload, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: Payload, index: number, event: MouseEvent) => void;
+  onClick?: (data: Payload, index: number, event: MouseEvent) => void;
 }
 
-export type Props = InternalProps & PresentationAttributesAdaptChildEvent<any, ReactElement>;
+export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;
 
 export class DefaultLegendContent extends PureComponent<Props> {
   static displayName = 'Legend';
@@ -161,7 +163,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
 
     return payload.map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
-      const className = classNames({
+      const className = clsx({
         'recharts-legend-item': true,
         [`legend-item-${i}`]: true,
         inactive: entry.inactive,
@@ -172,18 +174,20 @@ export class DefaultLegendContent extends PureComponent<Props> {
       }
 
       // Do not render entry.value as functions. Always require static string properties.
-      const entryValue = !_.isFunction(entry.value) ? entry.value : null;
+      const entryValue = !isFunction(entry.value) ? entry.value : null;
       warn(
-        !_.isFunction(entry.value),
+        !isFunction(entry.value),
         `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`, // eslint-disable-line max-len
       );
 
       const color = entry.inactive ? inactiveColor : entry.color;
+
       return (
         <li
           className={className}
           style={itemStyle}
-          key={`legend-item-${i}`} // eslint-disable-line react/no-array-index-key
+          // eslint-disable-next-line react/no-array-index-key
+          key={`legend-item-${i}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>

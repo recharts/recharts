@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
-import * as _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 import React from 'react';
-
 import { Bar, Surface } from '../../src';
 
 describe('<Bar />', () => {
@@ -80,7 +79,7 @@ describe('<Bar />', () => {
     it('Will accept a function for the background prop', () => {
       const className = 'test-custom-background';
       const backgroundComponent = () => {
-        return <div key={_.uniqueId()} className={className} />;
+        return <div key={uniqueId()} className={className} />;
       };
       const { container } = render(
         <Surface width={500} height={500}>

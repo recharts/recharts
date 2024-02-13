@@ -1,30 +1,72 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { PieChart, Pie, Legend, Cell, Tooltip, Sector } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { vi, Mock } from 'vitest';
+import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps, XAxis, YAxis } from '../../src';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<PieChart />', () => {
   const data = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-    { name: 'Group E', value: 278 },
-    { name: 'Group F', value: 189 },
+    { name: 'Group A', value: 400, v: 89 },
+    { name: 'Group B', value: 300, v: 100 },
+    { name: 'Group C', value: 200, v: 200 },
+    { name: 'Group D', value: 200, v: 20 },
+    { name: 'Group E', value: 278, v: 40 },
+    { name: 'Group F', value: 189, v: 60 },
   ];
 
+  test('Renders 1 sector with animation, simple PieChart', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive
+          data={[data[0]]}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(1);
+  });
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
-          isAnimationActive={false}
+          isAnimationActive
           data={data}
+          animationDuration={0}
           cx={200}
           cy={200}
           outerRadius={80}
           fill="#ff7300"
+          label
+        />
+      </PieChart>,
+    );
+
+    waitFor(() => {
+      expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+    });
+  });
+
+  test('Renders 6 sectors circles in simple PieChart with animation', () => {
+    const { container } = render(
+      <PieChart width={400} height={400}>
+        <Pie
+          dataKey="value"
+          startAngle={180}
+          endAngle={0}
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          fill="#8884d8"
           label
         />
       </PieChart>,
@@ -52,9 +94,7 @@ describe('<PieChart />', () => {
     );
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -67,7 +107,7 @@ describe('<PieChart />', () => {
         <Pie
           dataKey="value"
           isAnimationActive={false}
-          activeShape={props => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
+          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           data={data}
           cx={200}
           cy={200}
@@ -81,9 +121,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 200, pageY: 200 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -110,9 +148,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -139,9 +175,7 @@ describe('<PieChart />', () => {
 
     const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
     const [sector] = Array.from(sectorNodes);
-    const mouseOverEvent = mockMouseEvent('mouseover', sector, { pageX: 100, pageY: 100 });
-
-    mouseOverEvent.fire();
+    fireEvent.mouseOver(sector, { pageX: 100, pageY: 100 });
 
     const activeSector = container.querySelectorAll('.recharts-active-shape');
     expect(activeSector).toHaveLength(1);
@@ -220,7 +254,7 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(6);
   });
 
-  const getPieChart = (eventProps: { onClick?: jest.Mock; onMouseEnter?: jest.Mock; onMouseLeave?: jest.Mock }) => {
+  const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
     return (
       <PieChart width={800} height={400} {...eventProps}>
         <Pie
@@ -259,7 +293,7 @@ describe('<PieChart />', () => {
   });
 
   test('click on Sector should invoke onClick callback', async () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
 
     const { container } = render(getPieChart({ onClick }));
     const sectors = container.querySelectorAll('.recharts-sector');
@@ -270,7 +304,7 @@ describe('<PieChart />', () => {
   });
 
   test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
-    const onMouseEnter = jest.fn();
+    const onMouseEnter = vi.fn();
 
     const { container } = render(getPieChart({ onMouseEnter }));
     const sectors = container.querySelectorAll('.recharts-sector');
@@ -281,7 +315,7 @@ describe('<PieChart />', () => {
   });
 
   test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
-    const onMouseLeave = jest.fn();
+    const onMouseLeave = vi.fn();
 
     const { container } = render(getPieChart({ onMouseLeave }));
     const sectors = container.querySelectorAll('.recharts-sector');
@@ -289,5 +323,62 @@ describe('<PieChart />', () => {
 
     await userEvent.unhover(sector);
     expect(onMouseLeave).toBeCalled();
+  });
+
+  describe('PieChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <PieChart width={100} height={50} barSize={20}>
+            {props.children}
+          </PieChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <PieChart width={100} height={50} barSize={20}>
+            {props.children}
+          </PieChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
+      ),
+    );
+
+    /**
+     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
+     * TODO un-skip this level if fixing the exception.
+     */
+    it.skip(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <PieChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </PieChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });

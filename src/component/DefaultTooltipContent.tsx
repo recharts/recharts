@@ -1,13 +1,15 @@
 /**
  * @fileOverview Default Tooltip Content
  */
-import _ from 'lodash';
+
 import React, { CSSProperties, ReactNode } from 'react';
-import classNames from 'classnames';
+import sortBy from 'lodash/sortBy';
+import isNil from 'lodash/isNil';
+import clsx from 'clsx';
 import { isNumOrStr } from '../util/DataUtils';
 
 function defaultFormatter<TValue extends ValueType>(value: TValue) {
-  return _.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
+  return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
 }
 
 export type TooltipType = 'none';
@@ -34,6 +36,8 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   stroke?: string;
   strokeDasharray?: string | number;
   strokeWidth?: number | string;
+  className?: string;
+  hide?: boolean;
 }
 
 export interface Props<TValue extends ValueType, TName extends NameType> {
@@ -71,7 +75,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = (itemSorter ? _.sortBy(payload, itemSorter) : payload).map((entry, i) => {
+      const items = (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry, i) => {
         if (entry.type === 'none') {
           return null;
         }
@@ -129,10 +133,10 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     margin: 0,
     ...labelStyle,
   };
-  const hasLabel = !_.isNil(label);
+  const hasLabel = !isNil(label);
   let finalLabel = hasLabel ? label : '';
-  const wrapperCN = classNames('recharts-default-tooltip', wrapperClassName);
-  const labelCN = classNames('recharts-tooltip-label', labelClassName);
+  const wrapperCN = clsx('recharts-default-tooltip', wrapperClassName);
+  const labelCN = clsx('recharts-tooltip-label', labelClassName);
 
   if (hasLabel && labelFormatter && payload !== undefined && payload !== null) {
     finalLabel = labelFormatter(label, payload);

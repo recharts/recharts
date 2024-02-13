@@ -3,8 +3,13 @@
  */
 import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
-import classNames from 'classnames';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
+import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
+
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
@@ -38,6 +43,7 @@ interface InternalFunnelProps {
   nameKey?: DataKey<any>;
   data?: any[];
   hide?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
@@ -86,7 +92,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
 
   static getRealFunnelData = (item: Funnel) => {
     const { data, children } = item.props;
-    const presentationProps = filterProps(item.props);
+    const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
@@ -111,9 +117,9 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const realHeight = height;
     let realWidth = width;
 
-    if (_.isNumber(customWidth)) {
+    if (isNumber(customWidth)) {
       realWidth = customWidth;
-    } else if (_.isString(customWidth)) {
+    } else if (isString(customWidth)) {
       realWidth = (realWidth * parseFloat(customWidth)) / 100;
     }
 
@@ -180,7 +186,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         val,
         tooltipPayload,
         tooltipPosition,
-        ..._.omit(entry, 'width'),
+        ...omit(entry, 'width'),
         payload: entry,
         parentViewBox,
         labelViewBox: {
@@ -239,7 +245,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (_.isFunction(onAnimationEnd)) {
+    if (isFunction(onAnimationEnd)) {
       onAnimationEnd();
     }
   };
@@ -248,7 +254,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (_.isFunction(onAnimationStart)) {
+    if (isFunction(onAnimationStart)) {
       onAnimationStart();
     }
   };
@@ -264,10 +270,10 @@ export class Funnel extends PureComponent<FunnelProps, State> {
   }
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
-    const { activeShape } = this.props;
+    const { shape, activeShape } = this.props;
 
     return trapezoids.map((entry, i) => {
-      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : null;
+      const trapezoidOptions = this.isActiveIndex(i) ? activeShape : shape;
       const trapezoidProps = {
         ...entry,
         isActive: this.isActiveIndex(i),
@@ -278,7 +284,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         <Layer
           className="recharts-funnel-trapezoid"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`trapezoid-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
           role="img"
         >
           <FunnelTrapezoid option={trapezoidOptions} {...trapezoidProps} />
@@ -354,7 +360,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
       isAnimationActive &&
       trapezoids &&
       trapezoids.length &&
-      (!prevTrapezoids || !_.isEqual(prevTrapezoids, trapezoids))
+      (!prevTrapezoids || !isEqual(prevTrapezoids, trapezoids))
     ) {
       return this.renderTrapezoidsWithAnimation();
     }
@@ -369,7 +375,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
       return null;
     }
 
-    const layerClass = classNames('recharts-trapezoids', className);
+    const layerClass = clsx('recharts-trapezoids', className);
 
     return (
       <Layer className={layerClass}>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { vi, describe, test } from 'vitest';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('AccessibilityLayer', () => {
   const data = [
@@ -47,7 +49,7 @@ describe('AccessibilityLayer', () => {
   });
 
   test('Chart updates when it receives left/right arrow keystrokes', () => {
-    const mockMouseMovements = jest.fn();
+    const mockMouseMovements = vi.fn();
 
     const { container } = render(
       <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
@@ -60,19 +62,16 @@ describe('AccessibilityLayer', () => {
     );
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
     // Once the chart receives focus, the tooltip should display
-    svg?.focus();
+    svg.focus();
     expect(tooltip).toHaveTextContent('Page A');
     expect(mockMouseMovements.mock.instances).toHaveLength(1);
-
-    if (svg === null) {
-      return;
-    }
 
     // Ignore left arrow when you're already at the left
     fireEvent.keyDown(svg, {
@@ -127,7 +126,7 @@ describe('AccessibilityLayer', () => {
   });
 
   test('Vertical chart ignores arrow keys', () => {
-    const mockMouseMovements = jest.fn();
+    const mockMouseMovements = vi.fn();
 
     const { container } = render(
       <AreaChart
@@ -147,19 +146,16 @@ describe('AccessibilityLayer', () => {
     );
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
     // Once the chart receives focus, the tooltip should display
-    svg?.focus();
+    svg.focus();
     expect(tooltip).toHaveTextContent('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-    if (svg === null) {
-      return;
-    }
 
     // Vertical charts aren't supported, so right arrow key should be ignored
     fireEvent.keyDown(svg, {
@@ -207,18 +203,15 @@ describe('AccessibilityLayer', () => {
 
     const pre = container.querySelector('pre');
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
     expect(pre?.textContent).toBe('6');
 
     // Once the chart receives focus, the tooltip should display
-    svg?.focus();
+    svg.focus();
     expect(tooltip).toHaveTextContent('Page A');
-
-    if (svg === null) {
-      return;
-    }
 
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
@@ -321,17 +314,14 @@ describe('AccessibilityLayer', () => {
     expect(container.querySelectorAll('button')).toHaveLength(1);
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    svg?.focus();
+    svg.focus();
     expect(tooltip).toHaveTextContent('Page A');
-
-    if (svg === null) {
-      return;
-    }
 
     // Ignore left arrow when you're already at the left
     fireEvent.keyDown(svg, {
@@ -378,17 +368,13 @@ describe('AccessibilityLayer', () => {
     const { container } = render(<BugExample />);
 
     const svg = container.querySelector('svg');
+    assertNotNull(svg);
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
 
-    svg?.focus();
+    svg.focus();
     expect(tooltip).toHaveTextContent('Page A');
-
-    // This makes typescript happy
-    if (svg === null) {
-      return;
-    }
 
     // Make sure we move around, to get the AccessibilityManager's active index above 0
     fireEvent.keyDown(svg, {
@@ -402,7 +388,7 @@ describe('AccessibilityLayer', () => {
     expect(container.querySelector('.recharts-tooltip-wrapper')).toBeNull();
 
     expect(() => {
-      svg?.focus();
+      svg.focus();
       fireEvent.keyDown(svg, {
         key: 'ArrowRight',
       });

@@ -2,6 +2,7 @@
  * @fileOverview Render a group of error bar
  */
 import React, { SVGProps } from 'react';
+import invariant from 'tiny-invariant';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -48,8 +49,14 @@ export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 export function ErrorBar(props: Props) {
   const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
-  const svgProps = filterProps(others);
-  const errorBars = data.map((entry: any, i: number) => {
+  const svgProps = filterProps(others, false);
+
+  invariant(
+    !(props.direction === 'x' && xAxis.type !== 'number'),
+    'ErrorBar requires Axis type property to be "number".',
+  );
+
+  const errorBars = data.map((entry: any) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
 
     if (!errorVal) {
@@ -102,11 +109,13 @@ export function ErrorBar(props: Props) {
     }
 
     return (
-      // eslint-disable-next-line react/no-array-index-key
-      <Layer className="recharts-errorBar" key={`bar-${i}`} {...svgProps}>
-        {lineCoordinates.map((coordinates, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <line {...coordinates} key={`line-${index}`} />
+      <Layer
+        className="recharts-errorBar"
+        key={`bar-${lineCoordinates.map(c => `${c.x1}-${c.x2}-${c.y1}-${c.y2}`)}`}
+        {...svgProps}
+      >
+        {lineCoordinates.map(coordinates => (
+          <line {...coordinates} key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`} />
         ))}
       </Layer>
     );

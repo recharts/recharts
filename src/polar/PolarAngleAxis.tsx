@@ -2,7 +2,8 @@
  * @fileOverview Axis of radial direction
  */
 import React, { PureComponent } from 'react';
-import _ from 'lodash';
+import isFunction from 'lodash/isFunction';
+
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
@@ -85,9 +86,9 @@ export class PolarAngleAxis extends PureComponent<Props> {
   renderAxisLine() {
     const { cx, cy, radius, axisLine, axisLineType } = this.props;
     const props = {
-      ...filterProps(this.props),
+      ...filterProps(this.props, false),
       fill: 'none',
-      ...filterProps(axisLine),
+      ...filterProps(axisLine, false),
     };
 
     if (axisLineType === 'circle') {
@@ -104,7 +105,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (_.isFunction(option)) {
+    } else if (isFunction(option)) {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -119,12 +120,12 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   renderTicks() {
     const { ticks, tick, tickLine, tickFormatter, stroke } = this.props;
-    const axisProps = filterProps(this.props);
-    const customTickProps = filterProps(tick);
+    const axisProps = filterProps(this.props, false);
+    const customTickProps = filterProps(tick, false);
     const tickLineProps = {
       ...axisProps,
       fill: 'none',
-      ...filterProps(tickLine),
+      ...filterProps(tickLine, false),
     };
 
     const items = ticks.map((entry, i) => {
@@ -145,7 +146,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
       return (
         <Layer
           className="recharts-polar-angle-axis-tick"
-          key={`tick-${i}`} // eslint-disable-line react/no-array-index-key
+          key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}

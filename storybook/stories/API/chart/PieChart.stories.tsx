@@ -2,22 +2,13 @@ import React from 'react';
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
     ...CategoricalChartProps,
-    activeIndex: {
-      description: 'The index of the individual shapes of Pie to be marked as active, and render props.activeShape',
-      table: {
-        category: 'General',
-      },
-    },
-    activeShape: {
-      description: 'The customized shape to be rendered if activeIndex is a match',
-      table: {
-        category: 'General',
-      },
-    },
+    activeIndex: ActiveShapeProps.activeIndex,
+    activeShape: ActiveShapeProps.activeShape,
   },
   component: PieChart,
 };

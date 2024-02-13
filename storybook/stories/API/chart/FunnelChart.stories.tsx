@@ -2,31 +2,12 @@ import React from 'react';
 import { Meta } from '@storybook/react';
 import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer, FunnelProps } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
+import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 export default {
   argTypes: {
     ...CategoricalChartProps,
-    activeIndex: {
-      description:
-        'The index of the individual shapes of Funnel to be marked as active, and render props.activeShape as a result',
-      table: {
-        type: {
-          summary: 'number',
-        },
-        defaultValue: undefined,
-        category: 'General',
-      },
-    },
-    activeShape: {
-      description: 'The customized shape to be rendered if activeIndex or activeTooltipIndex match',
-      table: {
-        type: {
-          summary: 'Function | boolean | ReactElement | object',
-        },
-        defaultValue: undefined,
-        category: 'General',
-      },
-    },
+    ...ActiveShapeProps,
   },
   component: FunnelChart,
 };
@@ -48,6 +29,7 @@ export const Simple: Meta<FunnelProps> = {
             labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
+            shape={args.shape}
             activeShape={args.activeShape}
           >
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
@@ -59,6 +41,7 @@ export const Simple: Meta<FunnelProps> = {
     );
   },
   args: {
+    shape: {},
     activeShape: { fill: 'gold', stroke: 'purple' },
     activeIndex: undefined,
     data: [

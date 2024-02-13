@@ -1,11 +1,19 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
-import { Bar, BarChart, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
-import { mockMouseEvent } from '../helper/mockMouseEvent';
+import { vi } from 'vitest';
+import { Bar, BarChart, Rectangle, RectangleProps, Tooltip, XAxis, YAxis } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
+import { testChartLayoutContext } from '../util/context';
+
+type DataType = {
+  name: string;
+  uv: number;
+  pv: number;
+};
 
 describe('<BarChart />', () => {
-  const data = [
+  const data: DataType[] = [
     { name: 'food', uv: 400, pv: 2400 },
     { name: 'cosmetic', uv: 300, pv: 4567 },
     { name: 'storage', uv: 300, pv: 1398 },
@@ -13,6 +21,14 @@ describe('<BarChart />', () => {
   ];
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
+
+  beforeAll(() => {
+    vi.useFakeTimers();
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
 
   test('Renders 8 bars in simple BarChart', () => {
     const { container } = render(
@@ -112,7 +128,7 @@ describe('<BarChart />', () => {
   });
 
   test('Renders customized active bar by default', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
@@ -125,18 +141,15 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a function', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -144,7 +157,7 @@ describe('<BarChart />', () => {
             dataKey="uv"
             stackId="test"
             fill="#ff7300"
-            activeBar={props => {
+            activeBar={(props: RectangleProps) => {
               return <Rectangle {...props} name={props.name as string} />;
             }}
           />
@@ -155,18 +168,15 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar set to be a ReactElement', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -178,18 +188,15 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
+    vi.advanceTimersByTime(100);
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -201,18 +208,15 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
 
   test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -223,18 +227,15 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(0);
   });
 
   test('Renders customized active bar when activeBar set to be an object', () => {
-    jest.useFakeTimers();
-
     const { container } = render(
       <div style={{ height: 200, width: 700 }}>
         <BarChart width={700} height={200} data={data}>
@@ -246,11 +247,10 @@ describe('<BarChart />', () => {
     );
 
     const chart = container.querySelector('.recharts-wrapper');
-    const mouseOverEvent = mockMouseEvent('mouseover', chart!, { pageX: 100, pageY: 100 });
+    assertNotNull(chart);
+    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
 
-    mouseOverEvent.fire();
-
-    jest.runAllTimers();
+    vi.advanceTimersByTime(100);
     const bar = container.querySelectorAll('.recharts-active-bar');
     expect(bar).toHaveLength(1);
   });
@@ -279,7 +279,7 @@ describe('<BarChart />', () => {
   });
 
   test('Render customized shapem when shape is set to be a function', () => {
-    const renderShape = (props: any) => {
+    const renderShape = (props: RectangleProps & DataType) => {
       const { x, y } = props;
 
       return <circle className="customized-shape" cx={x} cy={y} r={8} />;
@@ -331,4 +331,171 @@ describe('<BarChart />', () => {
       expect(rectangleProps).toHaveAttribute('height', '10');
     });
   });
+
+  // guard against negative values in clipPath - ref https://github.com/recharts/recharts/issues/2009
+  test('Renders a (Bar) chart with less width than left, right margin and less height than top, bottom margin', () => {
+    const { container } = render(
+      <BarChart
+        width={50}
+        height={80}
+        data={data}
+        margin={{
+          top: 50,
+          right: 100,
+          left: 100,
+          bottom: 50,
+        }}
+        layout="vertical"
+      >
+        <XAxis type="number" />
+        <YAxis dataKey="name" type="category" />
+        <Bar dataKey="pv" fill="#8884d8" isAnimationActive={false} />
+      </BarChart>,
+    );
+
+    // expect nothing to render because height and width are 0
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
+
+    const clipPath = container.querySelector('#recharts53-clip');
+    assertNotNull(clipPath);
+    expect(clipPath.children[0]).not.toBeNull();
+
+    // expect clipPath rect to have a width and height of 0
+    expect(clipPath.children[0]).toHaveAttribute('width', '0');
+    expect(clipPath.children[0]).toHaveAttribute('height', '0');
+  });
+
+  describe('BarChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <BarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </BarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(xAxisMap).toEqual({});
+          expect(yAxisMap).toEqual({});
+        },
+      ),
+    );
+
+    it(
+      'should provide axisMaps if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <BarChart width={100} height={50} barSize={20}>
+            <XAxis dataKey="number" type="number" />
+            <YAxis type="category" dataKey="name" />
+            {props.children}
+          </BarChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(xAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "xAxis",
+                "bandSize": 0,
+                "categoricalDomain": [],
+                "dataKey": "number",
+                "domain": [
+                  0,
+                  -Infinity,
+                ],
+                "duplicateDomain": undefined,
+                "height": 30,
+                "hide": false,
+                "isCategorical": true,
+                "layout": "horizontal",
+                "mirror": false,
+                "niceTicks": [
+                  0,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                  -Infinity,
+                ],
+                "orientation": "bottom",
+                "originalDomain": [
+                  0,
+                  "auto",
+                ],
+                "padding": {
+                  "left": 0,
+                  "right": 0,
+                },
+                "realScaleType": "linear",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "number",
+                "width": 30,
+                "x": 65,
+                "xAxisId": 0,
+                "y": 15,
+              },
+            }
+          `);
+          expect(yAxisMap).toMatchInlineSnapshot(`
+            {
+              "0": {
+                "allowDataOverflow": false,
+                "allowDecimals": true,
+                "allowDuplicatedCategory": true,
+                "axisType": "yAxis",
+                "bandSize": 10,
+                "categoricalDomain": undefined,
+                "dataKey": "name",
+                "domain": [],
+                "duplicateDomain": undefined,
+                "height": 10,
+                "hide": false,
+                "isCategorical": false,
+                "layout": "horizontal",
+                "mirror": false,
+                "orientation": "left",
+                "originalDomain": undefined,
+                "padding": {
+                  "bottom": 0,
+                  "top": 0,
+                },
+                "realScaleType": "band",
+                "reversed": false,
+                "scale": [Function],
+                "tickCount": 5,
+                "type": "category",
+                "width": 60,
+                "x": 5,
+                "y": 5,
+                "yAxisId": 0,
+              },
+            }
+          `);
+        },
+      ),
+    );
+  });
+
+  it(
+    'should set width and height in context',
+    testChartLayoutContext(
+      props => (
+        <BarChart width={100} height={50} barSize={20}>
+          {props.children}
+        </BarChart>
+      ),
+      ({ width, height }) => {
+        expect(width).toBe(100);
+        expect(height).toBe(50);
+      },
+    ),
+  );
 });

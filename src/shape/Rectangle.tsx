@@ -2,12 +2,12 @@
  * @fileOverview Rectangle
  */
 import React, { SVGProps, useEffect, useRef, useState } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-type RectRadius = [number, number, number, number];
+export type RectRadius = [number, number, number, number];
 
 const getRectanglePath = (x: number, y: number, width: number, height: number, radius: number | RectRadius): string => {
   const maxRadius = Math.min(Math.abs(width) / 2, Math.abs(height) / 2);
@@ -144,7 +144,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
     return null;
   }
 
-  const layerClass = classNames('recharts-rectangle', className);
+  const layerClass = clsx('recharts-rectangle', className);
   if (!isUpdateAnimationActive) {
     return (
       <path {...filterProps(props, true)} className={layerClass} d={getRectanglePath(x, y, width, height, radius)} />
