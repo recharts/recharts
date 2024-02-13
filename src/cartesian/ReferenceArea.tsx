@@ -14,14 +14,10 @@ import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
+import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
 interface InternalReferenceAreaProps {
   viewBox?: CartesianViewBox;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  clipPathId?: number | string;
 }
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
@@ -43,8 +39,16 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
 
 export type Props = RectangleProps & ReferenceAreaProps;
 
-const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
-  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
+const getRect = (
+  hasX1: boolean,
+  hasX2: boolean,
+  hasY1: boolean,
+  hasY2: boolean,
+  xAxis: { scale: D3Scale<string | number> },
+  yAxis: { scale: D3Scale<string | number> },
+  props: Props,
+) => {
+  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
 
   if (!xAxis || !yAxis) return null;
 
@@ -82,7 +86,12 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
 };
 
 export function ReferenceArea(props: Props) {
-  const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
+  const { x1, x2, y1, y2, className, alwaysShow, shape, xAxisId, yAxisId } = props;
+  const clipPathId = useClipPathId();
+  const xAxis = useMaybeXAxis(xAxisId);
+  const yAxis = useMaybeYAxis(yAxisId);
+
+  if (!xAxis || !yAxis) return null;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
@@ -91,19 +100,19 @@ export function ReferenceArea(props: Props) {
   const hasY1 = isNumOrStr(y1);
   const hasY2 = isNumOrStr(y2);
 
-  const { shape } = props;
-
   if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) {
     return null;
   }
 
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props);
+  // @ts-expect-error the xAxis and yAxis in context do not match what this function is expecting - the whole axis type situation needs improvement
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxis, yAxis, props);
 
   if (!rect && !shape) {
     return null;
   }
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
+  const isOverflowHidden = ifOverflowMatches(props, 'hidden');
+  const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>

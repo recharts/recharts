@@ -1,7 +1,8 @@
 import React from 'react';
-import { describe, it, test, expect } from 'vitest';
+import { describe, vi, it, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
+import { IfOverflow } from '../../src/util/IfOverflowMatches';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -50,6 +51,24 @@ describe('<ReferenceArea />', () => {
         margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
       >
         <YAxis tickCount={7} orientation="right" />
+        <ReferenceArea x1="201106" x2="201110" fill="#666" />
+        <ReferenceArea y1={0} y2={2} fill="#999" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-area-rect')).toHaveLength(0);
+  });
+
+  it('should render nothing if neither YAxis not Bar are present', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis dataKey="name" orientation="top" />
         <ReferenceArea x1="201106" x2="201110" fill="#666" />
         <ReferenceArea y1={0} y2={2} fill="#999" />
       </BarChart>,
@@ -299,5 +318,258 @@ describe('<ReferenceArea />', () => {
       );
       expect(getByText('Custom Text')).toBeVisible();
     });
+  });
+
+  describe('shape', () => {
+    it('should render rectangle when shape is not defined', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea
+            x1="201106"
+            x2="201110"
+            fill="#666"
+            radius={10}
+            strokeWidth={3}
+            fillOpacity={0.7}
+            stroke="yellow"
+          />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect
+        .soft(area.getAttributeNames().sort())
+        .toEqual([
+          'class',
+          'd',
+          'fill',
+          'fill-opacity',
+          'height',
+          'r',
+          'radius',
+          'stroke',
+          'stroke-width',
+          'width',
+          'x',
+          'x1',
+          'x2',
+          'y',
+        ]);
+      expect.soft(area).toHaveAttribute('x', '112.27272727272728');
+      expect.soft(area).toHaveAttribute('y', '5');
+      expect.soft(area).toHaveAttribute('width', '59.09090909090909');
+      expect.soft(area).toHaveAttribute('height', '160');
+      expect.soft(area).toHaveAttribute('radius', '10');
+      expect.soft(area).toHaveAttribute('x1', '201106');
+      expect.soft(area).toHaveAttribute('x2', '201110');
+      expect.soft(area).toHaveAttribute('fill', '#666');
+      expect.soft(area).toHaveAttribute('stroke-width', '3');
+      expect.soft(area).toHaveAttribute('r', '10');
+      expect.soft(area).toHaveAttribute('fill-opacity', '0.7');
+      expect.soft(area).toHaveAttribute('stroke', 'yellow');
+      expect.soft(area).toHaveAttribute('class', 'recharts-rectangle recharts-reference-area-rect');
+      expect.soft(area.getAttribute('d')).toMatchSnapshot();
+    });
+
+    it('should render when shape is a React Element', () => {
+      const { getByTestId } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea
+            x1="201106"
+            x2="201110"
+            fill="#666"
+            shape={<g data-testid="my-custom-shape" />}
+            radius={10}
+            strokeWidth={3}
+          />
+        </BarChart>,
+      );
+      const area = getByTestId('my-custom-shape');
+      expect(area).toBeVisible();
+    });
+
+    it('should inject extra props if shape is a React element', () => {
+      const { getByTestId } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea
+            x1="201106"
+            x2="201110"
+            fill="#666"
+            shape={<g data-testid="my-custom-shape" />}
+            radius={10}
+            strokeWidth={3}
+            fillOpacity={0.7}
+            stroke="yellow"
+          />
+        </BarChart>,
+      );
+      const area = getByTestId('my-custom-shape');
+      expect(area).toHaveAttribute('data-testid', 'my-custom-shape');
+      expect
+        .soft(area.getAttributeNames().sort())
+        .toEqual([
+          'data-testid',
+          'fill',
+          'fill-opacity',
+          'height',
+          'r',
+          'radius',
+          'stroke',
+          'stroke-width',
+          'width',
+          'x',
+          'x1',
+          'x2',
+          'y',
+        ]);
+      expect.soft(area).toHaveAttribute('x', '112.27272727272728');
+      expect.soft(area).toHaveAttribute('y', '5');
+      expect.soft(area).toHaveAttribute('width', '59.09090909090909');
+      expect.soft(area).toHaveAttribute('height', '160');
+      expect.soft(area).toHaveAttribute('radius', '10');
+      expect.soft(area).toHaveAttribute('x1', '201106');
+      expect.soft(area).toHaveAttribute('x2', '201110');
+      expect.soft(area).toHaveAttribute('fill', '#666');
+      expect.soft(area).toHaveAttribute('stroke-width', '3');
+      expect.soft(area).toHaveAttribute('r', '10');
+      expect.soft(area).toHaveAttribute('fill-opacity', '0.7');
+      expect.soft(area).toHaveAttribute('stroke', 'yellow');
+    });
+
+    it('should render if shape is a function', () => {
+      const { getByTestId } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea
+            x1="201106"
+            x2="201110"
+            fill="#666"
+            shape={() => <g data-testid="my-custom-shape" />}
+            radius={10}
+            strokeWidth={3}
+          />
+        </BarChart>,
+      );
+      const area = getByTestId('my-custom-shape');
+      expect(area).toBeVisible();
+    });
+
+    it('should pass arguments to the shape function', () => {
+      const spy = vi.fn();
+      render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" fill="#666" shape={spy} radius={10} strokeWidth={3} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith({
+        clipPath: undefined,
+        fill: '#666',
+        fillOpacity: 0.5,
+        height: 160,
+        r: 10,
+        radius: 10,
+        stroke: 'none',
+        strokeWidth: 3,
+        width: 59.09090909090909,
+        x: 112.27272727272728,
+        x1: '201106',
+        x2: '201110',
+        y: 5,
+      });
+    });
+
+    it('should pass clip-path when ifOverflow=hidden', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" ifOverflow="hidden" />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect(area).toHaveAttribute('clip-path');
+      expect(area.getAttribute('clip-path')).toMatch(/url\(#recharts(\d+)-clip\)/);
+    });
+
+    it('should pass no clip-path when ifOverflow=hidden and alwaysShow=true', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" ifOverflow="hidden" alwaysShow />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect(area).not.toHaveAttribute('clip-path');
+    });
+
+    test.each(['discard', 'extendDomain', 'visible'] satisfies ReadonlyArray<IfOverflow>)(
+      'should pass no clip-path when ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={200} height={200} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" />
+            <ReferenceArea x1="201106" x2="201110" ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+        expect(allAreas).toHaveLength(1);
+        const area = allAreas[0];
+        expect(area).not.toHaveAttribute('clip-path');
+      },
+    );
+
+    it('should discard rect shape if it does not fit on the domain and ifOverflow=discard', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea y1={100} y2={200} ifOverflow="discard" />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(0);
+    });
+
+    test.each(['extendDomain', 'visible', 'hidden'] satisfies ReadonlyArray<IfOverflow>)(
+      'should draw the shape if it does not fit on the domain and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={200} height={200} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" />
+            <ReferenceArea y1={100} y2={200} ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+        expect(allAreas).toHaveLength(1);
+      },
+    );
   });
 });

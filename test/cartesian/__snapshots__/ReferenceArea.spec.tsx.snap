@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<ReferenceArea /> > shape > should render rectangle when shape is not defined 1`] = `
+"M 112.27272727272728,15
+            A 10,10,0,0,1,122.27272727272728,5
+            L 161.36363636363637,5
+            A 10,10,0,0,1,171.36363636363637,15
+            L 171.36363636363637,155
+            A 10,10,0,0,1,161.36363636363637,165
+            L 122.27272727272728,165
+            A 10,10,0,0,1,112.27272727272728,155 Z"
+`;
