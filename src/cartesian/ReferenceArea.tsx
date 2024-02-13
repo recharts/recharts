@@ -16,6 +16,7 @@ import { filterProps } from '../util/ReactUtils';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
+import { useClipPathId } from '../context/chartLayoutContext';
 
 interface InternalReferenceAreaProps {
   viewBox?: CartesianViewBox;
@@ -82,7 +83,8 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
 };
 
 export function ReferenceArea(props: Props) {
-  const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
+  const clipPathId = useClipPathId();
+  const { x1, x2, y1, y2, className, alwaysShow, shape } = props;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
@@ -90,8 +92,6 @@ export function ReferenceArea(props: Props) {
   const hasX2 = isNumOrStr(x2);
   const hasY1 = isNumOrStr(y1);
   const hasY2 = isNumOrStr(y2);
-
-  const { shape } = props;
 
   if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) {
     return null;
@@ -103,7 +103,8 @@ export function ReferenceArea(props: Props) {
     return null;
   }
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
+  const isOverflowHidden = ifOverflowMatches(props, 'hidden');
+  const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
