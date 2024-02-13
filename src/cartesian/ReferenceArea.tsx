@@ -43,8 +43,16 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
 
 export type Props = RectangleProps & ReferenceAreaProps;
 
-const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
-  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
+const getRect = (
+  hasX1: boolean,
+  hasX2: boolean,
+  hasY1: boolean,
+  hasY2: boolean,
+  xAxis: { scale: D3Scale<string | number> },
+  yAxis: { scale: D3Scale<string | number> },
+  props: Props,
+) => {
+  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
 
   if (!xAxis || !yAxis) return null;
 
@@ -96,7 +104,7 @@ export function ReferenceArea(props: Props) {
     return null;
   }
 
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props);
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props.xAxis, props.yAxis, props);
 
   if (!rect && !shape) {
     return null;
