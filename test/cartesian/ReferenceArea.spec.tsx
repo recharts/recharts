@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, vi, it, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
+import { IfOverflow } from '../../src/util/IfOverflowMatches';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -473,6 +474,53 @@ describe('<ReferenceArea />', () => {
         x2: '201110',
         y: 5,
       });
+    });
+
+    it('should pass clip-path when ifOverflow=hidden', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" ifOverflow="hidden" />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect(area).toHaveAttribute('clip-path', 'url(#recharts56-clip)');
+    });
+
+    it('should pass no clip-path when ifOverflow=hidden and alwaysShow=true', () => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" ifOverflow="hidden" alwaysShow />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect(area).not.toHaveAttribute('clip-path');
+    });
+
+    const ifOverflowsThatShowNoClipPath: ReadonlyArray<IfOverflow> = ['discard', 'extendDomain', 'visible'];
+
+    test.each(ifOverflowsThatShowNoClipPath)('should pass no clip-path when ifOverflow=%s', ifOverflow => {
+      const { container } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea x1="201106" x2="201110" ifOverflow={ifOverflow} />
+        </BarChart>,
+      );
+      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+      expect(allAreas).toHaveLength(1);
+      const area = allAreas[0];
+      expect(area).not.toHaveAttribute('clip-path');
     });
   });
 });
