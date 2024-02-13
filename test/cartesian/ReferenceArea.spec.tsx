@@ -506,21 +506,51 @@ describe('<ReferenceArea />', () => {
       expect(area).not.toHaveAttribute('clip-path');
     });
 
-    const ifOverflowsThatShowNoClipPath: ReadonlyArray<IfOverflow> = ['discard', 'extendDomain', 'visible'];
+    test.each(['discard', 'extendDomain', 'visible'] satisfies ReadonlyArray<IfOverflow>)(
+      'should pass no clip-path when ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={200} height={200} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" />
+            <ReferenceArea x1="201106" x2="201110" ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+        expect(allAreas).toHaveLength(1);
+        const area = allAreas[0];
+        expect(area).not.toHaveAttribute('clip-path');
+      },
+    );
 
-    test.each(ifOverflowsThatShowNoClipPath)('should pass no clip-path when ifOverflow=%s', ifOverflow => {
+    it('should discard rect shape if it does not fit on the domain and ifOverflow=discard', () => {
       const { container } = render(
         <BarChart width={200} height={200} data={data}>
           <XAxis dataKey="name" />
           <YAxis />
           <Bar dataKey="uv" />
-          <ReferenceArea x1="201106" x2="201110" ifOverflow={ifOverflow} />
+          <ReferenceArea y1={100} y2={200} ifOverflow="discard" />
         </BarChart>,
       );
       const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
-      expect(allAreas).toHaveLength(1);
-      const area = allAreas[0];
-      expect(area).not.toHaveAttribute('clip-path');
+      expect(allAreas).toHaveLength(0);
     });
+
+    test.each(['extendDomain', 'visible', 'hidden'] satisfies ReadonlyArray<IfOverflow>)(
+      'should draw the shape if it does not fit on the domain and ifOverflow=%s',
+      ifOverflow => {
+        const { container } = render(
+          <BarChart width={200} height={200} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="uv" />
+            <ReferenceArea y1={100} y2={200} ifOverflow={ifOverflow} />
+          </BarChart>,
+        );
+        const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
+        expect(allAreas).toHaveLength(1);
+      },
+    );
   });
 });
