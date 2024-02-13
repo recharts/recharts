@@ -119,7 +119,7 @@
     "babel-loader": "^9.1.3",
     "babel-plugin-dev-expression": "^0.2.3",
     "babel-plugin-lodash": "^3.3.4",
-    "browserslist": "^4.21.0",
+    "browserslist": "^4.22.3",
     "chromatic": "^6.15.0",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
