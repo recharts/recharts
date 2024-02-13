@@ -16,7 +16,7 @@ import { filterProps } from '../util/ReactUtils';
 
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { useClipPathId } from '../context/chartLayoutContext';
+import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
 interface InternalReferenceAreaProps {
   viewBox?: CartesianViewBox;
@@ -90,8 +90,12 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
 };
 
 export function ReferenceArea(props: Props) {
+  const { x1, x2, y1, y2, className, alwaysShow, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
-  const { x1, x2, y1, y2, className, alwaysShow, shape } = props;
+  const xAxis = useMaybeXAxis(xAxisId);
+  const yAxis = useMaybeYAxis(yAxisId);
+
+  if (!xAxis || !yAxis) return null;
 
   warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
@@ -104,7 +108,8 @@ export function ReferenceArea(props: Props) {
     return null;
   }
 
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props.xAxis, props.yAxis, props);
+  // @ts-expect-error the xAxis and yAxis in context do not match what this function is expecting - the whole axis type situation needs improvement
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxis, yAxis, props);
 
   if (!rect && !shape) {
     return null;
