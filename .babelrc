@@ -9,7 +9,10 @@
     [
       "@babel/preset-env",
       {
-        "modules": false
+        "modules": false,
+        "targets": {
+          "browsers": "supports es6-module"
+        }
       }
     ],
     "@babel/preset-react",

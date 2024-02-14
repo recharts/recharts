@@ -11,7 +11,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "target": "es5",
+    "target": "es6",
     "allowSyntheticDefaultImports": true,
     "types": ["vitest/globals"],
     "baseUrl": "."
