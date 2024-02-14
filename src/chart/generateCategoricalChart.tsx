@@ -2177,7 +2177,7 @@ export const generateCategoricalChart = ({
 
     renderMap = {
       CartesianGrid: { handler: renderAsIs, once: true },
-      ReferenceArea: { handler: this.renderReferenceElement },
+      ReferenceArea: { handler: renderAsIs },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
       XAxis: { handler: renderAsIs },
