@@ -11,16 +11,12 @@ import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
 import { isNumOrStr } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { CartesianViewBox, D3Scale } from '../util/types';
+import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
-interface InternalReferenceAreaProps {
-  viewBox?: CartesianViewBox;
-}
-
-interface ReferenceAreaProps extends InternalReferenceAreaProps {
+interface ReferenceAreaProps {
   isFront?: boolean;
   /** @deprecated use ifOverflow="extendDomain"  */
   alwaysShow?: boolean;

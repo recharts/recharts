@@ -15,11 +15,7 @@ import {
 } from '../props/EventHandlers';
 import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
 import { GeneralStyle } from '../props/Styles';
-import {
-  ReferenceComponentGeneralArgs,
-  ReferenceComponentInternalArgs,
-  ReferenceComponentStyle,
-} from '../props/ReferenceComponentShared';
+import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const StyleProps: Args = {
@@ -84,23 +80,9 @@ const GeneralProps: Args = {
   },
 };
 
-const InternalProps: Args = {
-  ...ReferenceComponentInternalArgs,
-  viewBox: {
-    description: 'The box of the viewing area, usually calculated internally.',
-    table: {
-      type: {
-        summary: '{x: number, y: number, width: number, height: number}',
-      },
-      category: 'Internal',
-    },
-  },
-};
-
 const referenceAreaArgTypes = {
   ...StyleProps,
   ...GeneralProps,
-  ...InternalProps,
   // Rectangle
   radius,
   // Deprecated
