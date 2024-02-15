@@ -36,6 +36,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
   ActiveShape,
+  LayoutType,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
@@ -104,6 +105,11 @@ interface State {
   readonly prevAnimationId?: number;
 }
 
+type BarComposedData = ChartOffset & {
+  layout: LayoutType;
+  data: BarRectangleItem[];
+};
+
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
 
@@ -158,7 +164,7 @@ export class Bar extends PureComponent<Props, State> {
     dataStartIndex: number;
     offset: ChartOffset;
     displayedData: any[];
-  }) => {
+  }): BarComposedData => {
     const pos = findPositionOfBar(barPosition, item);
     if (!pos) {
       return null;

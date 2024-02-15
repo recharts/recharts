@@ -144,6 +144,21 @@ interface State {
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
 
+type RealPieData = any;
+
+type PieCoordinate = {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  maxRadius: number;
+};
+
+type PieComposedData = PieCoordinate & {
+  sectors: PieSectorDataItem[];
+  data: RealPieData[];
+};
+
 export class Pie extends PureComponent<Props, State> {
   pieRef: HTMLElement = null;
 
@@ -181,7 +196,7 @@ export class Pie extends PureComponent<Props, State> {
     return sign * deltaAngle;
   };
 
-  static getRealPieData = (item: Pie) => {
+  static getRealPieData = (item: Pie): RealPieData[] => {
     const { data, children } = item.props;
     const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
@@ -202,7 +217,7 @@ export class Pie extends PureComponent<Props, State> {
     return [];
   };
 
-  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset) => {
+  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset): PieCoordinate => {
     const { top, left, width, height } = offset;
     const maxPieRadius = getMaxRadius(width, height);
     const cx = left + getPercentValue(item.props.cx, width, width / 2);
@@ -214,7 +229,7 @@ export class Pie extends PureComponent<Props, State> {
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   };
 
-  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): Omit<Props, 'dataKey'> => {
+  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): PieComposedData => {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) {
       return null;

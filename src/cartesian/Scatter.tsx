@@ -101,6 +101,10 @@ interface State {
   prevAnimationId?: number;
 }
 
+type ScatterComposedData = ChartOffset & {
+  points: ScatterPointItem[];
+};
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -148,7 +152,7 @@ export class Scatter extends PureComponent<Props, State> {
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;
-  }) => {
+  }): ScatterComposedData => {
     const { tooltipType } = item.props;
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;

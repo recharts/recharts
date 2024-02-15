@@ -28,6 +28,7 @@ import {
   DataKey,
   TickItem,
   AnimationDuration,
+  LayoutType,
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 
@@ -95,6 +96,13 @@ interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
+
+type AreaComposedData = ChartOffset & {
+  points?: AreaPointItem[];
+  baseLine?: number | Coordinate[];
+  layout: LayoutType;
+  isRange: boolean;
+};
 
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
@@ -184,7 +192,7 @@ export class Area extends PureComponent<Props, State> {
     offset: ChartOffset;
     displayedData: any[];
     dataKey: Props['dataKey'];
-  }) => {
+  }): AreaComposedData => {
     const { layout } = props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
