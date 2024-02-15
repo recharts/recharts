@@ -613,6 +613,68 @@ describe('getDomainOfErrorBars', () => {
       expect(getDomainOfErrorBars(data, line, 'y', 'horizontal', 'yAxis')).toEqual([85, 220]);
     });
   });
+
+  describe('with null-entries in data array', () => {
+    const scatter = (
+      <Scatter>
+        <ErrorBar dataKey="error" direction="y" />
+        <ErrorBar dataKey="error2" direction="x" />
+      </Scatter>
+    );
+
+    it('should ignore null values for domain with direction y in yAxis domain', () => {
+      const valueNull = {
+        x: 3,
+        y: null,
+        error: 30,
+        error2: 15,
+      };
+      expect(getDomainOfErrorBars([...data, valueNull], scatter, 'y', undefined, 'yAxis')).toEqual([90, 220]);
+
+      const valueAndErrorNull = {
+        x: 3,
+        y: null,
+        error: null,
+        error2: null,
+      };
+      expect(getDomainOfErrorBars([...data, valueAndErrorNull], scatter, 'y', undefined, 'yAxis')).toEqual([90, 220]);
+
+      const errorNull = {
+        x: 3,
+        y: 300,
+        error: null,
+        error2: null,
+      };
+      expect(getDomainOfErrorBars([...data, errorNull], scatter, 'y', undefined, 'yAxis')).toEqual([90, 300]);
+    });
+
+    it('should ignore null values for domain with direction x in xAxis domain', () => {
+      const valueNull = {
+        x: null,
+        y: 300,
+        error: 30,
+        error2: 15,
+      };
+
+      expect(getDomainOfErrorBars([...data, valueNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
+
+      const valueAndErrorNull = {
+        x: null,
+        y: 300,
+        error: 30,
+        error2: null,
+      };
+      expect(getDomainOfErrorBars([...data, valueAndErrorNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
+
+      const errorNull = {
+        x: 3,
+        y: 300,
+        error: 30,
+        error2: null,
+      };
+      expect(getDomainOfErrorBars([...data, errorNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
+    });
+  });
 });
 
 describe('exports for backwards-compatibility', () => {
