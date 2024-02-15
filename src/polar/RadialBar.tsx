@@ -32,6 +32,7 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
   ActiveShape,
+  LayoutType,
 } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
@@ -85,6 +86,11 @@ interface State {
   readonly prevAnimationId?: string | number;
 }
 
+type RadialBarComposedData = {
+  data: RadialBarDataItem[];
+  layout: LayoutType;
+};
+
 export class RadialBar extends PureComponent<RadialBarProps, State> {
   static displayName = 'RadialBar';
 
@@ -129,7 +135,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     barPosition?: any[];
     bandSize?: number;
     dataStartIndex: number;
-  }) => {
+  }): RadialBarComposedData => {
     const pos = findPositionOfBar(barPosition, item);
     if (!pos) {
       return null;

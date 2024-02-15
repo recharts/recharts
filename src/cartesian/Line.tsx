@@ -30,6 +30,7 @@ import {
   TickItem,
   AnimationDuration,
   ActiveShape,
+  LayoutType,
 } from '../util/types';
 
 export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
@@ -91,6 +92,11 @@ interface State {
   prevAnimationId?: number;
 }
 
+type LineComposedData = ChartOffset & {
+  points?: LinePointItem[];
+  layout: LayoutType;
+};
+
 export class Line extends PureComponent<Props, State> {
   static displayName = 'Line';
 
@@ -142,7 +148,7 @@ export class Line extends PureComponent<Props, State> {
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;
-  }) => {
+  }): LineComposedData => {
     const { layout } = props;
 
     const points = displayedData.map((entry, index) => {

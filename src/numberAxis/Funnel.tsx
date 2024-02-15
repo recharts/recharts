@@ -73,6 +73,13 @@ interface State {
   readonly isAnimationFinished?: boolean;
 }
 
+type RealFunnelData = any;
+
+type FunnelComposedData = {
+  trapezoids: FunnelTrapezoidItem[];
+  data: RealFunnelData[];
+};
+
 export class Funnel extends PureComponent<FunnelProps, State> {
   static displayName = 'Funnel';
 
@@ -90,7 +97,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     lastShapeType: 'triangle',
   };
 
-  static getRealFunnelData = (item: Funnel) => {
+  static getRealFunnelData = (item: Funnel): RealFunnelData[] => {
     const { data, children } = item.props;
     const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
@@ -131,7 +138,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     };
   };
 
-  static getComposedData = ({ item, offset }: { item: Funnel; offset: ChartOffset }) => {
+  static getComposedData = ({ item, offset }: { item: Funnel; offset: ChartOffset }): FunnelComposedData => {
     const funnelData = Funnel.getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
     const { left, top } = offset;
@@ -144,7 +151,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const rowHeight = realHeight / len;
     const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
-    let trapezoids = funnelData.map((entry: any, i: number) => {
+    let trapezoids = funnelData.map((entry: any, i: number): FunnelTrapezoidItem => {
       const rawVal = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
       let val = rawVal;
@@ -188,6 +195,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         tooltipPosition,
         ...omit(entry, 'width'),
         payload: entry,
+        // @ts-expect-error parentViewBox property does not exist on type FunnelTrapezoidItem
         parentViewBox,
         labelViewBox: {
           x: x + (upperWidth - lowerWidth) / 4,
