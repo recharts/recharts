@@ -7,10 +7,9 @@ import some from 'lodash/some';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
-import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { warn } from '../util/LogUtils';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
@@ -33,8 +32,6 @@ export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
   isFront?: boolean;
-  /** @deprecated use ifOverflow="extendDomain"  */
-  alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
 
   x?: number | string;
@@ -74,7 +71,6 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 };
 
 type EndPointsPropsSubset = {
-  alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
   segment?: ReadonlyArray<Segment>;
   x?: number | string;
@@ -98,7 +94,7 @@ export const getEndPoints = (
     const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
 
-    if (ifOverflowMatches(props, 'discard') && !scales.y.isInRange(coord)) {
+    if (props.ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
       return null;
     }
 
@@ -112,7 +108,7 @@ export const getEndPoints = (
     const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
 
-    if (ifOverflowMatches(props, 'discard') && !scales.x.isInRange(coord)) {
+    if (props.ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
       return null;
     }
 
@@ -127,7 +123,7 @@ export const getEndPoints = (
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (ifOverflowMatches(props, 'discard') && some(points, p => !scales.isInRange(p))) {
+    if (props.ifOverflow === 'discard' && some(points, p => !scales.isInRange(p))) {
       return null;
     }
 
@@ -138,7 +134,7 @@ export const getEndPoints = (
 };
 
 export function ReferenceLine(props: Props) {
-  const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
+  const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const clipPathId = useClipPathId();
   const xAxis = useXAxisOrThrow(xAxisId);
@@ -147,8 +143,6 @@ export function ReferenceLine(props: Props) {
   if (!clipPathId || !viewBox) {
     return null;
   }
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
@@ -173,7 +167,7 @@ export function ReferenceLine(props: Props) {
 
   const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = endPoints;
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
+  const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 
   const lineProps = {
     clipPath,

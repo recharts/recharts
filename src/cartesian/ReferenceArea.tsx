@@ -7,9 +7,8 @@ import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
-import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
-import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { CartesianViewBox, D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -22,8 +21,6 @@ interface InternalReferenceAreaProps {
 
 interface ReferenceAreaProps extends InternalReferenceAreaProps {
   isFront?: boolean;
-  /** @deprecated use ifOverflow="extendDomain"  */
-  alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
@@ -64,7 +61,7 @@ const getRect = (
     y: hasY2 ? scales.y.apply(yValue2, { position: 'end' }) : scales.y.rangeMax,
   };
 
-  if (ifOverflowMatches(props, 'discard') && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
+  if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 
@@ -86,14 +83,12 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
 };
 
 export function ReferenceArea(props: Props) {
-  const { x1, x2, y1, y2, className, alwaysShow, shape, xAxisId, yAxisId } = props;
+  const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
   const xAxis = useMaybeXAxis(xAxisId);
   const yAxis = useMaybeYAxis(yAxisId);
 
   if (!xAxis || !yAxis) return null;
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
   const hasX1 = isNumOrStr(x1);
   const hasX2 = isNumOrStr(x2);
@@ -111,7 +106,7 @@ export function ReferenceArea(props: Props) {
     return null;
   }
 
-  const isOverflowHidden = ifOverflowMatches(props, 'hidden');
+  const isOverflowHidden = props.ifOverflow === 'hidden';
   const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (

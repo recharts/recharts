@@ -151,28 +151,6 @@ describe('<ReferenceLine />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
-  test('Render line and label when (deprecated) alwaysShow is true in ReferenceLine', () => {
-    const { container } = render(
-      <BarChart
-        width={1100}
-        height={250}
-        barGap={2}
-        barSize={6}
-        data={data}
-        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
-      >
-        <XAxis dataKey="name" />
-        <YAxis tickCount={7} />
-        <Bar dataKey="uv" />
-        <ReferenceLine x="201102" label="test" stroke="#666" />
-        <ReferenceLine y={20} stroke="#666" label="20" alwaysShow />
-      </BarChart>,
-    );
-    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
-    expect(consoleSpy).toHaveBeenCalled();
-  });
-
   test('Render line and label when ifOverflow is "extendDomain" in ReferenceLine', () => {
     const { container } = render(
       <BarChart

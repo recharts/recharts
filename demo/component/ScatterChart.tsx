@@ -134,7 +134,7 @@ export default class Demo extends Component {
             <Scatter name="B school" data={data02} fill="#347300" />
             <Tooltip trigger="click" />
             <Legend />
-            <ReferenceArea x1={250} x2={300} alwaysShow label="any label" />
+            <ReferenceArea x1={250} x2={300} ifOverflow="extendDomain" label="any label" />
             <ReferenceLine x={159} stroke="red" />
             <ReferenceLine y={237.5} stroke="red" />
             <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" isFront />
