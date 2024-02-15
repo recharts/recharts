@@ -8,9 +8,8 @@ import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
-import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
-import { warn } from '../util/LogUtils';
 import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -26,8 +25,6 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
   r?: number;
 
   isFront?: boolean;
-  /** @deprecated use ifOverflow="extendDomain"  */
-  alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
   x?: number | string;
   y?: number | string;
@@ -47,7 +44,7 @@ const getCoordinate = (props: Props) => {
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
-  if (ifOverflowMatches(props, 'discard') && !scales.isInRange(result)) {
+  if (props.ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;
   }
 
@@ -55,11 +52,9 @@ const getCoordinate = (props: Props) => {
 };
 
 export function ReferenceDot(props: Props) {
-  const { x, y, r, alwaysShow, clipPathId } = props;
+  const { x, y, r, clipPathId } = props;
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
-
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
 
   if (!isX || !isY) {
     return null;
@@ -73,9 +68,9 @@ export function ReferenceDot(props: Props) {
 
   const { x: cx, y: cy } = coordinate;
 
-  const { shape, className } = props;
+  const { shape, className, ifOverflow } = props;
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
+  const clipPath = ifOverflow === 'hidden' ? `url(#${clipPathId})` : undefined;
 
   const dotProps = {
     clipPath,

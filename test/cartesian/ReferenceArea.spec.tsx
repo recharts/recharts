@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, vi, it, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
-import { IfOverflow } from '../../src/util/IfOverflowMatches';
+import { IfOverflow } from '../../src/util/IfOverflow';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -508,21 +508,6 @@ describe('<ReferenceArea />', () => {
       const area = allAreas[0];
       expect(area).toHaveAttribute('clip-path');
       expect(area.getAttribute('clip-path')).toMatch(/url\(#recharts(\d+)-clip\)/);
-    });
-
-    it('should pass no clip-path when ifOverflow=hidden and alwaysShow=true', () => {
-      const { container } = render(
-        <BarChart width={200} height={200} data={data}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Bar dataKey="uv" />
-          <ReferenceArea x1="201106" x2="201110" ifOverflow="hidden" alwaysShow />
-        </BarChart>,
-      );
-      const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
-      expect(allAreas).toHaveLength(1);
-      const area = allAreas[0];
-      expect(area).not.toHaveAttribute('clip-path');
     });
 
     test.each(['discard', 'extendDomain', 'visible'] satisfies ReadonlyArray<IfOverflow>)(

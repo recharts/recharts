@@ -441,7 +441,7 @@ export const getAxisMapByAxes = (
       }
 
       if (type === 'number') {
-        // To detect wether there is any reference lines whose props alwaysShow is true
+        // To detect wether there is any reference lines whose props ifOverflow is extendDomain
         domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
         if (childDomain) {
