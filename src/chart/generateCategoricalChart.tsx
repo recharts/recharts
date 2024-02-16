@@ -2206,10 +2206,17 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-            {this.renderClipPath()}
-            {renderByOrder(children, this.renderMap)}
-          </Surface>
+          <ChartLayoutContextProvider
+            state={this.state}
+            width={this.props.width}
+            height={this.props.height}
+            clipPathId={this.clipPathId}
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+              {this.renderClipPath()}
+              {renderByOrder(children, this.renderMap)}
+            </Surface>
+          </ChartLayoutContextProvider>
         );
       }
 
