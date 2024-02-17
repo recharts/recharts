@@ -27,6 +27,7 @@
     "build-es6": "rimraf es6 && cross-env NODE_ENV=es6 babel ./src -d es6 --extensions '.js,.ts,.tsx'",
     "build-umd": "rimraf umd && cross-env NODE_ENV=production webpack --entry ./src/index.ts -o umd",
     "build-types": "rimraf types && npm run tsc",
+    "check-types-test": "tsc --project test/tsconfig.json",
     "demo": "webpack serve --config demo/webpack.config.js --port 3000 --host 127.0.0.1 --progress --profile --static demo/",
     "test": "vitest run --config vitest.config.ts",
     "test-coverage": "vitest run --config vitest.config.ts --coverage",

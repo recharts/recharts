@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "jsx": "react",
+        "module": "commonjs",
+        "noEmit": true,
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "target": "es6"
+    },
+    "include": [
+        "../src/**/*",
+        "./**/*",
+        "../types.d.ts"
+    ]
+}
