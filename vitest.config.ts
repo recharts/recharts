@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
@@ -9,6 +10,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test/vitest.setup.ts'],
-    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build'],
+    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts'],
   },
 });

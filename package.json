@@ -40,6 +40,7 @@
     "storybook": "npx storybook dev -p 6006 -c storybook",
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
     "chromatic": "npx chromatic",
+    "test-build-output": "vitest run --config scripts/vitest-build.config.ts",
     "test-storybook": "test-storybook --config-dir storybook",
     "test-storybook:url": "test-storybook --url http://127.0.0.1:9009 --config-dir storybook",
     "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
