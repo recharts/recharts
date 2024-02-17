@@ -417,7 +417,9 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
   return false;
 };
 
-const orderByPriorityAndIndex = <T>(items: [number, number, T][]): [number, number, T][] => {
+type Priority = number;
+type Index = number;
+export const orderByPriorityAndIndex = <T>(items: [Priority, Index, T][]): [Priority, Index, T][] => {
   return items.sort((a, b) => {
     if (a[0] < b[0]) return -1;
     if (a[0] > b[0]) return 1;
