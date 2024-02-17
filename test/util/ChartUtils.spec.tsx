@@ -623,7 +623,7 @@ describe('getDomainOfErrorBars', () => {
     );
 
     it('should ignore null values for domain with direction y in yAxis domain', () => {
-      const valueNull = {
+      const valueNull: Record<string, unknown> = {
         x: 3,
         y: null,
         error: 30,
@@ -631,7 +631,7 @@ describe('getDomainOfErrorBars', () => {
       };
       expect(getDomainOfErrorBars([...data, valueNull], scatter, 'y', undefined, 'yAxis')).toEqual([90, 220]);
 
-      const valueAndErrorNull = {
+      const valueAndErrorNull: Record<string, unknown> = {
         x: 3,
         y: null,
         error: null,
@@ -639,7 +639,7 @@ describe('getDomainOfErrorBars', () => {
       };
       expect(getDomainOfErrorBars([...data, valueAndErrorNull], scatter, 'y', undefined, 'yAxis')).toEqual([90, 220]);
 
-      const errorNull = {
+      const errorNull: Record<string, unknown> = {
         x: 3,
         y: 300,
         error: null,
@@ -649,7 +649,7 @@ describe('getDomainOfErrorBars', () => {
     });
 
     it('should ignore null values for domain with direction x in xAxis domain', () => {
-      const valueNull = {
+      const valueNull: Record<string, unknown> = {
         x: null,
         y: 300,
         error: 30,
@@ -658,7 +658,7 @@ describe('getDomainOfErrorBars', () => {
 
       expect(getDomainOfErrorBars([...data, valueNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
 
-      const valueAndErrorNull = {
+      const valueAndErrorNull: Record<string, unknown> = {
         x: null,
         y: 300,
         error: 30,
@@ -666,7 +666,7 @@ describe('getDomainOfErrorBars', () => {
       };
       expect(getDomainOfErrorBars([...data, valueAndErrorNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
 
-      const errorNull = {
+      const errorNull: Record<string, unknown> = {
         x: 3,
         y: 300,
         error: 30,

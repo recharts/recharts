@@ -122,7 +122,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
         x: expect.any(Number),
         y: 50,
       };
-      const backgroundComponent = props => {
+      const backgroundComponent = (props: unknown) => {
         expect.soft(props).toEqual(expectedProps);
         return <></>;
       };
