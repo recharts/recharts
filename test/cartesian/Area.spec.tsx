@@ -1,22 +1,15 @@
 import React, { ComponentType, FC, ReactNode } from 'react';
 import { describe, test, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import {
-  Area,
-  AreaChart,
-  BarChart,
-  ComposedChart,
-  FunnelChart,
-  LineChart,
-  PieChart,
-  RadarChart,
-  RadialBarChart,
-  ScatterChart,
-  XAxis,
-  YAxis,
-} from '../../src';
+import { Area, XAxis, YAxis } from '../../src';
 import type { Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
+import {
+  AreaChartCase,
+  ComposedChartCase,
+  allCategoricalsChartsExcept,
+  includingCompact,
+} from '../helper/parameterizedTestCases';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -29,24 +22,11 @@ type TestCase = {
   testName: string;
 };
 
-const chartsThatSupportArea: ReadonlyArray<TestCase> = [
-  { ChartElement: ComposedChart, testName: 'ComposedChart' },
-  { ChartElement: AreaChart, testName: 'AreaElement' },
-];
+const chartsThatSupportArea: ReadonlyArray<TestCase> = includingCompact([ComposedChartCase, AreaChartCase]);
 
-const chartsThatDoNotSupportArea: ReadonlyArray<TestCase> = [
-  { ChartElement: BarChart, testName: 'BarChart' },
-  { ChartElement: LineChart, testName: 'LineChart' },
-  { ChartElement: ScatterChart, testName: 'ScatterChart' },
-  { ChartElement: PieChart, testName: 'PieChart' },
-  { ChartElement: RadarChart, testName: 'RadarChart' },
-  { ChartElement: RadialBarChart, testName: 'RadialBarChart' },
-  { ChartElement: ScatterChart, testName: 'ScatterChart' },
-  { ChartElement: FunnelChart, testName: 'FunnelChart' },
-  // Treemap and Sankey do not accept children
-  // { ChartElement: Treemap, testName: 'Treemap' },
-  // { ChartElement: Sankey, testName: 'Sankey' },
-];
+const chartsThatDoNotSupportArea: ReadonlyArray<TestCase> = includingCompact(
+  allCategoricalsChartsExcept(chartsThatSupportArea),
+);
 
 const data = [
   { x: 10, y: 50, value: 100 },

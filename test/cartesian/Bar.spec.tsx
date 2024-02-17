@@ -2,46 +2,24 @@ import React, { ComponentType, ReactNode } from 'react';
 import { describe, expect, test, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import uniqueId from 'lodash/uniqueId';
+import { Bar, Legend, LegendType, XAxis, YAxis } from '../../src';
 import {
-  AreaChart,
-  Bar,
-  BarChart,
-  ComposedChart,
-  FunnelChart,
-  Legend,
-  LegendType,
-  LineChart,
-  PieChart,
-  RadarChart,
-  RadialBarChart,
-  ScatterChart,
-  XAxis,
-  YAxis,
-} from '../../src';
+  BarChartCase,
+  ComposedChartCase,
+  allCategoricalsChartsExcept,
+  includingCompact,
+} from '../helper/parameterizedTestCases';
 
 type TestCase = {
   ChartElement: ComponentType<{ children?: ReactNode; width?: number; height?: number; data?: any[] }>;
   testName: string;
 };
 
-const chartsThatSupportBar: ReadonlyArray<TestCase> = [
-  { ChartElement: ComposedChart, testName: 'ComposedChart' },
-  { ChartElement: BarChart, testName: 'BarChart' },
-];
+const chartsThatSupportBar: ReadonlyArray<TestCase> = [ComposedChartCase, BarChartCase];
 
-const chartsThatDoNotSupportBar: ReadonlyArray<TestCase> = [
-  { ChartElement: AreaChart, testName: 'AreaElement' },
-  { ChartElement: LineChart, testName: 'LineChart' },
-  { ChartElement: ScatterChart, testName: 'ScatterChart' },
-  { ChartElement: PieChart, testName: 'PieChart' },
-  { ChartElement: RadarChart, testName: 'RadarChart' },
-  { ChartElement: RadialBarChart, testName: 'RadialBarChart' },
-  { ChartElement: ScatterChart, testName: 'ScatterChart' },
-  { ChartElement: FunnelChart, testName: 'FunnelChart' },
-  // Treemap and Sankey do not accept children
-  // { ChartElement: Treemap, testName: 'Treemap' },
-  // { ChartElement: Sankey, testName: 'Sankey' },
-];
+const chartsThatDoNotSupportBar: ReadonlyArray<TestCase> = includingCompact(
+  allCategoricalsChartsExcept(chartsThatSupportBar),
+);
 
 const data = [
   { x: 10, y: 50, width: 20, height: 50, value: 100, label: 'test1' },
@@ -51,7 +29,7 @@ const data = [
   { x: 170, y: 50, width: 20, height: 50, value: 500, label: 'test5' },
 ];
 
-describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
+describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it(`Render ${data.length} rectangles in horizontal Bar`, () => {
     const { container } = render(
       <ChartElement width={500} height={500}>
@@ -363,7 +341,12 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       });
     });
   });
+});
 
+describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
+  /**
+   * legend does not render in the compact chart so that's why this excludes the compact cases
+   */
   describe('legendType', () => {
     const allLegendTypesExceptNone: ReadonlyArray<LegendType> = [
       'circle',
