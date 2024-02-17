@@ -811,3 +811,20 @@ export const WithMinPointSize = {
     );
   },
 };
+
+export const ActiveTooltip = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={pageData}>
+          <XAxis dataKey="pv" />
+          <YAxis dataKey="uv" />
+          <ReferenceLine y={pageData[0].pv} />
+          <Bar dataKey="uv" />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip active defaultIndex={1} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+};
