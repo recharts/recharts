@@ -1,6 +1,3 @@
-/**
- * @fileOverview Legend
- */
 import React, { PureComponent, CSSProperties } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
 

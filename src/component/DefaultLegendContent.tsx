@@ -51,6 +51,7 @@ export interface Payload {
   legendIcon?: ReactElement<SVGElement>;
   dataKey?: DataKey<any>;
 }
+
 interface InternalProps {
   content?: ContentType;
   iconSize?: number;
