@@ -10,7 +10,6 @@
         "target": "es6"
     },
     "include": [
-        "../src/**/*",
         "./**/*",
         "../types.d.ts"
     ]
