@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../../src';
+import { ComposedChart, Bar, ResponsiveContainer, Cell, BarProps } from '../../../../../src';
 import { pageData } from '../../../data';
 
 export default {
@@ -15,8 +15,12 @@ export const CustomizedShape = {
   Z`;
     };
 
-    const TriangleBar = (props: { fill: string; x: number; y: number; width: number; height: number }) => {
+    const TriangleBar = (props: BarProps) => {
       const { fill, x, y, width, height } = props;
+
+      if (typeof x !== 'number' || typeof y !== 'number' || typeof width !== 'number' || typeof height !== 'number') {
+        return null;
+      }
 
       return <path d={getPath(x, y, width, height)} stroke="none" fill={fill} />;
     };
@@ -40,7 +44,7 @@ export const CustomizedShape = {
           <Bar
             dataKey="uv"
             fill="#8884d8"
-            shape={props => <TriangleBar {...props} />}
+            shape={(props: BarProps) => <TriangleBar {...props} />}
             label={{ position: 'top' }}
             isAnimationActive={false}
           >

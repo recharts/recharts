@@ -80,7 +80,7 @@ export type PieSectorData = {
   value?: number;
   paddingAngle?: number;
   dataKey?: string;
-  payload?: any[];
+  payload?: any;
 };
 
 export type PieSectorDataItem = SectorProps & PieSectorData;

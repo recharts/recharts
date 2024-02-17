@@ -120,10 +120,12 @@ export const StockPriceChart = {
         <BarChart data={data}>
           <XAxis dataKey="date" />
           <YAxis domain={[minValue, maxValue]} />
+          {/* @ts-expect-error custom components do not have a good type support */}
           <Tooltip content={<CustomTooltip />} />
           <Legend />
+          {/* @ts-expect-error custom components do not have a good type support */}
           <Bar dataKey="openClose" fill="#8884d8" shape={<Candlestick />}>
-            {data.map(({ date }) => (
+            {data.map(({ date }: any) => (
               <Cell key={`cell-${date}`} />
             ))}
           </Bar>

@@ -20,6 +20,7 @@ import {
   ReferenceArea,
   DefaultTooltipContent,
 } from '../../../src';
+import { DataKey } from '../../../src/util/types';
 
 export default {
   component: LineChart,
@@ -964,7 +965,10 @@ export const HideOnLegendClick: StoryObj = {
   render: () => {
     const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
 
-    const handleLegendClick = (dataKey: string) => {
+    const handleLegendClick = (dataKey?: DataKey<any>) => {
+      if (typeof dataKey !== 'string') {
+        return;
+      }
       if (activeSeries.includes(dataKey)) {
         setActiveSeries(activeSeries.filter(el => el !== dataKey));
       } else {
