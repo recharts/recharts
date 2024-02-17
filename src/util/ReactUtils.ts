@@ -417,27 +417,36 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
   return false;
 };
 
+const orderByPriorityAndIndex = <T>(items: [number, number, T][]): [number, number, T][] => {
+  return items.sort((a, b) => {
+    if (a[0] < b[0]) return -1;
+    if (a[0] > b[0]) return 1;
+
+    return a[1] - b[1];
+  });
+};
+
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
-  const elements: React.ReactElement[] = [];
+  const elementsWithPriority: [number, number, React.ReactElement][] = [];
   const record: Record<string, boolean> = {};
 
   toArray(children).forEach((child, index) => {
     if (isSvgElement(child)) {
-      elements.push(child);
+      elementsWithPriority.push([0, index, child]);
     } else if (child) {
       const displayName = getDisplayName(child.type);
-      const { handler, once } = renderMap[displayName] || {};
+      const { handler, once, priority } = renderMap[displayName] || {};
 
       if (handler && (!once || !record[displayName])) {
         const results = handler(child, displayName, index);
 
-        elements.push(results);
+        elementsWithPriority.push([priority, index, results]);
         record[displayName] = true;
       }
     }
   });
 
-  return elements;
+  return orderByPriorityAndIndex(elementsWithPriority).map(entry => entry[2]);
 };
 
 export const getReactEventByType = (e: { type?: string }): string => {
