@@ -137,7 +137,7 @@ describe('getPath', () => {
     const actual = getPath({
       type: 'linear',
       layout: 'horizontal',
-      // @ts-expect-error type says not-null but when I try in sandbox I can see nulls coming here
+      // typescript type says not-null but when I try in sandbox I can see nulls coming here
       points: [{ x: 5, y: null }],
       baseLine: undefined,
     });

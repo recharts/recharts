@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ComponentType, memo } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import {
@@ -29,7 +29,7 @@ describe('ChartLayoutContextProvider', () => {
   describe('ClipPathIdContext', () => {
     it('should add clipPathId to context', () => {
       expect.assertions(1);
-      const MockConsumer = () => {
+      const MockConsumer: ComponentType = () => {
         const clipPathId = useClipPathId();
         expect(clipPathId).toBe('my mock ID');
         return null;
@@ -43,7 +43,7 @@ describe('ChartLayoutContextProvider', () => {
 
     it('should return undefined when using the hook outside of context', () => {
       expect.assertions(1);
-      const MockComponent = () => {
+      const MockComponent: ComponentType = () => {
         const clipPathId = useClipPathId();
         expect(clipPathId).toBe(undefined);
         return null;
@@ -54,7 +54,7 @@ describe('ChartLayoutContextProvider', () => {
     describe('vanilla children', () => {
       it('should re-render children every time even when nothing changes', () => {
         let renderCount = 0;
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           renderCount++;
           return null;
         };
@@ -215,7 +215,7 @@ describe('ChartLayoutContextProvider', () => {
     };
 
     describe('useXAxisOrThrow', () => {
-      let originalConsoleError;
+      let originalConsoleError: typeof console.error;
       beforeAll(() => {
         originalConsoleError = console.error;
         console.error = vi.fn();
@@ -227,7 +227,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis but the xAxisMap is undefined', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useXAxisOrThrow('a');
           return null;
         };
@@ -243,7 +243,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis outside of Recharts context', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useXAxisOrThrow('a');
           return null;
         };
@@ -253,7 +253,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis but the xAxisMap is empty object', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useXAxisOrThrow('a');
           return null;
         };
@@ -269,7 +269,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when axes are set but the ID is wrong', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useXAxisOrThrow('wrong ID');
           return null;
         };
@@ -284,7 +284,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should read xAxis from context', () => {
         expect.assertions(2);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useXAxisOrThrow('a');
           expect(xAxis).toEqual({
             width: 200,
@@ -302,7 +302,7 @@ describe('ChartLayoutContextProvider', () => {
     });
 
     describe('useMaybeXAxis', () => {
-      let originalConsoleError;
+      let originalConsoleError: typeof console.error;
       beforeAll(() => {
         originalConsoleError = console.error;
         console.error = vi.fn();
@@ -315,7 +315,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis but the xAxisMap is undefined', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useMaybeXAxis('wrong ID');
           expect(xAxis).toBe(undefined);
           return null;
@@ -330,7 +330,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis outside of Recharts context', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useMaybeXAxis('wrong ID');
           expect(xAxis).toBe(undefined);
           return null;
@@ -340,7 +340,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis but the xAxisMap is empty object', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useMaybeXAxis('wrong ID');
           expect(xAxis).toBe(undefined);
           return null;
@@ -356,7 +356,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when axes are set but the ID is wrong', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useMaybeXAxis('wrong ID');
           expect(xAxis).toBe(undefined);
           return null;
@@ -370,7 +370,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should read xAxis from context', () => {
         expect.assertions(2);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const xAxis = useMaybeXAxis('a');
           expect(xAxis).toEqual({
             width: 200,
@@ -390,7 +390,7 @@ describe('ChartLayoutContextProvider', () => {
     describe('vanilla children', () => {
       it('should re-render children every time even when nothing changes', () => {
         let renderCount = 0;
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           renderCount++;
           return null;
         };
@@ -588,7 +588,7 @@ describe('ChartLayoutContextProvider', () => {
     };
 
     describe('useYAxisOrThrow', () => {
-      let originalConsoleError;
+      let originalConsoleError: typeof console.error;
       beforeAll(() => {
         originalConsoleError = console.error;
         console.error = vi.fn();
@@ -600,7 +600,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis but the yAxisMap is undefined', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useYAxisOrThrow('a');
           return null;
         };
@@ -616,7 +616,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis outside of Recharts context', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useYAxisOrThrow('a');
           return null;
         };
@@ -626,7 +626,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when reading axis but the xAxisMap is empty object', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useYAxisOrThrow('a');
           return null;
         };
@@ -642,7 +642,7 @@ describe('ChartLayoutContextProvider', () => {
       });
 
       it('should throw when axes are set but the ID is wrong', () => {
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           useYAxisOrThrow('wrong ID');
           return null;
         };
@@ -657,7 +657,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should read yAxis from context', () => {
         expect.assertions(2);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useYAxisOrThrow('m');
           expect(yAxis).toEqual({
             width: 200,
@@ -675,7 +675,7 @@ describe('ChartLayoutContextProvider', () => {
     });
 
     describe('useMaybeYAxis', () => {
-      let originalConsoleError;
+      let originalConsoleError: typeof console.error;
       beforeAll(() => {
         originalConsoleError = console.error;
         console.error = vi.fn();
@@ -688,7 +688,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis but the yAxisMap is undefined', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useMaybeYAxis('a');
           expect(yAxis).toBe(undefined);
           return null;
@@ -703,7 +703,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis outside of Recharts context', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useMaybeYAxis('a');
           expect(yAxis).toBe(undefined);
           return null;
@@ -714,7 +714,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when reading axis but the xAxisMap is empty object', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useMaybeYAxis('a');
           expect(yAxis).toBe(undefined);
           return null;
@@ -730,7 +730,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should return undefined when axes are set but the ID is wrong', () => {
         expect.assertions(1);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useMaybeYAxis('wrong ID');
           expect(yAxis).toBe(undefined);
           return null;
@@ -744,7 +744,7 @@ describe('ChartLayoutContextProvider', () => {
 
       it('should read yAxis from context', () => {
         expect.assertions(2);
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           const yAxis = useMaybeYAxis('m');
           expect(yAxis).toEqual({
             width: 200,
@@ -764,7 +764,7 @@ describe('ChartLayoutContextProvider', () => {
     describe('vanilla children', () => {
       it('should re-render children every time even when nothing changes', () => {
         let renderCount = 0;
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           renderCount++;
           return null;
         };
@@ -969,7 +969,7 @@ describe('ChartLayoutContextProvider', () => {
 
     it('should set viewBox to all undefined properties if there is offset but it is missing properties', () => {
       expect.assertions(1);
-      const MockConsumer = () => {
+      const MockConsumer: ComponentType = () => {
         const viewBox = useViewBox();
         expect(viewBox).toEqual({
           x: undefined,
@@ -988,7 +988,7 @@ describe('ChartLayoutContextProvider', () => {
 
     it('should add viewBox to context', () => {
       expect.assertions(1);
-      const MockConsumer = () => {
+      const MockConsumer: ComponentType = () => {
         const viewBox = useViewBox();
         expect(viewBox).toEqual({
           y: 10,
@@ -1008,7 +1008,7 @@ describe('ChartLayoutContextProvider', () => {
     describe('vanilla children', () => {
       it('should re-render children every time even when nothing changes', () => {
         let renderCount = 0;
-        const MockConsumer = () => {
+        const MockConsumer: ComponentType = () => {
           renderCount++;
           return null;
         };

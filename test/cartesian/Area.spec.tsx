@@ -132,7 +132,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const { container } = render(
         <ChartElement width={500} height={500} data={data}>
           {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
-          {/* @ts-expect-error TypeScript correctly flags this as an error, but we want to have a test for it regardless */}
+          {/* TypeScript should flag this as an error, but we have strict null checks disabled in config */}
           <Area dataKey="value" dot={null} />
         </ChartElement>,
       );

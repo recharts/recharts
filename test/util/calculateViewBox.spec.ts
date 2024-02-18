@@ -4,7 +4,8 @@ import { calculateViewBox } from '../../src/util/calculateViewBox';
 
 describe('calculateViewBox', () => {
   test('should throw if offset is undefined', () => {
-    // @ts-expect-error this should show an error - the function will not accept undefined, so typescript should highlight that too
+    // this should show an error - the function will not accept undefined, so typescript should highlight that too.
+    // but recharts has strict mode off so this is allowed!
     expect(() => calculateViewBox(undefined)).toThrow();
   });
 

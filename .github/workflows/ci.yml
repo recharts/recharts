@@ -26,10 +26,11 @@ jobs:
         run: npm ci
       - name: Run build
         run: npm run build --if-present
+      - name: Typecheck
+        run: npm run check-types
+      - name: Lint
+        run: npm run lint
       - name: Test
-        run: |
-          tsc --noEmit
-          npm run lint
-          npm test
+        run: npm test
       - name: Serve Storybook and run tests
         run: npm run test-storybook:ci
