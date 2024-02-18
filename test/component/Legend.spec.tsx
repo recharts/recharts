@@ -1,7 +1,132 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
-import { Legend, LineChart, Line } from '../../src';
+import { describe, it, test, expect, vi } from 'vitest';
+import { Legend, LineChart, Line, BarChart, Bar, LegendType } from '../../src';
+
+function assertHasLegend(container: HTMLElement) {
+  expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
+  return container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+}
+
+const expectedLegendTypeSymbols: ReadonlyArray<{
+  legendType: LegendType;
+  selector: string;
+  expectedAttributes: Record<string, string>;
+}> = [
+  {
+    legendType: 'circle',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M16,0A16,16,0,1,1,-16,0A16,16,0,1,1,16,0',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'cross',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M-16,-5.333L-5.333,-5.333L-5.333,-16L5.333,-16L5.333,-5.333L16,-5.333L16,5.333L5.333,5.333L5.333,16L-5.333,16L-5.333,5.333L-16,5.333Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'diamond',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M0,-16L9.238,0L0,16L-9.238,0Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'line',
+    selector: 'path.recharts-legend-icon',
+    expectedAttributes: {
+      // d attribute path is sensitive to whitespace!
+      d: `M0,16h10.666666666666666
+            A5.333333333333333,5.333333333333333,0,1,1,21.333333333333332,16
+            H32M21.333333333333332,16
+            A5.333333333333333,5.333333333333333,0,1,1,10.666666666666666,16`,
+      fill: 'none',
+      'stroke-width': '4',
+      class: 'recharts-legend-icon',
+    },
+  },
+  {
+    legendType: 'plainline',
+    selector: 'line.recharts-legend-icon',
+    expectedAttributes: {
+      class: 'recharts-legend-icon',
+      x1: '0',
+      x2: '32',
+      y1: '16',
+      y2: '16',
+      fill: 'none',
+      'stroke-width': '4',
+    },
+  },
+  {
+    legendType: 'rect',
+    selector: 'path.recharts-legend-icon',
+    expectedAttributes: {
+      d: 'M0,4h32v24h-32z',
+      class: 'recharts-legend-icon',
+      stroke: 'none',
+    },
+  },
+  {
+    legendType: 'square',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M-16,-16h32v32h-32Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'star',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M0,-16.823L3.777,-5.199L16,-5.199L6.111,1.986L9.889,13.61L0,6.426L-9.889,13.61L-6.111,1.986L-16,-5.199L-3.777,-5.199Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'triangle',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M0,-18.475L16,9.238L-16,9.238Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+  {
+    legendType: 'wye',
+    selector: 'path.recharts-symbols',
+    expectedAttributes: {
+      d: 'M5.856,3.381L5.856,15.094L-5.856,15.094L-5.856,3.381L-16,-2.475L-10.144,-12.619L0,-6.762L10.144,-12.619L16,-2.475Z',
+      class: 'recharts-symbols',
+      cx: '16',
+      cy: '16',
+      transform: 'translate(16, 16)',
+    },
+  },
+];
 
 describe('<Legend />', () => {
   const data = [
@@ -113,5 +238,44 @@ describe('<Legend />', () => {
           'Ex: <Bar name="Name of my Data"/>',
       );
     });
+  });
+
+  describe('as a child of BarChart', () => {
+    it('should render one legend item for each bar', () => {
+      const { container, getByText } = render(
+        <BarChart width={500} height={500} data={data}>
+          <Legend />
+          <Bar dataKey="value" />
+          <Bar dataKey="color" />
+        </BarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+      expect(getByText('value')).toBeInTheDocument();
+      expect(getByText('color')).toBeInTheDocument();
+    });
+
+    test.each(expectedLegendTypeSymbols)(
+      'should render element $selector for legendType $legendType',
+      ({ legendType, selector, expectedAttributes }) => {
+        const { container, debug } = render(
+          <BarChart width={500} height={500} data={data}>
+            <Legend />
+            <Bar dataKey="value" legendType={legendType} />
+          </BarChart>,
+        );
+        const [legendItem] = assertHasLegend(container);
+        const symbol = legendItem.querySelector(selector);
+        if (symbol == null) {
+          debug();
+        }
+        expect(symbol).toBeInTheDocument();
+        const expectedAttributeNames = Object.keys(expectedAttributes);
+        expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
+        expectedAttributeNames.forEach(attributeName => {
+          expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
+        });
+      },
+    );
   });
 });
