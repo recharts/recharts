@@ -1,7 +1,19 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
-import { Legend, LineChart, Line, BarChart, Bar, LegendType, Area, AreaChart, ComposedChart } from '../../src';
+import {
+  Legend,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  LegendType,
+  Area,
+  AreaChart,
+  ComposedChart,
+  PieChart,
+  Pie,
+} from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -14,6 +26,10 @@ type LegendTypeTestCases = ReadonlyArray<{
   expectedAttributes: Record<string, string>;
 }>;
 
+/**
+ * Bar legend for some reason has no default color at all.
+ * I think that's because Bar has no default fill nor stroke.
+ */
 const expectedLegendTypeSymbolsWithoutColor: LegendTypeTestCases = [
   {
     legendType: 'circle',
@@ -130,7 +146,14 @@ const expectedLegendTypeSymbolsWithoutColor: LegendTypeTestCases = [
   },
 ];
 
-const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
+/**
+ * Different chart elements have different default colors (don't ask me why)
+ * so this accepts the color as an argument.
+ *
+ * @param color expected color of individual elements
+ * @returns test cases ready for test.each
+ */
+const expectedLegendTypeSymbolsWithColor = (color: string): LegendTypeTestCases => [
   {
     legendType: 'circle',
     selector: 'path.recharts-symbols',
@@ -140,7 +163,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -152,7 +175,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -164,7 +187,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -179,7 +202,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       fill: 'none',
       'stroke-width': '4',
       class: 'recharts-legend-icon',
-      stroke: '#3182bd',
+      stroke: color,
     },
   },
   {
@@ -192,7 +215,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       y1: '16',
       y2: '16',
       fill: 'none',
-      stroke: '#3182bd',
+      stroke: color,
       'stroke-width': '4',
     },
   },
@@ -203,7 +226,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       d: 'M0,4h32v24h-32z',
       class: 'recharts-legend-icon',
       stroke: 'none',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -215,7 +238,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -227,7 +250,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -239,7 +262,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
   {
@@ -251,7 +274,7 @@ const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
       cx: '16',
       cy: '16',
       transform: 'translate(16, 16)',
-      fill: '#3182bd',
+      fill: color,
     },
   },
 ];
@@ -272,16 +295,25 @@ function assertExpectedAttributes(
 }
 
 describe('<Legend />', () => {
-  const data = [
+  const categoricalData = [
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
     { value: 'Huawei', color: '#887300' },
     { value: 'Sony', color: '#667300' },
   ];
 
+  const numericalData = [
+    { value: 'Luck', percent: 10 },
+    { value: 'Skill', percent: 20 },
+    { value: 'Concentrated power of will', percent: 15 },
+    { value: 'Pleasure', percent: 50 },
+    { value: 'Pain', percent: 50 },
+    { value: 'Reason to remember the name', percent: 100 },
+  ];
+
   describe('outside of chart context', () => {
     test('Render 4 legend items in simple Legend', () => {
-      const { container } = render(<Legend width={500} height={30} payload={data} />);
+      const { container } = render(<Legend width={500} height={30} payload={categoricalData} />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(4);
@@ -289,7 +321,9 @@ describe('<Legend />', () => {
 
     test('Render customized legend when content is set to be a react element', () => {
       const CustomizedLegend = () => <div className="customized-legend">test</div>;
-      const { container } = render(<Legend width={500} height={30} payload={data} content={<CustomizedLegend />} />);
+      const { container } = render(
+        <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
+      );
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
       expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
@@ -317,7 +351,7 @@ describe('<Legend />', () => {
   describe('as a child of LineChart', () => {
     test('Renders `strokeDasharray` (if present) in Legend when iconType is set to `plainline`', () => {
       const { container } = render(
-        <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <Legend iconType="plainline" />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
@@ -332,7 +366,7 @@ describe('<Legend />', () => {
 
     test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
       const { container } = render(
-        <LineChart width={600} height={300} data={data}>
+        <LineChart width={600} height={300} data={categoricalData}>
           <Legend iconType="line" />
           <Line dataKey="pv" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
@@ -346,7 +380,7 @@ describe('<Legend />', () => {
     });
     test('Renders name value of siblings when dataKey is a function', () => {
       render(
-        <LineChart width={500} height={500} data={data}>
+        <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Line dataKey={row => row.value} name="My Line Data" />
           <Line dataKey={row => row.color} name="My Other Line Data" />
@@ -363,7 +397,7 @@ describe('<Legend />', () => {
       const consoleWarn = vi.spyOn(console, 'warn');
 
       render(
-        <LineChart width={500} height={500} data={data}>
+        <LineChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Line dataKey={row => row.value} />
           <Line dataKey={row => row.color} />
@@ -383,11 +417,11 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols', () => {
-      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
+      test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container, debug } = render(
-            <LineChart width={500} height={500} data={data}>
+            <LineChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Line dataKey="value" legendType={legendType} />
             </LineChart>,
@@ -411,7 +445,7 @@ describe('<Legend />', () => {
   describe('as a child of BarChart', () => {
     it('should render one legend item for each bar', () => {
       const { container, getByText } = render(
-        <BarChart width={500} height={500} data={data}>
+        <BarChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Bar dataKey="value" />
           <Bar dataKey="color" />
@@ -428,7 +462,7 @@ describe('<Legend />', () => {
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container } = render(
-            <BarChart width={500} height={500} data={data}>
+            <BarChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Bar dataKey="value" legendType={legendType} />
             </BarChart>,
@@ -442,7 +476,7 @@ describe('<Legend />', () => {
   describe('as a child of AreaChart', () => {
     it('should render one legend item for each bar', () => {
       const { container, getByText } = render(
-        <AreaChart width={500} height={500} data={data}>
+        <AreaChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Area dataKey="value" />
           <Area dataKey="color" />
@@ -455,11 +489,11 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols', () => {
-      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
+      test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container } = render(
-            <AreaChart width={500} height={500} data={data}>
+            <AreaChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Area dataKey="value" legendType={legendType} />
             </AreaChart>,
@@ -473,7 +507,7 @@ describe('<Legend />', () => {
   describe('as a child of ComposedChart', () => {
     it('should render one legend item for each bar', () => {
       const { container, getByText } = render(
-        <ComposedChart width={500} height={500} data={data}>
+        <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Area dataKey="value" />
           <Bar dataKey="color" />
@@ -486,11 +520,11 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols for Area', () => {
-      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
+      test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container } = render(
-            <ComposedChart width={500} height={500} data={data}>
+            <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Area dataKey="value" legendType={legendType} />
             </ComposedChart>,
@@ -505,7 +539,7 @@ describe('<Legend />', () => {
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container } = render(
-            <ComposedChart width={500} height={500} data={data}>
+            <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Bar dataKey="value" legendType={legendType} />
             </ComposedChart>,
@@ -516,14 +550,43 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols for Line', () => {
-      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
+      test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container } = render(
-            <ComposedChart width={500} height={500} data={data}>
+            <ComposedChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Line dataKey="value" legendType={legendType} />
             </ComposedChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+  });
+
+  describe('as a child of PieChart', () => {
+    it('should render one legend item for each segment', () => {
+      const { container, getByText } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" nameKey="value" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(numericalData.length);
+      numericalData.forEach(({ value }) => expect(getByText(value)).toBeInTheDocument());
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('#808080'))(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <PieChart width={500} height={500}>
+              <Legend />
+              <Pie data={numericalData} dataKey="percent" legendType={legendType} />
+            </PieChart>,
           );
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
