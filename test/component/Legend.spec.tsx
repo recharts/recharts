@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
-import { Legend, LineChart, Line, BarChart, Bar, LegendType } from '../../src';
+import { Legend, LineChart, Line, BarChart, Bar, LegendType, Area, AreaChart } from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -14,7 +14,7 @@ type LegendTypeTestCases = ReadonlyArray<{
   expectedAttributes: Record<string, string>;
 }>;
 
-const expectedBarLegendTypeSymbols: LegendTypeTestCases = [
+const expectedLegendTypeSymbolsWithoutColor: LegendTypeTestCases = [
   {
     legendType: 'circle',
     selector: 'path.recharts-symbols',
@@ -130,7 +130,7 @@ const expectedBarLegendTypeSymbols: LegendTypeTestCases = [
   },
 ];
 
-const expectedLineLegendTypeSymbols: LegendTypeTestCases = [
+const expectedLegendTypeSymbolsWithDefaultColor: LegendTypeTestCases = [
   {
     legendType: 'circle',
     selector: 'path.recharts-symbols',
@@ -368,7 +368,7 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols', () => {
-      test.each(expectedLineLegendTypeSymbols)(
+      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container, debug } = render(
@@ -409,7 +409,7 @@ describe('<Legend />', () => {
     });
 
     describe('legendType symbols', () => {
-      test.each(expectedBarLegendTypeSymbols)(
+      test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
           const { container, debug } = render(
@@ -417,6 +417,47 @@ describe('<Legend />', () => {
               <Legend />
               <Bar dataKey="value" legendType={legendType} />
             </BarChart>,
+          );
+          const [legendItem] = assertHasLegend(container);
+          const symbol = legendItem.querySelector(selector);
+          if (symbol == null) {
+            debug();
+          }
+          expect(symbol).toBeInTheDocument();
+          const expectedAttributeNames = Object.keys(expectedAttributes);
+          expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
+          expectedAttributeNames.forEach(attributeName => {
+            expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
+          });
+        },
+      );
+    });
+  });
+
+  describe('as a child of AreaChart', () => {
+    it('should render one legend item for each bar', () => {
+      const { container, getByText } = render(
+        <AreaChart width={500} height={500} data={data}>
+          <Legend />
+          <Area dataKey="value" />
+          <Area dataKey="color" />
+        </AreaChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+      expect(getByText('value')).toBeInTheDocument();
+      expect(getByText('color')).toBeInTheDocument();
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithDefaultColor)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container, debug } = render(
+            <AreaChart width={500} height={500} data={data}>
+              <Legend />
+              <Area dataKey="value" legendType={legendType} />
+            </AreaChart>,
           );
           const [legendItem] = assertHasLegend(container);
           const symbol = legendItem.querySelector(selector);
