@@ -29,6 +29,7 @@ export const getLegendProps = ({
   if (legendItem.props && legendItem.props.payload) {
     legendData = legendItem.props && legendItem.props.payload;
   } else if (legendContent === 'children') {
+    // This branch is true for: PieChart, RadialBarChart; false for every other chart
     legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
       const data: ReadonlyArray<SectorOrDataEntry> = props.sectors || props.data || [];
 

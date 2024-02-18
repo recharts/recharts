@@ -367,28 +367,30 @@ describe('<Legend />', () => {
       );
     });
 
-    test.each(expectedLineLegendTypeSymbols)(
-      'should render element $selector for legendType $legendType',
-      ({ legendType, selector, expectedAttributes }) => {
-        const { container, debug } = render(
-          <LineChart width={500} height={500} data={data}>
-            <Legend />
-            <Line dataKey="value" legendType={legendType} />
-          </LineChart>,
-        );
-        const [legendItem] = assertHasLegend(container);
-        const symbol = legendItem.querySelector(selector);
-        if (symbol == null) {
-          debug();
-        }
-        expect(symbol).toBeInTheDocument();
-        const expectedAttributeNames = Object.keys(expectedAttributes);
-        expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
-        expectedAttributeNames.forEach(attributeName => {
-          expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
-        });
-      },
-    );
+    describe('legendType symbols', () => {
+      test.each(expectedLineLegendTypeSymbols)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container, debug } = render(
+            <LineChart width={500} height={500} data={data}>
+              <Legend />
+              <Line dataKey="value" legendType={legendType} />
+            </LineChart>,
+          );
+          const [legendItem] = assertHasLegend(container);
+          const symbol = legendItem.querySelector(selector);
+          if (symbol == null) {
+            debug();
+          }
+          expect(symbol).toBeInTheDocument();
+          const expectedAttributeNames = Object.keys(expectedAttributes);
+          expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
+          expectedAttributeNames.forEach(attributeName => {
+            expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
+          });
+        },
+      );
+    });
   });
 
   describe('as a child of BarChart', () => {
@@ -406,27 +408,29 @@ describe('<Legend />', () => {
       expect(getByText('color')).toBeInTheDocument();
     });
 
-    test.each(expectedBarLegendTypeSymbols)(
-      'should render element $selector for legendType $legendType',
-      ({ legendType, selector, expectedAttributes }) => {
-        const { container, debug } = render(
-          <BarChart width={500} height={500} data={data}>
-            <Legend />
-            <Bar dataKey="value" legendType={legendType} />
-          </BarChart>,
-        );
-        const [legendItem] = assertHasLegend(container);
-        const symbol = legendItem.querySelector(selector);
-        if (symbol == null) {
-          debug();
-        }
-        expect(symbol).toBeInTheDocument();
-        const expectedAttributeNames = Object.keys(expectedAttributes);
-        expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
-        expectedAttributeNames.forEach(attributeName => {
-          expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
-        });
-      },
-    );
+    describe('legendType symbols', () => {
+      test.each(expectedBarLegendTypeSymbols)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container, debug } = render(
+            <BarChart width={500} height={500} data={data}>
+              <Legend />
+              <Bar dataKey="value" legendType={legendType} />
+            </BarChart>,
+          );
+          const [legendItem] = assertHasLegend(container);
+          const symbol = legendItem.querySelector(selector);
+          if (symbol == null) {
+            debug();
+          }
+          expect(symbol).toBeInTheDocument();
+          const expectedAttributeNames = Object.keys(expectedAttributes);
+          expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
+          expectedAttributeNames.forEach(attributeName => {
+            expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
+          });
+        },
+      );
+    });
   });
 });
