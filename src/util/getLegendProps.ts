@@ -10,7 +10,7 @@ interface SectorOrDataEntry {
   fill: any;
 }
 
-interface LegendPropsGraphicalItemInput {
+export interface LegendPropsGraphicalItemInput {
   props: {
     sectors?: ReadonlyArray<any>;
     data?: ReadonlyArray<any>;
