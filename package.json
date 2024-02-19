@@ -150,7 +150,7 @@
     "ts-loader": "^8.0.12",
     "typescript": "5.3.x",
     "update-browserslist-db": "^1.0.10",
-    "vitest": "1.2.x",
+    "vitest": "1.3.x",
     "vitest-axe": "^0.1.0",
     "webpack": "^5.65.0",
     "webpack-bundle-analyzer": "^4.4.0",
