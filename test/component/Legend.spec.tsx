@@ -474,6 +474,23 @@ describe('<Legend />', () => {
       expect(getByText('color')).toBeInTheDocument();
     });
 
+    it('should not implicitly read `name` and `fill` properties from the data array', () => {
+      const { container, queryByText } = render(
+        <BarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Bar dataKey="color" />
+        </BarChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+    });
+
     describe('legendType symbols', () => {
       test.each(expectedLegendTypeSymbolsWithoutColor)(
         'should render element $selector for legendType $legendType',
@@ -505,6 +522,23 @@ describe('<Legend />', () => {
       expect(getByText('color')).toBeInTheDocument();
     });
 
+    it('should not implicitly read `name` and `fill` properties from the data array', () => {
+      const { container, queryByText } = render(
+        <AreaChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Area dataKey="value" />
+        </AreaChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+    });
+
     describe('legendType symbols', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
@@ -534,6 +568,24 @@ describe('<Legend />', () => {
       expect(legendItems).toHaveLength(2);
       expect(getByText('value')).toBeInTheDocument();
       expect(getByText('color')).toBeInTheDocument();
+    });
+
+    it('should not implicitly read `name` and `fill` properties from the data array', () => {
+      const { container, queryByText } = render(
+        <ComposedChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Area dataKey="value" />
+          <Bar dataKey="color" />
+        </ComposedChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
     });
 
     describe('legendType symbols for Area', () => {
@@ -595,7 +647,7 @@ describe('<Legend />', () => {
       numericalData.forEach(({ value }) => expect(getByText(value)).toBeInTheDocument());
     });
 
-    it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
+    it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
       const { container, getByText } = render(
         <PieChart width={500} height={500}>
           <Legend />
@@ -640,6 +692,23 @@ describe('<Legend />', () => {
       expect(legendItems).toHaveLength(2);
       expect(getByText('value')).toBeInTheDocument();
       expect(getByText('percent')).toBeInTheDocument();
+    });
+
+    it('should not implicitly read `name` and `fill` properties from the data array', () => {
+      const { container, queryByText } = render(
+        <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
     });
 
     describe('legendType symbols', () => {
