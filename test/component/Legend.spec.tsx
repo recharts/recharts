@@ -583,7 +583,7 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of PieChart', () => {
-    it('should render one legend item for each segment', () => {
+    it('should render one legend item for each segment, and it should use nameKey as its label', () => {
       const { container, getByText } = render(
         <PieChart width={500} height={500}>
           <Legend />
@@ -593,6 +593,22 @@ describe('<Legend />', () => {
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(numericalData.length);
       numericalData.forEach(({ value }) => expect(getByText(value)).toBeInTheDocument());
+    });
+
+    it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
+      const { container, getByText } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={dataWithSpecialNameAndFillProperties} dataKey="percent" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
+      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
+      legendItems.forEach((legendItem, index) => {
+        const icon = legendItem.querySelector('.recharts-legend-icon');
+        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
+      });
     });
 
     describe('legendType symbols', () => {
@@ -675,13 +691,12 @@ describe('<Legend />', () => {
     });
 
     it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
-      const { container, getByText, debug } = render(
+      const { container, getByText } = render(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="percent" />
         </RadialBarChart>,
       );
-      debug();
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
       dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
