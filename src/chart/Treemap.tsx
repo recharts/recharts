@@ -28,19 +28,19 @@ const computeNode = ({
   depth,
   node,
   index,
-  valueKey,
+  dataKey,
 }: {
   depth: number;
   node: TreemapNode;
   index: number;
-  valueKey: DataKey<any>;
+  dataKey: DataKey<any>;
 }) => {
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren =
     children && children.length
       ? children.map((child: TreemapNode, i: number) =>
-          computeNode({ depth: childDepth, node: child, index: i, valueKey }),
+          computeNode({ depth: childDepth, node: child, index: i, dataKey }),
         )
       : null;
   let nodeValue;
@@ -48,8 +48,8 @@ const computeNode = ({
   if (children && children.length) {
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
-    // TODO need to verify valueKey
-    nodeValue = isNan(node[valueKey as string]) || node[valueKey as string] <= 0 ? 0 : node[valueKey as string];
+    // TODO need to verify dataKey
+    nodeValue = isNan(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
   }
 
   return {
@@ -335,7 +335,7 @@ export class Treemap extends PureComponent<Props, State> {
         depth: 0,
         node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height } as TreemapNode,
         index: 0,
-        valueKey: nextProps.dataKey,
+        dataKey: nextProps.dataKey,
       });
       const formatRoot = squarify(root, nextProps.aspectRatio);
 
@@ -426,7 +426,7 @@ export class Treemap extends PureComponent<Props, State> {
         depth: 0,
         node: { ...node, x: 0, y: 0, width, height },
         index: 0,
-        valueKey: dataKey,
+        dataKey,
       });
 
       const formatRoot = squarify(root, aspectRatio);
@@ -452,7 +452,7 @@ export class Treemap extends PureComponent<Props, State> {
       depth: 0,
       node: { ...node, x: 0, y: 0, width, height },
       index: 0,
-      valueKey: dataKey,
+      dataKey,
     });
 
     const formatRoot = squarify(root, aspectRatio);

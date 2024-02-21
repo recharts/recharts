@@ -8,7 +8,7 @@ import { ActiveShapeProps } from '../props/ActiveShapeProps';
 
 const GeneralProps: Args = {
   cx: {
-    description: `The x-coordinate of center. If set a percentage, 
+    description: `The x-coordinate of center. If set a percentage,
       the final value is obtained by multiplying the percentage of container width.`,
     table: {
       type: { summary: 'percentage | number', defaultValue: '50%' },
@@ -16,7 +16,7 @@ const GeneralProps: Args = {
     },
   },
   cy: {
-    description: `The y-coordinate of center. If set a percentage, 
+    description: `The y-coordinate of center. If set a percentage,
       the final value is obtained by multiplying the percentage of container height.`,
     table: {
       type: { summary: 'percentage | number', defaultValue: '50%' },
@@ -24,7 +24,7 @@ const GeneralProps: Args = {
     },
   },
   innerRadius: {
-    description: `The inner radius of all the sectors. If set a percentage, the final value is 
+    description: `The inner radius of all the sectors. If set a percentage, the final value is
       obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.`,
     table: {
       type: { summary: 'percentage | number', defaultValue: 0 },
@@ -32,7 +32,7 @@ const GeneralProps: Args = {
     },
   },
   outerRadius: {
-    description: `The outer radius of all the sectors. If set a percentage, the final value is 
+    description: `The outer radius of all the sectors. If set a percentage, the final value is
       obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.`,
     table: {
       type: { summary: 'percentage | number', defaultValue: '80%' },
@@ -80,7 +80,7 @@ const GeneralProps: Args = {
     description: 'The type of icon in legend. If set to "none", no legend item will be rendered.',
     table: {
       type: {
-        summary: `'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square' 
+        summary: `'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond' | 'square'
           | 'star' | 'triangle' | 'wye' | 'none'`,
         defaultValue: 'rect',
       },
@@ -88,10 +88,10 @@ const GeneralProps: Args = {
     },
   },
   label: {
-    description: `If false set, labels will not be drawn. If true set, labels will be drawn which have 
-      the props calculated internally. If object set, labels will be drawn which have the props 
-      merged by the internal calculated props and the option. If ReactElement set, the option 
-      can be the custom label element. If set a function, the function will be called to render 
+    description: `If false set, labels will not be drawn. If true set, labels will be drawn which have
+      the props calculated internally. If object set, labels will be drawn which have the props
+      merged by the internal calculated props and the option. If ReactElement set, the option
+      can be the custom label element. If set a function, the function will be called to render
       customized label.`,
     table: {
       type: { summary: 'Boolean | Object | ReactElement | Function', defaultValue: false },
@@ -99,10 +99,10 @@ const GeneralProps: Args = {
     },
   },
   labelLine: {
-    description: `If false set, label lines will not be drawn. If true set, label lines will be drawn which 
-      have the props calculated internally. If object set, label lines will be drawn which have 
-      the props merged by the internal calculated props and the option. If ReactElement set, 
-      the option can be the custom label line element. If set a function, the function will be 
+    description: `If false set, label lines will not be drawn. If true set, label lines will be drawn which
+      have the props calculated internally. If object set, label lines will be drawn which have
+      the props merged by the internal calculated props and the option. If ReactElement set,
+      the option can be the custom label line element. If set a function, the function will be
       called to render customized label line.`,
     table: {
       type: { summary: 'Boolean | Object | ReactElement | Function', defaultValue: false },
@@ -135,12 +135,6 @@ export default {
     ...AnimationProps,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    valueKey: {
-      description: "Use 'dataKey' alternatively, The key of each sector's value.",
-      table: { type: { summary: 'string', defaultValue: 'value' }, category: 'Deprecated' },
-      hide: true,
-      disable: true,
-    },
   },
   component: Pie,
 };

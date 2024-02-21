@@ -5,7 +5,6 @@ import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
@@ -21,7 +20,6 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { warn } from '../util/LogUtils';
 import {
   LegendType,
   TooltipType,
@@ -90,7 +88,6 @@ interface PieProps extends PieDef {
   animationId?: number;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
-  valueKey?: DataKey<any>;
   /** Match each sector's stroke color to it's fill color */
   blendStroke?: boolean;
   /** The minimum angle for no-zero element */
@@ -235,36 +232,18 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
 
-    let realDataKey = dataKey;
-
-    if (isNil(dataKey) && isNil(valueKey)) {
-      warn(
-        false,
-        `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`,
-      );
-      realDataKey = 'value';
-    } else if (isNil(dataKey)) {
-      warn(
-        false,
-        `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`,
-      );
-      realDataKey = valueKey;
-    }
-
-    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, realDataKey, 0) !== 0).length;
+    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
     const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
     const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
 
     const sum = pieData.reduce((result: number, entry: any) => {
-      const val = getValueByDataKey(entry, realDataKey, 0);
+      const val = getValueByDataKey(entry, dataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
     let sectors;
@@ -272,7 +251,7 @@ export class Pie extends PureComponent<Props, State> {
     if (sum > 0) {
       let prev: PieSectorDataItem;
       sectors = pieData.map((entry: any, i: number) => {
-        const val = getValueByDataKey(entry, realDataKey, 0);
+        const val = getValueByDataKey(entry, dataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
         const percent = (isNumber(val) ? val : 0) / sum;
         let tempStartAngle;
@@ -292,7 +271,7 @@ export class Pie extends PureComponent<Props, State> {
             name,
             value: val,
             payload: entry,
-            dataKey: realDataKey,
+            dataKey,
             type: tooltipType,
           },
         ];
@@ -308,7 +287,7 @@ export class Pie extends PureComponent<Props, State> {
           tooltipPosition,
           ...entry,
           ...coordinate,
-          value: getValueByDataKey(entry, realDataKey),
+          value: getValueByDataKey(entry, dataKey),
           startAngle: tempStartAngle,
           endAngle: tempEndAngle,
           payload: entry,
@@ -455,7 +434,7 @@ export class Pie extends PureComponent<Props, State> {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { label, labelLine, dataKey, valueKey } = this.props;
+    const { label, labelLine, dataKey } = this.props;
     const pieProps = filterProps(this.props, false);
     const customLabelProps = filterProps(label, false);
     const customLabelLineProps = filterProps(labelLine, false);
@@ -483,18 +462,11 @@ export class Pie extends PureComponent<Props, State> {
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
         key: 'line',
       };
-      let realDataKey = dataKey;
-      // TODO: compatible to lower versions
-      if (isNil(dataKey) && isNil(valueKey)) {
-        realDataKey = 'value';
-      } else if (isNil(dataKey)) {
-        realDataKey = valueKey;
-      }
 
       return (
         <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
-          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
+          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
         </Layer>
       );
     });
