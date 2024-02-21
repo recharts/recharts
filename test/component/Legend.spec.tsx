@@ -15,6 +15,8 @@ import {
   Pie,
   Radar,
   RadarChart,
+  RadialBarChart,
+  RadialBar,
 } from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
@@ -311,6 +313,19 @@ describe('<Legend />', () => {
     { value: 'Pleasure', percent: 50 },
     { value: 'Pain', percent: 50 },
     { value: 'Reason to remember the name', percent: 100 },
+  ];
+
+  /**
+   * PieChart, and RadialBarChar, have this specialty where they read properties `name` and `fill`
+   * and use them to set labels, and to set legend colors.
+   *
+   * Other charts use `nameKey` and `fill` or `stroke` properties.
+   */
+  const dataWithSpecialNameAndFillProperties = [
+    { name: 'name1', fill: 'fill1', value: 12 },
+    { name: 'name2', fill: 'fill2', value: 34 },
+    { name: 'name3', fill: 'fill3', value: 56 },
+    { name: 'name4', fill: 'fill4', value: 78 },
   ];
 
   describe('outside of chart context', () => {
@@ -626,7 +641,7 @@ describe('<Legend />', () => {
       );
     });
 
-    describe('legendType symbols', () => {
+    describe('legendType symbols with explicit fill', () => {
       test.each(expectedLegendTypeSymbolsWithColor('red'))(
         'should render legend colors for $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
@@ -635,6 +650,56 @@ describe('<Legend />', () => {
               <Legend />
               <Radar dataKey="percent" legendType={legendType} fill="red" />
             </RadarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+  });
+
+  describe('as a child of RadialBarChart', () => {
+    it('should render one legend item for each segment, but with no label text by default', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <RadialBar dataKey="percent" label />
+        </RadialBarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(numericalData.length);
+      legendItems.forEach(legendItem => {
+        const legendItemText = legendItem.querySelector('.recharts-legend-item-text');
+        expect(legendItemText).toBeInTheDocument();
+        expect(legendItemText).toBeEmptyDOMElement();
+      });
+    });
+
+    it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
+      const { container, getByText, debug } = render(
+        <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <RadialBar dataKey="percent" />
+        </RadialBarChart>,
+      );
+      debug();
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
+      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
+      legendItems.forEach((legendItem, index) => {
+        const icon = legendItem.querySelector('.recharts-legend-icon');
+        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
+      });
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithoutColor)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadialBarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <RadialBar dataKey="percent" legendType={legendType} />
+            </RadialBarChart>,
           );
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
