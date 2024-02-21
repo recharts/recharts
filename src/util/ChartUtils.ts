@@ -33,7 +33,6 @@ import {
   BaseAxisProps,
   DataKey,
   LayoutType,
-  LegendType,
   PolarLayoutType,
   NumberDomain,
   TickItem,
@@ -198,15 +197,6 @@ export const getMainColorOfGraphicItem = (item: ReactElement) => {
 
   return result;
 };
-
-export interface FormattedGraphicalItem {
-  props: {
-    sectors?: ReadonlyArray<any>;
-    data?: ReadonlyArray<any>;
-  };
-  childIndex: number;
-  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
-}
 
 export type BarSetup = {
   barSize: number | string;

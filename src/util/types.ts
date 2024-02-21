@@ -53,13 +53,13 @@ export type PresentationAttributesAdaptChildEvent<P, T> = AriaAttributes &
 
 export type SymbolType = 'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye';
 export type LegendType =
-  | 'plainline'
-  | 'line'
-  | 'square'
-  | 'rect'
   | 'circle'
   | 'cross'
   | 'diamond'
+  | 'line'
+  | 'plainline'
+  | 'rect'
+  | 'square'
   | 'star'
   | 'triangle'
   | 'wye'
