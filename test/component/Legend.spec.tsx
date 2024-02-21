@@ -13,6 +13,8 @@ import {
   ComposedChart,
   PieChart,
   Pie,
+  Radar,
+  RadarChart,
 } from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
@@ -587,6 +589,52 @@ describe('<Legend />', () => {
               <Legend />
               <Pie data={numericalData} dataKey="percent" legendType={legendType} />
             </PieChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+  });
+
+  describe('as a child of RadarChart', () => {
+    it('should render one legend item for each Radar', () => {
+      const { container, getByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" />
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+      expect(getByText('value')).toBeInTheDocument();
+      expect(getByText('percent')).toBeInTheDocument();
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithoutColor)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Radar dataKey="percent" legendType={legendType} />
+            </RadarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('red'))(
+        'should render legend colors for $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Radar dataKey="percent" legendType={legendType} fill="red" />
+            </RadarChart>,
           );
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
