@@ -17,6 +17,8 @@ import {
   RadarChart,
   RadialBarChart,
   RadialBar,
+  ScatterChart,
+  Scatter,
 } from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
@@ -784,6 +786,69 @@ describe('<Legend />', () => {
               <Legend />
               <RadialBar dataKey="percent" legendType={legendType} />
             </RadialBarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+  });
+
+  describe('as a child of ScatterChart', () => {
+    it('should render one legend item for each Radar', () => {
+      const { container, getByText } = render(
+        <ScatterChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Scatter dataKey="percent" />
+          <Scatter dataKey="value" />
+        </ScatterChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+      expect(getByText('value')).toBeInTheDocument();
+      expect(getByText('percent')).toBeInTheDocument();
+    });
+
+    it('should implicitly read `fill` property from the data array but not `name`', () => {
+      const { container, queryByText } = render(
+        <ScatterChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Scatter dataKey="value" />
+        </ScatterChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).toBeInTheDocument();
+    });
+
+    describe('legendType symbols', () => {
+      test.each(expectedLegendTypeSymbolsWithoutColor)(
+        'should render element $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <ScatterChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Scatter dataKey="percent" legendType={legendType} />
+            </ScatterChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+
+    describe('legendType symbols with explicit fill', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('red'))(
+        'should render legend colors for $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <ScatterChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Scatter dataKey="percent" legendType={legendType} fill="red" />
+            </ScatterChart>,
           );
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
