@@ -713,7 +713,6 @@ const getAxisNameByLayout = (layout: LayoutType) => {
 const calculateOffset = (
   {
     props,
-    graphicalItems,
     xAxisMap = {},
     yAxisMap = {},
   }: {
@@ -767,7 +766,7 @@ const calculateOffset = (
 
   if (legendItem && prevLegendBBox) {
     // @ts-expect-error margin is optional in props but required in appendOffsetOfLegend
-    offset = appendOffsetOfLegend(offset, graphicalItems, props, prevLegendBBox);
+    offset = appendOffsetOfLegend(offset, props, prevLegendBBox);
   }
 
   const offsetWidth = width - offset.left - offset.right;
