@@ -310,6 +310,7 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowRight',
     });
 
+    // Page F
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
     });
@@ -470,5 +471,52 @@ describe('AccessibilityLayer', () => {
         key: 'ArrowRight',
       });
     }).not.toThrowError();
+  });
+
+  const DirectionSwitcher = () => {
+    const [reversed, setReversed] = useState(false);
+
+    return (
+      <div>
+        <button type="button" onClick={() => setReversed(!reversed)}>
+          Change directions
+        </button>
+
+        <AreaChart width={100} height={50} data={data} accessibilityLayer>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+          <XAxis dataKey="name" reversed={reversed} />
+          <YAxis orientation={reversed ? 'right' : 'left'} />
+        </AreaChart>
+      </div>
+    );
+  };
+
+  test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
+    const { container } = render(<DirectionSwitcher />);
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+
+    svg.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page B');
+
+    const button = container.querySelector('BUTTON') as HTMLButtonElement;
+    fireEvent.click(button);
+
+    // Key events should now go in reverse
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page A');
   });
 });

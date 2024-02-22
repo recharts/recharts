@@ -1118,6 +1118,12 @@ export const generateCategoricalChart = ({
         });
       }
 
+      if (this.state.xAxisMap !== prevState.xAxisMap) {
+        this.accessibilityManager.setDetails({
+          ltr: this.state.xAxisMap?.['0']?.reversed === false,
+        });
+      }
+
       if (this.props.layout !== prevProps.layout) {
         this.accessibilityManager.setDetails({
           layout: this.props.layout,

@@ -31,7 +31,7 @@ export class AccessibilityManager {
   private ltr = true;
 
   public setDetails({
-    coordinateList = [],
+    coordinateList = null,
     container = null,
     layout = null,
     offset = null,
