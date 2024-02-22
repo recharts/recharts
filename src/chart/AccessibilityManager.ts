@@ -61,49 +61,27 @@ export class AccessibilityManager {
       return;
     }
 
-    if (this.ltr) {
-      switch (e.key) {
-        case 'ArrowRight': {
-          if (this.layout !== 'horizontal') {
-            return;
-          }
-          this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
-          this.spoofMouse();
-          break;
+    switch (`${this.ltr ? 'ltr' : 'rtl'}-${e.key}`) {
+      case 'ltr-ArrowRight':
+      case 'rtl-ArrowLeft': {
+        if (this.layout !== 'horizontal') {
+          return;
         }
-        case 'ArrowLeft': {
-          if (this.layout !== 'horizontal') {
-            return;
-          }
-          this.activeIndex = Math.max(this.activeIndex - 1, 0);
-          this.spoofMouse();
-          break;
-        }
-        default: {
-          break;
-        }
+        this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
+        this.spoofMouse();
+        break;
       }
-    } else {
-      switch (e.key) {
-        case 'ArrowRight': {
-          if (this.layout !== 'horizontal') {
-            return;
-          }
-          this.activeIndex = Math.max(this.activeIndex - 1, 0);
-          this.spoofMouse();
-          break;
+      case 'ltr-ArrowLeft':
+      case 'rtl-ArrowRight': {
+        if (this.layout !== 'horizontal') {
+          return;
         }
-        case 'ArrowLeft': {
-          if (this.layout !== 'horizontal') {
-            return;
-          }
-          this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
-          this.spoofMouse();
-          break;
-        }
-        default: {
-          break;
-        }
+        this.activeIndex = Math.max(this.activeIndex - 1, 0);
+        this.spoofMouse();
+        break;
+      }
+      default: {
+        break;
       }
     }
   }
