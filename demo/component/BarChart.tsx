@@ -279,7 +279,7 @@ const initialState = {
 };
 
 const NoDataBar = (props: any) => {
-  const { x, width, value, valueKey, fill, y } = props;
+  const { x, width, value, dataKey, fill, y } = props;
 
   const noDataYVal = 5 + y / 2;
   const noDataHeight = y / 2 - 5;
@@ -288,7 +288,7 @@ const NoDataBar = (props: any) => {
     <svg className="NoDataLabel">
       <defs>
         <pattern
-          id={`hatch_${valueKey}`}
+          id={`hatch_${dataKey}`}
           patternUnits="userSpaceOnUse"
           width="35"
           height="10"
@@ -311,8 +311,8 @@ const NoDataBar = (props: any) => {
           fill="#ffffff"
           rx="3"
         />
-        <rect x={x} y={noDataYVal} width={width} height={noDataHeight} fill={`url(#hatch_${valueKey})`} />
-        <p>{value && value[valueKey] ? value[valueKey] : 'No Data'}</p>
+        <rect x={x} y={noDataYVal} width={width} height={noDataHeight} fill={`url(#hatch_${dataKey})`} />
+        <p>{value && value[dataKey] ? value[dataKey] : 'No Data'}</p>
       </g>
     </svg>
   );
