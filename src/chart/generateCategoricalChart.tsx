@@ -1099,6 +1099,7 @@ export const generateCategoricalChart = ({
         coordinateList: this.state.tooltipTicks,
         mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
+        ltr: this.state.xAxisMap?.['0']?.reversed === false,
       });
     }
 

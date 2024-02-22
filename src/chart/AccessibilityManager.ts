@@ -11,6 +11,8 @@ interface InitiableOptions {
   container?: HTMLElement;
   layout?: LayoutType;
   offset?: ContainerOffset;
+  /* Is the chart oriented left-to-right? */
+  ltr?: boolean;
 }
 
 export class AccessibilityManager {
@@ -26,18 +28,22 @@ export class AccessibilityManager {
 
   private offset: InitiableOptions['offset'];
 
+  private ltr = true;
+
   public setDetails({
     coordinateList = [],
     container = null,
     layout = null,
     offset = null,
     mouseHandlerCallback = null,
+    ltr = null,
   }: InitiableOptions) {
     this.coordinateList = coordinateList ?? this.coordinateList;
     this.container = container ?? this.container;
     this.layout = layout ?? this.layout;
     this.offset = offset ?? this.offset;
     this.mouseHandlerCallback = mouseHandlerCallback ?? this.mouseHandlerCallback;
+    this.ltr = ltr ?? this.ltr;
 
     // Keep activeIndex in the bounds between 0 and the last coordinate index
     this.activeIndex = Math.min(Math.max(this.activeIndex, 0), this.coordinateList.length - 1);
@@ -55,25 +61,49 @@ export class AccessibilityManager {
       return;
     }
 
-    switch (e.key) {
-      case 'ArrowRight': {
-        if (this.layout !== 'horizontal') {
-          return;
+    if (this.ltr) {
+      switch (e.key) {
+        case 'ArrowRight': {
+          if (this.layout !== 'horizontal') {
+            return;
+          }
+          this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
+          this.spoofMouse();
+          break;
         }
-        this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
-        this.spoofMouse();
-        break;
-      }
-      case 'ArrowLeft': {
-        if (this.layout !== 'horizontal') {
-          return;
+        case 'ArrowLeft': {
+          if (this.layout !== 'horizontal') {
+            return;
+          }
+          this.activeIndex = Math.max(this.activeIndex - 1, 0);
+          this.spoofMouse();
+          break;
         }
-        this.activeIndex = Math.max(this.activeIndex - 1, 0);
-        this.spoofMouse();
-        break;
+        default: {
+          break;
+        }
       }
-      default: {
-        break;
+    } else {
+      switch (e.key) {
+        case 'ArrowRight': {
+          if (this.layout !== 'horizontal') {
+            return;
+          }
+          this.activeIndex = Math.max(this.activeIndex - 1, 0);
+          this.spoofMouse();
+          break;
+        }
+        case 'ArrowLeft': {
+          if (this.layout !== 'horizontal') {
+            return;
+          }
+          this.activeIndex = Math.min(this.activeIndex + 1, this.coordinateList.length - 1);
+          this.spoofMouse();
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
   }

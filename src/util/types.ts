@@ -1162,6 +1162,8 @@ export interface BaseAxisProps {
   label?: string | number | ReactElement | object;
   /** The HTML element's class name */
   className?: string;
+  /** If it's reversed */
+  reversed?: boolean;
 }
 
 /** Defines how ticks are placed and whether / how tick collisions are handled.
