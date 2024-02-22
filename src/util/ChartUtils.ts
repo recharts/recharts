@@ -383,12 +383,7 @@ export const getBarPosition = ({
 
 export const appendOffsetOfLegend = (
   offset: ChartOffset,
-  _unused: unknown,
-  props: {
-    width?: number;
-    margin: Margin;
-    children?: ReactNode[];
-  },
+  props: { width?: number; margin: Margin; children?: ReactNode[] },
   legendBox: DOMRect | null,
 ): ChartOffset => {
   const { children, width, margin } = props;
