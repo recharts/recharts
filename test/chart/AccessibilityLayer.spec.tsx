@@ -172,6 +172,83 @@ describe('AccessibilityLayer', () => {
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
   });
 
+  test('Left/right arrow pays attention to if the XAxis is reversed', () => {
+    const mockMouseMovements = vi.fn();
+
+    const { container } = render(
+      <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="name" reversed />
+        <YAxis />
+      </AreaChart>,
+    );
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Once the chart receives focus, the tooltip should display
+    svg.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+    expect(mockMouseMovements.mock.instances).toHaveLength(1);
+
+    // Ignore right arrow when you're already at the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page A');
+    expect(mockMouseMovements.mock.instances).toHaveLength(2);
+
+    // Respect left arrow when there's something to the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page B');
+    expect(mockMouseMovements.mock.instances).toHaveLength(3);
+
+    // Page C
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+
+    // Page D
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements.mock.instances).toHaveLength(6);
+
+    // Ignore left arrow when you're already at the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page F');
+    expect(mockMouseMovements.mock.instances).toHaveLength(7);
+
+    // Respect right arrow when there's something to the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements.mock.instances).toHaveLength(8);
+
+    // Chart ignores non-arrow keys
+    fireEvent.keyDown(svg, {
+      key: 'a',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements.mock.instances).toHaveLength(8);
+  });
+
   const Expand = () => {
     const [width, setWidth] = useState(6);
     const myData = data.slice(0, width);
