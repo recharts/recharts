@@ -38,7 +38,7 @@ export class AccessibilityManager {
     mouseHandlerCallback = null,
     ltr = null,
   }: InitiableOptions) {
-    this.coordinateList = coordinateList ?? this.coordinateList;
+    this.coordinateList = coordinateList ?? this.coordinateList ?? [];
     this.container = container ?? this.container;
     this.layout = layout ?? this.layout;
     this.offset = offset ?? this.offset;
