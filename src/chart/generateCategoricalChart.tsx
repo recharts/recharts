@@ -717,7 +717,6 @@ const calculateOffset = (
     yAxisMap = {},
   }: {
     props: CategoricalChartProps;
-    graphicalItems: Array<ReactElement>;
     xAxisMap?: XAxisMap;
     yAxisMap?: YAxisMap;
   },
@@ -1014,7 +1013,7 @@ export const generateCategoricalChart = ({
       };
     }, {});
 
-    const offset: ChartOffset = calculateOffset({ ...axisObj, props, graphicalItems }, prevState?.legendBBox);
+    const offset: ChartOffset = calculateOffset({ ...axisObj, props }, prevState?.legendBBox);
 
     Object.keys(axisObj).forEach(key => {
       axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
