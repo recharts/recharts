@@ -1099,6 +1099,7 @@ export const generateCategoricalChart = ({
         coordinateList: this.state.tooltipTicks,
         mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
+        // Assuming there's only 1 <XAxis />, check to see if it has reversed={true}. If so, this is an RTL chart
         ltr: this.state.xAxisMap?.['0']?.reversed === false,
       });
     }
