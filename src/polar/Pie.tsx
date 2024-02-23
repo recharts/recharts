@@ -467,7 +467,8 @@ export class Pie extends PureComponent<Props, State> {
       }
 
       return (
-        <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
+        // eslint-disable-next-line react/no-array-index-key
+        <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
           {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
