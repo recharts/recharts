@@ -4,22 +4,30 @@ import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } fro
 import { isNumber } from '../util/DataUtils';
 import { LayoutType } from '../util/types';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { useLegendPayload } from '../context/LegendPayloadContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
-function renderContent(content: ContentType, props: Props) {
+type PieContentProps = {
+  content: ContentType;
+  props: Props;
+};
+
+function PieContent({ content, props }: PieContentProps) {
+  const contextPayload = useLegendPayload();
+  const uniqPayload = getUniqPayload(contextPayload, props.payloadUniqBy, defaultUniqBy);
   if (React.isValidElement(content)) {
-    return React.cloneElement(content, props);
+    return React.cloneElement(content, { ...props, payload: uniqPayload });
   }
   if (typeof content === 'function') {
-    return React.createElement(content as any, props);
+    return React.createElement(content as any, { ...props, payload: uniqPayload });
   }
 
   const { ref, ...otherProps } = props;
 
-  return <DefaultLegendContent {...otherProps} />;
+  return <DefaultLegendContent {...otherProps} payload={uniqPayload} />;
 }
 
 const EPS = 1;
@@ -166,7 +174,7 @@ export class Legend extends PureComponent<Props, State> {
   }
 
   public render() {
-    const { content, width, height, wrapperStyle, payloadUniqBy, payload } = this.props;
+    const { content, width, height, wrapperStyle } = this.props;
     const outerStyle: CSSProperties = {
       position: 'absolute',
       width: width || 'auto',
@@ -183,7 +191,7 @@ export class Legend extends PureComponent<Props, State> {
           this.wrapperNode = node;
         }}
       >
-        {renderContent(content, { ...this.props, payload: getUniqPayload(payload, payloadUniqBy, defaultUniqBy) })}
+        <PieContent content={content} props={this.props} />
       </div>
     );
   }

@@ -1,13 +1,14 @@
 /**
  * @fileOverview Render sectors of a pie
  */
-import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
+import React, { PureComponent, ReactElement, ReactNode, SVGProps, useContext } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
+import memoize from 'lodash/memoize';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
@@ -18,6 +19,7 @@ import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
+import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -34,6 +36,7 @@ import {
   GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
+import { LegendPayloadContext } from '../context/LegendPayloadContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -127,6 +130,7 @@ export interface PieLabelRenderProps extends PieDef {
   textAnchor: string;
   x: number;
   y: number;
+
   [key: string]: any;
 }
 
@@ -155,6 +159,29 @@ type PieComposedData = PieCoordinate & {
   sectors: PieSectorDataItem[];
   data: RealPieData[];
 };
+
+type PiePayloadInputProps = {
+  sectors: PieSectorDataItem[];
+  legendType?: LegendType;
+};
+
+const computeLegendPayloadFromPieData = memoize(
+  ({ sectors, legendType }: PiePayloadInputProps): ReadonlyArray<LegendPayload> =>
+    sectors.map(
+      (entry: PieSectorDataItem): LegendPayload => ({
+        type: legendType,
+        value: entry.name,
+        color: entry.fill,
+        payload: entry,
+      }),
+    ),
+);
+
+function SetPiePayloadLegend(props: PiePayloadInputProps): null {
+  const { setPayload } = useContext(LegendPayloadContext);
+  setPayload(computeLegendPayloadFromPieData(props));
+  return null;
+}
 
 export class Pie extends PureComponent<Props, State> {
   pieRef: HTMLElement = null;
@@ -642,6 +669,7 @@ export class Pie extends PureComponent<Props, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
+        <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>
     );
   }

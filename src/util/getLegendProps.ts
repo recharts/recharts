@@ -40,18 +40,6 @@ export const getLegendProps = ({
     legendData = legendItem.props && legendItem.props.payload;
   } else if (legendContent === 'children') {
     // This branch is true for: PieChart, RadialBarChart; false for every other chart
-    legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
-      const data: ReadonlyArray<SectorOrDataEntry> = props.sectors || props.data || [];
-
-      return result.concat(
-        data.map((entry: SectorOrDataEntry) => ({
-          type: legendItem.props.iconType || item.props.legendType,
-          value: entry.name,
-          color: entry.fill,
-          payload: entry,
-        })),
-      );
-    }, []);
   } else {
     legendData = (formattedGraphicalItems || []).map(({ item }): LegendPayload => {
       const { dataKey, name, legendType, hide } = item.props;
@@ -71,7 +59,6 @@ export const getLegendProps = ({
   return {
     ...legendItem.props,
     ...Legend.getWithHeight(legendItem, legendWidth),
-    payload: legendData,
     item: legendItem,
   };
 };
