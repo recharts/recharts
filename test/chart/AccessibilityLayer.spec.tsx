@@ -48,6 +48,29 @@ describe('AccessibilityLayer', () => {
     expect(tooltip).toHaveTextContent('Page A');
   });
 
+  test('accessibilityLayer works, even without *Axis elements', () => {
+    const { container } = render(
+      <AreaChart width={100} height={50} data={data} accessibilityLayer>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+      </AreaChart>,
+    );
+
+    // Confirm that the tooltip container exists, but isn't displaying anything
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip?.textContent).toBe('');
+
+    // Once the chart receives focus, the tooltip should display
+    container.querySelector('svg')?.focus();
+    expect(tooltip).toHaveTextContent('uv : 400');
+
+    // Use keyboard to move around
+    fireEvent.keyDown(document.querySelector('svg') as SVGSVGElement, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('uv : 300');
+  });
+
   test('Chart updates when it receives left/right arrow keystrokes', () => {
     const mockMouseMovements = vi.fn();
 
