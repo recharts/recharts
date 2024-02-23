@@ -41,6 +41,7 @@ import {
   StackOffsetType,
   Margin,
   ChartOffset,
+  XAxisMap,
 } from './types';
 import { getLegendProps } from './getLegendProps';
 
@@ -1337,3 +1338,5 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
     chartType,
   };
 };
+
+export const isAxisLTR = (axisMap: XAxisMap) => Object.values(axisMap ?? {}).some(({ reversed }) => !reversed);
