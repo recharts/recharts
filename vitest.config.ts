@@ -11,5 +11,9 @@ export default defineConfig({
     globals: true,
     setupFiles: ['test/vitest.setup.ts'],
     exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src', 'test'],
+    },
   },
 });
