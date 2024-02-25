@@ -53,6 +53,16 @@ Reassure will look for `*.perf-test.tsx` files by default.
 
 Also be aware that the performance tests might take a long time to run; up to several minutes.
 
+### Mutation tests
+
+We have (https://stryker-mutator.io/docs/)[stryker] installed and ready to use for mutation testing.
+
+If you want to run mutation test be aware that these may take hours! A single file will take 15 minutes or more.
+
+To run, update the list of checked files in `./stryker.config.mjs` and then run with `npm run test-mutation`.
+
+You will find test output in your console, and also HTML report in the `./reports` folder.
+
 ## <a name="pr"></a>Pull Requests
 
 **Working on your first Pull Request?** You can learn how from this _free_ series [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github)
