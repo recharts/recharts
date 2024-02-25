@@ -1,24 +1,24 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, test, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import {
-  Legend,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  LegendType,
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   ComposedChart,
-  PieChart,
+  Legend,
+  LegendType,
+  Line,
+  LineChart,
   Pie,
+  PieChart,
   Radar,
   RadarChart,
-  RadialBarChart,
   RadialBar,
-  ScatterChart,
+  RadialBarChart,
   Scatter,
+  ScatterChart,
 } from '../../src';
 
 function assertHasLegend(container: HTMLElement) {
@@ -338,16 +338,6 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(4);
     });
 
-    test('Render customized legend when content is set to be a react element', () => {
-      const CustomizedLegend = () => <div className="customized-legend">test</div>;
-      const { container } = render(
-        <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
-      );
-
-      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
-      expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
-    });
-
     test('Does not render items with a type of `none`', () => {
       const dataWithNone = [
         { value: 'Apple', color: '#ff7300' },
@@ -364,6 +354,101 @@ describe('<Legend />', () => {
     test('Renders payload value correctly when passed as a static value', () => {
       render(<Legend payload={[{ value: 'item name' }]} />);
       screen.getByText(/item name/i);
+    });
+  });
+
+  describe('custom content as a react element', () => {
+    it('should render result', () => {
+      const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
+      const { container } = render(
+        <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
+      );
+
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
+    });
+
+    it('should inject extra sneaky props - but none of them are actual HTML props so they get ignored by React', () => {
+      const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
+      const { container } = render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend content={<CustomizedLegend />} />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      const legendItem = container.querySelectorAll('.customized-legend')[0];
+      expect(legendItem.getAttributeNames().sort()).toEqual(['class'].sort());
+    });
+  });
+
+  describe('content as a function', () => {
+    it('should render result', () => {
+      const customizedLegend = () => {
+        return 'custom return value';
+      };
+      const { container, getByText } = render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend content={customizedLegend} />
+          <Line dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      expect(getByText('custom return value')).toBeInTheDocument();
+      expect(getByText('custom return value')).toBeVisible();
+    });
+
+    it('should pass parameters to the function', () => {
+      expect.assertions(1);
+      const customContent = (params: unknown): null => {
+        expect(params).toMatchSnapshot();
+        return null;
+      };
+      render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend content={customContent} />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+    });
+  });
+
+  describe('content as a React Component', () => {
+    it('should render result', () => {
+      const CustomizedLegend = () => {
+        return <>custom return value</>;
+      };
+      const { container, getByText } = render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend content={CustomizedLegend} />
+          <Line dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      expect(getByText('custom return value')).toBeInTheDocument();
+      expect(getByText('custom return value')).toBeVisible();
+    });
+
+    it('should pass parameters to the Component', () => {
+      expect.assertions(1);
+      const CustomContent = (props: unknown): null => {
+        expect(props).toMatchSnapshot();
+        return null;
+      };
+      render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <Legend content={CustomContent} />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
     });
   });
 
