@@ -31,6 +31,12 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Test
-        run: npm test
+        run: npm run test-coverage
       - name: Serve Storybook and run tests
         run: npm run test-storybook:ci
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: recharts/recharts
+          files: ./coverage/coverage-final.json
