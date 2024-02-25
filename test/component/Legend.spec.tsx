@@ -317,6 +317,14 @@ describe('<Legend />', () => {
     { value: 'Reason to remember the name', percent: 100 },
   ];
 
+  const numericalData2 = [
+    { title: 'Luftbaloons', value: 99 },
+    { title: 'Miles I would walk', value: 500 },
+    { title: 'Days a week', value: 8 },
+    { title: 'Mambo number', value: 5 },
+    { title: 'Seas of Rhye', value: 7 },
+  ];
+
   /**
    * PieChart, and RadialBarChar, have this specialty where they read properties `name` and `fill`
    * and use them to set labels, and to set legend colors.
@@ -748,6 +756,100 @@ describe('<Legend />', () => {
         const icon = legendItem.querySelector('.recharts-legend-icon');
         expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
       });
+    });
+
+    it('should disappear after Pie data is removed', () => {
+      const { container, rerender } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" />
+          <Pie data={numericalData2} dataKey="value" nameKey="title" />
+        </PieChart>,
+      );
+      const legendItems1 = assertHasLegend(container);
+      expect.soft(legendItems1).toHaveLength(numericalData.length + numericalData2.length);
+      rerender(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={[]} dataKey="percent" />
+          <Pie data={numericalData2} dataKey="value" nameKey="title" />
+        </PieChart>,
+      );
+      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect.soft(legendItems2).toHaveLength(numericalData2.length);
+      expect(Array.from(legendItems2).map(i => i.textContent)).toEqual([
+        'Luftbaloons',
+        'Miles I would walk',
+        'Days a week',
+        'Mambo number',
+        'Seas of Rhye',
+      ]);
+    });
+
+    it('should disappear after Pie itself is removed', () => {
+      const { container, rerender } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" />
+          <Pie data={numericalData2} dataKey="value" nameKey="title" />
+        </PieChart>,
+      );
+      const legendItems1 = assertHasLegend(container);
+      expect(legendItems1).toHaveLength(numericalData.length + numericalData2.length);
+      rerender(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData2} dataKey="value" nameKey="title" />
+        </PieChart>,
+      );
+      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect(legendItems2).toHaveLength(numericalData2.length);
+    });
+
+    it('should update legend if Pie data changes', () => {
+      const { container, rerender } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" nameKey="value" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(numericalData.length);
+      expect
+        .soft(Array.from(legendItems).map(i => i.textContent))
+        .toEqual(['Luck', 'Skill', 'Concentrated power of will', 'Pleasure', 'Pain', 'Reason to remember the name']);
+      rerender(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData2} dataKey="value" nameKey="title" />
+        </PieChart>,
+      );
+      const legendItems2 = assertHasLegend(container);
+      expect.soft(legendItems2).toHaveLength(numericalData2.length);
+      expect
+        .soft(Array.from(legendItems2).map(i => i.textContent))
+        .toEqual(['Luftbaloons', 'Miles I would walk', 'Days a week', 'Mambo number', 'Seas of Rhye']);
+    });
+
+    it('should update legend if nameKey changes', () => {
+      const { container, rerender } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" nameKey="value" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect
+        .soft(Array.from(legendItems).map(i => i.textContent))
+        .toEqual(['Luck', 'Skill', 'Concentrated power of will', 'Pleasure', 'Pain', 'Reason to remember the name']);
+      rerender(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="percent" nameKey="percent" />
+        </PieChart>,
+      );
+      const legendItems2 = assertHasLegend(container);
+      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['10', '20', '15', '50', '50', '100']);
     });
 
     describe('legendType symbols', () => {
