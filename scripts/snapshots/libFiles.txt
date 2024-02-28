@@ -59,6 +59,7 @@
   "lib/polar/PolarAngleAxis.js",
   "lib/polar/Pie.js",
   "lib/numberAxis/Funnel.js",
+  "lib/context/legendPayloadContext.js",
   "lib/context/chartLayoutContext.js",
   "lib/container/Surface.js",
   "lib/container/Layer.js",
