@@ -795,7 +795,22 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       const legendItems1 = assertHasLegend(container);
-      expect(legendItems1).toHaveLength(numericalData.length + numericalData2.length);
+      expect.soft(legendItems1).toHaveLength(numericalData.length + numericalData2.length);
+      expect
+        .soft(Array.from(legendItems1).map(i => i.textContent))
+        .toEqual([
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          'Luftbaloons',
+          'Miles I would walk',
+          'Days a week',
+          'Mambo number',
+          'Seas of Rhye',
+        ]);
       rerender(
         <PieChart width={500} height={500}>
           <Legend />
@@ -803,7 +818,10 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
-      expect(legendItems2).toHaveLength(numericalData2.length);
+      expect.soft(legendItems2).toHaveLength(numericalData2.length);
+      expect
+        .soft(Array.from(legendItems2).map(i => i.textContent))
+        .toEqual(['Luftbaloons', 'Miles I would walk', 'Days a week', 'Mambo number', 'Seas of Rhye']);
     });
 
     it('should update legend if Pie data changes', () => {

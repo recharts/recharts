@@ -4,13 +4,17 @@ import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultL
 import { isNumber } from '../util/DataUtils';
 import { LayoutType } from '../util/types';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { useLegendPayload } from '../context/legendPayloadContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
 function LegendContent(props: Props) {
-  const finalPayload = getUniqPayload(props.payload, props.payloadUniqBy, defaultUniqBy);
+  const contextPayload = useLegendPayload();
+  // We are in the process of refactoring all charts to Context; once that's done we can get rid of props.payload.
+  const preferredPayload = contextPayload.length > 0 ? contextPayload : props.payload;
+  const finalPayload = getUniqPayload(preferredPayload, props.payloadUniqBy, defaultUniqBy);
   const contentProps = {
     ...props,
     payload: finalPayload,

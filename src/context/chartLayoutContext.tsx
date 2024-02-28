@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext } from 'react';
+import React, { createContext, ReactNode, useContext } from 'react';
 import invariant from 'tiny-invariant';
 import find from 'lodash/find';
 import every from 'lodash/every';
@@ -8,6 +8,7 @@ import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
 import { calculateViewBox } from '../util/calculateViewBox';
 import { getAnyElementOfObject } from '../util/DataUtils';
+import { LegendPayloadProvider } from './legendPayloadContext';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -31,7 +32,7 @@ export type ChartLayoutContextProviderProps = {
  * If you want to read these properties, see the collection of hooks exported from this file.
  *
  * @param {object} props CategoricalChartState, plus children
- * @returns {ReactElement} React Context Provider
+ * @returns React Context Provider
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
@@ -61,19 +62,21 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * See the test file for details.
    */
   return (
-    <XAxisContext.Provider value={xAxisMap}>
-      <YAxisContext.Provider value={yAxisMap}>
-        <OffsetContext.Provider value={offset}>
-          <ViewBoxContext.Provider value={viewBox}>
-            <ClipPathIdContext.Provider value={clipPathId}>
-              <ChartHeightContext.Provider value={height}>
-                <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
-              </ChartHeightContext.Provider>
-            </ClipPathIdContext.Provider>
-          </ViewBoxContext.Provider>
-        </OffsetContext.Provider>
-      </YAxisContext.Provider>
-    </XAxisContext.Provider>
+    <LegendPayloadProvider>
+      <XAxisContext.Provider value={xAxisMap}>
+        <YAxisContext.Provider value={yAxisMap}>
+          <OffsetContext.Provider value={offset}>
+            <ViewBoxContext.Provider value={viewBox}>
+              <ClipPathIdContext.Provider value={clipPathId}>
+                <ChartHeightContext.Provider value={height}>
+                  <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
+                </ChartHeightContext.Provider>
+              </ClipPathIdContext.Provider>
+            </ViewBoxContext.Provider>
+          </OffsetContext.Provider>
+        </YAxisContext.Provider>
+      </XAxisContext.Provider>
+    </LegendPayloadProvider>
   );
 };
 
@@ -196,8 +199,7 @@ export const useMaybeYAxis = (yAxisId: string | number): YAxisProps | undefined 
 };
 
 export const useViewBox = (): CartesianViewBox => {
-  const viewBox = useContext(ViewBoxContext);
-  return viewBox;
+  return useContext(ViewBoxContext);
 };
 
 export const useOffset = (): ChartOffset => {
