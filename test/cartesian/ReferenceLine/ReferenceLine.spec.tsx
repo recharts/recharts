@@ -246,9 +246,9 @@ describe('<ReferenceLine />', () => {
     const spy = vi.fn();
     const viewBox: CartesianViewBox = { x: 1, y: 2 };
     render(
-      <BarChart width={1100} height={250}>
-        <XAxis />
-        <YAxis />
+      <BarChart width={1100} height={250} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis dataKey="uv" />
         <ReferenceLine y={20} ifOverflow="visible" shape={spy} viewBox={viewBox} />
       </BarChart>,
     );
@@ -262,8 +262,8 @@ describe('<ReferenceLine />', () => {
       x1: 65,
       x2: 1095,
       y: 20,
-      y1: NaN,
-      y2: NaN,
+      y1: -152.5,
+      y2: -152.5,
     });
   });
 
@@ -348,6 +348,20 @@ describe('<ReferenceLine />', () => {
         <p>
           <ReferenceLine y={20} ifOverflow="visible" />
         </p>
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  test('does not return anything when there is a duplicated category', () => {
+    const firstDataItem = data[0];
+    const dataWithDupe = [...data, firstDataItem];
+    const { container } = render(
+      <BarChart width={1100} height={250} data={dataWithDupe}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        {/* reference line is currently unable to differentiate between duplcates on categorical axes. Which one do I render on? The first? Both? */}
+        <ReferenceLine y={firstDataItem.name} ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
