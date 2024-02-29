@@ -93,6 +93,8 @@ export const getEndPoints = (
   if (isFixedY) {
     const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
+    // don't render the line if the scale can't compute a result that makes sense
+    if (Number.isNaN(coord)) return null;
 
     if (props.ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
       return null;
@@ -107,6 +109,8 @@ export const getEndPoints = (
   if (isFixedX) {
     const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
+    // don't render the line if the scale can't compute a result that makes sense
+    if (Number.isNaN(coord)) return null;
 
     if (props.ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
       return null;
