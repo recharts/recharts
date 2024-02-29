@@ -11,7 +11,7 @@ interface InitiableOptions {
   container?: HTMLElement;
   layout?: LayoutType;
   offset?: ContainerOffset;
-  /* Is the chart oriented left-to-right? */
+  /* Is the chart oriented left-to-right? true = left-to-right, false = right-to-left */
   ltr?: boolean;
 }
 

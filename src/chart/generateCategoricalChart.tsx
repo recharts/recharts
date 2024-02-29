@@ -1100,7 +1100,7 @@ export const generateCategoricalChart = ({
         coordinateList: this.state.tooltipTicks,
         mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
-        // Assuming there's only 1 <XAxis />, check to see if it has reversed={true}. If so, this is an RTL chart
+        // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
         ltr: isAxisLTR(this.state.xAxisMap),
       });
     }
