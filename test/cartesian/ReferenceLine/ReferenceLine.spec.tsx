@@ -360,7 +360,7 @@ describe('<ReferenceLine />', () => {
       <BarChart width={1100} height={250} data={dataWithDupe}>
         <XAxis dataKey="name" />
         <YAxis />
-        {/* reference line is currently unable to differentiate between duplcates on categorical axes. Which one do I render on? The first? Both? */}
+        {/* reference line is currently unable to differentiate between duplicates on categorical axes. Which one do I render on? The first? Both? */}
         <ReferenceLine y={firstDataItem.name} ifOverflow="extendDomain" />
       </BarChart>,
     );
