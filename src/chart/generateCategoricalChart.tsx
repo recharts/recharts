@@ -5,8 +5,6 @@ import range from 'lodash/range';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import throttle from 'lodash/throttle';
-import find from 'lodash/find';
-import every from 'lodash/every';
 
 import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
@@ -234,12 +232,6 @@ const getTooltipContent = (
   }
   // get data by activeIndex when the axis don't allow duplicated category
   return graphicalItems.reduce((result, child) => {
-    const { hide } = child.props;
-
-    if (hide) {
-      return result;
-    }
-
     /**
      * Fixes: https://github.com/recharts/recharts/issues/3669
      * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
@@ -450,7 +442,7 @@ export const getAxisMapByAxes = (
       }
 
       if (type === 'number') {
-        // To detect wether there is any reference lines whose props alwaysShow is true
+        // To detect wether there is any reference lines whose props ifOverflow is extendDomain
         domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
 
         if (childDomain) {
@@ -722,12 +714,10 @@ const getAxisNameByLayout = (layout: LayoutType) => {
 const calculateOffset = (
   {
     props,
-    graphicalItems,
     xAxisMap = {},
     yAxisMap = {},
   }: {
     props: CategoricalChartProps;
-    graphicalItems: Array<ReactElement>;
     xAxisMap?: XAxisMap;
     yAxisMap?: YAxisMap;
   },
@@ -776,7 +766,7 @@ const calculateOffset = (
 
   if (legendItem && prevLegendBBox) {
     // @ts-expect-error margin is optional in props but required in appendOffsetOfLegend
-    offset = appendOffsetOfLegend(offset, graphicalItems, props, prevLegendBBox);
+    offset = appendOffsetOfLegend(offset, props, prevLegendBBox);
   }
 
   const offsetWidth = width - offset.left - offset.right;
@@ -1024,7 +1014,7 @@ export const generateCategoricalChart = ({
       };
     }, {});
 
-    const offset: ChartOffset = calculateOffset({ ...axisObj, props, graphicalItems }, prevState?.legendBBox);
+    const offset: ChartOffset = calculateOffset({ ...axisObj, props }, prevState?.legendBBox);
 
     Object.keys(axisObj).forEach(key => {
       axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
@@ -1103,6 +1093,70 @@ export const generateCategoricalChart = ({
         // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
         ltr: isAxisLTR(this.state.xAxisMap),
       });
+      this.displayDefaultTooltip();
+    }
+
+    displayDefaultTooltip() {
+      const { children, data, height, layout } = this.props;
+
+      const tooltipElem = findChildByType(children, Tooltip);
+      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
+      if (!tooltipElem) {
+        return;
+      }
+
+      const { defaultIndex } = tooltipElem.props;
+
+      // Protect against runtime errors
+      if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length) {
+        return;
+      }
+
+      const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
+      let activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
+
+      const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
+      const dependentAxisCoord = (this.state.offset.top + height) / 2;
+
+      const isHorizontal = layout === 'horizontal';
+      let activeCoordinate = isHorizontal
+        ? {
+            x: independentAxisCoord,
+            y: dependentAxisCoord,
+          }
+        : {
+            y: independentAxisCoord,
+            x: dependentAxisCoord,
+          };
+
+      // Unlike other chart types, scatter plot's tooltip positions rely on both X and Y coordinates. Only the scatter plot
+      // element knows its own Y coordinates.
+      // If there's a scatter plot, we'll want to grab that element for an interrogation.
+      const scatterPlotElement = this.state.formattedGraphicalItems.find(
+        ({ item }: { item: any }) => item.type.name === 'Scatter',
+      );
+      if (scatterPlotElement) {
+        activeCoordinate = {
+          ...activeCoordinate,
+          ...scatterPlotElement.props.points[defaultIndex].tooltipPosition,
+        };
+        activePayload = scatterPlotElement.props.points[defaultIndex].tooltipPayload;
+      }
+
+      const nextState = {
+        activeTooltipIndex: defaultIndex,
+        isTooltipActive: true,
+        activeLabel,
+        activePayload,
+        activeCoordinate,
+      };
+
+      this.setState(nextState);
+      this.renderCursor(tooltipElem);
+
+      // Make sure that anyone who keyboard-only users who tab to the chart will start their
+      // cursors at defaultIndex
+      this.accessibilityManager.setIndex(defaultIndex);
     }
 
     getSnapshotBeforeUpdate(
@@ -1262,8 +1316,17 @@ export const generateCategoricalChart = ({
       return null;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    componentDidUpdate() {}
+    componentDidUpdate(prevProps: CategoricalChartProps) {
+      // Check to see if the Tooltip updated. If so, re-check default tooltip position
+      if (
+        !isChildrenEqual(
+          [findChildByType(prevProps.children, Tooltip)],
+          [findChildByType(this.props.children, Tooltip)],
+        )
+      ) {
+        this.displayDefaultTooltip();
+      }
+    }
 
     componentWillUnmount() {
       this.removeListener();
@@ -1527,6 +1590,7 @@ export const generateCategoricalChart = ({
      * @return {Null} no return
      */
     handleMouseLeave = (e: any) => {
+      this.throttleTriggeredAfterMouseMove.cancel();
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
@@ -1734,35 +1798,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    /**
-     * Draw grid
-     * @param  {ReactElement} element the grid item
-     * @return {ReactElement} The instance of grid
-     */
-    renderGrid = (element: React.ReactElement): React.ReactElement => {
-      const { xAxisMap, yAxisMap, offset } = this.state;
-      const { width, height } = this.props;
-      const xAxis = getAnyElementOfObject(xAxisMap);
-      const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
-      const yAxis = yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
-      const props = element.props || {};
-
-      return cloneElement(element, {
-        key: element.key || 'grid',
-        x: isNumber(props.x) ? props.x : offset.left,
-        y: isNumber(props.y) ? props.y : offset.top,
-        width: isNumber(props.width) ? props.width : offset.width,
-        height: isNumber(props.height) ? props.height : offset.height,
-        xAxis,
-        yAxis,
-        offset,
-        chartWidth: width,
-        chartHeight: height,
-        verticalCoordinatesGenerator: props.verticalCoordinatesGenerator,
-        horizontalCoordinatesGenerator: props.horizontalCoordinatesGenerator,
-      });
-    };
-
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
       const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
@@ -1822,7 +1857,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
+      const { children, accessibilityLayer } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
       if (!tooltipItem) {
@@ -1842,6 +1877,7 @@ export const generateCategoricalChart = ({
         label: activeLabel,
         payload: isActive ? activePayload : [],
         coordinate: activeCoordinate,
+        accessibilityLayer,
       });
     };
 
@@ -1905,6 +1941,9 @@ export const generateCategoricalChart = ({
       );
     };
 
+    /*
+     * This method is used for rendering AreaChart, LineChart, and Tooltip
+     */
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
       const { key } = item.props;
@@ -2144,8 +2183,8 @@ export const generateCategoricalChart = ({
     }
 
     renderMap = {
-      CartesianGrid: { handler: this.renderGrid, once: true },
-      ReferenceArea: { handler: this.renderReferenceElement },
+      CartesianGrid: { handler: renderAsIs, once: true },
+      ReferenceArea: { handler: renderAsIs },
       ReferenceLine: { handler: renderAsIs },
       ReferenceDot: { handler: this.renderReferenceElement },
       XAxis: { handler: renderAsIs },
@@ -2177,10 +2216,17 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-            {this.renderClipPath()}
-            {renderByOrder(children, this.renderMap)}
-          </Surface>
+          <ChartLayoutContextProvider
+            state={this.state}
+            width={this.props.width}
+            height={this.props.height}
+            clipPathId={this.clipPathId}
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+              {this.renderClipPath()}
+              {renderByOrder(children, this.renderMap)}
+            </Surface>
+          </ChartLayoutContextProvider>
         );
       }
 
@@ -2188,7 +2234,7 @@ export const generateCategoricalChart = ({
         // Set tabIndex to 0 by default (can be overwritten)
         attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
-        attrs.role = this.props.role ?? 'img';
+        attrs.role = this.props.role ?? 'application';
         attrs.onKeyDown = (e: any) => {
           this.accessibilityManager.keyboardEvent(e);
           // 'onKeyDown' is not currently a supported prop that can be passed through
@@ -2216,7 +2262,7 @@ export const generateCategoricalChart = ({
             ref={(node: HTMLDivElement) => {
               this.container = node;
             }}
-            role="region"
+            role={attrs.role ?? 'region'}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
               {this.renderClipPath()}

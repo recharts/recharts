@@ -1,9 +1,10 @@
 import React, { ReactNode } from 'react';
 import { vi } from 'vitest';
-import { FormattedGraphicalItem, getLegendProps } from '../../../src/util/ChartUtils';
+import { getLegendProps } from '../../../src/util/ChartUtils';
 import { findChildByType } from '../../../src/util/ReactUtils';
 import { Legend } from '../../../src/component/Legend';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { LegendPropsGraphicalItemInput } from '../../../src/util/getLegendProps';
 
 vi.mock('../../../src/util/ReactUtils');
 
@@ -23,9 +24,9 @@ function createFormattedGraphicalItem({
   props,
   itemProps,
 }: {
-  props: FormattedGraphicalItem['props'];
-  itemProps: FormattedGraphicalItem['item']['props'];
-}): FormattedGraphicalItem {
+  props: LegendPropsGraphicalItemInput['props'];
+  itemProps: LegendPropsGraphicalItemInput['item']['props'];
+}): LegendPropsGraphicalItemInput {
   return {
     props,
     childIndex: 0,

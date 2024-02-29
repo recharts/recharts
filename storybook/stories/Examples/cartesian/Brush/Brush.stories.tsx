@@ -1,7 +1,19 @@
 import { expect } from '@storybook/jest';
 import React, { useState } from 'react';
 import { within, userEvent } from '@storybook/testing-library';
-import { ComposedChart, ResponsiveContainer, Line, Brush } from '../../../../../src';
+import {
+  ComposedChart,
+  ResponsiveContainer,
+  Line,
+  Brush,
+  CartesianGrid,
+  Legend,
+  LineChart,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../../../../src';
 import { pageData } from '../../../data';
 
 export default {
@@ -67,5 +79,30 @@ export const ControlledBrush = {
 
     expect(brushTexts.item(0).textContent).toContain('2');
     expect(brushTexts.item(1).textContent).toContain('5');
+  },
+};
+
+export const PanoramicBrush = {
+  render: () => {
+    return (
+      <ComposedChart width={600} height={300} data={pageData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <ReferenceLine stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+        <Brush dataKey="name">
+          <LineChart>
+            <ReferenceLine key="test" stroke="red" strokeOpacity="red" strokeWidth={3} strokeLinecap="round" y={1000} />
+            <CartesianGrid strokeDasharray="1 1" verticalPoints={[10, 20, 30]} horizontalPoints={[10, 20, 30]} />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>
+        </Brush>
+      </ComposedChart>
+    );
   },
 };

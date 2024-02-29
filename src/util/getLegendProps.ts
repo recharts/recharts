@@ -1,12 +1,22 @@
 import { ReactNode, ReactElement } from 'react';
 import { Legend, Props as LegendProps } from '../component/Legend';
-import { FormattedGraphicalItem, getMainColorOfGraphicItem } from './ChartUtils';
+import { getMainColorOfGraphicItem } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
 import { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { DataKey, LegendType } from './types';
 
 interface SectorOrDataEntry {
   name: any;
   fill: any;
+}
+
+export interface LegendPropsGraphicalItemInput {
+  props: {
+    sectors?: ReadonlyArray<any>;
+    data?: ReadonlyArray<any>;
+  };
+  childIndex: number;
+  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
 }
 
 export const getLegendProps = ({
@@ -16,7 +26,7 @@ export const getLegendProps = ({
   legendContent,
 }: {
   children: ReactNode[];
-  formattedGraphicalItems?: Array<FormattedGraphicalItem>;
+  formattedGraphicalItems?: Array<LegendPropsGraphicalItemInput>;
   legendWidth: number;
   legendContent?: 'children';
 }): null | (LegendProps & { item: ReactElement }) => {
@@ -29,6 +39,7 @@ export const getLegendProps = ({
   if (legendItem.props && legendItem.props.payload) {
     legendData = legendItem.props && legendItem.props.payload;
   } else if (legendContent === 'children') {
+    // This branch is true for: PieChart, RadialBarChart; false for every other chart
     legendData = (formattedGraphicalItems || []).reduce((result, { item, props }) => {
       const data: ReadonlyArray<SectorOrDataEntry> = props.sectors || props.data || [];
 

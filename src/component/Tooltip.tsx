@@ -38,12 +38,17 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
 }
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = ToltipContentProps<TValue, TName> & {
+  accessibilityLayer?: boolean;
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
    * If false, then Tooltip is never displayed.
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
   active?: boolean | undefined;
+  /**
+   * If true, then Tooltip will information about hidden series (defaults to false). Interacting with the hide property of Area, Bar, Line, Scatter.
+   */
+  includeHidden?: boolean | undefined;
   allowEscapeViewBox?: AllowInDimension;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -51,6 +56,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
   coordinate?: Partial<Coordinate>;
   cursor?: boolean | ReactElement | SVGProps<SVGElement>;
   filterNull?: boolean;
+  defaultIndex?: number;
   isAnimationActive?: boolean;
   offset?: number;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
@@ -69,6 +75,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static displayName = 'Tooltip';
 
   static defaultProps = {
+    accessibilityLayer: false,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',
@@ -112,7 +119,7 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
 
     if (filterNull && finalPayload.length) {
       finalPayload = getUniqPayload(
-        payload.filter(entry => entry.value != null),
+        payload.filter(entry => entry.value != null && (entry.hide !== true || this.props.includeHidden)),
         payloadUniqBy,
         defaultUniqBy,
       );

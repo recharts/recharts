@@ -26,7 +26,7 @@ describe('appendOffsetOfLegend', () => {
     };
     mockLegendProps(null);
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toBe(offset);
     expect(result).toEqual({
       bottom: 9,
@@ -43,7 +43,7 @@ describe('appendOffsetOfLegend', () => {
       layout: 'vertical',
       align: 'left',
     });
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, null);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, null);
     expect(result).toEqual({
       bottom: 9,
       left: 5,
@@ -60,7 +60,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -75,7 +75,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -89,7 +89,7 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'middle',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -104,7 +104,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(offset).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -118,7 +118,7 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'bottom',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -133,7 +133,7 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'bottom',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -147,7 +147,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'center',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
   });
 
@@ -161,14 +161,14 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'middle',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, undefined, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
   });
 
   it('should pass margin to getLegendProps', () => {
     const children: ReactNode[] = [];
     spy.mockReset();
-    appendOffsetOfLegend({}, undefined, { margin: { left: 10, right: 20 }, children, width: 100 }, null);
+    appendOffsetOfLegend({}, { margin: { left: 10, right: 20 }, children, width: 100 }, null);
     expect(spy).toBeCalledTimes(1);
     expect(spy).toBeCalledWith({ children, legendWidth: 70 });
   });

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Brush, LineChart, Line, BarChart, ComposedChart } from '../../src';
+import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Brush />', () => {
@@ -185,14 +185,15 @@ describe('<Brush />', () => {
       });
     });
 
-    const ControlledBrush = () => {
+    const ControlledPanoramicBrush = () => {
       const [startIndex, setStartIndex] = useState<number | undefined>(3);
       const [endIndex, setEndIndex] = useState<number | undefined>(data.length - 1);
 
       return (
         <>
           <ComposedChart data={data} height={400} width={400}>
-            <Line dataKey="uv" isAnimationActive={false} />
+            <Line dataKey="value" isAnimationActive={false} />
+            <ReferenceLine y={30} />
 
             <Brush
               startIndex={startIndex}
@@ -202,7 +203,12 @@ describe('<Brush />', () => {
                 setStartIndex(e.startIndex);
               }}
               alwaysShowText
-            />
+            >
+              <ComposedChart>
+                <Line dataKey="value" isAnimationActive={false} />
+                <ReferenceLine y={30} />
+              </ComposedChart>
+            </Brush>
           </ComposedChart>
           <input
             type="number"
@@ -227,7 +233,7 @@ describe('<Brush />', () => {
 
     test('Travellers should move and chart should update when brush start and end indexes are controlled', async () => {
       const user = userEvent.setup();
-      const { container } = render(<ControlledBrush />);
+      const { container } = render(<ControlledPanoramicBrush />);
 
       const traveller = container.querySelector('.recharts-brush-traveller') as SVGGElement;
       fireEvent.focus(traveller);
@@ -245,6 +251,29 @@ describe('<Brush />', () => {
 
       expect(brushTexts.item(0)?.textContent).toContain('2');
       expect(brushTexts.item(1)?.textContent).toContain('5');
+    });
+
+    test('Should render panorama in brush', async () => {
+      const { container } = render(<ControlledPanoramicBrush />);
+
+      const svgs = container.getElementsByTagName('svg');
+      expect(svgs).toHaveLength(2);
+
+      const lines = container.getElementsByClassName('recharts-line');
+      expect(lines).toHaveLength(2);
+
+      const referenceLines = container.getElementsByClassName('recharts-reference-line-line');
+      expect(referenceLines).toHaveLength(2);
+
+      const chartReferenceLineY1 = referenceLines[0].getAttribute('y1');
+      const chartReferenceLineY2 = referenceLines[0].getAttribute('y2');
+
+      const panoReferenceLineY1 = referenceLines[1].getAttribute('y1');
+      const panoReferenceLineY2 = referenceLines[1].getAttribute('y2');
+
+      // reference lines should be created on different scales and therefore have different values
+      expect(chartReferenceLineY1).not.toEqual(panoReferenceLineY1);
+      expect(chartReferenceLineY2).not.toEqual(panoReferenceLineY2);
     });
   });
 });

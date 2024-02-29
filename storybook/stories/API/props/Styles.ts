@@ -1,8 +1,8 @@
 // The Line props are shared between multiple components, such as the Line and the Area.
 import { Args } from '@storybook/react';
-import { StorybookArgs } from '../../../StorybookArgs';
+import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
-export const hide = {
+export const hide: StorybookArg = {
   description: 'Hides the component when true, useful when toggling visibility state via legend',
   type: { name: 'boolean' },
   defaultValue: false,

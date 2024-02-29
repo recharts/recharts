@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
-
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
@@ -37,9 +36,10 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
   ActiveShape,
+  LayoutType,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
-import { BarRectangle } from '../util/BarUtils';
+import { BarRectangle, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -76,7 +76,7 @@ export interface BarProps extends InternalBarProps {
   dataKey: DataKey<any>;
   tooltipType?: TooltipType;
   legendType?: LegendType;
-  minPointSize?: number;
+  minPointSize?: MinPointSize;
   maxBarSize?: number;
   hide?: boolean;
   shape?: ActiveShape<BarProps, SVGPathElement>;
@@ -96,7 +96,7 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius'> & BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius' | 'name'> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -104,6 +104,11 @@ interface State {
   readonly curData?: BarRectangleItem[];
   readonly prevAnimationId?: number;
 }
+
+type BarComposedData = ChartOffset & {
+  layout: LayoutType;
+  data: BarRectangleItem[];
+};
 
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
@@ -116,7 +121,7 @@ export class Bar extends PureComponent<Props, State> {
     hide: false,
     data: [] as BarRectangleItem[],
     layout: 'vertical',
-    activeBar: true,
+    activeBar: false,
     isAnimationActive: !Global.isSsr,
     animationBegin: 0,
     animationDuration: 400,
@@ -159,19 +164,18 @@ export class Bar extends PureComponent<Props, State> {
     dataStartIndex: number;
     offset: ChartOffset;
     displayedData: any[];
-  }) => {
+  }): BarComposedData => {
     const pos = findPositionOfBar(barPosition, item);
     if (!pos) {
       return null;
     }
 
     const { layout } = props;
-    const { dataKey, children, minPointSize } = item.props;
+    const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
-
     const rects = displayedData.map((entry, index) => {
       let value, x, y, width, height, background;
 
@@ -184,6 +188,8 @@ export class Bar extends PureComponent<Props, State> {
           value = [baseValue, value];
         }
       }
+
+      const minPointSize = minPointSizeCallback(minPointSizeProp, this.defaultProps.minPointSize)(value[1], index);
 
       if (layout === 'horizontal') {
         const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];

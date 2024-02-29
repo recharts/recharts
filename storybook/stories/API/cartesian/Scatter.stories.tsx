@@ -175,6 +175,7 @@ import {
 } from '../props/AnimationProps';
 import { hide } from '../props/Styles';
 import { legendType } from '../props/Legend';
+import { StorybookArgs } from '../../../StorybookArgs';
 
 const EventHandlers = {
   onAbort,
@@ -347,7 +348,7 @@ const AnimationProps = {
   isAnimationActive,
 };
 
-const StyleProps = {
+const StyleProps: StorybookArgs = {
   hide,
   legendType,
   line: {

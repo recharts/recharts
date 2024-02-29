@@ -32,7 +32,10 @@
       }
     ],
     "import/extensions": "off",
-    "valid-jsdoc": "error",
+    "valid-jsdoc": ["error", {
+      "requireReturnType": false,
+      "requireParamType": false
+    }],
     "react/no-did-update-set-state": "warn",
     "react/sort-comp": "off",
     "react/jsx-uses-react": "error",
@@ -48,6 +51,8 @@
     "one-var-declaration-per-line": ["error", "initializations"],
     "no-plusplus": "off",
     "no-bitwise": "off",
+    // We have typescript, we don't need prop-types
+    "react/prop-types": "off",
     "react/no-unused-prop-types": "off",
     "class-methods-use-this": "error",
     "import/no-extraneous-dependencies": [
@@ -108,7 +113,6 @@
     {
       "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)", "*.js"],
       "rules": {
-        "react/prop-types": "off",
         "no-useless-constructor": "off",
         "import/no-default-export": "off",
         "react-hooks/rules-of-hooks": "off"

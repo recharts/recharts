@@ -149,10 +149,6 @@ describe('getTranslateTransform', () => {
         useTranslate3d: true,
       });
       const expected = {
-        MozTransform: 'translate3d(7px, 18px, 0)',
-        OTransform: 'translate3d(7px, 18px, 0)',
-        WebkitTransform: 'translate3d(7px, 18px, 0)',
-        msTransform: 'translate3d(7px, 18px, 0)',
         transform: 'translate3d(7px, 18px, 0)',
       };
       expect(result).toEqual(expected);
@@ -166,10 +162,6 @@ describe('getTranslateTransform', () => {
         useTranslate3d: false,
       });
       const expected = {
-        MozTransform: 'translate(7px, 18px)',
-        OTransform: 'translate(7px, 18px)',
-        WebkitTransform: 'translate(7px, 18px)',
-        msTransform: 'translate(7px, 18px)',
         transform: 'translate(7px, 18px)',
       };
       expect(result).toEqual(expected);
@@ -306,10 +298,6 @@ describe('getTooltipTranslate', () => {
       viewBox: { height: 400, width: 900 },
     });
     const expected = {
-      MozTransform: 'translate(33px, 87px)',
-      OTransform: 'translate(33px, 87px)',
-      WebkitTransform: 'translate(33px, 87px)',
-      msTransform: 'translate(33px, 87px)',
       transform: 'translate(33px, 87px)',
     };
     expect(cssProperties).toEqual(expected);

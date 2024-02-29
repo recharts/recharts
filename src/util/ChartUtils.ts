@@ -33,7 +33,6 @@ import {
   BaseAxisProps,
   DataKey,
   LayoutType,
-  LegendType,
   PolarLayoutType,
   NumberDomain,
   TickItem,
@@ -199,15 +198,6 @@ export const getMainColorOfGraphicItem = (item: ReactElement) => {
 
   return result;
 };
-
-export interface FormattedGraphicalItem {
-  props: {
-    sectors?: ReadonlyArray<any>;
-    data?: ReadonlyArray<any>;
-  };
-  childIndex: number;
-  item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
-}
 
 export type BarSetup = {
   barSize: number | string;
@@ -394,12 +384,7 @@ export const getBarPosition = ({
 
 export const appendOffsetOfLegend = (
   offset: ChartOffset,
-  _unused: unknown,
-  props: {
-    width?: number;
-    margin: Margin;
-    children?: ReactNode[];
-  },
+  props: { width?: number; margin: Margin; children?: ReactNode[] },
   legendBox: DOMRect | null,
 ): ChartOffset => {
   const { children, width, margin } = props;
@@ -468,7 +453,9 @@ export const getDomainOfErrorBars = (
 
     return data.reduce<NumberDomain>(
       (result: NumberDomain, entry: object): NumberDomain => {
-        const entryValue = getValueByDataKey(entry, dataKey, 0);
+        const entryValue = getValueByDataKey(entry, dataKey);
+        if (isNil(entryValue)) return result;
+
         const mainValue = Array.isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
@@ -1087,7 +1074,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
   return null;
 };
 
-export const getCateCoordinateOfLine = ({
+export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,
   ticks,
   bandSize,
@@ -1095,16 +1082,23 @@ export const getCateCoordinateOfLine = ({
   index,
   dataKey,
 }: {
-  axis: any;
+  axis: {
+    dataKey?: DataKey<T>;
+    allowDuplicatedCategory?: boolean;
+    type?: BaseAxisProps['type'];
+    scale: (v: number) => number;
+  };
   ticks: Array<TickItem>;
   bandSize: number;
-  entry: any;
+  entry: T;
   index: number;
-  dataKey?: string | number | ((obj: any) => any);
-}) => {
+  dataKey?: DataKey<T>;
+}): number | null {
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
+    // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
     if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
+      // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
       if (matchedTick) {
@@ -1118,7 +1112,7 @@ export const getCateCoordinateOfLine = ({
   const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
   return !isNil(value) ? axis.scale(value) : null;
-};
+}
 
 export const getCateCoordinateOfBar = ({
   axis,
@@ -1323,7 +1317,7 @@ export const parseDomainOfCategoryAxis = <T>(
 };
 
 export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
-  const { dataKey, name, unit, formatter, tooltipType, chartType } = graphicalItem.props;
+  const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
 
   return {
     ...filterProps(graphicalItem, false),
@@ -1336,6 +1330,7 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
     type: tooltipType,
     payload,
     chartType,
+    hide,
   };
 };
 

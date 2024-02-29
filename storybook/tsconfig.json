@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
     "jsx": "react",
     "module": "commonjs",
-    "noImplicitAny": true,
     "noEmit": true,
-    "declarationDir": "./types" /* Output directory for generated declaration files. */,
-    "preserveConstEnums": true,
-    "removeComments": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
+    "noImplicitAny": true,
     "skipLibCheck": true,
-    "declaration": true /* Generates corresponding '.d.ts' file. */,
-    "target": "es5",
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "."
+    "target": "es6"
   },
-  "include": ["./stories"]
+  "include": [
+    "./**/*",
+    "../types.d.ts"
+  ]
 }

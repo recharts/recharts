@@ -90,23 +90,23 @@ export const TinyAreaChart = {
 
 export const PercentAreaChart = {
   render: () => {
-    const toPercent = (decimal, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
+    const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
 
-    const getPercent = (value, total) => {
+    const getPercent = (value: number, total: number = 0) => {
       const ratio = total > 0 ? value / total : 0;
 
       return toPercent(ratio, 2);
     };
 
-    const renderTooltipContent = o => {
+    const renderTooltipContent = (o: { payload?: Array<{ value?: number }>; label?: string }) => {
       const { payload, label } = o;
-      const total = payload.reduce((result, entry) => result + entry.value, 0);
+      const total = payload?.reduce((result, entry) => result + (entry.value ?? 0), 0);
 
       return (
         <div className="customized-tooltip-content">
           <p className="total">{`${label} (Total: ${total})`}</p>
           <ul className="list">
-            {payload.map(entry => (
+            {payload?.map((entry: any) => (
               <li key={`item-${entry.name}`} style={{ color: entry.color }}>
                 {`${entry.name}: ${entry.value}(${getPercent(entry.value, total)})`}
               </li>

@@ -101,6 +101,10 @@ interface State {
   prevAnimationId?: number;
 }
 
+type ScatterComposedData = ChartOffset & {
+  points: ScatterPointItem[];
+};
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -148,7 +152,7 @@ export class Scatter extends PureComponent<Props, State> {
     bandSize: number;
     displayedData: any[];
     offset: ChartOffset;
-  }) => {
+  }): ScatterComposedData => {
     const { tooltipType } = item.props;
     const cells = findAllByType(item.props.children, Cell);
     const xAxisDataKey = isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
@@ -278,7 +282,8 @@ export class Scatter extends PureComponent<Props, State> {
         <Layer
           className="recharts-scatter-symbol"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           role="img"
         >
           <ScatterSymbol option={option} isActive={isActive} {...props} />

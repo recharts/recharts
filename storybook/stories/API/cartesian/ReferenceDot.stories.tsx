@@ -72,14 +72,6 @@ export default {
     r,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    alwaysShow: {
-      description: "Use 'ifOverflow' instead.",
-      control: { type: 'boolean' },
-      table: { category: 'Deprecated' },
-      hide: true,
-      disable: true,
-      default: false,
-    },
   },
   component: ReferenceDot,
 };

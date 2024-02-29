@@ -22,20 +22,7 @@ export type ContentType = ReactElement | ((props: Props) => ReactNode);
 export type IconType = Exclude<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-export type Formatter = (
-  value: any,
-  entry: {
-    value: any;
-    id?: string;
-    type?: LegendType;
-    color?: string;
-    payload?: {
-      strokeDasharray: ReactText;
-      value?: any;
-    };
-  },
-  index: number,
-) => ReactNode;
+export type Formatter = (value: any, entry: Payload, index: number) => ReactNode;
 
 export interface Payload {
   value: any;
@@ -43,7 +30,7 @@ export interface Payload {
   type?: LegendType;
   color?: string;
   payload?: {
-    strokeDasharray: ReactText;
+    strokeDasharray?: ReactText;
     value?: any;
   };
   formatter?: Formatter;
@@ -51,6 +38,7 @@ export interface Payload {
   legendIcon?: ReactElement<SVGElement>;
   dataKey?: DataKey<any>;
 }
+
 interface InternalProps {
   content?: ContentType;
   iconSize?: number;
@@ -81,8 +69,8 @@ export class DefaultLegendContent extends PureComponent<Props> {
 
   /**
    * Render the path of icon
-   * @param {Object} data Data of each legend item
-   * @return {String} Path element
+   * @param data Data of each legend item
+   * @return Path element
    */
   renderIcon(data: Payload) {
     const { inactiveColor } = this.props;
@@ -150,7 +138,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
 
   /**
    * Draw items of legend
-   * @return {ReactElement} Items
+   * @return Items
    */
   renderItems() {
     const { payload, iconSize, layout, formatter, inactiveColor } = this.props;

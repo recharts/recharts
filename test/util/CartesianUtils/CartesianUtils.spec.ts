@@ -5,8 +5,8 @@ import {
   createLabeledScales,
   getAngledRectangleWidth,
   normalizeAngle,
-} from '../../src/util/CartesianUtils';
-import { combineEventHandlers } from '../../src/util/ChartUtils';
+} from '../../../src/util/CartesianUtils';
+import { combineEventHandlers } from '../../../src/util/ChartUtils';
 
 describe('ScaleHelper', () => {
   it('apply() should return the expected value', () => {

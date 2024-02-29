@@ -78,6 +78,12 @@ interface State {
   prevAnimationId?: number;
 }
 
+type RadarComposedData = {
+  points: RadarPoint[];
+  baseLinePoints: RadarPoint[];
+  isRange: boolean;
+};
+
 export class Radar extends PureComponent<Props, State> {
   static displayName = 'Radar';
 
@@ -106,7 +112,7 @@ export class Radar extends PureComponent<Props, State> {
     displayedData: any[];
     dataKey: RadarProps['dataKey'];
     bandSize: number;
-  }) => {
+  }): RadarComposedData => {
     const { cx, cy } = angleAxis;
     let isRange = false;
     const points: RadarPoint[] = [];

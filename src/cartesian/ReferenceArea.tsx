@@ -7,27 +7,16 @@ import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
-import { IfOverflow, ifOverflowMatches } from '../util/IfOverflowMatches';
+import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
-import { warn } from '../util/LogUtils';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
-import { CartesianViewBox, D3Scale } from '../util/types';
+import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
+import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
-interface InternalReferenceAreaProps {
-  viewBox?: CartesianViewBox;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  clipPathId?: number | string;
-}
-
-interface ReferenceAreaProps extends InternalReferenceAreaProps {
+interface ReferenceAreaProps {
   isFront?: boolean;
-  /** @deprecated use ifOverflow="extendDomain"  */
-  alwaysShow?: boolean;
   ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
@@ -43,8 +32,16 @@ interface ReferenceAreaProps extends InternalReferenceAreaProps {
 
 export type Props = RectangleProps & ReferenceAreaProps;
 
-const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean, props: Props) => {
-  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2, xAxis, yAxis } = props;
+const getRect = (
+  hasX1: boolean,
+  hasX2: boolean,
+  hasY1: boolean,
+  hasY2: boolean,
+  xAxis: { scale: D3Scale<string | number> },
+  yAxis: { scale: D3Scale<string | number> },
+  props: Props,
+) => {
+  const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
 
   if (!xAxis || !yAxis) return null;
 
@@ -60,40 +57,57 @@ const getRect = (hasX1: boolean, hasX2: boolean, hasY1: boolean, hasY2: boolean,
     y: hasY2 ? scales.y.apply(yValue2, { position: 'end' }) : scales.y.rangeMax,
   };
 
-  if (ifOverflowMatches(props, 'discard') && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
+  if (props.ifOverflow === 'discard' && (!scales.isInRange(p1) || !scales.isInRange(p2))) {
     return null;
   }
 
   return rectWithPoints(p1, p2);
 };
 
-export function ReferenceArea(props: Props) {
-  const { x1, x2, y1, y2, className, alwaysShow, clipPathId } = props;
+const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
+  let rect;
 
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+  if (React.isValidElement(option)) {
+    rect = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    rect = option(props);
+  } else {
+    rect = <Rectangle {...props} className="recharts-reference-area-rect" />;
+  }
+
+  return rect;
+};
+
+export function ReferenceArea(props: Props) {
+  const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
+  const clipPathId = useClipPathId();
+  const xAxis = useMaybeXAxis(xAxisId);
+  const yAxis = useMaybeYAxis(yAxisId);
+
+  if (!xAxis || !yAxis) return null;
 
   const hasX1 = isNumOrStr(x1);
   const hasX2 = isNumOrStr(x2);
   const hasY1 = isNumOrStr(y1);
   const hasY2 = isNumOrStr(y2);
 
-  const { shape } = props;
-
   if (!hasX1 && !hasX2 && !hasY1 && !hasY2 && !shape) {
     return null;
   }
 
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, props);
+  // @ts-expect-error the xAxis and yAxis in context do not match what this function is expecting - the whole axis type situation needs improvement
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxis, yAxis, props);
 
   if (!rect && !shape) {
     return null;
   }
 
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
+  const isOverflowHidden = props.ifOverflow === 'hidden';
+  const clipPath = isOverflowHidden ? `url(#${clipPathId})` : undefined;
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
-      {ReferenceArea.renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
+      {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
       {Label.renderCallByParent(props, rect)}
     </Layer>
   );
@@ -110,18 +124,4 @@ ReferenceArea.defaultProps = {
   fillOpacity: 0.5,
   stroke: 'none',
   strokeWidth: 1,
-};
-
-ReferenceArea.renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
-  let rect;
-
-  if (React.isValidElement(option)) {
-    rect = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    rect = option(props);
-  } else {
-    rect = <Rectangle {...props} className="recharts-reference-area-rect" />;
-  }
-
-  return rect;
 };

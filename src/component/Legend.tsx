@@ -1,26 +1,33 @@
-/**
- * @fileOverview Legend
- */
 import React, { PureComponent, CSSProperties } from 'react';
-import { DefaultLegendContent, Payload, Props as DefaultProps, ContentType } from './DefaultLegendContent';
+import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 import { LayoutType } from '../util/types';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { useLegendPayload } from '../context/legendPayloadContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
-function renderContent(content: ContentType, props: Props) {
-  if (React.isValidElement(content)) {
-    return React.cloneElement(content, props);
+function LegendContent(props: Props) {
+  const contextPayload = useLegendPayload();
+  // We are in the process of refactoring all charts to Context; once that's done we can get rid of props.payload.
+  const preferredPayload = contextPayload.length > 0 ? contextPayload : props.payload;
+  const finalPayload = getUniqPayload(preferredPayload, props.payloadUniqBy, defaultUniqBy);
+  const contentProps = {
+    ...props,
+    payload: finalPayload,
+  };
+
+  if (React.isValidElement(props.content)) {
+    return React.cloneElement(props.content, contentProps);
   }
-  if (typeof content === 'function') {
-    return React.createElement(content as any, props);
+  if (typeof props.content === 'function') {
+    return React.createElement(props.content as any, contentProps);
   }
 
-  const { ref, ...otherProps } = props;
+  const { ref, ...otherProps } = contentProps;
 
   return <DefaultLegendContent {...otherProps} />;
 }
@@ -169,7 +176,7 @@ export class Legend extends PureComponent<Props, State> {
   }
 
   public render() {
-    const { content, width, height, wrapperStyle, payloadUniqBy, payload } = this.props;
+    const { width, height, wrapperStyle } = this.props;
     const outerStyle: CSSProperties = {
       position: 'absolute',
       width: width || 'auto',
@@ -186,7 +193,7 @@ export class Legend extends PureComponent<Props, State> {
           this.wrapperNode = node;
         }}
       >
-        {renderContent(content, { ...this.props, payload: getUniqPayload(payload, payloadUniqBy, defaultUniqBy) })}
+        <LegendContent {...this.props} />
       </div>
     );
   }

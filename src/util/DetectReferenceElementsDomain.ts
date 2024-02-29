@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { ReferenceDot } from '../cartesian/ReferenceDot';
 import { ReferenceLine } from '../cartesian/ReferenceLine';
 import { ReferenceArea } from '../cartesian/ReferenceArea';
-import { ifOverflowMatches } from './IfOverflowMatches';
 import { findAllByType } from './ReactUtils';
 import { isNumber } from './DataUtils';
 
@@ -23,7 +22,8 @@ export const detectReferenceElementsDomain = (
 
   if (elements.length) {
     finalDomain = elements.reduce((result: number[], el: any) => {
-      if (el.props[idKey] === axisId && ifOverflowMatches(el.props, 'extendDomain') && isNumber(el.props[valueKey])) {
+      const ifOverflow = el.props?.ifOverflow;
+      if (el.props[idKey] === axisId && ifOverflow === 'extendDomain' && isNumber(el.props[valueKey])) {
         const value = el.props[valueKey];
 
         return [Math.min(result[0], value), Math.max(result[1], value)];
@@ -37,9 +37,10 @@ export const detectReferenceElementsDomain = (
     const key2 = `${valueKey}2`;
 
     finalDomain = areas.reduce((result: number[], el: any) => {
+      const ifOverflow = el.props?.ifOverflow;
       if (
         el.props[idKey] === axisId &&
-        ifOverflowMatches(el.props, 'extendDomain') &&
+        ifOverflow === 'extendDomain' &&
         isNumber(el.props[key1]) &&
         isNumber(el.props[key2])
       ) {

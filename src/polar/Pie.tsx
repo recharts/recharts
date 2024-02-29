@@ -5,7 +5,6 @@ import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
@@ -21,7 +20,7 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { warn } from '../util/LogUtils';
+import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
   TooltipType,
@@ -33,8 +32,10 @@ import {
   PresentationAttributesAdaptChildEvent,
   AnimationDuration,
   ActiveShape,
+  GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -58,12 +59,19 @@ type PieLabelLine =
   | ((props: any) => ReactElement<SVGElement>)
   | SVGProps<SVGPathElement>
   | boolean;
-export type PieLabel<P = any> =
+
+export type PieLabelProps = PieSectorData &
+  GeometrySector & {
+    tooltipPayload?: any;
+  } & PieLabelRenderProps;
+
+export type PieLabel<P extends PieLabelProps = PieLabelProps> =
   | ReactElement<SVGElement>
   | ((props: P) => ReactNode | ReactElement<SVGElement>)
   | (SVGProps<SVGTextElement> & { offsetRadius?: number })
   | boolean;
-export type PieSectorDataItem = SectorProps & {
+
+export type PieSectorData = {
   percent?: number;
   name?: string | number;
   midAngle?: number;
@@ -72,15 +80,16 @@ export type PieSectorDataItem = SectorProps & {
   value?: number;
   paddingAngle?: number;
   dataKey?: string;
-  payload?: any[];
+  payload?: any;
 };
+
+export type PieSectorDataItem = SectorProps & PieSectorData;
 
 interface PieProps extends PieDef {
   className?: string;
   animationId?: number;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
-  valueKey?: DataKey<any>;
   /** Match each sector's stroke color to it's fill color */
   blendStroke?: boolean;
   /** The minimum angle for no-zero element */
@@ -134,6 +143,41 @@ interface State {
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
 
+type RealPieData = any;
+
+type PieCoordinate = {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  maxRadius: number;
+};
+
+type PieComposedData = PieCoordinate & {
+  sectors: PieSectorDataItem[];
+  data: RealPieData[];
+};
+type PiePayloadInputProps = {
+  sectors: PieSectorDataItem[];
+  legendType?: LegendType;
+};
+
+const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
+  return sectors.map(
+    (entry: PieSectorDataItem): LegendPayload => ({
+      type: legendType,
+      value: entry.name,
+      color: entry.fill,
+      payload: entry,
+    }),
+  );
+};
+
+function SetPiePayloadLegend(props: PiePayloadInputProps): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
+  return null;
+}
+
 export class Pie extends PureComponent<Props, State> {
   pieRef: HTMLElement = null;
 
@@ -171,7 +215,7 @@ export class Pie extends PureComponent<Props, State> {
     return sign * deltaAngle;
   };
 
-  static getRealPieData = (item: Pie) => {
+  static getRealPieData = (item: Pie): RealPieData[] => {
     const { data, children } = item.props;
     const presentationProps = filterProps(item.props, false);
     const cells = findAllByType(children, Cell);
@@ -192,7 +236,7 @@ export class Pie extends PureComponent<Props, State> {
     return [];
   };
 
-  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset) => {
+  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset): PieCoordinate => {
     const { top, left, width, height } = offset;
     const maxPieRadius = getMaxRadius(width, height);
     const cx = left + getPercentValue(item.props.cx, width, width / 2);
@@ -204,42 +248,24 @@ export class Pie extends PureComponent<Props, State> {
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   };
 
-  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): Omit<Props, 'dataKey'> => {
+  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): PieComposedData => {
     const pieData = Pie.getRealPieData(item);
     if (!pieData || !pieData.length) {
       return null;
     }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
 
-    let realDataKey = dataKey;
-
-    if (isNil(dataKey) && isNil(valueKey)) {
-      warn(
-        false,
-        `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`,
-      );
-      realDataKey = 'value';
-    } else if (isNil(dataKey)) {
-      warn(
-        false,
-        `Use "dataKey" to specify the value of pie,
-      the props "valueKey" will be deprecated in 1.1.0`,
-      );
-      realDataKey = valueKey;
-    }
-
-    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, realDataKey, 0) !== 0).length;
+    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
     const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
     const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
 
     const sum = pieData.reduce((result: number, entry: any) => {
-      const val = getValueByDataKey(entry, realDataKey, 0);
+      const val = getValueByDataKey(entry, dataKey, 0);
       return result + (isNumber(val) ? val : 0);
     }, 0);
     let sectors;
@@ -247,7 +273,7 @@ export class Pie extends PureComponent<Props, State> {
     if (sum > 0) {
       let prev: PieSectorDataItem;
       sectors = pieData.map((entry: any, i: number) => {
-        const val = getValueByDataKey(entry, realDataKey, 0);
+        const val = getValueByDataKey(entry, dataKey, 0);
         const name = getValueByDataKey(entry, nameKey, i);
         const percent = (isNumber(val) ? val : 0) / sum;
         let tempStartAngle;
@@ -267,7 +293,7 @@ export class Pie extends PureComponent<Props, State> {
             name,
             value: val,
             payload: entry,
-            dataKey: realDataKey,
+            dataKey,
             type: tooltipType,
           },
         ];
@@ -283,7 +309,7 @@ export class Pie extends PureComponent<Props, State> {
           tooltipPosition,
           ...entry,
           ...coordinate,
-          value: getValueByDataKey(entry, realDataKey),
+          value: getValueByDataKey(entry, dataKey),
           startAngle: tempStartAngle,
           endAngle: tempEndAngle,
           payload: entry,
@@ -430,7 +456,7 @@ export class Pie extends PureComponent<Props, State> {
     if (isAnimationActive && !this.state.isAnimationFinished) {
       return null;
     }
-    const { label, labelLine, dataKey, valueKey } = this.props;
+    const { label, labelLine, dataKey } = this.props;
     const pieProps = filterProps(this.props, false);
     const customLabelProps = filterProps(label, false);
     const customLabelLineProps = filterProps(labelLine, false);
@@ -458,18 +484,12 @@ export class Pie extends PureComponent<Props, State> {
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
         key: 'line',
       };
-      let realDataKey = dataKey;
-      // TODO: compatible to lower versions
-      if (isNil(dataKey) && isNil(valueKey)) {
-        realDataKey = 'value';
-      } else if (isNil(dataKey)) {
-        realDataKey = valueKey;
-      }
 
       return (
-        <Layer key={`label-${entry.startAngle}-${entry.endAngle}`}>
+        // eslint-disable-next-line react/no-array-index-key
+        <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
           {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
-          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
+          {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
         </Layer>
       );
     });
@@ -499,7 +519,8 @@ export class Pie extends PureComponent<Props, State> {
           tabIndex={-1}
           className="recharts-pie-sector"
           {...adaptEventsOfChild(this.props, entry, i)}
-          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
         >
           <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
         </Layer>
@@ -643,6 +664,7 @@ export class Pie extends PureComponent<Props, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
+        <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>
     );
   }

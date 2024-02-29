@@ -1,27 +1,21 @@
 {
   "plugins": [
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-proposal-function-bind",
-    "babel-plugin-lodash",
     "babel-plugin-dev-expression"
   ],
   "presets": [
     [
       "@babel/preset-env",
       {
-        "modules": false
+        "modules": false,
+        "targets": {
+          "browsers": "supports es6-module"
+        }
       }
     ],
     "@babel/preset-react",
     "@babel/preset-typescript"
   ],
   "env": {
-    "test-karma": {
-      "plugins": ["@babel/plugin-transform-modules-commonjs", "istanbul", "@babel/plugin-transform-runtime"]
-    },
-    "test": {
-      "plugins": ["@babel/plugin-transform-modules-commonjs", "@babel/plugin-transform-runtime"]
-    },
     "commonjs": {
       "plugins": [
         [

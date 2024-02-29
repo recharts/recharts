@@ -36,41 +36,36 @@ describe('mathSign', () => {
 
 describe('is functions', () => {
   interface IsFunctionTestDefinition<F extends (value: any) => any> {
-    should: string;
     value: Parameters<F>[0];
     result: ReturnType<F>;
   }
 
   describe('isPercent', () => {
     const tests: IsFunctionTestDefinition<typeof isPercent>[] = [
-      { should: 'return true with 0%', value: '0%', result: true },
-      { should: 'return true with 10%', value: '10%', result: true },
-      { should: 'return false with invalid string', value: '0', result: false },
+      { value: '0%', result: true },
+      { value: '10%', result: true },
+      { value: '0', result: false },
       // the case with only '%' character looks like a bug - we should probably change that? Is this a breaking change?
-      { should: 'return true with %', value: '%', result: true },
-      { should: 'return false with %%', value: '%%', result: false },
-      { should: 'return false with 0%%', value: '0%%', result: false },
+      { value: '%', result: true },
+      { value: '%%', result: false },
+      { value: '0%%', result: false },
     ];
 
-    tests.forEach(({ should, value, result }) => {
-      it(should, () => {
-        expect(isPercent(value)).toBe(result);
-      });
+    test.each(tests)('should return $result with input $value', ({ value, result }) => {
+      expect(isPercent(value)).toBe(result);
     });
   });
 
   describe('isNumber', () => {
     const tests: IsFunctionTestDefinition<typeof isNumber>[] = [
-      { should: 'return true with input number', value: 0, result: true },
-      { should: 'return false with input string', value: '0', result: false },
-      { should: 'return false with input object', value: {}, result: false },
-      { should: 'return false with input array', value: [], result: false },
+      { value: 0, result: true },
+      { value: '0', result: false },
+      { value: {}, result: false },
+      { value: [], result: false },
     ];
 
-    tests.forEach(({ should, value, result }) => {
-      it(should, () => {
-        expect(isNumber(value)).toBe(result);
-      });
+    test.each(tests)('should return $result with input $value', ({ value, result }) => {
+      expect(isNumber(value)).toBe(result);
     });
 
     it('should allow type refinement', () => {
@@ -85,16 +80,14 @@ describe('is functions', () => {
 
   describe('isNumOrStr', () => {
     const tests: IsFunctionTestDefinition<typeof isNumOrStr>[] = [
-      { should: 'return true with input number', value: 0, result: true },
-      { should: 'return true with input string', value: '0', result: true },
-      { should: 'return false with input object', value: {}, result: false },
-      { should: 'return false with input array', value: [], result: false },
+      { value: 0, result: true },
+      { value: '0', result: true },
+      { value: {}, result: false },
+      { value: [], result: false },
     ];
 
-    tests.forEach(({ should, value, result }) => {
-      it(should, () => {
-        expect(isNumOrStr(value)).toBe(result);
-      });
+    test.each(tests)('should return $result with input $value', ({ value, result }) => {
+      expect(isNumOrStr(value)).toBe(result);
     });
   });
 });

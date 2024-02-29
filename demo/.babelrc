@@ -1,8 +1,4 @@
 {
-  "plugins": [
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-proposal-function-bind",
-    "babel-plugin-lodash"
-  ],
+  "plugins": [],
   "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"]
 }

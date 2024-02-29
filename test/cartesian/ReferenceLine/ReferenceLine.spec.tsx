@@ -151,28 +151,6 @@ describe('<ReferenceLine />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
   });
 
-  test('Render line and label when (deprecated) alwaysShow is true in ReferenceLine', () => {
-    const { container } = render(
-      <BarChart
-        width={1100}
-        height={250}
-        barGap={2}
-        barSize={6}
-        data={data}
-        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
-      >
-        <XAxis dataKey="name" />
-        <YAxis tickCount={7} />
-        <Bar dataKey="uv" />
-        <ReferenceLine x="201102" label="test" stroke="#666" />
-        <ReferenceLine y={20} stroke="#666" label="20" alwaysShow />
-      </BarChart>,
-    );
-    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(2);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(2);
-    expect(consoleSpy).toHaveBeenCalled();
-  });
-
   test('Render line and label when ifOverflow is "extendDomain" in ReferenceLine', () => {
     const { container } = render(
       <BarChart
@@ -268,9 +246,9 @@ describe('<ReferenceLine />', () => {
     const spy = vi.fn();
     const viewBox: CartesianViewBox = { x: 1, y: 2 };
     render(
-      <BarChart width={1100} height={250}>
-        <XAxis />
-        <YAxis />
+      <BarChart width={1100} height={250} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis dataKey="uv" />
         <ReferenceLine y={20} ifOverflow="visible" shape={spy} viewBox={viewBox} />
       </BarChart>,
     );
@@ -284,8 +262,8 @@ describe('<ReferenceLine />', () => {
       x1: 65,
       x2: 1095,
       y: 20,
-      y1: NaN,
-      y2: NaN,
+      y1: -152.5,
+      y2: -152.5,
     });
   });
 
@@ -370,6 +348,20 @@ describe('<ReferenceLine />', () => {
         <p>
           <ReferenceLine y={20} ifOverflow="visible" />
         </p>
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  test('does not return anything when there is a duplicated category', () => {
+    const firstDataItem = data[0];
+    const dataWithDupe = [...data, firstDataItem];
+    const { container } = render(
+      <BarChart width={1100} height={250} data={dataWithDupe}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        {/* reference line is currently unable to differentiate between duplicates on categorical axes. Which one do I render on? The first? Both? */}
+        <ReferenceLine y={firstDataItem.name} ifOverflow="extendDomain" />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
