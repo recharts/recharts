@@ -20,6 +20,7 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
+import { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
   TooltipType,
@@ -34,6 +35,7 @@ import {
   GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -155,6 +157,26 @@ type PieComposedData = PieCoordinate & {
   sectors: PieSectorDataItem[];
   data: RealPieData[];
 };
+type PiePayloadInputProps = {
+  sectors: PieSectorDataItem[];
+  legendType?: LegendType;
+};
+
+const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
+  return sectors.map(
+    (entry: PieSectorDataItem): LegendPayload => ({
+      type: legendType,
+      value: entry.name,
+      color: entry.fill,
+      payload: entry,
+    }),
+  );
+};
+
+function SetPiePayloadLegend(props: PiePayloadInputProps): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
+  return null;
+}
 
 export class Pie extends PureComponent<Props, State> {
   pieRef: HTMLElement = null;
@@ -642,6 +664,7 @@ export class Pie extends PureComponent<Props, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
+        <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>
     );
   }
