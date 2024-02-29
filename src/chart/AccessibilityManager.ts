@@ -11,6 +11,8 @@ interface InitiableOptions {
   container?: HTMLElement;
   layout?: LayoutType;
   offset?: ContainerOffset;
+  /* Is the chart oriented left-to-right? true = left-to-right, false = right-to-left */
+  ltr?: boolean;
 }
 
 export class AccessibilityManager {
@@ -26,18 +28,22 @@ export class AccessibilityManager {
 
   private offset: InitiableOptions['offset'];
 
+  private ltr = true;
+
   public setDetails({
     coordinateList = null,
     container = null,
     layout = null,
     offset = null,
     mouseHandlerCallback = null,
+    ltr = null,
   }: InitiableOptions) {
     this.coordinateList = coordinateList ?? this.coordinateList ?? [];
     this.container = container ?? this.container;
     this.layout = layout ?? this.layout;
     this.offset = offset ?? this.offset;
     this.mouseHandlerCallback = mouseHandlerCallback ?? this.mouseHandlerCallback;
+    this.ltr = ltr ?? this.ltr;
 
     // Keep activeIndex in the bounds between 0 and the last coordinate index
     this.activeIndex = Math.min(Math.max(this.activeIndex, 0), this.coordinateList.length - 1);
@@ -55,8 +61,9 @@ export class AccessibilityManager {
       return;
     }
 
-    switch (e.key) {
-      case 'ArrowRight': {
+    switch (`${this.ltr ? 'ltr' : 'rtl'}-${e.key}`) {
+      case 'ltr-ArrowRight':
+      case 'rtl-ArrowLeft': {
         if (this.layout !== 'horizontal') {
           return;
         }
@@ -64,7 +71,8 @@ export class AccessibilityManager {
         this.spoofMouse();
         break;
       }
-      case 'ArrowLeft': {
+      case 'ltr-ArrowLeft':
+      case 'rtl-ArrowRight': {
         if (this.layout !== 'horizontal') {
           return;
         }

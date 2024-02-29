@@ -48,6 +48,29 @@ describe('AccessibilityLayer', () => {
     expect(tooltip).toHaveTextContent('Page A');
   });
 
+  test('accessibilityLayer works, even without *Axis elements', () => {
+    const { container } = render(
+      <AreaChart width={100} height={50} data={data} accessibilityLayer>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+      </AreaChart>,
+    );
+
+    // Confirm that the tooltip container exists, but isn't displaying anything
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip?.textContent).toBe('');
+
+    // Once the chart receives focus, the tooltip should display
+    container.querySelector('svg')?.focus();
+    expect(tooltip).toHaveTextContent('uv : 400');
+
+    // Use keyboard to move around
+    fireEvent.keyDown(document.querySelector('svg') as SVGSVGElement, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('uv : 300');
+  });
+
   test('Chart updates when it receives left/right arrow keystrokes', () => {
     const mockMouseMovements = vi.fn();
 
@@ -172,6 +195,83 @@ describe('AccessibilityLayer', () => {
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
   });
 
+  test('Left/right arrow pays attention to if the XAxis is reversed', () => {
+    const mockMouseMovements = vi.fn();
+
+    const { container } = render(
+      <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="name" reversed />
+        <YAxis />
+      </AreaChart>,
+    );
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(0);
+
+    // Once the chart receives focus, the tooltip should display
+    svg.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(1);
+
+    // Ignore right arrow when you're already at the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page A');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(2);
+
+    // Respect left arrow when there's something to the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page B');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(3);
+
+    // Page C
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+
+    // Page D
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(6);
+
+    // Ignore left arrow when you're already at the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('Page F');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(7);
+
+    // Respect right arrow when there's something to the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(8);
+
+    // Chart ignores non-arrow keys
+    fireEvent.keyDown(svg, {
+      key: 'a',
+    });
+    expect(tooltip).toHaveTextContent('Page E');
+    expect(mockMouseMovements).toHaveBeenCalledTimes(8);
+  });
+
   const Expand = () => {
     const [width, setWidth] = useState(6);
     const myData = data.slice(0, width);
@@ -233,6 +333,7 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowRight',
     });
 
+    // Page F
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
     });
@@ -393,5 +494,52 @@ describe('AccessibilityLayer', () => {
         key: 'ArrowRight',
       });
     }).not.toThrowError();
+  });
+
+  const DirectionSwitcher = () => {
+    const [reversed, setReversed] = useState(false);
+
+    return (
+      <div>
+        <button type="button" onClick={() => setReversed(!reversed)}>
+          Change directions
+        </button>
+
+        <AreaChart width={100} height={50} data={data} accessibilityLayer>
+          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+          <XAxis dataKey="name" reversed={reversed} />
+          <YAxis orientation={reversed ? 'right' : 'left'} />
+        </AreaChart>
+      </div>
+    );
+  };
+
+  test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
+    const { container } = render(<DirectionSwitcher />);
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+
+    expect(tooltip?.textContent).toBe('');
+
+    svg.focus();
+    expect(tooltip).toHaveTextContent('Page A');
+
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page B');
+
+    const button = container.querySelector('BUTTON') as HTMLButtonElement;
+    fireEvent.click(button);
+
+    // Key events should now go in reverse
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('Page A');
   });
 });

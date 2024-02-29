@@ -50,6 +50,7 @@ import {
   getStackGroupsByAxisId,
   getTicksOfAxis,
   getTooltipItem,
+  isAxisLTR,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
   parseErrorBarsOfAxis,
@@ -1089,6 +1090,8 @@ export const generateCategoricalChart = ({
         coordinateList: this.state.tooltipTicks,
         mouseHandlerCallback: this.triggeredAfterMouseMove,
         layout: this.props.layout,
+        // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
+        ltr: isAxisLTR(this.state.xAxisMap),
       });
       this.displayDefaultTooltip();
     }
@@ -1167,6 +1170,12 @@ export const generateCategoricalChart = ({
       if (this.state.tooltipTicks !== prevState.tooltipTicks) {
         this.accessibilityManager.setDetails({
           coordinateList: this.state.tooltipTicks,
+        });
+      }
+
+      if (this.state.xAxisMap !== prevState.xAxisMap) {
+        this.accessibilityManager.setDetails({
+          ltr: isAxisLTR(this.state.xAxisMap),
         });
       }
 

@@ -40,6 +40,7 @@ import {
   StackOffsetType,
   Margin,
   ChartOffset,
+  XAxisMap,
 } from './types';
 import { getLegendProps } from './getLegendProps';
 
@@ -1331,4 +1332,15 @@ export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
     chartType,
     hide,
   };
+};
+
+export const isAxisLTR = (axisMap: XAxisMap) => {
+  const axes = Object.values(axisMap ?? {});
+  // If there are no <XAxis /> elements in the chart, then the chart is left-to-right (returning true).
+  if (axes.length === 0) {
+    return true;
+  }
+  // If there are any cases of reversed=true, then the chart is right-to-left (returning false).
+  // Otherwise, the chart is left-to-right (returning true)
+  return !axes.some(({ reversed }) => reversed);
 };
