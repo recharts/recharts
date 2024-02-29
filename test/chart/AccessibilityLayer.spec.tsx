@@ -213,26 +213,26 @@ describe('AccessibilityLayer', () => {
     const tooltip = container.querySelector('.recharts-tooltip-wrapper');
 
     expect(tooltip?.textContent).toBe('');
-    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(0);
 
     // Once the chart receives focus, the tooltip should display
     svg.focus();
     expect(tooltip).toHaveTextContent('Page A');
-    expect(mockMouseMovements.mock.instances).toHaveLength(1);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(1);
 
     // Ignore right arrow when you're already at the right
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
     });
     expect(tooltip).toHaveTextContent('Page A');
-    expect(mockMouseMovements.mock.instances).toHaveLength(2);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(2);
 
     // Respect left arrow when there's something to the left
     fireEvent.keyDown(svg, {
       key: 'ArrowLeft',
     });
     expect(tooltip).toHaveTextContent('Page B');
-    expect(mockMouseMovements.mock.instances).toHaveLength(3);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(3);
 
     // Page C
     fireEvent.keyDown(svg, {
@@ -248,28 +248,28 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowLeft',
     });
     expect(tooltip).toHaveTextContent('Page E');
-    expect(mockMouseMovements.mock.instances).toHaveLength(6);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(6);
 
     // Ignore left arrow when you're already at the left
     fireEvent.keyDown(svg, {
       key: 'ArrowLeft',
     });
     expect(tooltip).toHaveTextContent('Page F');
-    expect(mockMouseMovements.mock.instances).toHaveLength(7);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(7);
 
     // Respect right arrow when there's something to the right
     fireEvent.keyDown(svg, {
       key: 'ArrowRight',
     });
     expect(tooltip).toHaveTextContent('Page E');
-    expect(mockMouseMovements.mock.instances).toHaveLength(8);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(8);
 
     // Chart ignores non-arrow keys
     fireEvent.keyDown(svg, {
       key: 'a',
     });
     expect(tooltip).toHaveTextContent('Page E');
-    expect(mockMouseMovements.mock.instances).toHaveLength(8);
+    expect(mockMouseMovements).toHaveBeenCalledTimes(8);
   });
 
   const Expand = () => {
