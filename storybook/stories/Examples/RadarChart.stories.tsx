@@ -1,6 +1,6 @@
 import React from 'react';
 import { StoryObj } from '@storybook/react';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from '../../../src';
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
 
 export default {
   component: RadarChart,
@@ -74,6 +74,28 @@ export const ShouldBeCorrectAngle: StoryObj = {
         <PolarAngleAxis dataKey="angle" type="number" domain={[0, 360]} tickCount={9} />
 
         <Radar dataKey="value" fillOpacity={0} stroke="#000" />
+      </RadarChart>
+    );
+  },
+};
+
+export const RadarWithLegend: StoryObj = {
+  render: () => {
+    const data = [
+      { angle: 0, r: 1 },
+      { angle: 90, r: 2 },
+      { angle: 180, r: 3 },
+      { angle: 270, r: 4 },
+    ];
+    return (
+      <RadarChart data={data} width={360} height={360}>
+        <PolarGrid gridType="circle" />
+        <Legend />
+        <PolarRadiusAxis type="number" dataKey="r" />
+
+        <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
+
+        <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
       </RadarChart>
     );
   },

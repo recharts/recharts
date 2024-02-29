@@ -901,6 +901,19 @@ describe('<Legend />', () => {
       expect(getByText('percent')).toBeInTheDocument();
     });
 
+    it('should render one empty legend item if Radar has no dataKey', () => {
+      const { container } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          {/* @ts-expect-error TypeScript correctly points out that dataKey is required but I want a test for this anyway */}
+          <Radar />
+        </RadarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(1);
+      expect(legendItems[0].textContent).toBe('');
+    });
+
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
       const { container, queryByText } = render(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
@@ -916,6 +929,49 @@ describe('<Legend />', () => {
       expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
       expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
       expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+    });
+
+    it('should disappear after Radar element is removed', () => {
+      const { container, rerender } = render(
+        <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Radar dataKey="name" />
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      const legendItems1 = assertHasLegend(container);
+      expect.soft(legendItems1).toHaveLength(2);
+      expect.soft(Array.from(legendItems1).map(i => i.textContent)).toEqual(['name', 'value']);
+      rerender(
+        <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect.soft(legendItems2).toHaveLength(1);
+      expect(Array.from(legendItems2).map(i => i.textContent)).toEqual(['value']);
+    });
+
+    it('should update legend if Radar data changes', () => {
+      const { container, rerender } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(1);
+      expect.soft(Array.from(legendItems).map(i => i.textContent)).toEqual(['value']);
+      rerender(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" />
+        </RadarChart>,
+      );
+      const legendItems2 = assertHasLegend(container);
+      expect.soft(legendItems2).toHaveLength(1);
+      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
     });
 
     describe('legendType symbols', () => {
