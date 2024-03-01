@@ -272,4 +272,25 @@ describe('<ResponsiveContainer />', () => {
 
     expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
   });
+
+  it('should trigger console.warn only when accessing ref.current.current, not ref.current', () => {
+    const ref = React.createRef<any>();
+
+    const consoleWarn = vi.fn();
+    vi.spyOn(console, 'warn').mockImplementation(consoleWarn);
+
+    render(
+      <ResponsiveContainer height={100} ref={ref}>
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(consoleWarn).not.toHaveBeenCalled();
+    expect(ref.current instanceof HTMLElement).toBe(true);
+    expect(consoleWarn).not.toHaveBeenCalled();
+    expect(ref.current.current instanceof HTMLElement).toBe(true);
+    expect(consoleWarn).toHaveBeenLastCalledWith(
+      'The usage of ref.current.current is deprecated and will no longer be supported.',
+    );
+  });
 });

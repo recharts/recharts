@@ -69,12 +69,13 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDi
     const onResizeRef = useRef<Props['onResize']>();
     onResizeRef.current = onResize;
     useImperativeHandle(ref, () => {
-      return Object.assign(containerRef.current, {
-        get current() {
+      return Object.defineProperty(containerRef.current, 'current', {
+        get() {
           // eslint-disable-next-line no-console
           console.warn('The usage of ref.current.current is deprecated and will no longer be supported.');
           return containerRef.current;
         },
+        configurable: true,
       });
     });
 
