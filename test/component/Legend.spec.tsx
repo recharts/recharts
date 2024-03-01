@@ -292,6 +292,7 @@ function assertExpectedAttributes(
 ) {
   const [legendItem] = assertHasLegend(container);
   const symbol = legendItem.querySelector(selector);
+  expect(symbol).not.toBeNull();
   expect(symbol).toBeInTheDocument();
   const expectedAttributeNames = Object.keys(expectedAttributes);
   expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
@@ -887,7 +888,7 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of RadarChart', () => {
-    it('should render one legend item for each Radar', () => {
+    it('should render one rect legend item for each Radar, with default class and style attributes', () => {
       const { container, getByText } = render(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
@@ -895,10 +896,24 @@ describe('<Legend />', () => {
           <Radar dataKey="value" />
         </RadarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(2);
       expect(getByText('value')).toBeInTheDocument();
       expect(getByText('percent')).toBeInTheDocument();
+
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+      expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
+      expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Radar should default to rect
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor
+        .filter(tc => tc.legendType === 'rect')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
     it('should render one empty legend item if Radar has no dataKey', () => {
@@ -912,6 +927,26 @@ describe('<Legend />', () => {
       const legendItems = assertHasLegend(container);
       expect.soft(legendItems).toHaveLength(1);
       expect(legendItems[0].textContent).toBe('');
+    });
+
+    it('should set legend item from `name` prop on Radar, and update it after rerender', () => {
+      const { rerender, queryByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" name="%" />
+        </RadarChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).toBeInTheDocument();
+      rerender(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" name="Percent" />
+        </RadarChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).not.toBeInTheDocument();
+      expect.soft(queryByText('Percent')).toBeInTheDocument();
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
@@ -997,6 +1032,51 @@ describe('<Legend />', () => {
             <RadarChart width={500} height={500} data={numericalData}>
               <Legend />
               <Radar dataKey="percent" legendType={legendType} fill="red" />
+            </RadarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+
+    describe('legendType symbols with explicit stroke', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('yellow'))(
+        'should render legend colors for $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Radar dataKey="percent" legendType={legendType} stroke="yellow" />
+            </RadarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+
+    describe('legendType symbols with both fill and stroke', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('gold'))(
+        'should render legend colors for $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Radar dataKey="percent" legendType={legendType} stroke="gold" fill="green" />
+            </RadarChart>,
+          );
+          assertExpectedAttributes(container, selector, expectedAttributes);
+        },
+      );
+    });
+
+    describe('legendType symbols with stroke = none', () => {
+      test.each(expectedLegendTypeSymbolsWithColor('green'))(
+        'should render legend colors for $selector for legendType $legendType',
+        ({ legendType, selector, expectedAttributes }) => {
+          const { container } = render(
+            <RadarChart width={500} height={500} data={numericalData}>
+              <Legend />
+              <Radar dataKey="percent" legendType={legendType} stroke="none" fill="green" />
             </RadarChart>,
           );
           assertExpectedAttributes(container, selector, expectedAttributes);
