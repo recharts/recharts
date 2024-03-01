@@ -292,6 +292,7 @@ function assertExpectedAttributes(
 ) {
   const [legendItem] = assertHasLegend(container);
   const symbol = legendItem.querySelector(selector);
+  expect(symbol).not.toBeNull();
   expect(symbol).toBeInTheDocument();
   const expectedAttributeNames = Object.keys(expectedAttributes);
   expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
@@ -887,7 +888,7 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of RadarChart', () => {
-    it('should render one legend item for each Radar, with default class and style attributes', () => {
+    it('should render one rect legend item for each Radar, with default class and style attributes', () => {
       const { container, getByText } = render(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
@@ -907,6 +908,12 @@ describe('<Legend />', () => {
       expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
       expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
       expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Radar should default to rect
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor
+        .filter(tc => tc.legendType === 'rect')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
     it('should render one empty legend item if Radar has no dataKey', () => {
