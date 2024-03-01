@@ -929,6 +929,26 @@ describe('<Legend />', () => {
       expect(legendItems[0].textContent).toBe('');
     });
 
+    it('should set legend item from `name` prop on Radar, and update it after rerender', () => {
+      const { rerender, queryByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" name="%" />
+        </RadarChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).toBeInTheDocument();
+      rerender(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="percent" name="Percent" />
+        </RadarChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).not.toBeInTheDocument();
+      expect.soft(queryByText('Percent')).toBeInTheDocument();
+    });
+
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
       const { container, queryByText } = render(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
