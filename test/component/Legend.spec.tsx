@@ -752,6 +752,8 @@ describe('<Legend />', () => {
       );
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(numericalData.length);
+      // all legendItems are only icons, with empty text
+      legendItems.forEach(legendItem => expect(legendItem.textContent).toBe(''));
     });
 
     it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
@@ -921,9 +923,9 @@ describe('<Legend />', () => {
       expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
       // in absence of explicit `legendType`, Radar should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor
-        .filter(tc => tc.legendType === 'rect')
-        .pop();
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+        tc => tc.legendType === 'rect',
+      );
       assertExpectedAttributes(container, selector, expectedAttributes);
     });
 
@@ -937,6 +939,7 @@ describe('<Legend />', () => {
       expect(getByText('unknown')).toBeInTheDocument();
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(1);
+      expect(legendItems[0].textContent).toBe('unknown');
     });
 
     it('should change color and className of hidden Radar', () => {
@@ -1153,7 +1156,7 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of RadialBarChart', () => {
-    it('should render one legend item for each segment, but with no label text by default', () => {
+    it('should render one legend item for each segment, with no label text, and rect icon with no color, by default', () => {
       const { container } = render(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
@@ -1167,6 +1170,20 @@ describe('<Legend />', () => {
         expect(legendItemText).toBeInTheDocument();
         expect(legendItemText).toBeEmptyDOMElement();
       });
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(i => i.legendType === 'rect');
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <RadialBar dataKey="unknown" />
+        </RadialBarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(numericalData.length);
+      legendItems.forEach(li => expect(li.textContent).toBe(''));
     });
 
     it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
@@ -1178,11 +1195,65 @@ describe('<Legend />', () => {
       );
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
+      // I think this is the only way to set legend labels for RadialBarChart?
       dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
       legendItems.forEach((legendItem, index) => {
         const icon = legendItem.querySelector('.recharts-legend-icon');
         expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
       });
+    });
+
+    it('should disappear after RadialBar itself is removed', () => {
+      const { container, rerender } = render(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <RadialBar dataKey="percent" />
+          <RadialBar dataKey="value" />
+        </RadialBarChart>,
+      );
+      const legendItems1 = assertHasLegend(container);
+      expect.soft(legendItems1).toHaveLength(numericalData.length * 2);
+      // all legend items have empty textContent
+      legendItems1.forEach(legendItem => {
+        expect(legendItem.textContent).toBe('');
+      });
+      rerender(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <RadialBar dataKey="value" />
+        </RadialBarChart>,
+      );
+      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect.soft(legendItems2).toHaveLength(numericalData.length);
+      rerender(
+        <RadialBarChart width={500} height={500}>
+          <Legend />
+        </RadialBarChart>,
+      );
+      const legendItems3 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect.soft(legendItems3).toHaveLength(0);
+    });
+
+    it('should update legend if RadialBarChart data changes', () => {
+      const { container, rerender } = render(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <RadialBar dataKey="percent" />
+        </RadialBarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(numericalData.length);
+      // all these are empty because numericalData does not have .name property
+      legendItems.forEach(li => expect(li.textContent).toBe(''));
+      rerender(
+        <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <RadialBar dataKey="value" />
+        </RadialBarChart>,
+      );
+      const legendItems2 = assertHasLegend(container);
+      expect.soft(legendItems2).toHaveLength(dataWithSpecialNameAndFillProperties.length);
+      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['name1', 'name2', 'name3', 'name4']);
     });
 
     describe('legendType symbols', () => {
