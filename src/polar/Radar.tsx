@@ -22,6 +22,8 @@ import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration } 
 import { filterProps } from '../util/ReactUtils';
 import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 
 interface RadarPoint {
   x: number;
@@ -83,6 +85,29 @@ type RadarComposedData = {
   baseLinePoints: RadarPoint[];
   isRange: boolean;
 };
+
+function getLegendItemColor(stroke: string | undefined, fill: string): string {
+  return stroke && stroke !== 'none' ? stroke : fill;
+}
+
+const computeLegendPayloadFromRadarSectors = (props: Props): Array<LegendPayload> => {
+  const { dataKey, name, stroke, fill, legendType, hide } = props;
+  return [
+    {
+      inactive: hide,
+      dataKey,
+      type: legendType,
+      color: getLegendItemColor(stroke, fill),
+      value: name || dataKey,
+      payload: props,
+    },
+  ];
+};
+
+function SetRadarPayloadLegend(props: RadarProps): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromRadarSectors, props);
+  return null;
+}
 
 export class Radar extends PureComponent<Props, State> {
   static displayName = 'Radar';
@@ -346,7 +371,14 @@ export class Radar extends PureComponent<Props, State> {
     const { hide, className, points, isAnimationActive } = this.props;
 
     if (hide || !points || !points.length) {
-      return null;
+      /*
+       * This used to render `null`, but it should still set the legend because:
+       * 1. Hidden Radar still renders a legend item (albeit with inactive color)
+       * 2. if a dataKey does not match anything from props.data, then props.points are not defined.
+       * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
+       * But for now I will keep it as-is.
+       */
+      return <SetRadarPayloadLegend {...this.props} />;
     }
 
     const { isAnimationFinished } = this.state;
@@ -354,6 +386,7 @@ export class Radar extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass}>
+        <SetRadarPayloadLegend {...this.props} />
         {this.renderPolygon()}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>

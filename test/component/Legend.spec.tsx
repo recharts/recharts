@@ -743,6 +743,17 @@ describe('<Legend />', () => {
       numericalData.forEach(({ value }) => expect(getByText(value)).toBeInTheDocument());
     });
 
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="unknown" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(numericalData.length);
+    });
+
     it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
       const { container, getByText } = render(
         <PieChart width={500} height={500}>
@@ -911,6 +922,62 @@ describe('<Legend />', () => {
 
       // in absence of explicit `legendType`, Radar should default to rect
       const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor
+        .filter(tc => tc.legendType === 'rect')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container, getByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="unknown" />
+        </RadarChart>,
+      );
+      expect(getByText('unknown')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(1);
+    });
+
+    it('should change color and className of hidden Radar', () => {
+      const { container, getByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend inactiveColor="yellow" />
+          {/* this will ignore the stroke and use inactive color on legend */}
+          <Radar dataKey="percent" stroke="red" hide />
+        </RadarChart>,
+      );
+      expect(getByText('percent')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Radar should default to rect
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow')
+        .filter(tc => tc.legendType === 'rect')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should have a default inactive Radar legend color', () => {
+      const { container, getByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          {/* this will ignore the stroke and use inactive color on legend */}
+          <Radar dataKey="percent" stroke="red" hide />
+        </RadarChart>,
+      );
+      expect(getByText('percent')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Radar should default to rect
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc')
         .filter(tc => tc.legendType === 'rect')
         .pop();
       assertExpectedAttributes(container, selector, expectedAttributes);

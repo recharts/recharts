@@ -20,7 +20,7 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
-import { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
   TooltipType,
@@ -647,7 +647,14 @@ export class Pie extends PureComponent<Props, State> {
       !isNumber(innerRadius as number) ||
       !isNumber(outerRadius as number)
     ) {
-      return null;
+      /*
+       * This used to render `null`, but it should still set the legend because:
+       * 1. Hidden pie still renders a legend item (albeit with inactive color)
+       * 2. if a dataKey does not match anything from props.data, then props.sectors are not defined.
+       * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
+       * But for now I will keep it as-is.
+       */
+      return <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />;
     }
 
     const layerClass = clsx('recharts-pie', className);
