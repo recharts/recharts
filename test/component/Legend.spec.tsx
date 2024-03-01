@@ -743,6 +743,17 @@ describe('<Legend />', () => {
       numericalData.forEach(({ value }) => expect(getByText(value)).toBeInTheDocument());
     });
 
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Legend />
+          <Pie data={numericalData} dataKey="unknown" />
+        </PieChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(numericalData.length);
+    });
+
     it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
       const { container, getByText } = render(
         <PieChart width={500} height={500}>
@@ -914,6 +925,18 @@ describe('<Legend />', () => {
         .filter(tc => tc.legendType === 'rect')
         .pop();
       assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container, getByText } = render(
+        <RadarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Radar dataKey="unknown" />
+        </RadarChart>,
+      );
+      expect(getByText('unknown')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(1);
     });
 
     it('should change color and className of hidden Radar', () => {
