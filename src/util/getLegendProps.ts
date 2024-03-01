@@ -19,6 +19,14 @@ export interface LegendPropsGraphicalItemInput {
   item: ReactElement<{ legendType?: LegendType; hide: boolean; name?: string; dataKey: DataKey<any> }>;
 }
 
+/**
+ * @deprecated we are replacing this function with Context-based legend instead. See useLegendPayloadDispatch and useLegendPayload
+ * @param children do not use
+ * @param formattedGraphicalItems do not use
+ * @param legendWidth do not use
+ * @param legendContent do not use
+ * @returns mix of everything, do not use
+ */
 export const getLegendProps = ({
   children,
   formattedGraphicalItems,
