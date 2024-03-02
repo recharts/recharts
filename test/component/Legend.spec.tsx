@@ -23,7 +23,7 @@ import {
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-  return container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+  return Array.from(container.querySelectorAll('.recharts-default-legend .recharts-legend-item'));
 }
 
 type LegendTypeTestCases = ReadonlyArray<{
@@ -696,7 +696,7 @@ describe('<Legend />', () => {
       );
       const legendItems = assertHasLegend(container);
       expect.soft(legendItems).toHaveLength(1);
-      expect.soft(Array.from(legendItems).map(i => i.textContent)).toEqual(['value']);
+      expect.soft(legendItems.map(i => i.textContent)).toEqual(['value']);
       rerender(
         <LineChart width={500} height={500} data={numericalData}>
           <Legend />
@@ -1187,18 +1187,53 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of ComposedChart', () => {
-    it('should render one legend item for each bar', () => {
-      const { container, getByText } = render(
+    it('should render one legend item for each allowed graphical element, even if their dataKey does not match the data or is undefined', () => {
+      const { container, queryByText } = render(
         <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Area dataKey="value" />
+          <Area dataKey="wrong" />
+          <Area dataKey="wrong but invisible" name="Wrong 1" />
           <Bar dataKey="color" />
+          <Bar dataKey="unknown" />
+          <Bar dataKey="unknown but invisible" name="Wrong 2" />
+          <Line dataKey="bad" />
+          <Line dataKey="bad but invisible" name="Wrong 3" />
         </ComposedChart>,
       );
       const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(2);
-      expect(getByText('value')).toBeInTheDocument();
-      expect(getByText('color')).toBeInTheDocument();
+      expect.soft(legendItems).toHaveLength(8);
+      expect
+        .soft(legendItems.map(li => li.textContent))
+        .toEqual(['value', 'wrong', 'Wrong 1', 'color', 'unknown', 'Wrong 2', 'bad', 'Wrong 3']);
+      expect.soft(queryByText('wrong but invisible')).not.toBeInTheDocument();
+      expect.soft(queryByText('unknown but invisible')).not.toBeInTheDocument();
+      expect.soft(queryByText('bad but invisible')).not.toBeInTheDocument();
+    });
+
+    it('should not render legend of unsupported graphical element', () => {
+      const { container } = render(
+        <ComposedChart width={500} height={500} data={categoricalData}>
+          <Legend />
+          <Pie dataKey="pie datakey" />
+          <Radar dataKey="radar datakey" />
+          <RadialBar dataKey="radialbar datakey" />
+          {/* Scatter is not supported according to the website, but it still renders its Legend payload, interesting */}
+          {/* <Scatter dataKey="scatter datakey" /> */}
+        </ComposedChart>,
+      );
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+    });
+
+    it('should render legend of Scatter even though it is not a supported graphical element inside ComposedChart', () => {
+      const { container } = render(
+        <ComposedChart width={500} height={500} data={categoricalData}>
+          <Legend />
+          <Scatter dataKey="scatter datakey" />
+        </ComposedChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems.map(li => li.textContent)).toEqual(['scatter datakey']);
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
@@ -1207,6 +1242,7 @@ describe('<Legend />', () => {
           <Legend />
           <Area dataKey="value" />
           <Bar dataKey="color" />
+          <Line dataKey="color" />
         </ComposedChart>,
       );
       expect.soft(queryByText('name1')).not.toBeInTheDocument();
@@ -1394,7 +1430,7 @@ describe('<Legend />', () => {
       const legendItems2 = assertHasLegend(container);
       expect.soft(legendItems2).toHaveLength(numericalData2.length);
       expect
-        .soft(Array.from(legendItems2).map(i => i.textContent))
+        .soft(legendItems2.map(i => i.textContent))
         .toEqual(['Luftbaloons', 'Miles I would walk', 'Days a week', 'Mambo number', 'Seas of Rhye']);
     });
 
