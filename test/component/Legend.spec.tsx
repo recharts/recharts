@@ -491,6 +491,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(2);
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(0);
     });
+
     test('Renders name value of siblings when dataKey is a function', () => {
       render(
         <LineChart width={500} height={500} data={categoricalData}>
@@ -527,6 +528,184 @@ describe('<Legend />', () => {
           "a function for the dataKey of a chart's cartesian components. " +
           'Ex: <Bar name="Name of my Data"/>',
       );
+    });
+
+    it('should render one line legend item for each Line, with default class and style attributes', () => {
+      const { container, getByText } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="percent" />
+          <Line dataKey="value" />
+        </LineChart>,
+      );
+      expect(getByText('value')).toBeInTheDocument();
+      expect(getByText('percent')).toBeInTheDocument();
+
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(2);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+      expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
+      expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Line should default to line
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+        tc => tc.legendType === 'line',
+      );
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should render a legend item even if the dataKey does not match anything from the data', () => {
+      const { container, getByText } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="unknown" />
+        </LineChart>,
+      );
+      expect(getByText('unknown')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(1);
+      expect(legendItems[0].textContent).toBe('unknown');
+    });
+
+    it('should change color and className of hidden Line', () => {
+      const { container, getByText } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend inactiveColor="yellow" />
+          {/* this will ignore the stroke and use inactive color on legend */}
+          <Line dataKey="percent" stroke="red" hide />
+        </LineChart>,
+      );
+      expect(getByText('percent')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Line should default to line
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow')
+        .filter(tc => tc.legendType === 'line')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should have a default inactive Line legend color', () => {
+      const { container, getByText } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          {/* this will ignore the stroke and use inactive color on legend */}
+          <Line dataKey="percent" stroke="red" hide />
+        </LineChart>,
+      );
+      expect(getByText('percent')).toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+
+      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+      // in absence of explicit `legendType`, Line should default to rect
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc')
+        .filter(tc => tc.legendType === 'line')
+        .pop();
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should render one empty legend item if Line has no dataKey', () => {
+      const { container } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          {/* I wonder if dataKey should be required here, like it is in Radar? */}
+          <Line />
+        </LineChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(1);
+      expect(legendItems[0].textContent).toBe('');
+    });
+
+    it('should set legend item from `name` prop on Line, and update it after rerender', () => {
+      const { rerender, queryByText } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="percent" name="%" />
+        </LineChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).toBeInTheDocument();
+      rerender(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="percent" name="Percent" />
+        </LineChart>,
+      );
+      expect.soft(queryByText('percent')).not.toBeInTheDocument();
+      expect.soft(queryByText('%')).not.toBeInTheDocument();
+      expect.soft(queryByText('Percent')).toBeInTheDocument();
+    });
+
+    it('should not implicitly read `name` and `fill` properties from the data array', () => {
+      const { container, queryByText } = render(
+        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Line dataKey="value" />
+        </LineChart>,
+      );
+      expect.soft(queryByText('name1')).not.toBeInTheDocument();
+      expect.soft(queryByText('name2')).not.toBeInTheDocument();
+      expect.soft(queryByText('name3')).not.toBeInTheDocument();
+      expect.soft(queryByText('name4')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+    });
+
+    it('should disappear after Line element is removed', () => {
+      const { container, rerender } = render(
+        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Line dataKey="name" />
+          <Line dataKey="value" />
+        </LineChart>,
+      );
+      const legendItems1 = assertHasLegend(container);
+      expect.soft(legendItems1).toHaveLength(2);
+      expect.soft(Array.from(legendItems1).map(i => i.textContent)).toEqual(['name', 'value']);
+      rerender(
+        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <Line dataKey="value" />
+        </LineChart>,
+      );
+      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+      expect.soft(legendItems2).toHaveLength(1);
+      expect(Array.from(legendItems2).map(i => i.textContent)).toEqual(['value']);
+    });
+
+    it('should update legend if Line data changes', () => {
+      const { container, rerender } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="value" />
+        </LineChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect.soft(legendItems).toHaveLength(1);
+      expect.soft(Array.from(legendItems).map(i => i.textContent)).toEqual(['value']);
+      rerender(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="percent" />
+        </LineChart>,
+      );
+      const legendItems2 = assertHasLegend(container);
+      expect.soft(legendItems2).toHaveLength(1);
+      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
     });
 
     describe('legendType symbols', () => {
