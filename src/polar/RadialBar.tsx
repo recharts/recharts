@@ -35,6 +35,8 @@ import {
   LayoutType,
 } from '../util/types';
 import { polarToCartesian } from '../util/PolarUtils';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -90,6 +92,27 @@ type RadialBarComposedData = {
   data: RadialBarDataItem[];
   layout: LayoutType;
 };
+
+type RadialBarPayloadInputProps = {
+  data: RadialBarDataItem[];
+  legendType?: LegendType;
+};
+
+const computeLegendPayloadFromRadarData = ({ data, legendType }: RadialBarPayloadInputProps): Array<LegendPayload> => {
+  return data.map(
+    (entry: RadialBarDataItem): LegendPayload => ({
+      type: legendType,
+      value: entry.name,
+      color: entry.fill,
+      payload: entry,
+    }),
+  );
+};
+
+function SetRadialBarPayloadLegend(props: RadialBarPayloadInputProps): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromRadarData, props);
+  return null;
+}
 
 export class RadialBar extends PureComponent<RadialBarProps, State> {
   static displayName = 'RadialBar';
@@ -394,6 +417,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
     return (
       <Layer className={layerClass}>
+        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
         {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
 
         <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>

@@ -1203,6 +1203,23 @@ describe('<Legend />', () => {
       });
     });
 
+    it('should use special `name` and `fill` properties from data as legend labels and colors, even if the dataKey does not match', () => {
+      const { container, getByText } = render(
+        <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+          <Legend />
+          <RadialBar dataKey="unknown" />
+        </RadialBarChart>,
+      );
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
+      // I think this is the only way to set legend labels for RadialBarChart?
+      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
+      legendItems.forEach((legendItem, index) => {
+        const icon = legendItem.querySelector('.recharts-legend-icon');
+        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
+      });
+    });
+
     it('should disappear after RadialBar itself is removed', () => {
       const { container, rerender } = render(
         <RadialBarChart width={500} height={500} data={numericalData}>
