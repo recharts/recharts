@@ -81,27 +81,6 @@ exports[`<Legend /> > content as a React Component > should pass parameters to t
 }
 `;
 
-exports[`<Legend /> > content as a React Component > should pass parameters to the Component 2`] = `
-{
-  "align": "center",
-  "chartHeight": 300,
-  "chartWidth": 600,
-  "content": [Function],
-  "iconSize": 14,
-  "layout": "horizontal",
-  "margin": {
-    "bottom": 5,
-    "left": 20,
-    "right": 30,
-    "top": 5,
-  },
-  "onBBoxUpdate": [Function],
-  "payload": [],
-  "verticalAlign": "bottom",
-  "width": 550,
-}
-`;
-
 exports[`<Legend /> > content as a function > should pass parameters to the function 1`] = `
 {
   "align": "center",
@@ -178,27 +157,6 @@ exports[`<Legend /> > content as a function > should pass parameters to the func
       "value": "uv",
     },
   ],
-  "verticalAlign": "bottom",
-  "width": 550,
-}
-`;
-
-exports[`<Legend /> > content as a function > should pass parameters to the function 2`] = `
-{
-  "align": "center",
-  "chartHeight": 300,
-  "chartWidth": 600,
-  "content": [Function],
-  "iconSize": 14,
-  "layout": "horizontal",
-  "margin": {
-    "bottom": 5,
-    "left": 20,
-    "right": 30,
-    "top": 5,
-  },
-  "onBBoxUpdate": [Function],
-  "payload": [],
   "verticalAlign": "bottom",
   "width": 550,
 }
