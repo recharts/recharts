@@ -712,25 +712,28 @@ describe('<Legend />', () => {
       test.each(expectedLegendTypeSymbolsWithColor('#3182bd'))(
         'should render element $selector for legendType $legendType',
         ({ legendType, selector, expectedAttributes }) => {
-          const { container, debug } = render(
+          const { container } = render(
             <LineChart width={500} height={500} data={categoricalData}>
               <Legend />
               <Line dataKey="value" legendType={legendType} />
             </LineChart>,
           );
-          const [legendItem] = assertHasLegend(container);
-          const symbol = legendItem.querySelector(selector);
-          if (symbol == null) {
-            debug();
-          }
-          expect(symbol).toBeInTheDocument();
-          const expectedAttributeNames = Object.keys(expectedAttributes);
-          expect.soft(symbol?.getAttributeNames().sort()).toEqual(expectedAttributeNames.sort());
-          expectedAttributeNames.forEach(attributeName => {
-            expect.soft(symbol).toHaveAttribute(attributeName, expectedAttributes[attributeName]);
-          });
+          assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+    });
+
+    it('should prefer Legend.iconType over Line.legendType', () => {
+      const { container } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend iconType="circle" />
+          <Line dataKey="value" legendType="square" />
+        </LineChart>,
+      );
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+        li => li.legendType === 'circle',
+      );
+      assertExpectedAttributes(container, selector, expectedAttributes);
     });
   });
 
@@ -926,6 +929,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Bar.legendType', () => {
+        const { container } = render(
+          <BarChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Bar dataKey="value" legendType="square" />
+          </BarChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
   });
 
@@ -1183,6 +1199,19 @@ describe('<Legend />', () => {
           },
         );
       });
+
+      it('should prefer Legend.iconType over Area.legendType', () => {
+        const { container } = render(
+          <AreaChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Area dataKey="value" legendType="square" />
+          </AreaChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
   });
 
@@ -1268,6 +1297,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Area.legendType', () => {
+        const { container } = render(
+          <ComposedChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Area dataKey="value" legendType="square" />
+          </ComposedChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
 
     describe('legendType symbols for Bar', () => {
@@ -1283,6 +1325,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Bar.legendType', () => {
+        const { container } = render(
+          <ComposedChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Bar dataKey="value" legendType="square" />
+          </ComposedChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
 
     describe('legendType symbols for Line', () => {
@@ -1298,6 +1353,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Line.legendType', () => {
+        const { container } = render(
+          <ComposedChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Line dataKey="value" legendType="square" />
+          </ComposedChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
   });
 
@@ -1468,6 +1536,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Pie.legendType', () => {
+        const { container } = render(
+          <PieChart width={500} height={500}>
+            <Legend iconType="circle" />
+            <Pie data={numericalData} dataKey="percent" legendType="square" />
+          </PieChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#808080').find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
   });
 
@@ -1663,6 +1744,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Radar.legendType', () => {
+        const { container } = render(
+          <RadarChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Radar dataKey="value" legendType="square" />
+          </RadarChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
 
     describe('legendType symbols with explicit fill', () => {
@@ -1858,6 +1952,19 @@ describe('<Legend />', () => {
         },
       );
     });
+
+    it('should prefer Legend.iconType over RadialBar.legendType', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={numericalData}>
+          <Legend iconType="circle" />
+          <RadialBar dataKey="value" legendType="square" />
+        </RadialBarChart>,
+      );
+      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+        li => li.legendType === 'circle',
+      );
+      assertExpectedAttributes(container, selector, expectedAttributes);
+    });
   });
 
   describe('as a child of ScatterChart', () => {
@@ -1905,6 +2012,19 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+
+      it('should prefer Legend.iconType over Scatter.legendType', () => {
+        const { container } = render(
+          <ScatterChart width={500} height={500} data={numericalData}>
+            <Legend iconType="circle" />
+            <Scatter dataKey="value" legendType="square" />
+          </ScatterChart>,
+        );
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithoutColor.find(
+          li => li.legendType === 'circle',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
 
     describe('legendType symbols with explicit fill', () => {

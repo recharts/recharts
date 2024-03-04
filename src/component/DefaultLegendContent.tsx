@@ -12,7 +12,6 @@ import {
   DataKey,
   LegendType,
   LayoutType,
-  SymbolType,
   adaptEventsOfChild,
   PresentationAttributesAdaptChildEvent,
 } from '../util/types';
@@ -70,16 +69,21 @@ export class DefaultLegendContent extends PureComponent<Props> {
   /**
    * Render the path of icon
    * @param data Data of each legend item
+   * @param iconType if defined, it will always render this icon. If undefined then it uses icon from data.type
    * @return Path element
    */
-  renderIcon(data: Payload) {
+  renderIcon(data: Payload, iconType: IconType | undefined) {
     const { inactiveColor } = this.props;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;
     const thirdSize = SIZE / 3;
     const color = data.inactive ? inactiveColor : data.color;
+    const preferredIcon = iconType ?? data.type;
 
-    if (data.type === 'plainline') {
+    if (preferredIcon === 'none') {
+      return null;
+    }
+    if (preferredIcon === 'plainline') {
       return (
         <line
           strokeWidth={4}
@@ -94,7 +98,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
         />
       );
     }
-    if (data.type === 'line') {
+    if (preferredIcon === 'line') {
       return (
         <path
           strokeWidth={4}
@@ -108,7 +112,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
         />
       );
     }
-    if (data.type === 'rect') {
+    if (preferredIcon === 'rect') {
       return (
         <path
           stroke="none"
@@ -124,16 +128,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
       return React.cloneElement(data.legendIcon, iconProps);
     }
 
-    return (
-      <Symbols
-        fill={color}
-        cx={halfSize}
-        cy={halfSize}
-        size={SIZE}
-        sizeType="diameter"
-        type={data.type as SymbolType}
-      />
-    );
+    return <Symbols fill={color} cx={halfSize} cy={halfSize} size={SIZE} sizeType="diameter" type={preferredIcon} />;
   }
 
   /**
@@ -141,7 +136,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
    * @return Items
    */
   renderItems() {
-    const { payload, iconSize, layout, formatter, inactiveColor } = this.props;
+    const { payload, iconSize, layout, formatter, inactiveColor, iconType } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
     const itemStyle = {
       display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -179,7 +174,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
           {...adaptEventsOfChild(this.props, entry, i)}
         >
           <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
-            {this.renderIcon(entry)}
+            {this.renderIcon(entry, iconType)}
           </Surface>
           <span className="recharts-legend-item-text" style={{ color }}>
             {finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue}

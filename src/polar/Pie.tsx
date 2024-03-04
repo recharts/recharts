@@ -163,6 +163,9 @@ type PiePayloadInputProps = {
 };
 
 const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
+  if (sectors == null) {
+    return [];
+  }
   return sectors.map(
     (entry: PieSectorDataItem): LegendPayload => ({
       type: legendType,
