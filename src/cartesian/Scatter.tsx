@@ -36,6 +36,8 @@ import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -104,6 +106,25 @@ interface State {
 type ScatterComposedData = ChartOffset & {
   points: ScatterPointItem[];
 };
+
+const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
+  const { dataKey, name, fill, legendType, hide } = props;
+  return [
+    {
+      inactive: hide,
+      dataKey,
+      type: legendType,
+      color: fill,
+      value: name || dataKey,
+      payload: props,
+    },
+  ];
+};
+
+function SetScatterLegend(props: Props): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromScatterProps, props);
+  return null;
+}
 
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
@@ -422,7 +443,7 @@ export class Scatter extends PureComponent<Props, State> {
   render() {
     const { hide, points, line, className, xAxis, yAxis, left, top, width, height, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
-      return null;
+      return <SetScatterLegend {...this.props} />;
     }
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
@@ -433,6 +454,7 @@ export class Scatter extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+        <SetScatterLegend {...this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
