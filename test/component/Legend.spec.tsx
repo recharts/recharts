@@ -412,7 +412,6 @@ describe('<Legend />', () => {
     });
 
     it('should pass parameters to the function', () => {
-      // expect.assertions(1);
       const customContent = (params: unknown): null => {
         expect(params).toMatchSnapshot();
         return null;
