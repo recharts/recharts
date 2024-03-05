@@ -340,29 +340,11 @@ describe('<Legend />', () => {
   ];
 
   describe('outside of chart context', () => {
-    test('Render 4 legend items in simple Legend', () => {
+    it('should ignore payload prop', () => {
       const { container } = render(<Legend width={500} height={30} payload={categoricalData} />);
 
-      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(4);
-    });
-
-    test('Does not render items with a type of `none`', () => {
-      const dataWithNone = [
-        { value: 'Apple', color: '#ff7300' },
-        { value: 'Samsung', color: '#bb7300' },
-        { value: 'Huawei', color: '#887300' },
-        { value: 'Sony', type: 'none' },
-      ];
-      const { container } = render(<Legend width={500} height={30} payload={dataWithNone as any} />);
-
-      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(3);
-    });
-
-    test('Renders payload value correctly when passed as a static value', () => {
-      render(<Legend payload={[{ value: 'item name' }]} />);
-      screen.getByText(/item name/i);
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(0);
     });
   });
 
@@ -1058,6 +1040,22 @@ describe('<Legend />', () => {
         tc => tc.legendType === 'rect',
       );
       assertExpectedAttributes(container, selector, expectedAttributes);
+    });
+
+    it('should not render items with a type of `none`', () => {
+      const { container, queryByText } = render(
+        <BarChart width={500} height={500} data={categoricalData}>
+          <Legend />
+          <Bar dataKey="value" legendType="star" />
+          <Bar dataKey="color" legendType="none" />
+        </BarChart>,
+      );
+
+      expect.soft(queryByText('value')).toBeInTheDocument();
+      expect.soft(queryByText('color')).not.toBeInTheDocument();
+      const legendItems = assertHasLegend(container);
+      expect(legendItems).toHaveLength(1);
+      expect(legendItems[0].textContent).toBe('value');
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
