@@ -32,6 +32,8 @@ import {
   ActiveShape,
   LayoutType,
 } from '../util/types';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
@@ -96,6 +98,25 @@ type LineComposedData = ChartOffset & {
   points?: LinePointItem[];
   layout: LayoutType;
 };
+
+const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
+  const { dataKey, name, stroke, legendType, hide } = props;
+  return [
+    {
+      inactive: hide,
+      dataKey,
+      type: legendType,
+      color: stroke,
+      value: name || dataKey,
+      payload: props,
+    },
+  ];
+};
+
+function SetLineLegend(props: Props): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
+  return null;
+}
 
 export class Line extends PureComponent<Props, State> {
   static displayName = 'Line';
@@ -509,6 +530,7 @@ export class Line extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass}>
+        <SetLineLegend {...this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>

@@ -31,6 +31,8 @@ import {
   LayoutType,
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 export type AreaDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
@@ -103,6 +105,29 @@ type AreaComposedData = ChartOffset & {
   layout: LayoutType;
   isRange: boolean;
 };
+
+function getLegendItemColor(stroke: string | undefined, fill: string): string {
+  return stroke && stroke !== 'none' ? stroke : fill;
+}
+
+const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
+  const { dataKey, name, stroke, fill, legendType, hide } = props;
+  return [
+    {
+      inactive: hide,
+      dataKey,
+      type: legendType,
+      color: getLegendItemColor(stroke, fill),
+      value: name || dataKey,
+      payload: props,
+    },
+  ];
+};
+
+function SetAreaLegend(props: Props): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
+  return null;
+}
 
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
@@ -568,6 +593,7 @@ export class Area extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass}>
+        <SetAreaLegend {...this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>

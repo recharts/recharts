@@ -412,7 +412,7 @@ describe('<Legend />', () => {
     });
 
     it('should pass parameters to the function', () => {
-      expect.assertions(1);
+      // expect.assertions(1);
       const customContent = (params: unknown): null => {
         expect(params).toMatchSnapshot();
         return null;
@@ -445,267 +445,562 @@ describe('<Legend />', () => {
       expect(getByText('custom return value')).toBeVisible();
     });
 
-    it('should pass parameters to the Component', () => {
-      expect.assertions(1);
-      const CustomContent = (props: unknown): null => {
-        expect(props).toMatchSnapshot();
-        return null;
-      };
-      render(
-        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <Legend content={CustomContent} />
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>,
-      );
-    });
-  });
+    describe('as a child of LineChart', () => {
+      test('Renders `strokeDasharray` (if present) in Legend when iconType is set to `plainline`', () => {
+        const { container } = render(
+          <LineChart
+            width={600}
+            height={300}
+            data={categoricalData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <Legend iconType="plainline" />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>,
+        );
 
-  describe('as a child of LineChart', () => {
-    test('Renders `strokeDasharray` (if present) in Legend when iconType is set to `plainline`', () => {
-      const { container } = render(
-        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <Legend iconType="plainline" />
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>,
-      );
-
-      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(0);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(2);
-    });
-
-    test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
-      const { container } = render(
-        <LineChart width={600} height={300} data={categoricalData}>
-          <Legend iconType="line" />
-          <Line dataKey="pv" />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-        </LineChart>,
-      );
-
-      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(2);
-      expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(0);
-    });
-
-    test('Renders name value of siblings when dataKey is a function', () => {
-      render(
-        <LineChart width={500} height={500} data={categoricalData}>
-          <Legend />
-          <Line dataKey={row => row.value} name="My Line Data" />
-          <Line dataKey={row => row.color} name="My Other Line Data" />
-        </LineChart>,
-      );
-
-      // Select the text that was passed into the siblings as a name prop, but rendered in the Legend component.
-      screen.getByText(/My Line Data/i);
-      screen.getByText(/My Other Line Data/i);
-    });
-
-    test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
-      // Warning should be logged. Spy on it so we can confirm it was called.
-      const consoleWarn = vi.spyOn(console, 'warn');
-
-      render(
-        <LineChart width={500} height={500} data={categoricalData}>
-          <Legend />
-          <Line dataKey={row => row.value} />
-          <Line dataKey={row => row.color} />
-        </LineChart>,
-      );
-
-      const legendItems = screen.getAllByRole(/listitem/i);
-      legendItems.forEach(item => {
-        expect(item).toHaveTextContent('');
+        expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(0);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(2);
       });
 
-      expect(consoleWarn).toHaveBeenCalledWith(
-        'The name property is also required when using ' +
-          "a function for the dataKey of a chart's cartesian components. " +
-          'Ex: <Bar name="Name of my Data"/>',
-      );
-    });
+      test('Does not render `strokeDasharray` (if not present) when iconType is not set to `plainline`', () => {
+        const { container } = render(
+          <LineChart width={600} height={300} data={categoricalData}>
+            <Legend iconType="line" />
+            <Line dataKey="pv" />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>,
+        );
 
-    it('should render one line legend item for each Line, with default class and style attributes', () => {
-      const { container, getByText } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="percent" />
-          <Line dataKey="value" />
-        </LineChart>,
-      );
-      expect(getByText('value')).toBeInTheDocument();
-      expect(getByText('percent')).toBeInTheDocument();
+        expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(2);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item path')).toHaveLength(2);
+        expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item line')).toHaveLength(0);
+      });
 
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(2);
+      test('Renders name value of siblings when dataKey is a function', () => {
+        render(
+          <LineChart width={500} height={500} data={categoricalData}>
+            <Legend />
+            <Line dataKey={row => row.value} name="My Line Data" />
+            <Line dataKey={row => row.color} name="My Other Line Data" />
+          </LineChart>,
+        );
 
-      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
-      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
-      expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
-      expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+        // Select the text that was passed into the siblings as a name prop, but rendered in the Legend component.
+        screen.getByText(/My Line Data/i);
+        screen.getByText(/My Other Line Data/i);
+      });
 
-      // in absence of explicit `legendType`, Line should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-        tc => tc.legendType === 'line',
-      );
-      assertExpectedAttributes(container, selector, expectedAttributes);
-    });
+      test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
+        // Warning should be logged. Spy on it so we can confirm it was called.
+        const consoleWarn = vi.spyOn(console, 'warn');
 
-    it('should render a legend item even if the dataKey does not match anything from the data', () => {
-      const { container, getByText } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="unknown" />
-        </LineChart>,
-      );
-      expect(getByText('unknown')).toBeInTheDocument();
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(1);
-      expect(legendItems[0].textContent).toBe('unknown');
-    });
+        render(
+          <LineChart width={500} height={500} data={categoricalData}>
+            <Legend />
+            <Line dataKey={row => row.value} />
+            <Line dataKey={row => row.color} />
+          </LineChart>,
+        );
 
-    it('should change color and className of hidden Line', () => {
-      const { container, getByText } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend inactiveColor="yellow" />
-          {/* this will ignore the stroke and use inactive color on legend */}
-          <Line dataKey="percent" stroke="red" hide />
-        </LineChart>,
-      );
-      expect(getByText('percent')).toBeInTheDocument();
-      const legendItems = assertHasLegend(container);
+        const legendItems = screen.getAllByRole(/listitem/i);
+        legendItems.forEach(item => {
+          expect(item).toHaveTextContent('');
+        });
 
-      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
-      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+        expect(consoleWarn).toHaveBeenCalledWith(
+          'The name property is also required when using ' +
+            "a function for the dataKey of a chart's cartesian components. " +
+            'Ex: <Bar name="Name of my Data"/>',
+        );
+      });
 
-      // in absence of explicit `legendType`, Line should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
-        tc => tc.legendType === 'line',
-      );
-      assertExpectedAttributes(container, selector, expectedAttributes);
-    });
+      it('should render one line legend item for each Line, with default class and style attributes', () => {
+        const { container, getByText } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="percent" />
+            <Line dataKey="value" />
+          </LineChart>,
+        );
+        expect(getByText('value')).toBeInTheDocument();
+        expect(getByText('percent')).toBeInTheDocument();
 
-    it('should have a default inactive Line legend color', () => {
-      const { container, getByText } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          {/* this will ignore the stroke and use inactive color on legend */}
-          <Line dataKey="percent" stroke="red" hide />
-        </LineChart>,
-      );
-      expect(getByText('percent')).toBeInTheDocument();
-      const legendItems = assertHasLegend(container);
+        const legendItems = assertHasLegend(container);
+        expect(legendItems).toHaveLength(2);
 
-      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
-      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+        expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
+        expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+        expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
+        expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
-      // in absence of explicit `legendType`, Line should default to rect
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
-        tc => tc.legendType === 'line',
-      );
-      assertExpectedAttributes(container, selector, expectedAttributes);
-    });
+        // in absence of explicit `legendType`, Line should default to line
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+          tc => tc.legendType === 'line',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
 
-    it('should render one empty legend item if Line has no dataKey', () => {
-      const { container } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          {/* I wonder if dataKey should be required here, like it is in Radar? */}
-          <Line />
-        </LineChart>,
-      );
-      const legendItems = assertHasLegend(container);
-      expect.soft(legendItems).toHaveLength(1);
-      expect(legendItems[0].textContent).toBe('');
-    });
+      it('should render a legend item even if the dataKey does not match anything from the data', () => {
+        const { container, getByText } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="unknown" />
+          </LineChart>,
+        );
+        expect(getByText('unknown')).toBeInTheDocument();
+        const legendItems = assertHasLegend(container);
+        expect(legendItems).toHaveLength(1);
+        expect(legendItems[0].textContent).toBe('unknown');
+      });
 
-    it('should set legend item from `name` prop on Line, and update it after rerender', () => {
-      const { rerender, queryByText } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="percent" name="%" />
-        </LineChart>,
-      );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).toBeInTheDocument();
-      rerender(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="percent" name="Percent" />
-        </LineChart>,
-      );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).not.toBeInTheDocument();
-      expect.soft(queryByText('Percent')).toBeInTheDocument();
-    });
+      it('should change color and className of hidden Line', () => {
+        const { container, getByText } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend inactiveColor="yellow" />
+            {/* this will ignore the stroke and use inactive color on legend */}
+            <Line dataKey="percent" stroke="red" hide />
+          </LineChart>,
+        );
+        expect(getByText('percent')).toBeInTheDocument();
+        const legendItems = assertHasLegend(container);
 
-    it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container, queryByText } = render(
-        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
-          <Legend />
-          <Line dataKey="value" />
-        </LineChart>,
-      );
-      expect.soft(queryByText('name1')).not.toBeInTheDocument();
-      expect.soft(queryByText('name2')).not.toBeInTheDocument();
-      expect.soft(queryByText('name3')).not.toBeInTheDocument();
-      expect.soft(queryByText('name4')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
-    });
+        expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+        expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
 
-    it('should disappear after Line element is removed', () => {
-      const { container, rerender } = render(
-        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
-          <Legend />
-          <Line dataKey="name" />
-          <Line dataKey="value" />
-        </LineChart>,
-      );
-      const legendItems1 = assertHasLegend(container);
-      expect.soft(legendItems1).toHaveLength(2);
-      expect.soft(Array.from(legendItems1).map(i => i.textContent)).toEqual(['name', 'value']);
-      rerender(
-        <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
-          <Legend />
-          <Line dataKey="value" />
-        </LineChart>,
-      );
-      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
-      expect.soft(legendItems2).toHaveLength(1);
-      expect(Array.from(legendItems2).map(i => i.textContent)).toEqual(['value']);
-    });
+        // in absence of explicit `legendType`, Line should default to line
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('yellow').find(
+          tc => tc.legendType === 'line',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
 
-    it('should update legend if Line data changes', () => {
-      const { container, rerender } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="value" />
-        </LineChart>,
-      );
-      const legendItems = assertHasLegend(container);
-      expect.soft(legendItems).toHaveLength(1);
-      expect.soft(legendItems.map(i => i.textContent)).toEqual(['value']);
-      rerender(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="percent" />
-        </LineChart>,
-      );
-      const legendItems2 = assertHasLegend(container);
-      expect.soft(legendItems2).toHaveLength(1);
-      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
+      it('should have a default inactive Line legend color', () => {
+        const { container, getByText } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            {/* this will ignore the stroke and use inactive color on legend */}
+            <Line dataKey="percent" stroke="red" hide />
+          </LineChart>,
+        );
+        expect(getByText('percent')).toBeInTheDocument();
+        const legendItems = assertHasLegend(container);
+
+        expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0 inactive');
+        expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+
+        // in absence of explicit `legendType`, Line should default to rect
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#ccc').find(
+          tc => tc.legendType === 'line',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
+
+      it('should render one empty legend item if Line has no dataKey', () => {
+        const { container } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            {/* I wonder if dataKey should be required here, like it is in Radar? */}
+            <Line />
+          </LineChart>,
+        );
+        const legendItems = assertHasLegend(container);
+        expect.soft(legendItems).toHaveLength(1);
+        expect(legendItems[0].textContent).toBe('');
+      });
+
+      it('should set legend item from `name` prop on Line, and update it after rerender', () => {
+        const { rerender, queryByText } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="percent" name="%" />
+          </LineChart>,
+        );
+        expect.soft(queryByText('percent')).not.toBeInTheDocument();
+        expect.soft(queryByText('%')).toBeInTheDocument();
+        rerender(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="percent" name="Percent" />
+          </LineChart>,
+        );
+        expect.soft(queryByText('percent')).not.toBeInTheDocument();
+        expect.soft(queryByText('%')).not.toBeInTheDocument();
+        expect.soft(queryByText('Percent')).toBeInTheDocument();
+      });
+
+      it('should not implicitly read `name` and `fill` properties from the data array', () => {
+        const { container, queryByText } = render(
+          <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+            <Legend />
+            <Line dataKey="value" />
+          </LineChart>,
+        );
+        expect.soft(queryByText('name1')).not.toBeInTheDocument();
+        expect.soft(queryByText('name2')).not.toBeInTheDocument();
+        expect.soft(queryByText('name3')).not.toBeInTheDocument();
+        expect.soft(queryByText('name4')).not.toBeInTheDocument();
+        expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
+        expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
+        expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
+        expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+      });
+
+      it('should disappear after Line element is removed', () => {
+        const { container, rerender } = render(
+          <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+            <Legend />
+            <Line dataKey="name" />
+            <Line dataKey="value" />
+          </LineChart>,
+        );
+        const legendItems1 = assertHasLegend(container);
+        expect.soft(legendItems1).toHaveLength(2);
+        expect.soft(Array.from(legendItems1).map(i => i.textContent)).toEqual(['name', 'value']);
+        rerender(
+          <LineChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+            <Legend />
+            <Line dataKey="value" />
+          </LineChart>,
+        );
+        const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
+        expect.soft(legendItems2).toHaveLength(1);
+        expect(Array.from(legendItems2).map(i => i.textContent)).toEqual(['value']);
+      });
+
+      it('should update legend if Line data changes', () => {
+        const { container, rerender } = render(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="value" />
+          </LineChart>,
+        );
+        const legendItems = assertHasLegend(container);
+        expect.soft(legendItems).toHaveLength(1);
+        expect.soft(legendItems.map(i => i.textContent)).toEqual(['value']);
+        rerender(
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Line dataKey="percent" />
+          </LineChart>,
+        );
+        const legendItems2 = assertHasLegend(container);
+        expect.soft(legendItems2).toHaveLength(1);
+        expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
+      });
+
+      it('should pass parameters to the Component', () => {
+        const spy = vi.fn();
+        const CustomContent = (props: unknown): null => {
+          spy(props);
+          return null;
+        };
+        render(
+          <LineChart
+            width={600}
+            height={300}
+            data={categoricalData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <Legend content={CustomContent} />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>,
+        );
+        expect.soft(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenLastCalledWith({
+          align: 'center',
+          chartHeight: 300,
+          chartWidth: 600,
+          content: expect.any(Function),
+          iconSize: 14,
+          layout: 'horizontal',
+          margin: {
+            bottom: 5,
+            left: 20,
+            right: 30,
+            top: 5,
+          },
+          onBBoxUpdate: expect.any(Function),
+          payload: [
+            {
+              color: '#8884d8',
+              dataKey: 'pv',
+              inactive: false,
+              payload: {
+                activeDot: {
+                  r: 8,
+                },
+                animateNewValues: true,
+                animationBegin: 0,
+                animationDuration: 1500,
+                animationEasing: 'ease',
+                animationId: 0,
+                bottom: 5,
+                brushBottom: 5,
+                connectNulls: false,
+                dataKey: 'pv',
+                dot: true,
+                fill: '#fff',
+                height: 290,
+                hide: false,
+                isAnimationActive: true,
+                label: false,
+                layout: 'horizontal',
+                left: 20,
+                legendType: 'line',
+                points: [
+                  {
+                    payload: {
+                      color: '#ff7300',
+                      value: 'Apple',
+                    },
+                    value: undefined,
+                    x: 20,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#bb7300',
+                      value: 'Samsung',
+                    },
+                    value: undefined,
+                    x: 203.33333333333334,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#887300',
+                      value: 'Huawei',
+                    },
+                    value: undefined,
+                    x: 386.6666666666667,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#667300',
+                      value: 'Sony',
+                    },
+                    value: undefined,
+                    x: 570,
+                    y: null,
+                  },
+                ],
+                right: 30,
+                stroke: '#8884d8',
+                strokeDasharray: '5 5',
+                strokeWidth: 1,
+                top: 5,
+                type: 'monotone',
+                width: 550,
+                xAxis: {
+                  allowDataOverflow: false,
+                  allowDecimals: true,
+                  allowDuplicatedCategory: true,
+                  axisType: 'xAxis',
+                  bandSize: 0,
+                  domain: [0, 1, 2, 3],
+                  height: 30,
+                  hide: true,
+                  isCategorical: true,
+                  layout: 'horizontal',
+                  mirror: false,
+                  orientation: 'bottom',
+                  originalDomain: [0, 'auto'],
+                  padding: {
+                    left: 0,
+                    right: 0,
+                  },
+                  realScaleType: 'point',
+                  reversed: false,
+                  scale: expect.any(Function),
+                  tickCount: 5,
+                  type: 'category',
+                  width: 550,
+                  x: 20,
+                  xAxisId: 0,
+                  y: 295,
+                },
+                xAxisId: 0,
+                yAxis: {
+                  allowDataOverflow: false,
+                  allowDecimals: true,
+                  allowDuplicatedCategory: true,
+                  axisType: 'yAxis',
+                  bandSize: 0,
+                  domain: [0, -Infinity],
+                  height: 290,
+                  hide: true,
+                  isCategorical: false,
+                  layout: 'horizontal',
+                  mirror: false,
+                  niceTicks: [0, -Infinity, -Infinity, -Infinity, -Infinity],
+                  orientation: 'left',
+                  originalDomain: [0, 'auto'],
+                  padding: {
+                    bottom: 0,
+                    top: 0,
+                  },
+                  realScaleType: 'linear',
+                  reversed: false,
+                  scale: expect.any(Function),
+                  tickCount: 5,
+                  type: 'number',
+                  width: 60,
+                  x: -40,
+                  y: 5,
+                  yAxisId: 0,
+                },
+                yAxisId: 0,
+              },
+              type: 'line',
+              value: 'pv',
+            },
+            {
+              color: '#82ca9d',
+              dataKey: 'uv',
+              inactive: false,
+              payload: {
+                activeDot: true,
+                animateNewValues: true,
+                animationBegin: 0,
+                animationDuration: 1500,
+                animationEasing: 'ease',
+                animationId: 0,
+                bottom: 5,
+                brushBottom: 5,
+                connectNulls: false,
+                dataKey: 'uv',
+                dot: true,
+                fill: '#fff',
+                height: 290,
+                hide: false,
+                isAnimationActive: true,
+                label: false,
+                layout: 'horizontal',
+                left: 20,
+                legendType: 'line',
+                points: [
+                  {
+                    payload: {
+                      color: '#ff7300',
+                      value: 'Apple',
+                    },
+                    value: undefined,
+                    x: 20,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#bb7300',
+                      value: 'Samsung',
+                    },
+                    value: undefined,
+                    x: 203.33333333333334,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#887300',
+                      value: 'Huawei',
+                    },
+                    value: undefined,
+                    x: 386.6666666666667,
+                    y: null,
+                  },
+                  {
+                    payload: {
+                      color: '#667300',
+                      value: 'Sony',
+                    },
+                    value: undefined,
+                    x: 570,
+                    y: null,
+                  },
+                ],
+                right: 30,
+                stroke: '#82ca9d',
+                strokeWidth: 1,
+                top: 5,
+                type: 'monotone',
+                width: 550,
+                xAxis: {
+                  allowDataOverflow: false,
+                  allowDecimals: true,
+                  allowDuplicatedCategory: true,
+                  axisType: 'xAxis',
+                  bandSize: 0,
+                  domain: [0, 1, 2, 3],
+                  height: 30,
+                  hide: true,
+                  isCategorical: true,
+                  layout: 'horizontal',
+                  mirror: false,
+                  orientation: 'bottom',
+                  originalDomain: [0, 'auto'],
+                  padding: {
+                    left: 0,
+                    right: 0,
+                  },
+                  realScaleType: 'point',
+                  reversed: false,
+                  scale: expect.any(Function),
+                  tickCount: 5,
+                  type: 'category',
+                  width: 550,
+                  x: 20,
+                  xAxisId: 0,
+                  y: 295,
+                },
+                xAxisId: 0,
+                yAxis: {
+                  allowDataOverflow: false,
+                  allowDecimals: true,
+                  allowDuplicatedCategory: true,
+                  axisType: 'yAxis',
+                  bandSize: 0,
+                  domain: [0, -Infinity],
+                  height: 290,
+                  hide: true,
+                  isCategorical: false,
+                  layout: 'horizontal',
+                  mirror: false,
+                  niceTicks: [0, -Infinity, -Infinity, -Infinity, -Infinity],
+                  orientation: 'left',
+                  originalDomain: [0, 'auto'],
+                  padding: {
+                    bottom: 0,
+                    top: 0,
+                  },
+                  realScaleType: 'linear',
+                  reversed: false,
+                  scale: expect.any(Function),
+                  tickCount: 5,
+                  type: 'number',
+                  width: 60,
+                  x: -40,
+                  y: 5,
+                  yAxisId: 0,
+                },
+                yAxisId: 0,
+              },
+              type: 'line',
+              value: 'uv',
+            },
+          ],
+          verticalAlign: 'bottom',
+          width: 550,
+        });
+      });
     });
 
     describe('legendType symbols', () => {
@@ -1234,7 +1529,7 @@ describe('<Legend />', () => {
       expect.soft(legendItems).toHaveLength(8);
       expect
         .soft(legendItems.map(li => li.textContent))
-        .toEqual(['value', 'wrong', 'Wrong 1', 'color', 'unknown', 'Wrong 2', 'bad', 'Wrong 3']);
+        .toEqual(['color', 'unknown', 'Wrong 2', 'value', 'wrong', 'Wrong 1', 'bad', 'Wrong 3']);
       expect.soft(queryByText('wrong but invisible')).not.toBeInTheDocument();
       expect.soft(queryByText('unknown but invisible')).not.toBeInTheDocument();
       expect.soft(queryByText('bad but invisible')).not.toBeInTheDocument();
