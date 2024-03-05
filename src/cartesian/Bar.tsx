@@ -40,6 +40,8 @@ import {
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -109,6 +111,25 @@ type BarComposedData = ChartOffset & {
   layout: LayoutType;
   data: BarRectangleItem[];
 };
+
+const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => {
+  const { dataKey, name, fill, legendType, hide } = props;
+  return [
+    {
+      inactive: hide,
+      dataKey,
+      type: legendType,
+      color: fill,
+      value: name || dataKey,
+      payload: props,
+    },
+  ];
+};
+
+function SetBarLegend(props: Props): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromBarData, props);
+  return null;
+}
 
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
@@ -487,6 +508,7 @@ export class Bar extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass}>
+        <SetBarLegend {...this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
