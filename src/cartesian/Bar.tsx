@@ -496,7 +496,7 @@ export class Bar extends PureComponent<Props, State> {
     const { hide, data, className, xAxis, yAxis, left, top, width, height, isAnimationActive, background, id } =
       this.props;
     if (hide || !data || !data.length) {
-      return null;
+      return <SetBarLegend {...this.props} />;
     }
 
     const { isAnimationFinished } = this.state;

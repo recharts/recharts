@@ -577,7 +577,7 @@ export class Area extends PureComponent<Props, State> {
     const { hide, dot, points, className, top, left, xAxis, yAxis, width, height, isAnimationActive, id } = this.props;
 
     if (hide || !points || !points.length) {
-      return null;
+      return <SetAreaLegend {...this.props} />;
     }
 
     const { isAnimationFinished } = this.state;
