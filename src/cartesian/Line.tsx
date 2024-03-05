@@ -514,7 +514,7 @@ export class Line extends PureComponent<Props, State> {
     const { hide, dot, points, className, xAxis, yAxis, top, left, width, height, isAnimationActive, id } = this.props;
 
     if (hide || !points || !points.length) {
-      return null;
+      return <SetLineLegend {...this.props} />;
     }
 
     const { isAnimationFinished } = this.state;

@@ -2263,7 +2263,7 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of ScatterChart', () => {
-    it('should render one legend item for each Radar', () => {
+    it('should render one legend item for each Scatter', () => {
       const { container, getByText } = render(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend />
