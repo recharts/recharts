@@ -1645,9 +1645,11 @@ describe('<Legend />', () => {
       );
       const legendItems = assertHasLegend(container);
       expect.soft(legendItems).toHaveLength(8);
-      expect
-        .soft(legendItems.map(li => li.textContent))
-        .toEqual(['color', 'unknown', 'Wrong 2', 'value', 'wrong', 'Wrong 1', 'bad', 'Wrong 3']);
+      const allLabelTextContexts = legendItems.map(li => li.textContent);
+      const allExpectedLabels = ['color', 'unknown', 'Wrong 2', 'value', 'wrong', 'Wrong 1', 'bad', 'Wrong 3'];
+      expect.soft(allLabelTextContexts).toHaveLength(allExpectedLabels.length);
+      // This is not testing the order of labels on purpose - Recharts does not promise they will come in any given order.
+      allExpectedLabels.forEach(label => expect.soft(allLabelTextContexts).toContain(label));
       expect.soft(queryByText('wrong but invisible')).not.toBeInTheDocument();
       expect.soft(queryByText('unknown but invisible')).not.toBeInTheDocument();
       expect.soft(queryByText('bad but invisible')).not.toBeInTheDocument();
