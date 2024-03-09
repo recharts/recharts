@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, Mock } from 'vitest';
 import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps, XAxis, YAxis } from '../../src';
@@ -33,6 +33,7 @@ describe('<PieChart />', () => {
 
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(1);
   });
+
   test('Renders 6 sectors circles in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
@@ -50,9 +51,7 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    waitFor(() => {
-      expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
-    });
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
   });
 
   test('Renders 6 sectors circles in simple PieChart with animation', () => {
@@ -181,7 +180,7 @@ describe('<PieChart />', () => {
     expect(activeSector).toHaveLength(1);
   });
 
-  test('Renders 6 sectors circles when add Cell to specified props of eact slice', () => {
+  test('Renders 6 sectors circles when add Cell to specified props of each slice', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie dataKey="value" isAnimationActive={false} cx={200} cy={200} outerRadius={80} fill="#ff7300" label>

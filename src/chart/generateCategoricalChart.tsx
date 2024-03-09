@@ -852,7 +852,6 @@ export const generateCategoricalChart = ({
   defaultTooltipEventType = 'axis',
   validateTooltipEventTypes = ['axis'],
   axisComponents,
-  legendContent,
   formatAxisMap,
   defaultProps,
 }: CategoricalChartOptions) => {
@@ -1826,15 +1825,12 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
-      const { formattedGraphicalItems } = this.state;
       const { children, width, height } = this.props;
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
         children,
-        formattedGraphicalItems,
         legendWidth,
-        legendContent,
       });
 
       if (!props) {

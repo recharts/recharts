@@ -45,6 +45,9 @@ interface InternalProps {
   layout?: LayoutType;
   align?: HorizontalAlignmentType;
   verticalAlign?: VerticalAlignmentType;
+  /**
+   * @deprecated Legend.payload prop is not doing anything. Legend is set from data on other graphical elements like Bar, Line, and Area.
+   */
   payload?: Array<Payload>;
   inactiveColor?: string;
   formatter?: Formatter;

@@ -12,7 +12,6 @@ export const PieChart = generateCategoricalChart({
   GraphicalChild: Pie,
   validateTooltipEventTypes: ['item'],
   defaultTooltipEventType: 'item',
-  legendContent: 'children',
   axisComponents: [
     { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
     { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },

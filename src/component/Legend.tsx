@@ -12,9 +12,7 @@ function defaultUniqBy(entry: Payload) {
 
 function LegendContent(props: Props) {
   const contextPayload = useLegendPayload();
-  // We are in the process of refactoring all charts to Context; once that's done we can get rid of props.payload.
-  const preferredPayload = contextPayload.length > 0 ? contextPayload : props.payload;
-  const finalPayload = getUniqPayload(preferredPayload, props.payloadUniqBy, defaultUniqBy);
+  const finalPayload = getUniqPayload(contextPayload, props.payloadUniqBy, defaultUniqBy);
   const contentProps = {
     ...props,
     payload: finalPayload,
