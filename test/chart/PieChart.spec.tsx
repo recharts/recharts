@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, Mock } from 'vitest';
 import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps, XAxis, YAxis } from '../../src';
