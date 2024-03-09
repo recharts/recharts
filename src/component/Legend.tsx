@@ -106,7 +106,8 @@ export class Legend extends PureComponent<Props, State> {
 
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
       const box = this.wrapperNode.getBoundingClientRect();
-
+      box.height = this.wrapperNode.offsetHeight;
+      box.width = this.wrapperNode.offsetWidth;
       if (
         Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
         Math.abs(box.height - this.lastBoundingBox.height) > EPS
