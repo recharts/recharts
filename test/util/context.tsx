@@ -67,7 +67,7 @@ export function testChartLayoutContext(
          * other than rendering it as string and then parsing back:
          * https://testing-library.com/docs/example-react-context/
          *
-         * Good news is, we can workaround with using the `content` prop in Tooltip
+         * Good news is, we can work around with using the `content` prop in Tooltip
          * which happens to do exactly what we need for this test:
          * renders arbitrary components directly to DOM. Yay.
          *
