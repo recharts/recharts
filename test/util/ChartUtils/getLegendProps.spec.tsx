@@ -1,10 +1,9 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { vi } from 'vitest';
 import { getLegendProps } from '../../../src/util/ChartUtils';
 import { findChildByType } from '../../../src/util/ReactUtils';
 import { Legend } from '../../../src/component/Legend';
 import { assertNotNull } from '../../helper/assertNotNull';
-import { LegendPropsGraphicalItemInput } from '../../../src/util/getLegendProps';
 
 vi.mock('../../../src/util/ReactUtils');
 
@@ -18,20 +17,6 @@ function mockDomElement(item: ReactNode) {
 function createChildren(...nodes: ReactNode[]): ReactNode[] {
   mockDomElement(nodes[0]);
   return nodes;
-}
-
-function createFormattedGraphicalItem({
-  props,
-  itemProps,
-}: {
-  props: LegendPropsGraphicalItemInput['props'];
-  itemProps: LegendPropsGraphicalItemInput['item']['props'];
-}): LegendPropsGraphicalItemInput {
-  return {
-    props,
-    childIndex: 0,
-    item: <Legend {...itemProps} />,
-  };
 }
 
 describe('getLegendProps', () => {
@@ -126,12 +111,6 @@ describe('getLegendProps', () => {
   describe('payload defined in props', () => {
     it('should pass it through unchanged', () => {
       const item = { props: { payload: ['defined'] } };
-      const result = getLegendProps({ children: createChildren(item), legendWidth: 0 });
-      assertNotNull(result);
-      expect(result.payload).toBe(item.props.payload);
-    });
-    it('should pass it through unchanged even if legendContent ==="children"', () => {
-      const item = { props: { legendContent: 'children', payload: ['defined'] } };
       const result = getLegendProps({ children: createChildren(item), legendWidth: 0 });
       assertNotNull(result);
       expect(result.payload).toBe(item.props.payload);

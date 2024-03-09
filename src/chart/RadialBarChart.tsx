@@ -10,7 +10,6 @@ import { RadialBar } from '../polar/RadialBar';
 export const RadialBarChart = generateCategoricalChart({
   chartName: 'RadialBarChart',
   GraphicalChild: RadialBar,
-  legendContent: 'children',
   defaultTooltipEventType: 'axis',
   validateTooltipEventTypes: ['axis', 'item'],
   axisComponents: [
