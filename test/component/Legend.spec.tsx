@@ -20,6 +20,8 @@ import {
   Scatter,
   ScatterChart,
 } from '../../src';
+import { testChartLayoutContext } from '../util/context';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -1206,6 +1208,125 @@ describe('<Legend />', () => {
       const legendItems2 = assertHasLegend(container);
       expect.soft(legendItems2).toHaveLength(1);
       expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
+    });
+
+    describe('offset calculation', () => {
+      it('should reduce vertical offset by the height of legend', () => {
+        mockGetBoundingClientRect({
+          height: 13,
+          width: 17,
+        });
+        const spy = vi.fn();
+        testChartLayoutContext(
+          props => (
+            <BarChart width={500} height={500} data={categoricalData}>
+              {props.children}
+              <Legend layout="horizontal" width={200} />
+              <Bar dataKey="value" />
+            </BarChart>
+          ),
+          ({ offset }) => {
+            spy(offset);
+          },
+        )();
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({
+          brushBottom: 5,
+          top: 5,
+          bottom: 5 + 13,
+          left: 5,
+          right: 5,
+          width: 490,
+          height: 490 - 13,
+        });
+      });
+      it('should ignore height of legend if it has verticalAlign == middle', () => {
+        mockGetBoundingClientRect({
+          height: 13,
+          width: 17,
+        });
+        const spy = vi.fn();
+        testChartLayoutContext(
+          props => (
+            <BarChart width={500} height={500} data={categoricalData}>
+              {props.children}
+              <Legend layout="horizontal" verticalAlign="middle" width={200} />
+              <Bar dataKey="value" />
+            </BarChart>
+          ),
+          ({ offset }) => {
+            spy(offset);
+          },
+        )();
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({
+          brushBottom: 5,
+          top: 5,
+          bottom: 5,
+          left: 5,
+          right: 5,
+          width: 490,
+          height: 490,
+        });
+      });
+      it('should reduce vertical offset by the width of vertical legend', () => {
+        mockGetBoundingClientRect({
+          height: 13,
+          width: 17,
+        });
+        const spy = vi.fn();
+        testChartLayoutContext(
+          props => (
+            <BarChart width={500} height={500} data={categoricalData}>
+              {props.children}
+              <Legend layout="vertical" align="left" width={200} />
+              <Bar dataKey="value" />
+            </BarChart>
+          ),
+          ({ offset }) => {
+            spy(offset);
+          },
+        )();
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({
+          brushBottom: 5,
+          top: 5,
+          bottom: 5,
+          left: 5 + 17,
+          right: 5,
+          width: 490 - 17,
+          height: 490,
+        });
+      });
+      it('should ignore width of vertical legend if it has align == center', () => {
+        mockGetBoundingClientRect({
+          height: 13,
+          width: 17,
+        });
+        const spy = vi.fn();
+        testChartLayoutContext(
+          props => (
+            <BarChart width={500} height={500} data={categoricalData}>
+              {props.children}
+              <Legend layout="vertical" align="center" width={200} />
+              <Bar dataKey="value" />
+            </BarChart>
+          ),
+          ({ offset }) => {
+            spy(offset);
+          },
+        )();
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({
+          brushBottom: 5,
+          top: 5,
+          bottom: 5 + 13,
+          left: 5,
+          right: 5,
+          width: 490,
+          height: 490 - 13,
+        });
+      });
     });
 
     describe('legendType symbols', () => {
