@@ -1,21 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { vi } from 'vitest';
 import { Surface, Text } from '../../src';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('<Text />', () => {
-  const mock = {
-    x: 200,
-    y: 100,
+  const mockRect = {
     width: 25,
     height: 17,
-    top: 10,
-    right: 10,
-    bottom: 10,
-    left: 10,
-    toJSON: vi.fn(),
   };
-  Element.prototype.getBoundingClientRect = vi.fn(() => mock);
+  beforeAll(() => mockGetBoundingClientRect(mockRect));
 
   test('Does not wrap long text if enough width', () => {
     render(
@@ -47,7 +40,7 @@ describe('<Text />', () => {
   });
 
   test('Wraps long text if styled but would have had enough room', () => {
-    Element.prototype.getBoundingClientRect = vi.fn(() => ({ ...mock, width: 40 }));
+    mockGetBoundingClientRect({ ...mockRect, width: 40 });
     render(
       <Surface width={300} height={200}>
         <Text role="img" width={300} style={{ fontSize: '2em', fontFamily: 'Courier' }}>
