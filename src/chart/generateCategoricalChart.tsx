@@ -2092,40 +2092,6 @@ export const generateCategoricalChart = ({
       );
     }
 
-    public getXScales() {
-      const { xAxisMap } = this.state;
-
-      return xAxisMap
-        ? Object.entries(xAxisMap).reduce(
-            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
-            },
-            {},
-          )
-        : null;
-    }
-
-    public getYScales() {
-      const { yAxisMap } = this.state;
-
-      return yAxisMap
-        ? Object.entries(yAxisMap).reduce(
-            (res: Record<string, Function>, [axisId, axisProps]: [string, BaseAxisProps]) => {
-              return { ...res, [axisId]: (axisProps as BaseAxisProps).scale };
-            },
-            {},
-          )
-        : null;
-    }
-
-    public getXScaleByAxisId(axisId: string) {
-      return this.state.xAxisMap?.[axisId]?.scale;
-    }
-
-    public getYScaleByAxisId(axisId: string) {
-      return this.state.yAxisMap?.[axisId]?.scale;
-    }
-
     public getItemByXY(chartXY: { x: number; y: number }) {
       const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
