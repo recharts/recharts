@@ -1740,6 +1740,14 @@ export const generateCategoricalChart = ({
       }
     };
 
+    /**
+     * Only used by renderGraphicChild.
+     * @deprecated use a Context-based approach instead
+     * @param item do not use
+     * @param displayName do not use
+     * @param childIndex do not use
+     * @returns do not use
+     */
     filterFormatItem(item: any, displayName: any, childIndex: any) {
       const { formattedGraphicalItems } = this.state;
 
