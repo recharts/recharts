@@ -95,19 +95,18 @@ export class Legend extends PureComponent<Props, State> {
 
   public getBBox() {
     if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      return this.wrapperNode.getBoundingClientRect();
+      const box = this.wrapperNode.getBoundingClientRect();
+      box.height = this.wrapperNode.offsetHeight;
+      box.width = this.wrapperNode.offsetWidth;
+      return box;
     }
-
     return null;
   }
 
   private updateBBox() {
     const { onBBoxUpdate } = this.props;
-
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-      box.height = this.wrapperNode.offsetHeight;
-      box.width = this.wrapperNode.offsetWidth;
+    const box = this.getBBox();
+    if (box) {
       if (
         Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
         Math.abs(box.height - this.lastBoundingBox.height) > EPS
