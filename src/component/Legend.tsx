@@ -98,14 +98,6 @@ export class Legend extends PureComponent<Props, State> {
     this.updateBBox();
   }
 
-  public getBBox() {
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      return this.wrapperNode.getBoundingClientRect();
-    }
-
-    return null;
-  }
-
   private updateBBox() {
     const { onBBoxUpdate } = this.props;
 
