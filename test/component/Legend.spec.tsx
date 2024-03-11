@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import {
@@ -8,6 +8,7 @@ import {
   BarChart,
   ComposedChart,
   Legend,
+  LegendProps,
   LegendType,
   Line,
   LineChart,
@@ -1208,6 +1209,327 @@ describe('<Legend />', () => {
       const legendItems2 = assertHasLegend(container);
       expect.soft(legendItems2).toHaveLength(1);
       expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
+    });
+
+    describe('wrapper props', () => {
+      it('should provide default props', () => {
+        const { container } = render(
+          <BarChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Bar dataKey="value" />
+          </BarChart>,
+        );
+        const wrapper = container.querySelector('.recharts-legend-wrapper');
+        expect(wrapper).toBeInTheDocument();
+        expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+        expect
+          .soft(wrapper.getAttribute('style'))
+          .toBe('position: absolute; width: 490px; height: auto; left: 5px; bottom: 5px;');
+      });
+
+      it('should change width and height based on chart width and height and margin and bounding box size', () => {
+        mockGetBoundingClientRect({
+          width: 3,
+          height: 5,
+        });
+        const { container } = render(
+          <BarChart width={300} height={200} margin={{ top: 11, right: 13, left: 17, bottom: 19 }} data={numericalData}>
+            <Legend />
+            <Bar dataKey="value" />
+          </BarChart>,
+        );
+        const wrapper = container.querySelector('.recharts-legend-wrapper');
+        expect(wrapper).toBeInTheDocument();
+        expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+        expect
+          .soft(wrapper.getAttribute('style'))
+          .toBe('position: absolute; width: 270px; height: auto; left: 17px; bottom: 19px;');
+      });
+
+      it('should append wrapperStyle', () => {
+        const { container } = render(
+          <BarChart width={500} height={500} data={numericalData}>
+            <Legend wrapperStyle={{ backgroundColor: 'red' }} />
+            <Bar dataKey="value" />
+          </BarChart>,
+        );
+        const wrapper = container.querySelector('.recharts-legend-wrapper');
+        expect(wrapper).toBeInTheDocument();
+        expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+        expect
+          .soft(wrapper.getAttribute('style'))
+          .toBe('position: absolute; width: 490px; height: auto; left: 5px; bottom: 5px; background-color: red;');
+      });
+
+      const wrapperStyleTestCases: ReadonlyArray<{
+        wrapperStyle: CSSProperties;
+        align?: LegendProps['align'];
+        name: string;
+        expectedStyle: string;
+      }> = [
+        {
+          wrapperStyle: { left: '31px', right: '33px', bottom: '37px', top: '41px' },
+          name: 'all provided',
+          expectedStyle:
+            'position: absolute; width: 470px; height: auto; left: 31px; right: 33px; bottom: 37px; top: 41px;',
+        },
+        {
+          wrapperStyle: { left: '31px', right: '33px', bottom: '37px' },
+          name: 'missing top',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 31px; right: 33px; bottom: 37px;',
+        },
+        {
+          wrapperStyle: { left: '31px', right: '33px', top: '41px' },
+          name: 'missing bottom',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 31px; right: 33px; top: 41px;',
+        },
+        {
+          wrapperStyle: { left: '31px', right: '33px' },
+          name: 'missing top and bottom',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; bottom: 19px; left: 31px; right: 33px;',
+        },
+        {
+          wrapperStyle: { left: '31px', bottom: '37px', top: '41px' },
+          name: 'missing right',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 31px; bottom: 37px; top: 41px;',
+        },
+        {
+          wrapperStyle: { right: '33px', bottom: '37px', top: '41px' },
+          name: 'missing left',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 33px; bottom: 37px; top: 41px;',
+        },
+        {
+          wrapperStyle: { left: '31px', bottom: '37px', top: '41px' },
+          align: 'right',
+          name: 'missing right, align right',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 31px; bottom: 37px; top: 41px;',
+        },
+        {
+          wrapperStyle: { bottom: '37px', top: '41px' },
+          name: 'missing left and right',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 37px; top: 41px;',
+        },
+      ];
+      test.each(wrapperStyleTestCases)(
+        'should calculate position if wrapperStyle is $name',
+        ({ wrapperStyle, align, expectedStyle }) => {
+          const { container } = render(
+            <BarChart
+              width={500}
+              height={500}
+              margin={{ top: 11, right: 13, left: 17, bottom: 19 }}
+              data={numericalData}
+            >
+              <Legend wrapperStyle={wrapperStyle} align={align} />
+              <Bar dataKey="value" />
+            </BarChart>,
+          );
+          const wrapper = container.querySelector('.recharts-legend-wrapper');
+          expect(wrapper).toBeInTheDocument();
+          expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+          expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+          expect.soft(wrapper.getAttribute('style')).toBe(expectedStyle);
+        },
+      );
+
+      type LegendPositionTextCase = {
+        align: LegendProps['align'];
+        verticalAlign: LegendProps['verticalAlign'];
+        layout: LegendProps['layout'];
+        expectedStyle: string;
+        expectedStyleOnSecondRender: string;
+      };
+
+      const layoutPositionCartesianTests: ReadonlyArray<LegendPositionTextCase> = [
+        {
+          align: 'center',
+          verticalAlign: 'top',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'top',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'top',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; top: 11px;',
+        },
+        {
+          align: 'center',
+          verticalAlign: 'bottom',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'bottom',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'bottom',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; bottom: 19px;',
+        },
+        {
+          align: 'center',
+          verticalAlign: 'middle',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 335.5px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'middle',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 335.5px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'middle',
+          layout: 'horizontal',
+          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; top: 335.5px;',
+        },
+        {
+          align: 'center',
+          verticalAlign: 'top',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; top: 11px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'top',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; top: 11px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'top',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; top: 11px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; top: 11px;',
+        },
+        {
+          align: 'center',
+          verticalAlign: 'bottom',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; bottom: 19px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'bottom',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; bottom: 19px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'bottom',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; bottom: 19px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; bottom: 19px;',
+        },
+        {
+          align: 'center',
+          verticalAlign: 'middle',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; top: 335.5px;',
+        },
+        {
+          align: 'left',
+          verticalAlign: 'middle',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; top: 335.5px;',
+        },
+        {
+          align: 'right',
+          verticalAlign: 'middle',
+          layout: 'vertical',
+          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; top: 350px;',
+          expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; top: 335.5px;',
+        },
+      ];
+      test('test cases should be complete and unique', () => {
+        const horizontalAlignmentVariants = 3;
+        const verticalAlignmentVariants = 3;
+        const layoutVariants = 2; // polar variants do not make sense for cartesian chart
+        expect
+          .soft(layoutPositionCartesianTests)
+          .toHaveLength(horizontalAlignmentVariants * verticalAlignmentVariants * layoutVariants);
+        const set = new Set(
+          layoutPositionCartesianTests.map(({ align, verticalAlign, layout }) => align + verticalAlign + layout),
+        );
+        expect(set.size).toEqual(layoutPositionCartesianTests.length);
+      });
+
+      test.each(layoutPositionCartesianTests)(
+        'should calculate position for align=$align, verticalAlign=$verticalAlign, layout=$layout',
+        ({ align, verticalAlign, layout, expectedStyle, expectedStyleOnSecondRender }) => {
+          mockGetBoundingClientRect({
+            width: 23,
+            height: 29,
+          });
+          const { container, rerender } = render(
+            <BarChart
+              width={500}
+              height={700}
+              margin={{ top: 11, right: 13, left: 17, bottom: 19 }}
+              data={numericalData}
+            >
+              <Legend align={align} verticalAlign={verticalAlign} layout={layout} />
+              <Bar dataKey="value" />
+            </BarChart>,
+          );
+          const wrapper = container.querySelector('.recharts-legend-wrapper');
+          expect(wrapper).toBeInTheDocument();
+          expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+          expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+          expect.soft(wrapper.getAttribute('style')).toBe(expectedStyle);
+          /*
+           * Because the bounding box is set as a class property instead of a state,
+           * reading the legend width and height does not trigger re-render!
+           * Instead we have to trigger manually here.
+           */
+          rerender(
+            <BarChart
+              width={500}
+              height={700}
+              margin={{ top: 11, right: 13, left: 17, bottom: 19 }}
+              data={numericalData}
+            >
+              <Legend align={align} verticalAlign={verticalAlign} layout={layout} />
+              <Bar dataKey="value" />
+            </BarChart>,
+          );
+          const wrapper2 = container.querySelector('.recharts-legend-wrapper');
+          expect(wrapper2).toBeInTheDocument();
+          expect.soft(wrapper2.getAttributeNames()).toEqual(['class', 'style']);
+          expect.soft(wrapper2.getAttribute('class')).toBe('recharts-legend-wrapper');
+          expect.soft(wrapper2.getAttribute('style')).toBe(expectedStyleOnSecondRender);
+        },
+      );
     });
 
     describe('offset calculation', () => {
