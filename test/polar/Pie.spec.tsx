@@ -416,10 +416,8 @@ describe('<Pie />', () => {
       </Surface>,
     );
 
-    setTimeout(() => {
-      expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
-      expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
-    }, 1000);
+    expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
+    expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
   });
 
   test('Render customized label when label is set to be a react element', () => {
