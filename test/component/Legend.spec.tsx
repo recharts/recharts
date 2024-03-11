@@ -2,8 +2,18 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { Legend, LineChart, Line } from '../../src';
+import { mockGetBoundingClientRect, mockHTMLElementProperty } from '../helper/elementMockHelper';
 
 describe('<Legend />', () => {
+  const mockRect = {
+    width: 300,
+    height: 30,
+  };
+  const scale = 2;
+  beforeAll(() => mockGetBoundingClientRect(mockRect));
+  beforeAll(() => mockHTMLElementProperty('offsetHeight', mockRect.height * scale));
+  beforeAll(() => mockHTMLElementProperty('offsetWidth', mockRect.width * scale));
+
   const data = [
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
@@ -110,5 +120,11 @@ describe('<Legend />', () => {
         "a function for the dataKey of a chart's cartesian components. " +
         'Ex: <Bar name="Name of my Data"/>',
     );
+  });
+  test('it should get the correct BBox when scale', () => {
+    const handleUpdate = vi.fn();
+    render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
+    expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
+    expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
   });
 });
