@@ -382,12 +382,13 @@ describe('<Tooltip />', () => {
 
       const chart = container.querySelector('.recharts-wrapper');
 
+      expect(chart).not.toBeNull();
       // Page E
-      fireEvent.mouseOver(chart!, { clientX: 325, clientY: 200 });
+      fireEvent.mouseOver(chart, { clientX: 325, clientY: 200 });
       expect(tooltipPayload).toHaveLength(2);
 
       // Page F, ignores null
-      fireEvent.mouseOver(chart!, { clientX: 375, clientY: 200 });
+      fireEvent.mouseOver(chart, { clientX: 375, clientY: 200 });
       expect(tooltipPayload).toHaveLength(1);
       expect(tooltipPayload[0].payload.name).toBe('Page F');
     });
