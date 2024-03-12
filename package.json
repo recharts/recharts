@@ -99,7 +99,7 @@
     "@storybook/react": "^7.6.14",
     "@storybook/react-webpack5": "^7.6.14",
     "@storybook/source-loader": "^7.6.14",
-    "@storybook/test-runner": "^0.16.0",
+    "@storybook/test-runner": "^0.17.0",
     "@storybook/testing-library": "^0.2.2",
     "@storybook/theming": "^7.6.14",
     "@stryker-mutator/typescript-checker": "^8.2.6",
