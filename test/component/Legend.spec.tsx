@@ -1426,7 +1426,6 @@ describe('<Legend />', () => {
         align: LegendProps['align'];
         verticalAlign: LegendProps['verticalAlign'];
         layout: LegendProps['layout'];
-        expectedStyle: string;
         expectedStyleOnSecondRender: string;
       };
 
@@ -1435,126 +1434,108 @@ describe('<Legend />', () => {
           align: 'center',
           verticalAlign: 'top',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
         },
         {
           align: 'left',
           verticalAlign: 'top',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 11px;',
         },
         {
           align: 'right',
           verticalAlign: 'top',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; top: 11px;',
         },
         {
           align: 'center',
           verticalAlign: 'bottom',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
         },
         {
           align: 'left',
           verticalAlign: 'bottom',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; bottom: 19px;',
         },
         {
           align: 'right',
           verticalAlign: 'bottom',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; bottom: 19px;',
         },
         {
           align: 'center',
           verticalAlign: 'middle',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 335.5px;',
         },
         {
           align: 'left',
           verticalAlign: 'middle',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; left: 17px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; left: 17px; top: 335.5px;',
         },
         {
           align: 'right',
           verticalAlign: 'middle',
           layout: 'horizontal',
-          expectedStyle: 'position: absolute; width: 470px; height: auto; right: 13px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: 470px; height: auto; right: 13px; top: 335.5px;',
         },
         {
           align: 'center',
           verticalAlign: 'top',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; top: 11px;',
         },
         {
           align: 'left',
           verticalAlign: 'top',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; top: 11px;',
         },
         {
           align: 'right',
           verticalAlign: 'top',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; top: 11px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; top: 11px;',
         },
         {
           align: 'center',
           verticalAlign: 'bottom',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; bottom: 19px;',
         },
         {
           align: 'left',
           verticalAlign: 'bottom',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; bottom: 19px;',
         },
         {
           align: 'right',
           verticalAlign: 'bottom',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; bottom: 19px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; bottom: 19px;',
         },
         {
           align: 'center',
           verticalAlign: 'middle',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 250px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 238.5px; top: 335.5px;',
         },
         {
           align: 'left',
           verticalAlign: 'middle',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; left: 17px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; left: 17px; top: 335.5px;',
         },
         {
           align: 'right',
           verticalAlign: 'middle',
           layout: 'vertical',
-          expectedStyle: 'position: absolute; width: auto; height: auto; right: 13px; top: 350px;',
           expectedStyleOnSecondRender: 'position: absolute; width: auto; height: auto; right: 13px; top: 335.5px;',
         },
       ];
@@ -1573,7 +1554,7 @@ describe('<Legend />', () => {
 
       test.each(layoutPositionCartesianTests)(
         'should calculate position for align=$align, verticalAlign=$verticalAlign, layout=$layout',
-        ({ align, verticalAlign, layout, expectedStyle, expectedStyleOnSecondRender }) => {
+        ({ align, verticalAlign, layout, expectedStyleOnSecondRender }) => {
           mockGetBoundingClientRect({
             width: 23,
             height: 29,
@@ -1593,7 +1574,7 @@ describe('<Legend />', () => {
           expect(wrapper).toBeInTheDocument();
           expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
           expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
-          expect.soft(wrapper.getAttribute('style')).toBe(expectedStyle);
+          expect.soft(wrapper.getAttribute('style')).toBe(expectedStyleOnSecondRender);
           /*
            * Because the bounding box is set as a class property instead of a state,
            * reading the legend width and height does not trigger re-render!

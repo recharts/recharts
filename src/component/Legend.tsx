@@ -1,4 +1,4 @@
-import React, { PureComponent, CSSProperties } from 'react';
+import React, { PureComponent, CSSProperties, useState, useCallback } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -10,11 +10,15 @@ function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
-function LegendContent(props: Props) {
-  const contextPayload = useLegendPayload();
+type ContentProps = Props & {
+  contextPayload: Payload[];
+};
+
+function LegendContent(props: ContentProps) {
+  const { contextPayload, ...otherProps } = props;
   const finalPayload = getUniqPayload(contextPayload, props.payloadUniqBy, defaultUniqBy);
   const contentProps = {
-    ...props,
+    ...otherProps,
     payload: finalPayload,
   };
 
@@ -25,9 +29,9 @@ function LegendContent(props: Props) {
     return React.createElement(props.content as any, contentProps);
   }
 
-  const { ref, ...otherProps } = contentProps;
+  const { ref, ...propsWithoutRef } = contentProps;
 
-  return <DefaultLegendContent {...otherProps} />;
+  return <DefaultLegendContent {...propsWithoutRef} />;
 }
 
 const EPS = 1;
@@ -86,6 +90,42 @@ export type Props = DefaultProps & {
 interface State {
   boxWidth: number;
   boxHeight: number;
+}
+
+function LegendWrapper(props: Props) {
+  const contextPayload = useLegendPayload();
+  const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
+  const { width, height, wrapperStyle, onBBoxUpdate } = props;
+  const updateBoundingBox = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node != null && node.getBoundingClientRect) {
+        const box = node.getBoundingClientRect();
+        if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
+          setLastBoundingBox({ width: box.width, height: box.height });
+          if (onBBoxUpdate) {
+            onBBoxUpdate(box);
+          }
+        }
+      }
+    },
+    // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
+    // when the payload changes, therefore it's here as a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [lastBoundingBox.width, lastBoundingBox.height, onBBoxUpdate, contextPayload],
+  );
+  const outerStyle: CSSProperties = {
+    position: 'absolute',
+    width: width || 'auto',
+    height: height || 'auto',
+    ...getDefaultPosition(wrapperStyle, props, lastBoundingBox),
+    ...wrapperStyle,
+  };
+
+  return (
+    <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
+      <LegendContent {...props} contextPayload={contextPayload} />
+    </div>
+  );
 }
 
 export class Legend extends PureComponent<Props, State> {
@@ -158,34 +198,7 @@ export class Legend extends PureComponent<Props, State> {
     }
   }
 
-  private getBBoxSnapshot(): BoundingBox {
-    if (this.lastBoundingBox.width >= 0 && this.lastBoundingBox.height >= 0) {
-      return { ...this.lastBoundingBox };
-    }
-
-    return { width: 0, height: 0 };
-  }
-
   public render() {
-    const { width, height, wrapperStyle } = this.props;
-    const outerStyle: CSSProperties = {
-      position: 'absolute',
-      width: width || 'auto',
-      height: height || 'auto',
-      ...getDefaultPosition(wrapperStyle, this.props, this.getBBoxSnapshot()),
-      ...wrapperStyle,
-    };
-
-    return (
-      <div
-        className="recharts-legend-wrapper"
-        style={outerStyle}
-        ref={node => {
-          this.wrapperNode = node;
-        }}
-      >
-        <LegendContent {...this.props} />
-      </div>
-    );
+    return <LegendWrapper {...this.props} />;
   }
 }
