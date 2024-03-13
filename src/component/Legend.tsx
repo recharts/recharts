@@ -32,6 +32,41 @@ function LegendContent(props: Props) {
 
 const EPS = 1;
 
+type BoundingBox = {
+  width: number;
+  height: number;
+};
+
+function getDefaultPosition(style: React.CSSProperties, props: Props, box: BoundingBox) {
+  const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = props;
+  let hPos, vPos;
+
+  if (
+    !style ||
+    ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
+  ) {
+    if (align === 'center' && layout === 'vertical') {
+      hPos = { left: ((chartWidth || 0) - box.width) / 2 };
+    } else {
+      hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
+    }
+  }
+
+  if (
+    !style ||
+    ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
+  ) {
+    if (verticalAlign === 'middle') {
+      vPos = { top: ((chartHeight || 0) - box.height) / 2 };
+    } else {
+      vPos =
+        verticalAlign === 'bottom' ? { bottom: (margin && margin.bottom) || 0 } : { top: (margin && margin.top) || 0 };
+    }
+  }
+
+  return { ...hPos, ...vPos };
+}
+
 export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
   chartWidth?: number;
@@ -85,7 +120,7 @@ export class Legend extends PureComponent<Props, State> {
     return null;
   }
 
-  lastBoundingBox = {
+  lastBoundingBox: BoundingBox = {
     width: -1,
     height: -1,
   };
@@ -123,46 +158,12 @@ export class Legend extends PureComponent<Props, State> {
     }
   }
 
-  private getBBoxSnapshot() {
+  private getBBoxSnapshot(): BoundingBox {
     if (this.lastBoundingBox.width >= 0 && this.lastBoundingBox.height >= 0) {
       return { ...this.lastBoundingBox };
     }
 
     return { width: 0, height: 0 };
-  }
-
-  private getDefaultPosition(style: CSSProperties) {
-    const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
-    let hPos, vPos;
-
-    if (
-      !style ||
-      ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
-    ) {
-      if (align === 'center' && layout === 'vertical') {
-        const box = this.getBBoxSnapshot();
-        hPos = { left: ((chartWidth || 0) - box.width) / 2 };
-      } else {
-        hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
-      }
-    }
-
-    if (
-      !style ||
-      ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
-    ) {
-      if (verticalAlign === 'middle') {
-        const box = this.getBBoxSnapshot();
-        vPos = { top: ((chartHeight || 0) - box.height) / 2 };
-      } else {
-        vPos =
-          verticalAlign === 'bottom'
-            ? { bottom: (margin && margin.bottom) || 0 }
-            : { top: (margin && margin.top) || 0 };
-      }
-    }
-
-    return { ...hPos, ...vPos };
   }
 
   public render() {
@@ -171,7 +172,7 @@ export class Legend extends PureComponent<Props, State> {
       position: 'absolute',
       width: width || 'auto',
       height: height || 'auto',
-      ...this.getDefaultPosition(wrapperStyle),
+      ...getDefaultPosition(wrapperStyle, this.props, this.getBBoxSnapshot()),
       ...wrapperStyle,
     };
 
