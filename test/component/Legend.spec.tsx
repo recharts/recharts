@@ -22,7 +22,9 @@ import {
   ScatterChart,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
+import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -305,6 +307,7 @@ function assertExpectedAttributes(
 }
 
 describe('<Legend />', () => {
+  afterEach(restoreGetBoundingClientRect);
   const categoricalData = [
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
@@ -348,6 +351,46 @@ describe('<Legend />', () => {
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
       expect(container.querySelectorAll('.recharts-default-legend .recharts-legend-item')).toHaveLength(0);
+    });
+  });
+
+  describe('onBBoxUpdate', () => {
+    it('should call onBBoxUpdate once on mount', () => {
+      const onBBoxUpdate = vi.fn();
+      mockGetBoundingClientRect({ width: 50, height: 15 });
+      render(<Legend onBBoxUpdate={onBBoxUpdate} />);
+      expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
+      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
+    });
+
+    it('should call onBBoxUpdate if the payload changes', () => {
+      const onBBoxUpdate = vi.fn();
+      mockGetBoundingClientRect({ width: 50, height: 15 });
+      const { rerender } = render(
+        <LegendPayloadProvider>
+          <Legend onBBoxUpdate={onBBoxUpdate} />
+        </LegendPayloadProvider>,
+      );
+
+      expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
+      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
+      mockGetBoundingClientRect({ width: 50, height: 25 });
+      rerender(
+        <LegendPayloadProvider>
+          <MockLegendPayload payload={exampleLegendPayload} />
+          <Legend onBBoxUpdate={onBBoxUpdate} />
+        </LegendPayloadProvider>,
+      );
+      expect(onBBoxUpdate).toHaveBeenCalledTimes(2);
+      mockGetBoundingClientRect({ width: 50, height: 0 });
+      rerender(
+        <LegendPayloadProvider>
+          <MockLegendPayload payload={[]} />
+          <Legend onBBoxUpdate={onBBoxUpdate} />
+        </LegendPayloadProvider>,
+      );
+      expect(onBBoxUpdate).toHaveBeenCalledTimes(3);
+      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 0 }));
     });
   });
 
@@ -1059,6 +1102,50 @@ describe('<Legend />', () => {
       const legendItems = assertHasLegend(container);
       expect(legendItems).toHaveLength(1);
       expect(legendItems[0].textContent).toBe('value');
+    });
+
+    it('should push away Bars to make space', () => {
+      Element.prototype.getBoundingClientRect = () => ({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 10,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        toJSON: () => '{}',
+      });
+
+      const { container, rerender } = render(
+        <BarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Bar isAnimationActive={false} dataKey="percent" />
+        </BarChart>,
+      );
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
+      const bars1 = container.querySelectorAll('.recharts-bar-rectangle path');
+      expect.soft(bars1).toHaveLength(numericalData.length);
+      const bar1 = bars1[0];
+      expect(bar1).toBeInTheDocument();
+      expect.soft(bar1.getAttribute('d')).toBe('M 13.166666666666668,437 h 65 v 48 h -65 Z');
+      expect.soft(bar1.getAttribute('height')).toBe('48');
+      expect.soft(bar1.getAttribute('y')).toBe('437');
+
+      rerender(
+        <BarChart width={500} height={500} data={numericalData}>
+          <Bar isAnimationActive={false} dataKey="percent" />
+        </BarChart>,
+      );
+      // debug();
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+      const bars2 = container.querySelectorAll('.recharts-bar-rectangle path');
+      expect.soft(bars2).toHaveLength(numericalData.length);
+      const bar2 = bars2[0];
+      expect.soft(bar2).toBeInTheDocument();
+      expect.soft(bar2.getAttribute('d')).toBe('M 13.166666666666668,446 h 65 v 49 h -65 Z');
+      expect.soft(bar2.getAttribute('height')).toBe('49');
+      expect.soft(bar2.getAttribute('y')).toBe('446');
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
