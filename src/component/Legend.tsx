@@ -138,8 +138,6 @@ export class Legend extends PureComponent<Props, State> {
     verticalAlign: 'bottom',
   };
 
-  private wrapperNode: HTMLDivElement;
-
   static getWithHeight(
     item: { props: { layout?: LayoutType; height?: number; width?: number } },
     chartWidth: number,
@@ -158,44 +156,6 @@ export class Legend extends PureComponent<Props, State> {
     }
 
     return null;
-  }
-
-  lastBoundingBox: BoundingBox = {
-    width: -1,
-    height: -1,
-  };
-
-  public componentDidMount() {
-    this.updateBBox();
-  }
-
-  public componentDidUpdate() {
-    this.updateBBox();
-  }
-
-  private updateBBox() {
-    const { onBBoxUpdate } = this.props;
-
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-
-      if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPS
-      ) {
-        this.lastBoundingBox.width = box.width;
-        this.lastBoundingBox.height = box.height;
-        if (onBBoxUpdate) {
-          onBBoxUpdate(box);
-        }
-      }
-    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
-      this.lastBoundingBox.width = -1;
-      this.lastBoundingBox.height = -1;
-      if (onBBoxUpdate) {
-        onBBoxUpdate(null);
-      }
-    }
   }
 
   public render() {
