@@ -35,7 +35,7 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
 
 export type Props = DotProps & ReferenceDotProps;
 
-const getCoordinate = (
+const useCoordinate = (
   x: number | string | undefined,
   y: number | string | undefined,
   xAxis: Props['xAxis'],
@@ -63,7 +63,7 @@ export function ReferenceDot(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
-  const coordinate = getCoordinate(x, y, props.xAxis, props.yAxis, props.ifOverflow);
+  const coordinate = useCoordinate(x, y, props.xAxis, props.yAxis, props.ifOverflow);
 
   if (!coordinate) {
     return null;
