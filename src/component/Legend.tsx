@@ -1,4 +1,4 @@
-import React, { PureComponent, CSSProperties } from 'react';
+import React, { PureComponent, CSSProperties, useState, useCallback } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -10,11 +10,15 @@ function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
-function LegendContent(props: Props) {
-  const contextPayload = useLegendPayload();
+type ContentProps = Props & {
+  contextPayload: Payload[];
+};
+
+function LegendContent(props: ContentProps) {
+  const { contextPayload, ...otherProps } = props;
   const finalPayload = getUniqPayload(contextPayload, props.payloadUniqBy, defaultUniqBy);
   const contentProps = {
-    ...props,
+    ...otherProps,
     payload: finalPayload,
   };
 
@@ -25,12 +29,47 @@ function LegendContent(props: Props) {
     return React.createElement(props.content as any, contentProps);
   }
 
-  const { ref, ...otherProps } = contentProps;
+  const { ref, ...propsWithoutRef } = contentProps;
 
-  return <DefaultLegendContent {...otherProps} />;
+  return <DefaultLegendContent {...propsWithoutRef} />;
 }
 
 const EPS = 1;
+
+type BoundingBox = {
+  width: number;
+  height: number;
+};
+
+function getDefaultPosition(style: React.CSSProperties, props: Props, box: BoundingBox) {
+  const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = props;
+  let hPos, vPos;
+
+  if (
+    !style ||
+    ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
+  ) {
+    if (align === 'center' && layout === 'vertical') {
+      hPos = { left: ((chartWidth || 0) - box.width) / 2 };
+    } else {
+      hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
+    }
+  }
+
+  if (
+    !style ||
+    ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
+  ) {
+    if (verticalAlign === 'middle') {
+      vPos = { top: ((chartHeight || 0) - box.height) / 2 };
+    } else {
+      vPos =
+        verticalAlign === 'bottom' ? { bottom: (margin && margin.bottom) || 0 } : { top: (margin && margin.top) || 0 };
+    }
+  }
+
+  return { ...hPos, ...vPos };
+}
 
 export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
@@ -53,6 +92,42 @@ interface State {
   boxHeight: number;
 }
 
+function LegendWrapper(props: Props) {
+  const contextPayload = useLegendPayload();
+  const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
+  const { width, height, wrapperStyle, onBBoxUpdate } = props;
+  const updateBoundingBox = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (node != null && node.getBoundingClientRect) {
+        const box = node.getBoundingClientRect();
+        if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
+          setLastBoundingBox({ width: box.width, height: box.height });
+          if (onBBoxUpdate) {
+            onBBoxUpdate(box);
+          }
+        }
+      }
+    },
+    // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
+    // when the payload changes, therefore it's here as a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [lastBoundingBox.width, lastBoundingBox.height, onBBoxUpdate, contextPayload],
+  );
+  const outerStyle: CSSProperties = {
+    position: 'absolute',
+    width: width || 'auto',
+    height: height || 'auto',
+    ...getDefaultPosition(wrapperStyle, props, lastBoundingBox),
+    ...wrapperStyle,
+  };
+
+  return (
+    <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
+      <LegendContent {...props} contextPayload={contextPayload} />
+    </div>
+  );
+}
+
 export class Legend extends PureComponent<Props, State> {
   static displayName = 'Legend';
 
@@ -62,8 +137,6 @@ export class Legend extends PureComponent<Props, State> {
     align: 'center',
     verticalAlign: 'bottom',
   };
-
-  private wrapperNode: HTMLDivElement;
 
   static getWithHeight(
     item: { props: { layout?: LayoutType; height?: number; width?: number } },
@@ -85,106 +158,7 @@ export class Legend extends PureComponent<Props, State> {
     return null;
   }
 
-  lastBoundingBox = {
-    width: -1,
-    height: -1,
-  };
-
-  public componentDidMount() {
-    this.updateBBox();
-  }
-
-  public componentDidUpdate() {
-    this.updateBBox();
-  }
-
-  private updateBBox() {
-    const { onBBoxUpdate } = this.props;
-
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-
-      if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPS ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPS
-      ) {
-        this.lastBoundingBox.width = box.width;
-        this.lastBoundingBox.height = box.height;
-        if (onBBoxUpdate) {
-          onBBoxUpdate(box);
-        }
-      }
-    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
-      this.lastBoundingBox.width = -1;
-      this.lastBoundingBox.height = -1;
-      if (onBBoxUpdate) {
-        onBBoxUpdate(null);
-      }
-    }
-  }
-
-  private getBBoxSnapshot() {
-    if (this.lastBoundingBox.width >= 0 && this.lastBoundingBox.height >= 0) {
-      return { ...this.lastBoundingBox };
-    }
-
-    return { width: 0, height: 0 };
-  }
-
-  private getDefaultPosition(style: CSSProperties) {
-    const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = this.props;
-    let hPos, vPos;
-
-    if (
-      !style ||
-      ((style.left === undefined || style.left === null) && (style.right === undefined || style.right === null))
-    ) {
-      if (align === 'center' && layout === 'vertical') {
-        const box = this.getBBoxSnapshot();
-        hPos = { left: ((chartWidth || 0) - box.width) / 2 };
-      } else {
-        hPos = align === 'right' ? { right: (margin && margin.right) || 0 } : { left: (margin && margin.left) || 0 };
-      }
-    }
-
-    if (
-      !style ||
-      ((style.top === undefined || style.top === null) && (style.bottom === undefined || style.bottom === null))
-    ) {
-      if (verticalAlign === 'middle') {
-        const box = this.getBBoxSnapshot();
-        vPos = { top: ((chartHeight || 0) - box.height) / 2 };
-      } else {
-        vPos =
-          verticalAlign === 'bottom'
-            ? { bottom: (margin && margin.bottom) || 0 }
-            : { top: (margin && margin.top) || 0 };
-      }
-    }
-
-    return { ...hPos, ...vPos };
-  }
-
   public render() {
-    const { width, height, wrapperStyle } = this.props;
-    const outerStyle: CSSProperties = {
-      position: 'absolute',
-      width: width || 'auto',
-      height: height || 'auto',
-      ...this.getDefaultPosition(wrapperStyle),
-      ...wrapperStyle,
-    };
-
-    return (
-      <div
-        className="recharts-legend-wrapper"
-        style={outerStyle}
-        ref={node => {
-          this.wrapperNode = node;
-        }}
-      >
-        <LegendContent {...this.props} />
-      </div>
-    );
+    return <LegendWrapper {...this.props} />;
   }
 }
