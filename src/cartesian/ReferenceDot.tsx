@@ -7,18 +7,10 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
-import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
-import { useClipPathId } from '../context/chartLayoutContext';
+import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
 
-interface InternalReferenceDotProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-}
-
-interface ReferenceDotProps extends InternalReferenceDotProps {
+interface ReferenceDotProps {
   r?: number;
 
   isFront?: boolean;
@@ -38,12 +30,14 @@ export type Props = DotProps & ReferenceDotProps;
 const useCoordinate = (
   x: number | string | undefined,
   y: number | string | undefined,
-  xAxis: Props['xAxis'],
-  yAxis: Props['yAxis'],
+  xAxisId: Props['xAxisId'],
+  yAxisId: Props['yAxisId'],
   ifOverflow: IfOverflow,
 ) => {
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
+  const xAxis = useXAxisOrThrow(xAxisId);
+  const yAxis = useYAxisOrThrow(yAxisId);
   if (!isX || !isY) {
     return null;
   }
@@ -63,7 +57,7 @@ export function ReferenceDot(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
-  const coordinate = useCoordinate(x, y, props.xAxis, props.yAxis, props.ifOverflow);
+  const coordinate = useCoordinate(x, y, props.xAxisId, props.yAxisId, props.ifOverflow);
 
   if (!coordinate) {
     return null;
