@@ -35,13 +35,24 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
 
 export type Props = DotProps & ReferenceDotProps;
 
-const getCoordinate = (props: Props) => {
-  const { x, y, xAxis, yAxis } = props;
+const getCoordinate = (
+  x: number | string | undefined,
+  y: number | string | undefined,
+  xAxis: Props['xAxis'],
+  yAxis: Props['yAxis'],
+  ifOverflow: IfOverflow,
+) => {
+  const isX = isNumOrStr(x);
+  const isY = isNumOrStr(y);
+  if (!isX || !isY) {
+    return null;
+  }
+
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
-  if (props.ifOverflow === 'discard' && !scales.isInRange(result)) {
+  if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;
   }
 
@@ -51,14 +62,8 @@ const getCoordinate = (props: Props) => {
 export function ReferenceDot(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
-  const isX = isNumOrStr(x);
-  const isY = isNumOrStr(y);
 
-  if (!isX || !isY) {
-    return null;
-  }
-
-  const coordinate = getCoordinate(props);
+  const coordinate = getCoordinate(x, y, props.xAxis, props.yAxis, props.ifOverflow);
 
   if (!coordinate) {
     return null;

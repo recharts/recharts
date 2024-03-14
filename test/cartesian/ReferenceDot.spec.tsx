@@ -107,6 +107,25 @@ describe('<ReferenceDot />', () => {
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
   });
 
+  it('should render dot and label even when yAxis is not present', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis dataKey="name" />
+        <Bar dataKey="uv" />
+        <ReferenceDot x="201104" y={3} stroke="#666" label="201106" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-dot-dot')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
+  });
+
   it('adds a clipPath attribute when ifOverflow is "hidden"', () => {
     const { container } = render(
       <BarChart
