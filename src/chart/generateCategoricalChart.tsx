@@ -1905,28 +1905,6 @@ export const generateCategoricalChart = ({
       });
     };
 
-    renderReferenceElement = (element: React.ReactElement, displayName: string, index: number): React.ReactElement => {
-      if (!element) {
-        return null;
-      }
-      const { clipPathId } = this;
-      const { xAxisMap, yAxisMap, offset } = this.state;
-      const { xAxisId, yAxisId } = element.props;
-
-      return cloneElement(element, {
-        key: element.key || `${displayName}-${index}`,
-        xAxis: xAxisMap[xAxisId],
-        yAxis: yAxisMap[yAxisId],
-        viewBox: {
-          x: offset.left,
-          y: offset.top,
-          width: offset.width,
-          height: offset.height,
-        },
-        clipPathId,
-      });
-    };
-
     static renderActiveDot = (option: any, props: any): React.ReactElement => {
       let dot;
 
@@ -2156,7 +2134,7 @@ export const generateCategoricalChart = ({
       CartesianGrid: { handler: renderAsIs, once: true },
       ReferenceArea: { handler: renderAsIs },
       ReferenceLine: { handler: renderAsIs },
-      ReferenceDot: { handler: this.renderReferenceElement },
+      ReferenceDot: { handler: renderAsIs },
       XAxis: { handler: renderAsIs },
       YAxis: { handler: renderAsIs },
       Brush: { handler: this.renderBrush, once: true },

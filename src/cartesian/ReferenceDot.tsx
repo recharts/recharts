@@ -1,6 +1,3 @@
-/**
- * @fileOverview Reference Dot
- */
 import React, { ReactElement } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
@@ -10,18 +7,10 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
-import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
+import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
 
-interface InternalReferenceDotProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  clipPathId?: number | string;
-}
-
-interface ReferenceDotProps extends InternalReferenceDotProps {
+interface ReferenceDotProps {
   r?: number;
 
   isFront?: boolean;
@@ -38,13 +27,26 @@ interface ReferenceDotProps extends InternalReferenceDotProps {
 
 export type Props = DotProps & ReferenceDotProps;
 
-const getCoordinate = (props: Props) => {
-  const { x, y, xAxis, yAxis } = props;
+const useCoordinate = (
+  x: number | string | undefined,
+  y: number | string | undefined,
+  xAxisId: Props['xAxisId'],
+  yAxisId: Props['yAxisId'],
+  ifOverflow: IfOverflow,
+) => {
+  const isX = isNumOrStr(x);
+  const isY = isNumOrStr(y);
+  const xAxis = useXAxisOrThrow(xAxisId);
+  const yAxis = useYAxisOrThrow(yAxisId);
+  if (!isX || !isY) {
+    return null;
+  }
+
   const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
-  if (props.ifOverflow === 'discard' && !scales.isInRange(result)) {
+  if (ifOverflow === 'discard' && !scales.isInRange(result)) {
     return null;
   }
 
@@ -52,15 +54,10 @@ const getCoordinate = (props: Props) => {
 };
 
 export function ReferenceDot(props: Props) {
-  const { x, y, r, clipPathId } = props;
-  const isX = isNumOrStr(x);
-  const isY = isNumOrStr(y);
+  const { x, y, r } = props;
+  const clipPathId = useClipPathId();
 
-  if (!isX || !isY) {
-    return null;
-  }
-
-  const coordinate = getCoordinate(props);
+  const coordinate = useCoordinate(x, y, props.xAxisId, props.yAxisId, props.ifOverflow);
 
   if (!coordinate) {
     return null;
