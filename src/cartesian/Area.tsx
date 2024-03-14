@@ -288,7 +288,7 @@ export class Area extends PureComponent<Props, State> {
     } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
-      const className = clsx('recharts-area-dot', option ? (option as DotProps).className : '');
+      const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
       dotItem = <Dot {...props} className={className} />;
     }
 
