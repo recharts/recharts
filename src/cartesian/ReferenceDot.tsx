@@ -1,6 +1,3 @@
-/**
- * @fileOverview Reference Dot
- */
 import React, { ReactElement } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
@@ -14,11 +11,11 @@ import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
+import { useClipPathId } from '../context/chartLayoutContext';
 
 interface InternalReferenceDotProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  clipPathId?: number | string;
 }
 
 interface ReferenceDotProps extends InternalReferenceDotProps {
@@ -52,7 +49,8 @@ const getCoordinate = (props: Props) => {
 };
 
 export function ReferenceDot(props: Props) {
-  const { x, y, r, clipPathId } = props;
+  const { x, y, r } = props;
+  const clipPathId = useClipPathId();
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
 
