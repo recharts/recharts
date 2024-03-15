@@ -14,6 +14,7 @@ import { TooltipBoundingBox } from './TooltipBoundingBox';
 import { Global } from '../util/Global';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
+import { useViewBox } from '../context/chartLayoutContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -85,9 +86,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     position,
     reverseDirection,
     useTranslate3d,
-    viewBox,
     wrapperStyle,
   } = props;
+  const viewBox = useViewBox();
   let finalPayload: Payload<TValue, TName>[] = payload ?? [];
 
   if (filterNull && finalPayload.length) {
