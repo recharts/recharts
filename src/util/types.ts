@@ -1342,3 +1342,17 @@ export type RangeObj = {
   angle?: number;
   radius?: number;
 };
+
+export type MouseInfo = {
+  xValue?: number | null;
+  yValue?: number | null;
+  chartX?: number;
+  chartY?: number;
+};
+
+export type TooltipData = {
+  activeTooltipIndex: number;
+  activeLabel: TickItem['value'] | undefined;
+  activeCoordinate: ChartCoordinate;
+  activePayload: any[];
+};

@@ -96,11 +96,11 @@ export const calculateActiveTickIndex = (
   ticks: Array<TickItem> = [],
   unsortedTicks?: Array<TickItem>,
   axis?: BaseAxisProps,
-) => {
+): number => {
   let index = -1;
   const len = ticks?.length ?? 0;
 
-  // if there are 1 or less ticks ticks then the active tick is at index 0
+  // if there are 1 or fewer ticks then the active tick is at index 0
   if (len <= 1) {
     return 0;
   }
