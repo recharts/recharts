@@ -1333,3 +1333,12 @@ export type XAxisMap = {
 export type YAxisMap = {
   [axisId: string]: YAxisProps;
 };
+
+export type RangeObj = {
+  x?: number;
+  y?: number;
+  cx?: number;
+  cy?: number;
+  angle?: number;
+  radius?: number;
+};
