@@ -17,9 +17,9 @@ export function parseCornerRadius(cornerRadius: string | number): number {
 // This function will return the passed in props along with cx, cy as numbers.
 export function typeGuardSectorProps(option: SVGProps<SVGPathElement>, props: SectorProps): SectorProps {
   const cxValue = `${props.cx || option.cx}`;
-  const cx = parseInt(cxValue, 10);
+  const cx = Number(cxValue);
   const cyValue = `${props.cy || option.cy}`;
-  const cy = parseInt(cyValue, 10);
+  const cy = Number(cyValue);
   return {
     ...props,
     ...option,
