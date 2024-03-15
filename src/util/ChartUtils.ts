@@ -467,7 +467,9 @@ export const getDomainOfErrorBars = (
 
     return data.reduce<NumberDomain>(
       (result: NumberDomain, entry: object): NumberDomain => {
-        const entryValue = getValueByDataKey(entry, dataKey, 0);
+        const entryValue = getValueByDataKey(entry, dataKey);
+        if (isNil(entryValue)) return result;
+
         const mainValue = Array.isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
           (prevErrorArr: [number, number], k: DataKey<any>): NumberDomain => {
