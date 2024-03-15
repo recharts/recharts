@@ -1333,3 +1333,26 @@ export type XAxisMap = {
 export type YAxisMap = {
   [axisId: string]: YAxisProps;
 };
+
+export type RangeObj = {
+  x?: number;
+  y?: number;
+  cx?: number;
+  cy?: number;
+  angle?: number;
+  radius?: number;
+};
+
+export type MouseInfo = {
+  xValue?: number | null;
+  yValue?: number | null;
+  chartX?: number;
+  chartY?: number;
+};
+
+export type TooltipData = {
+  activeTooltipIndex: number;
+  activeLabel: TickItem['value'] | undefined;
+  activeCoordinate: ChartCoordinate;
+  activePayload: any[];
+};

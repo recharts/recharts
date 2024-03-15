@@ -73,8 +73,11 @@ import {
   GeometrySector,
   LayoutType,
   Margin,
+  MouseInfo,
+  RangeObj,
   StackOffsetType,
   TickItem,
+  TooltipData,
   TooltipEventType,
   XAxisMap,
   YAxisMap,
@@ -123,7 +126,7 @@ function renderAsIs(element: React.ReactElement): React.ReactElement {
   return element;
 }
 
-const calculateTooltipPos = (rangeObj: any, layout: LayoutType): any => {
+const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
   if (layout === 'horizontal') {
     return rangeObj.x;
   }
@@ -141,7 +144,7 @@ const getActiveCoordinate = (
   layout: LayoutType,
   tooltipTicks: TickItem[],
   activeIndex: number,
-  rangeObj: any,
+  rangeObj: RangeObj,
 ): ChartCoordinate => {
   const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
 
@@ -263,22 +266,27 @@ const getTooltipContent = (
 
 /**
  * Returns tooltip data based on a mouse position (as a parameter or in state)
- * @param  {Object} state     current state
- * @param  {Array}  chartData the data defined in chart
- * @param  {String} layout     The layout type of chart
- * @param  {Object} rangeObj  { x, y } coordinates
- * @return {Object}           Tooltip data data
+ * @param  state      current state
+ * @param  chartData  the data defined in chart
+ * @param  layout     The layout type of chart
+ * @param  rangeObj   coordinates
+ * @return            Tooltip data
  */
-const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: LayoutType, rangeObj?: any) => {
-  const rangeData = rangeObj || { x: state.chartX, y: state.chartY };
+const getTooltipData = (
+  state: CategoricalChartState,
+  chartData: any[],
+  layout: LayoutType,
+  rangeObj?: RangeObj,
+): TooltipData | null => {
+  const rangeData: RangeObj = rangeObj || { x: state.chartX, y: state.chartY };
 
-  const pos = calculateTooltipPos(rangeData, layout);
+  const pos: number | undefined = calculateTooltipPos(rangeData, layout);
   const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = state;
 
   const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
   if (activeIndex >= 0 && tooltipTicks) {
-    const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
+    const activeLabel: TickItem['value'] | undefined = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
     const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
     const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
 
@@ -1347,9 +1355,9 @@ export const generateCategoricalChart = ({
     /**
      * Get the information of mouse in chart, return null when the mouse is not in the chart
      * @param  {MousePointer} event    The event object
-     * @return {Object}          Mouse data
+     * @return Monster object with a little bit of everything in it
      */
-    getMouseInfo(event: MousePointer) {
+    getMouseInfo(event: MousePointer): MouseInfo | null {
       if (!this.container) {
         return null;
       }
@@ -1375,8 +1383,8 @@ export const generateCategoricalChart = ({
       if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
         const xScale = getAnyElementOfObject(xAxisMap).scale;
         const yScale = getAnyElementOfObject(yAxisMap).scale;
-        const xValue = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
-        const yValue = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
+        const xValue: number | null = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
+        const yValue: number | null = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
 
         return { ...e, xValue, yValue };
       }
@@ -1393,7 +1401,7 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    inRange(x: number, y: number, scale = 1): any {
+    inRange(x: number, y: number, scale = 1): RangeObj {
       const { layout } = this.props;
 
       const [scaledX, scaledY] = [x / scale, y / scale];

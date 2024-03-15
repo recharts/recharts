@@ -1,7 +1,7 @@
 import isNil from 'lodash/isNil';
 import { getPercentValue } from './DataUtils';
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
-import { Coordinate, ChartOffset, GeometrySector } from './types';
+import { Coordinate, ChartOffset, GeometrySector, RangeObj } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -141,15 +141,17 @@ const reverseFormatAngleOfSetor = (angle: number, { startAngle, endAngle }: Geom
   return angle + min * 360;
 };
 
-export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector) => {
+export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector): RangeObj | null => {
   const { radius, angle } = getAngleOfPoint({ x, y }, sector);
   const { innerRadius, outerRadius } = sector;
 
   if (radius < innerRadius || radius > outerRadius) {
+    // @ts-expect-error usages of this method expect it to always return RangeObj, not boolean
     return false;
   }
 
   if (radius === 0) {
+    // @ts-expect-error usages of this method expect it to always return RangeObj, not boolean
     return true;
   }
 
