@@ -387,6 +387,29 @@ describe('<RadialBarChart />', () => {
       ),
     );
 
+    test('renders background in the exact same position as foreground', () => {
+      const preparedData = [{ value: 42, fill: '#241084' }];
+      const emptyBackgroundColor = '#D8BDF3';
+
+      const { container } = render(
+        <RadialBarChart data={preparedData} height={280} width={340} cx="47%" startAngle={180} endAngle={0}>
+          <RadialBar
+            background={{
+              fill: emptyBackgroundColor,
+            }}
+            dataKey="value"
+            isAnimationActive={false}
+          />
+        </RadialBarChart>,
+      );
+      const background = container.querySelector('.recharts-radial-bar-background-sector');
+      expect(background).toBeInTheDocument();
+      const foreground = container.querySelector('.recharts-radial-bar-sector');
+      expect(foreground).not.toBeNull();
+      expect(foreground).toBeInTheDocument();
+      expect(foreground!.getAttribute('d')).toEqual(background!.getAttribute('d'));
+    });
+
     /**
      * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
      * TODO un-skip this level if fixing the exception.
