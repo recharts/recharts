@@ -69,6 +69,58 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
   wrapperStyle?: CSSProperties;
 };
 
+function TooltipInternal<TValue extends ValueType, TName extends NameType>(props: TooltipProps<TValue, TName>) {
+  const {
+    active,
+    allowEscapeViewBox,
+    animationDuration,
+    animationEasing,
+    content,
+    coordinate,
+    filterNull,
+    isAnimationActive,
+    offset,
+    payload,
+    payloadUniqBy,
+    position,
+    reverseDirection,
+    useTranslate3d,
+    viewBox,
+    wrapperStyle,
+  } = props;
+  let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+
+  if (filterNull && finalPayload.length) {
+    finalPayload = getUniqPayload(
+      payload.filter(entry => entry.value != null && (entry.hide !== true || props.includeHidden)),
+      payloadUniqBy,
+      defaultUniqBy,
+    );
+  }
+
+  const hasPayload = finalPayload.length > 0;
+
+  return (
+    <TooltipBoundingBox
+      allowEscapeViewBox={allowEscapeViewBox}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
+      isAnimationActive={isAnimationActive}
+      active={active}
+      coordinate={coordinate}
+      hasPayload={hasPayload}
+      offset={offset}
+      position={position}
+      reverseDirection={reverseDirection}
+      useTranslate3d={useTranslate3d}
+      viewBox={viewBox}
+      wrapperStyle={wrapperStyle}
+    >
+      {renderContent(content, { ...props, payload: finalPayload })}
+    </TooltipBoundingBox>
+  );
+}
+
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
   TooltipProps<TValue, TName>
 > {
@@ -97,54 +149,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   };
 
   render() {
-    const {
-      active,
-      allowEscapeViewBox,
-      animationDuration,
-      animationEasing,
-      content,
-      coordinate,
-      filterNull,
-      isAnimationActive,
-      offset,
-      payload,
-      payloadUniqBy,
-      position,
-      reverseDirection,
-      useTranslate3d,
-      viewBox,
-      wrapperStyle,
-    } = this.props;
-    let finalPayload: Payload<TValue, TName>[] = payload ?? [];
-
-    if (filterNull && finalPayload.length) {
-      finalPayload = getUniqPayload(
-        payload.filter(entry => entry.value != null && (entry.hide !== true || this.props.includeHidden)),
-        payloadUniqBy,
-        defaultUniqBy,
-      );
-    }
-
-    const hasPayload = finalPayload.length > 0;
-
-    return (
-      <TooltipBoundingBox
-        allowEscapeViewBox={allowEscapeViewBox}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        active={active}
-        coordinate={coordinate}
-        hasPayload={hasPayload}
-        offset={offset}
-        position={position}
-        reverseDirection={reverseDirection}
-        useTranslate3d={useTranslate3d}
-        viewBox={viewBox}
-        wrapperStyle={wrapperStyle}
-      >
-        {renderContent(content, { ...this.props, payload: finalPayload })}
-      </TooltipBoundingBox>
-    );
+    return <TooltipInternal {...this.props} />;
   }
 }
