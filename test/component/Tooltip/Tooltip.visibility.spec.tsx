@@ -28,10 +28,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from '../../src';
-import { assertNotNull } from '../helper/assertNotNull';
-import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { PageData, SankeyData } from '../_data';
+} from '../../../src';
+import { assertNotNull } from '../../helper/assertNotNull';
+import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { PageData, SankeyData } from '../../_data';
 
 type TooltipTestCase = {
   // For identifying which test is running
@@ -241,7 +241,7 @@ function getTooltip(container: HTMLElement) {
   return element;
 }
 
-describe('<Tooltip />', () => {
+describe('<Tooltip /> visibility', () => {
   afterEach(restoreGetBoundingClientRect);
 
   describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector }) => {

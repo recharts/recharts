@@ -34,7 +34,7 @@ When implementing a new feature we would prefer to extract pure helper function 
 
 ### React Testing Library
 
-Some behaviour must be tested upon rendering, such as interactions between components (Line, Tooltip), see `test/component/Tooltip.spec.tsx` for an example.
+Some behaviour must be tested upon rendering, such as interactions between components (Line, Tooltip), see `test/component/Tooltip.visibility.spec.tsx` for an example.
 
 ### Storybook Test Runner
 
