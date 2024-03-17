@@ -423,10 +423,6 @@ describe('Tooltip visibility', () => {
         // The cursor should also be visible
         // expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
 
-        // TODO replace this commented code with a new test suite for all the active-X elements
-        // The active dot should also be visible
-        // expect(container.querySelector('.recharts-active-dot')).toBeVisible();
-
         const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         // Tooltip should be able to move when the mouse moves over the chart
@@ -504,6 +500,7 @@ describe('Tooltip visibility', () => {
       });
     });
   });
+
   describe('includeHidden prop', () => {
     test('true - Should render tooltip for hidden items', () => {
       let tooltipPayload: any[] | undefined = [];
@@ -580,5 +577,53 @@ describe('Tooltip visibility', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: +line.getAttribute('x')! + 1, clientY: 50 });
     expect(getByText(container, '4567')).toBeVisible();
+  });
+});
+
+describe('Active element visibility', () => {
+  afterEach(restoreGetBoundingClientRect);
+
+  describe.each([
+    AreaChartTestCase,
+    LineChartHorizontalTestCase,
+    LineChartVerticalTestCase,
+    ComposedChartWithAreaTestCase,
+    ComposedChartWithLineTestCase,
+    RadarChartTestCase,
+  ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
+    it('should display activeDot', () => {
+      const { container, debug } = render(
+        <Wrapper>
+          <Tooltip />
+        </Wrapper>,
+      );
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
+
+      showTooltip(container, mouseHoverSelector, debug);
+
+      expect(container.querySelector('.recharts-active-dot')).toBeVisible();
+    });
+  });
+
+  describe.each([
+    BarChartTestCase,
+    ComposedChartWithBarTestCase,
+    PieChartTestCase,
+    RadialBarChartTestCase,
+    SankeyTestCase,
+    ScatterChartTestCase,
+  ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
+    it('should not display activeDot', () => {
+      const { container, debug } = render(
+        <Wrapper>
+          <Tooltip />
+        </Wrapper>,
+      );
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
+
+      showTooltip(container, mouseHoverSelector, debug);
+
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
+    });
   });
 });
