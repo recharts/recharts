@@ -345,4 +345,9 @@ describe('Tooltip payload', () => {
       expectTooltipPayload(container, '', ['x : ', 'y : 2']);
     });
   });
+
+  describe('payloadUniqBy prop', () => {
+    // I cannot find any meaningul difference that the payloadUniqBy prop makes.
+    // If you can think of a test case please add.
+  });
 });

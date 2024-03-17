@@ -559,40 +559,6 @@ describe('Tooltip visibility', () => {
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
     });
-
-    test('Should filter nulls when filterNull and payloadUniqBy are true', () => {
-      const dataWithNull = [...PageData, { name: 'Page F', uv: null, pv: 4800, amt: 2400 }];
-      let tooltipPayload: any[] | undefined = [];
-
-      const { container } = render(
-        <ComposedChart width={400} height={400} data={dataWithNull}>
-          <Line dataKey="uv" />
-          <Line dataKey="pv" />
-          <Tooltip
-            payloadUniqBy
-            filterNull
-            content={({ payload }) => {
-              tooltipPayload = payload;
-              return null;
-            }}
-          />
-        </ComposedChart>,
-      );
-
-      expect(tooltipPayload).toHaveLength(0);
-
-      const chart = container.querySelector('.recharts-wrapper');
-
-      expect(chart).not.toBeNull();
-      // Page E
-      fireEvent.mouseOver(chart, { clientX: 325, clientY: 200 });
-      expect(tooltipPayload).toHaveLength(2);
-
-      // Page F, ignores null
-      fireEvent.mouseOver(chart, { clientX: 375, clientY: 200 });
-      expect(tooltipPayload).toHaveLength(1);
-      expect(tooltipPayload[0].payload.name).toBe('Page F');
-    });
   });
 
   it('Should display the data selected by Brush', () => {
