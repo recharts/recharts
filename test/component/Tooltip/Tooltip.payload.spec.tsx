@@ -28,11 +28,23 @@ import {
 import { restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import { PageData, SankeyData } from '../../_data';
+import {
+  areaChartMouseHoverTooltipSelector,
+  barChartMouseHoverTooltipSelector,
+  composedChartMouseHoverTooltipSelector,
+  lineChartMouseHoverTooltipSelector,
+  MouseHoverTooltipTriggerSelector,
+  pieChartMouseHoverTooltipSelector,
+  radarChartMouseHoverTooltipSelector,
+  radialBarChartMouseHoverTooltipSelector,
+  sankeyChartMouseHoverTooltipSelector,
+  sankeyNodeChartMouseHoverTooltipSelector,
+} from './tooltipMouseHoverSelectors';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
   name: string;
-  mouseHoverSelector: string;
+  mouseHoverSelector: MouseHoverTooltipTriggerSelector;
   Wrapper: ComponentType<{ children: ReactNode }>;
   expectedTooltipTitle: string;
   expectedTooltipContent: ReadonlyArray<string>;
@@ -53,7 +65,7 @@ const AreaChartTestCase: TooltipPayloadTestCase = {
       {children}
     </AreaChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: areaChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
@@ -70,7 +82,7 @@ const AreaChartWithXAxisTestCase: TooltipPayloadTestCase = {
       {children}
     </AreaChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: areaChartMouseHoverTooltipSelector,
   expectedTooltipTitle: 'Page C',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
@@ -85,7 +97,7 @@ const BarChartTestCase: TooltipPayloadTestCase = {
       {children}
     </BarChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: barChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
@@ -100,7 +112,7 @@ const LineChartTestCase: TooltipPayloadTestCase = {
       {children}
     </LineChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
@@ -119,7 +131,7 @@ const LineChartVerticalTestCase: TooltipPayloadTestCase = {
       <Line dataKey="amt" unit={undefined} />
     </LineChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '1',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 4567$$$', 'amt : 2400'],
 };
@@ -134,7 +146,7 @@ const ComposedChartTestCase: TooltipPayloadTestCase = {
       <Line dataKey="amt" unit={undefined} />
     </ComposedChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
@@ -151,7 +163,7 @@ const PieChartTestCase: TooltipPayloadTestCase = {
       {children}
     </PieChart>
   ),
-  mouseHoverSelector: '.recharts-pie-sector',
+  mouseHoverSelector: pieChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Page A : 400'],
 };
@@ -166,7 +178,7 @@ const PieChartWithCustomNameKeyTestCase: TooltipPayloadTestCase = {
       {children}
     </PieChart>
   ),
-  mouseHoverSelector: '.recharts-pie-sector',
+  mouseHoverSelector: pieChartMouseHoverTooltipSelector,
   // I can't get Pie to render any tooltip title - I suppose that's a feature?
   expectedTooltipTitle: '',
   expectedTooltipContent: ['2400 : 400'],
@@ -182,7 +194,7 @@ const RadarChartTestCase: TooltipPayloadTestCase = {
       {children}
     </RadarChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: radarChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '5',
   expectedTooltipContent: ['uv : 189', 'My custom name : 4800', 'amt : 2400'],
 };
@@ -198,7 +210,7 @@ const RadarChartWithAxisTestCase: TooltipPayloadTestCase = {
       {children}
     </RadarChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: radarChartMouseHoverTooltipSelector,
   expectedTooltipTitle: 'Page F',
   expectedTooltipContent: ['uv : 189', 'My custom name : 4800', 'amt : 2400'],
 };
@@ -213,7 +225,7 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
       {children}
     </RadialBarChart>
   ),
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
   // I cannot figure out how to make RadialBar display anything else other than the index
   expectedTooltipTitle: '4',
   expectedTooltipContent: ['uv : 278', 'My custom name : 3908', 'amt : 2400'],
@@ -226,7 +238,7 @@ const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: '.recharts-sankey-nodes .recharts-rectangle',
+  mouseHoverSelector: sankeyNodeChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Agricultural waste : 124.729'],
 };
@@ -238,7 +250,7 @@ const SankeyLinkHoverTestCase: TooltipPayloadTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: '.recharts-sankey-links .recharts-sankey-link',
+  mouseHoverSelector: sankeyChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Agricultural waste - Bio-conversion : 124.729'],
 };
@@ -346,10 +358,11 @@ describe('Tooltip payload', () => {
     });
   });
 
-  describe('payloadUniqBy prop', () => {
-    // I cannot find any meaningful difference that the payloadUniqBy prop makes.
-    // If you can think of a test case please add.
-  });
+  /*
+   * I cannot find any meaningful difference that the payloadUniqBy prop makes.
+   * If you can think of a test case please add.
+   */
+  describe.todo('payloadUniqBy prop');
 
   it('should contain payload data from multiple datasets', () => {
     const lineData1 = [

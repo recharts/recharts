@@ -32,12 +32,23 @@ import {
 import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { PageData, SankeyData } from '../../_data';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
+import {
+  areaChartMouseHoverTooltipSelector,
+  barChartMouseHoverTooltipSelector,
+  composedChartMouseHoverTooltipSelector,
+  lineChartMouseHoverTooltipSelector,
+  MouseHoverTooltipTriggerSelector,
+  pieChartMouseHoverTooltipSelector,
+  radarChartMouseHoverTooltipSelector,
+  radialBarChartMouseHoverTooltipSelector,
+  sankeyNodeChartMouseHoverTooltipSelector,
+  scatterChartMouseHoverTooltipSelector,
+} from './tooltipMouseHoverSelectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
   name: string;
-  // Hovering over this selector will trigger a tooltip
-  mouseHoverSelector: string;
+  mouseHoverSelector: MouseHoverTooltipTriggerSelector;
   Wrapper: ComponentType<{ children: ReactNode }>;
 };
 
@@ -55,8 +66,7 @@ const AreaChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </AreaChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: areaChartMouseHoverTooltipSelector,
 };
 
 const BarChartTestCase: TooltipVisibilityTestCase = {
@@ -67,8 +77,7 @@ const BarChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </BarChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: barChartMouseHoverTooltipSelector,
 };
 
 const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
@@ -83,8 +92,7 @@ const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
       <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
     </LineChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
 };
 
 const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
@@ -108,8 +116,7 @@ const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
       <Line dataKey="uv" stroke="#82ca9d" />
     </LineChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
 };
 
 const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
@@ -122,8 +129,7 @@ const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
       <Area dataKey="pv" />
     </ComposedChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: composedChartMouseHoverTooltipSelector,
 };
 
 const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
@@ -136,8 +142,7 @@ const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
       <Bar dataKey="amt" />
     </ComposedChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: composedChartMouseHoverTooltipSelector,
 };
 
 const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
@@ -150,8 +155,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
       <Line dataKey="pv" />
     </ComposedChart>
   ),
-  // hovering anywhere in the chart shows Tooltip with the closest relevant information
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: composedChartMouseHoverTooltipSelector,
 };
 
 const PieChartTestCase: TooltipVisibilityTestCase = {
@@ -162,8 +166,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </PieChart>
   ),
-  // hovering over the whole chart does nothing; Pie requires hovering over individual segments
-  mouseHoverSelector: '.recharts-pie-sector',
+  mouseHoverSelector: pieChartMouseHoverTooltipSelector,
 };
 
 const RadarChartTestCase: TooltipVisibilityTestCase = {
@@ -177,8 +180,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </RadarChart>
   ),
-  // RadarChart allows hovering over the whole chart - but it is sensitive on the actual x,y coordinates!
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: radarChartMouseHoverTooltipSelector,
 };
 
 const RadialBarChartTestCase: TooltipVisibilityTestCase = {
@@ -192,8 +194,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </RadialBarChart>
   ),
-  // RadialBarChart allows hovering over the whole chart - but it is sensitive on the actual x,y coordinates!
-  mouseHoverSelector: '.recharts-wrapper',
+  mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -203,7 +204,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: '.recharts-sankey-nodes .recharts-rectangle',
+  mouseHoverSelector: sankeyNodeChartMouseHoverTooltipSelector,
 };
 
 const ScatterChartTestCase: TooltipVisibilityTestCase = {
@@ -216,7 +217,7 @@ const ScatterChartTestCase: TooltipVisibilityTestCase = {
       {children}
     </ScatterChart>
   ),
-  mouseHoverSelector: '.recharts-scatter-symbol',
+  mouseHoverSelector: scatterChartMouseHoverTooltipSelector,
 };
 
 const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
