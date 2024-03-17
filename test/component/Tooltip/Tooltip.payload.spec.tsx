@@ -347,7 +347,44 @@ describe('Tooltip payload', () => {
   });
 
   describe('payloadUniqBy prop', () => {
-    // I cannot find any meaningul difference that the payloadUniqBy prop makes.
+    // I cannot find any meaningful difference that the payloadUniqBy prop makes.
     // If you can think of a test case please add.
+  });
+
+  it('should contain payload data from multiple datasets', () => {
+    const lineData1 = [
+      { category: 'A', value: 0.2 },
+      { category: 'B', value: 0.3 },
+      { category: 'B', value: 0.5 },
+      { category: 'C', value: 0.6 },
+      { category: 'C', value: 0.7 },
+      { category: 'D', value: 0.4 },
+    ];
+
+    const lineData2 = [
+      { category: 'A', value: null },
+      { category: 'B', value: null },
+      { category: 'B', value: null },
+      { category: 'C', value: 0.2 },
+      { category: 'C', value: 0.4 },
+      { category: 'D', value: 0.6 },
+    ];
+
+    const { container, debug } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <ComposedChart width={400} height={400}>
+          <XAxis dataKey="category" type="category" />
+          <YAxis dataKey="value" />
+          <Tooltip />
+
+          <Line dataKey="value" data={lineData1} />
+          <Line dataKey="value" data={lineData2} />
+        </ComposedChart>
+      </div>,
+    );
+
+    showTooltip(container, ComposedChartTestCase.mouseHoverSelector, debug);
+
+    expectTooltipPayload(container, 'C', ['value : 0.7', 'value : 0.4']);
   });
 });
