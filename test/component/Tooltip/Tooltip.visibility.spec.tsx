@@ -435,53 +435,6 @@ describe('Tooltip visibility', () => {
         expect(tooltip).not.toBeVisible();
       });
 
-      test('defaultIndex can be updated by parent control', () => {
-        const data2 = [
-          { x: 100, y: 200, z: 200 },
-          { x: 120, y: 100, z: 260 },
-          { x: 170, y: 300, z: 400 },
-          { x: 140, y: 250, z: 280 },
-          { x: 150, y: 400, z: 500 },
-          { x: 110, y: 280, z: 200 },
-        ];
-        const Example = () => {
-          const [defaultIndex, setDefaultIndex] = useState(0);
-
-          // TODO switch this to Wrapper and separate the cursor tests
-          return (
-            <div>
-              <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                <XAxis dataKey="x" name="stature" unit="cm" />
-                <YAxis dataKey="y" name="weight" unit="kg" />
-                <Scatter line name="A school" data={data2} fill="#ff7300" />
-                <Tooltip defaultIndex={defaultIndex} active />
-              </ScatterChart>
-              <button type="button" id="goRight" onClick={() => setDefaultIndex(defaultIndex + 1)}>
-                Go right
-              </button>
-            </div>
-          );
-        };
-        const { container } = render(<Example />);
-
-        const tooltip = getTooltip(container);
-        expect(tooltip).toBeInTheDocument();
-
-        // Tooltip should be visible, since defaultIndex was set
-        expect(tooltip).toBeVisible();
-
-        // The cursor should also be visible
-        expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
-
-        // Data should be displayed in the Tooltip payload
-        expect(tooltip.textContent).toBe('100stature : 100cmweight : 200kg');
-
-        fireEvent.click(container.querySelector('#goRight') as HTMLButtonElement);
-
-        // Data should be displayed in the Tooltip payload
-        expect(tooltip?.textContent).toBe('120stature : 120cmweight : 100kg');
-      });
-
       it('should ignore invalid defaultIndex value', () => {
         const { container } = render(
           <Wrapper>
@@ -572,6 +525,52 @@ describe('Tooltip visibility', () => {
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseOver(chart!, { clientX: +line.getAttribute('x')! + 1, clientY: 50 });
     expect(getByText(container, '4567')).toBeVisible();
+  });
+
+  test('defaultIndex can be updated by parent control', () => {
+    const data2 = [
+      { x: 100, y: 200, z: 200 },
+      { x: 120, y: 100, z: 260 },
+      { x: 170, y: 300, z: 400 },
+      { x: 140, y: 250, z: 280 },
+      { x: 150, y: 400, z: 500 },
+      { x: 110, y: 280, z: 200 },
+    ];
+    const Example = () => {
+      const [defaultIndex, setDefaultIndex] = useState(0);
+
+      return (
+        <div>
+          <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <XAxis dataKey="x" name="stature" unit="cm" />
+            <YAxis dataKey="y" name="weight" unit="kg" />
+            <Scatter line name="A school" data={data2} fill="#ff7300" />
+            <Tooltip defaultIndex={defaultIndex} active />
+          </ScatterChart>
+          <button type="button" id="goRight" onClick={() => setDefaultIndex(defaultIndex + 1)}>
+            Go right
+          </button>
+        </div>
+      );
+    };
+    const { container } = render(<Example />);
+
+    const tooltip = getTooltip(container);
+    expect(tooltip).toBeInTheDocument();
+
+    // Tooltip should be visible, since defaultIndex was set
+    expect(tooltip).toBeVisible();
+
+    // The cursor should also be visible
+    expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+
+    // Data should be displayed in the Tooltip payload
+    expect(tooltip.textContent).toBe('100stature : 100cmweight : 200kg');
+
+    fireEvent.click(container.querySelector('#goRight') as HTMLButtonElement);
+
+    // Data should be displayed in the Tooltip payload
+    expect(tooltip?.textContent).toBe('120stature : 120cmweight : 100kg');
   });
 });
 
