@@ -103,4 +103,27 @@ describe('<ErrorBar />', () => {
 
     expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(10);
   });
+
+  test('Renders Error Bars with animation', () => {
+    const { container } = render(
+      <LineChart data={barData} width={500} height={500}>
+        <Line isAnimationActive dataKey="uv">
+          <ErrorBar dataKey="uvError" />
+        </Line>
+      </LineChart>,
+    );
+
+    const errorBars = container.querySelectorAll('.recharts-errorBar');
+
+    errorBars.forEach(bar => {
+      const lineElements = bar.querySelectorAll('line');
+
+      lineElements.forEach(line => {
+        const style = line.getAttribute('style');
+        expect(style).toContain('transform: scale(1, 1)');
+        expect(style).toContain('transform-origin');
+        expect(style).toContain('transition: transform 200ms ease-in-out 0s');
+      });
+    });
+  });
 });
