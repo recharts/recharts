@@ -156,13 +156,8 @@ describe('<Sankey />', () => {
   });
 
   describe('Sankey layout context', () => {
-    /**
-     * Okay Sankey is something different, I can't get it to render without throwing
-     * even for the basic example copied from above.
-     * TODO figure out why does it throw and unskip this test.
-     */
-    it.skip(
-      'should provide viewBox and clipPathId if there are no axes',
+    it(
+      'should not provide viewBox nor clipPathId nor any axes',
       testChartLayoutContext(
         props => (
           <Sankey width={1000} height={500} data={data}>
@@ -170,20 +165,15 @@ describe('<Sankey />', () => {
           </Sankey>
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+          expect(clipPathId).toBe(undefined);
+          expect(viewBox).toEqual(undefined);
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
       ),
     );
 
-    /**
-     * Okay Sankey is something different, I can't get it to render without throwing
-     * even for the basic example copied from above.
-     * TODO figure out why does it throw and unskip this test.
-     */
-    it.skip(
+    it(
       'should not set width and height in context',
       testChartLayoutContext(
         props => (
@@ -198,11 +188,7 @@ describe('<Sankey />', () => {
       ),
     );
 
-    /**
-     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
-     * TODO un-skip this level if fixing the exception.
-     */
-    it.skip(
+    it(
       'should provide axisMaps: undefined even if axes are specified',
       testChartLayoutContext(
         props => (
@@ -212,9 +198,7 @@ describe('<Sankey />', () => {
             {props.children}
           </Sankey>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+        ({ xAxisMap, yAxisMap }) => {
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
