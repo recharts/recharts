@@ -29,11 +29,11 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { assertNotNull } from '../../helper/assertNotNull';
 import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { PageData, SankeyData } from '../../_data';
+import { getTooltip, showTooltip } from './tooltipTestHelpers';
 
-type TooltipTestCase = {
+type TooltipVisibilityTestCase = {
   // For identifying which test is running
   name: string;
   // Hovering over this selector will trigger a tooltip
@@ -47,7 +47,7 @@ const commonChartProps = {
   data: PageData,
 };
 
-const AreaChartTestCase: TooltipTestCase = {
+const AreaChartTestCase: TooltipVisibilityTestCase = {
   name: 'AreaChart',
   Wrapper: ({ children }) => (
     <AreaChart {...commonChartProps}>
@@ -59,7 +59,7 @@ const AreaChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const BarChartTestCase: TooltipTestCase = {
+const BarChartTestCase: TooltipVisibilityTestCase = {
   name: 'BarChart',
   Wrapper: ({ children }) => (
     <BarChart {...commonChartProps}>
@@ -71,7 +71,7 @@ const BarChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const LineChartHorizontalTestCase: TooltipTestCase = {
+const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
   name: 'horizontal LineChart',
   Wrapper: ({ children }) => (
     <LineChart {...commonChartProps}>
@@ -87,7 +87,7 @@ const LineChartHorizontalTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const LineChartVerticalTestCase: TooltipTestCase = {
+const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
   name: 'vertical LineChart',
   Wrapper: ({ children }) => (
     <LineChart
@@ -112,7 +112,7 @@ const LineChartVerticalTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const ComposedChartWithAreaTestCase: TooltipTestCase = {
+const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
   name: 'ComposedChart with Area',
   Wrapper: ({ children }) => (
     <ComposedChart {...commonChartProps}>
@@ -126,7 +126,7 @@ const ComposedChartWithAreaTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const ComposedChartWithBarTestCase: TooltipTestCase = {
+const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
   name: 'ComposedChart with Bar',
   Wrapper: ({ children }) => (
     <ComposedChart {...commonChartProps}>
@@ -140,7 +140,7 @@ const ComposedChartWithBarTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const ComposedChartWithLineTestCase: TooltipTestCase = {
+const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
   name: 'ComposedChart with Line',
   Wrapper: ({ children }) => (
     <ComposedChart {...commonChartProps}>
@@ -154,7 +154,7 @@ const ComposedChartWithLineTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const PieChartTestCase: TooltipTestCase = {
+const PieChartTestCase: TooltipVisibilityTestCase = {
   name: 'PieChart',
   Wrapper: ({ children }) => (
     <PieChart height={400} width={400}>
@@ -166,7 +166,7 @@ const PieChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-pie-sector',
 };
 
-const RadarChartTestCase: TooltipTestCase = {
+const RadarChartTestCase: TooltipVisibilityTestCase = {
   name: 'RadarChart',
   Wrapper: ({ children }) => (
     <RadarChart height={600} width={600} data={PageData}>
@@ -181,7 +181,7 @@ const RadarChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const RadialBarChartTestCase: TooltipTestCase = {
+const RadialBarChartTestCase: TooltipVisibilityTestCase = {
   name: 'RadialBarChart',
   Wrapper: ({ children }) => (
     <RadialBarChart height={600} width={600} data={PageData}>
@@ -196,7 +196,7 @@ const RadialBarChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-wrapper',
 };
 
-const SankeyTestCase: TooltipTestCase = {
+const SankeyTestCase: TooltipVisibilityTestCase = {
   name: 'Sankey',
   Wrapper: ({ children }) => (
     <Sankey width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} data={SankeyData}>
@@ -206,7 +206,7 @@ const SankeyTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-sankey-nodes .recharts-rectangle',
 };
 
-const ScatterChartTestCase: TooltipTestCase = {
+const ScatterChartTestCase: TooltipVisibilityTestCase = {
   name: 'ScatterChart',
   Wrapper: ({ children }) => (
     <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -219,7 +219,7 @@ const ScatterChartTestCase: TooltipTestCase = {
   mouseHoverSelector: '.recharts-scatter-symbol',
 };
 
-const testCases: ReadonlyArray<TooltipTestCase> = [
+const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   AreaChartTestCase,
   BarChartTestCase,
   LineChartHorizontalTestCase,
@@ -235,28 +235,10 @@ const testCases: ReadonlyArray<TooltipTestCase> = [
   // FunnelChart is excluded because FunnelChart does not support Tooltip
 ];
 
-function getTooltip(container: HTMLElement) {
-  const element = container.querySelector('.recharts-tooltip-wrapper');
-  assertNotNull(element);
-  return element;
-}
-
-describe('<Tooltip /> visibility', () => {
+describe('Tooltip visibility', () => {
   afterEach(restoreGetBoundingClientRect);
 
   describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector }) => {
-    function showTooltip(container: Element, debug?: () => void): Element {
-      const tooltipTriggerElement = container.querySelector(mouseHoverSelector);
-      if (tooltipTriggerElement == null && debug != null) {
-        debug();
-      }
-      assertNotNull(tooltipTriggerElement);
-      expect(tooltipTriggerElement).toBeInTheDocument();
-      expect(tooltipTriggerElement).toBeVisible();
-      fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
-      return tooltipTriggerElement;
-    }
-
     test('Without an event, the tooltip wrapper is rendered but not visible', () => {
       const { container } = render(
         <Wrapper>
@@ -289,7 +271,7 @@ describe('<Tooltip /> visibility', () => {
         </Wrapper>,
       );
 
-      showTooltip(container, debug);
+      showTooltip(container, mouseHoverSelector, debug);
 
       // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
       // but the content is already created based on the nearest data point.
@@ -312,7 +294,7 @@ describe('<Tooltip /> visibility', () => {
         </Wrapper>,
       );
 
-      const tooltipTriggerElement = showTooltip(container);
+      const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
       fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
 
       const tooltip = getTooltip(container);
@@ -329,7 +311,7 @@ describe('<Tooltip /> visibility', () => {
         </Wrapper>,
       );
 
-      showTooltip(container);
+      showTooltip(container, mouseHoverSelector);
 
       const customizedContent = container.querySelector('.customized');
       expect(customizedContent).toBeInTheDocument();
@@ -352,7 +334,7 @@ describe('<Tooltip /> visibility', () => {
         const tooltip = getTooltip(container);
         expect(tooltip).not.toBeVisible();
 
-        const tooltipTriggerElement = showTooltip(container);
+        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         expect(tooltip).toBeVisible();
 
@@ -378,7 +360,7 @@ describe('<Tooltip /> visibility', () => {
         const tooltip = getTooltip(container);
         expect(tooltip).not.toBeVisible();
 
-        const tooltipTriggerElement = showTooltip(container);
+        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         expect(tooltip).not.toBeVisible();
 
@@ -397,7 +379,7 @@ describe('<Tooltip /> visibility', () => {
         const tooltip = getTooltip(container);
         expect(tooltip).not.toBeVisible();
 
-        const tooltipTriggerElement = showTooltip(container);
+        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         expect(tooltip).toBeVisible();
 
@@ -444,16 +426,11 @@ describe('<Tooltip /> visibility', () => {
         // The active dot should also be visible
         // expect(container.querySelector('.recharts-active-dot')).toBeVisible();
 
-        // TODO replace this commented code with a new test suite for tooltip payload and content
-        // "2uv..." should be displayed in the Tooltip payload
-        // expect(tooltip.textContent).toBe('2uv : 200');
-
-        const tooltipTriggerElement = showTooltip(container);
+        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         // Tooltip should be able to move when the mouse moves over the chart
         expect(tooltip).toBeVisible();
-        // TODO replace this commented code with a new test suite for tooltip payload and content
-        // expect(tooltip.textContent).toBe('4uv : 189');
+
         fireEvent.mouseOver(tooltipTriggerElement, { clientX: 350, clientY: 200 });
 
         // TODO assert tooltip positions
