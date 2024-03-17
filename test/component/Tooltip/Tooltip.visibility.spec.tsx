@@ -455,6 +455,7 @@ describe('Tooltip visibility', () => {
         const Example = () => {
           const [defaultIndex, setDefaultIndex] = useState(0);
 
+          // TODO switch this to Wrapper and separate the cursor tests
           return (
             <div>
               <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -491,12 +492,9 @@ describe('Tooltip visibility', () => {
 
       it('should ignore invalid defaultIndex value', () => {
         const { container } = render(
-          <div role="main" style={{ width: '400px', height: '400px' }}>
-            <AreaChart width={400} height={400} data={PageData}>
-              <Area dataKey="uv" />
-              <Tooltip defaultIndex={20} />
-            </AreaChart>
-          </div>,
+          <Wrapper>
+            <Tooltip defaultIndex={20} />
+          </Wrapper>,
         );
 
         const tooltip = getTooltip(container);
@@ -506,7 +504,7 @@ describe('Tooltip visibility', () => {
     });
   });
   describe('includeHidden prop', () => {
-    test('False - Should not render tooltip for hidden items', () => {
+    test('true - Should render tooltip for hidden items', () => {
       let tooltipPayload: any[] | undefined = [];
 
       const { container } = render(
@@ -534,7 +532,7 @@ describe('Tooltip visibility', () => {
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12345');
     });
 
-    test('True - Should render tooltip for hidden items', () => {
+    test('false - Should hide tooltip for hidden items', () => {
       let tooltipPayload: any[] | undefined = [];
 
       const { container } = render(
