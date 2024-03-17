@@ -275,6 +275,19 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   ScatterChartTestCase,
 ];
 
+function expectTooltipPayload(
+  container: HTMLElement,
+  expectedTooltipTitle: string,
+  expectedTooltipContent: ReadonlyArray<string>,
+) {
+  const tooltip = getTooltip(container);
+  expect(tooltip).toBeInTheDocument();
+  expect(tooltip).toBeVisible();
+  expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
+  const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
+  expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
+}
+
 describe('Tooltip payload', () => {
   afterEach(() => {
     restoreGetBoundingClientRect();
@@ -295,13 +308,41 @@ describe('Tooltip payload', () => {
 
         showTooltip(container, mouseHoverSelector, debug);
 
-        const tooltip = getTooltip(container);
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toBeVisible();
-        expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
-        const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
-        expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
+        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
       });
     },
   );
+
+  describe('filterNull prop', () => {
+    const dataWithNulls: Array<{ x: number | null; y: number | null }> = [{ x: null, y: 2 }];
+    test.each([undefined, true])('should filter away nulls when filterNull = %s', filterNull => {
+      const { container, debug } = render(
+        <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <XAxis dataKey="x" />
+          <YAxis dataKey="y" />
+          <Scatter name="A school" data={dataWithNulls} fill="#ff7300" />
+          <Tooltip filterNull={filterNull} />
+        </ScatterChart>,
+      );
+
+      showTooltip(container, ScatterChartTestCase.mouseHoverSelector, debug);
+
+      expectTooltipPayload(container, '', ['y : 2']);
+    });
+
+    it('should display nulls when filterNull = false', () => {
+      const { container, debug } = render(
+        <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <XAxis dataKey="x" />
+          <YAxis dataKey="y" />
+          <Scatter name="A school" data={dataWithNulls} fill="#ff7300" />
+          <Tooltip filterNull={false} />
+        </ScatterChart>,
+      );
+
+      showTooltip(container, ScatterChartTestCase.mouseHoverSelector, debug);
+
+      expectTooltipPayload(container, '', ['x : ', 'y : 2']);
+    });
+  });
 });
