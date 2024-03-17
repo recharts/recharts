@@ -141,18 +141,20 @@ describe('<Sankey />', () => {
   });
 
   it('re-renders links and nodes when data changes', () => {
-    const { container } = render(<Sankey width={1000} height={500} data={data} />);
+    const { container, rerender } = render(<Sankey width={1000} height={500} data={data} />);
 
     expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(48);
     expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(68);
 
-    data.nodes.push({ name: 'New Node' });
-    data.links.push({ source: 2, target: data.nodes.length, value: 100.0 });
+    const nextData = {
+      nodes: [...data.nodes, { name: 'New Node' }],
+      links: [...data.links, { source: 2, target: data.nodes.length, value: 100.0 }],
+    };
 
-    setTimeout(() => {
-      expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(49);
-      expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(69);
-    }, 1000);
+    rerender(<Sankey width={1000} height={500} data={nextData} />);
+
+    expect(container.querySelectorAll('.recharts-sankey-node')).toHaveLength(49);
+    expect(container.querySelectorAll('.recharts-sankey-link')).toHaveLength(69);
   });
 
   describe('Sankey layout context', () => {
