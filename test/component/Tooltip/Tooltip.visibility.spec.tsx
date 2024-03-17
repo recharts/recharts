@@ -419,10 +419,6 @@ describe('Tooltip visibility', () => {
         // Tooltip should be visible, since defaultIndex was set
         expect(tooltip).toBeVisible();
 
-        // TODO replace this with cursor tests
-        // The cursor should also be visible
-        // expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
-
         const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
         // Tooltip should be able to move when the mouse moves over the chart
@@ -430,7 +426,6 @@ describe('Tooltip visibility', () => {
 
         fireEvent.mouseOver(tooltipTriggerElement, { clientX: 350, clientY: 200 });
 
-        // TODO assert tooltip positions
         // Tooltip should be able to move when the mouse moves over the chart
         expect(tooltip).toBeVisible();
 
@@ -624,6 +619,46 @@ describe('Active element visibility', () => {
       showTooltip(container, mouseHoverSelector, debug);
 
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe('Cursor visibility', () => {
+  afterEach(restoreGetBoundingClientRect);
+
+  describe.each([
+    AreaChartTestCase,
+    BarChartTestCase,
+    LineChartHorizontalTestCase,
+    LineChartVerticalTestCase,
+    ComposedChartWithAreaTestCase,
+    ComposedChartWithLineTestCase,
+    RadarChartTestCase,
+  ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
+    it('should display cursor', () => {
+      const { container, debug } = render(
+        <Wrapper>
+          <Tooltip />
+        </Wrapper>,
+      );
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+
+      showTooltip(container, mouseHoverSelector, debug);
+
+      expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+    });
+
+    it('should not display cursor when cursor=false', () => {
+      const { container, debug } = render(
+        <Wrapper>
+          <Tooltip cursor={false} />
+        </Wrapper>,
+      );
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
+
+      showTooltip(container, mouseHoverSelector, debug);
+
+      expect(container.querySelector('.recharts-tooltip-cursor')).not.toBeInTheDocument();
     });
   });
 });
