@@ -134,6 +134,7 @@ export function ErrorBar(props: Props) {
         {...svgProps}
       >
         {lineCoordinates.map(coordinates => {
+          const lineStyle = isAnimationActive ? { transformOrigin: `${coordinates.x1 - 5}px` } : undefined;
           return (
             <Animate
               from="scale(0, 1)"
@@ -145,7 +146,7 @@ export function ErrorBar(props: Props) {
               duration={animationDuration}
               key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
             >
-              <line {...coordinates} style={{ transformOrigin: `${coordinates.x1 - 5}px` }} />
+              <line {...coordinates} style={lineStyle} />
             </Animate>
           );
         })}
@@ -164,7 +165,7 @@ ErrorBar.defaultProps = {
   layout: 'horizontal',
   isAnimationActive: true,
   animationBegin: 0,
-  animationDuration: 400,
+  animationDuration: 200,
   animationEasing: 'ease-in-out',
 };
 ErrorBar.displayName = 'ErrorBar';

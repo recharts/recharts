@@ -20,6 +20,19 @@ const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
   });
 };
 
+function assertAnimationStyles(container: HTMLElement, expectedTransform: string, expectedTransition: string) {
+  const errorBars = container.querySelectorAll('.recharts-errorBar');
+  errorBars.forEach(bar => {
+    const lineElements = bar.querySelectorAll('line');
+    lineElements.forEach(line => {
+      const style = line.getAttribute('style');
+      expect(style).toContain(`transform: ${expectedTransform}`);
+      expect(style).toContain('transform-origin');
+      expect(style).toContain(`transition: ${expectedTransition}`);
+    });
+  });
+}
+
 describe('<ErrorBar />', () => {
   const barData = [
     { name: 'food', uv: 2000, pv: 2013, time: 1, uvError: [100, 50], pvError: [110, 20] },
@@ -113,17 +126,80 @@ describe('<ErrorBar />', () => {
       </LineChart>,
     );
 
-    const errorBars = container.querySelectorAll('.recharts-errorBar');
+    assertErrorBars(container, 0);
 
-    errorBars.forEach(bar => {
-      const lineElements = bar.querySelectorAll('line');
+    setTimeout(() => {
+      assertErrorBars(container, 4);
+      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 0s');
+    }, 200);
+  });
 
-      lineElements.forEach(line => {
-        const style = line.getAttribute('style');
-        expect(style).toContain('transform: scale(1, 1)');
-        expect(style).toContain('transform-origin');
-        expect(style).toContain('transition: transform 200ms ease-in-out 0s');
-      });
-    });
+  test('Renders Error Bars without animation', () => {
+    const { container } = render(
+      <LineChart data={barData} width={500} height={500}>
+        <Line dataKey="uv">
+          <ErrorBar isAnimationActive={false} dataKey="uvError" />
+        </Line>
+      </LineChart>,
+    );
+
+    assertErrorBars(container, 0);
+
+    setTimeout(() => {
+      assertErrorBars(container, 4);
+      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 0s');
+    }, 200);
+  });
+
+  test('Renders Error Bars with animation delay', () => {
+    const { container } = render(
+      <LineChart data={barData} width={500} height={500}>
+        <Line isAnimationActive dataKey="uv">
+          <ErrorBar dataKey="uvError" animationBegin={100} />
+        </Line>
+      </LineChart>,
+    );
+
+    assertErrorBars(container, 0);
+
+    setTimeout(() => {
+      assertErrorBars(container, 4);
+      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 100ms');
+    }, 300);
+  });
+
+  test('Renders Error Bars with animation duration', () => {
+    const { container } = render(
+      <LineChart data={barData} width={500} height={500}>
+        <Line isAnimationActive dataKey="uv">
+          <ErrorBar dataKey="uvError" animationDuration={1000} />
+        </Line>
+      </LineChart>,
+    );
+
+    assertErrorBars(container, 0);
+
+    setTimeout(() => {
+      assertErrorBars(container, 4);
+      assertAnimationStyles(container, 'scale(1, 1)', 'transform 1000ms ease-in-out 0s');
+    }, 1000);
+  });
+
+  // animationEasing
+  test('Renders Error Bars with animation easing', () => {
+    const { container } = render(
+      <LineChart data={barData} width={500} height={500}>
+        <Line isAnimationActive dataKey="uv">
+          <ErrorBar dataKey="uvError" animationEasing="ease-in" />
+        </Line>
+      </LineChart>,
+    );
+
+    assertErrorBars(container, 0);
+
+    setTimeout(() => {
+      assertErrorBars(container, 4);
+      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in 0s');
+    }, 200);
   });
 });
