@@ -3,6 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { vi } from 'vitest';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<RadarChart />', () => {
   const data = [
@@ -25,7 +26,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-polygon')).toHaveLength(1);
   });
 
-  test('Render 8 dots when dot is setted to be true', () => {
+  test('Render 8 dots when dot=true', () => {
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} dot dataKey="value" />
@@ -34,7 +35,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-radar-dot')).toHaveLength(8);
   });
 
-  test('Render 8 labels when dot is setted to be true', () => {
+  test('Render 8 labels when label=true', () => {
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} label dataKey="value" />
@@ -66,7 +67,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-polar-radius-axis')).toHaveLength(1);
   });
 
-  test('Render 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
+  test('Render 8 angle grid angle line, 8 angle axis ticks, and 5 radius axis ticks', () => {
     const { container } = render(
       <RadarChart
         cx={300}
@@ -97,9 +98,7 @@ describe('<RadarChart />', () => {
       </RadarChart>,
     );
     const radar = container.querySelector('.recharts-polygon');
-    if (!radar) {
-      throw new Error('Radar not found');
-    }
+    assertNotNull(radar);
     fireEvent.click(radar);
     expect(onClick).toBeCalled();
   });
