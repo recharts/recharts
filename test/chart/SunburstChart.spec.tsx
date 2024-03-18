@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { SunburstChart } from '../../src';
-import { SunburstData as data } from '../_data';
+import { exampleSunburstData as data } from '../_data';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {

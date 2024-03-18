@@ -1,3 +1,5 @@
+import type { SunburstData } from '../src/chart/SunburstChart';
+
 export const PageData = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
   { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
@@ -161,7 +163,7 @@ export const TreemapData = [
   { rank: '20', name: 'T', value: 1885463047 },
 ];
 
-export const SunburstData = {
+export const exampleSunburstData: SunburstData = {
   name: 'Root',
   value: 100,
   children: [

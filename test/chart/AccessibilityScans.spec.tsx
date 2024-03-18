@@ -28,7 +28,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { PageData as data, SankeyData, TreemapData, SunburstData } from '../_data';
+import { PageData as data, SankeyData, TreemapData, exampleSunburstData } from '../_data';
 
 describe('Static scanning for accessibility markup issues', () => {
   test('Area chart', async () => {
@@ -147,7 +147,7 @@ describe('Static scanning for accessibility markup issues', () => {
   });
 
   test.skip('Sunburst', async () => {
-    const { container } = render(<SunburstChart data={SunburstData} />);
+    const { container } = render(<SunburstChart data={exampleSunburstData} />);
 
     expect((await axe(container)).violations).toHaveLength(0);
   });
