@@ -136,7 +136,7 @@ export function ErrorBar(props: Props) {
         {lineCoordinates.map(coordinates => {
           return (
             <Animate
-              from="scale(0, 1"
+              from="scale(0, 1)"
               to="scale(1, 1)"
               attributeName="transform"
               begin={animationBegin}
