@@ -29,7 +29,7 @@ interface TextOptions {
 
 export interface SunburstChartProps {
   className?: string;
-  data?: SunburstData;
+  data: SunburstData;
   width?: number;
   height?: number;
   padding?: number;

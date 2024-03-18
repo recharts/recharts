@@ -1,8 +1,9 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { vi } from 'vitest';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis } from '../../src';
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<RadarChart />', () => {
   const data = [
@@ -25,7 +26,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-polygon')).toHaveLength(1);
   });
 
-  test('Render 8 dots when dot is setted to be true', () => {
+  test('Render 8 dots when dot=true', () => {
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} dot dataKey="value" />
@@ -34,7 +35,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-radar-dot')).toHaveLength(8);
   });
 
-  test('Render 8 labels when dot is setted to be true', () => {
+  test('Render 8 labels when label=true', () => {
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
         <Radar isAnimationActive={false} label dataKey="value" />
@@ -66,7 +67,7 @@ describe('<RadarChart />', () => {
     expect(container.querySelectorAll('.recharts-polar-radius-axis')).toHaveLength(1);
   });
 
-  test('Render 8 angle grid angle line, 8 angle axis ticks, and 3 radius axis ticks', () => {
+  test('Render 8 angle grid angle line, 8 angle axis ticks, and 5 radius axis ticks', () => {
     const { container } = render(
       <RadarChart
         cx={300}
@@ -97,9 +98,7 @@ describe('<RadarChart />', () => {
       </RadarChart>,
     );
     const radar = container.querySelector('.recharts-polygon');
-    if (!radar) {
-      throw new Error('Radar not found');
-    }
+    assertNotNull(radar);
     fireEvent.click(radar);
     expect(onClick).toBeCalled();
   });
@@ -137,23 +136,20 @@ describe('<RadarChart />', () => {
       ),
     );
 
-    /**
-     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
-     * TODO un-skip this level if fixing the exception.
-     */
-    it.skip(
+    it(
       'should provide axisMaps: undefined even if axes are specified',
       testChartLayoutContext(
         props => (
           <RadarChart width={100} height={50} barSize={20}>
-            <XAxis dataKey="number" type="number" />
-            <YAxis type="category" dataKey="name" />
+            <PolarGrid />
+            <PolarAngleAxis dataKey="subject" />
+            <PolarRadiusAxis />
             {props.children}
           </RadarChart>
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(viewBox).toEqual({ x: 5, y: 5, width: 90, height: 40 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },

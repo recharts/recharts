@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
-import { FunnelChart, Funnel, XAxis, YAxis } from '../../src';
+import { Funnel, FunnelChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 
 const data = [
@@ -134,27 +134,6 @@ describe('<FunnelChart />', () => {
       ),
     );
 
-    /**
-     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
-     * TODO un-skip this level if fixing the exception.
-     */
-    it.skip(
-      'should provide axisMaps: undefined even if axes are specified',
-      testChartLayoutContext(
-        props => (
-          <FunnelChart width={100} height={50} barSize={20}>
-            <XAxis dataKey="number" type="number" />
-            <YAxis type="category" dataKey="name" />
-            {props.children}
-          </FunnelChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
-        },
-      ),
-    );
+    // Funnel chart does not support any axes so there is no axes context test!
   });
 });

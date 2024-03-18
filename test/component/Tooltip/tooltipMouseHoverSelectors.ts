@@ -23,3 +23,4 @@ export const sankeyNodeChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerS
 export const scatterChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-scatter-symbol';
 export const sankeyChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
   '.recharts-sankey-links .recharts-sankey-link';
+export const sunburstChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-sector';
