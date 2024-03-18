@@ -1,4 +1,5 @@
 import React, { ReactElement, cloneElement, createElement, isValidElement } from 'react';
+import clsx from 'clsx';
 import { ChartCoordinate, ChartOffset, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
@@ -85,7 +86,7 @@ export function Cursor(props: CursorProps) {
     ...filterProps(element.props.cursor, false),
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
-    className: 'recharts-tooltip-cursor',
+    className: clsx('recharts-tooltip-cursor', element.props.cursor.className),
   };
 
   return isValidElement(element.props.cursor)
