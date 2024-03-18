@@ -1,8 +1,19 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, Mock } from 'vitest';
-import { PieChart, Pie, Legend, Cell, Tooltip, Sector, SectorProps, XAxis, YAxis } from '../../src';
+import { Mock, vi } from 'vitest';
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Sector,
+  SectorProps,
+  Tooltip,
+} from '../../src';
 import { testChartLayoutContext } from '../util/context';
 
 describe('<PieChart />', () => {
@@ -357,23 +368,20 @@ describe('<PieChart />', () => {
       ),
     );
 
-    /**
-     * This test is skipped because generateCategoricalChart throws an error if axes are provided to FunnelChart.
-     * TODO un-skip this level if fixing the exception.
-     */
-    it.skip(
+    it(
       'should provide axisMaps: undefined even if axes are specified',
       testChartLayoutContext(
         props => (
           <PieChart width={100} height={50} barSize={20}>
-            <XAxis dataKey="number" type="number" />
-            <YAxis type="category" dataKey="name" />
+            <PolarGrid />
+            <PolarAngleAxis dataKey="subject" />
+            <PolarRadiusAxis />
             {props.children}
           </PieChart>
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
+          expect(viewBox).toEqual({ x: 5, y: 5, width: 90, height: 40 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
