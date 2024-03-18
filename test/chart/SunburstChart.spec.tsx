@@ -1,13 +1,14 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { SunburstChart } from '../../src';
-import { exampleSunburstData as data } from '../_data';
+import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, SunburstChart } from '../../src';
+import { exampleSunburstData } from '../_data';
+import { testChartLayoutContext } from '../util/context';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
-    const { container } = render(<SunburstChart data={data} />);
+    const { container } = render(<SunburstChart data={exampleSunburstData} />);
 
     const sectors = container.querySelectorAll('.recharts-sector');
 
@@ -24,7 +25,12 @@ describe('<Sunburst />', () => {
     const onClick = vi.fn();
 
     const { container } = render(
-      <SunburstChart onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} data={data} />,
+      <SunburstChart
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        data={exampleSunburstData}
+      />,
     );
     const sector = container.querySelectorAll('.recharts-sector')[0];
 
@@ -34,5 +40,59 @@ describe('<Sunburst />', () => {
     expect(onMouseLeave).toHaveBeenCalled();
     await userEvent.click(sector);
     expect(onClick).toHaveBeenCalled();
+  });
+
+  describe('SunburstChart layout context', () => {
+    it(
+      'should not provide viewBox nor clipPathId if there are no axes',
+      testChartLayoutContext(
+        props => (
+          <SunburstChart width={100} height={50} data={exampleSunburstData}>
+            {props.children}
+          </SunburstChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toBe(undefined);
+          expect(viewBox).toEqual(undefined);
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
+
+    it(
+      'should not set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <SunburstChart width={100} height={50} data={exampleSunburstData}>
+            {props.children}
+          </SunburstChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(0);
+          expect(height).toBe(0);
+        },
+      ),
+    );
+
+    it(
+      'should provide axisMaps: undefined even if axes are specified',
+      testChartLayoutContext(
+        props => (
+          <SunburstChart width={100} height={50} data={exampleSunburstData}>
+            <PolarGrid />
+            <PolarAngleAxis dataKey="subject" />
+            <PolarRadiusAxis />
+            {props.children}
+          </SunburstChart>
+        ),
+        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+          expect(clipPathId).toBe(undefined);
+          expect(viewBox).toEqual(undefined);
+          expect(xAxisMap).toBe(undefined);
+          expect(yAxisMap).toBe(undefined);
+        },
+      ),
+    );
   });
 });

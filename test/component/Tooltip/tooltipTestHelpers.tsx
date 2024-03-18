@@ -3,10 +3,13 @@ import { fireEvent } from '@testing-library/react';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 export function getTooltip(container: HTMLElement): HTMLElement {
-  const element = container.querySelector('.recharts-tooltip-wrapper');
+  const allWrappers = container.querySelectorAll('.recharts-tooltip-wrapper');
+  assertNotNull(allWrappers);
+  expect(allWrappers).toHaveLength(1);
+  const element = allWrappers[0];
   assertNotNull(element);
   if (!(element instanceof HTMLElement)) {
-    throw new Error(`Expected instance of HTMLElement, instead received: [${typeof element}]`);
+    throw new Error(`Expected instance of HTMLElement, instead received: [${element}]`);
   }
   return element;
 }
