@@ -37,7 +37,7 @@ describe('<Sankey />', () => {
 
   describe('Sankey layout context', () => {
     it(
-      'should not provide viewBox nor clipPathId nor any axes',
+      'should provide viewBox, but not clipPathId nor any axes',
       testChartLayoutContext(
         props => (
           <Sankey width={1000} height={500} data={SankeyData}>
@@ -46,7 +46,7 @@ describe('<Sankey />', () => {
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual(undefined);
+          expect(viewBox).toEqual({ x: 0, y: 0, width: 1000, height: 500 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
