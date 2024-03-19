@@ -1,4 +1,4 @@
-import { prettyDOM, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import React from 'react';
 import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
 
@@ -165,8 +165,6 @@ describe('<XAxis />', () => {
         <YAxis dataKey="y" />
       </BarChart>,
     );
-
-    console.log(prettyDOM(container));
 
     const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
     expect(parseInt(tick?.getAttribute('x') as string, 10)).toEqual(180);
