@@ -27,11 +27,12 @@ import {
   ScatterChart,
   SunburstChart,
   Tooltip,
+  Treemap,
   XAxis,
   YAxis,
 } from '../../../src';
 import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
-import { PageData, SankeyData, exampleSunburstData } from '../../_data';
+import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -45,6 +46,7 @@ import {
   sankeyNodeChartMouseHoverTooltipSelector,
   scatterChartMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
+  treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 
 type TooltipVisibilityTestCase = {
@@ -226,11 +228,27 @@ const SunburstChartTestCase: TooltipVisibilityTestCase = {
   name: 'SunburstChart',
   Wrapper: ({ children }) => (
     <SunburstChart width={400} height={400} data={exampleSunburstData}>
-      <Tooltip />
       {children}
     </SunburstChart>
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
+};
+
+const TreemapTestCase: TooltipVisibilityTestCase = {
+  name: 'Treemap',
+  Wrapper: ({ children }) => (
+    <Treemap
+      width={400}
+      height={400}
+      data={exampleTreemapData}
+      isAnimationActive={false}
+      nameKey="name"
+      dataKey="value"
+    >
+      {children}
+    </Treemap>
+  ),
+  mouseHoverSelector: treemapNodeChartMouseHoverTooltipSelector,
 };
 
 const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
@@ -249,6 +267,7 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
   // SunburstChartTestCase,
   // FunnelChart is excluded because FunnelChart does not support Tooltip
+  TreemapTestCase,
 ];
 
 describe('Tooltip visibility', () => {
@@ -288,6 +307,9 @@ describe('Tooltip visibility', () => {
       );
 
       showTooltip(container, mouseHoverSelector, debug);
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).toBeVisible();
 
       // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
       // but the content is already created based on the nearest data point.
@@ -341,6 +363,12 @@ describe('Tooltip visibility', () => {
            */
           context.skip();
         }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores active property on Tooltip
+           */
+          context.skip();
+        }
         const { container } = render(
           <Wrapper>
             <Tooltip active />
@@ -364,6 +392,12 @@ describe('Tooltip visibility', () => {
         if (name === 'Sankey') {
           /*
            * Sankey chart for some reason ignores active property on Tooltip
+           */
+          context.skip();
+        }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores active property on Tooltip
            */
           context.skip();
         }
@@ -419,6 +453,12 @@ describe('Tooltip visibility', () => {
         if (name === 'Sankey') {
           /*
            * Sankey chart for some reason ignores defaultIndex property on Tooltip
+           */
+          context.skip();
+        }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores defaultIndex property on Tooltip
            */
           context.skip();
         }
@@ -622,6 +662,7 @@ describe('Active element visibility', () => {
     SankeyTestCase,
     ScatterChartTestCase,
     SunburstChartTestCase,
+    TreemapTestCase,
   ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
     it('should not display activeDot', () => {
       const { container, debug } = render(
