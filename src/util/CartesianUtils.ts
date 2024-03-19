@@ -50,17 +50,19 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
           );
         }
       });
-      const smallestDistanceInPercent = smallestDistanceBetweenValues / diff;
-      const rangeWidth = axis.layout === 'vertical' ? offset.height : offset.width;
+      if (Number.isFinite(smallestDistanceBetweenValues)) {
+        const smallestDistanceInPercent = smallestDistanceBetweenValues / diff;
+        const rangeWidth = axis.layout === 'vertical' ? offset.height : offset.width;
 
-      if (axis.padding === 'gap') {
-        calculatedPadding = (smallestDistanceInPercent * rangeWidth) / 2;
-      }
+        if (axis.padding === 'gap') {
+          calculatedPadding = (smallestDistanceInPercent * rangeWidth) / 2;
+        }
 
-      if (axis.padding === 'no-gap') {
-        const gap = getPercentValue(props.barCategoryGap, smallestDistanceInPercent * rangeWidth);
-        const halfBand = (smallestDistanceInPercent * rangeWidth) / 2;
-        calculatedPadding = halfBand - gap - ((halfBand - gap) / rangeWidth) * gap;
+        if (axis.padding === 'no-gap') {
+          const gap = getPercentValue(props.barCategoryGap, smallestDistanceInPercent * rangeWidth);
+          const halfBand = (smallestDistanceInPercent * rangeWidth) / 2;
+          calculatedPadding = halfBand - gap - ((halfBand - gap) / rangeWidth) * gap;
+        }
       }
     }
 
