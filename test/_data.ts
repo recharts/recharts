@@ -132,7 +132,7 @@ export const SankeyData = {
   ],
 };
 
-export const TreemapData = [
+export const exampleTreemapData = [
   {
     rank: '1',
     name: 'A',

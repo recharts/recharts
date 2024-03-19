@@ -28,7 +28,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { PageData as data, SankeyData, TreemapData, exampleSunburstData } from '../_data';
+import { PageData as data, SankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
 
 describe('Static scanning for accessibility markup issues', () => {
   test('Area chart', async () => {
@@ -154,7 +154,14 @@ describe('Static scanning for accessibility markup issues', () => {
 
   test.skip('Treemap', async () => {
     const { container } = render(
-      <Treemap width={500} height={250} data={TreemapData} isAnimationActive={false} nameKey="name" dataKey="value" />,
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+      />,
     );
 
     expect((await axe(container)).violations).toHaveLength(0);

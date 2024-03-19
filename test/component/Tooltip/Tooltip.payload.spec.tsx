@@ -23,12 +23,13 @@ import {
   ScatterChart,
   SunburstChart,
   Tooltip,
+  Treemap,
   XAxis,
   YAxis,
 } from '../../../src';
 import { restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
-import { PageData, SankeyData, exampleSunburstData } from '../../_data';
+import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -41,6 +42,7 @@ import {
   sankeyChartMouseHoverTooltipSelector,
   sankeyNodeChartMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
+  treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 
 type TooltipPayloadTestCase = {
@@ -285,6 +287,26 @@ const SunburstChartTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['Agricultural waste : 124.729'],
 };
 
+const TreemapTestCase: TooltipPayloadTestCase = {
+  name: 'Treemap',
+  Wrapper: ({ children }) => (
+    <Treemap
+      width={400}
+      height={400}
+      data={exampleTreemapData}
+      dataKey="value"
+      nameKey="name"
+      stroke="#fff"
+      fill="#8884d8"
+    >
+      {children}
+    </Treemap>
+  ),
+  mouseHoverSelector: treemapNodeChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '',
+  expectedTooltipContent: ['U : 12490887132'],
+};
+
 const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   AreaChartTestCase,
   AreaChartWithXAxisTestCase,
@@ -302,6 +324,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   ScatterChartTestCase,
   // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
   // SunburstChartTestCase,
+  TreemapTestCase,
 ];
 
 function expectTooltipPayload(

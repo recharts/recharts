@@ -2,12 +2,19 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Treemap, XAxis, YAxis } from '../../src';
 import { testChartLayoutContext } from '../util/context';
-import { TreemapData as data } from '../_data';
+import { exampleTreemapData } from '../_data';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
     const { container } = render(
-      <Treemap width={500} height={250} data={data} isAnimationActive={false} nameKey="name" dataKey="value" />,
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+      />,
     );
 
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(24);
@@ -18,7 +25,7 @@ describe('<Treemap />', () => {
       <Treemap
         width={500}
         height={250}
-        data={data}
+        data={exampleTreemapData}
         isAnimationActive={false}
         nameKey="name"
         dataKey="value"

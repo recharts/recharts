@@ -27,11 +27,12 @@ import {
   ScatterChart,
   SunburstChart,
   Tooltip,
+  Treemap,
   XAxis,
   YAxis,
 } from '../../../src';
 import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
-import { PageData, SankeyData, exampleSunburstData } from '../../_data';
+import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -45,6 +46,7 @@ import {
   sankeyNodeChartMouseHoverTooltipSelector,
   scatterChartMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
+  treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 
 type TooltipVisibilityTestCase = {
@@ -52,6 +54,7 @@ type TooltipVisibilityTestCase = {
   name: string;
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
   Wrapper: ComponentType<{ children: ReactNode }>;
+  expectedTransform: string;
 };
 
 const commonChartProps = {
@@ -69,6 +72,7 @@ const AreaChartTestCase: TooltipVisibilityTestCase = {
     </AreaChart>
   ),
   mouseHoverSelector: areaChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(10px, 10px);',
 };
 
 const BarChartTestCase: TooltipVisibilityTestCase = {
@@ -80,6 +84,7 @@ const BarChartTestCase: TooltipVisibilityTestCase = {
     </BarChart>
   ),
   mouseHoverSelector: barChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(10px, 10px);',
 };
 
 const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
@@ -95,6 +100,7 @@ const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(65px, 10px);',
 };
 
 const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
@@ -119,6 +125,7 @@ const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(80px, 20px);',
 };
 
 const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
@@ -132,6 +139,7 @@ const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(65px, 10px);',
 };
 
 const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
@@ -145,6 +153,7 @@ const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(65px, 10px);',
 };
 
 const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
@@ -158,6 +167,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(65px, 10px);',
 };
 
 const PieChartTestCase: TooltipVisibilityTestCase = {
@@ -169,6 +179,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
     </PieChart>
   ),
   mouseHoverSelector: pieChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(271.8676024097812px, 161.6138988484545px);',
 };
 
 const RadarChartTestCase: TooltipVisibilityTestCase = {
@@ -183,6 +194,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
     </RadarChart>
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(10px, 10px);',
 };
 
 const RadialBarChartTestCase: TooltipVisibilityTestCase = {
@@ -197,6 +209,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(10px, 10px);',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -207,6 +220,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
     </Sankey>
   ),
   mouseHoverSelector: sankeyNodeChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(35px, 114.89236115144739px);',
 };
 
 const ScatterChartTestCase: TooltipVisibilityTestCase = {
@@ -220,17 +234,36 @@ const ScatterChartTestCase: TooltipVisibilityTestCase = {
     </ScatterChart>
   ),
   mouseHoverSelector: scatterChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(115px, 280.8px);',
 };
 
 const SunburstChartTestCase: TooltipVisibilityTestCase = {
   name: 'SunburstChart',
   Wrapper: ({ children }) => (
     <SunburstChart width={400} height={400} data={exampleSunburstData}>
-      <Tooltip />
       {children}
     </SunburstChart>
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(10px, 10px);',
+};
+
+const TreemapTestCase: TooltipVisibilityTestCase = {
+  name: 'Treemap',
+  Wrapper: ({ children }) => (
+    <Treemap
+      width={400}
+      height={400}
+      data={exampleTreemapData}
+      isAnimationActive={false}
+      nameKey="name"
+      dataKey="value"
+    >
+      {children}
+    </Treemap>
+  ),
+  mouseHoverSelector: treemapNodeChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(94.5px, 58.5px);',
 };
 
 const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
@@ -249,12 +282,13 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
   // SunburstChartTestCase,
   // FunnelChart is excluded because FunnelChart does not support Tooltip
+  TreemapTestCase,
 ];
 
 describe('Tooltip visibility', () => {
   afterEach(restoreGetBoundingClientRect);
 
-  describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector }) => {
+  describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector, expectedTransform }) => {
     test('Without an event, the tooltip wrapper is rendered but not visible', () => {
       const { container } = render(
         <Wrapper>
@@ -289,6 +323,9 @@ describe('Tooltip visibility', () => {
 
       showTooltip(container, mouseHoverSelector, debug);
 
+      const tooltip = getTooltip(container);
+      expect(tooltip).toBeVisible();
+
       // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
       // but the content is already created based on the nearest data point.
       const tooltipContentName = container.querySelector('.recharts-tooltip-item-name');
@@ -304,17 +341,24 @@ describe('Tooltip visibility', () => {
         width: 10,
         height: 10,
       });
-      const { container, debug } = render(
+      const { container } = render(
         <Wrapper>
           <Tooltip />
         </Wrapper>,
       );
 
       const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+
+      const tooltip1 = getTooltip(container);
+      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
+
       fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
-      debug();
-      const tooltip = getTooltip(container);
-      expect(tooltip.getAttribute('style')).toContain('translate');
+
+      const tooltip2 = getTooltip(container);
+
+      expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
     });
 
     it('should render customized tooltip when content is set to be a react element', () => {
@@ -341,6 +385,12 @@ describe('Tooltip visibility', () => {
            */
           context.skip();
         }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores active property on Tooltip
+           */
+          context.skip();
+        }
         const { container } = render(
           <Wrapper>
             <Tooltip active />
@@ -364,6 +414,12 @@ describe('Tooltip visibility', () => {
         if (name === 'Sankey') {
           /*
            * Sankey chart for some reason ignores active property on Tooltip
+           */
+          context.skip();
+        }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores active property on Tooltip
            */
           context.skip();
         }
@@ -419,6 +475,12 @@ describe('Tooltip visibility', () => {
         if (name === 'Sankey') {
           /*
            * Sankey chart for some reason ignores defaultIndex property on Tooltip
+           */
+          context.skip();
+        }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart for some reason ignores defaultIndex property on Tooltip
            */
           context.skip();
         }
@@ -622,6 +684,7 @@ describe('Active element visibility', () => {
     SankeyTestCase,
     ScatterChartTestCase,
     SunburstChartTestCase,
+    TreemapTestCase,
   ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
     it('should not display activeDot', () => {
       const { container, debug } = render(
