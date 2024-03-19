@@ -167,7 +167,8 @@ describe('<XAxis />', () => {
     );
 
     const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
-    expect(parseInt(tick?.getAttribute('x') as string, 10)).toEqual(180);
+    expect(tick).toBeInTheDocument();
+    expect(tick?.getAttribute('x')).toEqual('180');
   });
 
   test('Render no ticks if type is category and data is empty', () => {
