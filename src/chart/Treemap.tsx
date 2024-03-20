@@ -21,6 +21,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
+import { ViewBoxContext } from '../context/chartLayoutContext';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -734,20 +735,23 @@ export class Treemap extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, type, ...others } = this.props;
     const attrs = filterProps(others, false);
+    const viewBox = { x: 0, y: 0, width, height };
 
     return (
-      <div
-        className={clsx('recharts-wrapper', className)}
-        style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-        role="region"
-      >
-        <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-          {this.renderAllNodes()}
-          {filterSvgElements(children)}
-        </Surface>
-        {this.renderTooltip()}
-        {type === 'nest' && this.renderNestIndex()}
-      </div>
+      <ViewBoxContext.Provider value={viewBox}>
+        <div
+          className={clsx('recharts-wrapper', className)}
+          style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+          role="region"
+        >
+          <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+            {this.renderAllNodes()}
+            {filterSvgElements(children)}
+          </Surface>
+          {this.renderTooltip()}
+          {type === 'nest' && this.renderNestIndex()}
+        </div>
+      </ViewBoxContext.Provider>
     );
   }
 }
