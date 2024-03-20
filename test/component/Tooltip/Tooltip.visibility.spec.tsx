@@ -10,6 +10,8 @@ import {
   Brush,
   CartesianGrid,
   ComposedChart,
+  Funnel,
+  FunnelChart,
   Legend,
   Line,
   LineChart,
@@ -38,6 +40,7 @@ import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
   composedChartMouseHoverTooltipSelector,
+  funnelChartMouseHoverTooltipSelector,
   lineChartMouseHoverTooltipSelector,
   MouseHoverTooltipTriggerSelector,
   pieChartMouseHoverTooltipSelector,
@@ -170,6 +173,18 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
   expectedTransform: 'transform: translate(65px, 10px);',
 };
 
+const FunnelChartTestCase: TooltipVisibilityTestCase = {
+  name: 'FunnelChart',
+  Wrapper: ({ children }) => (
+    <FunnelChart width={700} height={500}>
+      <Funnel isAnimationActive={false} dataKey="uv" nameKey="name" data={PageData} />
+      {children}
+    </FunnelChart>
+  ),
+  mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
+  expectedTransform: 'transform: translate(355px, 55px);',
+};
+
 const PieChartTestCase: TooltipVisibilityTestCase = {
   name: 'PieChart',
   Wrapper: ({ children }) => (
@@ -274,6 +289,7 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   ComposedChartWithAreaTestCase,
   ComposedChartWithBarTestCase,
   ComposedChartWithLineTestCase,
+  FunnelChartTestCase,
   PieChartTestCase,
   RadarChartTestCase,
   RadialBarChartTestCase,
@@ -281,7 +297,6 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   ScatterChartTestCase,
   // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
   // SunburstChartTestCase,
-  // FunnelChart is excluded because FunnelChart does not support Tooltip
   TreemapTestCase,
 ];
 
@@ -472,6 +487,10 @@ describe('Tooltip visibility', () => {
           // IntelliJ (incorrectly) reports this as test failure - but CLI says it's skipped. Since CLI is the source of truth I leave this here.
           context.skip();
         }
+        if (name === 'FunnelChart') {
+          // FunnelChart throws an error when called with defaultIndex
+          context.skip();
+        }
         if (name === 'Sankey') {
           /*
            * Sankey chart for some reason ignores defaultIndex property on Tooltip
@@ -512,7 +531,11 @@ describe('Tooltip visibility', () => {
         expect(tooltip).not.toBeVisible();
       });
 
-      it('should ignore invalid defaultIndex value', () => {
+      it('should ignore invalid defaultIndex value', context => {
+        if (name === 'FunnelChart') {
+          // FunnelChart throws an error when called with defaultIndex
+          context.skip();
+        }
         const { container } = render(
           <Wrapper>
             <Tooltip defaultIndex={20} />
