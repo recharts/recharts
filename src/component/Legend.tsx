@@ -100,6 +100,8 @@ function LegendWrapper(props: Props) {
     (node: HTMLDivElement | null) => {
       if (node != null && node.getBoundingClientRect) {
         const box = node.getBoundingClientRect();
+        box.width = node.offsetWidth;
+        box.height = node.offsetHeight;
         if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
           setLastBoundingBox({ width: box.width, height: box.height });
           if (onBBoxUpdate) {

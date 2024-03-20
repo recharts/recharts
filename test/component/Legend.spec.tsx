@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
   Area,
   AreaChart,
@@ -544,6 +545,26 @@ describe('<Legend />', () => {
             "a function for the dataKey of a chart's cartesian components. " +
             'Ex: <Bar name="Name of my Data"/>',
         );
+      });
+
+      test('it should get the correct BBox when scaled 2x', () => {
+        const mockRect = {
+          width: 300,
+          height: 30,
+        };
+        const scale = 2;
+        const cleanupRect = mockGetBoundingClientRect(mockRect, false);
+        const cleanupOffsetHeight = mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
+        const cleanupOffsetWidth = mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
+
+        const handleUpdate = vi.fn();
+        render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
+        expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
+        expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
+
+        cleanupRect();
+        cleanupOffsetHeight();
+        cleanupOffsetWidth();
       });
 
       it('should render one line legend item for each Line, with default class and style attributes', () => {
@@ -1105,17 +1126,7 @@ describe('<Legend />', () => {
     });
 
     it('should push away Bars to make space', () => {
-      Element.prototype.getBoundingClientRect = () => ({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 10,
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        toJSON: () => '{}',
-      });
+      mockGetBoundingClientRect({ width: 0, height: 10 });
 
       const { container, rerender } = render(
         <BarChart width={500} height={500} data={numericalData}>

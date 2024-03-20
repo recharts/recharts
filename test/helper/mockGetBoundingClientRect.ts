@@ -1,3 +1,5 @@
+import { mockHTMLElementProperty } from './mockHTMLElementProperty';
+
 const original = Element.prototype.getBoundingClientRect;
 
 /**
@@ -6,9 +8,10 @@ const original = Element.prototype.getBoundingClientRect;
  * https://github.com/jsdom/jsdom/issues/1590#issuecomment-578350151
  *
  * @param rect overrides getBoundingClientRect return value in the mock. jsdom by design returns all zeroes
+ * @param mockClientHeightWidth overrides offsetWidth/offsetHeight with the same values as rect
  * @returns cleanup function, convenient for beforeAll or beforeEach
  */
-export function mockGetBoundingClientRect(rect: Partial<DOMRect>) {
+export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeightWidth = true) {
   const mockDomRect = {
     x: 0,
     y: 0,
@@ -24,8 +27,17 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>) {
     ...mockDomRect,
     toJSON: () => JSON.stringify(mockDomRect),
   });
+
+  let cleanupHeight: () => void | undefined, cleanupWidth: () => void | undefined;
+  if (mockClientHeightWidth) {
+    cleanupHeight = mockHTMLElementProperty('offsetHeight', rect.height);
+    cleanupWidth = mockHTMLElementProperty('offsetWidth', rect.width);
+  }
+
   return function cleanup() {
     Element.prototype.getBoundingClientRect = original;
+    cleanupHeight?.();
+    cleanupWidth?.();
   };
 }
 
