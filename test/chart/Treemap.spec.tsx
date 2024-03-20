@@ -38,7 +38,7 @@ describe('<Treemap />', () => {
 
   describe('Treemap layout context', () => {
     it(
-      'should not provide viewBox nor clipPathId nor any axes',
+      'should provide viewBox but not clipPathId nor any axes',
       testChartLayoutContext(
         props => (
           <Treemap width={100} height={50}>
@@ -47,7 +47,7 @@ describe('<Treemap />', () => {
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
-          expect(viewBox).toBe(undefined);
+          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
@@ -81,7 +81,7 @@ describe('<Treemap />', () => {
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
-          expect(viewBox).toBe(undefined);
+          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },

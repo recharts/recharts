@@ -1,19 +1,17 @@
-/**
- * @fileOverview Tooltip
- */
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import {
   DefaultTooltipContent,
   ValueType,
   NameType,
   Payload,
-  Props as ToltipContentProps,
+  Props as TooltipContentProps,
 } from './DefaultTooltipContent';
 import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { Global } from '../util/Global';
 import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
-import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
+import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
+import { useViewBox } from '../context/chartLayoutContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -37,7 +35,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   return <DefaultTooltipContent {...props} />;
 }
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = ToltipContentProps<TValue, TName> & {
+export type TooltipProps<TValue extends ValueType, TName extends NameType> = TooltipContentProps<TValue, TName> & {
   accessibilityLayer?: boolean;
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
@@ -65,9 +63,60 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Tol
   shared?: boolean;
   trigger?: 'hover' | 'click';
   useTranslate3d?: boolean;
-  viewBox?: CartesianViewBox;
   wrapperStyle?: CSSProperties;
 };
+
+function TooltipInternal<TValue extends ValueType, TName extends NameType>(props: TooltipProps<TValue, TName>) {
+  const {
+    active,
+    allowEscapeViewBox,
+    animationDuration,
+    animationEasing,
+    content,
+    coordinate,
+    filterNull,
+    isAnimationActive,
+    offset,
+    payload,
+    payloadUniqBy,
+    position,
+    reverseDirection,
+    useTranslate3d,
+    wrapperStyle,
+  } = props;
+  const viewBox = useViewBox();
+  let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+
+  if (filterNull && finalPayload.length) {
+    finalPayload = getUniqPayload(
+      payload.filter(entry => entry.value != null && (entry.hide !== true || props.includeHidden)),
+      payloadUniqBy,
+      defaultUniqBy,
+    );
+  }
+
+  const hasPayload = finalPayload.length > 0;
+
+  return (
+    <TooltipBoundingBox
+      allowEscapeViewBox={allowEscapeViewBox}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
+      isAnimationActive={isAnimationActive}
+      active={active}
+      coordinate={coordinate}
+      hasPayload={hasPayload}
+      offset={offset}
+      position={position}
+      reverseDirection={reverseDirection}
+      useTranslate3d={useTranslate3d}
+      viewBox={viewBox}
+      wrapperStyle={wrapperStyle}
+    >
+      {renderContent(content, { ...props, payload: finalPayload })}
+    </TooltipBoundingBox>
+  );
+}
 
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
   TooltipProps<TValue, TName>
@@ -92,59 +141,10 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     separator: ' : ',
     trigger: 'hover',
     useTranslate3d: false,
-    viewBox: { x: 0, y: 0, height: 0, width: 0 },
     wrapperStyle: {},
   };
 
   render() {
-    const {
-      active,
-      allowEscapeViewBox,
-      animationDuration,
-      animationEasing,
-      content,
-      coordinate,
-      filterNull,
-      isAnimationActive,
-      offset,
-      payload,
-      payloadUniqBy,
-      position,
-      reverseDirection,
-      useTranslate3d,
-      viewBox,
-      wrapperStyle,
-    } = this.props;
-    let finalPayload: Payload<TValue, TName>[] = payload ?? [];
-
-    if (filterNull && finalPayload.length) {
-      finalPayload = getUniqPayload(
-        payload.filter(entry => entry.value != null && (entry.hide !== true || this.props.includeHidden)),
-        payloadUniqBy,
-        defaultUniqBy,
-      );
-    }
-
-    const hasPayload = finalPayload.length > 0;
-
-    return (
-      <TooltipBoundingBox
-        allowEscapeViewBox={allowEscapeViewBox}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        active={active}
-        coordinate={coordinate}
-        hasPayload={hasPayload}
-        offset={offset}
-        position={position}
-        reverseDirection={reverseDirection}
-        useTranslate3d={useTranslate3d}
-        viewBox={viewBox}
-        wrapperStyle={wrapperStyle}
-      >
-        {renderContent(content, { ...this.props, payload: finalPayload })}
-      </TooltipBoundingBox>
-    );
+    return <TooltipInternal {...this.props} />;
   }
 }

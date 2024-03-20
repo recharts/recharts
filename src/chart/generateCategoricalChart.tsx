@@ -1876,7 +1876,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const { isTooltipActive, activeCoordinate, activePayload, activeLabel, offset } = this.state;
+      const { isTooltipActive, activeCoordinate, activePayload, activeLabel } = this.state;
 
       // The user can set isActive on the Tooltip,
       // and we respect the user to enable customisation.
@@ -1884,7 +1884,6 @@ export const generateCategoricalChart = ({
       const isActive = tooltipItem.props.active ?? isTooltipActive;
 
       return cloneElement(tooltipItem, {
-        viewBox: { ...offset, x: offset.left, y: offset.top },
         active: isActive,
         label: activeLabel,
         payload: isActive ? activePayload : [],

@@ -44,7 +44,7 @@ describe('<Sunburst />', () => {
 
   describe('SunburstChart layout context', () => {
     it(
-      'should not provide viewBox nor clipPathId if there are no axes',
+      'should provide viewBox but not clipPathId if there are no axes',
       testChartLayoutContext(
         props => (
           <SunburstChart width={100} height={50} data={exampleSunburstData}>
@@ -53,7 +53,7 @@ describe('<Sunburst />', () => {
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual(undefined);
+          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },
@@ -88,7 +88,7 @@ describe('<Sunburst />', () => {
         ),
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual(undefined);
+          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
           expect(xAxisMap).toBe(undefined);
           expect(yAxisMap).toBe(undefined);
         },

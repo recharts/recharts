@@ -8,6 +8,8 @@ import {
   BarChart,
   CartesianGrid,
   ComposedChart,
+  Funnel,
+  FunnelChart,
   Legend,
   Line,
   LineChart,
@@ -34,6 +36,7 @@ import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
   composedChartMouseHoverTooltipSelector,
+  funnelChartMouseHoverTooltipSelector,
   lineChartMouseHoverTooltipSelector,
   MouseHoverTooltipTriggerSelector,
   pieChartMouseHoverTooltipSelector,
@@ -168,6 +171,25 @@ const PieChartTestCase: TooltipPayloadTestCase = {
     </PieChart>
   ),
   mouseHoverSelector: pieChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '',
+  expectedTooltipContent: ['Page A : 400'],
+};
+
+const FunnelChartTestCase: TooltipPayloadTestCase = {
+  name: 'FunnelChart',
+  Wrapper: ({ children }) => (
+    <FunnelChart width={700} height={500}>
+      <Funnel
+        isAnimationActive={false}
+        dataKey="uv"
+        nameKey="name"
+        name="This is not going to the tooltip title unfortunately"
+        data={PageData}
+      />
+      {children}
+    </FunnelChart>
+  ),
+  mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Page A : 400'],
 };
@@ -314,6 +336,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   LineChartTestCase,
   LineChartVerticalTestCase,
   ComposedChartTestCase,
+  FunnelChartTestCase,
   PieChartTestCase,
   PieChartWithCustomNameKeyTestCase,
   RadarChartTestCase,
