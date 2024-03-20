@@ -337,10 +337,13 @@ describe('Tooltip visibility', () => {
     });
 
     test('Should move when the mouse moves', async () => {
-      mockGetBoundingClientRect({
-        width: 10,
-        height: 10,
-      });
+      mockGetBoundingClientRect(
+        {
+          width: 10,
+          height: 10,
+        },
+        false,
+      );
       const { container } = render(
         <Wrapper>
           <Tooltip />
