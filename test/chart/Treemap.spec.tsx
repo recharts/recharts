@@ -38,7 +38,7 @@ describe('<Treemap />', () => {
 
   describe('Treemap layout context', () => {
     it(
-      'should not provide viewBox nor clipPathId nor any axes',
+      'should provide viewBox but not clipPathId nor any axes',
       testChartLayoutContext(
         props => (
           <Treemap width={100} height={50}>
