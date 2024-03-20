@@ -678,7 +678,7 @@ export class Sankey extends PureComponent<Props, State> {
   }
 
   renderTooltip(): ReactElement {
-    const { children, width, height, nameKey } = this.props;
+    const { children, nameKey } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
     if (!tooltipItem) {
@@ -686,14 +686,12 @@ export class Sankey extends PureComponent<Props, State> {
     }
 
     const { isTooltipActive, activeElement, activeElementType } = this.state;
-    const viewBox = { x: 0, y: 0, width, height };
     const coordinate = activeElement
       ? getCoordinateOfTooltip(activeElement, activeElementType)
       : defaultCoordinateOfTooltip;
     const payload = activeElement ? getPayloadOfTooltip(activeElement, activeElementType, nameKey) : [];
 
     return React.cloneElement(tooltipItem, {
-      viewBox,
       active: isTooltipActive,
       coordinate,
       label: '',

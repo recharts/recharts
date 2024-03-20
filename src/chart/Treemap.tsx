@@ -656,9 +656,7 @@ export class Treemap extends PureComponent<Props, State> {
       return null;
     }
 
-    const { width, height } = this.props;
     const { isTooltipActive, activeNode } = this.state;
-    const viewBox = { x: 0, y: 0, width, height };
     const coordinate = activeNode
       ? {
           x: activeNode.x + activeNode.width / 2,
@@ -677,7 +675,6 @@ export class Treemap extends PureComponent<Props, State> {
         : [];
 
     return React.cloneElement(tooltipItem as React.DetailedReactHTMLElement<any, HTMLElement>, {
-      viewBox,
       active: isTooltipActive,
       coordinate,
       label: '',
