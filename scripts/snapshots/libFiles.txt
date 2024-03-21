@@ -9,6 +9,7 @@
   "lib/component",
   "lib/chart",
   "lib/cartesian",
+  "lib/util/useGetBoundingClientRect.js",
   "lib/util/types.js",
   "lib/util/tooltip",
   "lib/util/payload",
