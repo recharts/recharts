@@ -9,6 +9,7 @@ import type { Props as YAxisProps } from '../cartesian/YAxis';
 import { calculateViewBox } from '../util/calculateViewBox';
 import { getAnyElementOfObject } from '../util/DataUtils';
 import { LegendPayloadProvider } from './legendPayloadContext';
+import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -36,7 +37,7 @@ export type ChartLayoutContextProviderProps = {
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
-    state: { xAxisMap, yAxisMap, offset },
+    state: { xAxisMap, yAxisMap, offset, activeLabel, activePayload, isTooltipActive, activeCoordinate },
     clipPathId,
     children,
     width,
@@ -47,6 +48,13 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * Perhaps we should compute this property when reading? Let's see what is more often used
    */
   const viewBox = calculateViewBox(offset);
+
+  const tooltipContextValue: TooltipContextValue = {
+    label: activeLabel,
+    payload: activePayload,
+    coordinate: activeCoordinate,
+    active: isTooltipActive,
+  };
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -69,7 +77,9 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
             <ViewBoxContext.Provider value={viewBox}>
               <ClipPathIdContext.Provider value={clipPathId}>
                 <ChartHeightContext.Provider value={height}>
-                  <ChartWidthContext.Provider value={width}>{children}</ChartWidthContext.Provider>
+                  <ChartWidthContext.Provider value={width}>
+                    <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                  </ChartWidthContext.Provider>
                 </ChartHeightContext.Provider>
               </ClipPathIdContext.Provider>
             </ViewBoxContext.Provider>

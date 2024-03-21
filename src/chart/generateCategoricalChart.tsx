@@ -1876,18 +1876,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const { isTooltipActive, activeCoordinate, activePayload, activeLabel } = this.state;
-
-      // The user can set isActive on the Tooltip,
-      // and we respect the user to enable customisation.
-      // The Tooltip is active if the user has set isActive, or if the tooltip is active due to a mouse event.
-      const isActive = tooltipItem.props.active ?? isTooltipActive;
-
       return cloneElement(tooltipItem, {
-        active: isActive,
-        label: activeLabel,
-        payload: isActive ? activePayload : [],
-        coordinate: activeCoordinate,
         accessibilityLayer,
       });
     };

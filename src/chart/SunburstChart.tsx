@@ -9,6 +9,7 @@ import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { Tooltip } from '../component/Tooltip';
 import { ViewBoxContext } from '../context/chartLayoutContext';
+import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 
 export interface SunburstData {
   [key: string]: any;
@@ -192,30 +193,37 @@ export const SunburstChart = ({
   function renderTooltip() {
     const tooltipComponent = findChildByType([children], Tooltip);
 
-    if (!tooltipComponent || !activeNode) return null;
-
-    return React.cloneElement(tooltipComponent as React.DetailedReactHTMLElement<any, HTMLElement>, {
+    return tooltipComponent;
+  }
+  function getTooltipContext(): TooltipContextValue {
+    if (activeNode == null) {
+      return doNotDisplayTooltip;
+    }
+    return {
+      // @ts-expect-error positions map does not match what Tooltip is expecting
       coordinate: positions.get(activeNode.name),
       payload: [activeNode],
       active: isTooltipActive,
-    });
+    };
   }
 
   const viewBox = { x: 0, y: 0, width, height };
 
   return (
     <ViewBoxContext.Provider value={viewBox}>
-      <div
-        className={clsx('recharts-wrapper', className)}
-        style={{ position: 'relative', width, height }}
-        role="region"
-      >
-        <Surface width={width} height={height}>
-          {children}
-          <Layer className={layerClass}>{sectors}</Layer>
-        </Surface>
-        {renderTooltip()}
-      </div>
+      <TooltipContextProvider value={getTooltipContext()}>
+        <div
+          className={clsx('recharts-wrapper', className)}
+          style={{ position: 'relative', width, height }}
+          role="region"
+        >
+          <Surface width={width} height={height}>
+            {children}
+            <Layer className={layerClass}>{sectors}</Layer>
+          </Surface>
+          {renderTooltip()}
+        </div>
+      </TooltipContextProvider>
     </ViewBoxContext.Provider>
   );
 };
