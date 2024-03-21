@@ -50,11 +50,11 @@ describe('<ErrorBar />', () => {
     { name: 'digital', uv: 2800, pv: 2800, time: 4, uvError: [100, 200], pvError: 30 },
   ];
 
-  beforeAll(() => {
+  beforeEach(() => {
     mockAnimation();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     cleanupMockAnimation();
   });
 
