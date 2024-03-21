@@ -41,6 +41,8 @@ type BoundingBox = {
   height: number;
 };
 
+type SetBoundingBox = (node: HTMLElement | null) => void;
+
 function getDefaultPosition(style: React.CSSProperties, props: Props, box: BoundingBox) {
   const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = props;
   let hPos, vPos;
@@ -92,10 +94,11 @@ interface State {
   boxHeight: number;
 }
 
-function LegendWrapper(props: Props) {
-  const contextPayload = useLegendPayload();
+function useGetBoundingClientRect(
+  onUpdate: (domRect: DOMRect | null) => void,
+  extraDependencies: ReadonlyArray<unknown>,
+): [BoundingBox, SetBoundingBox] {
   const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
-  const { width, height, wrapperStyle, onBBoxUpdate } = props;
   const updateBoundingBox = useCallback(
     (node: HTMLDivElement | null) => {
       if (node != null && node.getBoundingClientRect) {
@@ -104,17 +107,24 @@ function LegendWrapper(props: Props) {
         box.height = node.offsetHeight;
         if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
           setLastBoundingBox({ width: box.width, height: box.height });
-          if (onBBoxUpdate) {
-            onBBoxUpdate(box);
+          if (onUpdate) {
+            onUpdate(box);
           }
         }
       }
     },
-    // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
-    // when the payload changes, therefore it's here as a dependency.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lastBoundingBox.width, lastBoundingBox.height, onBBoxUpdate, contextPayload],
+    [lastBoundingBox.width, lastBoundingBox.height, onUpdate, ...extraDependencies],
   );
+  return [lastBoundingBox, updateBoundingBox];
+}
+
+function LegendWrapper(props: Props) {
+  const contextPayload = useLegendPayload();
+  const { width, height, wrapperStyle, onBBoxUpdate } = props;
+  // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
+  // when the payload changes, therefore it's here as a dependency.
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
+
   const outerStyle: CSSProperties = {
     position: 'absolute',
     width: width || 'auto',
