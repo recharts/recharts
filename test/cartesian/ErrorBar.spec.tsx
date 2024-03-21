@@ -1,6 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis } from '../../src';
+import '@testing-library/jest-dom';
+import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -20,15 +22,23 @@ const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
   });
 };
 
-function assertAnimationStyles(container: HTMLElement, expectedTransform: string, expectedTransition: string) {
+function assertAnimationStyles(
+  container: HTMLElement,
+  animation: boolean = true,
+  expectedStyles: { [key: string]: string } = {},
+) {
   const errorBars = container.querySelectorAll('.recharts-errorBar');
   errorBars.forEach(bar => {
     const lineElements = bar.querySelectorAll('line');
     lineElements.forEach(line => {
-      const style = line.getAttribute('style');
-      expect(style).toContain(`transform: ${expectedTransform}`);
-      expect(style).toContain('transform-origin');
-      expect(style).toContain(`transition: ${expectedTransition}`);
+      if (animation) {
+        const style = line.getAttribute('style');
+        Object.entries(expectedStyles).forEach(([key, value]) => {
+          expect(style).toContain(`${key}: ${value}`);
+        });
+      } else {
+        expect(line.getAttribute('style')).toBeNull();
+      }
     });
   });
 }
@@ -117,89 +127,93 @@ describe('<ErrorBar />', () => {
     expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(10);
   });
 
-  test('Renders Error Bars with animation', () => {
+  test('Renders Error Bars with animation', async () => {
+    mockAnimation();
+
     const { container } = render(
-      <LineChart data={barData} width={500} height={500}>
-        <Line isAnimationActive dataKey="uv">
-          <ErrorBar dataKey="uvError" />
-        </Line>
-      </LineChart>,
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive dataKey="uvError" />
+        </Bar>
+      </BarChart>,
     );
 
-    assertErrorBars(container, 0);
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
 
-    setTimeout(() => {
-      assertErrorBars(container, 4);
-      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 0s');
-    }, 200);
+    cleanupMockAnimation();
   });
 
   test('Renders Error Bars without animation', () => {
+    mockAnimation();
+
     const { container } = render(
-      <LineChart data={barData} width={500} height={500}>
-        <Line dataKey="uv">
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive={false} dataKey="uvError" />
-        </Line>
-      </LineChart>,
+        </Bar>
+      </BarChart>,
     );
 
-    assertErrorBars(container, 0);
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, false);
 
-    setTimeout(() => {
-      assertErrorBars(container, 4);
-      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 0s');
-    }, 200);
+    cleanupMockAnimation();
   });
 
   test('Renders Error Bars with animation delay', () => {
+    mockAnimation();
+
     const { container } = render(
-      <LineChart data={barData} width={500} height={500}>
-        <Line isAnimationActive dataKey="uv">
-          <ErrorBar dataKey="uvError" animationBegin={100} />
-        </Line>
-      </LineChart>,
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive begin={200} dataKey="uvError" />
+        </Bar>
+      </BarChart>,
     );
 
-    assertErrorBars(container, 0);
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
 
-    setTimeout(() => {
-      assertErrorBars(container, 4);
-      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in-out 100ms');
-    }, 300);
+    const errorBars = container.querySelectorAll('.recharts-errorBar');
+    errorBars.forEach(bar => {
+      expect(bar.getAttribute('begin')).toBe('200');
+    });
+
+    cleanupMockAnimation();
   });
 
   test('Renders Error Bars with animation duration', () => {
+    mockAnimation();
+
     const { container } = render(
-      <LineChart data={barData} width={500} height={500}>
-        <Line isAnimationActive dataKey="uv">
-          <ErrorBar dataKey="uvError" animationDuration={1000} />
-        </Line>
-      </LineChart>,
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive animationDuration={400} dataKey="uvError" />
+        </Bar>
+      </BarChart>,
     );
 
-    assertErrorBars(container, 0);
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 400ms ease-in-out' });
 
-    setTimeout(() => {
-      assertErrorBars(container, 4);
-      assertAnimationStyles(container, 'scale(1, 1)', 'transform 1000ms ease-in-out 0s');
-    }, 1000);
+    cleanupMockAnimation();
   });
 
-  // animationEasing
   test('Renders Error Bars with animation easing', () => {
+    mockAnimation();
+
     const { container } = render(
-      <LineChart data={barData} width={500} height={500}>
-        <Line isAnimationActive dataKey="uv">
-          <ErrorBar dataKey="uvError" animationEasing="ease-in" />
-        </Line>
-      </LineChart>,
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
+        </Bar>
+      </BarChart>,
     );
 
-    assertErrorBars(container, 0);
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms linear' });
 
-    setTimeout(() => {
-      assertErrorBars(container, 4);
-      assertAnimationStyles(container, 'scale(1, 1)', 'transform 200ms ease-in 0s');
-    }, 200);
+    cleanupMockAnimation();
   });
 });
