@@ -3,10 +3,11 @@
  */
 import React, { SVGProps } from 'react';
 import invariant from 'tiny-invariant';
+import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { D3Scale, DataKey } from '../util/types';
+import { AnimationTiming, D3Scale, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
@@ -43,12 +44,30 @@ interface ErrorBarProps extends InternalErrorBarProps {
    * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
    */
   direction?: 'x' | 'y';
+  isAnimationActive?: boolean;
+  animationBegin?: number;
+  animationDuration?: number;
+  animationEasing?: AnimationTiming;
 }
 
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 export function ErrorBar(props: Props) {
-  const { offset, layout, width, dataKey, data, dataPointFormatter, xAxis, yAxis, ...others } = props;
+  const {
+    offset,
+    layout,
+    width,
+    dataKey,
+    data,
+    dataPointFormatter,
+    xAxis,
+    yAxis,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    ...others
+  } = props;
   const svgProps = filterProps(others, false);
 
   invariant(
@@ -114,9 +133,23 @@ export function ErrorBar(props: Props) {
         key={`bar-${lineCoordinates.map(c => `${c.x1}-${c.x2}-${c.y1}-${c.y2}`)}`}
         {...svgProps}
       >
-        {lineCoordinates.map(coordinates => (
-          <line {...coordinates} key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`} />
-        ))}
+        {lineCoordinates.map(coordinates => {
+          const lineStyle = isAnimationActive ? { transformOrigin: `${coordinates.x1 - 5}px` } : undefined;
+          return (
+            <Animate
+              from="scale(0, 1)"
+              to="scale(1, 1)"
+              attributeName="transform"
+              begin={animationBegin}
+              easing={animationEasing}
+              isActive={isAnimationActive}
+              duration={animationDuration}
+              key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
+            >
+              <line {...coordinates} style={lineStyle} />
+            </Animate>
+          );
+        })}
       </Layer>
     );
   });
@@ -130,5 +163,9 @@ ErrorBar.defaultProps = {
   width: 5,
   offset: 0,
   layout: 'horizontal',
+  isAnimationActive: true,
+  animationBegin: 0,
+  animationDuration: 200,
+  animationEasing: 'ease-in-out',
 };
 ErrorBar.displayName = 'ErrorBar';

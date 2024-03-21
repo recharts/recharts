@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis } from '../../src';
+import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -20,6 +21,27 @@ const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
   });
 };
 
+function assertAnimationStyles(
+  container: HTMLElement,
+  animation: boolean = true,
+  expectedStyles: { [key: string]: string } = {},
+) {
+  const errorBars = container.querySelectorAll('.recharts-errorBar');
+  errorBars.forEach(bar => {
+    const lineElements = bar.querySelectorAll('line');
+    lineElements.forEach(line => {
+      if (animation) {
+        const style = line.getAttribute('style');
+        Object.entries(expectedStyles).forEach(([key, value]) => {
+          expect(style).toContain(`${key}: ${value}`);
+        });
+      } else {
+        expect(line.getAttribute('style')).toBeNull();
+      }
+    });
+  });
+}
+
 describe('<ErrorBar />', () => {
   const barData = [
     { name: 'food', uv: 2000, pv: 2013, time: 1, uvError: [100, 50], pvError: [110, 20] },
@@ -27,6 +49,14 @@ describe('<ErrorBar />', () => {
     { name: 'storage', uv: 3200, pv: 1398, time: 3, uvError: [120, 80], pvError: [200, 100] },
     { name: 'digital', uv: 2800, pv: 2800, time: 4, uvError: [100, 200], pvError: 30 },
   ];
+
+  beforeAll(() => {
+    mockAnimation();
+  });
+
+  afterAll(() => {
+    cleanupMockAnimation();
+  });
 
   test('Renders Error Bars in Bar', () => {
     const { container } = render(
@@ -102,5 +132,75 @@ describe('<ErrorBar />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-errorBar')).toHaveLength(10);
+  });
+
+  test('Renders Error Bars with animation', async () => {
+    const { container } = render(
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive dataKey="uvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
+  });
+
+  test('Renders Error Bars without animation', () => {
+    const { container } = render(
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive={false} dataKey="uvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, false);
+  });
+
+  test('Renders Error Bars with animation delay', () => {
+    const { container } = render(
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive begin={200} dataKey="uvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
+
+    const errorBars = container.querySelectorAll('.recharts-errorBar');
+    errorBars.forEach(bar => {
+      expect(bar.getAttribute('begin')).toBe('200');
+    });
+  });
+
+  test('Renders Error Bars with animation duration', () => {
+    const { container } = render(
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive animationDuration={400} dataKey="uvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 400ms ease-in-out' });
+  });
+
+  test('Renders Error Bars with animation easing', () => {
+    const { container } = render(
+      <BarChart data={barData} width={500} height={500}>
+        <Bar isAnimationActive={false} dataKey="uv">
+          <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
+        </Bar>
+      </BarChart>,
+    );
+
+    assertErrorBars(container, 4);
+    assertAnimationStyles(container, true, { transition: 'transform 200ms linear' });
   });
 });
