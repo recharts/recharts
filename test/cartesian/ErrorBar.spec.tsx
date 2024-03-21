@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis } from '../../src';
-import '@testing-library/jest-dom';
 import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
 
 // asserts an error bar has both a start and end position
