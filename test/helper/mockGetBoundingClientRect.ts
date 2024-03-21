@@ -1,17 +1,19 @@
+import { vi } from 'vitest';
 import { mockHTMLElementProperty } from './mockHTMLElementProperty';
-
-const original = Element.prototype.getBoundingClientRect;
 
 /**
  * getBoundingClientRect always returns 0 in jsdom, we can't test for actual returned string size
  * Execution order matters
  * https://github.com/jsdom/jsdom/issues/1590#issuecomment-578350151
  *
+ * This assumes that vitest restoreMock is turned on by default because there is no explicit cleanup available:
+ * https://vitest.dev/config/#restoremocks
+ *
  * @param rect overrides getBoundingClientRect return value in the mock. jsdom by design returns all zeroes
  * @param mockClientHeightWidth overrides offsetWidth/offsetHeight with the same values as rect
- * @returns cleanup function, convenient for beforeAll or beforeEach
+ * @returns void
  */
-export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeightWidth = true) {
+export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeightWidth = true): void {
   const mockDomRect = {
     x: 0,
     y: 0,
@@ -23,24 +25,13 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
     left: 0,
     ...rect,
   };
-  Element.prototype.getBoundingClientRect = () => ({
+  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
     ...mockDomRect,
     toJSON: () => JSON.stringify(mockDomRect),
   });
 
-  let cleanupHeight: () => void | undefined, cleanupWidth: () => void | undefined;
   if (mockClientHeightWidth) {
-    cleanupHeight = mockHTMLElementProperty('offsetHeight', rect.height);
-    cleanupWidth = mockHTMLElementProperty('offsetWidth', rect.width);
+    mockHTMLElementProperty('offsetHeight', rect.height);
+    mockHTMLElementProperty('offsetWidth', rect.width);
   }
-
-  return function cleanup() {
-    Element.prototype.getBoundingClientRect = original;
-    cleanupHeight?.();
-    cleanupWidth?.();
-  };
-}
-
-export function restoreGetBoundingClientRect() {
-  Element.prototype.getBoundingClientRect = original;
 }

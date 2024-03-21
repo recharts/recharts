@@ -23,7 +23,7 @@ import {
   ScatterChart,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
-import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 
@@ -308,7 +308,6 @@ function assertExpectedAttributes(
 }
 
 describe('<Legend />', () => {
-  afterEach(restoreGetBoundingClientRect);
   const categoricalData = [
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
@@ -441,6 +440,7 @@ describe('<Legend />', () => {
     });
 
     it('should pass parameters to the function', () => {
+      mockGetBoundingClientRect({ width: 70, height: 20 });
       const customContent = (params: unknown): null => {
         expect(params).toMatchSnapshot();
         return null;
@@ -553,18 +553,14 @@ describe('<Legend />', () => {
           height: 30,
         };
         const scale = 2;
-        const cleanupRect = mockGetBoundingClientRect(mockRect, false);
-        const cleanupOffsetHeight = mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
-        const cleanupOffsetWidth = mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
+        mockGetBoundingClientRect(mockRect, false);
+        mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
+        mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
 
         const handleUpdate = vi.fn();
         render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
         expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
         expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
-
-        cleanupRect();
-        cleanupOffsetHeight();
-        cleanupOffsetWidth();
       });
 
       it('should render one line legend item for each Line, with default class and style attributes', () => {
@@ -746,6 +742,7 @@ describe('<Legend />', () => {
       });
 
       it('should pass parameters to the Component', () => {
+        mockGetBoundingClientRect({ width: 80, height: 30 });
         const spy = vi.fn();
         const CustomContent = (props: unknown): null => {
           spy(props);
@@ -792,13 +789,13 @@ describe('<Legend />', () => {
                 animationDuration: 1500,
                 animationEasing: 'ease',
                 animationId: 0,
-                bottom: 5,
+                bottom: 35,
                 brushBottom: 5,
                 connectNulls: false,
                 dataKey: 'pv',
                 dot: true,
                 fill: '#fff',
-                height: 290,
+                height: 260,
                 hide: false,
                 isAnimationActive: true,
                 label: false,
@@ -876,7 +873,7 @@ describe('<Legend />', () => {
                   width: 550,
                   x: 20,
                   xAxisId: 0,
-                  y: 295,
+                  y: 265,
                 },
                 xAxisId: 0,
                 yAxis: {
@@ -886,7 +883,7 @@ describe('<Legend />', () => {
                   axisType: 'yAxis',
                   bandSize: 0,
                   domain: [0, -Infinity],
-                  height: 290,
+                  height: 260,
                   hide: true,
                   isCategorical: false,
                   layout: 'horizontal',
@@ -924,13 +921,13 @@ describe('<Legend />', () => {
                 animationDuration: 1500,
                 animationEasing: 'ease',
                 animationId: 0,
-                bottom: 5,
+                bottom: 35,
                 brushBottom: 5,
                 connectNulls: false,
                 dataKey: 'uv',
                 dot: true,
                 fill: '#fff',
-                height: 290,
+                height: 260,
                 hide: false,
                 isAnimationActive: true,
                 label: false,
@@ -1007,7 +1004,7 @@ describe('<Legend />', () => {
                   width: 550,
                   x: 20,
                   xAxisId: 0,
-                  y: 295,
+                  y: 265,
                 },
                 xAxisId: 0,
                 yAxis: {
@@ -1017,7 +1014,7 @@ describe('<Legend />', () => {
                   axisType: 'yAxis',
                   bandSize: 0,
                   domain: [0, -Infinity],
-                  height: 290,
+                  height: 260,
                   hide: true,
                   isCategorical: false,
                   layout: 'horizontal',

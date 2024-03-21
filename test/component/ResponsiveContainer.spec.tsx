@@ -1,5 +1,5 @@
 import React from 'react';
-import { vi } from 'vitest';
+import { Mock, MockInstance, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
 
@@ -16,36 +16,33 @@ describe('<ResponsiveContainer />', () => {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
    */
-  let notifyResizeObserverChange: (arg: unknown) => void;
+  let notifyResizeObserverChange: (arg: unknown) => void,
+    consoleWarnSpy: MockInstance<any[], void>,
+    resizeObserverMock: Mock<any, any>;
 
-  /**
-   * ResizeObserver is not available so we have to create a mock to avoid error coming
-   * from `react-resize-detector`.
-   * @see https://github.com/maslianok/react-resize-detector/issues/145
-   *
-   * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
-   * from inside our test.
-   */
-  const resizeObserverMock = vi.fn().mockImplementation(callback => {
-    notifyResizeObserverChange = callback;
+  beforeEach(() => {
+    /**
+     * ResizeObserver is not available, so we have to create a mock to avoid error coming
+     * from `react-resize-detector`.
+     * @see https://github.com/maslianok/react-resize-detector/issues/145
+     *
+     * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
+     * from inside our test.
+     */
+    resizeObserverMock = vi.fn().mockImplementation(callback => {
+      notifyResizeObserverChange = callback;
 
-    return {
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    };
-  });
-  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+      };
+    });
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
-  beforeAll(() => {
     delete window.ResizeObserver;
 
     window.ResizeObserver = resizeObserverMock;
-  });
-
-  afterEach(() => {
-    resizeObserverMock.mockClear();
-    consoleWarnSpy.mockClear();
   });
 
   it('Render a wrapper container in ResponsiveContainer', () => {
