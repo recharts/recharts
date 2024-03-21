@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import {
   Area,
@@ -29,7 +29,6 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import {
@@ -364,10 +363,6 @@ function expectTooltipPayload(
 }
 
 describe('Tooltip payload', () => {
-  afterEach(() => {
-    restoreGetBoundingClientRect();
-  });
-
   describe.each(testCases)(
     'as a child of $name',
     ({ Wrapper, mouseHoverSelector, expectedTooltipTitle, expectedTooltipContent }) => {

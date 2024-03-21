@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
-import { afterEach, describe, expect, it, test } from 'vitest';
+import { describe, expect, it, test } from 'vitest';
 import { fireEvent, getByText, render } from '@testing-library/react';
 
 import {
@@ -33,7 +33,7 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
@@ -75,7 +75,7 @@ const AreaChartTestCase: TooltipVisibilityTestCase = {
     </AreaChart>
   ),
   mouseHoverSelector: areaChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(10px, 10px);',
+  expectedTransform: 'transform: translate(249px, 211px);',
 };
 
 const BarChartTestCase: TooltipVisibilityTestCase = {
@@ -87,7 +87,7 @@ const BarChartTestCase: TooltipVisibilityTestCase = {
     </BarChart>
   ),
   mouseHoverSelector: barChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(10px, 10px);',
+  expectedTransform: 'transform: translate(242.5px, 211px);',
 };
 
 const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
@@ -103,7 +103,7 @@ const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(65px, 10px);',
+  expectedTransform: 'transform: translate(207px, 211px);',
 };
 
 const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
@@ -128,7 +128,7 @@ const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(80px, 20px);',
+  expectedTransform: 'transform: translate(211px, 231px);',
 };
 
 const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
@@ -142,7 +142,7 @@ const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(65px, 10px);',
+  expectedTransform: 'transform: translate(207px, 211px);',
 };
 
 const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
@@ -156,7 +156,7 @@ const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(65px, 10px);',
+  expectedTransform: 'transform: translate(212.5px, 211px);',
 };
 
 const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
@@ -170,7 +170,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
     </ComposedChart>
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(65px, 10px);',
+  expectedTransform: 'transform: translate(207px, 211px);',
 };
 
 const FunnelChartTestCase: TooltipVisibilityTestCase = {
@@ -209,7 +209,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
     </RadarChart>
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(10px, 10px);',
+  expectedTransform: 'transform: translate(188.75025773223268px, 239.9964286625318px);',
 };
 
 const RadialBarChartTestCase: TooltipVisibilityTestCase = {
@@ -224,7 +224,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(10px, 10px);',
+  expectedTransform: 'transform: translate(226.5613998199874px, 226.5613998199874px);',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -301,8 +301,6 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
 ];
 
 describe('Tooltip visibility', () => {
-  afterEach(restoreGetBoundingClientRect);
-
   describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector, expectedTransform }) => {
     test('Without an event, the tooltip wrapper is rendered but not visible', () => {
       const { container } = render(
@@ -352,13 +350,10 @@ describe('Tooltip visibility', () => {
     });
 
     test('Should move when the mouse moves', async () => {
-      mockGetBoundingClientRect(
-        {
-          width: 10,
-          height: 10,
-        },
-        false,
-      );
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
       const { container } = render(
         <Wrapper>
           <Tooltip />
@@ -678,8 +673,6 @@ describe('Tooltip visibility', () => {
 });
 
 describe('Active element visibility', () => {
-  afterEach(restoreGetBoundingClientRect);
-
   describe.each([
     AreaChartTestCase,
     LineChartHorizontalTestCase,
@@ -728,8 +721,6 @@ describe('Active element visibility', () => {
 });
 
 describe('Cursor visibility', () => {
-  afterEach(restoreGetBoundingClientRect);
-
   describe.each([
     AreaChartTestCase,
     BarChartTestCase,

@@ -1,14 +1,13 @@
 import React from 'react';
-import { vi } from 'vitest';
+import { MockInstance, vi, beforeEach } from 'vitest';
 import { screen, render } from '@testing-library/react';
 import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
 
 describe('<ReferenceLine />', () => {
-  const consoleSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
-
-  afterEach(() => {
-    consoleSpy.mockReset();
+  let consoleSpy: MockInstance<any[], void>;
+  beforeEach(() => {
+    consoleSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
   });
 
   const data = [

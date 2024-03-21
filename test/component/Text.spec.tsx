@@ -8,7 +8,7 @@ describe('<Text />', () => {
     width: 25,
     height: 17,
   };
-  beforeAll(() => mockGetBoundingClientRect(mockRect));
+  beforeEach(() => mockGetBoundingClientRect(mockRect));
 
   test('Does not wrap long text if enough width', () => {
     render(
