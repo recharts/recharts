@@ -8,6 +8,7 @@ import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { Tooltip } from '../component/Tooltip';
+import { ViewBoxContext } from '../context/chartLayoutContext';
 
 export interface SunburstData {
   [key: string]: any;
@@ -29,7 +30,7 @@ interface TextOptions {
 
 export interface SunburstChartProps {
   className?: string;
-  data?: SunburstData;
+  data: SunburstData;
   width?: number;
   height?: number;
   padding?: number;
@@ -193,23 +194,28 @@ export const SunburstChart = ({
 
     if (!tooltipComponent || !activeNode) return null;
 
-    const viewBox = { x: 0, y: 0, width, height };
-
     return React.cloneElement(tooltipComponent as React.DetailedReactHTMLElement<any, HTMLElement>, {
-      viewBox,
       coordinate: positions.get(activeNode.name),
       payload: [activeNode],
       active: isTooltipActive,
     });
   }
 
+  const viewBox = { x: 0, y: 0, width, height };
+
   return (
-    <div className={clsx('recharts-wrapper', className)} style={{ position: 'relative', width, height }} role="region">
-      <Surface width={width} height={height}>
-        {children}
-        <Layer className={layerClass}>{sectors}</Layer>
-      </Surface>
-      {renderTooltip()}
-    </div>
+    <ViewBoxContext.Provider value={viewBox}>
+      <div
+        className={clsx('recharts-wrapper', className)}
+        style={{ position: 'relative', width, height }}
+        role="region"
+      >
+        <Surface width={width} height={height}>
+          {children}
+          <Layer className={layerClass}>{sectors}</Layer>
+        </Surface>
+        {renderTooltip()}
+      </div>
+    </ViewBoxContext.Provider>
   );
 };

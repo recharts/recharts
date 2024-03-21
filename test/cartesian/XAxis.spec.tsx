@@ -157,6 +157,20 @@ describe('<XAxis />', () => {
     expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
   });
 
+  it('Render Bars with gap for a single data point', () => {
+    const { container } = render(
+      <BarChart width={300} height={300} data={data.slice(0, 1)}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <YAxis dataKey="y" />
+      </BarChart>,
+    );
+
+    const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
+    expect(tick).toBeInTheDocument();
+    expect(tick?.getAttribute('x')).toEqual('180');
+  });
+
   test('Render no ticks if type is category and data is empty', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={[]}>

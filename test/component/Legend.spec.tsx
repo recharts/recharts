@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
+import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
   Area,
   AreaChart,
@@ -22,7 +23,7 @@ import {
   ScatterChart,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
-import { mockGetBoundingClientRect, restoreGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 
@@ -307,7 +308,6 @@ function assertExpectedAttributes(
 }
 
 describe('<Legend />', () => {
-  afterEach(restoreGetBoundingClientRect);
   const categoricalData = [
     { value: 'Apple', color: '#ff7300' },
     { value: 'Samsung', color: '#bb7300' },
@@ -440,6 +440,7 @@ describe('<Legend />', () => {
     });
 
     it('should pass parameters to the function', () => {
+      mockGetBoundingClientRect({ width: 70, height: 20 });
       const customContent = (params: unknown): null => {
         expect(params).toMatchSnapshot();
         return null;
@@ -544,6 +545,22 @@ describe('<Legend />', () => {
             "a function for the dataKey of a chart's cartesian components. " +
             'Ex: <Bar name="Name of my Data"/>',
         );
+      });
+
+      test('it should get the correct BBox when scaled 2x', () => {
+        const mockRect = {
+          width: 300,
+          height: 30,
+        };
+        const scale = 2;
+        mockGetBoundingClientRect(mockRect, false);
+        mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
+        mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
+
+        const handleUpdate = vi.fn();
+        render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
+        expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
+        expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
       });
 
       it('should render one line legend item for each Line, with default class and style attributes', () => {
@@ -725,6 +742,7 @@ describe('<Legend />', () => {
       });
 
       it('should pass parameters to the Component', () => {
+        mockGetBoundingClientRect({ width: 80, height: 30 });
         const spy = vi.fn();
         const CustomContent = (props: unknown): null => {
           spy(props);
@@ -771,13 +789,13 @@ describe('<Legend />', () => {
                 animationDuration: 1500,
                 animationEasing: 'ease',
                 animationId: 0,
-                bottom: 5,
+                bottom: 35,
                 brushBottom: 5,
                 connectNulls: false,
                 dataKey: 'pv',
                 dot: true,
                 fill: '#fff',
-                height: 290,
+                height: 260,
                 hide: false,
                 isAnimationActive: true,
                 label: false,
@@ -855,7 +873,7 @@ describe('<Legend />', () => {
                   width: 550,
                   x: 20,
                   xAxisId: 0,
-                  y: 295,
+                  y: 265,
                 },
                 xAxisId: 0,
                 yAxis: {
@@ -865,7 +883,7 @@ describe('<Legend />', () => {
                   axisType: 'yAxis',
                   bandSize: 0,
                   domain: [0, -Infinity],
-                  height: 290,
+                  height: 260,
                   hide: true,
                   isCategorical: false,
                   layout: 'horizontal',
@@ -903,13 +921,13 @@ describe('<Legend />', () => {
                 animationDuration: 1500,
                 animationEasing: 'ease',
                 animationId: 0,
-                bottom: 5,
+                bottom: 35,
                 brushBottom: 5,
                 connectNulls: false,
                 dataKey: 'uv',
                 dot: true,
                 fill: '#fff',
-                height: 290,
+                height: 260,
                 hide: false,
                 isAnimationActive: true,
                 label: false,
@@ -986,7 +1004,7 @@ describe('<Legend />', () => {
                   width: 550,
                   x: 20,
                   xAxisId: 0,
-                  y: 295,
+                  y: 265,
                 },
                 xAxisId: 0,
                 yAxis: {
@@ -996,7 +1014,7 @@ describe('<Legend />', () => {
                   axisType: 'yAxis',
                   bandSize: 0,
                   domain: [0, -Infinity],
-                  height: 290,
+                  height: 260,
                   hide: true,
                   isCategorical: false,
                   layout: 'horizontal',
@@ -1105,17 +1123,7 @@ describe('<Legend />', () => {
     });
 
     it('should push away Bars to make space', () => {
-      Element.prototype.getBoundingClientRect = () => ({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 10,
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        toJSON: () => '{}',
-      });
+      mockGetBoundingClientRect({ width: 0, height: 10 });
 
       const { container, rerender } = render(
         <BarChart width={500} height={500} data={numericalData}>

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 
-import { vi, describe, test, SpyInstance } from 'vitest';
+import { vi, describe, test, MockInstance } from 'vitest';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
@@ -372,25 +372,15 @@ describe('<LineChart />', () => {
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
-  const spies: Array<SpyInstance<[], React.ReactElement | null>> = [];
+  const spies: Array<MockInstance<[], React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: SpyInstance<[], React.ReactElement | null>;
+  let axisSpy: MockInstance<[], React.ReactElement | null>;
 
-  // spy on each pure element before each test, and restore the spy afterwards
-  beforeAll(() => {
+  beforeEach(() => {
     pureElements.forEach((el, i) => {
       spies[i] = vi.spyOn(el.prototype, 'render');
     });
     axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
-  });
-  afterEach(() => {
-    pureElements.forEach((_el, i) => spies[i].mockReset());
-    axisSpy.mockReset();
-  });
-
-  afterAll(() => {
-    pureElements.forEach((_el, i) => spies[i].mockRestore());
-    axisSpy.mockRestore();
   });
 
   const chart = (
@@ -441,24 +431,15 @@ describe('<LineChart /> - Pure Rendering', () => {
 describe('<LineChart /> - Pure Rendering with legend', () => {
   const pureElements = [Line];
 
-  const spies: Array<SpyInstance<[], React.ReactElement | null>> = [];
+  const spies: Array<MockInstance<[], React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: SpyInstance<[], React.ReactElement | null>;
+  let axisSpy: MockInstance<[], React.ReactElement | null>;
 
-  // spy on each pure element before each test, and restore the spy afterwards
-  beforeAll(() => {
+  beforeEach(() => {
     pureElements.forEach((el, i) => {
       spies[i] = vi.spyOn(el.prototype, 'render');
     });
     axisSpy = vi.spyOn(CartesianAxis.prototype, 'render');
-  });
-  afterEach(() => {
-    pureElements.forEach((_el, i) => spies[i].mockReset());
-    axisSpy.mockReset();
-  });
-  afterAll(() => {
-    pureElements.forEach((_el, i) => spies[i].mockRestore());
-    axisSpy.mockRestore();
   });
 
   const chart = (

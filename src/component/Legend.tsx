@@ -1,10 +1,11 @@
-import React, { PureComponent, CSSProperties, useState, useCallback } from 'react';
+import React, { CSSProperties, PureComponent } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 import { LayoutType } from '../util/types';
-import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
+import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
@@ -33,13 +34,6 @@ function LegendContent(props: ContentProps) {
 
   return <DefaultLegendContent {...propsWithoutRef} />;
 }
-
-const EPS = 1;
-
-type BoundingBox = {
-  width: number;
-  height: number;
-};
 
 function getDefaultPosition(style: React.CSSProperties, props: Props, box: BoundingBox) {
   const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = props;
@@ -94,25 +88,11 @@ interface State {
 
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
-  const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
   const { width, height, wrapperStyle, onBBoxUpdate } = props;
-  const updateBoundingBox = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node != null && node.getBoundingClientRect) {
-        const box = node.getBoundingClientRect();
-        if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
-          setLastBoundingBox({ width: box.width, height: box.height });
-          if (onBBoxUpdate) {
-            onBBoxUpdate(box);
-          }
-        }
-      }
-    },
-    // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
-    // when the payload changes, therefore it's here as a dependency.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [lastBoundingBox.width, lastBoundingBox.height, onBBoxUpdate, contextPayload],
-  );
+  // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
+  // when the payload changes, therefore it's here as a dependency.
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
+
   const outerStyle: CSSProperties = {
     position: 'absolute',
     width: width || 'auto',

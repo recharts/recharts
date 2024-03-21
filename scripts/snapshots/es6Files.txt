@@ -9,6 +9,7 @@
   "es6/component",
   "es6/chart",
   "es6/cartesian",
+  "es6/util/useGetBoundingClientRect.js",
   "es6/util/types.js",
   "es6/util/tooltip",
   "es6/util/payload",

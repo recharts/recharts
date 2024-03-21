@@ -9,6 +9,7 @@
   "types/component",
   "types/chart",
   "types/cartesian",
+  "types/util/useGetBoundingClientRect.d.ts",
   "types/util/types.d.ts",
   "types/util/tooltip",
   "types/util/payload",

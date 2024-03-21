@@ -1,6 +1,6 @@
 import React from 'react';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
-import { ResponsiveContainer, Sankey } from '../../../../src';
+import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { data, margin } from '../props/ChartProps';
 import { dataKey } from '../props/CartesianComponentShared';
 import { SankeyNode } from '../../../../src/util/types';
@@ -26,7 +26,9 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={nodeLinkData} {...args} />
+        <Sankey data={nodeLinkData} {...args}>
+          <Tooltip />
+        </Sankey>
       </ResponsiveContainer>
     );
   },
