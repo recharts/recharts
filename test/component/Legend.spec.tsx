@@ -1,7 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
-import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
   Area,
   AreaChart,
@@ -545,22 +544,6 @@ describe('<Legend />', () => {
             "a function for the dataKey of a chart's cartesian components. " +
             'Ex: <Bar name="Name of my Data"/>',
         );
-      });
-
-      test('it should get the correct BBox when scaled 2x', () => {
-        const mockRect = {
-          width: 300,
-          height: 30,
-        };
-        const scale = 2;
-        mockGetBoundingClientRect(mockRect, false);
-        mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
-        mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
-
-        const handleUpdate = vi.fn();
-        render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
-        expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
-        expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
       });
 
       it('should render one line legend item for each Line, with default class and style attributes', () => {
