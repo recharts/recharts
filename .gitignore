@@ -12,6 +12,7 @@ npm-debug.log
 .justconf/
 types
 build
+build-baseline
 storybook/public/
 .reassure/*
 
