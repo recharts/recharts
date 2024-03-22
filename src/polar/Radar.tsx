@@ -249,7 +249,9 @@ export class Radar extends PureComponent<Props, State> {
     } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
-      dotItem = <Dot {...props} className="recharts-radar-dot" />;
+      dotItem = (
+        <Dot {...props} className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')} />
+      );
     }
 
     return dotItem;

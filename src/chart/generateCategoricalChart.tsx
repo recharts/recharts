@@ -1807,7 +1807,7 @@ export const generateCategoricalChart = ({
 
       return cloneElement(element, {
         ...axisOption,
-        className: axisType,
+        className: clsx(axisType, axisOption.className),
         key: element.key || `${displayName}-${index}`,
         ticks: getTicksOfAxis(axisOption, true),
       });
