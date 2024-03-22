@@ -1,17 +1,18 @@
 import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
 import {
   DefaultTooltipContent,
-  ValueType,
   NameType,
   Payload,
-  Props as TooltipContentProps,
+  Props as DefaultTooltipContentProps,
+  ValueType,
 } from './DefaultTooltipContent';
 import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { Global } from '../util/Global';
-import { UniqueOption, getUniqPayload } from '../util/payload/getUniqPayload';
+import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
+import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -21,9 +22,12 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
   return entry.dataKey;
 }
 
+type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
+  TooltipContextValue;
+
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,
-  props: TooltipProps<TValue, TName>,
+  props: TooltipContentProps<TValue, TName>,
 ): ReactNode {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, props);
@@ -35,7 +39,10 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   return <DefaultTooltipContent {...props} />;
 }
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = TooltipContentProps<TValue, TName> & {
+export type TooltipProps<TValue extends ValueType, TName extends NameType> = DefaultTooltipContentProps<
+  TValue,
+  TName
+> & {
   accessibilityLayer?: boolean;
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
@@ -51,7 +58,6 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Too
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   content?: ContentType<TValue, TName>;
-  coordinate?: Partial<Coordinate>;
   cursor?: boolean | ReactElement | SVGProps<SVGElement>;
   filterNull?: boolean;
   defaultIndex?: number;
@@ -68,16 +74,14 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Too
 
 function TooltipInternal<TValue extends ValueType, TName extends NameType>(props: TooltipProps<TValue, TName>) {
   const {
-    active,
+    active: activeFromProps,
     allowEscapeViewBox,
     animationDuration,
     animationEasing,
     content,
-    coordinate,
     filterNull,
     isAnimationActive,
     offset,
-    payload,
     payloadUniqBy,
     position,
     reverseDirection,
@@ -85,7 +89,19 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     wrapperStyle,
   } = props;
   const viewBox = useViewBox();
+  const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
+
+  /*
+   * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
+   * or `active=false` in which case the Tooltip never shows.
+   *
+   * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
+   */
+  const finalIsActive = activeFromProps ?? activeFromContext;
   let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+  if (!finalIsActive) {
+    finalPayload = [];
+  }
 
   if (filterNull && finalPayload.length) {
     finalPayload = getUniqPayload(
@@ -103,7 +119,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       animationDuration={animationDuration}
       animationEasing={animationEasing}
       isAnimationActive={isAnimationActive}
-      active={active}
+      active={finalIsActive}
       coordinate={coordinate}
       hasPayload={hasPayload}
       offset={offset}
@@ -113,7 +129,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       viewBox={viewBox}
       wrapperStyle={wrapperStyle}
     >
-      {renderContent(content, { ...props, payload: finalPayload })}
+      {renderContent(content, { ...props, payload: finalPayload, label, active: finalIsActive, coordinate })}
     </TooltipBoundingBox>
   );
 }

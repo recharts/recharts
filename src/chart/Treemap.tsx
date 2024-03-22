@@ -1,12 +1,9 @@
+import React, { PureComponent } from 'react';
 import isNan from 'lodash/isNaN';
 import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 import clsx from 'clsx';
-/**
- * @fileOverview TreemapChart
- */
-import React, { PureComponent } from 'react';
 import Smooth from 'react-smooth';
 
 import { Tooltip } from '../component/Tooltip';
@@ -22,6 +19,7 @@ import { Global } from '../util/Global';
 import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
+import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -649,37 +647,10 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   renderTooltip(): React.ReactElement {
-    const { children, nameKey } = this.props;
+    const { children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
 
-    if (!tooltipItem) {
-      return null;
-    }
-
-    const { isTooltipActive, activeNode } = this.state;
-    const coordinate = activeNode
-      ? {
-          x: activeNode.x + activeNode.width / 2,
-          y: activeNode.y + activeNode.height / 2,
-        }
-      : null;
-    const payload =
-      isTooltipActive && activeNode
-        ? [
-            {
-              payload: activeNode,
-              name: getValueByDataKey(activeNode, nameKey, ''),
-              value: getValueByDataKey(activeNode, NODE_VALUE_KEY),
-            },
-          ]
-        : [];
-
-    return React.cloneElement(tooltipItem as React.DetailedReactHTMLElement<any, HTMLElement>, {
-      active: isTooltipActive,
-      coordinate,
-      label: '',
-      payload,
-    });
+    return tooltipItem;
   }
 
   // render nest treemap
@@ -725,6 +696,35 @@ export class Treemap extends PureComponent<Props, State> {
     );
   }
 
+  getTooltipContext(): TooltipContextValue {
+    const { nameKey } = this.props;
+
+    const { isTooltipActive, activeNode } = this.state;
+    const coordinate = activeNode
+      ? {
+          x: activeNode.x + activeNode.width / 2,
+          y: activeNode.y + activeNode.height / 2,
+        }
+      : null;
+    const payload =
+      isTooltipActive && activeNode
+        ? [
+            {
+              payload: activeNode,
+              name: getValueByDataKey(activeNode, nameKey, ''),
+              value: getValueByDataKey(activeNode, NODE_VALUE_KEY),
+            },
+          ]
+        : [];
+
+    return {
+      active: isTooltipActive,
+      coordinate,
+      label: '',
+      payload,
+    };
+  }
+
   render() {
     if (!validateWidthHeight(this)) {
       return null;
@@ -736,18 +736,20 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <ViewBoxContext.Provider value={viewBox}>
-        <div
-          className={clsx('recharts-wrapper', className)}
-          style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-          role="region"
-        >
-          <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-            {this.renderAllNodes()}
-            {filterSvgElements(children)}
-          </Surface>
-          {this.renderTooltip()}
-          {type === 'nest' && this.renderNestIndex()}
-        </div>
+        <TooltipContextProvider value={this.getTooltipContext()}>
+          <div
+            className={clsx('recharts-wrapper', className)}
+            style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+            role="region"
+          >
+            <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+              {this.renderAllNodes()}
+              {filterSvgElements(children)}
+            </Surface>
+            {this.renderTooltip()}
+            {type === 'nest' && this.renderNestIndex()}
+          </div>
+        </TooltipContextProvider>
       </ViewBoxContext.Provider>
     );
   }
