@@ -6,6 +6,8 @@ import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
+import get from 'lodash/get';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -153,7 +155,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
       return (
         <Layer
-          className="recharts-polar-radius-axis-tick"
+          className={clsx('recharts-polar-radius-axis-tick', get(tick, 'className'))}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
@@ -173,7 +175,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     }
 
     return (
-      <Layer className="recharts-polar-radius-axis">
+      <Layer className={clsx('recharts-polar-radius-axis', this.props.className)}>
         {axisLine && this.renderAxisLine()}
         {tick && this.renderTicks()}
         {Label.renderCallByParent(this.props, this.getViewBox())}

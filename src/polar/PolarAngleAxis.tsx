@@ -4,6 +4,8 @@
 import React, { PureComponent } from 'react';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
+import get from 'lodash/get';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
@@ -145,7 +147,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
       return (
         <Layer
-          className="recharts-polar-angle-axis-tick"
+          className={clsx('recharts-polar-angle-axis-tick', get(tick, 'className'))}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
@@ -167,7 +169,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
     }
 
     return (
-      <Layer className="recharts-polar-angle-axis">
+      <Layer className={clsx('recharts-polar-angle-axis', this.props.className)}>
         {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
       </Layer>
