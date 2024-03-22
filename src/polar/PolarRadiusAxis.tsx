@@ -7,7 +7,6 @@ import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
-import get from 'lodash/get';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -153,9 +152,12 @@ export class PolarRadiusAxis extends PureComponent<Props> {
         payload: entry,
       };
 
+      const className =
+        !React.isValidElement(tick) && !isFunction(tick) && typeof tick !== 'boolean' ? tick.className : '';
+
       return (
         <Layer
-          className={clsx('recharts-polar-radius-axis-tick', get(tick, 'className'))}
+          className={clsx('recharts-polar-radius-axis-tick', className)}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >

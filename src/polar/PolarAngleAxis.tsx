@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
-import get from 'lodash/get';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
@@ -145,9 +144,12 @@ export class PolarAngleAxis extends PureComponent<Props> {
         y: lineCoord.y2,
       };
 
+      const className =
+        !React.isValidElement(tick) && !isFunction(tick) && typeof tick !== 'boolean' ? tick.className : '';
+
       return (
         <Layer
-          className={clsx('recharts-polar-angle-axis-tick', get(tick, 'className'))}
+          className={clsx('recharts-polar-angle-axis-tick', className)}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
