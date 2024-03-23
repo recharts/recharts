@@ -33,8 +33,6 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     dismissedAtCoordinate: { x: 0, y: 0 },
   };
 
-  private wrapperNode: HTMLDivElement;
-
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
   }
@@ -116,15 +114,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     return (
       // This element allow listening to the `Escape` key.
       // See https://github.com/recharts/recharts/pull/2925
-      <div
-        tabIndex={-1}
-        className={cssClasses}
-        style={outerStyle}
-        ref={node => {
-          this.wrapperNode = node;
-          innerRef(node);
-        }}
-      >
+      <div tabIndex={-1} className={cssClasses} style={outerStyle} ref={innerRef}>
         {children}
       </div>
     );
