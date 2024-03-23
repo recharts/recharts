@@ -13,17 +13,18 @@ import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
+import { useAccessibilityLayer } from '../context/accessibilityContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
-  | ((props: TooltipProps<TValue, TName>) => ReactNode);
+  | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
 function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
   return entry.dataKey;
 }
 
 type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
-  TooltipContextValue;
+  TooltipContextValue & { accessibilityLayer: boolean };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,
@@ -39,11 +40,12 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   return <DefaultTooltipContent {...props} />;
 }
 
-export type TooltipProps<TValue extends ValueType, TName extends NameType> = DefaultTooltipContentProps<
-  TValue,
-  TName
+type PropertiesReadFromContext = 'viewBox' | 'active' | 'payload' | 'coordinate' | 'label' | 'accessibilityLayer';
+
+export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omit<
+  DefaultTooltipContentProps<TValue, TName>,
+  PropertiesReadFromContext
 > & {
-  accessibilityLayer?: boolean;
   /**
    * If true, then Tooltip is always displayed, once an activeIndex is set by mouse over, or programmatically.
    * If false, then Tooltip is never displayed.
@@ -89,6 +91,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     wrapperStyle,
   } = props;
   const viewBox = useViewBox();
+  const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
 
   /*
@@ -129,7 +132,14 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       viewBox={viewBox}
       wrapperStyle={wrapperStyle}
     >
-      {renderContent(content, { ...props, payload: finalPayload, label, active: finalIsActive, coordinate })}
+      {renderContent(content, {
+        ...props,
+        payload: finalPayload,
+        label,
+        active: finalIsActive,
+        coordinate,
+        accessibilityLayer,
+      })}
     </TooltipBoundingBox>
   );
 }
@@ -140,7 +150,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static displayName = 'Tooltip';
 
   static defaultProps = {
-    accessibilityLayer: false,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',

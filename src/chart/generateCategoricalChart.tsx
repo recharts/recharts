@@ -88,6 +88,7 @@ import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../ut
 import { Cursor } from '../component/Cursor';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
+import { AccessibilityContextProvider } from '../context/accessibilityContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1869,16 +1870,10 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}  The instance of Tooltip
      */
     renderTooltip = (): React.ReactElement => {
-      const { children, accessibilityLayer } = this.props;
+      const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
 
-      if (!tooltipItem) {
-        return null;
-      }
-
-      return cloneElement(tooltipItem, {
-        accessibilityLayer,
-      });
+      return tooltipItem;
     };
 
     renderBrush = (element: React.ReactElement) => {
@@ -2193,29 +2188,31 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <ChartLayoutContextProvider
-          state={this.state}
-          width={this.props.width}
-          height={this.props.height}
-          clipPathId={this.clipPathId}
-        >
-          <div
-            className={clsx('recharts-wrapper', className)}
-            style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-            {...events}
-            ref={(node: HTMLDivElement) => {
-              this.container = node;
-            }}
-            role={attrs.role ?? 'region'}
+        <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+          <ChartLayoutContextProvider
+            state={this.state}
+            width={this.props.width}
+            height={this.props.height}
+            clipPathId={this.clipPathId}
           >
-            <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-              {this.renderClipPath()}
-              {renderByOrder(children, this.renderMap)}
-            </Surface>
-            {this.renderLegend()}
-            {this.renderTooltip()}
-          </div>
-        </ChartLayoutContextProvider>
+            <div
+              className={clsx('recharts-wrapper', className)}
+              style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+              {...events}
+              ref={(node: HTMLDivElement) => {
+                this.container = node;
+              }}
+              role={attrs.role ?? 'region'}
+            >
+              <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+                {this.renderClipPath()}
+                {renderByOrder(children, this.renderMap)}
+              </Surface>
+              {this.renderLegend()}
+              {this.renderTooltip()}
+            </div>
+          </ChartLayoutContextProvider>
+        </AccessibilityContextProvider>
       );
     }
   };

@@ -18,7 +18,6 @@ import {
   Area,
   Brush,
   ReferenceArea,
-  DefaultTooltipContent,
 } from '../../../src';
 import { DataKey } from '../../../src/util/types';
 
@@ -915,7 +914,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 tickMargin={25}
               />
               {yAxisComponents}
-              <Tooltip content={<DefaultTooltipContent />} />
+              <Tooltip />
               <Line
                 name="PV"
                 type="monotone"

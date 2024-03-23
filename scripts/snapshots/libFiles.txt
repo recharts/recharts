@@ -63,6 +63,7 @@
   "lib/context/tooltipContext.js",
   "lib/context/legendPayloadContext.js",
   "lib/context/chartLayoutContext.js",
+  "lib/context/accessibilityContext.js",
   "lib/container/Surface.js",
   "lib/container/Layer.js",
   "lib/component/TooltipBoundingBox.js",
