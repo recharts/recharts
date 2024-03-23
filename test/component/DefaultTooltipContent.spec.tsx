@@ -4,6 +4,7 @@ import { DefaultTooltipContent } from '../../src/component/DefaultTooltipContent
 
 describe('DefaultTooltipContent', () => {
   const mockProps = {
+    accessibilityLayer: true,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',
