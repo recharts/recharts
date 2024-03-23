@@ -11,7 +11,7 @@ import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
 import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { polarToCartesian } from '../util/PolarUtils';
+import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -144,12 +144,9 @@ export class PolarAngleAxis extends PureComponent<Props> {
         y: lineCoord.y2,
       };
 
-      const className =
-        !React.isValidElement(tick) && !isFunction(tick) && typeof tick !== 'boolean' ? tick.className : '';
-
       return (
         <Layer
-          className={clsx('recharts-polar-angle-axis-tick', className)}
+          className={clsx('recharts-polar-angle-axis-tick', getTickClassName(tick))}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
