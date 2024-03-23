@@ -27,41 +27,16 @@ type State = {
   dismissedAtCoordinate: Coordinate;
 };
 
-const EPSILON = 1;
-
 export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, State> {
   state = {
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
   };
 
-  lastBoundingBox = {
-    width: -1,
-    height: -1,
-  };
-
   private wrapperNode: HTMLDivElement;
-
-  updateBBox() {
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-
-      if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPSILON ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPSILON
-      ) {
-        this.lastBoundingBox.width = box.width;
-        this.lastBoundingBox.height = box.height;
-      }
-    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
-      this.lastBoundingBox.width = -1;
-      this.lastBoundingBox.height = -1;
-    }
-  }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    this.updateBBox();
   }
 
   componentWillUnmount() {
@@ -69,10 +44,6 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
   }
 
   componentDidUpdate() {
-    if (this.props.active) {
-      this.updateBBox();
-    }
-
     if (!this.state.dismissed) {
       return;
     }
