@@ -1,6 +1,7 @@
 import React, { CSSProperties, PureComponent, ReactNode } from 'react';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
+import { BoundingBox, SetBoundingBox } from '../util/useGetBoundingClientRect';
 
 export type TooltipBoundingBoxProps = {
   active: boolean;
@@ -17,6 +18,8 @@ export type TooltipBoundingBoxProps = {
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
   wrapperStyle: CSSProperties;
+  lastBoundingBox: BoundingBox;
+  innerRef: SetBoundingBox;
 };
 
 type State = {
@@ -110,6 +113,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       useTranslate3d,
       viewBox,
       wrapperStyle,
+      lastBoundingBox,
+      innerRef,
     } = this.props;
 
     const { cssClasses, cssProperties } = getTooltipTranslate({
@@ -119,8 +124,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       position,
       reverseDirection,
       tooltipBox: {
-        height: this.lastBoundingBox.height,
-        width: this.lastBoundingBox.width,
+        height: lastBoundingBox.height,
+        width: lastBoundingBox.width,
       },
       useTranslate3d,
       viewBox,
@@ -146,6 +151,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
         style={outerStyle}
         ref={node => {
           this.wrapperNode = node;
+          innerRef(node);
         }}
       >
         {children}

@@ -14,6 +14,7 @@ import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from
 import { useViewBox } from '../context/chartLayoutContext';
 import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
+import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -93,7 +94,6 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
-
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
    * or `active=false` in which case the Tooltip never shows.
@@ -101,6 +101,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
   const finalIsActive = activeFromProps ?? activeFromContext;
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
   let finalPayload: Payload<TValue, TName>[] = payload ?? [];
   if (!finalIsActive) {
     finalPayload = [];
@@ -131,6 +132,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       useTranslate3d={useTranslate3d}
       viewBox={viewBox}
       wrapperStyle={wrapperStyle}
+      lastBoundingBox={lastBoundingBox}
+      innerRef={updateBoundingBox}
     >
       {renderContent(content, {
         ...props,
