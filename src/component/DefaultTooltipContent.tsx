@@ -52,7 +52,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   label?: any;
   payload?: Array<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
-  accessibilityLayer?: boolean;
+  accessibilityLayer: boolean;
 }
 
 export const DefaultTooltipContent = <TValue extends ValueType, TName extends NameType>(
