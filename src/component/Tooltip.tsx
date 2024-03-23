@@ -17,14 +17,14 @@ import { useAccessibilityLayer } from '../context/accessibilityContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
-  | ((props: TooltipProps<TValue, TName>) => ReactNode);
+  | ((props: TooltipContentProps<TValue, TName>) => ReactNode);
 
 function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: Payload<TValue, TName>) {
   return entry.dataKey;
 }
 
 type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
-  TooltipContextValue;
+  TooltipContextValue & { accessibilityLayer: boolean };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,
@@ -40,7 +40,7 @@ function renderContent<TValue extends ValueType, TName extends NameType>(
   return <DefaultTooltipContent {...props} />;
 }
 
-type PropertiesReadFromContext = 'viewBox' | 'active' | 'payload' | 'coordinate' | 'label';
+type PropertiesReadFromContext = 'viewBox' | 'active' | 'payload' | 'coordinate' | 'label' | 'accessibilityLayer';
 
 export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omit<
   DefaultTooltipContentProps<TValue, TName>,
