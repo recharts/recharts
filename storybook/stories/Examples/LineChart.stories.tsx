@@ -992,3 +992,33 @@ export const HideOnLegendClick: StoryObj = {
     );
   },
 };
+
+export const LineTrailingIcon: StoryObj = {
+  render: () => {
+    const lastDotKey = 'lastDot';
+    const data = pageData.map((entry, index) => ({
+      ...entry,
+      [lastDotKey]: index === pageData.length - 1 ? entry.pv : undefined,
+    }));
+
+    return (
+      <ResponsiveContainer>
+        <LineChart data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+          <Line
+            type="monotone"
+            dataKey={lastDotKey}
+            legendType="none"
+            tooltipType="none"
+            dot={{ stroke: 'red', strokeWidth: 1, r: 4 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
