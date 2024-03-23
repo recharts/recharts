@@ -113,7 +113,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
 
     return (
       <g>
-        <foreignObject>
+        <foreignObject x="0" y="0" width="100%" height="100%" style={{ pointerEvents: 'none' }}>
           {/* This element allow listening to the `Escape` key. // See https://github.com/recharts/recharts/pull/2925 */}
           <div
             // @ts-expect-error typescript library does not recognize xmlns attribute

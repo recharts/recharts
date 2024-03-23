@@ -211,8 +211,8 @@ export const SunburstChart = ({
           role="region"
         >
           <Surface width={width} height={height}>
-            {children}
             <Layer className={layerClass}>{sectors}</Layer>
+            {children}
           </Surface>
         </div>
       </TooltipContextProvider>
