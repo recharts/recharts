@@ -112,11 +112,21 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     };
 
     return (
-      // This element allow listening to the `Escape` key.
-      // See https://github.com/recharts/recharts/pull/2925
-      <div tabIndex={-1} className={cssClasses} style={outerStyle} ref={innerRef}>
-        {children}
-      </div>
+      <g>
+        <foreignObject>
+          {/* This element allow listening to the `Escape` key. // See https://github.com/recharts/recharts/pull/2925 */}
+          <div
+            // @ts-expect-error typescript library does not recognize xmlns attribute
+            xmlns="http://www.w3.org/1999/xhtml"
+            tabIndex={-1}
+            className={cssClasses}
+            style={outerStyle}
+            ref={innerRef}
+          >
+            {children}
+          </div>
+        </foreignObject>
+      </g>
     );
   }
 }
