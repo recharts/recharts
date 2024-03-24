@@ -43,6 +43,7 @@ import {
   XAxisMap,
 } from './types';
 import { getLegendProps } from './getLegendProps';
+import { BoundingBox } from './useGetBoundingClientRect';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -385,7 +386,7 @@ export const getBarPosition = ({
 export const appendOffsetOfLegend = (
   offset: ChartOffset,
   props: { width?: number; margin: Margin; children?: ReactNode[] },
-  legendBox: DOMRect | null,
+  legendBox: BoundingBox | null,
 ): ChartOffset => {
   const { children, width, margin } = props;
   const legendWidth = width - (margin.left || 0) - (margin.right || 0);

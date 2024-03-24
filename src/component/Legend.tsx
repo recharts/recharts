@@ -87,7 +87,7 @@ export type Props = DefaultProps & {
   width?: number;
   height?: number;
   payloadUniqBy?: UniqueOption<Payload>;
-  onBBoxUpdate?: (box: DOMRect | null) => void;
+  onBBoxUpdate?: (box: BoundingBox | null) => void;
 };
 
 interface State {

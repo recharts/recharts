@@ -22,7 +22,7 @@ type SetBoundingBox = (node: HTMLElement | null) => void;
  * @returns [lastBoundingBox, updateBoundingBox] most recent value, and setter. Pass the setter to a DOM element ref like this: `<div ref={updateBoundingBox}>`
  */
 export function useGetBoundingClientRect(
-  onUpdate: (domRect: DOMRect | null) => void,
+  onUpdate: (domRect: BoundingBox | null) => void,
   extraDependencies: ReadonlyArray<unknown>,
 ): [BoundingBox, SetBoundingBox] {
   const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
