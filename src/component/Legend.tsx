@@ -6,12 +6,15 @@ import { LayoutType } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
+import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
 type ContentProps = Props & {
+  chartWidth: number;
+  chartHeight: number;
   contextPayload: Payload[];
 };
 
@@ -35,8 +38,21 @@ function LegendContent(props: ContentProps) {
   return <DefaultLegendContent {...propsWithoutRef} />;
 }
 
-function getDefaultPosition(style: React.CSSProperties, props: Props, box: BoundingBox) {
-  const { layout, align, verticalAlign, margin, chartWidth, chartHeight } = props;
+type PositionInput = {
+  layout?: Props['layout'];
+  align?: Props['align'];
+  verticalAlign?: Props['verticalAlign'];
+  margin?: Props['margin'];
+};
+
+function getDefaultPosition(
+  style: React.CSSProperties,
+  props: PositionInput,
+  chartWidth: number,
+  chartHeight: number,
+  box: BoundingBox,
+) {
+  const { layout, align, verticalAlign, margin } = props;
   let hPos, vPos;
 
   if (
@@ -67,8 +83,6 @@ function getDefaultPosition(style: React.CSSProperties, props: Props, box: Bound
 
 export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
-  chartWidth?: number;
-  chartHeight?: number;
   width?: number;
   height?: number;
   margin?: {
@@ -92,18 +106,20 @@ function LegendWrapper(props: Props) {
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
+  const chartWidth = useChartWidth();
+  const chartHeight = useChartHeight();
 
   const outerStyle: CSSProperties = {
     position: 'absolute',
     width: width || 'auto',
     height: height || 'auto',
-    ...getDefaultPosition(wrapperStyle, props, lastBoundingBox),
+    ...getDefaultPosition(wrapperStyle, props, chartWidth, chartHeight, lastBoundingBox),
     ...wrapperStyle,
   };
 
   return (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
-      <LegendContent {...props} contextPayload={contextPayload} />
+      <LegendContent {...props} chartWidth={chartWidth} chartHeight={chartHeight} contextPayload={contextPayload} />
     </div>
   );
 }

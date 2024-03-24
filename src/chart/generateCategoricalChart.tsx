@@ -1842,7 +1842,7 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
-      const { children, width, height } = this.props;
+      const { children, width } = this.props;
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
@@ -1858,8 +1858,6 @@ export const generateCategoricalChart = ({
 
       return cloneElement(item, {
         ...otherProps,
-        chartWidth: width,
-        chartHeight: height,
         margin,
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
