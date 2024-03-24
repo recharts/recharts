@@ -89,6 +89,7 @@ import { Cursor } from '../component/Cursor';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
+import { BoundingBox } from '../util/useGetBoundingClientRect';
 
 export interface MousePointer {
   pageX: number;
@@ -730,7 +731,7 @@ const calculateOffset = (
     xAxisMap?: XAxisMap;
     yAxisMap?: YAxisMap;
   },
-  prevLegendBBox?: DOMRect | null,
+  prevLegendBBox?: BoundingBox | null,
 ): ChartOffset => {
   const { width, height, children } = props;
   const margin = props.margin || {};
@@ -1469,7 +1470,7 @@ export const generateCategoricalChart = ({
       eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
-    handleLegendBBoxUpdate = (box: DOMRect | null) => {
+    handleLegendBBoxUpdate = (box: BoundingBox | null) => {
       if (box) {
         const { dataStartIndex, dataEndIndex, updateId } = this.state;
 

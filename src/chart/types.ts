@@ -10,6 +10,7 @@ import {
   TickItem,
 } from '../util/types';
 import { AxisStackGroups } from '../util/ChartUtils';
+import { BoundingBox } from '../util/useGetBoundingClientRect';
 
 export type AxisMap = {
   [axisId: string]: BaseAxisProps;
@@ -71,7 +72,7 @@ export interface CategoricalChartState {
 
   yValue?: number;
 
-  legendBBox?: DOMRect | null;
+  legendBBox?: BoundingBox | null;
 
   prevDataKey?: DataKey<any>;
   prevData?: any[];
