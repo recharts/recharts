@@ -2,6 +2,7 @@
  * @fileOverview Polar Grid
  */
 import React, { SVGProps } from 'react';
+import clsx from 'clsx';
 import { polarToCartesian } from '../util/PolarUtils';
 import { filterProps } from '../util/ReactUtils';
 
@@ -78,7 +79,7 @@ const ConcentricCircle: React.FC<ConcentricProps> = props => {
   return (
     <circle
       {...concentricCircleProps}
-      className="recharts-polar-grid-concentric-circle"
+      className={clsx('recharts-polar-grid-concentric-circle', props.className)}
       key={`circle-${index}`}
       cx={cx}
       cy={cy}
@@ -99,7 +100,7 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
   return (
     <path
       {...concentricPolygonProps}
-      className="recharts-polar-grid-concentric-polygon"
+      className={clsx('recharts-polar-grid-concentric-polygon', props.className)}
       key={`path-${index}`}
       d={getPolygonPath(radius, props.cx, props.cy, props.polarAngles)}
     />
