@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useContext } from 'react';
 import invariant from 'tiny-invariant';
 import find from 'lodash/find';
 import every from 'lodash/every';
-import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../util/types';
+import { CartesianViewBox, ChartOffset, Margin, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
@@ -18,6 +18,7 @@ export const OffsetContext = createContext<ChartOffset>({});
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
+export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 
 export type ChartLayoutContextProviderProps = {
   state: CategoricalChartState;
@@ -25,6 +26,7 @@ export type ChartLayoutContextProviderProps = {
   clipPathId: string;
   width: number;
   height: number;
+  margin: Margin;
 };
 
 /**
@@ -42,6 +44,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     children,
     width,
     height,
+    margin,
   } = props;
 
   /**
@@ -70,23 +73,25 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * See the test file for details.
    */
   return (
-    <LegendPayloadProvider>
-      <XAxisContext.Provider value={xAxisMap}>
-        <YAxisContext.Provider value={yAxisMap}>
-          <OffsetContext.Provider value={offset}>
-            <ViewBoxContext.Provider value={viewBox}>
-              <ClipPathIdContext.Provider value={clipPathId}>
-                <ChartHeightContext.Provider value={height}>
-                  <ChartWidthContext.Provider value={width}>
-                    <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                  </ChartWidthContext.Provider>
-                </ChartHeightContext.Provider>
-              </ClipPathIdContext.Provider>
-            </ViewBoxContext.Provider>
-          </OffsetContext.Provider>
-        </YAxisContext.Provider>
-      </XAxisContext.Provider>
-    </LegendPayloadProvider>
+    <MarginContext.Provider value={margin}>
+      <LegendPayloadProvider>
+        <XAxisContext.Provider value={xAxisMap}>
+          <YAxisContext.Provider value={yAxisMap}>
+            <OffsetContext.Provider value={offset}>
+              <ViewBoxContext.Provider value={viewBox}>
+                <ClipPathIdContext.Provider value={clipPathId}>
+                  <ChartHeightContext.Provider value={height}>
+                    <ChartWidthContext.Provider value={width}>
+                      <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                    </ChartWidthContext.Provider>
+                  </ChartHeightContext.Provider>
+                </ClipPathIdContext.Provider>
+              </ViewBoxContext.Provider>
+            </OffsetContext.Provider>
+          </YAxisContext.Provider>
+        </XAxisContext.Provider>
+      </LegendPayloadProvider>
+    </MarginContext.Provider>
   );
 };
 
@@ -222,4 +227,8 @@ export const useChartWidth = (): number => {
 
 export const useChartHeight = (): number => {
   return useContext(ChartHeightContext);
+};
+
+export const useMargin = (): Margin => {
+  return useContext(MarginContext);
 };

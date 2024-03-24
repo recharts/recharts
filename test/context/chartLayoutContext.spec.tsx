@@ -19,6 +19,7 @@ describe('ChartLayoutContextProvider', () => {
     offset: {},
   };
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
+    margin: { top: 0, right: 0, bottom: 0, left: 0 },
     state: minimalState,
     clipPathId: 'my mock ID',
     width: 100,

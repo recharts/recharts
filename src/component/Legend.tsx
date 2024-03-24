@@ -2,17 +2,18 @@ import React, { CSSProperties, PureComponent } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
-import { LayoutType } from '../util/types';
+import { LayoutType, Margin } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
-import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
 }
 
 type ContentProps = Props & {
+  margin: Margin;
   chartWidth: number;
   chartHeight: number;
   contextPayload: Payload[];
@@ -42,17 +43,17 @@ type PositionInput = {
   layout?: Props['layout'];
   align?: Props['align'];
   verticalAlign?: Props['verticalAlign'];
-  margin?: Props['margin'];
 };
 
 function getDefaultPosition(
   style: React.CSSProperties,
   props: PositionInput,
+  margin: Margin,
   chartWidth: number,
   chartHeight: number,
   box: BoundingBox,
 ) {
-  const { layout, align, verticalAlign, margin } = props;
+  const { layout, align, verticalAlign } = props;
   let hPos, vPos;
 
   if (
@@ -85,12 +86,6 @@ export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
   width?: number;
   height?: number;
-  margin?: {
-    top?: number;
-    left?: number;
-    bottom?: number;
-    right?: number;
-  };
   payloadUniqBy?: UniqueOption<Payload>;
   onBBoxUpdate?: (box: DOMRect | null) => void;
 };
@@ -102,6 +97,7 @@ interface State {
 
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
+  const margin = useMargin();
   const { width, height, wrapperStyle, onBBoxUpdate } = props;
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
@@ -113,13 +109,19 @@ function LegendWrapper(props: Props) {
     position: 'absolute',
     width: width || 'auto',
     height: height || 'auto',
-    ...getDefaultPosition(wrapperStyle, props, chartWidth, chartHeight, lastBoundingBox),
+    ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
     ...wrapperStyle,
   };
 
   return (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
-      <LegendContent {...props} chartWidth={chartWidth} chartHeight={chartHeight} contextPayload={contextPayload} />
+      <LegendContent
+        {...props}
+        margin={margin}
+        chartWidth={chartWidth}
+        chartHeight={chartHeight}
+        contextPayload={contextPayload}
+      />
     </div>
   );
 }

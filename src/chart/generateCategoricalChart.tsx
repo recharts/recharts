@@ -1858,7 +1858,6 @@ export const generateCategoricalChart = ({
 
       return cloneElement(item, {
         ...otherProps,
-        margin,
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     };
@@ -2158,6 +2157,7 @@ export const generateCategoricalChart = ({
             width={this.props.width}
             height={this.props.height}
             clipPathId={this.clipPathId}
+            margin={this.props.margin}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
               {this.renderClipPath()}
@@ -2192,6 +2192,7 @@ export const generateCategoricalChart = ({
             width={this.props.width}
             height={this.props.height}
             clipPathId={this.clipPathId}
+            margin={this.props.margin}
           >
             <div
               className={clsx('recharts-wrapper', className)}
