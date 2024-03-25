@@ -111,12 +111,25 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       ...wrapperStyle,
     };
 
+    /*
+     * So Tooltip is a specialty in Recharts - it is a HTML element rendered inside SVG container.
+     * This does not work just like that (HTML is not a subset of SVG) but there is a special tag for it
+     * - <foreignObject>. This tag allows including extra stuff inside the SVG - such as HTML.
+     * See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject
+     *
+     * The x and 0 and width and height are static and cover the whole SVG document, because
+     * the tooltip itself is positioned via context.
+     *
+     * pointer-events: none is necessary because this foreignObject covers the whole chart,
+     * and if it was catching mouse events it would steal them all before they reach the chart
+     * and tooltip would never open.
+     */
     return (
       <g>
         <foreignObject x="0" y="0" width="100%" height="100%" style={{ pointerEvents: 'none' }}>
           {/* This element allow listening to the `Escape` key. // See https://github.com/recharts/recharts/pull/2925 */}
           <div
-            // @ts-expect-error typescript library does not recognize xmlns attribute
+            // @ts-expect-error typescript library does not recognize xmlns attribute, but it's required for an HTML chunk inside SVG.
             xmlns="http://www.w3.org/1999/xhtml"
             tabIndex={-1}
             className={cssClasses}
