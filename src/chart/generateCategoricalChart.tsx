@@ -262,13 +262,25 @@ const getTooltipContent = (
 
 /**
  * Returns tooltip data based on a mouse position (as a parameter or in state)
+ * @param  {String} chartName chart name
  * @param  {Object} state     current state
  * @param  {Array}  chartData the data defined in chart
  * @param  {String} layout     The layout type of chart
  * @param  {Object} rangeObj  { x, y } coordinates
  * @return {Object}           Tooltip data data
  */
-const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: LayoutType, rangeObj?: any) => {
+const getTooltipData = (
+  chartName: string,
+  state: CategoricalChartState,
+  chartData: any[],
+  layout: LayoutType,
+  rangeObj?: any,
+): object => {
+  // PieChart is temporarily returning null because the 'calculateActiveTickIndex' is returning an incorrect activeIndex
+  if (chartName === 'PieChart') {
+    return null;
+  }
+
   const rangeData = rangeObj || { x: state.chartX, y: state.chartY };
 
   const pos = calculateTooltipPos(rangeData, layout);
@@ -1247,7 +1259,7 @@ export const generateCategoricalChart = ({
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
-          ...getTooltipData(prevState, data, layout),
+          ...getTooltipData(chartName, prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
 
@@ -1375,7 +1387,7 @@ export const generateCategoricalChart = ({
         return { ...e, xValue, yValue };
       }
 
-      const toolTipData = getTooltipData(this.state, this.props.data, this.props.layout, rangeObj);
+      const toolTipData = getTooltipData(chartName, this.state, this.props.data, this.props.layout, rangeObj);
 
       if (toolTipData) {
         return {
