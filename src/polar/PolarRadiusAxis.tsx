@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
-import { polarToCartesian } from '../util/PolarUtils';
+import { polarToCartesian, getTickClassName } from '../util/PolarUtils';
 import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
@@ -152,12 +152,9 @@ export class PolarRadiusAxis extends PureComponent<Props> {
         payload: entry,
       };
 
-      const className =
-        !React.isValidElement(tick) && !isFunction(tick) && typeof tick !== 'boolean' ? tick.className : '';
-
       return (
         <Layer
-          className={clsx('recharts-polar-radius-axis-tick', className)}
+          className={clsx('recharts-polar-radius-axis-tick', getTickClassName(tick))}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
