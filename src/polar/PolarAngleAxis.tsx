@@ -4,13 +4,14 @@
 import React, { PureComponent } from 'react';
 import isFunction from 'lodash/isFunction';
 
+import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
 import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { polarToCartesian } from '../util/PolarUtils';
+import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -145,7 +146,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
       return (
         <Layer
-          className="recharts-polar-angle-axis-tick"
+          className={clsx('recharts-polar-angle-axis-tick', getTickClassName(tick))}
           key={`tick-${entry.coordinate}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
@@ -167,7 +168,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
     }
 
     return (
-      <Layer className="recharts-polar-angle-axis">
+      <Layer className={clsx('recharts-polar-angle-axis', this.props.className)}>
         {axisLine && this.renderAxisLine()}
         {this.renderTicks()}
       </Layer>
