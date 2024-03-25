@@ -10,6 +10,7 @@ import {
   getDisplayName,
   isChildrenEqual,
   isValidSpreadableProp,
+  orderByPriorityAndIndex,
   toArray,
   validateWidthHeight,
   withoutType,
@@ -404,6 +405,26 @@ describe('ReactUtils untest tests', () => {
       const lineChildren = findAllByType(children, Line);
       expect(lineChildren.length).toEqual(4);
       expect(lineChildren.map(child => child.key)).toEqual(['a', 'b', 'c', 'd']);
+    });
+  });
+
+  describe('orderByPriorityAndIndex', () => {
+    test('orderByPriorityAndIndex should return in ascending order by priority and index', () => {
+      const sortedValue = orderByPriorityAndIndex([
+        [1, 1, 'a'],
+        [0, 1, 'b'],
+        [4, 2, 'c'],
+        [4, 0, 'd'],
+        [3, 1, 'e'],
+      ]);
+
+      expect(sortedValue).toEqual([
+        [0, 1, 'b'],
+        [1, 1, 'a'],
+        [3, 1, 'e'],
+        [4, 0, 'd'],
+        [4, 2, 'c'],
+      ]);
     });
   });
 });
