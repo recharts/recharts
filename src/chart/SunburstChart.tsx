@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import clsx from 'clsx';
-import { findChildByType } from '../util/ReactUtils';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
-import { Tooltip } from '../component/Tooltip';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 
@@ -190,11 +188,6 @@ export const SunburstChart = ({
 
   const layerClass = clsx('recharts-sunburst', className);
 
-  function renderTooltip() {
-    const tooltipComponent = findChildByType([children], Tooltip);
-
-    return tooltipComponent;
-  }
   function getTooltipContext(): TooltipContextValue {
     if (activeNode == null) {
       return doNotDisplayTooltip;
@@ -218,10 +211,9 @@ export const SunburstChart = ({
           role="region"
         >
           <Surface width={width} height={height}>
-            {children}
             <Layer className={layerClass}>{sectors}</Layer>
+            {children}
           </Surface>
-          {renderTooltip()}
         </div>
       </TooltipContextProvider>
     </ViewBoxContext.Provider>

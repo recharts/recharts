@@ -260,7 +260,7 @@ const SunburstChartTestCase: TooltipVisibilityTestCase = {
     </SunburstChart>
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(10px, 10px);',
+  expectedTransform: 'transform: translate(285px, 210px);',
 };
 
 const TreemapTestCase: TooltipVisibilityTestCase = {
@@ -296,7 +296,7 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   SankeyTestCase,
   ScatterChartTestCase,
   // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
-  // SunburstChartTestCase,
+  SunburstChartTestCase,
   TreemapTestCase,
 ];
 
@@ -404,6 +404,12 @@ describe('Tooltip visibility', () => {
            */
           context.skip();
         }
+        if (name === 'SunburstChart') {
+          /*
+           * SunburstChart for some reason ignores active property on Tooltip
+           */
+          context.skip();
+        }
         const { container } = render(
           <Wrapper>
             <Tooltip active />
@@ -498,6 +504,12 @@ describe('Tooltip visibility', () => {
         if (name === 'Treemap') {
           /*
            * Treemap chart for some reason ignores defaultIndex property on Tooltip
+           */
+          context.skip();
+        }
+        if (name === 'SunburstChart') {
+          /*
+           * SunburstChart for some reason ignores active property on Tooltip
            */
           context.skip();
         }
@@ -668,7 +680,7 @@ describe('Tooltip visibility', () => {
     fireEvent.click(container.querySelector('#goRight') as HTMLButtonElement);
 
     // Data should be displayed in the Tooltip payload
-    expect(tooltip?.textContent).toBe('120stature : 120cmweight : 100kg');
+    expect(tooltip.textContent).toBe('120stature : 120cmweight : 100kg');
   });
 });
 

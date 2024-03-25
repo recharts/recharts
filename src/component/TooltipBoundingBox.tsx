@@ -1,6 +1,7 @@
 import React, { CSSProperties, PureComponent, ReactNode } from 'react';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
+import { BoundingBox, SetBoundingBox } from '../util/useGetBoundingClientRect';
 
 export type TooltipBoundingBoxProps = {
   active: boolean;
@@ -17,6 +18,8 @@ export type TooltipBoundingBoxProps = {
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
   wrapperStyle: CSSProperties;
+  lastBoundingBox: BoundingBox;
+  innerRef: SetBoundingBox;
 };
 
 type State = {
@@ -24,41 +27,14 @@ type State = {
   dismissedAtCoordinate: Coordinate;
 };
 
-const EPSILON = 1;
-
 export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, State> {
   state = {
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
   };
 
-  lastBoundingBox = {
-    width: -1,
-    height: -1,
-  };
-
-  private wrapperNode: HTMLDivElement;
-
-  updateBBox() {
-    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
-      const box = this.wrapperNode.getBoundingClientRect();
-
-      if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPSILON ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPSILON
-      ) {
-        this.lastBoundingBox.width = box.width;
-        this.lastBoundingBox.height = box.height;
-      }
-    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
-      this.lastBoundingBox.width = -1;
-      this.lastBoundingBox.height = -1;
-    }
-  }
-
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyDown);
-    this.updateBBox();
   }
 
   componentWillUnmount() {
@@ -66,10 +42,6 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
   }
 
   componentDidUpdate() {
-    if (this.props.active) {
-      this.updateBBox();
-    }
-
     if (!this.state.dismissed) {
       return;
     }
@@ -110,6 +82,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       useTranslate3d,
       viewBox,
       wrapperStyle,
+      lastBoundingBox,
+      innerRef,
     } = this.props;
 
     const { cssClasses, cssProperties } = getTooltipTranslate({
@@ -119,8 +93,8 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       position,
       reverseDirection,
       tooltipBox: {
-        height: this.lastBoundingBox.height,
-        width: this.lastBoundingBox.width,
+        height: lastBoundingBox.height,
+        width: lastBoundingBox.width,
       },
       useTranslate3d,
       viewBox,
@@ -137,19 +111,35 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       ...wrapperStyle,
     };
 
+    /*
+     * So Tooltip is a specialty in Recharts - it is a HTML element rendered inside SVG container.
+     * This does not work just like that (HTML is not a subset of SVG) but there is a special tag for it
+     * - <foreignObject>. This tag allows including extra stuff inside the SVG - such as HTML.
+     * See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject
+     *
+     * The x and 0 and width and height are static and cover the whole SVG document, because
+     * the tooltip itself is positioned via context.
+     *
+     * pointer-events: none is necessary because this foreignObject covers the whole chart,
+     * and if it was catching mouse events it would steal them all before they reach the chart
+     * and tooltip would never open.
+     */
     return (
-      // This element allow listening to the `Escape` key.
-      // See https://github.com/recharts/recharts/pull/2925
-      <div
-        tabIndex={-1}
-        className={cssClasses}
-        style={outerStyle}
-        ref={node => {
-          this.wrapperNode = node;
-        }}
-      >
-        {children}
-      </div>
+      <g>
+        <foreignObject x="0" y="0" width="100%" height="100%" style={{ pointerEvents: 'none' }}>
+          {/* This element allow listening to the `Escape` key. // See https://github.com/recharts/recharts/pull/2925 */}
+          <div
+            // @ts-expect-error typescript library does not recognize xmlns attribute, but it's required for an HTML chunk inside SVG.
+            xmlns="http://www.w3.org/1999/xhtml"
+            tabIndex={-1}
+            className={cssClasses}
+            style={outerStyle}
+            ref={innerRef}
+          >
+            {children}
+          </div>
+        </foreignObject>
+      </g>
     );
   }
 }
