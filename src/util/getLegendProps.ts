@@ -21,7 +21,7 @@ export const getLegendProps = ({
   }
   return {
     ...legendItem.props,
-    ...Legend.getWidthOrHeight(legendItem, legendWidth),
+    ...Legend.getWidthOrHeight(legendItem.props.layout, legendItem.props.height, legendItem.props.width, legendWidth),
     item: legendItem,
   };
 };
