@@ -68,21 +68,15 @@ describe('<Sankey />', () => {
       ),
     );
 
-    it(
-      'should provide axisMaps: undefined even if axes are specified',
-      testChartLayoutContext(
-        props => (
+    it('should throw if axes are provided - they are not an allowed child anyway', () => {
+      expect(() =>
+        render(
           <Sankey width={1000} height={500} data={SankeyData}>
             <XAxis dataKey="number" type="number" />
             <YAxis type="category" dataKey="name" />
-            {props.children}
-          </Sankey>
+          </Sankey>,
         ),
-        ({ xAxisMap, yAxisMap }) => {
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
-        },
-      ),
-    );
+      ).toThrowError('Invariant failed: Could not find Recharts context');
+    });
   });
 });

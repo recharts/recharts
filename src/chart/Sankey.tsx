@@ -14,7 +14,7 @@ import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { filterSvgElements, validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
+import { validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
@@ -678,13 +678,6 @@ export class Sankey extends PureComponent<Props, State> {
     );
   }
 
-  renderTooltip(): ReactElement {
-    const { children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
-
-    return tooltipItem;
-  }
-
   getTooltipContext(): TooltipContextValue {
     const { nameKey } = this.props;
     const { isTooltipActive, activeElement, activeElementType } = this.state;
@@ -720,11 +713,10 @@ export class Sankey extends PureComponent<Props, State> {
             role="region"
           >
             <Surface {...attrs} width={width} height={height}>
-              {filterSvgElements(children)}
+              {children}
               {this.renderLinks(links, nodes)}
               {this.renderNodes(nodes)}
             </Surface>
-            {this.renderTooltip()}
           </div>
         </TooltipContextProvider>
       </ViewBoxContext.Provider>
