@@ -28,10 +28,11 @@ export function useGetBoundingClientRect(
   const [lastBoundingBox, setLastBoundingBox] = useState<BoundingBox>({ width: 0, height: 0 });
   const updateBoundingBox = useCallback(
     (node: HTMLDivElement | null) => {
-      if (node != null && node.getBoundingClientRect) {
-        const box = node.getBoundingClientRect();
-        box.width = node.offsetWidth;
-        box.height = node.offsetHeight;
+      if (node != null) {
+        const box = {
+          width: node.offsetWidth,
+          height: node.offsetHeight,
+        };
         if (Math.abs(box.width - lastBoundingBox.width) > EPS || Math.abs(box.height - lastBoundingBox.height) > EPS) {
           setLastBoundingBox({ width: box.width, height: box.height });
           if (onUpdate) {
