@@ -1,6 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
 import { Legend, Props as LegendProps } from '../component/Legend';
-import { findChildByType } from './ReactUtils';
 
 /**
  * @deprecated we are replacing this function with Context-based legend instead. See useLegendPayloadDispatch and useLegendPayload
@@ -9,19 +7,14 @@ import { findChildByType } from './ReactUtils';
  * @returns mix of everything, do not use
  */
 export const getLegendProps = ({
-  children,
+  legendItem,
   legendWidth,
 }: {
-  children: ReactNode[];
+  legendItem: { props: LegendProps };
   legendWidth: number;
-}): null | (LegendProps & { item: ReactElement }) => {
-  const legendItem = findChildByType(children, Legend);
-  if (!legendItem) {
-    return null;
-  }
+}): LegendProps => {
   return {
     ...legendItem.props,
     ...Legend.getWidthOrHeight(legendItem.props.layout, legendItem.props.height, legendItem.props.width, legendWidth),
-    item: legendItem,
   };
 };

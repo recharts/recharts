@@ -25,7 +25,7 @@ import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
-import { filterProps, findAllByType, getDisplayName } from './ReactUtils';
+import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
 import {
@@ -44,6 +44,7 @@ import {
 } from './types';
 import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
+import { Legend } from '../component/Legend';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -389,9 +390,10 @@ export const appendOffsetOfLegend = (
   legendBox: BoundingBox | null,
 ): ChartOffset => {
   const { children, width, margin } = props;
-  const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-  const legendProps = getLegendProps({ children, legendWidth });
-  if (legendProps) {
+  const legendItem = findChildByType(children, Legend);
+  if (legendItem) {
+    const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+    const legendProps = getLegendProps({ legendItem, legendWidth });
     const { width: boxWidth, height: boxHeight } = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
