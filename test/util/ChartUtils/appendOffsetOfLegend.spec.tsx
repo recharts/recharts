@@ -1,32 +1,39 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { vi } from 'vitest';
 import { appendOffsetOfLegend } from '../../../src/util/ChartUtils';
 import { ChartOffset } from '../../../src/util/types';
 import { getLegendProps } from '../../../src/util/getLegendProps';
+import { BoundingBox } from '../../../src/util/useGetBoundingClientRect';
+import { findChildByType } from '../../../src/util/ReactUtils';
 
-vi.mock('../../../src/util/getLegendProps');
+vi.mock('../../../src/util/ReactUtils');
 
-const spy = vi.mocked(getLegendProps);
+const spy = vi.mocked(findChildByType);
 
-function mockLegendProps(props: null | Omit<ReturnType<typeof getLegendProps>, 'item'>) {
-  spy.mockReturnValueOnce({ ...props, item: <p /> });
+function mockDomElement(item: ReactNode) {
+  // @ts-expect-error I cannot find a way to type DetailedReactHTMLElement properly
+  spy.mockReturnValueOnce(item);
 }
 
-function createMockDomRect(width: number, height: number): DOMRect {
-  // @ts-expect-error this is job for jsdom but jsdom does not implement DOMRect yet.
-  // See https://github.com/jsdom/jsdom/issues/2716
+function mockLegendProps(props: ReturnType<typeof getLegendProps>): ReactNode[] {
+  const mockLegendItem = { props };
+  mockDomElement(mockLegendItem);
+  return [mockLegendItem];
+}
+
+function createMockDomRect(width: number, height: number): BoundingBox {
   return { width, height };
 }
 
 describe('appendOffsetOfLegend', () => {
-  it('should return offset without changes if legendProps are not defined', () => {
+  it('should return offset without changes if Legend is not found in children', () => {
     const offset: ChartOffset = {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps(null);
+    const children: ReactNode[] = [];
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toBe(offset);
     expect(result).toEqual({
       bottom: 9,
@@ -39,11 +46,11 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'vertical',
       align: 'left',
     });
-    const result = appendOffsetOfLegend(offset, { margin: {} }, null);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, null);
     expect(result).toEqual({
       bottom: 9,
       left: 5,
@@ -55,12 +62,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'vertical',
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -69,13 +76,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'horizontal',
       verticalAlign: 'middle',
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -84,12 +91,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'horizontal',
       verticalAlign: 'middle',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -98,13 +105,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'horizontal',
       verticalAlign: 'middle',
       align: 'left',
     });
     const legendBox = createMockDomRect(100, 200);
-    appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(offset).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -113,12 +120,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'horizontal',
       verticalAlign: 'bottom',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -127,13 +134,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'vertical',
       align: 'center',
       verticalAlign: 'bottom',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -142,12 +149,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'vertical',
       align: 'center',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
   });
 
@@ -156,20 +163,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    mockLegendProps({
+    const children = mockLegendProps({
       layout: 'horizontal',
       verticalAlign: 'middle',
     });
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {} }, legendBox);
+    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
-  });
-
-  it('should pass margin to getLegendProps', () => {
-    const children: ReactNode[] = [];
-    spy.mockReset();
-    appendOffsetOfLegend({}, { margin: { left: 10, right: 20 }, children, width: 100 }, null);
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toBeCalledWith({ children, legendWidth: 70 });
   });
 });

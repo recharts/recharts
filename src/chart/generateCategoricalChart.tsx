@@ -1844,21 +1844,19 @@ export const generateCategoricalChart = ({
      */
     renderLegend = (): React.ReactElement => {
       const { children, width } = this.props;
+      const legendItem = findChildByType(children, Legend);
+      if (!legendItem) {
+        return null;
+      }
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
-        children,
+        legendItem,
         legendWidth,
       });
 
-      if (!props) {
-        return null;
-      }
-
-      const { item, ...otherProps } = props;
-
-      return cloneElement(item, {
-        ...otherProps,
+      return cloneElement(legendItem, {
+        ...props,
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     };
