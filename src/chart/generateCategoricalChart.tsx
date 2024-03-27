@@ -1802,19 +1802,6 @@ export const generateCategoricalChart = ({
       );
     };
 
-    renderPolarAxis = (element: any, displayName: string, index: number) => {
-      const axisType = get(element, 'type.axisType');
-      const axisMap = get(this.state, `${axisType}Map`);
-      const axisOption: BaseAxisProps | undefined = axisMap && axisMap[element.props[`${axisType}Id`]];
-
-      return cloneElement(element, {
-        ...axisOption,
-        className: clsx(axisType, axisOption.className),
-        key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true),
-      });
-    };
-
     renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
       const { radialLines, polarAngles, polarRadius } = element.props;
       const { radiusAxisMap, angleAxisMap } = this.state;
@@ -2136,7 +2123,7 @@ export const generateCategoricalChart = ({
       Tooltip: { handler: this.renderCursor, once: true },
       PolarGrid: { handler: this.renderPolarGrid, once: true },
       PolarAngleAxis: { handler: renderAsIs },
-      PolarRadiusAxis: { handler: this.renderPolarAxis },
+      PolarRadiusAxis: { handler: renderAsIs },
       Customized: { handler: this.renderCustomized },
     };
 
