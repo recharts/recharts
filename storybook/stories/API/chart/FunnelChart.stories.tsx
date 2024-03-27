@@ -17,6 +17,7 @@ export const Simple: Meta<FunnelProps> = {
     const { data } = args;
     return (
       // <div style={{ height: 200, width: 200 }}>
+      // </div>
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
@@ -37,7 +38,6 @@ export const Simple: Meta<FunnelProps> = {
           <Tooltip />
         </FunnelChart>
       </ResponsiveContainer>
-      // </div>
     );
   },
   args: {

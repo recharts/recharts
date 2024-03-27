@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent } from '@storybook/testing-library';
+import { fireEvent } from '@storybook/test';
 import { Args } from '@storybook/react';
 import { pageData } from '../../data';
 import { Brush, ResponsiveContainer, ComposedChart, Line } from '../../../../src';
