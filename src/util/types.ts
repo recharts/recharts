@@ -1334,6 +1334,10 @@ export type YAxisMap = {
   [axisId: string]: YAxisProps;
 };
 
+export type BaseAxisMap = {
+  [axisId: string]: BaseAxisProps;
+};
+
 export type RangeObj = {
   x?: number;
   y?: number;

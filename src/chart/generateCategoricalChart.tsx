@@ -2135,7 +2135,7 @@ export const generateCategoricalChart = ({
       Funnel: { handler: this.renderGraphicChild },
       Tooltip: { handler: this.renderCursor, once: true },
       PolarGrid: { handler: this.renderPolarGrid, once: true },
-      PolarAngleAxis: { handler: this.renderPolarAxis },
+      PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: this.renderPolarAxis },
       Customized: { handler: this.renderCustomized },
     };
