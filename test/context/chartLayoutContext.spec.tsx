@@ -6,6 +6,7 @@ import {
   ChartLayoutContextProviderProps,
   useClipPathId,
   useMaybePolarAngleAxis,
+  useMaybePolarRadiusAxis,
   useMaybeXAxis,
   useMaybeYAxis,
   useViewBox,
@@ -950,6 +951,32 @@ describe('ChartLayoutContextProvider', () => {
         const angleAxis = useMaybePolarAngleAxis('m');
         expect(angleAxis).toEqual({ type: 'category', axisType: 'angleAxis' });
         expect(angleAxis).toBe(exampleBaseAxisMap.m);
+        return null;
+      };
+      render(
+        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+          <MockConsumer />
+        </ChartLayoutContextProvider>,
+      );
+    });
+  });
+
+  describe('PolarRadiusAxisContext', () => {
+    const exampleBaseAxisMap: BaseAxisMap = {
+      m: { type: 'category', axisType: 'radiusAxis' },
+    };
+
+    const mockState1: CategoricalChartState = {
+      ...minimalState,
+      radiusAxisMap: exampleBaseAxisMap,
+    };
+
+    it('should read polarRadiusAxis from context', () => {
+      expect.assertions(2);
+      const MockConsumer: ComponentType = () => {
+        const radiusAxis = useMaybePolarRadiusAxis('m');
+        expect(radiusAxis).toEqual({ type: 'category', axisType: 'radiusAxis' });
+        expect(radiusAxis).toBe(exampleBaseAxisMap.m);
         return null;
       };
       render(
