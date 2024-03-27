@@ -1,9 +1,5 @@
-/**
- * @fileOverview Axis of radial direction
- */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import isFunction from 'lodash/isFunction';
-
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
@@ -15,16 +11,17 @@ import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
+
 export interface PolarAngleAxisProps extends BaseAxisProps {
   angleAxisId?: string | number;
   cx?: number;
   cy?: number;
   radius?: number;
-
   axisLineType?: 'polygon' | 'circle';
   ticks?: TickItem[];
   orientation?: 'inner' | 'outer';
 }
+
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> & PolarAngleAxisProps;
 
 export class PolarAngleAxis extends PureComponent<Props> {
@@ -49,12 +46,16 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   /**
    * Calculate the coordinate of line endpoint
-   * @param  {Object} data The Data if ticks
-   * @return {Object} (x0, y0): The start point of text,
-   *                  (x1, y1): The end point close to text,
-   *                  (x2, y2): The end point close to axis
+   * @param data The data if there are ticks
+   * @return (x1, y1): The point close to text,
+   *         (x2, y2): The point close to axis
    */
-  getTickLineCoord(data: TickItem) {
+  getTickLineCoord(data: TickItem): {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+  } {
     const { cx, cy, radius, orientation, tickSize } = this.props;
     const tickLineSize = tickSize || 8;
     const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
@@ -65,10 +66,10 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   /**
    * Get the text-anchor of each tick
-   * @param  {Object} data Data of ticks
-   * @return {String} text-anchor
+   * @param data Data of ticks
+   * @return text-anchor
    */
-  getTickTextAnchor(data: TickItem) {
+  getTickTextAnchor(data: TickItem): string {
     const { orientation } = this.props;
     const cos = Math.cos(-data.coordinate * RADIAN);
     let textAnchor;
@@ -84,7 +85,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
     return textAnchor;
   }
 
-  renderAxisLine() {
+  renderAxisLine(): ReactElement {
     const { cx, cy, radius, axisLine, axisLineType } = this.props;
     const props = {
       ...filterProps(this.props, false),
@@ -101,7 +102,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
     return <Polygon className="recharts-polar-angle-axis-line" {...props} points={points} />;
   }
 
-  static renderTickItem(option: PolarAngleAxisProps['tick'], props: any, value: string | number) {
+  static renderTickItem(option: PolarAngleAxisProps['tick'], props: any, value: string | number): ReactElement {
     let tickItem;
 
     if (React.isValidElement(option)) {
