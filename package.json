@@ -88,6 +88,7 @@
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.2",
     "@babel/runtime": "^7.23.2",
+    "@chromatic-com/storybook": "^1.2.25",
     "@storybook/addon-a11y": "^8.0.4",
     "@storybook/addon-docs": "^8.0.4",
     "@storybook/addon-essentials": "^8.0.4",
