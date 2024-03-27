@@ -1,18 +1,29 @@
-/**
- * @fileOverview The axis of polar coordinate system
- */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
-
 import clsx from 'clsx';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
 import { polarToCartesian, getTickClassName } from '../util/PolarUtils';
-import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import {
+  BaseAxisProps,
+  TickItem,
+  adaptEventsOfChild,
+  PresentationAttributesAdaptChildEvent,
+  Coordinate,
+} from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+
+type PolarRadiusViewBox = {
+  cx: number;
+  cy: number;
+  startAngle: number;
+  endAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+};
 
 export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   cx?: number;
@@ -49,10 +60,10 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
   /**
    * Calculate the coordinate of tick
-   * @param  {Number} coordinate The radius of tick
-   * @return {Object} (x, y)
+   * @param coordinate The radius of tick
+   * @return (x, y)
    */
-  getTickValueCoord({ coordinate }: TickItem) {
+  getTickValueCoord({ coordinate }: TickItem): Coordinate {
     const { angle, cx, cy } = this.props;
 
     return polarToCartesian(cx, cy, coordinate, angle);
@@ -77,7 +88,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     return textAnchor;
   }
 
-  getViewBox() {
+  getViewBox(): PolarRadiusViewBox {
     const { cx, cy, angle, ticks } = this.props;
     const maxRadiusTick = maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
     const minRadiusTick = minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
@@ -92,7 +103,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     };
   }
 
-  renderAxisLine() {
+  renderAxisLine(): ReactElement {
     const { cx, cy, angle, ticks, axisLine, ...others } = this.props;
     const extent = ticks.reduce(
       (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
@@ -114,7 +125,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     return <line className="recharts-polar-radius-axis-line" {...props} />;
   }
 
-  static renderTickItem(option: Props['tick'], props: any, value: string | number) {
+  static renderTickItem(option: Props['tick'], props: any, value: string | number): ReactElement {
     let tickItem;
 
     if (React.isValidElement(option)) {
@@ -132,7 +143,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     return tickItem;
   }
 
-  renderTicks() {
+  renderTicks(): ReactElement {
     const { ticks, tick, angle, tickFormatter, stroke, ...others } = this.props;
     const textAnchor = this.getTickTextAnchor();
     const axisProps = filterProps(others, false);
