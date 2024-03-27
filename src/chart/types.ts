@@ -49,9 +49,9 @@ export interface CategoricalChartState {
 
   offset?: ChartOffset;
 
-  angleAxisMap?: any;
+  angleAxisMap?: AxisMap;
 
-  radiusAxisMap?: any;
+  radiusAxisMap?: AxisMap;
 
   formattedGraphicalItems?: any;
 
