@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
+import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps, SVGAttributes } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
@@ -77,6 +77,14 @@ interface State {
   prevUpdateId?: string | number;
 }
 
+type DefaultTravellerProps = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  stroke: SVGAttributes<SVGElement>['stroke'];
+};
+
 const createScale = ({
   data,
   startIndex,
@@ -149,7 +157,7 @@ export class Brush extends PureComponent<Props, State> {
     (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
 
-  static renderDefaultTraveller(props: any) {
+  static renderDefaultTraveller(props: DefaultTravellerProps) {
     const { x, y, width, height, stroke } = props;
     const lineY = Math.floor(y + height / 2) - 1;
 
