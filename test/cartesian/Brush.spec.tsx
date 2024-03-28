@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from 'react';
+import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine } from '../../src';
@@ -7,20 +7,20 @@ import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Brush />', () => {
   const data = [
-    { date: '2023-01-01', value: 10 },
-    { date: '2023-01-02', value: 20 },
-    { date: '2023-01-03', value: 10 },
-    { date: '2023-01-04', value: 30 },
-    { date: '2023-01-05', value: 50 },
-    { date: '2023-01-06', value: 10 },
-    { date: '2023-01-07', value: 30 },
-    { date: '2023-01-08', value: 20 },
-    { date: '2023-01-09', value: 10 },
-    { date: '2023-01-10', value: 70 },
-    { date: '2023-01-11', value: 40 },
-    { date: '2023-01-12', value: 20 },
-    { date: '2023-01-13', value: 10 },
-    { date: '2023-01-14', value: 10 },
+    { date: '2023-01-01', value: 10, name: 'A' },
+    { date: '2023-01-02', value: 20, name: 'B' },
+    { date: '2023-01-03', value: 10, name: 'C' },
+    { date: '2023-01-04', value: 30, name: 'D' },
+    { date: '2023-01-05', value: 50, name: 'E' },
+    { date: '2023-01-06', value: 10, name: 'F' },
+    { date: '2023-01-07', value: 30, name: 'G' },
+    { date: '2023-01-08', value: 20, name: 'H' },
+    { date: '2023-01-09', value: 10, name: 'I' },
+    { date: '2023-01-10', value: 70, name: 'J' },
+    { date: '2023-01-11', value: 40, name: 'K' },
+    { date: '2023-01-12', value: 20, name: 'L' },
+    { date: '2023-01-13', value: 10, name: 'M' },
+    { date: '2023-01-14', value: 10, name: 'N' },
   ];
 
   test('Render 2 travelers and 1 slide in simple Brush', () => {
@@ -30,8 +30,101 @@ describe('<Brush />', () => {
       </BarChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(2);
+    const allTravellers = container.querySelectorAll('.recharts-brush-traveller');
+    expect(allTravellers).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(1);
+
+    const traveller1 = allTravellers[0];
+    expect(traveller1.getAttributeNames()).toEqual([
+      'class',
+      'tabindex',
+      'role',
+      'aria-label',
+      'aria-valuenow',
+      'style',
+    ]);
+    expect(traveller1.getAttribute('class')).toBe('recharts-layer recharts-brush-traveller');
+    expect(traveller1.getAttribute('tabindex')).toBe('0');
+    expect(traveller1.getAttribute('role')).toBe('slider');
+    // sic! the label says "value" but it actually renders `name` property, not the dataKey, why?
+    expect(traveller1.getAttribute('aria-label')).toBe('Min value: A, Max value: N');
+    // this is using X in pixels, not value, why? Doesn't sound very accessible
+    expect(traveller1.getAttribute('aria-valuenow')).toBe('100');
+    expect(traveller1.getAttribute('style')).toBe('cursor: col-resize;');
+    expect(traveller1.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller1.svg');
+
+    const traveller2 = allTravellers[1];
+    expect(traveller2.getAttributeNames()).toEqual([
+      'class',
+      'tabindex',
+      'role',
+      'aria-label',
+      'aria-valuenow',
+      'style',
+    ]);
+    expect(traveller2.getAttribute('class')).toBe('recharts-layer recharts-brush-traveller');
+    expect(traveller2.getAttribute('tabindex')).toBe('0');
+    expect(traveller2.getAttribute('role')).toBe('slider');
+    // sic! the label says "value" but it actually renders `name` property, not the dataKey, why?
+    expect(traveller2.getAttribute('aria-label')).toBe('Min value: A, Max value: N');
+    // this is using X in pixels, not value, why? Doesn't sound very accessible
+    expect(traveller2.getAttribute('aria-valuenow')).toBe('495');
+    expect(traveller2.getAttribute('style')).toBe('cursor: col-resize;');
+    expect(traveller2.innerHTML).toMatchFileSnapshot('snapshots/brush-traveller2.svg');
+  });
+
+  test('custom traveller Element should receive extra sneaky props', () => {
+    const { container } = render(
+      <BarChart width={400} height={100} data={data}>
+        <Brush
+          dataKey="value"
+          x={100}
+          y={50}
+          width={400}
+          height={40}
+          traveller={<div data-testid="custom-traveller-element" />}
+        />
+      </BarChart>,
+    );
+    const customTraveller = container.querySelector('[data-testid="custom-traveller-element"]');
+    expect(customTraveller).toBeInTheDocument();
+    expect(customTraveller).toBeVisible();
+    expect(customTraveller.getAttributeNames()).toEqual(['data-testid', 'x', 'y', 'width', 'height', 'fill', 'stroke']);
+    expect(customTraveller.getAttribute('data-testid')).toBe('custom-traveller-element');
+    expect(customTraveller.getAttribute('x')).toBe('100');
+    expect(customTraveller.getAttribute('y')).toBe('50');
+    expect(customTraveller.getAttribute('width')).toBe('5');
+    expect(customTraveller.getAttribute('height')).toBe('40');
+    expect(customTraveller.getAttribute('fill')).toBe('#fff');
+    expect(customTraveller.getAttribute('stroke')).toBe('#666');
+  });
+
+  test('custom traveller component receives props', () => {
+    const spy = vi.fn();
+    const CustomTraveller = (props: unknown) => {
+      spy(props);
+      return <div data-testid="custom-traveller-element" />;
+    };
+    const { container } = render(
+      <BarChart width={400} height={100} data={data}>
+        <Brush
+          dataKey="value"
+          x={100}
+          y={50}
+          width={400}
+          height={40}
+          fill="#abc"
+          stroke="#def"
+          traveller={CustomTraveller}
+        />
+      </BarChart>,
+    );
+    const customTraveller = container.querySelector('[data-testid="custom-traveller-element"]');
+    expect(customTraveller).toBeInTheDocument();
+    expect(customTraveller).toBeVisible();
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenNthCalledWith(1, { x: 100, y: 50, width: 5, height: 40, fill: '#abc', stroke: '#def' });
+    expect(spy).toHaveBeenNthCalledWith(2, { x: 495, y: 50, width: 5, height: 40, fill: '#abc', stroke: '#def' });
   });
 
   test("Don't render any travellers or slide when data is empty in simple Brush", () => {
@@ -70,7 +163,6 @@ describe('<Brush />', () => {
     expect(screen.getAllByText(data[data.length - 1].date)).toHaveLength(1);
   });
 
-  // eslint-disable-next-line max-len
   test('mouse down on traveller will trigger the brush text display, and mouse move out will hide the brush text', () => {
     // wrap brush with a bar chart to make brush traveler work
     const { container } = render(
