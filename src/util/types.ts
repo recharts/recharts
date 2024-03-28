@@ -24,6 +24,8 @@ import {
 } from 'react';
 import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
+import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
+import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
 
@@ -1332,6 +1334,14 @@ export type XAxisMap = {
 
 export type YAxisMap = {
   [axisId: string]: YAxisProps;
+};
+
+export type PolarAngleAxisMap = {
+  [axisId: string]: PolarAngleAxisProps;
+};
+
+export type PolarRadiusAxisMap = {
+  [axisId: string]: PolarRadiusAxisProps;
 };
 
 export type BaseAxisMap = {
