@@ -1802,29 +1802,6 @@ export const generateCategoricalChart = ({
       );
     };
 
-    renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
-      const { radialLines, polarAngles, polarRadius } = element.props;
-      const { radiusAxisMap, angleAxisMap } = this.state;
-      const radiusAxis = getAnyElementOfObject(radiusAxisMap);
-      const angleAxis = getAnyElementOfObject(angleAxisMap);
-      const { cx, cy, innerRadius, outerRadius } = angleAxis;
-
-      return cloneElement(element, {
-        polarAngles: Array.isArray(polarAngles)
-          ? polarAngles
-          : getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
-        polarRadius: Array.isArray(polarRadius)
-          ? polarRadius
-          : getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
-        cx,
-        cy,
-        innerRadius,
-        outerRadius,
-        key: element.key || 'polar-grid',
-        radialLines,
-      });
-    };
-
     /**
      * Draw legend
      * @return {ReactElement}            The instance of Legend
@@ -2121,7 +2098,7 @@ export const generateCategoricalChart = ({
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
       Tooltip: { handler: this.renderCursor, once: true },
-      PolarGrid: { handler: this.renderPolarGrid, once: true },
+      PolarGrid: { handler: renderAsIs, once: true },
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
       Customized: { handler: this.renderCustomized },

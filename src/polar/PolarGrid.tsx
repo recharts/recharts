@@ -1,8 +1,7 @@
-/**
- * @fileOverview Polar Grid
- */
 import clsx from 'clsx';
 import React, { SVGProps } from 'react';
+import { getTicksOfAxis } from '../util/ChartUtils';
+import { useArbitraryPolarAngleAxis, useArbitraryPolarRadiusAxis } from '../context/chartLayoutContext';
 import { polarToCartesian } from '../util/PolarUtils';
 import { filterProps } from '../util/ReactUtils';
 
@@ -11,12 +10,12 @@ interface PolarGridProps {
   cy?: number;
   innerRadius?: number;
   outerRadius?: number;
-
   polarAngles?: number[];
   polarRadius?: number[];
   gridType?: 'polygon' | 'circle';
   radialLines?: boolean;
 }
+
 export type Props = SVGProps<SVGPathElement> & PolarGridProps;
 
 type ConcentricProps = Props & {
@@ -108,8 +107,7 @@ const ConcentricPolygon: React.FC<ConcentricProps> = props => {
 };
 
 // Draw concentric axis
-// TODO Optimize the name
-const ConcentricPath: React.FC<Props> = props => {
+const ConcentricGridPath: React.FC<Props> = props => {
   const { polarRadius, gridType } = props;
 
   if (!polarRadius || !polarRadius.length) {
@@ -127,18 +125,32 @@ const ConcentricPath: React.FC<Props> = props => {
   );
 };
 
-export const PolarGrid = ({
-  cx = 0,
-  cy = 0,
-  innerRadius = 0,
-  outerRadius = 0,
-  gridType = 'polygon',
-  radialLines = true,
-  ...props
-}: Props) => {
+export const PolarGrid = ({ gridType = 'polygon', radialLines = true, ...inputs }: Props) => {
+  const angleAxis = useArbitraryPolarAngleAxis();
+  const radiusAxis = useArbitraryPolarRadiusAxis();
+
+  const props = {
+    cx: angleAxis?.cx ?? 0,
+    cy: angleAxis?.cy ?? 0,
+    // @ts-expect-error innerRadius is not defined on PolarAngleAxisProps, but it was cloned from there previously
+    innerRadius: angleAxis?.innerRadius ?? 0,
+    // @ts-expect-error outerRadius is not defined on PolarAngleAxisProps, but it was cloned from there previously
+    outerRadius: angleAxis?.outerRadius ?? 0,
+    ...inputs,
+  };
+
+  const { polarAngles: polarAnglesInput, polarRadius: polarRadiusInput, cx, cy, innerRadius, outerRadius } = props;
+
   if (outerRadius <= 0) {
     return null;
   }
+
+  const polarAngles = Array.isArray(polarAnglesInput)
+    ? polarAnglesInput
+    : getTicksOfAxis(angleAxis, true)?.map(entry => entry.coordinate);
+  const polarRadius = Array.isArray(polarRadiusInput)
+    ? polarRadiusInput
+    : getTicksOfAxis(radiusAxis, true)?.map(entry => entry.coordinate);
 
   return (
     <g className="recharts-polar-grid">
@@ -150,8 +162,10 @@ export const PolarGrid = ({
         gridType={gridType}
         radialLines={radialLines}
         {...props}
+        polarAngles={polarAngles}
+        polarRadius={polarRadius}
       />
-      <ConcentricPath
+      <ConcentricGridPath
         cx={cx}
         cy={cy}
         innerRadius={innerRadius}
@@ -159,6 +173,8 @@ export const PolarGrid = ({
         gridType={gridType}
         radialLines={radialLines}
         {...props}
+        polarAngles={polarAngles}
+        polarRadius={polarRadius}
       />
     </g>
   );
