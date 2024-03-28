@@ -359,8 +359,9 @@ export class Treemap extends PureComponent<Props, State> {
     e.persist();
     const { onMouseEnter, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipTrigger = tooltipItem.props.trigger;
 
-    if (tooltipItem) {
+    if (tooltipItem && tooltipTrigger === 'hover') {
       this.setState(
         {
           isTooltipActive: true,
@@ -381,8 +382,9 @@ export class Treemap extends PureComponent<Props, State> {
     e.persist();
     const { onMouseLeave, children } = this.props;
     const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipTrigger = tooltipItem.props.trigger;
 
-    if (tooltipItem) {
+    if (tooltipItem && tooltipTrigger === 'hover') {
       this.setState(
         {
           isTooltipActive: false,
@@ -418,8 +420,30 @@ export class Treemap extends PureComponent<Props, State> {
   };
 
   handleClick(node: TreemapNode) {
-    const { onClick, type } = this.props;
-    if (type === 'nest' && node.children) {
+    const { onClick, type, children } = this.props;
+    const tooltipItem = findChildByType(children, Tooltip);
+    const tooltipTrigger = tooltipItem.props.trigger;
+    const { activeNode } = this.state;
+    const isNestedParentNode = type === 'nest' && node.children;
+
+    if (tooltipTrigger === 'click') {
+      if (
+        (!activeNode || (activeNode && (activeNode.index !== node.index || activeNode.depth !== node.depth))) &&
+        !isNestedParentNode
+      ) {
+        this.setState({
+          isTooltipActive: true,
+          activeNode: node,
+        });
+      } else {
+        this.setState({
+          isTooltipActive: false,
+          activeNode: null,
+        });
+      }
+    }
+
+    if (isNestedParentNode) {
       const { width, height, dataKey, aspectRatio } = this.props;
       const root = computeNode({
         depth: 0,
@@ -445,7 +469,7 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   handleNestIndex(node: TreemapNode, i: number) {
-    let { nestIndex } = this.state;
+    const { nestIndex, isTooltipActive } = this.state;
     const { width, height, dataKey, aspectRatio } = this.props;
     const root = computeNode({
       depth: 0,
@@ -454,13 +478,16 @@ export class Treemap extends PureComponent<Props, State> {
       dataKey,
     });
 
+    if (isTooltipActive) {
+      this.setState({ isTooltipActive: false, activeNode: null });
+    }
+
     const formatRoot = squarify(root, aspectRatio);
 
-    nestIndex = nestIndex.slice(0, i + 1);
     this.setState({
       formatRoot,
       currentRoot: node,
-      nestIndex,
+      nestIndex: nestIndex.slice(0, i + 1),
     });
   }
 
@@ -478,7 +505,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { isAnimationFinished } = this.state;
     const { width, height, x, y, depth } = nodeProps;
     const translateX = parseInt(`${(Math.random() * 2 - 1) * width}`, 10);
-    let event = {} as any;
+    let event = {};
     if (isLeaf || type === 'nest') {
       event = {
         onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),

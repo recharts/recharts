@@ -1,5 +1,5 @@
 import React from 'react';
-import { sizeData } from '../../data';
+import { nestedCategoryData, sizeData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
 import {
@@ -103,6 +103,24 @@ export const WithTooltip = {
   },
   args: {
     data: sizeData,
+    dataKey: 'size',
+    nameKey: 'name',
+    isAnimationActive: false,
+  },
+};
+
+export const NestedWithClickLockedTooltip = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <Treemap {...args} aspectRatio={4 / 3} type="nest">
+          <Tooltip trigger="click" />
+        </Treemap>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    data: nestedCategoryData,
     dataKey: 'size',
     nameKey: 'name',
     isAnimationActive: false,
