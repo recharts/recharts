@@ -143,6 +143,24 @@ function getIndex({
   };
 }
 
+function Background({
+  x,
+  y,
+  width,
+  height,
+  fill,
+  stroke,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+  stroke: string;
+}) {
+  return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -499,12 +517,6 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
-  renderBackground() {
-    const { x, y, width, height, fill, stroke } = this.props;
-
-    return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
-  }
-
   renderPanorama() {
     const { x, y, width, height, data, children, padding } = this.props;
     const chartElement = Children.only(children);
@@ -627,7 +639,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   render() {
-    const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
+    const { data, className, children, x, y, width, height, alwaysShowText, fill, stroke } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
 
     if (
@@ -654,7 +666,7 @@ export class Brush extends PureComponent<Props, State> {
         onTouchMove={this.handleTouchMove}
         style={style}
       >
-        {this.renderBackground()}
+        <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
         {isPanoramic && this.renderPanorama()}
         {this.renderSlide(startX, endX)}
         {this.renderTravellerLayer(startX, 'startX')}
