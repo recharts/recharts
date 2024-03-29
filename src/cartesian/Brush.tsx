@@ -90,7 +90,7 @@ type TextOfTickProps = {
   index: number;
   data: any[];
   dataKey: DataKey<any>;
-  tickFormatter: (value: any, index: number) => ReactText;
+  tickFormatter: BrushTickFormatter;
 };
 
 /*
