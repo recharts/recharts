@@ -70,6 +70,19 @@ function DefaultTraveller(props: TravellerProps) {
   );
 }
 
+function Traveller(props: { travellerType: BrushTravellerType; travellerProps: TravellerProps }) {
+  const { travellerProps, travellerType } = props;
+
+  if (React.isValidElement(travellerType)) {
+    // @ts-expect-error element cloning disagrees with the types (and it should)
+    return React.cloneElement(travellerType, travellerProps);
+  }
+  if (isFunction(travellerType)) {
+    return travellerType(travellerProps);
+  }
+  return <DefaultTraveller {...travellerProps} />;
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -170,21 +183,6 @@ export class Brush extends PureComponent<Props, State> {
     BrushTravellerId,
     (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
-
-  static renderTraveller(option: BrushTravellerType, props: TravellerProps) {
-    let rectangle;
-
-    if (React.isValidElement(option)) {
-      // @ts-expect-error element cloning disagrees with the types (and it should)
-      rectangle = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      rectangle = option(props);
-    } else {
-      rectangle = <DefaultTraveller {...props} />;
-    }
-
-    return rectangle;
-  }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
@@ -538,7 +536,7 @@ export class Brush extends PureComponent<Props, State> {
         }}
         style={{ cursor: 'col-resize' }}
       >
-        {Brush.renderTraveller(traveller, travellerProps)}
+        <Traveller travellerType={traveller} travellerProps={travellerProps} />
       </Layer>
     );
   }
