@@ -101,6 +101,24 @@ function getTextOfTick(props: TextOfTickProps): ReactText {
   return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
 }
 
+function getIndexInRange(valueRange: number[], x: number) {
+  const len = valueRange.length;
+  let start = 0;
+  let end = len - 1;
+
+  while (end - start > 1) {
+    const middle = Math.floor((start + end) / 2);
+
+    if (valueRange[middle] > x) {
+      end = middle;
+    } else {
+      start = middle;
+    }
+  }
+
+  return x >= valueRange[end] ? end : start;
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -249,32 +267,14 @@ export class Brush extends PureComponent<Props, State> {
     this.detachDragEndListener();
   }
 
-  static getIndexInRange(valueRange: number[], x: number) {
-    const len = valueRange.length;
-    let start = 0;
-    let end = len - 1;
-
-    while (end - start > 1) {
-      const middle = Math.floor((start + end) / 2);
-
-      if (valueRange[middle] > x) {
-        end = middle;
-      } else {
-        start = middle;
-      }
-    }
-
-    return x >= valueRange[end] ? end : start;
-  }
-
   getIndex({ startX, endX }: { startX: number; endX: number }) {
     const { scaleValues } = this.state;
     const { gap, data } = this.props;
     const lastIndex = data.length - 1;
     const min = Math.min(startX, endX);
     const max = Math.max(startX, endX);
-    const minIndex = Brush.getIndexInRange(scaleValues, min);
-    const maxIndex = Brush.getIndexInRange(scaleValues, max);
+    const minIndex = getIndexInRange(scaleValues, min);
+    const maxIndex = getIndexInRange(scaleValues, max);
     return {
       startIndex: minIndex - (minIndex % gap),
       endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
