@@ -14,7 +14,11 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { Padding, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
+
+// Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
+type BrushTickFormatter = (value: any, index: number) => ReactText;
+
 interface BrushStartEndIndex {
   startIndex?: number;
   endIndex?: number;
@@ -42,7 +46,7 @@ interface BrushProps extends InternalBrushProps {
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
-  tickFormatter?: (value: any, index: number) => ReactText;
+  tickFormatter?: BrushTickFormatter;
 
   children?: ReactElement;
 
@@ -55,6 +59,204 @@ interface BrushProps extends InternalBrushProps {
 export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
+
+function DefaultTraveller(props: TravellerProps) {
+  const { x, y, width, height, stroke } = props;
+  const lineY = Math.floor(y + height / 2) - 1;
+
+  return (
+    <>
+      <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
+      <line x1={x + 1} y1={lineY} x2={x + width - 1} y2={lineY} fill="none" stroke="#fff" />
+      <line x1={x + 1} y1={lineY + 2} x2={x + width - 1} y2={lineY + 2} fill="none" stroke="#fff" />
+    </>
+  );
+}
+
+function Traveller(props: { travellerType: BrushTravellerType; travellerProps: TravellerProps }) {
+  const { travellerProps, travellerType } = props;
+
+  if (React.isValidElement(travellerType)) {
+    // @ts-expect-error element cloning disagrees with the types (and it should)
+    return React.cloneElement(travellerType, travellerProps);
+  }
+  if (isFunction(travellerType)) {
+    return travellerType(travellerProps);
+  }
+  return <DefaultTraveller {...travellerProps} />;
+}
+
+type TextOfTickProps = {
+  index: number;
+  data: any[];
+  dataKey: DataKey<any>;
+  tickFormatter: BrushTickFormatter;
+};
+
+/*
+ * This one cannot be a React Component because React is not happy with it returning only string | number.
+ * React wants a full React.JSX.Element but that is not compatible with Text component.
+ */
+function getTextOfTick(props: TextOfTickProps): ReactText {
+  const { index, data, tickFormatter, dataKey } = props;
+  const text = getValueByDataKey(data[index], dataKey, index);
+
+  return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+}
+
+function getIndexInRange(valueRange: number[], x: number) {
+  const len = valueRange.length;
+  let start = 0;
+  let end = len - 1;
+
+  while (end - start > 1) {
+    const middle = Math.floor((start + end) / 2);
+
+    if (valueRange[middle] > x) {
+      end = middle;
+    } else {
+      start = middle;
+    }
+  }
+
+  return x >= valueRange[end] ? end : start;
+}
+
+function getIndex({
+  startX,
+  endX,
+  scaleValues,
+  gap,
+  data,
+}: {
+  startX: number;
+  endX: number;
+  scaleValues: number[];
+  gap: number;
+  data: any[];
+}) {
+  const lastIndex = data.length - 1;
+  const min = Math.min(startX, endX);
+  const max = Math.max(startX, endX);
+  const minIndex = getIndexInRange(scaleValues, min);
+  const maxIndex = getIndexInRange(scaleValues, max);
+  return {
+    startIndex: minIndex - (minIndex % gap),
+    endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
+  };
+}
+
+function Background({
+  x,
+  y,
+  width,
+  height,
+  fill,
+  stroke,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: string;
+  stroke: string;
+}) {
+  return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
+}
+
+function BrushText({
+  startIndex,
+  endIndex,
+  y,
+  height,
+  travellerWidth,
+  stroke,
+  tickFormatter,
+  dataKey,
+  data,
+  startX,
+  endX,
+}: {
+  startIndex: number;
+  endIndex: number;
+  y: number;
+  height: number;
+  travellerWidth: number;
+  stroke: string;
+  tickFormatter: BrushTickFormatter;
+  dataKey: DataKey<any>;
+  data: any[];
+  startX: number;
+  endX: number;
+}) {
+  const offset = 5;
+  const attrs = {
+    pointerEvents: 'none',
+    fill: stroke,
+  };
+
+  return (
+    <Layer className="recharts-brush-texts">
+      <Text textAnchor="end" verticalAnchor="middle" x={Math.min(startX, endX) - offset} y={y + height / 2} {...attrs}>
+        {getTextOfTick({ index: startIndex, tickFormatter, dataKey, data })}
+      </Text>
+      <Text
+        textAnchor="start"
+        verticalAnchor="middle"
+        x={Math.max(startX, endX) + travellerWidth + offset}
+        y={y + height / 2}
+        {...attrs}
+      >
+        {getTextOfTick({ index: endIndex, tickFormatter, dataKey, data })}
+      </Text>
+    </Layer>
+  );
+}
+
+function Slide({
+  y,
+  height,
+  stroke,
+  travellerWidth,
+  startX,
+  endX,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  onTouchStart,
+}: {
+  y: number;
+  height: number;
+  stroke: string;
+  travellerWidth: number;
+  startX: number;
+  endX: number;
+  onMouseEnter: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onMouseLeave: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onMouseDown: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onTouchStart: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+}) {
+  const x = Math.min(startX, endX) + travellerWidth;
+  const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
+
+  return (
+    <rect
+      className="recharts-brush-slide"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+      style={{ cursor: 'move' }}
+      stroke="none"
+      fill={stroke}
+      fillOpacity={0.2}
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+    />
+  );
+}
 
 interface State {
   isTravellerMoving?: boolean;
@@ -77,12 +279,12 @@ interface State {
   prevUpdateId?: string | number;
 }
 
-type DefaultTravellerProps = {
+type TravellerProps = {
   x: number;
   y: number;
   width: number;
   height: number;
-  stroke: SVGAttributes<SVGElement>['stroke'];
+  stroke?: SVGAttributes<SVGElement>['stroke'];
 };
 
 const createScale = ({
@@ -157,33 +359,6 @@ export class Brush extends PureComponent<Props, State> {
     (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
 
-  static renderDefaultTraveller(props: DefaultTravellerProps) {
-    const { x, y, width, height, stroke } = props;
-    const lineY = Math.floor(y + height / 2) - 1;
-
-    return (
-      <>
-        <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
-        <line x1={x + 1} y1={lineY} x2={x + width - 1} y2={lineY} fill="none" stroke="#fff" />
-        <line x1={x + 1} y1={lineY + 2} x2={x + width - 1} y2={lineY + 2} fill="none" stroke="#fff" />
-      </>
-    );
-  }
-
-  static renderTraveller(option: BrushTravellerType, props: any) {
-    let rectangle;
-
-    if (React.isValidElement(option)) {
-      rectangle = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      rectangle = option(props);
-    } else {
-      rectangle = Brush.renderDefaultTraveller(props);
-    }
-
-    return rectangle;
-  }
-
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
 
@@ -229,45 +404,6 @@ export class Brush extends PureComponent<Props, State> {
     }
 
     this.detachDragEndListener();
-  }
-
-  static getIndexInRange(valueRange: number[], x: number) {
-    const len = valueRange.length;
-    let start = 0;
-    let end = len - 1;
-
-    while (end - start > 1) {
-      const middle = Math.floor((start + end) / 2);
-
-      if (valueRange[middle] > x) {
-        end = middle;
-      } else {
-        start = middle;
-      }
-    }
-
-    return x >= valueRange[end] ? end : start;
-  }
-
-  getIndex({ startX, endX }: { startX: number; endX: number }) {
-    const { scaleValues } = this.state;
-    const { gap, data } = this.props;
-    const lastIndex = data.length - 1;
-    const min = Math.min(startX, endX);
-    const max = Math.max(startX, endX);
-    const minIndex = Brush.getIndexInRange(scaleValues, min);
-    const maxIndex = Brush.getIndexInRange(scaleValues, max);
-    return {
-      startIndex: minIndex - (minIndex % gap),
-      endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
-    };
-  }
-
-  getTextOfTick(index: number) {
-    const { data, tickFormatter, dataKey } = this.props;
-    const text = getValueByDataKey(data[index], dataKey, index);
-
-    return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
   }
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
@@ -349,8 +485,8 @@ export class Brush extends PureComponent<Props, State> {
   };
 
   handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { slideMoveStartX, startX, endX } = this.state;
-    const { x, width, travellerWidth, startIndex, endIndex, onChange } = this.props;
+    const { slideMoveStartX, startX, endX, scaleValues } = this.state;
+    const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -358,9 +494,12 @@ export class Brush extends PureComponent<Props, State> {
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }
-    const newIndex = this.getIndex({
+    const newIndex = getIndex({
       startX: startX + delta,
       endX: endX + delta,
+      data,
+      gap,
+      scaleValues,
     });
 
     if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
@@ -388,11 +527,11 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
+    const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
     const prevValue = this.state[movingTravellerId];
 
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
-    const params = { startX: this.state.startX, endX: this.state.endX };
+    const params = { startX: this.state.startX, endX: this.state.endX, data, gap, scaleValues };
 
     let delta = e.pageX - brushMoveStartX;
     if (delta > 0) {
@@ -403,7 +542,7 @@ export class Brush extends PureComponent<Props, State> {
 
     params[movingTravellerId] = prevValue + delta;
 
-    const newIndex = this.getIndex(params);
+    const newIndex = getIndex(params);
     const { startIndex, endIndex } = newIndex;
     const isFullGap = () => {
       const lastIndex = data.length - 1;
@@ -434,6 +573,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerMoveKeyboard(direction: 1 | -1, id: BrushTravellerId) {
+    const { data, gap } = this.props;
     // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
     const { scaleValues, startX, endX } = this.state;
     // currentScaleValue refers to which coordinate the current traveller should be placed at.
@@ -462,19 +602,16 @@ export class Brush extends PureComponent<Props, State> {
       },
       () => {
         this.props.onChange(
-          this.getIndex({
+          getIndex({
             startX: this.state.startX,
             endX: this.state.endX,
+            data,
+            gap,
+            scaleValues,
           }),
         );
       },
     );
-  }
-
-  renderBackground() {
-    const { x, y, width, height, fill, stroke } = this.props;
-
-    return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
   }
 
   renderPanorama() {
@@ -499,7 +636,7 @@ export class Brush extends PureComponent<Props, State> {
   renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
     const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
     const x = Math.max(travellerX, this.props.x);
-    const travellerProps = {
+    const travellerProps: TravellerProps = {
       ...filterProps(this.props, false),
       x,
       y,
@@ -536,70 +673,29 @@ export class Brush extends PureComponent<Props, State> {
         }}
         style={{ cursor: 'col-resize' }}
       >
-        {Brush.renderTraveller(traveller, travellerProps)}
-      </Layer>
-    );
-  }
-
-  renderSlide(startX: number, endX: number) {
-    const { y, height, stroke, travellerWidth } = this.props;
-    const x = Math.min(startX, endX) + travellerWidth;
-    const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
-
-    return (
-      <rect
-        className="recharts-brush-slide"
-        onMouseEnter={this.handleEnterSlideOrTraveller}
-        onMouseLeave={this.handleLeaveSlideOrTraveller}
-        onMouseDown={this.handleSlideDragStart}
-        onTouchStart={this.handleSlideDragStart}
-        style={{ cursor: 'move' }}
-        stroke="none"
-        fill={stroke}
-        fillOpacity={0.2}
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-      />
-    );
-  }
-
-  renderText() {
-    const { startIndex, endIndex, y, height, travellerWidth, stroke } = this.props;
-    const { startX, endX } = this.state;
-    const offset = 5;
-    const attrs = {
-      pointerEvents: 'none',
-      fill: stroke,
-    };
-
-    return (
-      <Layer className="recharts-brush-texts">
-        <Text
-          textAnchor="end"
-          verticalAnchor="middle"
-          x={Math.min(startX, endX) - offset}
-          y={y + height / 2}
-          {...attrs}
-        >
-          {this.getTextOfTick(startIndex)}
-        </Text>
-        <Text
-          textAnchor="start"
-          verticalAnchor="middle"
-          x={Math.max(startX, endX) + travellerWidth + offset}
-          y={y + height / 2}
-          {...attrs}
-        >
-          {this.getTextOfTick(endIndex)}
-        </Text>
+        <Traveller travellerType={traveller} travellerProps={travellerProps} />
       </Layer>
     );
   }
 
   render() {
-    const { data, className, children, x, y, width, height, alwaysShowText } = this.props;
+    const {
+      data,
+      className,
+      children,
+      x,
+      y,
+      width,
+      height,
+      alwaysShowText,
+      fill,
+      stroke,
+      startIndex,
+      endIndex,
+      travellerWidth,
+      tickFormatter,
+      dataKey,
+    } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
 
     if (
@@ -626,13 +722,37 @@ export class Brush extends PureComponent<Props, State> {
         onTouchMove={this.handleTouchMove}
         style={style}
       >
-        {this.renderBackground()}
+        <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
         {isPanoramic && this.renderPanorama()}
-        {this.renderSlide(startX, endX)}
+        <Slide
+          y={y}
+          height={height}
+          stroke={stroke}
+          travellerWidth={travellerWidth}
+          startX={startX}
+          endX={endX}
+          onMouseEnter={this.handleEnterSlideOrTraveller}
+          onMouseLeave={this.handleLeaveSlideOrTraveller}
+          onMouseDown={this.handleSlideDragStart}
+          onTouchStart={this.handleSlideDragStart}
+        />
         {this.renderTravellerLayer(startX, 'startX')}
         {this.renderTravellerLayer(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) &&
-          this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) && (
+          <BrushText
+            startIndex={startIndex}
+            endIndex={endIndex}
+            y={y}
+            height={height}
+            travellerWidth={travellerWidth}
+            stroke={stroke}
+            tickFormatter={tickFormatter}
+            dataKey={dataKey}
+            data={data}
+            startX={startX}
+            endX={endX}
+          />
+        )}
       </Layer>
     );
   }
