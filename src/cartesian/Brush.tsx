@@ -119,6 +119,30 @@ function getIndexInRange(valueRange: number[], x: number) {
   return x >= valueRange[end] ? end : start;
 }
 
+function getIndex({
+  startX,
+  endX,
+  scaleValues,
+  gap,
+  data,
+}: {
+  startX: number;
+  endX: number;
+  scaleValues: number[];
+  gap: number;
+  data: any[];
+}) {
+  const lastIndex = data.length - 1;
+  const min = Math.min(startX, endX);
+  const max = Math.max(startX, endX);
+  const minIndex = getIndexInRange(scaleValues, min);
+  const maxIndex = getIndexInRange(scaleValues, max);
+  return {
+    startIndex: minIndex - (minIndex % gap),
+    endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
+  };
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -267,27 +291,6 @@ export class Brush extends PureComponent<Props, State> {
     this.detachDragEndListener();
   }
 
-  getIndex({ startX, endX }: { startX: number; endX: number }) {
-    const { scaleValues } = this.state;
-    const { gap, data } = this.props;
-    const lastIndex = data.length - 1;
-    const min = Math.min(startX, endX);
-    const max = Math.max(startX, endX);
-    const minIndex = getIndexInRange(scaleValues, min);
-    const maxIndex = getIndexInRange(scaleValues, max);
-    return {
-      startIndex: minIndex - (minIndex % gap),
-      endIndex: maxIndex === lastIndex ? lastIndex : maxIndex - (maxIndex % gap),
-    };
-  }
-
-  getTextOfTick(index: number) {
-    const { data, tickFormatter, dataKey } = this.props;
-    const text = getValueByDataKey(data[index], dataKey, index);
-
-    return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
-  }
-
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
     if (this.leaveTimer) {
       clearTimeout(this.leaveTimer);
@@ -367,8 +370,8 @@ export class Brush extends PureComponent<Props, State> {
   };
 
   handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { slideMoveStartX, startX, endX } = this.state;
-    const { x, width, travellerWidth, startIndex, endIndex, onChange } = this.props;
+    const { slideMoveStartX, startX, endX, scaleValues } = this.state;
+    const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -376,9 +379,12 @@ export class Brush extends PureComponent<Props, State> {
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }
-    const newIndex = this.getIndex({
+    const newIndex = getIndex({
       startX: startX + delta,
       endX: endX + delta,
+      data,
+      gap,
+      scaleValues,
     });
 
     if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
@@ -406,11 +412,11 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { brushMoveStartX, movingTravellerId, endX, startX } = this.state;
+    const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
     const prevValue = this.state[movingTravellerId];
 
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
-    const params = { startX: this.state.startX, endX: this.state.endX };
+    const params = { startX: this.state.startX, endX: this.state.endX, data, gap, scaleValues };
 
     let delta = e.pageX - brushMoveStartX;
     if (delta > 0) {
@@ -421,7 +427,7 @@ export class Brush extends PureComponent<Props, State> {
 
     params[movingTravellerId] = prevValue + delta;
 
-    const newIndex = this.getIndex(params);
+    const newIndex = getIndex(params);
     const { startIndex, endIndex } = newIndex;
     const isFullGap = () => {
       const lastIndex = data.length - 1;
@@ -452,6 +458,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   handleTravellerMoveKeyboard(direction: 1 | -1, id: BrushTravellerId) {
+    const { data, gap } = this.props;
     // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
     const { scaleValues, startX, endX } = this.state;
     // currentScaleValue refers to which coordinate the current traveller should be placed at.
@@ -480,9 +487,12 @@ export class Brush extends PureComponent<Props, State> {
       },
       () => {
         this.props.onChange(
-          this.getIndex({
+          getIndex({
             startX: this.state.startX,
             endX: this.state.endX,
+            data,
+            gap,
+            scaleValues,
           }),
         );
       },
