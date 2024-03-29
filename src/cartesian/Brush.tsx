@@ -14,7 +14,8 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { Padding, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-type BrushTravellerType = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
+type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
+
 interface BrushStartEndIndex {
   startIndex?: number;
   endIndex?: number;
@@ -56,6 +57,19 @@ export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
 type BrushTravellerId = 'startX' | 'endX';
 
+function DefaultTraveller(props: TravellerProps) {
+  const { x, y, width, height, stroke } = props;
+  const lineY = Math.floor(y + height / 2) - 1;
+
+  return (
+    <>
+      <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
+      <line x1={x + 1} y1={lineY} x2={x + width - 1} y2={lineY} fill="none" stroke="#fff" />
+      <line x1={x + 1} y1={lineY + 2} x2={x + width - 1} y2={lineY + 2} fill="none" stroke="#fff" />
+    </>
+  );
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -77,12 +91,12 @@ interface State {
   prevUpdateId?: string | number;
 }
 
-type DefaultTravellerProps = {
+type TravellerProps = {
   x: number;
   y: number;
   width: number;
   height: number;
-  stroke: SVGAttributes<SVGElement>['stroke'];
+  stroke?: SVGAttributes<SVGElement>['stroke'];
 };
 
 const createScale = ({
@@ -157,28 +171,16 @@ export class Brush extends PureComponent<Props, State> {
     (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
   >;
 
-  static renderDefaultTraveller(props: DefaultTravellerProps) {
-    const { x, y, width, height, stroke } = props;
-    const lineY = Math.floor(y + height / 2) - 1;
-
-    return (
-      <>
-        <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
-        <line x1={x + 1} y1={lineY} x2={x + width - 1} y2={lineY} fill="none" stroke="#fff" />
-        <line x1={x + 1} y1={lineY + 2} x2={x + width - 1} y2={lineY + 2} fill="none" stroke="#fff" />
-      </>
-    );
-  }
-
-  static renderTraveller(option: BrushTravellerType, props: any) {
+  static renderTraveller(option: BrushTravellerType, props: TravellerProps) {
     let rectangle;
 
     if (React.isValidElement(option)) {
+      // @ts-expect-error element cloning disagrees with the types (and it should)
       rectangle = React.cloneElement(option, props);
     } else if (isFunction(option)) {
       rectangle = option(props);
     } else {
-      rectangle = Brush.renderDefaultTraveller(props);
+      rectangle = <DefaultTraveller {...props} />;
     }
 
     return rectangle;
@@ -499,7 +501,7 @@ export class Brush extends PureComponent<Props, State> {
   renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
     const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
     const x = Math.max(travellerX, this.props.x);
-    const travellerProps = {
+    const travellerProps: TravellerProps = {
       ...filterProps(this.props, false),
       x,
       y,
