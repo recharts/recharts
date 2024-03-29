@@ -213,6 +213,51 @@ function BrushText({
   );
 }
 
+function Slide({
+  y,
+  height,
+  stroke,
+  travellerWidth,
+  startX,
+  endX,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  onTouchStart,
+}: {
+  y: number;
+  height: number;
+  stroke: string;
+  travellerWidth: number;
+  startX: number;
+  endX: number;
+  onMouseEnter: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onMouseLeave: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onMouseDown: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onTouchStart: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+}) {
+  const x = Math.min(startX, endX) + travellerWidth;
+  const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
+
+  return (
+    <rect
+      className="recharts-brush-slide"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+      style={{ cursor: 'move' }}
+      stroke="none"
+      fill={stroke}
+      fillOpacity={0.2}
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+    />
+  );
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -633,30 +678,6 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
-  renderSlide(startX: number, endX: number) {
-    const { y, height, stroke, travellerWidth } = this.props;
-    const x = Math.min(startX, endX) + travellerWidth;
-    const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
-
-    return (
-      <rect
-        className="recharts-brush-slide"
-        onMouseEnter={this.handleEnterSlideOrTraveller}
-        onMouseLeave={this.handleLeaveSlideOrTraveller}
-        onMouseDown={this.handleSlideDragStart}
-        onTouchStart={this.handleSlideDragStart}
-        style={{ cursor: 'move' }}
-        stroke="none"
-        fill={stroke}
-        fillOpacity={0.2}
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-      />
-    );
-  }
-
   render() {
     const {
       data,
@@ -703,7 +724,18 @@ export class Brush extends PureComponent<Props, State> {
       >
         <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
         {isPanoramic && this.renderPanorama()}
-        {this.renderSlide(startX, endX)}
+        <Slide
+          y={y}
+          height={height}
+          stroke={stroke}
+          travellerWidth={travellerWidth}
+          startX={startX}
+          endX={endX}
+          onMouseEnter={this.handleEnterSlideOrTraveller}
+          onMouseLeave={this.handleLeaveSlideOrTraveller}
+          onMouseDown={this.handleSlideDragStart}
+          onTouchStart={this.handleSlideDragStart}
+        />
         {this.renderTravellerLayer(startX, 'startX')}
         {this.renderTravellerLayer(endX, 'endX')}
         {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) && (
