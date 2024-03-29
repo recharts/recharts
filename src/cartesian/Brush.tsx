@@ -83,6 +83,24 @@ function Traveller(props: { travellerType: BrushTravellerType; travellerProps: T
   return <DefaultTraveller {...travellerProps} />;
 }
 
+type TextOfTickProps = {
+  index: number;
+  data: any[];
+  dataKey: DataKey<any>;
+  tickFormatter: (value: any, index: number) => ReactText;
+};
+
+/*
+ * This one cannot be a React Component because React is not happy with it returning only string | number.
+ * React wants a full React.JSX.Element but that is not compatible with Text component.
+ */
+function getTextOfTick(props: TextOfTickProps): ReactText {
+  const { index, data, tickFormatter, dataKey } = props;
+  const text = getValueByDataKey(data[index], dataKey, index);
+
+  return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+}
+
 interface State {
   isTravellerMoving?: boolean;
   isTravellerFocused?: boolean;
@@ -566,7 +584,7 @@ export class Brush extends PureComponent<Props, State> {
   }
 
   renderText() {
-    const { startIndex, endIndex, y, height, travellerWidth, stroke } = this.props;
+    const { startIndex, endIndex, y, height, travellerWidth, stroke, tickFormatter, dataKey, data } = this.props;
     const { startX, endX } = this.state;
     const offset = 5;
     const attrs = {
@@ -583,7 +601,7 @@ export class Brush extends PureComponent<Props, State> {
           y={y + height / 2}
           {...attrs}
         >
-          {this.getTextOfTick(startIndex)}
+          {getTextOfTick({ index: startIndex, tickFormatter, dataKey, data })}
         </Text>
         <Text
           textAnchor="start"
@@ -592,7 +610,7 @@ export class Brush extends PureComponent<Props, State> {
           y={y + height / 2}
           {...attrs}
         >
-          {this.getTextOfTick(endIndex)}
+          {getTextOfTick({ index: endIndex, tickFormatter, dataKey, data })}
         </Text>
       </Layer>
     );
