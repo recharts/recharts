@@ -16,6 +16,9 @@ import { filterProps } from '../util/ReactUtils';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
+// Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
+type BrushTickFormatter = (value: any, index: number) => ReactText;
+
 interface BrushStartEndIndex {
   startIndex?: number;
   endIndex?: number;
@@ -43,7 +46,7 @@ interface BrushProps extends InternalBrushProps {
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
-  tickFormatter?: (value: any, index: number) => ReactText;
+  tickFormatter?: BrushTickFormatter;
 
   children?: ReactElement;
 
@@ -159,6 +162,55 @@ function Background({
   stroke: string;
 }) {
   return <rect stroke={stroke} fill={fill} x={x} y={y} width={width} height={height} />;
+}
+
+function BrushText({
+  startIndex,
+  endIndex,
+  y,
+  height,
+  travellerWidth,
+  stroke,
+  tickFormatter,
+  dataKey,
+  data,
+  startX,
+  endX,
+}: {
+  startIndex: number;
+  endIndex: number;
+  y: number;
+  height: number;
+  travellerWidth: number;
+  stroke: string;
+  tickFormatter: BrushTickFormatter;
+  dataKey: DataKey<any>;
+  data: any[];
+  startX: number;
+  endX: number;
+}) {
+  const offset = 5;
+  const attrs = {
+    pointerEvents: 'none',
+    fill: stroke,
+  };
+
+  return (
+    <Layer className="recharts-brush-texts">
+      <Text textAnchor="end" verticalAnchor="middle" x={Math.min(startX, endX) - offset} y={y + height / 2} {...attrs}>
+        {getTextOfTick({ index: startIndex, tickFormatter, dataKey, data })}
+      </Text>
+      <Text
+        textAnchor="start"
+        verticalAnchor="middle"
+        x={Math.max(startX, endX) + travellerWidth + offset}
+        y={y + height / 2}
+        {...attrs}
+      >
+        {getTextOfTick({ index: endIndex, tickFormatter, dataKey, data })}
+      </Text>
+    </Layer>
+  );
 }
 
 interface State {
@@ -605,41 +657,24 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
-  renderText() {
-    const { startIndex, endIndex, y, height, travellerWidth, stroke, tickFormatter, dataKey, data } = this.props;
-    const { startX, endX } = this.state;
-    const offset = 5;
-    const attrs = {
-      pointerEvents: 'none',
-      fill: stroke,
-    };
-
-    return (
-      <Layer className="recharts-brush-texts">
-        <Text
-          textAnchor="end"
-          verticalAnchor="middle"
-          x={Math.min(startX, endX) - offset}
-          y={y + height / 2}
-          {...attrs}
-        >
-          {getTextOfTick({ index: startIndex, tickFormatter, dataKey, data })}
-        </Text>
-        <Text
-          textAnchor="start"
-          verticalAnchor="middle"
-          x={Math.max(startX, endX) + travellerWidth + offset}
-          y={y + height / 2}
-          {...attrs}
-        >
-          {getTextOfTick({ index: endIndex, tickFormatter, dataKey, data })}
-        </Text>
-      </Layer>
-    );
-  }
-
   render() {
-    const { data, className, children, x, y, width, height, alwaysShowText, fill, stroke } = this.props;
+    const {
+      data,
+      className,
+      children,
+      x,
+      y,
+      width,
+      height,
+      alwaysShowText,
+      fill,
+      stroke,
+      startIndex,
+      endIndex,
+      travellerWidth,
+      tickFormatter,
+      dataKey,
+    } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
 
     if (
@@ -671,8 +706,21 @@ export class Brush extends PureComponent<Props, State> {
         {this.renderSlide(startX, endX)}
         {this.renderTravellerLayer(startX, 'startX')}
         {this.renderTravellerLayer(endX, 'endX')}
-        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) &&
-          this.renderText()}
+        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) && (
+          <BrushText
+            startIndex={startIndex}
+            endIndex={endIndex}
+            y={y}
+            height={height}
+            travellerWidth={travellerWidth}
+            stroke={stroke}
+            tickFormatter={tickFormatter}
+            dataKey={dataKey}
+            data={data}
+            startX={startX}
+            endX={endX}
+          />
+        )}
       </Layer>
     );
   }
