@@ -5,7 +5,6 @@ import { vi } from 'vitest';
 import { Bar, Line, LineChart } from '../../src';
 import {
   filterProps,
-  filterSvgElements,
   findAllByType,
   getDisplayName,
   isChildrenEqual,
@@ -165,23 +164,6 @@ describe('ReactUtils untest tests', () => {
     test('validateWidthHeight return false when input is not a react element', () => {
       expect(validateWidthHeight({ a: 1 })).toEqual(false);
       expect(validateWidthHeight(vi.fn())).toEqual(false);
-    });
-  });
-
-  describe('filterSvgElements', () => {
-    test('filterSvgElements filter children which are svg elements', () => {
-      const children = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <rect x="0" y="0" width="20" height="20" />
-          <text x="0" y="0">
-            12
-          </text>
-        </>,
-      ];
-
-      expect(filterSvgElements(children)?.length).toEqual(2);
     });
   });
 

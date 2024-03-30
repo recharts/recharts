@@ -298,23 +298,6 @@ export const isValidSpreadableProp = (
   );
 };
 
-/**
- * Filter all the svg elements of children
- * @param  {Array} children The children of a react element
- * @return {Array}          All the svg elements
- */
-export const filterSvgElements = (children: React.ReactElement[]): React.ReactElement[] => {
-  const svgElements = [] as React.ReactElement[];
-
-  toArray(children).forEach((entry: React.ReactElement) => {
-    if (isSvgElement(entry)) {
-      svgElements.push(entry);
-    }
-  });
-
-  return svgElements;
-};
-
 export const filterProps = (
   props: Record<string, any> | Component | FunctionComponent | boolean | unknown,
   includeEvents: boolean,
