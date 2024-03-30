@@ -6,6 +6,7 @@ import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType, Size } from './types';
 import { getPercentValue } from './DataUtils';
 import { Bar } from '../cartesian/Bar';
+import { StepRatioControl } from './scale/getNickTickValues';
 
 /**
  * Calculate the scale function, position, width, height of axes
@@ -14,9 +15,17 @@ import { Bar } from '../cartesian/Bar';
  * @param  {Object} offset    The offset of main part in the svg element
  * @param  {String} axisType  The type of axes, x-axis or y-axis
  * @param  {String} chartName The name of chart
+ * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Object} Configuration
  */
-export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: AxisType, chartName: string) => {
+export const formatAxisMap = (
+  props: any,
+  axisMap: any,
+  offset: any,
+  axisType: AxisType,
+  chartName: string,
+  stepRatioControl: StepRatioControl = 0.05,
+) => {
   const { width, height, layout, children } = props;
   const ids = Object.keys(axisMap);
   const steps: Record<string, any> = {
@@ -90,7 +99,7 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     const { scale, realScaleType } = parseScale(axis, chartName, hasBar);
     scale.domain(domain).range(range);
     checkDomainOfScale(scale);
-    const ticks = getTicksOfScale(scale, { ...axis, realScaleType });
+    const ticks = getTicksOfScale(scale, { ...axis, realScaleType, stepRatioControl });
 
     if (axisType === 'xAxis') {
       needSpace = (orientation === 'top' && !mirror) || (orientation === 'bottom' && mirror);

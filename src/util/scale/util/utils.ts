@@ -1,13 +1,13 @@
-const identity = i => i;
+const identity = (i: any) => i;
 
 export const PLACE_HOLDER = {
   '@@functional/placeholder': true,
 };
 
-const isPlaceHolder = val => val === PLACE_HOLDER;
+const isPlaceHolder = (val: any) => val === PLACE_HOLDER;
 
-const curry0 = fn =>
-  function _curried(...args) {
+const curry0 = (fn: Function) =>
+  function _curried(...args: any[]) {
     if (args.length === 0 || (args.length === 1 && isPlaceHolder(args[0]))) {
       return _curried;
     }
@@ -15,12 +15,12 @@ const curry0 = fn =>
     return fn(...args);
   };
 
-const curryN = (n, fn) => {
+const curryN = (n: number, fn: Function) => {
   if (n === 1) {
     return fn;
   }
 
-  return curry0((...args) => {
+  return curry0((...args: any[]) => {
     const argsLength = args.filter(arg => arg !== PLACE_HOLDER).length;
 
     if (argsLength >= n) {
@@ -29,7 +29,7 @@ const curryN = (n, fn) => {
 
     return curryN(
       n - argsLength,
-      curry0((...restArgs) => {
+      curry0((...restArgs: any[]) => {
         const newArgs = args.map(arg => (isPlaceHolder(arg) ? restArgs.shift() : arg));
 
         return fn(...newArgs, ...restArgs);
@@ -38,9 +38,9 @@ const curryN = (n, fn) => {
   });
 };
 
-export const curry = fn => curryN(fn.length, fn);
+export const curry = (fn: Function) => curryN(fn.length, fn);
 
-export const range = (begin, end) => {
+export const range = (begin: number, end: number) => {
   const arr = [];
 
   for (let i = begin; i < end; ++i) {
@@ -50,7 +50,7 @@ export const range = (begin, end) => {
   return arr;
 };
 
-export const map = curry((fn, arr) => {
+export const map = curry((fn: (value: any, index: number, array: any[]) => unknown, arr: any[]) => {
   if (Array.isArray(arr)) {
     return arr.map(fn);
   }
@@ -60,7 +60,7 @@ export const map = curry((fn, arr) => {
     .map(fn);
 });
 
-export const compose = (...args) => {
+export const compose = (...args: any[]) => {
   if (!args.length) {
     return identity;
   }
@@ -70,23 +70,23 @@ export const compose = (...args) => {
   const firstFn = fns[0];
   const tailsFn = fns.slice(1);
 
-  return (...composeArgs) => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
+  return (...composeArgs: any[]) => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
 };
 
-export const reverse = arr => {
+export const reverse = (arr: any[] | string) => {
   if (Array.isArray(arr)) {
     return arr.reverse();
   }
 
   // can be string
-  return arr.split('').reverse.join('');
+  return arr.split('').reverse().join('');
 };
 
-export const memoize = fn => {
-  let lastArgs = null;
-  let lastResult = null;
+export const memoize = (fn: Function) => {
+  let lastArgs: any[] = null;
+  let lastResult: any[] = null;
 
-  return (...args) => {
+  return (...args: any[]) => {
     if (lastArgs && args.every((val, i) => val === lastArgs[i])) {
       return lastResult;
     }
