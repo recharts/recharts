@@ -9,9 +9,7 @@ import { isFragment } from 'react-is';
 import { DotProps } from '..';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
-import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
-import { AreaDot } from '../cartesian/Area';
-import { LineDot } from '../cartesian/Line';
+import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -267,7 +265,7 @@ const SVG_TAGS: string[] = [
 
 const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
-export const isDotProps = (dot: LineDot | AreaDot): dot is DotProps =>
+export const isDotProps = (dot: ActiveDotType): dot is DotProps =>
   dot && typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
 
 /**

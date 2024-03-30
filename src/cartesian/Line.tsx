@@ -9,7 +9,7 @@ import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
 import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
-import { Dot, Props as DotProps } from '../shape/Dot';
+import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
@@ -29,13 +29,11 @@ import {
   DataKey,
   TickItem,
   AnimationDuration,
-  ActiveShape,
   LayoutType,
+  ActiveDotType,
 } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-
-export type LineDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -67,9 +65,8 @@ interface LineProps extends InternalLineProps {
   connectNulls?: boolean;
   hide?: boolean;
 
-  // whether have dot in line
-  activeDot?: ActiveShape<DotProps> | DotProps;
-  dot?: LineDot;
+  activeDot?: ActiveDotType;
+  dot?: ActiveDotType;
 
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
@@ -352,7 +349,7 @@ export class Line extends PureComponent<Props, State> {
     );
   }
 
-  static renderDotItem(option: LineDot, props: any) {
+  static renderDotItem(option: ActiveDotType, props: any) {
     let dotItem;
 
     if (React.isValidElement(option)) {
