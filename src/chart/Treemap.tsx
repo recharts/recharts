@@ -16,7 +16,7 @@ import { COLOR_PANEL } from '../util/Constants';
 import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { filterSvgElements, findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
@@ -646,13 +646,6 @@ export class Treemap extends PureComponent<Props, State> {
     return this.renderNode(formatRoot, formatRoot);
   }
 
-  renderTooltip(): React.ReactElement {
-    const { children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
-
-    return tooltipItem;
-  }
-
   // render nest treemap
   renderNestIndex(): React.ReactElement {
     const { nameKey, nestIndexContent } = this.props;
@@ -744,9 +737,8 @@ export class Treemap extends PureComponent<Props, State> {
           >
             <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
               {this.renderAllNodes()}
-              {filterSvgElements(children)}
+              {children}
             </Surface>
-            {this.renderTooltip()}
             {type === 'nest' && this.renderNestIndex()}
           </div>
         </TooltipContextProvider>
