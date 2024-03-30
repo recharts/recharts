@@ -26,6 +26,7 @@ import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
+import { LegendBoundingBoxContext } from '../../src/context/legendBoundingBoxContext';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -358,7 +359,11 @@ describe('<Legend />', () => {
     it('should call onBBoxUpdate once on mount', () => {
       const onBBoxUpdate = vi.fn();
       mockGetBoundingClientRect({ width: 50, height: 15 });
-      render(<Legend onBBoxUpdate={onBBoxUpdate} />);
+      render(
+        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
+          <Legend />
+        </LegendBoundingBoxContext.Provider>,
+      );
       expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
       expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
     });
@@ -367,27 +372,33 @@ describe('<Legend />', () => {
       const onBBoxUpdate = vi.fn();
       mockGetBoundingClientRect({ width: 50, height: 15 });
       const { rerender } = render(
-        <LegendPayloadProvider>
-          <Legend onBBoxUpdate={onBBoxUpdate} />
-        </LegendPayloadProvider>,
+        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
+          <LegendPayloadProvider>
+            <Legend />
+          </LegendPayloadProvider>
+        </LegendBoundingBoxContext.Provider>,
       );
 
       expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
       expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
       mockGetBoundingClientRect({ width: 50, height: 25 });
       rerender(
-        <LegendPayloadProvider>
-          <MockLegendPayload payload={exampleLegendPayload} />
-          <Legend onBBoxUpdate={onBBoxUpdate} />
-        </LegendPayloadProvider>,
+        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
+          <LegendPayloadProvider>
+            <MockLegendPayload payload={exampleLegendPayload} />
+            <Legend />
+          </LegendPayloadProvider>
+        </LegendBoundingBoxContext.Provider>,
       );
       expect(onBBoxUpdate).toHaveBeenCalledTimes(2);
       mockGetBoundingClientRect({ width: 50, height: 0 });
       rerender(
-        <LegendPayloadProvider>
-          <MockLegendPayload payload={[]} />
-          <Legend onBBoxUpdate={onBBoxUpdate} />
-        </LegendPayloadProvider>,
+        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
+          <LegendPayloadProvider>
+            <MockLegendPayload payload={[]} />
+            <Legend />
+          </LegendPayloadProvider>
+        </LegendBoundingBoxContext.Provider>,
       );
       expect(onBBoxUpdate).toHaveBeenCalledTimes(3);
       expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 0 }));
@@ -558,7 +569,11 @@ describe('<Legend />', () => {
         mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
 
         const handleUpdate = vi.fn();
-        render(<Legend height={30} width={300} onBBoxUpdate={handleUpdate} />);
+        render(
+          <LegendBoundingBoxContext.Provider value={handleUpdate}>
+            <Legend height={30} width={300} />
+          </LegendBoundingBoxContext.Provider>,
+        );
         expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
         expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
       });

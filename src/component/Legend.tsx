@@ -1,4 +1,4 @@
-import React, { CSSProperties, PureComponent } from 'react';
+import React, { CSSProperties, PureComponent, useContext } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -7,6 +7,7 @@ import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
+import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
@@ -98,7 +99,8 @@ interface State {
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
   const margin = useMargin();
-  const { width, height, wrapperStyle, onBBoxUpdate } = props;
+  const { width, height, wrapperStyle } = props;
+  const onBBoxUpdate = useContext(LegendBoundingBoxContext);
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
