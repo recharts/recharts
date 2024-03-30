@@ -174,11 +174,15 @@ export const calculateActiveTickIndex = (
 };
 
 /**
+ * @deprecated render child components as children instead of reading DOM elements and passing them around
  * Get the main color of each graphic item
  * @param  {ReactElement} item A graphic item
  * @return {String}            Color
  */
-export const getMainColorOfGraphicItem = (item: ReactElement) => {
+export const getMainColorOfGraphicItem = (item: {
+  type: { displayName: string };
+  props: { stroke: string; fill: string };
+}) => {
   const {
     type: { displayName },
   } = item as any; // TODO: check if displayName is valid.
@@ -1319,7 +1323,23 @@ export const parseDomainOfCategoryAxis = <T>(
   return specifiedDomain;
 };
 
-export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
+export const getTooltipItem = (
+  graphicalItem: {
+    type: { displayName: string };
+    props: {
+      stroke: string;
+      fill: string;
+      dataKey: DataKey<any>;
+      name: string;
+      unit: string;
+      formatter: any;
+      tooltipType: any;
+      chartType: any;
+      hide: boolean;
+    };
+  },
+  payload: any,
+) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
 
   return {

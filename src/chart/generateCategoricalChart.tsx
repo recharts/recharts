@@ -61,6 +61,7 @@ import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
+  ActiveDotType,
   adaptEventHandlers,
   AxisType,
   BaseAxisProps,
@@ -262,6 +263,7 @@ const getTooltipContent = (
       return result;
     }
 
+    // @ts-expect-error missing types
     return [...result, getTooltipItem(child, payload)];
   }, []);
 };
@@ -1874,12 +1876,32 @@ export const generateCategoricalChart = ({
       );
     };
 
-    /*
-     * This method is used for rendering AreaChart, LineChart, and Tooltip
-     */
-    renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
+    renderActivePoints = ({
+      item,
+      activePoint,
+      basePoint,
+      childIndex,
+      isRange,
+    }: {
+      // The graphical item, for example Area or Bar.
+      item: {
+        props: { key: string };
+        item: {
+          type: { displayName: string };
+          props: { activeDot: ActiveDotType; dataKey: DataKey<any>; stroke: string; fill: string };
+        };
+      };
+      // found in points array
+      activePoint: any;
+
+      basePoint: any;
+      childIndex: number;
+      isRange: boolean;
+    }) => {
       const result = [];
+      // item.props is whatever getComposedData returns
       const { key } = item.props;
+      // item.item.props are the original props on the DOM element
       const { activeDot, dataKey } = item.item.props;
       const dotProps = {
         index: childIndex,

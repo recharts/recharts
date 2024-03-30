@@ -1,7 +1,7 @@
 /**
  * @fileOverview Area
  */
-import React, { PureComponent, ReactElement, SVGProps } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
@@ -10,7 +10,7 @@ import isNil from 'lodash/isNil';
 import isNan from 'lodash/isNaN';
 import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
-import { Dot, Props as DotProps } from '../shape/Dot';
+import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
@@ -29,12 +29,12 @@ import {
   TickItem,
   AnimationDuration,
   LayoutType,
+  ActiveDotType,
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 
-export type AreaDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
@@ -66,8 +66,8 @@ interface AreaProps extends InternalAreaProps {
   tooltipType?: TooltipType;
   connectNulls?: boolean;
   // whether have dot in line
-  activeDot?: AreaDot;
-  dot?: AreaDot;
+  activeDot?: ActiveDotType;
+  dot?: ActiveDotType;
 
   label?: any;
   layout?: 'horizontal' | 'vertical';
@@ -280,7 +280,7 @@ export class Area extends PureComponent<Props, State> {
     return { points, baseLine, layout, isRange, ...offset };
   };
 
-  static renderDotItem = (option: AreaDot, props: any) => {
+  static renderDotItem = (option: ActiveDotType, props: any) => {
     let dotItem;
 
     if (React.isValidElement(option)) {

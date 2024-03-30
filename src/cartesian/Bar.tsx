@@ -265,6 +265,7 @@ export class Bar extends PureComponent<Props, State> {
         payload: entry,
         background,
         ...(cells && cells[index] && cells[index].props),
+        // @ts-expect-error missing types
         tooltipPayload: [getTooltipItem(item, entry)],
         tooltipPosition: { x: x + width / 2, y: y + height / 2 },
       };
