@@ -99,18 +99,20 @@ interface State {
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
   const margin = useMargin();
-  const { width, height, wrapperStyle } = props;
+  const { width: widthFromProps, height: heightFromProps, wrapperStyle } = props;
   const onBBoxUpdate = useContext(LegendBoundingBoxContext);
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
-
+  const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
   const outerStyle: CSSProperties = {
     position: 'absolute',
-    width: width || 'auto',
-    height: height || 'auto',
+    width: widthOrHeight?.width || 'auto',
+    height: widthOrHeight?.height || 'auto',
     ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
     ...wrapperStyle,
   };
@@ -119,7 +121,10 @@ function LegendWrapper(props: Props) {
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
       <LegendContent
         {...props}
+        {...widthOrHeight}
         margin={margin}
+        // This doesn't need the bboxupdate callback at all - I pass it for the sake of not changing anything in the API
+        onBBoxUpdate={onBBoxUpdate}
         chartWidth={chartWidth}
         chartHeight={chartHeight}
         contextPayload={contextPayload}
@@ -143,7 +148,7 @@ export class Legend extends PureComponent<Props, State> {
     height: number | undefined,
     width: number | undefined,
     maxWidth: number,
-  ): null | { height: number } | { width: number } {
+  ): null | { height?: number; width?: number } {
     if (layout === 'vertical' && isNumber(height)) {
       return {
         height,

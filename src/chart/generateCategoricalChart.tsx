@@ -44,7 +44,6 @@ import {
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
-  getLegendProps,
   getMainColorOfGraphicItem,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
@@ -1808,22 +1807,13 @@ export const generateCategoricalChart = ({
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
-      const { children, width } = this.props;
+      const { children } = this.props;
       const legendItem = findChildByType(children, Legend);
       if (!legendItem) {
         return null;
       }
-      const margin = this.props.margin || {};
-      const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
-      const props = getLegendProps({
-        legendItem,
-        legendWidth,
-      });
 
-      return cloneElement(legendItem, {
-        ...props,
-        onBBoxUpdate: this.handleLegendBBoxUpdate,
-      });
+      return legendItem;
     };
 
     /**
