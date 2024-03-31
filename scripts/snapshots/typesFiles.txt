@@ -62,6 +62,7 @@
   "types/numberAxis/Funnel.d.ts",
   "types/context/tooltipContext.d.ts",
   "types/context/legendPayloadContext.d.ts",
+  "types/context/legendBoundingBoxContext.d.ts",
   "types/context/chartLayoutContext.d.ts",
   "types/context/accessibilityContext.d.ts",
   "types/container/Surface.d.ts",

@@ -62,6 +62,7 @@
   "es6/numberAxis/Funnel.js",
   "es6/context/tooltipContext.js",
   "es6/context/legendPayloadContext.js",
+  "es6/context/legendBoundingBoxContext.js",
   "es6/context/chartLayoutContext.js",
   "es6/context/accessibilityContext.js",
   "es6/container/Surface.js",
