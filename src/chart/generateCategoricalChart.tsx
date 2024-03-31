@@ -1803,20 +1803,6 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * Draw legend
-     * @return {ReactElement}            The instance of Legend
-     */
-    renderLegend = (): React.ReactElement => {
-      const { children } = this.props;
-      const legendItem = findChildByType(children, Legend);
-      if (!legendItem) {
-        return null;
-      }
-
-      return legendItem;
-    };
-
-    /**
      * Draw Tooltip
      * @return {ReactElement}  The instance of Tooltip
      */
@@ -2093,6 +2079,7 @@ export const generateCategoricalChart = ({
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
       Customized: { handler: this.renderCustomized },
+      Legend: { handler: renderAsIs },
     };
 
     render() {
@@ -2169,7 +2156,6 @@ export const generateCategoricalChart = ({
                   {this.renderClipPath()}
                   {renderByOrder(children, this.renderMap)}
                 </Surface>
-                {this.renderLegend()}
                 {this.renderTooltip()}
               </div>
             </ChartLayoutContextProvider>
