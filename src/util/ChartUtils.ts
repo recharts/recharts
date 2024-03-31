@@ -21,7 +21,6 @@ import isEqual from 'lodash/isEqual';
 import sortBy from 'lodash/sortBy';
 
 import { ReactElement, ReactNode } from 'react';
-import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
@@ -44,6 +43,7 @@ import {
 } from './types';
 import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
+import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1041,7 +1041,7 @@ export const getStackGroupsByAxisId = (
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale: any, opts: any) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
+  const { realScaleType, type, tickCount, originalDomain, allowDecimals, stepRatioControl } = opts;
   const scaleType = realScaleType || opts.scale;
 
   if (scaleType !== 'auto' && scaleType !== 'linear') {
@@ -1059,10 +1059,10 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     if (!domain.length) {
       return null;
     }
-    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
+
+    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals, stepRatioControl);
 
     scale.domain([min(tickValues), max(tickValues)]);
-
     return { niceTicks: tickValues };
   }
   if (tickCount && type === 'number') {
