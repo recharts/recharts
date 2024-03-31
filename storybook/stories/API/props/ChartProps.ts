@@ -181,6 +181,16 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
+  stepRatioControl: {
+    description: 'The value to control the range of y axis domain',
+    table: {
+      type: {
+        summary: '0.01 | 0.03 | 0.05',
+      },
+      defaultValue: 0.05,
+      category: 'General',
+    },
+  },
   cx: {
     description: 'The x-coordinate of the center of the circle.',
     table: {
