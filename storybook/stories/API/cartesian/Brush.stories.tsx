@@ -1,8 +1,8 @@
 import React from 'react';
-import { fireEvent } from '@storybook/testing-library';
+import { fireEvent } from '@storybook/test';
 import { Args } from '@storybook/react';
 import { pageData } from '../../data';
-import { Brush, ResponsiveContainer, ComposedChart, Line } from '../../../../src';
+import { Brush, ResponsiveContainer, ComposedChart, Line, Area, Bar, Scatter, ScatterChart } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const GeneralProps: Args = {
@@ -45,6 +45,11 @@ const GeneralProps: Args = {
     table: { type: { summary: 'number' }, category: 'General' },
     defaultValue: 1,
   },
+  fill: {
+    description: 'Fill color',
+    table: { type: { summary: 'string' }, category: 'SVG properties' },
+    defaultValue: '#ccc',
+  },
   startIndex: {
     description: 'The default start index of brush. If the option is not set, the start index will be 0.',
     table: { type: { summary: 'number' }, category: 'General' },
@@ -75,9 +80,7 @@ const GeneralProps: Args = {
 
 export default {
   component: Brush,
-  argTypes: {
-    ...GeneralProps,
-  },
+  argTypes: GeneralProps,
 };
 
 export const API = {
@@ -90,9 +93,7 @@ export const API = {
       </ComposedChart>
     </ResponsiveContainer>
   ),
-  args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
-  },
+  args: getStoryArgsFromArgsTypesObject(GeneralProps),
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     setTimeout(() => {
       const leftBrushSlide = canvasElement.querySelector('.recharts-brush-traveller');
@@ -102,4 +103,72 @@ export const API = {
       fireEvent.mouseUp(leftBrushSlide);
     }, 0);
   },
+};
+
+export const PanoramaWithLine = {
+  render: (args: Record<string, any>) => (
+    <ResponsiveContainer width="100%" height={400}>
+      <ComposedChart data={pageData}>
+        <Line dataKey="uv" />
+
+        <Brush {...args}>
+          <ComposedChart data={pageData}>
+            <Line dataKey="uv" />
+          </ComposedChart>
+        </Brush>
+      </ComposedChart>
+    </ResponsiveContainer>
+  ),
+  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+};
+
+export const PanoramaWithArea = {
+  render: (args: Record<string, any>) => (
+    <ResponsiveContainer width="100%" height={400}>
+      <ComposedChart data={pageData}>
+        <Area dataKey="uv" />
+
+        <Brush {...args}>
+          <ComposedChart data={pageData}>
+            <Area dataKey="uv" />
+          </ComposedChart>
+        </Brush>
+      </ComposedChart>
+    </ResponsiveContainer>
+  ),
+  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+};
+
+export const PanoramaWithBar = {
+  render: (args: Record<string, any>) => (
+    <ResponsiveContainer width="100%" height={400}>
+      <ComposedChart data={pageData}>
+        <Bar dataKey="uv" />
+
+        <Brush {...args}>
+          <ComposedChart data={pageData}>
+            <Bar dataKey="uv" />
+          </ComposedChart>
+        </Brush>
+      </ComposedChart>
+    </ResponsiveContainer>
+  ),
+  args: getStoryArgsFromArgsTypesObject(GeneralProps),
+};
+
+export const PanoramaWithScatter = {
+  render: (args: Record<string, any>) => (
+    <ResponsiveContainer width="100%" height={400}>
+      <ScatterChart data={pageData}>
+        <Scatter dataKey="uv" />
+
+        <Brush {...args}>
+          <ScatterChart data={pageData}>
+            <Scatter dataKey="uv" />
+          </ScatterChart>
+        </Brush>
+      </ScatterChart>
+    </ResponsiveContainer>
+  ),
+  args: getStoryArgsFromArgsTypesObject(GeneralProps),
 };

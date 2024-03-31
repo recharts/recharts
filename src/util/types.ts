@@ -24,8 +24,11 @@ import {
 } from 'react';
 import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
+import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
+import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
+import type { Props as DotProps } from '../shape/Dot';
 
 /**
  * Determines how values are stacked:
@@ -1319,6 +1322,30 @@ export interface SankeyLink {
 
 export type Size = { width: number; height: number };
 
+/**
+ * This is the type of `activeDot` prop on:
+ * - Area
+ * - Line
+ * - Radar
+ */
+export type ActiveDotType =
+  /**
+   * true | false will turn the default activeDot on and off, respectively
+   */
+  | boolean
+  /**
+   * activeDot can be a custom React Component
+   */
+  | ((props: DotProps) => ReactElement<SVGElement>)
+  /**
+   * activeDot can be an object; props from here will be appended to the default active dot
+   */
+  | DotProps
+  /**
+   * activeDot can be an element; it will get cloned and will receive new extra props.
+   */
+  | ReactElement<SVGElement>;
+
 export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElement> =
   | ReactElement<SVGProps<ElementType>>
   | ((props: PropsType) => ReactElement<SVGProps<ElementType>>)
@@ -1332,6 +1359,18 @@ export type XAxisMap = {
 
 export type YAxisMap = {
   [axisId: string]: YAxisProps;
+};
+
+export type PolarAngleAxisMap = {
+  [axisId: string]: PolarAngleAxisProps;
+};
+
+export type PolarRadiusAxisMap = {
+  [axisId: string]: PolarRadiusAxisProps;
+};
+
+export type BaseAxisMap = {
+  [axisId: string]: BaseAxisProps;
 };
 
 export type RangeObj = {

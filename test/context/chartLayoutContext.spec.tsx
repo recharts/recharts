@@ -5,6 +5,8 @@ import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
   useClipPathId,
+  useMaybePolarAngleAxis,
+  useMaybePolarRadiusAxis,
   useMaybeXAxis,
   useMaybeYAxis,
   useViewBox,
@@ -12,7 +14,7 @@ import {
   useYAxisOrThrow,
 } from '../../src/context/chartLayoutContext';
 import { CategoricalChartState } from '../../src/chart/types';
-import { XAxisMap, YAxisMap } from '../../src/util/types';
+import { BaseAxisMap, XAxisMap, YAxisMap } from '../../src/util/types';
 
 describe('ChartLayoutContextProvider', () => {
   const minimalState: CategoricalChartState = {
@@ -930,6 +932,58 @@ describe('ChartLayoutContextProvider', () => {
         );
         expect(renderCount).toBe(1);
       });
+    });
+  });
+
+  describe('PolarAngleAxisContext', () => {
+    const exampleBaseAxisMap: BaseAxisMap = {
+      m: { type: 'category', axisType: 'angleAxis' },
+    };
+
+    const mockState1: CategoricalChartState = {
+      ...minimalState,
+      angleAxisMap: exampleBaseAxisMap,
+    };
+
+    it('should read polarAngleAxis from context', () => {
+      expect.assertions(2);
+      const MockConsumer: ComponentType = () => {
+        const angleAxis = useMaybePolarAngleAxis('m');
+        expect(angleAxis).toEqual({ type: 'category', axisType: 'angleAxis' });
+        expect(angleAxis).toBe(exampleBaseAxisMap.m);
+        return null;
+      };
+      render(
+        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+          <MockConsumer />
+        </ChartLayoutContextProvider>,
+      );
+    });
+  });
+
+  describe('PolarRadiusAxisContext', () => {
+    const exampleBaseAxisMap: BaseAxisMap = {
+      m: { type: 'category', axisType: 'radiusAxis' },
+    };
+
+    const mockState1: CategoricalChartState = {
+      ...minimalState,
+      radiusAxisMap: exampleBaseAxisMap,
+    };
+
+    it('should read polarRadiusAxis from context', () => {
+      expect.assertions(2);
+      const MockConsumer: ComponentType = () => {
+        const radiusAxis = useMaybePolarRadiusAxis('m');
+        expect(radiusAxis).toEqual({ type: 'category', axisType: 'radiusAxis' });
+        expect(radiusAxis).toBe(exampleBaseAxisMap.m);
+        return null;
+      };
+      render(
+        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+          <MockConsumer />
+        </ChartLayoutContextProvider>,
+      );
     });
   });
 

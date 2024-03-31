@@ -244,6 +244,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         startAngle,
         endAngle,
         ...(cells && cells[index] && cells[index].props),
+        // @ts-expect-error missing types
         tooltipPayload: [getTooltipItem(item, entry)],
         tooltipPosition: polarToCartesian(cx, cy, (innerRadius + outerRadius) / 2, (startAngle + endAngle) / 2),
       };

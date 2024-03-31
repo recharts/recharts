@@ -136,20 +136,20 @@ export class Legend extends PureComponent<Props, State> {
     verticalAlign: 'bottom',
   };
 
-  static getWithHeight(
-    item: { props: { layout?: LayoutType; height?: number; width?: number } },
-    chartWidth: number,
+  static getWidthOrHeight(
+    layout: LayoutType | undefined,
+    height: number | undefined,
+    width: number | undefined,
+    maxWidth: number,
   ): null | { height: number } | { width: number } {
-    const { layout } = item.props;
-
-    if (layout === 'vertical' && isNumber(item.props.height)) {
+    if (layout === 'vertical' && isNumber(height)) {
       return {
-        height: item.props.height,
+        height,
       };
     }
     if (layout === 'horizontal') {
       return {
-        width: item.props.width || chartWidth,
+        width: width || maxWidth,
       };
     }
 

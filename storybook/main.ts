@@ -15,6 +15,9 @@ module.exports = {
     '@storybook/addon-storysource',
     '@storybook/addon-docs',
     'storybook-addon-performance',
+    '@storybook/addon-mdx-gfm',
+    '@storybook/addon-webpack5-compiler-swc',
+    '@chromatic-com/storybook',
   ],
   framework: {
     name: '@storybook/react-webpack5',

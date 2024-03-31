@@ -10,7 +10,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test/vitest.setup.ts'],
-    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts'],
+    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
     coverage: {
       provider: 'v8',
       include: ['src', 'test'],

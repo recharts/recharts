@@ -2,7 +2,15 @@ import React, { createContext, ReactNode, useContext } from 'react';
 import invariant from 'tiny-invariant';
 import find from 'lodash/find';
 import every from 'lodash/every';
-import { CartesianViewBox, ChartOffset, Margin, XAxisMap, YAxisMap } from '../util/types';
+import {
+  CartesianViewBox,
+  ChartOffset,
+  Margin,
+  PolarAngleAxisMap,
+  PolarRadiusAxisMap,
+  XAxisMap,
+  YAxisMap,
+} from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
@@ -10,9 +18,13 @@ import { calculateViewBox } from '../util/calculateViewBox';
 import { getAnyElementOfObject } from '../util/DataUtils';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
+import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
+import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
+export const PolarAngleAxisContext = createContext<PolarAngleAxisMap | undefined>(undefined);
+export const PolarRadiusAxisContext = createContext<PolarRadiusAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const OffsetContext = createContext<ChartOffset>({});
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
@@ -39,7 +51,17 @@ export type ChartLayoutContextProviderProps = {
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
-    state: { xAxisMap, yAxisMap, offset, activeLabel, activePayload, isTooltipActive, activeCoordinate },
+    state: {
+      xAxisMap,
+      yAxisMap,
+      angleAxisMap,
+      radiusAxisMap,
+      offset,
+      activeLabel,
+      activePayload,
+      isTooltipActive,
+      activeCoordinate,
+    },
     clipPathId,
     children,
     width,
@@ -77,17 +99,21 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       <LegendPayloadProvider>
         <XAxisContext.Provider value={xAxisMap}>
           <YAxisContext.Provider value={yAxisMap}>
-            <OffsetContext.Provider value={offset}>
-              <ViewBoxContext.Provider value={viewBox}>
-                <ClipPathIdContext.Provider value={clipPathId}>
-                  <ChartHeightContext.Provider value={height}>
-                    <ChartWidthContext.Provider value={width}>
-                      <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                    </ChartWidthContext.Provider>
-                  </ChartHeightContext.Provider>
-                </ClipPathIdContext.Provider>
-              </ViewBoxContext.Provider>
-            </OffsetContext.Provider>
+            <PolarAngleAxisContext.Provider value={angleAxisMap}>
+              <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
+                <OffsetContext.Provider value={offset}>
+                  <ViewBoxContext.Provider value={viewBox}>
+                    <ClipPathIdContext.Provider value={clipPathId}>
+                      <ChartHeightContext.Provider value={height}>
+                        <ChartWidthContext.Provider value={width}>
+                          <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                        </ChartWidthContext.Provider>
+                      </ChartHeightContext.Provider>
+                    </ClipPathIdContext.Provider>
+                  </ViewBoxContext.Provider>
+                </OffsetContext.Provider>
+              </PolarRadiusAxisContext.Provider>
+            </PolarAngleAxisContext.Provider>
           </YAxisContext.Provider>
         </XAxisContext.Provider>
       </LegendPayloadProvider>
@@ -157,7 +183,7 @@ export const useArbitraryXAxis = (): XAxisProps | undefined => {
  * This will find an arbitrary first YAxis. If there's exactly one it always returns that one
  * - but if there are multiple then it can return any of those.
  *
- * If you want specific YAxis out of multiple then prefer using useXAxisOrThrow
+ * If you want specific YAxis out of multiple then prefer using useYAxisOrThrow
  *
  * @returns Y axisOptions, or undefined - if there are no Y axes
  */
@@ -211,6 +237,50 @@ export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
 export const useMaybeYAxis = (yAxisId: string | number): YAxisProps | undefined => {
   const yAxisMap = useContext(YAxisContext);
   return yAxisMap?.[yAxisId];
+};
+
+/**
+ * This either finds and returns Axis by the specified ID, or returns undefined if an axis with this ID does not exist.
+ *
+ * @param axisId identifier of the axis - it's either autogenerated ('0'), or passed via `id` prop as <PolarAngleAxis id='foo' />
+ * @returns axis configuration object, or undefined
+ */
+export const useMaybePolarAngleAxis = (axisId: string | number): PolarAngleAxisProps | undefined => {
+  const polarAngleAxisMap = useContext(PolarAngleAxisContext);
+  return polarAngleAxisMap?.[axisId];
+};
+
+/**
+ * This will find an arbitrary first PolarAngleAxis. If there's exactly one it always returns that one
+ * - but if there are multiple then it can return any of those.
+ *
+ * @returns polarAngle axisOptions, or undefined - if there are no PolarAngleAxes
+ */
+export const useArbitraryPolarAngleAxis = (): PolarAngleAxisProps | undefined => {
+  const polarAngleAxisMap = useContext(PolarAngleAxisContext);
+  return getAnyElementOfObject(polarAngleAxisMap);
+};
+
+/**
+ * This either finds and returns Axis by the specified ID, or returns undefined if an axis with this ID does not exist.
+ *
+ * @param axisId identifier of the axis - it's either autogenerated ('0'), or passed via `id` prop as <PolarRadiusAxis id='foo' />
+ * @returns axis configuration object, or undefined
+ */
+export const useMaybePolarRadiusAxis = (axisId: string | number): PolarRadiusAxisProps | undefined => {
+  const polarRadiusAxisMap = useContext(PolarRadiusAxisContext);
+  return polarRadiusAxisMap?.[axisId];
+};
+
+/**
+ * This will find an arbitrary first PolarRadiusAxis . If there's exactly one it always returns that one
+ * - but if there are multiple then it can return any of those.
+ *
+ * @returns polarAngle axisOptions, or undefined - if there are no PolarRadiusAxes
+ */
+export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined => {
+  const polarRadiusAxisMap = useContext(PolarRadiusAxisContext);
+  return getAnyElementOfObject(polarRadiusAxisMap);
 };
 
 export const useViewBox = (): CartesianViewBox => {

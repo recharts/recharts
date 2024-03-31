@@ -62,6 +62,7 @@ import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
+  ActiveDotType,
   adaptEventHandlers,
   AxisType,
   BaseAxisProps,
@@ -263,6 +264,7 @@ const getTooltipContent = (
       return result;
     }
 
+    // @ts-expect-error missing types
     return [...result, getTooltipItem(child, payload)];
   }, []);
 };
@@ -1809,63 +1811,25 @@ export const generateCategoricalChart = ({
       );
     };
 
-    renderPolarAxis = (element: any, displayName: string, index: number) => {
-      const axisType = get(element, 'type.axisType');
-      const axisMap = get(this.state, `${axisType}Map`);
-      const axisOption: BaseAxisProps | undefined = axisMap && axisMap[element.props[`${axisType}Id`]];
-
-      return cloneElement(element, {
-        ...axisOption,
-        className: clsx(axisType, axisOption.className),
-        key: element.key || `${displayName}-${index}`,
-        ticks: getTicksOfAxis(axisOption, true),
-      });
-    };
-
-    renderPolarGrid = (element: React.ReactElement): React.ReactElement => {
-      const { radialLines, polarAngles, polarRadius } = element.props;
-      const { radiusAxisMap, angleAxisMap } = this.state;
-      const radiusAxis = getAnyElementOfObject(radiusAxisMap);
-      const angleAxis = getAnyElementOfObject(angleAxisMap);
-      const { cx, cy, innerRadius, outerRadius } = angleAxis;
-
-      return cloneElement(element, {
-        polarAngles: Array.isArray(polarAngles)
-          ? polarAngles
-          : getTicksOfAxis(angleAxis, true).map((entry: any) => entry.coordinate),
-        polarRadius: Array.isArray(polarRadius)
-          ? polarRadius
-          : getTicksOfAxis(radiusAxis, true).map((entry: any) => entry.coordinate),
-        cx,
-        cy,
-        innerRadius,
-        outerRadius,
-        key: element.key || 'polar-grid',
-        radialLines,
-      });
-    };
-
     /**
      * Draw legend
      * @return {ReactElement}            The instance of Legend
      */
     renderLegend = (): React.ReactElement => {
       const { children, width } = this.props;
+      const legendItem = findChildByType(children, Legend);
+      if (!legendItem) {
+        return null;
+      }
       const margin = this.props.margin || {};
       const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
       const props = getLegendProps({
-        children,
+        legendItem,
         legendWidth,
       });
 
-      if (!props) {
-        return null;
-      }
-
-      const { item, ...otherProps } = props;
-
-      return cloneElement(item, {
-        ...otherProps,
+      return cloneElement(legendItem, {
+        ...props,
         onBBoxUpdate: this.handleLegendBBoxUpdate,
       });
     };
@@ -1919,12 +1883,32 @@ export const generateCategoricalChart = ({
       );
     };
 
-    /*
-     * This method is used for rendering AreaChart, LineChart, and Tooltip
-     */
-    renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
+    renderActivePoints = ({
+      item,
+      activePoint,
+      basePoint,
+      childIndex,
+      isRange,
+    }: {
+      // The graphical item, for example Area or Bar.
+      item: {
+        props: { key: string };
+        item: {
+          type: { displayName: string };
+          props: { activeDot: ActiveDotType; dataKey: DataKey<any>; stroke: string; fill: string };
+        };
+      };
+      // found in points array
+      activePoint: any;
+
+      basePoint: any;
+      childIndex: number;
+      isRange: boolean;
+    }) => {
       const result = [];
+      // item.props is whatever getComposedData returns
       const { key } = item.props;
+      // item.item.props are the original props on the DOM element
       const { activeDot, dataKey } = item.item.props;
       const dotProps = {
         index: childIndex,
@@ -2143,9 +2127,9 @@ export const generateCategoricalChart = ({
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
       Tooltip: { handler: this.renderCursor, once: true },
-      PolarGrid: { handler: this.renderPolarGrid, once: true },
-      PolarAngleAxis: { handler: this.renderPolarAxis },
-      PolarRadiusAxis: { handler: this.renderPolarAxis },
+      PolarGrid: { handler: renderAsIs, once: true },
+      PolarAngleAxis: { handler: renderAsIs },
+      PolarRadiusAxis: { handler: renderAsIs },
       Customized: { handler: this.renderCustomized },
     };
 

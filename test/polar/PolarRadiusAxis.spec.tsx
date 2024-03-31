@@ -1,7 +1,9 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { Surface, PolarRadiusAxis } from '../../src';
+import { render, screen } from '@testing-library/react';
+import { exampleRadarData } from '../_data';
+import { Surface, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { TickItem } from '../../src/util/types';
+import { pageData } from '../../storybook/stories/data/Page';
 
 describe('<PolarRadiusAxis />', () => {
   const ticks: TickItem[] = [
@@ -135,5 +137,32 @@ describe('<PolarRadiusAxis />', () => {
 
     expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(0);
     expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+  });
+
+  describe('Compatible charts', () => {
+    test('Renders polar radius axis with RadarChart', () => {
+      const { container } = render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" />
+          <PolarRadiusAxis dataKey="value" label="test" />
+        </RadarChart>,
+      );
+
+      expect(screen.getByText('1000')).toBeInTheDocument();
+      expect(screen.getByText('test')).toBeInTheDocument();
+      expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(5);
+    });
+
+    test('Renders polar radius axis with RadialBarChart', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={pageData}>
+          <RadialBar dataKey="uv" />
+          <PolarRadiusAxis type="number" dataKey="uv" />
+        </RadialBarChart>,
+      );
+
+      expect(screen.getByText('1520')).toBeInTheDocument();
+      expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(7);
+    });
   });
 });

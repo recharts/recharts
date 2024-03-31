@@ -196,3 +196,14 @@ export const exampleSunburstData: SunburstData = {
     },
   ],
 };
+
+export const exampleRadarData = [
+  { name: 'iPhone 3GS', value: 420, half: 210 },
+  { name: 'iPhone 4', value: 460, half: 230 },
+  { name: 'iPhone 4s', value: 999, half: 500 },
+  { name: 'iPhone 5', value: 500, half: 250 },
+  { name: 'iPhone 5s', value: 864, half: 432 },
+  { name: 'iPhone 6', value: 650, half: 325 },
+  { name: 'iPhone 6s', value: 765, half: 383 },
+  { name: 'iPhone 5se', value: 365, half: 183 },
+];

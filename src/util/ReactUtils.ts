@@ -9,9 +9,7 @@ import { isFragment } from 'react-is';
 import { DotProps } from '..';
 import { isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
-import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys } from './types';
-import { AreaDot } from '../cartesian/Area';
-import { LineDot } from '../cartesian/Line';
+import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   click: 'onClick',
@@ -267,7 +265,7 @@ const SVG_TAGS: string[] = [
 
 const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
-export const isDotProps = (dot: LineDot | AreaDot): dot is DotProps =>
+export const isDotProps = (dot: ActiveDotType): dot is DotProps =>
   dot && typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
 
 /**
@@ -296,23 +294,6 @@ export const isValidSpreadableProp = (
       ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
     (includeEvents && EventKeys.includes(key))
   );
-};
-
-/**
- * Filter all the svg elements of children
- * @param  {Array} children The children of a react element
- * @return {Array}          All the svg elements
- */
-export const filterSvgElements = (children: React.ReactElement[]): React.ReactElement[] => {
-  const svgElements = [] as React.ReactElement[];
-
-  toArray(children).forEach((entry: React.ReactElement) => {
-    if (isSvgElement(entry)) {
-      svgElements.push(entry);
-    }
-  });
-
-  return svgElements;
 };
 
 export const filterProps = (

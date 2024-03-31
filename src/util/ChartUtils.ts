@@ -25,7 +25,7 @@ import { ReactElement, ReactNode } from 'react';
 import { getTickValuesFixedDomain } from 'recharts-scale';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
-import { filterProps, findAllByType, getDisplayName } from './ReactUtils';
+import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
 import {
@@ -45,6 +45,7 @@ import {
 import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
 import { getNiceTickValues } from './scale';
+import { Legend } from '../component/Legend';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -174,11 +175,15 @@ export const calculateActiveTickIndex = (
 };
 
 /**
+ * @deprecated render child components as children instead of reading DOM elements and passing them around
  * Get the main color of each graphic item
  * @param  {ReactElement} item A graphic item
  * @return {String}            Color
  */
-export const getMainColorOfGraphicItem = (item: ReactElement) => {
+export const getMainColorOfGraphicItem = (item: {
+  type: { displayName: string };
+  props: { stroke: string; fill: string };
+}) => {
   const {
     type: { displayName },
   } = item as any; // TODO: check if displayName is valid.
@@ -390,9 +395,10 @@ export const appendOffsetOfLegend = (
   legendBox: BoundingBox | null,
 ): ChartOffset => {
   const { children, width, margin } = props;
-  const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-  const legendProps = getLegendProps({ children, legendWidth });
-  if (legendProps) {
+  const legendItem = findChildByType(children, Legend);
+  if (legendItem) {
+    const legendWidth = width - (margin.left || 0) - (margin.right || 0);
+    const legendProps = getLegendProps({ legendItem, legendWidth });
     const { width: boxWidth, height: boxHeight } = legendBox || {};
     const { align, verticalAlign, layout } = legendProps;
 
@@ -1318,7 +1324,23 @@ export const parseDomainOfCategoryAxis = <T>(
   return specifiedDomain;
 };
 
-export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
+export const getTooltipItem = (
+  graphicalItem: {
+    type: { displayName: string };
+    props: {
+      stroke: string;
+      fill: string;
+      dataKey: DataKey<any>;
+      name: string;
+      unit: string;
+      formatter: any;
+      tooltipType: any;
+      chartType: any;
+      hide: boolean;
+    };
+  },
+  payload: any,
+) => {
   const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
 
   return {

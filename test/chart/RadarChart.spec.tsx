@@ -1,25 +1,15 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { vi } from 'vitest';
+import { exampleRadarData } from '../_data';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<RadarChart />', () => {
-  const data = [
-    { name: 'iPhone 3GS', value: 420, half: 210 },
-    { name: 'iPhone 4', value: 460, half: 230 },
-    { name: 'iPhone 4s', value: 999, half: 500 },
-    { name: 'iPhone 5', value: 500, half: 250 },
-    { name: 'iPhone 5s', value: 864, half: 432 },
-    { name: 'iPhone 6', value: 650, half: 325 },
-    { name: 'iPhone 6s', value: 765, half: 383 },
-    { name: 'iPhone 5se', value: 365, half: 183 },
-  ];
-
   test('Render 1 polygon in a simple Radar', () => {
     const { container } = render(
-      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
       </RadarChart>,
     );
@@ -28,7 +18,7 @@ describe('<RadarChart />', () => {
 
   test('Render 8 dots when dot=true', () => {
     const { container } = render(
-      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar isAnimationActive={false} dot dataKey="value" />
       </RadarChart>,
     );
@@ -37,7 +27,7 @@ describe('<RadarChart />', () => {
 
   test('Render 8 labels when label=true', () => {
     const { container } = render(
-      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar isAnimationActive={false} label dataKey="value" />
       </RadarChart>,
     );
@@ -54,7 +44,7 @@ describe('<RadarChart />', () => {
         outerRadius={150}
         width={600}
         height={500}
-        data={data}
+        data={exampleRadarData}
       >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
@@ -77,7 +67,7 @@ describe('<RadarChart />', () => {
         outerRadius={150}
         width={600}
         height={500}
-        data={data}
+        data={exampleRadarData}
       >
         <Radar dataKey="value" fill="#9597E4" fillOpacity={0.6} stroke="#8889DD" strokeWidth={3} />
         <PolarGrid />
@@ -93,7 +83,7 @@ describe('<RadarChart />', () => {
   test('click on Sector should invoke onClick callback', () => {
     const onClick = vi.fn();
     const { container } = render(
-      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={data}>
+      <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar dataKey="value" onClick={onClick} />
       </RadarChart>,
     );

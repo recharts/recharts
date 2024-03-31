@@ -1,6 +1,5 @@
-import { expect } from '@storybook/jest';
+import { expect, within, userEvent } from '@storybook/test';
 import React, { useState } from 'react';
-import { within, userEvent } from '@storybook/testing-library';
 import {
   ComposedChart,
   ResponsiveContainer,
