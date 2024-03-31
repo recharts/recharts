@@ -349,6 +349,22 @@ describe('getTicksOfScale', () => {
 
     expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
+
+  it('of linear scale with specified domain with stepRatioControl of 0.03', () => {
+    const scale = scaleLinear();
+    const opts = {
+      scale: 'linear',
+      type: 'number',
+      tickCount: 5,
+      originalDomain: ['auto', 'auto'],
+      allowDecimals: true,
+      stepRatioControl: 0.03,
+    };
+
+    const result = getTicksOfScale(scale, opts);
+
+    expect(result?.niceTicks).toEqual([0, 0.27, 0.54, 0.81, 1.08]);
+  });
 });
 
 describe('calculateActiveTickIndex', () => {
