@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps, SVGAttributes } from 'react';
+import React, { Children, PureComponent, ReactElement, ReactText, SVGAttributes, SVGProps, TouchEvent } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
@@ -11,7 +11,7 @@ import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
-import { Padding, DataKey } from '../util/types';
+import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
@@ -84,6 +84,59 @@ function Traveller(props: { travellerType: BrushTravellerType; travellerProps: T
     return travellerType(travellerProps);
   }
   return <DefaultTraveller {...travellerProps} />;
+}
+
+function TravellerLayer({
+  otherProps,
+  travellerX,
+  id,
+}: {
+  id: BrushTravellerId;
+  travellerX: number;
+  otherProps: Props;
+}) {
+  const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
+  const x = Math.max(travellerX, xFromProps);
+  const travellerProps: TravellerProps = {
+    ...filterProps(otherProps, false),
+    x,
+    y,
+    width: travellerWidth,
+    height,
+  };
+
+  const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
+
+  return (
+    <Layer
+      tabIndex={0}
+      role="slider"
+      aria-label={ariaLabelBrush}
+      aria-valuenow={travellerX}
+      className="recharts-brush-traveller"
+      onMouseEnter={this.handleEnterSlideOrTraveller}
+      onMouseLeave={this.handleLeaveSlideOrTraveller}
+      onMouseDown={this.travellerDragStartHandlers[id]}
+      onTouchStart={this.travellerDragStartHandlers[id]}
+      onKeyDown={e => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        this.handleTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
+      }}
+      onFocus={() => {
+        this.setState({ isTravellerFocused: true });
+      }}
+      onBlur={() => {
+        this.setState({ isTravellerFocused: false });
+      }}
+      style={{ cursor: 'col-resize' }}
+    >
+      <Traveller travellerType={traveller} travellerProps={travellerProps} />
+    </Layer>
+  );
 }
 
 type TextOfTickProps = {
@@ -256,6 +309,44 @@ function Slide({
       height={height}
     />
   );
+}
+
+function Panorama({
+  x,
+  y,
+  width,
+  height,
+  data,
+  children,
+  padding,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  data: any[];
+  children: ReactElement;
+  padding: Padding;
+}) {
+  const isPanoramic = React.Children.count(children) === 1;
+  if (!isPanoramic) {
+    return null;
+  }
+  const chartElement = Children.only(children);
+
+  if (!chartElement) {
+    return null;
+  }
+
+  return React.cloneElement(chartElement, {
+    x,
+    y,
+    width,
+    height,
+    margin: padding,
+    compact: true,
+    data,
+  });
 }
 
 interface State {
@@ -614,25 +705,6 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
-  renderPanorama() {
-    const { x, y, width, height, data, children, padding } = this.props;
-    const chartElement = Children.only(children);
-
-    if (!chartElement) {
-      return null;
-    }
-
-    return React.cloneElement(chartElement, {
-      x,
-      y,
-      width,
-      height,
-      margin: padding,
-      compact: true,
-      data,
-    });
-  }
-
   renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
     const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
     const x = Math.max(travellerX, this.props.x);
@@ -695,6 +767,7 @@ export class Brush extends PureComponent<Props, State> {
       travellerWidth,
       tickFormatter,
       dataKey,
+      padding,
     } = this.props;
     const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
 
@@ -712,7 +785,6 @@ export class Brush extends PureComponent<Props, State> {
     }
 
     const layerClass = clsx('recharts-brush', className);
-    const isPanoramic = React.Children.count(children) === 1;
     const style = generatePrefixStyle('userSelect', 'none');
 
     return (
@@ -723,7 +795,9 @@ export class Brush extends PureComponent<Props, State> {
         style={style}
       >
         <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
-        {isPanoramic && this.renderPanorama()}
+        <Panorama x={x} y={y} width={width} height={height} data={data} padding={padding}>
+          {children}
+        </Panorama>
         <Slide
           y={y}
           height={height}
