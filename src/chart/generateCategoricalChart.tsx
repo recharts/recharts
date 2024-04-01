@@ -44,7 +44,6 @@ import {
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
-  getLegendProps,
   getMainColorOfGraphicItem,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
@@ -91,6 +90,7 @@ import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
+import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1805,29 +1805,6 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * Draw legend
-     * @return {ReactElement}            The instance of Legend
-     */
-    renderLegend = (): React.ReactElement => {
-      const { children, width } = this.props;
-      const legendItem = findChildByType(children, Legend);
-      if (!legendItem) {
-        return null;
-      }
-      const margin = this.props.margin || {};
-      const legendWidth: number = width - (margin.left || 0) - (margin.right || 0);
-      const props = getLegendProps({
-        legendItem,
-        legendWidth,
-      });
-
-      return cloneElement(legendItem, {
-        ...props,
-        onBBoxUpdate: this.handleLegendBBoxUpdate,
-      });
-    };
-
-    /**
      * Draw Tooltip
      * @return {ReactElement}  The instance of Tooltip
      */
@@ -2124,6 +2101,7 @@ export const generateCategoricalChart = ({
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
       Customized: { handler: this.renderCustomized },
+      Legend: { handler: renderAsIs },
     };
 
     render() {
@@ -2171,32 +2149,40 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-          <ChartLayoutContextProvider
-            state={this.state}
-            width={this.props.width}
-            height={this.props.height}
-            clipPathId={this.clipPathId}
-            margin={this.props.margin}
-          >
-            <div
-              className={clsx('recharts-wrapper', className)}
-              style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-              {...events}
-              ref={(node: HTMLDivElement) => {
-                this.container = node;
-              }}
-              role={attrs.role ?? 'region'}
+        <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+            <ChartLayoutContextProvider
+              state={this.state}
+              width={this.props.width}
+              height={this.props.height}
+              clipPathId={this.clipPathId}
+              margin={this.props.margin}
             >
-              <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-                {this.renderClipPath()}
-                {renderByOrder(children, this.renderMap)}
-              </Surface>
-              {this.renderLegend()}
-              {this.renderTooltip()}
-            </div>
-          </ChartLayoutContextProvider>
-        </AccessibilityContextProvider>
+              <div
+                className={clsx('recharts-wrapper', className)}
+                style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                {...events}
+                ref={(node: HTMLDivElement) => {
+                  this.container = node;
+                }}
+                role={attrs.role ?? 'region'}
+              >
+                <Surface
+                  {...attrs}
+                  width={width}
+                  height={height}
+                  title={title}
+                  desc={desc}
+                  style={FULL_WIDTH_AND_HEIGHT}
+                >
+                  {this.renderClipPath()}
+                  {renderByOrder(children, this.renderMap)}
+                </Surface>
+                {this.renderTooltip()}
+              </div>
+            </ChartLayoutContextProvider>
+          </AccessibilityContextProvider>
+        </LegendBoundingBoxContext.Provider>
       );
     }
   };
