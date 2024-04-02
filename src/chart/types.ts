@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { StepRatioControl } from '../util/scale/getNickTickValues';
+import { StepRatioControl } from '../util/scale/getNiceTickValues';
 import {
   BaseAxisProps,
   ChartCoordinate,

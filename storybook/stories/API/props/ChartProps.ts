@@ -182,12 +182,19 @@ toggling between multiple dataKey.`,
     },
   },
   stepRatioControl: {
-    description: 'The value to control the range of y axis domain',
+    description: `This parameter controls the range of the y-axis domain. 
+    A lower value for this parameter results in the maximum y-axis value being closer to the highest data point in the dataset. 
+    For example, given the dataset [0, 400, 800, 1200, 1600], a stepRatioControl value of 0.05 would adjust the y-axis domain to [0, 2000]. 
+    Conversely, setting stepRatioControl to 0.1 brings the y-axis domain closer to [0, 1600]. 
+    Adjusting this parameter is recommended only when the default y-axis domain does not adequately represent the dataset.`,
+    options: ['0.01', '0.03', '0.05'],
+    control: {
+      type: 'select',
+    },
     table: {
       type: {
-        summary: '0.01 | 0.03 | 0.05',
+        summary: 'number',
       },
-      defaultValue: 0.05,
       category: 'General',
     },
   },

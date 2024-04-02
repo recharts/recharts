@@ -10,7 +10,7 @@ import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
-import { StepRatioControl } from '../util/scale/getNickTickValues';
+import { StepRatioControl } from '../util/scale/getNiceTickValues';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -1229,7 +1229,6 @@ export const generateCategoricalChart = ({
               props: nextProps,
               ...defaultState,
               updateId: 0,
-              // stepRatioControl
             },
             prevState,
           ),

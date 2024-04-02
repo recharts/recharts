@@ -6,7 +6,7 @@ import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType, Size } from './types';
 import { getPercentValue } from './DataUtils';
 import { Bar } from '../cartesian/Bar';
-import { StepRatioControl } from './scale/getNickTickValues';
+import { StepRatioControl } from './scale/getNiceTickValues';
 
 /**
  * Calculate the scale function, position, width, height of axes

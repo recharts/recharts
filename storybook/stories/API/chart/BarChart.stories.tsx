@@ -47,7 +47,6 @@ export const BarInBar = {
 
 export const Stacked = {
   render: (args: Args) => {
-    console.log(args);
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart {...args}>

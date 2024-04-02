@@ -350,7 +350,7 @@ describe('getTicksOfScale', () => {
     expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 
-  it('of linear scale with specified domain with stepRatioControl of 0.03', () => {
+  it('should generate correct tick values with stepRatioControl set to 0.03', () => {
     const scale = scaleLinear();
     const opts = {
       scale: 'linear',
