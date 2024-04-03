@@ -2165,7 +2165,6 @@ export const generateCategoricalChart = ({
                 ref={(node: HTMLDivElement) => {
                   this.container = node;
                 }}
-                role={attrs.role ?? 'region'}
               >
                 <Surface
                   {...attrs}
