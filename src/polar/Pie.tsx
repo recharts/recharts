@@ -402,7 +402,8 @@ export class Pie extends PureComponent<Props, State> {
       return option(props);
     }
 
-    return <Curve {...props} type="linear" className="recharts-pie-label-line" />;
+    const className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
+    return <Curve {...props} type="linear" className={className} />;
   }
 
   static renderLabelItem(option: PieLabel, props: any, value: any) {
@@ -417,8 +418,12 @@ export class Pie extends PureComponent<Props, State> {
       }
     }
 
+    const className = clsx(
+      'recharts-pie-label-text',
+      typeof option !== 'boolean' && !isFunction(option) ? option.className : '',
+    );
     return (
-      <Text {...props} alignmentBaseline="middle" className="recharts-pie-label-text">
+      <Text {...props} alignmentBaseline="middle" className={className}>
         {label}
       </Text>
     );
