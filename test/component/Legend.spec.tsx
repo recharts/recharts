@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
@@ -27,6 +27,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 import { LegendBoundingBoxContext } from '../../src/context/legendBoundingBoxContext';
+import { assertNotNull } from '../helper/assertNotNull';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -2868,6 +2869,23 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+    });
+  });
+
+  describe('click events', () => {
+    it('should call onClick when clicked', () => {
+      const onClick = vi.fn();
+      const { container } = render(
+        <ScatterChart width={500} height={500} data={numericalData}>
+          <Legend onClick={onClick} />
+          <Scatter dataKey="percent" />
+        </ScatterChart>,
+      );
+      expect(onClick).toHaveBeenCalledTimes(0);
+      const legend = container.querySelector('.recharts-legend-item');
+      assertNotNull(legend);
+      fireEvent.click(legend);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });
