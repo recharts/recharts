@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
@@ -27,6 +27,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 import { LegendBoundingBoxContext } from '../../src/context/legendBoundingBoxContext';
+import { assertNotNull } from '../helper/assertNotNull';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -1356,6 +1357,22 @@ describe('<Legend />', () => {
         expect
           .soft(wrapper.getAttribute('style'))
           .toBe('position: absolute; width: 270px; height: auto; left: 17px; bottom: 19px;');
+      });
+
+      it('should change width and height based on explicit Legend props', () => {
+        const { container } = render(
+          <BarChart width={500} height={500} margin={{ top: 11, right: 13, left: 17, bottom: 19 }} data={numericalData}>
+            <Legend width={90} height={20} />
+            <Bar dataKey="value" />
+          </BarChart>,
+        );
+        const wrapper = container.querySelector('.recharts-legend-wrapper');
+        expect(wrapper).toBeInTheDocument();
+        expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+        expect
+          .soft(wrapper.getAttribute('style'))
+          .toBe('position: absolute; width: 90px; height: 20px; left: 17px; bottom: 19px;');
       });
 
       it('should append wrapperStyle', () => {
@@ -2868,6 +2885,23 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+    });
+  });
+
+  describe('click events', () => {
+    it('should call onClick when clicked', () => {
+      const onClick = vi.fn();
+      const { container } = render(
+        <ScatterChart width={500} height={500} data={numericalData}>
+          <Legend onClick={onClick} />
+          <Scatter dataKey="percent" />
+        </ScatterChart>,
+      );
+      expect(onClick).toHaveBeenCalledTimes(0);
+      const legend = container.querySelector('.recharts-legend-item');
+      assertNotNull(legend);
+      fireEvent.click(legend);
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

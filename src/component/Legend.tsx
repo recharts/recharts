@@ -111,8 +111,8 @@ function LegendWrapper(props: Props) {
   const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
   const outerStyle: CSSProperties = {
     position: 'absolute',
-    width: widthOrHeight?.width || 'auto',
-    height: widthOrHeight?.height || 'auto',
+    width: widthOrHeight?.width || widthFromProps || 'auto',
+    height: widthOrHeight?.height || heightFromProps || 'auto',
     ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
     ...wrapperStyle,
   };
@@ -165,11 +165,9 @@ export class Legend extends PureComponent<Props, State> {
 
   public render() {
     return (
-      <g>
-        <foreignObject x="0" y="0" width="100%" height="100%" style={{ pointerEvents: 'none' }}>
-          <LegendWrapper {...this.props} />
-        </foreignObject>
-      </g>
+      <foreignObject x="0" y="0" width="100%" height="100%">
+        <LegendWrapper {...this.props} />
+      </foreignObject>
     );
   }
 }
