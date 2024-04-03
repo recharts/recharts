@@ -90,10 +90,24 @@ function TravellerLayer({
   otherProps,
   travellerX,
   id,
+  onMouseEnter,
+  onMouseLeave,
+  onMouseDown,
+  onTouchStart,
+  onTravellerMoveKeyboard,
+  onFocus,
+  onBlur,
 }: {
   id: BrushTravellerId;
   travellerX: number;
   otherProps: Props;
+  onMouseEnter: (e: MouseOrTouchEvent) => void;
+  onMouseLeave: (e: MouseOrTouchEvent) => void;
+  onMouseDown: (e: MouseOrTouchEvent) => void;
+  onTouchStart: (e: MouseOrTouchEvent) => void;
+  onTravellerMoveKeyboard: (direction: -1 | 1, travellerId: BrushTravellerId) => void;
+  onFocus: () => void;
+  onBlur: () => void;
 }) {
   const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
   const x = Math.max(travellerX, xFromProps);
@@ -114,24 +128,20 @@ function TravellerLayer({
       aria-label={ariaLabelBrush}
       aria-valuenow={travellerX}
       className="recharts-brush-traveller"
-      onMouseEnter={this.handleEnterSlideOrTraveller}
-      onMouseLeave={this.handleLeaveSlideOrTraveller}
-      onMouseDown={this.travellerDragStartHandlers[id]}
-      onTouchStart={this.travellerDragStartHandlers[id]}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
       onKeyDown={e => {
         if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) {
           return;
         }
         e.preventDefault();
         e.stopPropagation();
-        this.handleTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
+        onTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
       }}
-      onFocus={() => {
-        this.setState({ isTravellerFocused: true });
-      }}
-      onBlur={() => {
-        this.setState({ isTravellerFocused: false });
-      }}
+      onFocus={onFocus}
+      onBlur={onBlur}
       style={{ cursor: 'col-resize' }}
     >
       <Traveller travellerType={traveller} travellerProps={travellerProps} />
@@ -284,10 +294,10 @@ function Slide({
   travellerWidth: number;
   startX: number;
   endX: number;
-  onMouseEnter: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
-  onMouseLeave: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
-  onMouseDown: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
-  onTouchStart: (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => void;
+  onMouseEnter: (e: MouseOrTouchEvent) => void;
+  onMouseLeave: (e: MouseOrTouchEvent) => void;
+  onMouseDown: (e: MouseOrTouchEvent) => void;
+  onTouchStart: (e: MouseOrTouchEvent) => void;
 }) {
   const x = Math.min(startX, endX) + travellerWidth;
   const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
@@ -418,6 +428,8 @@ const createScale = ({
 const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is TouchEvent<SVGElement> =>
   (e as TouchEvent<SVGElement>).changedTouches && !!(e as TouchEvent<SVGElement>).changedTouches.length;
 
+type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
+
 export class Brush extends PureComponent<Props, State> {
   static displayName = 'Brush';
 
@@ -445,10 +457,7 @@ export class Brush extends PureComponent<Props, State> {
 
   leaveTimer?: number;
 
-  travellerDragStartHandlers?: Record<
-    BrushTravellerId,
-    (event: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) => void
-  >;
+  travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
@@ -563,7 +572,7 @@ export class Brush extends PureComponent<Props, State> {
     });
   };
 
-  handleSlideDragStart = (e: TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
+  handleSlideDragStart = (e: MouseOrTouchEvent) => {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -604,7 +613,7 @@ export class Brush extends PureComponent<Props, State> {
     });
   }
 
-  handleTravellerDragStart(id: BrushTravellerId, e: React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>) {
+  handleTravellerDragStart(id: BrushTravellerId, e: MouseOrTouchEvent) {
     const event = isTouch(e) ? e.changedTouches[0] : e;
 
     this.setState({
@@ -663,7 +672,7 @@ export class Brush extends PureComponent<Props, State> {
     );
   }
 
-  handleTravellerMoveKeyboard(direction: 1 | -1, id: BrushTravellerId) {
+  handleTravellerMoveKeyboard = (direction: 1 | -1, id: BrushTravellerId) => {
     const { data, gap } = this.props;
     // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
     const { scaleValues, startX, endX } = this.state;
@@ -703,52 +712,7 @@ export class Brush extends PureComponent<Props, State> {
         );
       },
     );
-  }
-
-  renderTravellerLayer(travellerX: number, id: BrushTravellerId) {
-    const { y, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = this.props;
-    const x = Math.max(travellerX, this.props.x);
-    const travellerProps: TravellerProps = {
-      ...filterProps(this.props, false),
-      x,
-      y,
-      width: travellerWidth,
-      height,
-    };
-
-    const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
-
-    return (
-      <Layer
-        tabIndex={0}
-        role="slider"
-        aria-label={ariaLabelBrush}
-        aria-valuenow={travellerX}
-        className="recharts-brush-traveller"
-        onMouseEnter={this.handleEnterSlideOrTraveller}
-        onMouseLeave={this.handleLeaveSlideOrTraveller}
-        onMouseDown={this.travellerDragStartHandlers[id]}
-        onTouchStart={this.travellerDragStartHandlers[id]}
-        onKeyDown={e => {
-          if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) {
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          this.handleTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
-        }}
-        onFocus={() => {
-          this.setState({ isTravellerFocused: true });
-        }}
-        onBlur={() => {
-          this.setState({ isTravellerFocused: false });
-        }}
-        style={{ cursor: 'col-resize' }}
-      >
-        <Traveller travellerType={traveller} travellerProps={travellerProps} />
-      </Layer>
-    );
-  }
+  };
 
   render() {
     const {
@@ -810,8 +774,38 @@ export class Brush extends PureComponent<Props, State> {
           onMouseDown={this.handleSlideDragStart}
           onTouchStart={this.handleSlideDragStart}
         />
-        {this.renderTravellerLayer(startX, 'startX')}
-        {this.renderTravellerLayer(endX, 'endX')}
+        <TravellerLayer
+          travellerX={startX}
+          id="startX"
+          otherProps={this.props}
+          onMouseEnter={this.handleEnterSlideOrTraveller}
+          onMouseLeave={this.handleLeaveSlideOrTraveller}
+          onMouseDown={this.travellerDragStartHandlers.startX}
+          onTouchStart={this.travellerDragStartHandlers.startX}
+          onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
+          onFocus={() => {
+            this.setState({ isTravellerFocused: true });
+          }}
+          onBlur={() => {
+            this.setState({ isTravellerFocused: false });
+          }}
+        />
+        <TravellerLayer
+          travellerX={endX}
+          id="endX"
+          otherProps={this.props}
+          onMouseEnter={this.handleEnterSlideOrTraveller}
+          onMouseLeave={this.handleLeaveSlideOrTraveller}
+          onMouseDown={this.travellerDragStartHandlers.endX}
+          onTouchStart={this.travellerDragStartHandlers.endX}
+          onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
+          onFocus={() => {
+            this.setState({ isTravellerFocused: true });
+          }}
+          onBlur={() => {
+            this.setState({ isTravellerFocused: false });
+          }}
+        />
         {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) && (
           <BrushText
             startIndex={startIndex}
