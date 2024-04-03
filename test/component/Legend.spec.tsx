@@ -1359,6 +1359,22 @@ describe('<Legend />', () => {
           .toBe('position: absolute; width: 270px; height: auto; left: 17px; bottom: 19px;');
       });
 
+      it('should change width and height based on explicit Legend props', () => {
+        const { container } = render(
+          <BarChart width={500} height={500} margin={{ top: 11, right: 13, left: 17, bottom: 19 }} data={numericalData}>
+            <Legend width={90} height={20} />
+            <Bar dataKey="value" />
+          </BarChart>,
+        );
+        const wrapper = container.querySelector('.recharts-legend-wrapper');
+        expect(wrapper).toBeInTheDocument();
+        expect.soft(wrapper.getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(wrapper.getAttribute('class')).toBe('recharts-legend-wrapper');
+        expect
+          .soft(wrapper.getAttribute('style'))
+          .toBe('position: absolute; width: 90px; height: 20px; left: 17px; bottom: 19px;');
+      });
+
       it('should append wrapperStyle', () => {
         const { container } = render(
           <BarChart width={500} height={500} data={numericalData}>

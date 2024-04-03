@@ -111,8 +111,8 @@ function LegendWrapper(props: Props) {
   const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
   const outerStyle: CSSProperties = {
     position: 'absolute',
-    width: widthOrHeight?.width || 'auto',
-    height: widthOrHeight?.height || 'auto',
+    width: widthOrHeight?.width || widthFromProps || 'auto',
+    height: widthOrHeight?.height || heightFromProps || 'auto',
     ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
     ...wrapperStyle,
   };
