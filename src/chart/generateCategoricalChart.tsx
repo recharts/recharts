@@ -2252,7 +2252,6 @@ export const generateCategoricalChart = ({
             ref={(node: HTMLDivElement) => {
               this.container = node;
             }}
-            role={attrs.role ?? 'region'}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
               {this.renderClipPath()}
