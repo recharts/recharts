@@ -1,6 +1,7 @@
-/**
- * @fileOverview Brush
+/*
+ * After we refactor classes to functional components, we can remove this eslint-disable
  */
+/* eslint-disable max-classes-per-file */
 import React, { Children, PureComponent, ReactElement, ReactText, SVGAttributes, SVGProps, TouchEvent } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
@@ -58,6 +59,8 @@ interface BrushProps extends InternalBrushProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
+type PropertiesFromContext = {};
+
 type BrushTravellerId = 'startX' | 'endX';
 
 function DefaultTraveller(props: TravellerProps) {
@@ -100,7 +103,7 @@ function TravellerLayer({
 }: {
   id: BrushTravellerId;
   travellerX: number;
-  otherProps: Props;
+  otherProps: BrushWithStateProps;
   onMouseEnter: (e: MouseOrTouchEvent) => void;
   onMouseLeave: (e: MouseOrTouchEvent) => void;
   onMouseDown: (e: MouseOrTouchEvent) => void;
@@ -430,21 +433,10 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-export class Brush extends PureComponent<Props, State> {
-  static displayName = 'Brush';
+type BrushWithStateProps = Props & PropertiesFromContext;
 
-  static defaultProps = {
-    height: 40,
-    travellerWidth: 5,
-    gap: 1,
-    fill: '#fff',
-    stroke: '#666',
-    padding: { top: 1, right: 1, bottom: 1, left: 1 },
-    leaveTimeOut: 1000,
-    alwaysShowText: false,
-  };
-
-  constructor(props: Props) {
+class BrushWithState extends PureComponent<BrushWithStateProps, State> {
+  constructor(props: BrushWithStateProps) {
     super(props);
 
     this.travellerDragStartHandlers = {
@@ -459,7 +451,7 @@ export class Brush extends PureComponent<Props, State> {
 
   travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): State {
     const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
 
     if (data !== prevState.prevData || updateId !== prevState.prevUpdateId) {
@@ -823,5 +815,29 @@ export class Brush extends PureComponent<Props, State> {
         )}
       </Layer>
     );
+  }
+}
+
+function BrushInternal(props: Props) {
+  // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
+  return <BrushWithState {...props} />;
+}
+
+export class Brush extends PureComponent<Props, State> {
+  static displayName = 'Brush';
+
+  static defaultProps = {
+    height: 40,
+    travellerWidth: 5,
+    gap: 1,
+    fill: '#fff',
+    stroke: '#666',
+    padding: { top: 1, right: 1, bottom: 1, left: 1 },
+    leaveTimeOut: 1000,
+    alwaysShowText: false,
+  };
+
+  render() {
+    return <BrushInternal {...this.props} />;
   }
 }
