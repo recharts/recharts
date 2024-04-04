@@ -16,7 +16,7 @@ export type StepRatioControl = 0.05 | 0.03 | 0.01;
  * @param  {Number} max       The maximum value
  * @return {Array} An interval
  */
-function getValidInterval([min, max]: [number, number]) {
+export const getValidInterval = ([min, max]: [number, number]) => {
   let [validMin, validMax] = [min, max];
 
   // exchange
@@ -25,7 +25,7 @@ function getValidInterval([min, max]: [number, number]) {
   }
 
   return [validMin, validMax];
-}
+};
 
 /**
  * Calculate the step which is easy to understand between ticks, like 10, 20, 25
@@ -37,12 +37,12 @@ function getValidInterval([min, max]: [number, number]) {
  * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Decimal} The step which is easy to understand between two ticks
  */
-function getFormatStep(
+export const getFormatStep = (
   roughStep: Decimal,
   allowDecimals: boolean,
   correctionFactor: number,
   stepRatioControl: StepRatioControl = 0.05,
-) {
+) => {
   if (roughStep.lte(0)) {
     return new Decimal(0);
   }
@@ -61,7 +61,7 @@ function getFormatStep(
   const formatStep = amendStepRatio.mul(digitCountValue);
 
   return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
-}
+};
 
 /**
  * calculate the ticks when the minimum value equals to the maximum value
@@ -71,7 +71,7 @@ function getFormatStep(
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
  * @return {Array}                 ticks
  */
-function getTickOfSingleValue(value: number, tickCount: number, allowDecimals: boolean) {
+export const getTickOfSingleValue = (value: number, tickCount: number, allowDecimals: boolean) => {
   let step: Decimal = new Decimal(1);
   // calculate the middle value of ticks
   let middle = new Decimal(value);
@@ -102,7 +102,7 @@ function getTickOfSingleValue(value: number, tickCount: number, allowDecimals: b
   );
 
   return fn(0, tickCount);
-}
+};
 
 /**
  * Calculate the step
@@ -115,14 +115,14 @@ function getTickOfSingleValue(value: number, tickCount: number, allowDecimals: b
  * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Object}  The step, minimum value of ticks, maximum value of ticks
  */
-function calculateStep(
+export const calculateStep = (
   min: number,
   max: number,
   tickCount: number,
   allowDecimals: boolean,
   correctionFactor = 0,
   stepRatioControl: StepRatioControl = 0.05,
-) {
+): any => {
   // dirty hack (for recharts' test)
   if (!Number.isFinite((max - min) / (tickCount - 1))) {
     return {
@@ -172,7 +172,7 @@ function calculateStep(
     tickMin: middle.sub(new Decimal(belowCount).mul(step)),
     tickMax: middle.add(new Decimal(upCount).mul(step)),
   };
-}
+};
 /**
  * Calculate the ticks of an interval, the count of ticks will be guraranteed
  *
