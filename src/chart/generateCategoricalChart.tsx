@@ -91,6 +91,7 @@ import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
+import { XAxisProps, YAxisProps } from 'src';
 
 export interface MousePointer {
   pageX: number;
@@ -872,7 +873,7 @@ export const generateCategoricalChart = ({
     const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
-    const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
+    
     const formattedItems = [] as any[];
 
     graphicalItems.forEach((item: ReactElement, index: number) => {
@@ -923,6 +924,8 @@ export const generateCategoricalChart = ({
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
       let barPosition: ReadonlyArray<BarPosition> = [];
+      const totalSize = cateAxisName === 'xAxis' ? (cateAxis as XAxisProps).width : (cateAxis as YAxisProps).height;
+      const sizeList = hasBar && getBarSizeList({ barSize, stackGroups, totalSize });
 
       if (itemIsBar) {
         // 如果是bar，计算bar的位置

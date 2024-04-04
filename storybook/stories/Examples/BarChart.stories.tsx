@@ -811,3 +811,30 @@ export const WithMinPointSize = {
     );
   },
 };
+
+export const OneDataPointPercentSize = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          width={500}
+          height={300}
+          data={[[4.5, 10]]}
+          barSize="30%" /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <XAxis dataKey={v => v[0]} type="number" domain={[0, 10]} />
+          <YAxis />
+          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar dataKey={v => v[1]} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+};

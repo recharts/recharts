@@ -24,7 +24,7 @@ import { ReactElement, ReactNode } from 'react';
 import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
-import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
+import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, isPercent, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
@@ -218,10 +218,12 @@ export type BarSetup = {
  */
 export const getBarSizeList = ({
   barSize: globalSize,
+  totalSize,
   stackGroups = {},
 }: {
   barSize: number | string;
   stackGroups: AxisStackGroups;
+  totalSize: number;
 }): Record<string, ReadonlyArray<BarSetup>> => {
   if (!stackGroups) {
     return {};
@@ -250,7 +252,10 @@ export const getBarSizeList = ({
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: isNil(selfSize) ? globalSize : selfSize,
+          barSize:
+            isNil(selfSize) && isNil(globalSize)
+              ? undefined
+              : getPercentValue(isNil(selfSize) ? globalSize : selfSize, totalSize, 0),
         });
       }
     }
