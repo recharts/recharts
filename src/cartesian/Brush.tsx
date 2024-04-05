@@ -14,7 +14,7 @@ import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { useMargin, useOffset } from '../context/chartLayoutContext';
+import { useMargin, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
@@ -27,11 +27,7 @@ interface BrushStartEndIndex {
   endIndex?: number;
 }
 
-interface InternalBrushProps {
-  updateId?: string | number;
-}
-
-interface BrushProps extends InternalBrushProps {
+interface BrushProps {
   x?: number;
   y?: number;
   width?: number;
@@ -67,6 +63,7 @@ type PropertiesFromContext = {
   data: any[];
   startIndex: number;
   endIndex: number;
+  updateId: string;
 };
 
 type BrushTravellerId = 'startX' | 'endX';
@@ -831,6 +828,7 @@ function BrushInternal(props: Props) {
   const margin = useMargin();
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
+  const updateId = useUpdateId();
   const contextProperties: PropertiesFromContext = {
     data: chartData,
     x: isNumber(props.x) ? props.x : offset.left,
@@ -838,6 +836,7 @@ function BrushInternal(props: Props) {
     width: isNumber(props.width) ? props.width : offset.width,
     startIndex,
     endIndex,
+    updateId,
   };
   // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
   return <BrushWithState {...props} {...contextProperties} />;

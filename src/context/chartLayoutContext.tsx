@@ -33,6 +33,9 @@ export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 
+// is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
+const UpdateIdContext = createContext<number>(0);
+
 export type ChartLayoutContextProviderProps = {
   state: CategoricalChartState;
   children: ReactNode;
@@ -64,6 +67,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       activeCoordinate,
       dataStartIndex,
       dataEndIndex,
+      updateId,
     },
     clipPathId,
     children,
@@ -98,33 +102,35 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * See the test file for details.
    */
   return (
-    <DataStartIndexContextProvider value={dataStartIndex}>
-      <DataEndIndexContextProvider value={dataEndIndex}>
-        <MarginContext.Provider value={margin}>
-          <LegendPayloadProvider>
-            <XAxisContext.Provider value={xAxisMap}>
-              <YAxisContext.Provider value={yAxisMap}>
-                <PolarAngleAxisContext.Provider value={angleAxisMap}>
-                  <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
-                    <OffsetContext.Provider value={offset}>
-                      <ViewBoxContext.Provider value={viewBox}>
-                        <ClipPathIdContext.Provider value={clipPathId}>
-                          <ChartHeightContext.Provider value={height}>
-                            <ChartWidthContext.Provider value={width}>
-                              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                            </ChartWidthContext.Provider>
-                          </ChartHeightContext.Provider>
-                        </ClipPathIdContext.Provider>
-                      </ViewBoxContext.Provider>
-                    </OffsetContext.Provider>
-                  </PolarRadiusAxisContext.Provider>
-                </PolarAngleAxisContext.Provider>
-              </YAxisContext.Provider>
-            </XAxisContext.Provider>
-          </LegendPayloadProvider>
-        </MarginContext.Provider>
-      </DataEndIndexContextProvider>
-    </DataStartIndexContextProvider>
+    <UpdateIdContext.Provider value={updateId}>
+      <DataStartIndexContextProvider value={dataStartIndex}>
+        <DataEndIndexContextProvider value={dataEndIndex}>
+          <MarginContext.Provider value={margin}>
+            <LegendPayloadProvider>
+              <XAxisContext.Provider value={xAxisMap}>
+                <YAxisContext.Provider value={yAxisMap}>
+                  <PolarAngleAxisContext.Provider value={angleAxisMap}>
+                    <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
+                      <OffsetContext.Provider value={offset}>
+                        <ViewBoxContext.Provider value={viewBox}>
+                          <ClipPathIdContext.Provider value={clipPathId}>
+                            <ChartHeightContext.Provider value={height}>
+                              <ChartWidthContext.Provider value={width}>
+                                <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                              </ChartWidthContext.Provider>
+                            </ChartHeightContext.Provider>
+                          </ClipPathIdContext.Provider>
+                        </ViewBoxContext.Provider>
+                      </OffsetContext.Provider>
+                    </PolarRadiusAxisContext.Provider>
+                  </PolarAngleAxisContext.Provider>
+                </YAxisContext.Provider>
+              </XAxisContext.Provider>
+            </LegendPayloadProvider>
+          </MarginContext.Provider>
+        </DataEndIndexContextProvider>
+      </DataStartIndexContextProvider>
+    </UpdateIdContext.Provider>
   );
 };
 
@@ -309,3 +315,5 @@ export const useChartHeight = (): number => {
 export const useMargin = (): Margin => {
   return useContext(MarginContext);
 };
+
+export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;

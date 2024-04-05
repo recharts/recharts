@@ -1817,13 +1817,10 @@ export const generateCategoricalChart = ({
     };
 
     renderBrush = (element: React.ReactElement) => {
-      const { updateId } = this.state;
-
       // TODO: update brush when children update
       return cloneElement(element, {
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
-        updateId: `brush-${updateId}`,
       });
     };
 
