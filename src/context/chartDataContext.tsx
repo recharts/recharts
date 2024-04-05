@@ -1,10 +1,12 @@
 import { createContext, useContext } from 'react';
 
 const ChartDataContext = createContext<any[] | undefined>(undefined);
-const DataIndexContext = createContext<{ startIndex: number; endIndex: number }>({ startIndex: 0, endIndex: 0 });
+const DataStartIndexContext = createContext<number>(0);
+const DataEndIndexContext = createContext<number>(0);
 
 export const ChartDataContextProvider = ChartDataContext.Provider;
-export const DataIndexContextProvider = DataIndexContext.Provider;
+export const DataStartIndexContextProvider = DataStartIndexContext.Provider;
+export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
 
 /**
  * "data" is the data of the chart - it has no type because this part of recharts is very flexible.
@@ -29,4 +31,8 @@ export const useChartData = () => useContext(ChartDataContext);
  *
  * @return object with startIndex and endIndex
  */
-export const useDataIndex = () => useContext(DataIndexContext);
+export const useDataIndex = () => {
+  const startIndex = useContext(DataStartIndexContext);
+  const endIndex = useContext(DataEndIndexContext);
+  return { startIndex, endIndex };
+};

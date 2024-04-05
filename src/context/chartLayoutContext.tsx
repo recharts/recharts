@@ -20,6 +20,7 @@ import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
+import { DataStartIndexContextProvider, DataEndIndexContextProvider } from './chartDataContext';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -61,6 +62,8 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       activePayload,
       isTooltipActive,
       activeCoordinate,
+      dataStartIndex,
+      dataEndIndex,
     },
     clipPathId,
     children,
@@ -95,29 +98,33 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * See the test file for details.
    */
   return (
-    <MarginContext.Provider value={margin}>
-      <LegendPayloadProvider>
-        <XAxisContext.Provider value={xAxisMap}>
-          <YAxisContext.Provider value={yAxisMap}>
-            <PolarAngleAxisContext.Provider value={angleAxisMap}>
-              <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
-                <OffsetContext.Provider value={offset}>
-                  <ViewBoxContext.Provider value={viewBox}>
-                    <ClipPathIdContext.Provider value={clipPathId}>
-                      <ChartHeightContext.Provider value={height}>
-                        <ChartWidthContext.Provider value={width}>
-                          <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                        </ChartWidthContext.Provider>
-                      </ChartHeightContext.Provider>
-                    </ClipPathIdContext.Provider>
-                  </ViewBoxContext.Provider>
-                </OffsetContext.Provider>
-              </PolarRadiusAxisContext.Provider>
-            </PolarAngleAxisContext.Provider>
-          </YAxisContext.Provider>
-        </XAxisContext.Provider>
-      </LegendPayloadProvider>
-    </MarginContext.Provider>
+    <DataStartIndexContextProvider value={dataStartIndex}>
+      <DataEndIndexContextProvider value={dataEndIndex}>
+        <MarginContext.Provider value={margin}>
+          <LegendPayloadProvider>
+            <XAxisContext.Provider value={xAxisMap}>
+              <YAxisContext.Provider value={yAxisMap}>
+                <PolarAngleAxisContext.Provider value={angleAxisMap}>
+                  <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
+                    <OffsetContext.Provider value={offset}>
+                      <ViewBoxContext.Provider value={viewBox}>
+                        <ClipPathIdContext.Provider value={clipPathId}>
+                          <ChartHeightContext.Provider value={height}>
+                            <ChartWidthContext.Provider value={width}>
+                              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                            </ChartWidthContext.Provider>
+                          </ChartHeightContext.Provider>
+                        </ClipPathIdContext.Provider>
+                      </ViewBoxContext.Provider>
+                    </OffsetContext.Provider>
+                  </PolarRadiusAxisContext.Provider>
+                </PolarAngleAxisContext.Provider>
+              </YAxisContext.Provider>
+            </XAxisContext.Provider>
+          </LegendPayloadProvider>
+        </MarginContext.Provider>
+      </DataEndIndexContextProvider>
+    </DataStartIndexContextProvider>
   );
 };
 

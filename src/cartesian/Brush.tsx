@@ -15,7 +15,7 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useMargin, useOffset } from '../context/chartLayoutContext';
-import { useChartData } from '../context/chartDataContext';
+import { useChartData, useDataIndex } from '../context/chartDataContext';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -65,6 +65,8 @@ type PropertiesFromContext = {
   y: number;
   width: number;
   data: any[];
+  startIndex: number;
+  endIndex: number;
 };
 
 type BrushTravellerId = 'startX' | 'endX';
@@ -828,11 +830,14 @@ function BrushInternal(props: Props) {
   const offset = useOffset();
   const margin = useMargin();
   const chartData = useChartData();
+  const { startIndex, endIndex } = useDataIndex();
   const contextProperties: PropertiesFromContext = {
     data: chartData,
     x: isNumber(props.x) ? props.x : offset.left,
     y: isNumber(props.y) ? props.y : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
     width: isNumber(props.width) ? props.width : offset.width,
+    startIndex,
+    endIndex,
   };
   // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
   return <BrushWithState {...props} {...contextProperties} />;
