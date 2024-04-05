@@ -15,6 +15,7 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useMargin, useOffset } from '../context/chartLayoutContext';
+import { useChartData } from '../context/chartDataContext';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -27,14 +28,13 @@ interface BrushStartEndIndex {
 }
 
 interface InternalBrushProps {
-  x?: number;
-  y?: number;
-  width?: number;
-  data?: any[];
   updateId?: string | number;
 }
 
 interface BrushProps extends InternalBrushProps {
+  x?: number;
+  y?: number;
+  width?: number;
   className?: string;
 
   ariaLabel?: string;
@@ -64,6 +64,7 @@ type PropertiesFromContext = {
   x: number;
   y: number;
   width: number;
+  data: any[];
 };
 
 type BrushTravellerId = 'startX' | 'endX';
@@ -826,7 +827,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 function BrushInternal(props: Props) {
   const offset = useOffset();
   const margin = useMargin();
+  const chartData = useChartData();
   const contextProperties: PropertiesFromContext = {
+    data: chartData,
     x: isNumber(props.x) ? props.x : offset.left,
     y: isNumber(props.y) ? props.y : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
     width: isNumber(props.width) ? props.width : offset.width,

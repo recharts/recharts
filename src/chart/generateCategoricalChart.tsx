@@ -91,6 +91,7 @@ import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
+import { ChartDataContextProvider } from '../context/chartDataContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1816,14 +1817,12 @@ export const generateCategoricalChart = ({
     };
 
     renderBrush = (element: React.ReactElement) => {
-      const { data } = this.props;
       const { dataStartIndex, dataEndIndex, updateId } = this.state;
 
       // TODO: update brush when children update
       return cloneElement(element, {
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
-        data,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
@@ -2144,39 +2143,41 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-            <ChartLayoutContextProvider
-              state={this.state}
-              width={this.props.width}
-              height={this.props.height}
-              clipPathId={this.clipPathId}
-              margin={this.props.margin}
-            >
-              <div
-                className={clsx('recharts-wrapper', className)}
-                style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                {...events}
-                ref={(node: HTMLDivElement) => {
-                  this.container = node;
-                }}
+        <ChartDataContextProvider value={this.props.data}>
+          <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+            <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+              <ChartLayoutContextProvider
+                state={this.state}
+                width={this.props.width}
+                height={this.props.height}
+                clipPathId={this.clipPathId}
+                margin={this.props.margin}
               >
-                <Surface
-                  {...attrs}
-                  width={width}
-                  height={height}
-                  title={title}
-                  desc={desc}
-                  style={FULL_WIDTH_AND_HEIGHT}
+                <div
+                  className={clsx('recharts-wrapper', className)}
+                  style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                  {...events}
+                  ref={(node: HTMLDivElement) => {
+                    this.container = node;
+                  }}
                 >
-                  {this.renderClipPath()}
-                  {renderByOrder(children, this.renderMap)}
-                </Surface>
-                {this.renderTooltip()}
-              </div>
-            </ChartLayoutContextProvider>
-          </AccessibilityContextProvider>
-        </LegendBoundingBoxContext.Provider>
+                  <Surface
+                    {...attrs}
+                    width={width}
+                    height={height}
+                    title={title}
+                    desc={desc}
+                    style={FULL_WIDTH_AND_HEIGHT}
+                  >
+                    {this.renderClipPath()}
+                    {renderByOrder(children, this.renderMap)}
+                  </Surface>
+                  {this.renderTooltip()}
+                </div>
+              </ChartLayoutContextProvider>
+            </AccessibilityContextProvider>
+          </LegendBoundingBoxContext.Provider>
+        </ChartDataContextProvider>
       );
     }
   };
