@@ -92,6 +92,7 @@ import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
+import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1502,7 +1503,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleBrushChange = ({ startIndex, endIndex }: { startIndex: number; endIndex: number }) => {
+    handleBrushChange = ({ startIndex, endIndex }: BrushStartEndIndex) => {
       // Only trigger changes if the extents of the brush have actually changed
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
         const { updateId } = this.state;
@@ -1816,14 +1817,6 @@ export const generateCategoricalChart = ({
       return tooltipItem;
     };
 
-    renderBrush = (element: React.ReactElement) => {
-      // TODO: update brush when children update
-      return cloneElement(element, {
-        key: element.key || '_recharts-brush',
-        onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
-      });
-    };
-
     static renderActiveDot = (option: any, props: any): React.ReactElement => {
       let dot;
 
@@ -2076,7 +2069,7 @@ export const generateCategoricalChart = ({
       ReferenceDot: { handler: renderAsIs },
       XAxis: { handler: renderAsIs },
       YAxis: { handler: renderAsIs },
-      Brush: { handler: this.renderBrush, once: true },
+      Brush: { handler: renderAsIs },
       Bar: { handler: this.renderGraphicChild },
       Line: { handler: this.renderGraphicChild },
       Area: { handler: this.renderGraphicChild },
@@ -2140,37 +2133,39 @@ export const generateCategoricalChart = ({
       return (
         <ChartDataContextProvider value={this.props.data}>
           <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-            <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-              <ChartLayoutContextProvider
-                state={this.state}
-                width={this.props.width}
-                height={this.props.height}
-                clipPathId={this.clipPathId}
-                margin={this.props.margin}
-              >
-                <div
-                  className={clsx('recharts-wrapper', className)}
-                  style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                  {...events}
-                  ref={(node: HTMLDivElement) => {
-                    this.container = node;
-                  }}
+            <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+              <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+                <ChartLayoutContextProvider
+                  state={this.state}
+                  width={this.props.width}
+                  height={this.props.height}
+                  clipPathId={this.clipPathId}
+                  margin={this.props.margin}
                 >
-                  <Surface
-                    {...attrs}
-                    width={width}
-                    height={height}
-                    title={title}
-                    desc={desc}
-                    style={FULL_WIDTH_AND_HEIGHT}
+                  <div
+                    className={clsx('recharts-wrapper', className)}
+                    style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                    {...events}
+                    ref={(node: HTMLDivElement) => {
+                      this.container = node;
+                    }}
                   >
-                    {this.renderClipPath()}
-                    {renderByOrder(children, this.renderMap)}
-                  </Surface>
-                  {this.renderTooltip()}
-                </div>
-              </ChartLayoutContextProvider>
-            </AccessibilityContextProvider>
+                    <Surface
+                      {...attrs}
+                      width={width}
+                      height={height}
+                      title={title}
+                      desc={desc}
+                      style={FULL_WIDTH_AND_HEIGHT}
+                    >
+                      {this.renderClipPath()}
+                      {renderByOrder(children, this.renderMap)}
+                    </Surface>
+                    {this.renderTooltip()}
+                  </div>
+                </ChartLayoutContextProvider>
+              </AccessibilityContextProvider>
+            </BrushUpdateDispatchContext.Provider>
           </LegendBoundingBoxContext.Provider>
         </ChartDataContextProvider>
       );
