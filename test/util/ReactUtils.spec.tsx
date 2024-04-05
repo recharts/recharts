@@ -11,7 +11,6 @@ import {
   isValidSpreadableProp,
   toArray,
   validateWidthHeight,
-  withoutType,
 } from '../../src/util/ReactUtils';
 import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 
@@ -164,21 +163,6 @@ describe('ReactUtils untest tests', () => {
     test('validateWidthHeight return false when input is not a react element', () => {
       expect(validateWidthHeight({ a: 1 })).toEqual(false);
       expect(validateWidthHeight(vi.fn())).toEqual(false);
-    });
-  });
-
-  describe('withoutType', () => {
-    test('withoutType return children except specified type', () => {
-      const children = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <Bar dataKey="c" />
-        </>,
-      ];
-
-      expect(withoutType(children, Bar.displayName).length).toEqual(2);
-      expect(withoutType(children, [Bar.displayName, Line.displayName]).length).toEqual(0);
     });
   });
 
