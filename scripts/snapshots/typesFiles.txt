@@ -64,6 +64,8 @@
   "types/context/legendPayloadContext.d.ts",
   "types/context/legendBoundingBoxContext.d.ts",
   "types/context/chartLayoutContext.d.ts",
+  "types/context/chartDataContext.d.ts",
+  "types/context/brushUpdateContext.d.ts",
   "types/context/accessibilityContext.d.ts",
   "types/container/Surface.d.ts",
   "types/container/Layer.d.ts",

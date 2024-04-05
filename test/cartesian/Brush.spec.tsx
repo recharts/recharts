@@ -128,7 +128,11 @@ describe('<Brush />', () => {
   });
 
   test("Don't render any travellers or slide when data is empty in simple Brush", () => {
-    const { container } = render(<Brush x={100} y={50} width={400} height={40} data={[]} />);
+    const { container } = render(
+      <BarChart width={400} height={100} data={[]}>
+        <Brush x={100} y={50} width={400} height={40} />
+      </BarChart>,
+    );
     expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(0);
     expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(0);
   });
@@ -195,7 +199,7 @@ describe('<Brush />', () => {
   test('render text when alwaysShowText is true', () => {
     const { container } = render(
       <BarChart width={500} height={100} data={data}>
-        <Brush x={100} y={50} width={400} height={40} data={data} alwaysShowText />
+        <Brush x={100} y={50} width={400} height={40} alwaysShowText />
       </BarChart>,
     );
 

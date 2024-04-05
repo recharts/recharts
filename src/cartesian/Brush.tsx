@@ -2,7 +2,17 @@
  * After we refactor classes to functional components, we can remove this eslint-disable
  */
 /* eslint-disable max-classes-per-file */
-import React, { Children, PureComponent, ReactElement, ReactText, SVGAttributes, SVGProps, TouchEvent } from 'react';
+import React, {
+  Children,
+  PureComponent,
+  ReactElement,
+  ReactText,
+  SVGAttributes,
+  SVGProps,
+  TouchEvent,
+  useCallback,
+  useContext,
+} from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
@@ -14,26 +24,19 @@ import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { useMargin, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { useChartData, useDataIndex } from '../context/chartDataContext';
+import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
 type BrushTickFormatter = (value: any, index: number) => ReactText;
 
-interface BrushStartEndIndex {
-  startIndex?: number;
-  endIndex?: number;
-}
-
-interface InternalBrushProps {
+interface BrushProps {
   x?: number;
   y?: number;
   width?: number;
-  data?: any[];
-  updateId?: string | number;
-}
-
-interface BrushProps extends InternalBrushProps {
   className?: string;
 
   ariaLabel?: string;
@@ -51,15 +54,24 @@ interface BrushProps extends InternalBrushProps {
 
   children?: ReactElement;
 
-  onChange?: (newIndex: BrushStartEndIndex) => void;
-  onDragEnd?: (newIndex: BrushStartEndIndex) => void;
+  onChange?: OnBrushUpdate;
+  onDragEnd?: OnBrushUpdate;
   leaveTimeOut?: number;
   alwaysShowText?: boolean;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
-type PropertiesFromContext = {};
+type PropertiesFromContext = {
+  x: number;
+  y: number;
+  width: number;
+  data: any[];
+  startIndex: number;
+  endIndex: number;
+  updateId: string;
+  onChange: OnBrushUpdate;
+};
 
 type BrushTravellerId = 'startX' | 'endX';
 
@@ -200,7 +212,7 @@ function getIndex({
   scaleValues: number[];
   gap: number;
   data: any[];
-}) {
+}): BrushStartEndIndex {
   const lastIndex = data.length - 1;
   const min = Math.min(startX, endX);
   const max = Math.max(startX, endX);
@@ -819,8 +831,32 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 }
 
 function BrushInternal(props: Props) {
+  const offset = useOffset();
+  const margin = useMargin();
+  const chartData = useChartData();
+  const { startIndex, endIndex } = useDataIndex();
+  const updateId = useUpdateId();
+  const onChangeFromContext = useContext(BrushUpdateDispatchContext);
+  const onChangeFromProps = props.onChange;
+  const onChange = useCallback(
+    (nextState: BrushStartEndIndex) => {
+      onChangeFromContext?.(nextState);
+      onChangeFromProps?.(nextState);
+    },
+    [onChangeFromProps, onChangeFromContext],
+  );
+  const contextProperties: PropertiesFromContext = {
+    data: chartData,
+    x: isNumber(props.x) ? props.x : offset.left,
+    y: isNumber(props.y) ? props.y : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
+    width: isNumber(props.width) ? props.width : offset.width,
+    startIndex,
+    endIndex,
+    updateId,
+    onChange,
+  };
   // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
-  return <BrushWithState {...props} />;
+  return <BrushWithState {...props} {...contextProperties} />;
 }
 
 export class Brush extends PureComponent<Props, State> {

@@ -64,6 +64,8 @@
   "es6/context/legendPayloadContext.js",
   "es6/context/legendBoundingBoxContext.js",
   "es6/context/chartLayoutContext.js",
+  "es6/context/chartDataContext.js",
+  "es6/context/brushUpdateContext.js",
   "es6/context/accessibilityContext.js",
   "es6/container/Surface.js",
   "es6/container/Layer.js",
