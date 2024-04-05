@@ -44,23 +44,8 @@ export const SCALE_TYPES = [
   'threshold',
 ];
 
-export const LEGEND_TYPES = [
-  'plainline',
-  'line',
-  'square',
-  'rect',
-  'circle',
-  'cross',
-  'diamond',
-  'star',
-  'triangle',
-  'wye',
-  'none',
-];
-
-export const TOOLTIP_TYPES = ['none'];
-
 /**
+ * @deprecated instead find another approach that does not depend on displayName.
  * Get the display name of a component
  * @param  {Object} Comp Specified Component
  * @return {String}      Display name of Component
@@ -80,6 +65,12 @@ export const getDisplayName = (Comp: React.ComponentType | string) => {
 let lastChildren: ReactNode | null = null;
 let lastResult: ReactNode[] | null = null;
 
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
+ * @param children do not use
+ * @return deprecated do not use
+ */
 export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   if (children === lastChildren && Array.isArray(lastResult)) {
     return lastResult as T[];
@@ -98,9 +89,15 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   return result;
 };
 
-/*
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
  * Find and return all matched children by type.
  * `type` must be a React.ComponentType
+ *
+ * @param children do not use
+ * @param type do not use
+ * @return deprecated do not use
  */
 export function findAllByType<
   ComponentType extends React.ComponentType,
@@ -125,9 +122,15 @@ export function findAllByType<
   return result;
 }
 
-/*
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
  * Return the first matched child by type, return null otherwise.
  * `type` must be a React.ComponentType
+ *
+ * @param children do not use
+ * @param type do not use
+ * @return deprecated do not use
  */
 export function findChildByType<ComponentType extends React.ComponentType>(
   children: ReactNode[],
@@ -137,31 +140,6 @@ export function findChildByType<ComponentType extends React.ComponentType>(
 
   return result && result[0];
 }
-
-/*
- * Create a new array of children excluding the ones matched the type
- */
-export const withoutType = (children: ReactNode, type: string | string[]) => {
-  const newChildren: ReactNode[] = [];
-  let types: string[];
-
-  if (Array.isArray(type)) {
-    types = type.map(t => getDisplayName(t));
-  } else {
-    types = [getDisplayName(type)];
-  }
-
-  toArray(children).forEach(child => {
-    const displayName = get(child, 'type.displayName');
-
-    if (displayName && types.indexOf(displayName) !== -1) {
-      return;
-    }
-    newChildren.push(child);
-  });
-
-  return newChildren;
-};
 
 /**
  * validate the width and height props of a chart element
@@ -263,6 +241,12 @@ const SVG_TAGS: string[] = [
   'vkern',
 ];
 
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
+ * @param child do not use
+ * @return deprecated do not use
+ */
 const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
 export const isDotProps = (dot: ActiveDotType): dot is DotProps =>
@@ -334,6 +318,7 @@ export const filterProps = (
 };
 
 /**
+ * @deprecated instead find another approach that does not require comparing React Elements.
  * Wether props of children changed
  * @param  {Object} nextChildren The latest children
  * @param  {Object} prevChildren The prev children
@@ -377,7 +362,13 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
   return true;
 };
 
-export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
+/**
+ * @deprecated instead find another approach that does not require comparing React Elements.
+ * @param nextChild do not use
+ * @param prevChild do not use
+ * @return deprecated do not use
+ */
+const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
   if (isNil(nextChild) && isNil(prevChild)) {
     return true;
   }
@@ -398,6 +389,13 @@ export const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: Rea
   return false;
 };
 
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
+ * @param children do not use
+ * @param renderMap do not use
+ * @return deprecated do not use
+ */
 export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
   const elements: React.ReactElement[] = [];
   const record: Record<string, boolean> = {};
@@ -431,6 +429,13 @@ export const getReactEventByType = (e: { type?: string }): string => {
   return null;
 };
 
+/**
+ * @deprecated instead find another approach that does not require reading React Elements from DOM.
+ *
+ * @param child do not use
+ * @param children do not use
+ * @return deprecated do not use
+ */
 export const parseChildIndex = (child: any, children: any[]) => {
   return toArray(children).indexOf(child);
 };
