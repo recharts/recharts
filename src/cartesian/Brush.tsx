@@ -14,6 +14,7 @@ import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { useMargin, useOffset } from '../context/chartLayoutContext';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -59,7 +60,11 @@ interface BrushProps extends InternalBrushProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
 
-type PropertiesFromContext = {};
+type PropertiesFromContext = {
+  x: number;
+  y: number;
+  width: number;
+};
 
 type BrushTravellerId = 'startX' | 'endX';
 
@@ -819,8 +824,15 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 }
 
 function BrushInternal(props: Props) {
+  const offset = useOffset();
+  const margin = useMargin();
+  const contextProperties: PropertiesFromContext = {
+    x: isNumber(props.x) ? props.x : offset.left,
+    y: isNumber(props.y) ? props.y : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
+    width: isNumber(props.width) ? props.width : offset.width,
+  };
   // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
-  return <BrushWithState {...props} />;
+  return <BrushWithState {...props} {...contextProperties} />;
 }
 
 export class Brush extends PureComponent<Props, State> {

@@ -1816,19 +1816,14 @@ export const generateCategoricalChart = ({
     };
 
     renderBrush = (element: React.ReactElement) => {
-      const { margin, data } = this.props;
-      const { offset, dataStartIndex, dataEndIndex, updateId } = this.state;
+      const { data } = this.props;
+      const { dataStartIndex, dataEndIndex, updateId } = this.state;
 
       // TODO: update brush when children update
       return cloneElement(element, {
         key: element.key || '_recharts-brush',
         onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
         data,
-        x: isNumber(element.props.x) ? element.props.x : offset.left,
-        y: isNumber(element.props.y)
-          ? element.props.y
-          : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: isNumber(element.props.width) ? element.props.width : offset.width,
         startIndex: dataStartIndex,
         endIndex: dataEndIndex,
         updateId: `brush-${updateId}`,
