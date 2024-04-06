@@ -1,15 +1,15 @@
 import React, { cloneElement, isValidElement } from 'react';
 import isFunction from 'lodash/isFunction';
 import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
-import { getMainColorOfGraphicItem } from '../util/ChartUtils';
 import { filterProps } from '../util/ReactUtils';
-import { Dot } from '../shape/Dot';
+import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 
-const renderActiveDot = (option: any, props: any): React.ReactElement => {
+const renderActiveDot = (option: ActiveDotType, props: DotProps): React.ReactElement => {
   let dot;
 
   if (isValidElement(option)) {
+    // @ts-expect-error element cloning does not have types
     dot = cloneElement(option, props);
   } else if (isFunction(option)) {
     dot = option(props);
@@ -30,13 +30,13 @@ export const renderActivePoints = ({
   basePoint,
   childIndex,
   isRange,
+  mainColor,
 }: {
   // The graphical item, for example Area or Bar.
   item: {
     props: { key: string };
     item: {
-      type: { displayName: string };
-      props: { hide: boolean; activeDot: ActiveDotType; dataKey: DataKey<any>; stroke: string; fill: string };
+      props: { hide: boolean; activeDot: ActiveDotType; dataKey: DataKey<any> };
     };
   };
   // found in points array
@@ -45,6 +45,11 @@ export const renderActivePoints = ({
   basePoint: any;
   childIndex: number;
   isRange: boolean;
+  /**
+   * Different graphical elements have different opinion on what is their main color.
+   * Sometimes stroke, sometimes fill, sometimes combination.
+   */
+  mainColor: string;
 }) => {
   const { activeDot, dataKey } = item.item.props;
   const result = [];
@@ -57,7 +62,7 @@ export const renderActivePoints = ({
     cx: activePoint.x,
     cy: activePoint.y,
     r: 4,
-    fill: getMainColorOfGraphicItem(item.item),
+    fill: mainColor,
     strokeWidth: 2,
     stroke: '#fff',
     payload: activePoint.payload,

@@ -42,6 +42,7 @@ import {
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
+  getMainColorOfGraphicItem,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
   getTicksOfAxis,
@@ -1872,6 +1873,7 @@ export const generateCategoricalChart = ({
                 basePoint,
                 childIndex: activeTooltipIndex,
                 isRange,
+                mainColor: getMainColorOfGraphicItem(item.item),
               }),
             ];
           }
