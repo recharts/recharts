@@ -69,6 +69,7 @@
   "types/context/accessibilityContext.d.ts",
   "types/container/Surface.d.ts",
   "types/container/Layer.d.ts",
+  "types/container/ClipPath.d.ts",
   "types/component/TooltipBoundingBox.d.ts",
   "types/component/Tooltip.d.ts",
   "types/component/Text.d.ts",
