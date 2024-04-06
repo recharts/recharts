@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, ReactElement } from 'react';
+import React, { Component, cloneElement, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -11,10 +11,8 @@ import clsx from 'clsx';
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
 import { Surface } from '../container/Surface';
-import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
-import { Dot } from '../shape/Dot';
 import { isInRectangle } from '../shape/Rectangle';
 
 import {
@@ -44,7 +42,6 @@ import {
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
-  getMainColorOfGraphicItem,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
   getTicksOfAxis,
@@ -60,7 +57,6 @@ import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
-  ActiveDotType,
   adaptEventHandlers,
   AxisType,
   BaseAxisProps,
@@ -94,6 +90,7 @@ import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
+import { renderActivePoints } from '../component/ActivePoints';
 
 export interface MousePointer {
   pageX: number;
@@ -1811,85 +1808,6 @@ export const generateCategoricalChart = ({
       return tooltipItem;
     };
 
-    static renderActiveDot = (option: any, props: any): React.ReactElement => {
-      let dot;
-
-      if (isValidElement(option)) {
-        dot = cloneElement(option, props);
-      } else if (isFunction(option)) {
-        dot = option(props);
-      } else {
-        dot = <Dot {...props} />;
-      }
-
-      return (
-        <Layer className="recharts-active-dot" key={props.key}>
-          {dot}
-        </Layer>
-      );
-    };
-
-    renderActivePoints = ({
-      item,
-      activePoint,
-      basePoint,
-      childIndex,
-      isRange,
-    }: {
-      // The graphical item, for example Area or Bar.
-      item: {
-        props: { key: string };
-        item: {
-          type: { displayName: string };
-          props: { activeDot: ActiveDotType; dataKey: DataKey<any>; stroke: string; fill: string };
-        };
-      };
-      // found in points array
-      activePoint: any;
-
-      basePoint: any;
-      childIndex: number;
-      isRange: boolean;
-    }) => {
-      const result = [];
-      // item.props is whatever getComposedData returns
-      const { key } = item.props;
-      // item.item.props are the original props on the DOM element
-      const { activeDot, dataKey } = item.item.props;
-      const dotProps = {
-        index: childIndex,
-        dataKey,
-        cx: activePoint.x,
-        cy: activePoint.y,
-        r: 4,
-        fill: getMainColorOfGraphicItem(item.item),
-        strokeWidth: 2,
-        stroke: '#fff',
-        payload: activePoint.payload,
-        value: activePoint.value,
-        key: `${key}-activePoint-${childIndex}`,
-        ...filterProps(activeDot, false),
-        ...adaptEventHandlers(activeDot),
-      };
-
-      result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps));
-
-      if (basePoint) {
-        result.push(
-          CategoricalChartWrapper.renderActiveDot(activeDot, {
-            ...dotProps,
-            cx: basePoint.x,
-            cy: basePoint.y,
-            key: `${key}-basePoint-${childIndex}`,
-          }),
-        );
-      } else if (isRange) {
-        result.push(null);
-      }
-
-      return result;
-    };
-
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
@@ -1948,7 +1866,7 @@ export const generateCategoricalChart = ({
           if (!isNil(activePoint)) {
             return [
               graphicalItem,
-              ...this.renderActivePoints({
+              renderActivePoints({
                 item,
                 activePoint,
                 basePoint,

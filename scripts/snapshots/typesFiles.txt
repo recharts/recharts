@@ -82,6 +82,7 @@
   "types/component/Customized.d.ts",
   "types/component/Cursor.d.ts",
   "types/component/Cell.d.ts",
+  "types/component/ActivePoints.d.ts",
   "types/chart/types.d.ts",
   "types/chart/generateCategoricalChart.d.ts",
   "types/chart/Treemap.d.ts",

@@ -82,6 +82,7 @@
   "lib/component/Customized.js",
   "lib/component/Cursor.js",
   "lib/component/Cell.js",
+  "lib/component/ActivePoints.js",
   "lib/chart/types.js",
   "lib/chart/generateCategoricalChart.js",
   "lib/chart/Treemap.js",
