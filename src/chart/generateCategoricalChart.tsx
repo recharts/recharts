@@ -1781,25 +1781,18 @@ export const generateCategoricalChart = ({
     }
 
     renderCursor = (element: ReactElement) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
-        this.state;
+      const { tooltipAxisBandSize } = this.state;
       const tooltipEventType = this.getTooltipEventType();
-      // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
-      const isActive: boolean = element.props.active ?? isTooltipActive;
+
       const { layout } = this.props;
       const key = element.key || '_recharts-cursor';
 
       return (
         <Cursor
           key={key}
-          activeCoordinate={activeCoordinate}
-          activePayload={activePayload}
-          activeTooltipIndex={activeTooltipIndex}
           chartName={chartName}
           element={element}
-          isActive={isActive}
           layout={layout}
-          offset={offset}
           tooltipAxisBandSize={tooltipAxisBandSize}
           tooltipEventType={tooltipEventType}
         />

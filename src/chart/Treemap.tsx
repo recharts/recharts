@@ -715,6 +715,7 @@ export class Treemap extends PureComponent<Props, State> {
       coordinate,
       label: '',
       payload,
+      index: 0,
     };
   }
 
