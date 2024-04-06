@@ -85,7 +85,7 @@ export const Dashed = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip defaultIndex={3} active />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
@@ -114,7 +114,7 @@ export const Vertical = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
-          <Tooltip />
+          <Tooltip defaultIndex={4} active />
           <Legend />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />

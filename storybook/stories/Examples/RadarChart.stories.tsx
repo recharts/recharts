@@ -91,7 +91,7 @@ export const RadarWithLegend: StoryObj = {
       <RadarChart data={data} width={360} height={360}>
         <PolarGrid gridType="circle" />
         <Legend />
-        <Tooltip />
+        <Tooltip defaultIndex={2} />
         <PolarRadiusAxis type="number" dataKey="r" />
 
         <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
