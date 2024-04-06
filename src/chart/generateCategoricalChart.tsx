@@ -93,6 +93,7 @@ import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
+import { ClipPath } from '../container/ClipPath';
 
 export interface MousePointer {
   pageX: number;
@@ -1995,21 +1996,6 @@ export const generateCategoricalChart = ({
         ...this.state,
       });
 
-    renderClipPath() {
-      const { clipPathId } = this;
-      const {
-        offset: { left, top, height, width },
-      } = this.state;
-
-      return (
-        <defs>
-          <clipPath id={clipPathId}>
-            <rect x={left} y={top} height={height} width={width} />
-          </clipPath>
-        </defs>
-      );
-    }
-
     public getItemByXY(chartXY: { x: number; y: number }) {
       const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
@@ -2105,7 +2091,7 @@ export const generateCategoricalChart = ({
             margin={this.props.margin}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-              {this.renderClipPath()}
+              <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
               {renderByOrder(children, this.renderMap)}
             </Surface>
           </ChartLayoutContextProvider>
@@ -2158,7 +2144,7 @@ export const generateCategoricalChart = ({
                       desc={desc}
                       style={FULL_WIDTH_AND_HEIGHT}
                     >
-                      {this.renderClipPath()}
+                      <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
                       {renderByOrder(children, this.renderMap)}
                     </Surface>
                     {this.renderTooltip()}
