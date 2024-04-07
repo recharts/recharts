@@ -69,6 +69,7 @@
   "lib/context/accessibilityContext.js",
   "lib/container/Surface.js",
   "lib/container/Layer.js",
+  "lib/container/ClipPath.js",
   "lib/component/TooltipBoundingBox.js",
   "lib/component/Tooltip.js",
   "lib/component/Text.js",
