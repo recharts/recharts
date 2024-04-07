@@ -1872,7 +1872,6 @@ export const generateCategoricalChart = ({
                 activePoint,
                 basePoint,
                 childIndex: activeTooltipIndex,
-                isRange,
                 mainColor: getMainColorOfGraphicItem(item.item),
               }),
             ];

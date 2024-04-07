@@ -29,7 +29,6 @@ export const renderActivePoints = ({
   activePoint,
   basePoint,
   childIndex,
-  isRange,
   mainColor,
 }: {
   // The graphical item, for example Area or Bar.
@@ -44,7 +43,6 @@ export const renderActivePoints = ({
 
   basePoint: any;
   childIndex: number;
-  isRange: boolean;
   /**
    * Different graphical elements have different opinion on what is their main color.
    * Sometimes stroke, sometimes fill, sometimes combination.
@@ -83,8 +81,6 @@ export const renderActivePoints = ({
         key: `${key}-basePoint-${childIndex}`,
       }),
     );
-  } else if (isRange) {
-    result.push(null);
   }
 
   return result;
