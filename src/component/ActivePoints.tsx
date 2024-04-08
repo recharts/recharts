@@ -92,7 +92,6 @@ const renderActivePoints = ({
 };
 
 type ActivePointsProps = {
-  hide: boolean;
   points: ReadonlyArray<PointType>;
   isRange: boolean;
   baseLine: number | Coordinate[];
@@ -105,18 +104,10 @@ type ActivePointsProps = {
   activeDot: ActiveDotType;
 };
 
-export function ActivePoints({
-  hide,
-  points,
-  isRange,
-  baseLine,
-  mainColor,
-  activeDot,
-  itemDataKey,
-}: ActivePointsProps) {
+export function ActivePoints({ points, isRange, baseLine, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
   const tooltipAxis = useTooltipAxis();
   const { active: isTooltipActive, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
-  const hasActive = Boolean(!hide && isTooltipActive);
+  const hasActive = Boolean(isTooltipActive);
 
   if (!hasActive) {
     return null;

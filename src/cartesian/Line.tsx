@@ -558,7 +558,6 @@ export class Line extends PureComponent<Props, State> {
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
-          hide={hide}
           activeDot={this.props.activeDot}
           points={points}
           isRange={false}

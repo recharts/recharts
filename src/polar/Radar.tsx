@@ -392,7 +392,6 @@ export class Radar extends PureComponent<Props, State> {
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
-          hide={hide}
           points={points}
           isRange={false}
           baseLine={0}
