@@ -218,10 +218,12 @@ export type BarSetup = {
  */
 export const getBarSizeList = ({
   barSize: globalSize,
+  totalSize,
   stackGroups = {},
 }: {
   barSize: number | string;
   stackGroups: AxisStackGroups;
+  totalSize: number;
 }): Record<string, ReadonlyArray<BarSetup>> => {
   if (!stackGroups) {
     return {};
@@ -247,10 +249,12 @@ export const getBarSizeList = ({
           result[cateId] = [];
         }
 
+        const barSize: string | number | undefined = isNil(selfSize) ? globalSize : selfSize;
+
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(barSize) ? undefined : getPercentValue(barSize, totalSize, 0),
         });
       }
     }

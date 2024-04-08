@@ -151,7 +151,7 @@ toggling between multiple dataKey.`,
       will be calculated by the barCategoryGap, barGap and the quantity of bar groups.`,
     table: {
       type: {
-        summary: 'number',
+        summary: 'number | Percentage',
       },
       category: 'Bar',
     },
