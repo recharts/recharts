@@ -1,6 +1,3 @@
-/**
- * @fileOverview Radar
- */
 import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import isNil from 'lodash/isNil';
@@ -24,6 +21,7 @@ import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
 import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { ActivePoints } from '../component/ActivePoints';
 
 interface RadarPoint {
   x: number;
@@ -387,11 +385,22 @@ export class Radar extends PureComponent<Props, State> {
     const layerClass = clsx('recharts-radar', className);
 
     return (
-      <Layer className={layerClass}>
-        <SetRadarPayloadLegend {...this.props} />
-        {this.renderPolygon()}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-      </Layer>
+      <>
+        <Layer className={layerClass}>
+          <SetRadarPayloadLegend {...this.props} />
+          {this.renderPolygon()}
+          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+        </Layer>
+        <ActivePoints
+          hide={hide}
+          points={points}
+          isRange={false}
+          baseLine={0}
+          mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
+          itemDataKey={this.props.dataKey}
+          activeDot={this.props.activeDot}
+        />
+      </>
     );
   }
 }

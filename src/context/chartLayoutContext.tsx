@@ -329,12 +329,20 @@ export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
 
 export const useChartLayout = () => useContext(LayoutContext);
 
-export const useCartesianTooltipAxis = () => {
+export const useTooltipAxis = () => {
   const layout = useChartLayout();
   const xAxis = useArbitraryXAxis();
   const yAxis = useArbitraryYAxis();
+  const angleAxis = useArbitraryPolarAngleAxis();
+  const radiusAxis = useArbitraryPolarRadiusAxis();
   if (layout === 'horizontal') {
     return xAxis;
   }
-  return yAxis;
+  if (layout === 'vertical') {
+    return yAxis;
+  }
+  if (layout === 'centric') {
+    return angleAxis;
+  }
+  return radiusAxis;
 };

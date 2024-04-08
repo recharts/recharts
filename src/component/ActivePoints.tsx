@@ -4,7 +4,7 @@ import { ActiveDotType, adaptEventHandlers, Coordinate, DataKey } from '../util/
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { useCartesianTooltipAxis } from '../context/chartLayoutContext';
+import { useTooltipAxis } from '../context/chartLayoutContext';
 import { useTooltipContext } from '../context/tooltipContext';
 import { findEntryInArray } from '../util/DataUtils';
 import isNil from 'lodash/isNil';
@@ -92,7 +92,7 @@ export const renderActivePoints = ({
 };
 
 type ActivePointsProps = {
-  hide?: boolean;
+  hide: boolean;
   points: ReadonlyArray<PointType>;
   isRange: boolean;
   baseLine: number | Coordinate[];
@@ -114,7 +114,7 @@ export function ActivePoints({
   activeDot,
   itemDataKey,
 }: ActivePointsProps) {
-  const tooltipAxis = useCartesianTooltipAxis();
+  const tooltipAxis = useTooltipAxis();
   const { active: isTooltipActive, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
   const hasActive = Boolean(!hide && isTooltipActive);
 
