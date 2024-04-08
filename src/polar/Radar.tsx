@@ -393,8 +393,6 @@ export class Radar extends PureComponent<Props, State> {
         </Layer>
         <ActivePoints
           points={points}
-          isRange={false}
-          baseLine={0}
           mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}

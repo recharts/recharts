@@ -37,17 +37,14 @@ export interface PointType {
 
 const renderActivePoints = ({
   activePoint,
-  basePoint,
   childIndex,
   mainColor,
   activeDot,
   dataKey,
-  keyPrefix,
 }: {
   // found in points array
   activePoint: PointType;
   activeDot: ActiveDotType;
-  basePoint: PointType;
   childIndex: number;
   dataKey: DataKey<any>;
   /**
@@ -55,7 +52,6 @@ const renderActivePoints = ({
    * Sometimes stroke, sometimes fill, sometimes combination.
    */
   mainColor: string;
-  keyPrefix: string;
 }) => {
   const result = [];
   const dotProps: DotProps = {
@@ -70,31 +66,17 @@ const renderActivePoints = ({
     stroke: '#fff',
     payload: activePoint.payload,
     value: activePoint.value,
-    key: `${keyPrefix}-activePoint-${childIndex}`,
     ...filterProps(activeDot, false),
     ...adaptEventHandlers(activeDot),
   };
 
   result.push(renderActiveDot(activeDot, dotProps));
 
-  if (basePoint) {
-    result.push(
-      renderActiveDot(activeDot, {
-        ...dotProps,
-        cx: basePoint.x,
-        cy: basePoint.y,
-        key: `${keyPrefix}-basePoint-${childIndex}`,
-      }),
-    );
-  }
-
   return result;
 };
 
 type ActivePointsProps = {
   points: ReadonlyArray<PointType>;
-  isRange: boolean;
-  baseLine: number | Coordinate[];
   /**
    * Different graphical elements have different opinion on what is their main color.
    * Sometimes stroke, sometimes fill, sometimes combination.
@@ -104,7 +86,7 @@ type ActivePointsProps = {
   activeDot: ActiveDotType;
 };
 
-export function ActivePoints({ points, isRange, baseLine, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
+export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
   const tooltipAxis = useTooltipAxis();
   const { active: isTooltipActive, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
   const hasActive = Boolean(isTooltipActive);
@@ -122,23 +104,17 @@ export function ActivePoints({ points, isRange, baseLine, mainColor, activeDot, 
         ? (point: PointType) => tooltipAxisDataKey(point.payload)
         : `payload.${tooltipAxisDataKey}`;
     activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-    // @ts-expect-error doesn't handle the case where baseLine is number
-    basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
   } else {
     activePoint = points?.[activeTooltipIndex];
-    // @ts-expect-error doesn't handle the case where baseLine is number
-    basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
   }
 
   if (!isNil(activePoint)) {
     return renderActivePoints({
       activePoint,
-      basePoint,
       childIndex: activeTooltipIndex,
       mainColor,
       dataKey: itemDataKey,
       activeDot,
-      keyPrefix: '',
     });
   }
 

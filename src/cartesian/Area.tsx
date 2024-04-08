@@ -48,7 +48,7 @@ interface InternalAreaProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: ReadonlyArray<AreaPointItem>;
+  points?: AreaPointItem[];
   baseLine?: number | Coordinate[];
 }
 
@@ -505,7 +505,7 @@ export class Area extends PureComponent<Props, State> {
         {({ t }: { t: number }) => {
           if (prevPoints) {
             const prevPointsDiffFactor = prevPoints.length / points.length;
-            // update animtaion
+            // update animation
             const stepPoints = points.map((entry, index) => {
               const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
               if (prevPoints[prevPointIndex]) {
@@ -576,7 +576,8 @@ export class Area extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, dot, points, className, top, left, xAxis, yAxis, width, height, isAnimationActive, id } = this.props;
+    const { hide, dot, points, className, top, left, xAxis, yAxis, width, height, isAnimationActive, id, baseLine } =
+      this.props;
 
     if (hide || !points || !points.length) {
       return <SetAreaLegend {...this.props} />;
@@ -625,12 +626,18 @@ export class Area extends PureComponent<Props, State> {
         </Layer>
         <ActivePoints
           points={points}
-          isRange={this.props.isRange}
-          baseLine={this.props.baseLine}
           mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
           itemDataKey={this.props.dataKey}
           activeDot={this.props.activeDot}
         />
+        {this.props.isRange && Array.isArray(baseLine) && (
+          <ActivePoints
+            points={baseLine}
+            mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
+            itemDataKey={this.props.dataKey}
+            activeDot={this.props.activeDot}
+          />
+        )}
       </>
     );
   }

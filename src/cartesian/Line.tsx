@@ -46,7 +46,7 @@ interface InternalLineProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: ReadonlyArray<LinePointItem>;
+  points?: LinePointItem[];
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 }
@@ -560,8 +560,6 @@ export class Line extends PureComponent<Props, State> {
         <ActivePoints
           activeDot={this.props.activeDot}
           points={points}
-          isRange={false}
-          baseLine={0}
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
         />
