@@ -69,7 +69,7 @@ export interface BarProps extends InternalBarProps {
   xAxisId?: string | number;
   yAxisId?: string | number;
   stackId?: string | number;
-  barSize?: number;
+  barSize?: string | number;
   unit?: string | number;
   name?: string | number;
   dataKey: DataKey<any>;

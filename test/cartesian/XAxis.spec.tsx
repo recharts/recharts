@@ -157,18 +157,54 @@ describe('<XAxis />', () => {
     expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
   });
 
-  it('Render Bars with gap for a single data point', () => {
+  it('Render axis with tick for a single data point', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)}>
         <Bar dataKey="y" isAnimationActive={false} />
-        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} />
         <YAxis dataKey="y" />
       </BarChart>,
     );
 
     const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
     expect(tick).toBeInTheDocument();
+    expect(tick.textContent).toEqual('100');
     expect(tick?.getAttribute('x')).toEqual('180');
+
+    // For a single data point, unless barSize is given, the bar will have no width and thus not be rendered.
+    // This test merely confirms this known limitation.
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(bar).not.toBeInTheDocument();
+  });
+
+  it('Render Bars for a single data point with barSize=50%', () => {
+    const { container } = render(
+      <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="50%">
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={[50, 150]} />
+        <YAxis dataKey="y" />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(bar).toBeInTheDocument();
+    expect(bar?.getAttribute('x')).toEqual('123');
+    expect(bar?.getAttribute('width')).toEqual('115');
+  });
+
+  it('Render Bars for a single data point with barSize=20% and no-gap', () => {
+    const { container } = render(
+      <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="20%">
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={[100, 150]} padding="no-gap" />
+        <YAxis dataKey="y" />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    expect(bar).toBeInTheDocument();
+    expect(bar?.getAttribute('x')).toEqual('42');
+    expect(bar?.getAttribute('width')).toEqual('46');
   });
 
   test('Render no ticks if type is category and data is empty', () => {
