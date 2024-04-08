@@ -34,6 +34,7 @@ import {
 import { filterProps, isDotProps } from '../util/ReactUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { ActivePoints } from '../component/ActivePoints';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -47,7 +48,7 @@ interface InternalAreaProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: AreaPointItem[];
+  points?: ReadonlyArray<AreaPointItem>;
   baseLine?: number | Coordinate[];
 }
 
@@ -593,29 +594,44 @@ export class Area extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <Layer className={layerClass}>
-        <SetAreaLegend {...this.props} />
-        {needClipX || needClipY ? (
-          <defs>
-            <clipPath id={`clipPath-${clipPathId}`}>
-              <rect
-                x={needClipX ? left : left - width / 2}
-                y={needClipY ? top : top - height / 2}
-                width={needClipX ? width : width * 2}
-                height={needClipY ? height : height * 2}
-              />
-            </clipPath>
-            {!clipDot && (
-              <clipPath id={`clipPath-dots-${clipPathId}`}>
-                <rect x={left - dotSize / 2} y={top - dotSize / 2} width={width + dotSize} height={height + dotSize} />
+      <>
+        <Layer className={layerClass}>
+          <SetAreaLegend {...this.props} />
+          {needClipX || needClipY ? (
+            <defs>
+              <clipPath id={`clipPath-${clipPathId}`}>
+                <rect
+                  x={needClipX ? left : left - width / 2}
+                  y={needClipY ? top : top - height / 2}
+                  width={needClipX ? width : width * 2}
+                  height={needClipY ? height : height * 2}
+                />
               </clipPath>
-            )}
-          </defs>
-        ) : null}
-        {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
-        {(dot || hasSinglePoint) && this.renderDots(needClip, clipDot, clipPathId)}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-      </Layer>
+              {!clipDot && (
+                <clipPath id={`clipPath-dots-${clipPathId}`}>
+                  <rect
+                    x={left - dotSize / 2}
+                    y={top - dotSize / 2}
+                    width={width + dotSize}
+                    height={height + dotSize}
+                  />
+                </clipPath>
+              )}
+            </defs>
+          ) : null}
+          {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
+          {(dot || hasSinglePoint) && this.renderDots(needClip, clipDot, clipPathId)}
+          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+        </Layer>
+        <ActivePoints
+          points={points}
+          isRange={this.props.isRange}
+          baseLine={this.props.baseLine}
+          mainColor={getLegendItemColor(this.props.stroke, this.props.fill)}
+          itemDataKey={this.props.dataKey}
+          activeDot={this.props.activeDot}
+        />
+      </>
     );
   }
 }

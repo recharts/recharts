@@ -29,10 +29,10 @@ const renderActiveDot = (option: ActiveDotType, props: DotProps): React.ReactEle
 };
 
 export interface PointType {
-  x: number;
-  y: number;
-  value: any;
-  payload: any;
+  readonly x: number;
+  readonly y: number;
+  readonly value?: any;
+  readonly payload?: any;
 }
 
 export const renderActivePoints = ({
