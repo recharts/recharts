@@ -1,6 +1,6 @@
 import React, { cloneElement, isValidElement } from 'react';
 import isFunction from 'lodash/isFunction';
-import { ActiveDotType, adaptEventHandlers, Coordinate, DataKey } from '../util/types';
+import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -53,7 +53,6 @@ const renderActivePoints = ({
    */
   mainColor: string;
 }) => {
-  const result = [];
   const dotProps: DotProps = {
     // @ts-expect-error Dot does not expect the 'index' prop
     index: childIndex,
@@ -70,9 +69,7 @@ const renderActivePoints = ({
     ...adaptEventHandlers(activeDot),
   };
 
-  result.push(renderActiveDot(activeDot, dotProps));
-
-  return result;
+  return <>{renderActiveDot(activeDot, dotProps)}</>;
 };
 
 type ActivePointsProps = {
@@ -95,7 +92,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     return null;
   }
 
-  let activePoint: PointType, basePoint: PointType;
+  let activePoint: PointType;
 
   const tooltipAxisDataKey = tooltipAxis.dataKey;
   if (tooltipAxisDataKey && !tooltipAxis.allowDuplicatedCategory) {
