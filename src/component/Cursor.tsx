@@ -1,6 +1,6 @@
 import React, { ReactElement, cloneElement, createElement, isValidElement } from 'react';
 import clsx from 'clsx';
-import { ChartCoordinate, ChartOffset, LayoutType, TooltipEventType } from '../util/types';
+import { LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -9,16 +9,13 @@ import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
+import { useTooltipContext } from '../context/tooltipContext';
+import { useOffset } from '../context/chartLayoutContext';
 
 export type CursorProps = {
-  activeCoordinate: ChartCoordinate;
-  activePayload: any[];
-  activeTooltipIndex: number;
   chartName: string;
   element: ReactElement;
-  isActive: boolean;
   layout: LayoutType;
-  offset: ChartOffset;
   tooltipAxisBandSize: number;
   tooltipEventType: TooltipEventType;
 };
@@ -32,18 +29,14 @@ export type CursorProps = {
  * to emphasise which part of the chart does the tooltip refer to.
  */
 export function Cursor(props: CursorProps) {
-  const {
-    element,
-    tooltipEventType,
-    isActive,
-    activeCoordinate,
-    activePayload,
-    offset,
-    activeTooltipIndex,
-    tooltipAxisBandSize,
-    layout,
-    chartName,
-  } = props;
+  const { element, tooltipEventType, tooltipAxisBandSize, layout, chartName } = props;
+  const { active, coordinate, payload, index } = useTooltipContext();
+  const offset = useOffset();
+  // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
+  const isActive: boolean = element.props.active ?? active;
+  const activeCoordinate = coordinate;
+  const activePayload = payload;
+  const activeTooltipIndex = index;
   if (
     !element ||
     !element.props.cursor ||

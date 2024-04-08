@@ -93,6 +93,9 @@ import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
 import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
+import { ChartDataContextProvider } from '../context/chartDataContext';
+import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
+import { ClipPath } from '../container/ClipPath';
 
 export interface MousePointer {
   pageX: number;
@@ -1517,7 +1520,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleBrushChange = ({ startIndex, endIndex }: { startIndex: number; endIndex: number }) => {
+    handleBrushChange = ({ startIndex, endIndex }: BrushStartEndIndex) => {
       // Only trigger changes if the extents of the brush have actually changed
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
         const { updateId } = this.state;
@@ -1795,25 +1798,18 @@ export const generateCategoricalChart = ({
     }
 
     renderCursor = (element: ReactElement) => {
-      const { isTooltipActive, activeCoordinate, activePayload, offset, activeTooltipIndex, tooltipAxisBandSize } =
-        this.state;
+      const { tooltipAxisBandSize } = this.state;
       const tooltipEventType = this.getTooltipEventType();
-      // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
-      const isActive: boolean = element.props.active ?? isTooltipActive;
+
       const { layout } = this.props;
       const key = element.key || '_recharts-cursor';
 
       return (
         <Cursor
           key={key}
-          activeCoordinate={activeCoordinate}
-          activePayload={activePayload}
-          activeTooltipIndex={activeTooltipIndex}
           chartName={chartName}
           element={element}
-          isActive={isActive}
           layout={layout}
-          offset={offset}
           tooltipAxisBandSize={tooltipAxisBandSize}
           tooltipEventType={tooltipEventType}
         />
@@ -1829,26 +1825,6 @@ export const generateCategoricalChart = ({
       const tooltipItem = findChildByType(children, Tooltip);
 
       return tooltipItem;
-    };
-
-    renderBrush = (element: React.ReactElement) => {
-      const { margin, data } = this.props;
-      const { offset, dataStartIndex, dataEndIndex, updateId } = this.state;
-
-      // TODO: update brush when children update
-      return cloneElement(element, {
-        key: element.key || '_recharts-brush',
-        onChange: combineEventHandlers(this.handleBrushChange, element.props.onChange),
-        data,
-        x: isNumber(element.props.x) ? element.props.x : offset.left,
-        y: isNumber(element.props.y)
-          ? element.props.y
-          : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-        width: isNumber(element.props.width) ? element.props.width : offset.width,
-        startIndex: dataStartIndex,
-        endIndex: dataEndIndex,
-        updateId: `brush-${updateId}`,
-      });
     };
 
     static renderActiveDot = (option: any, props: any): React.ReactElement => {
@@ -2029,21 +2005,6 @@ export const generateCategoricalChart = ({
         ...this.state,
       });
 
-    renderClipPath() {
-      const { clipPathId } = this;
-      const {
-        offset: { left, top, height, width },
-      } = this.state;
-
-      return (
-        <defs>
-          <clipPath id={clipPathId}>
-            <rect x={left} y={top} height={height} width={width} />
-          </clipPath>
-        </defs>
-      );
-    }
-
     public getItemByXY(chartXY: { x: number; y: number }) {
       const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
@@ -2103,7 +2064,7 @@ export const generateCategoricalChart = ({
       ReferenceDot: { handler: renderAsIs },
       XAxis: { handler: renderAsIs },
       YAxis: { handler: renderAsIs },
-      Brush: { handler: this.renderBrush, once: true },
+      Brush: { handler: renderAsIs },
       Bar: { handler: this.renderGraphicChild },
       Line: { handler: this.renderGraphicChild },
       Area: { handler: this.renderGraphicChild },
@@ -2139,7 +2100,7 @@ export const generateCategoricalChart = ({
             margin={this.props.margin}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-              {this.renderClipPath()}
+              <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
               {renderByOrder(children, this.renderMap)}
             </Surface>
           </ChartLayoutContextProvider>
@@ -2165,39 +2126,43 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-            <ChartLayoutContextProvider
-              state={this.state}
-              width={this.props.width}
-              height={this.props.height}
-              clipPathId={this.clipPathId}
-              margin={this.props.margin}
-            >
-              <div
-                className={clsx('recharts-wrapper', className)}
-                style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                {...events}
-                ref={(node: HTMLDivElement) => {
-                  this.container = node;
-                }}
-              >
-                <Surface
-                  {...attrs}
-                  width={width}
-                  height={height}
-                  title={title}
-                  desc={desc}
-                  style={FULL_WIDTH_AND_HEIGHT}
+        <ChartDataContextProvider value={this.props.data}>
+          <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+            <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+              <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+                <ChartLayoutContextProvider
+                  state={this.state}
+                  width={this.props.width}
+                  height={this.props.height}
+                  clipPathId={this.clipPathId}
+                  margin={this.props.margin}
                 >
-                  {this.renderClipPath()}
-                  {renderByOrder(children, this.renderMap)}
-                </Surface>
-                {this.renderTooltip()}
-              </div>
-            </ChartLayoutContextProvider>
-          </AccessibilityContextProvider>
-        </LegendBoundingBoxContext.Provider>
+                  <div
+                    className={clsx('recharts-wrapper', className)}
+                    style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                    {...events}
+                    ref={(node: HTMLDivElement) => {
+                      this.container = node;
+                    }}
+                  >
+                    <Surface
+                      {...attrs}
+                      width={width}
+                      height={height}
+                      title={title}
+                      desc={desc}
+                      style={FULL_WIDTH_AND_HEIGHT}
+                    >
+                      <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
+                      {renderByOrder(children, this.renderMap)}
+                    </Surface>
+                    {this.renderTooltip()}
+                  </div>
+                </ChartLayoutContextProvider>
+              </AccessibilityContextProvider>
+            </BrushUpdateDispatchContext.Provider>
+          </LegendBoundingBoxContext.Provider>
+        </ChartDataContextProvider>
       );
     }
   };

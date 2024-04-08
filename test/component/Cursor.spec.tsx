@@ -4,33 +4,40 @@ import { render } from '@testing-library/react';
 import { Cursor, CursorProps } from '../../src/component/Cursor';
 import { Tooltip, TooltipProps } from '../../src/component/Tooltip';
 import { assertNotNull } from '../helper/assertNotNull';
+import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
+import { OffsetContext } from '../../src/context/chartLayoutContext';
 
 function getTooltipElement(props: TooltipProps<any, any>) {
   return <Tooltip {...props} />;
 }
 
 const defaultProps: CursorProps = {
-  activeCoordinate: {
+  chartName: '',
+  element: getTooltipElement({}),
+  layout: 'horizontal',
+  tooltipAxisBandSize: 0,
+  tooltipEventType: 'axis',
+};
+
+const tooltipContext: TooltipContextValue = {
+  label: '',
+  payload: [],
+  coordinate: {
     x: 0,
     y: 0,
   },
-  activePayload: [],
-  activeTooltipIndex: 0,
-  chartName: '',
-  element: getTooltipElement({}),
-  isActive: true,
-  layout: 'horizontal',
-  offset: {},
-  tooltipAxisBandSize: 0,
-  tooltipEventType: 'axis',
+  active: true,
+  index: 0,
 };
 
 describe('Cursor', () => {
   it('should render curve cursor by default', () => {
     const { container } = render(
-      <svg width={100} height={100}>
-        <Cursor {...defaultProps} />
-      </svg>,
+      <TooltipContextProvider value={tooltipContext}>
+        <svg width={100} height={100}>
+          <Cursor {...defaultProps} />
+        </svg>
+      </TooltipContextProvider>,
     );
     const cursor = container.querySelector('.recharts-curve');
     assertNotNull(cursor);
@@ -46,9 +53,11 @@ describe('Cursor', () => {
       element: getTooltipElement({ cursor: <MyCustomCursor /> }),
     };
     const { getByText } = render(
-      <svg width={100} height={100}>
-        <Cursor {...props} />
-      </svg>,
+      <TooltipContextProvider value={tooltipContext}>
+        <svg width={100} height={100}>
+          <Cursor {...props} />
+        </svg>
+      </TooltipContextProvider>,
     );
     expect(getByText('I am a cursor.')).toBeVisible();
   });
@@ -59,9 +68,11 @@ describe('Cursor', () => {
       chartName: 'ScatterChart',
     };
     const { container } = render(
-      <svg width={100} height={100}>
-        <Cursor {...props} />
-      </svg>,
+      <TooltipContextProvider value={tooltipContext}>
+        <svg width={100} height={100}>
+          <Cursor {...props} />
+        </svg>
+      </TooltipContextProvider>,
     );
     const cursor = container.querySelector('.recharts-cross');
     assertNotNull(cursor);
@@ -71,17 +82,17 @@ describe('Cursor', () => {
   it('should render rectangle cursor for bar chart', () => {
     const props: CursorProps = {
       ...defaultProps,
-      offset: {
-        top: 0,
-        height: 2,
-      },
       tooltipAxisBandSize: 1,
       chartName: 'BarChart',
     };
     const { container } = render(
-      <svg width={100} height={100}>
-        <Cursor {...props} />
-      </svg>,
+      <OffsetContext.Provider value={{ top: 0, height: 0 }}>
+        <TooltipContextProvider value={tooltipContext}>
+          <svg width={100} height={100}>
+            <Cursor {...props} />
+          </svg>
+        </TooltipContextProvider>
+      </OffsetContext.Provider>,
     );
     const cursor = container.querySelector('.recharts-rectangle');
     assertNotNull(cursor);
@@ -91,19 +102,24 @@ describe('Cursor', () => {
   it('should render sector cursor for radial layout charts', () => {
     const props: CursorProps = {
       ...defaultProps,
-      activeCoordinate: {
+      layout: 'radial',
+    };
+    const radialTooltipContext: TooltipContextValue = {
+      ...tooltipContext,
+      coordinate: {
         endAngle: 2,
         radius: 1,
         startAngle: 1,
         x: 0,
         y: 0,
       },
-      layout: 'radial',
     };
     const { container } = render(
-      <svg width={100} height={100}>
-        <Cursor {...props} />
-      </svg>,
+      <TooltipContextProvider value={radialTooltipContext}>
+        <svg width={100} height={100}>
+          <Cursor {...props} />
+        </svg>
+      </TooltipContextProvider>,
     );
     const cursor = container.querySelector('.recharts-sector');
     assertNotNull(cursor);

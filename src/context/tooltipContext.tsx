@@ -6,6 +6,7 @@ export type TooltipContextValue = {
   payload: any[];
   coordinate: ChartCoordinate;
   active: boolean;
+  index: number;
 };
 
 export const doNotDisplayTooltip: TooltipContextValue = {
@@ -13,6 +14,7 @@ export const doNotDisplayTooltip: TooltipContextValue = {
   payload: [],
   coordinate: { x: 0, y: 0 },
   active: false,
+  index: 0,
 };
 
 const TooltipContext = createContext<TooltipContextValue>(doNotDisplayTooltip);

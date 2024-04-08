@@ -2,7 +2,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
-import { pageData } from '../data';
+import { pageData, rangeData } from '../data';
 import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area } from '../../../src';
 
 export default {
@@ -56,7 +56,7 @@ export const StackedAreaChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
+          <Tooltip active defaultIndex={2} />
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
@@ -133,7 +133,7 @@ export const PercentAreaChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
           <YAxis tickFormatter={toPercent} />
-          <Tooltip content={renderTooltipContent} />
+          <Tooltip content={renderTooltipContent} defaultIndex={3} active />
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
@@ -402,6 +402,31 @@ export const AreaChartFillByValue = {
             </linearGradient>
           </defs>
           <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const AreaChartRange = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          width={500}
+          height={400}
+          data={rangeData}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Tooltip defaultIndex={4} active />
+          <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
         </AreaChart>
       </ResponsiveContainer>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Surface, Brush, ResponsiveContainer } from '../../../../../src';
+import { Brush, ResponsiveContainer, ComposedChart } from '../../../../../src';
 import { dateData } from '../../../data';
 
 export default {
@@ -51,16 +51,7 @@ export const InSurface = {
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <div style={{ margin: 'auto', width: surfaceWidth }}>
           <p>Simple Brush</p>
-          <Surface
-            width={surfaceWidth}
-            height={200}
-            viewBox={{
-              x: 0,
-              y: 0,
-              width: surfaceWidth,
-              height: 200,
-            }}
-          >
+          <ComposedChart data={dateData} width={surfaceWidth} height={200}>
             <Brush
               startIndex={simple.startIndex}
               endIndex={simple.endIndex}
@@ -68,13 +59,12 @@ export const InSurface = {
               y={50}
               width={400}
               height={40}
-              data={dateData}
               onChange={handleChange}
               traveller={renderTraveller}
             />
-          </Surface>
+          </ComposedChart>
           <p>Brush has specified gap</p>
-          <Surface width={surfaceWidth} height={200}>
+          <ComposedChart width={surfaceWidth} height={200} data={dateData}>
             <Brush
               startIndex={gap.startIndex}
               endIndex={gap.endIndex}
@@ -82,11 +72,10 @@ export const InSurface = {
               y={50}
               width={400}
               height={40}
-              data={dateData}
               gap={5}
               onChange={handleGapChange}
             />
-          </Surface>
+          </ComposedChart>
         </div>
       </ResponsiveContainer>
     );
