@@ -1,9 +1,13 @@
 import React, { cloneElement, isValidElement } from 'react';
 import isFunction from 'lodash/isFunction';
-import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
+import { ActiveDotType, adaptEventHandlers, Coordinate, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
+import { useCartesianTooltipAxis } from '../context/chartLayoutContext';
+import { useTooltipContext } from '../context/tooltipContext';
+import { findEntryInArray } from '../util/DataUtils';
+import isNil from 'lodash/isNil';
 
 const renderActiveDot = (option: ActiveDotType, props: DotProps): React.ReactElement => {
   let dot;
@@ -86,3 +90,66 @@ export const renderActivePoints = ({
 
   return result;
 };
+
+type ActivePointsProps = {
+  hide?: boolean;
+  points: ReadonlyArray<PointType>;
+  isRange: boolean;
+  baseLine: number | Coordinate[];
+  /**
+   * Different graphical elements have different opinion on what is their main color.
+   * Sometimes stroke, sometimes fill, sometimes combination.
+   */
+  mainColor: string;
+  itemDataKey: DataKey<any>;
+  activeDot: ActiveDotType;
+};
+
+export function ActivePoints({
+  hide,
+  points,
+  isRange,
+  baseLine,
+  mainColor,
+  activeDot,
+  itemDataKey,
+}: ActivePointsProps) {
+  const tooltipAxis = useCartesianTooltipAxis();
+  const { active: isTooltipActive, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
+  const hasActive = Boolean(!hide && isTooltipActive);
+
+  if (!hasActive) {
+    return null;
+  }
+
+  let activePoint: PointType, basePoint: PointType;
+
+  const tooltipAxisDataKey = tooltipAxis.dataKey;
+  if (tooltipAxisDataKey && !tooltipAxis.allowDuplicatedCategory) {
+    const specifiedKey =
+      typeof tooltipAxisDataKey === 'function'
+        ? (point: PointType) => tooltipAxisDataKey(point.payload)
+        : `payload.${tooltipAxisDataKey}`;
+    activePoint = findEntryInArray(points, specifiedKey, activeLabel);
+    // @ts-expect-error doesn't handle the case where baseLine is number
+    basePoint = isRange && baseLine && findEntryInArray(baseLine, specifiedKey, activeLabel);
+  } else {
+    activePoint = points?.[activeTooltipIndex];
+    // @ts-expect-error doesn't handle the case where baseLine is number
+    basePoint = isRange && baseLine && baseLine[activeTooltipIndex];
+  }
+
+  if (!isNil(activePoint)) {
+    return renderActivePoints({
+      activePoint,
+      basePoint,
+      childIndex: activeTooltipIndex,
+      mainColor,
+      dataKey: itemDataKey,
+      activeDot,
+      keyPrefix: '',
+    });
+  }
+
+  return null;
+}

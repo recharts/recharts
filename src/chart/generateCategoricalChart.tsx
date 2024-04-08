@@ -1867,15 +1867,15 @@ export const generateCategoricalChart = ({
           if (!isNil(activePoint)) {
             return [
               graphicalItem,
-              renderActivePoints({
-                keyPrefix: item.props.key,
-                activeDot: item.item.props.activeDot,
-                dataKey: item.item.props.dataKey,
-                activePoint,
-                basePoint,
-                childIndex: activeTooltipIndex,
-                mainColor: getMainColorOfGraphicItem(item.item),
-              }),
+              // renderActivePoints({
+              //   keyPrefix: item.props.key,
+              //   activeDot: item.item.props.activeDot,
+              //   dataKey: item.item.props.dataKey,
+              //   activePoint,
+              //   basePoint,
+              //   childIndex: activeTooltipIndex,
+              //   mainColor: getMainColorOfGraphicItem(item.item),
+              // }),
             ];
           }
         } else {
@@ -2003,6 +2003,7 @@ export const generateCategoricalChart = ({
             height={this.props.height}
             clipPathId={this.clipPathId}
             margin={this.props.margin}
+            layout={this.props.layout}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
               <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
