@@ -34,6 +34,7 @@ import {
 } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { ActivePoints } from '../component/ActivePoints';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -526,30 +527,43 @@ export class Line extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <Layer className={layerClass}>
-        <SetLineLegend {...this.props} />
-        {needClipX || needClipY ? (
-          <defs>
-            <clipPath id={`clipPath-${clipPathId}`}>
-              <rect
-                x={needClipX ? left : left - width / 2}
-                y={needClipY ? top : top - height / 2}
-                width={needClipX ? width : width * 2}
-                height={needClipY ? height : height * 2}
-              />
-            </clipPath>
-            {!clipDot && (
-              <clipPath id={`clipPath-dots-${clipPathId}`}>
-                <rect x={left - dotSize / 2} y={top - dotSize / 2} width={width + dotSize} height={height + dotSize} />
+      <>
+        <Layer className={layerClass}>
+          <SetLineLegend {...this.props} />
+          {needClipX || needClipY ? (
+            <defs>
+              <clipPath id={`clipPath-${clipPathId}`}>
+                <rect
+                  x={needClipX ? left : left - width / 2}
+                  y={needClipY ? top : top - height / 2}
+                  width={needClipX ? width : width * 2}
+                  height={needClipY ? height : height * 2}
+                />
               </clipPath>
-            )}
-          </defs>
-        ) : null}
-        {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
-        {this.renderErrorBar(needClip, clipPathId)}
-        {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-      </Layer>
+              {!clipDot && (
+                <clipPath id={`clipPath-dots-${clipPathId}`}>
+                  <rect
+                    x={left - dotSize / 2}
+                    y={top - dotSize / 2}
+                    width={width + dotSize}
+                    height={height + dotSize}
+                  />
+                </clipPath>
+              )}
+            </defs>
+          ) : null}
+          {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
+          {this.renderErrorBar(needClip, clipPathId)}
+          {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
+          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+        </Layer>
+        <ActivePoints
+          activeDot={this.props.activeDot}
+          points={points}
+          mainColor={this.props.stroke}
+          itemDataKey={this.props.dataKey}
+        />
+      </>
     );
   }
 }

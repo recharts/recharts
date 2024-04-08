@@ -104,7 +104,7 @@ export const interpolateNumber = (numberA: number, numberB: number) => {
 };
 
 export function findEntryInArray<T>(
-  ary: Array<T>,
+  ary: ReadonlyArray<T>,
   specifiedKey: number | string | ((entry: T) => unknown),
   specifiedValue: unknown,
 ) {

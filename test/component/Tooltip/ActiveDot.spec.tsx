@@ -111,7 +111,6 @@ describe('ActiveDot', () => {
         dataKey: 'uv',
         fill: '#3182bd',
         index: 2,
-        key: 'item-0-activePoint-2',
         payload: {
           amt: 2400,
           name: 'Page C',
@@ -219,7 +218,6 @@ describe('ActiveDot', () => {
         dataKey: 'uv',
         fill: '#3182bd',
         index: 2,
-        key: 'item-0-activePoint-2',
         payload: {
           amt: 2400,
           name: 'Page C',
@@ -327,7 +325,6 @@ describe('ActiveDot', () => {
         dataKey: 'uv',
         fill: '#3182bd',
         index: 2,
-        key: 'item-0-activePoint-2',
         payload: {
           amt: 2400,
           name: 'Page C',
@@ -433,7 +430,6 @@ describe('ActiveDot', () => {
         cy: 244.245,
         dataKey: 'uv',
         index: 5,
-        key: 'item-0-activePoint-5',
         payload: {
           amt: 2400,
           name: 'Page F',

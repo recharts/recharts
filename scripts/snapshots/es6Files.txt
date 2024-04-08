@@ -82,6 +82,7 @@
   "es6/component/Customized.js",
   "es6/component/Cursor.js",
   "es6/component/Cell.js",
+  "es6/component/ActivePoints.js",
   "es6/chart/types.js",
   "es6/chart/generateCategoricalChart.js",
   "es6/chart/Treemap.js",
