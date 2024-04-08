@@ -1,5 +1,6 @@
 import React, { cloneElement, isValidElement } from 'react';
 import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
 import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
@@ -7,26 +8,6 @@ import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/chartLayoutContext';
 import { useTooltipContext } from '../context/tooltipContext';
 import { findEntryInArray } from '../util/DataUtils';
-import isNil from 'lodash/isNil';
-
-const renderActiveDot = (option: ActiveDotType, props: DotProps): React.ReactElement => {
-  let dot;
-
-  if (isValidElement(option)) {
-    // @ts-expect-error element cloning does not have types
-    dot = cloneElement(option, props);
-  } else if (isFunction(option)) {
-    dot = option(props);
-  } else {
-    dot = <Dot {...props} />;
-  }
-
-  return (
-    <Layer className="recharts-active-dot" key={props.key}>
-      {dot}
-    </Layer>
-  );
-};
 
 export interface PointType {
   readonly x: number;
@@ -35,15 +16,14 @@ export interface PointType {
   readonly payload?: any;
 }
 
-const renderActivePoints = ({
-  activePoint,
+const renderActivePoint = ({
+  point,
   childIndex,
   mainColor,
   activeDot,
   dataKey,
 }: {
-  // found in points array
-  activePoint: PointType;
+  point: PointType;
   activeDot: ActiveDotType;
   childIndex: number;
   dataKey: DataKey<any>;
@@ -57,19 +37,30 @@ const renderActivePoints = ({
     // @ts-expect-error Dot does not expect the 'index' prop
     index: childIndex,
     dataKey,
-    cx: activePoint.x,
-    cy: activePoint.y,
+    cx: point.x,
+    cy: point.y,
     r: 4,
     fill: mainColor,
     strokeWidth: 2,
     stroke: '#fff',
-    payload: activePoint.payload,
-    value: activePoint.value,
+    payload: point.payload,
+    value: point.value,
     ...filterProps(activeDot, false),
     ...adaptEventHandlers(activeDot),
   };
 
-  return <>{renderActiveDot(activeDot, dotProps)}</>;
+  let dot;
+
+  if (isValidElement(activeDot)) {
+    // @ts-expect-error element cloning does not have types
+    dot = cloneElement(activeDot, dotProps);
+  } else if (isFunction(activeDot)) {
+    dot = activeDot(dotProps);
+  } else {
+    dot = <Dot {...dotProps} />;
+  }
+
+  return <Layer className="recharts-active-dot">{dot}</Layer>;
 };
 
 type ActivePointsProps = {
@@ -105,15 +96,15 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     activePoint = points?.[activeTooltipIndex];
   }
 
-  if (!isNil(activePoint)) {
-    return renderActivePoints({
-      activePoint,
-      childIndex: activeTooltipIndex,
-      mainColor,
-      dataKey: itemDataKey,
-      activeDot,
-    });
+  if (isNil(activePoint)) {
+    return null;
   }
 
-  return null;
+  return renderActivePoint({
+    point: activePoint,
+    childIndex: activeTooltipIndex,
+    mainColor,
+    dataKey: itemDataKey,
+    activeDot,
+  });
 }
