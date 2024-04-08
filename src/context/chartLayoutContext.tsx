@@ -68,6 +68,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       dataStartIndex,
       dataEndIndex,
       updateId,
+      activeTooltipIndex,
     },
     clipPathId,
     children,
@@ -86,6 +87,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     payload: activePayload,
     coordinate: activeCoordinate,
     active: isTooltipActive,
+    index: activeTooltipIndex,
   };
 
   /*

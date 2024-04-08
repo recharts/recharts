@@ -691,6 +691,7 @@ export class Sankey extends PureComponent<Props, State> {
       payload,
       coordinate,
       active: isTooltipActive,
+      index: 0,
     };
   }
 

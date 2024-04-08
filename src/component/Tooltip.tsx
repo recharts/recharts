@@ -25,7 +25,7 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
 }
 
 type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
-  TooltipContextValue & { accessibilityLayer: boolean };
+  Pick<TooltipContextValue, 'label' | 'payload' | 'coordinate' | 'active'> & { accessibilityLayer: boolean };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,
