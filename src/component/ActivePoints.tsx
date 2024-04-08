@@ -65,10 +65,6 @@ const renderActivePoint = ({
 
 type ActivePointsProps = {
   points: ReadonlyArray<PointType>;
-  /**
-   * Different graphical elements have different opinion on what is their main color.
-   * Sometimes stroke, sometimes fill, sometimes combination.
-   */
   mainColor: string;
   itemDataKey: DataKey<any>;
   activeDot: ActiveDotType;
@@ -76,10 +72,8 @@ type ActivePointsProps = {
 
 export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
   const tooltipAxis = useTooltipAxis();
-  const { active: isTooltipActive, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
-  const hasActive = Boolean(isTooltipActive);
-
-  if (!hasActive) {
+  const { active, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
+  if (!active) {
     return null;
   }
 
