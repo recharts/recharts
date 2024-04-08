@@ -42,7 +42,6 @@ import {
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
-  getMainColorOfGraphicItem,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
   getTicksOfAxis,
@@ -1814,7 +1813,7 @@ export const generateCategoricalChart = ({
         return null;
       }
       const tooltipEventType = this.getTooltipEventType();
-      const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
+      const { isTooltipActive, activeTooltipIndex } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
       const { isRange } = item.props;
