@@ -35,7 +35,7 @@ export interface PointType {
   readonly payload?: any;
 }
 
-export const renderActivePoints = ({
+const renderActivePoints = ({
   activePoint,
   basePoint,
   childIndex,
