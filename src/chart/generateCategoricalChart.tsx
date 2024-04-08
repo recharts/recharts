@@ -1868,7 +1868,9 @@ export const generateCategoricalChart = ({
             return [
               graphicalItem,
               renderActivePoints({
-                item,
+                keyPrefix: item.props.key,
+                activeDot: item.item.props.activeDot,
+                dataKey: item.item.props.dataKey,
                 activePoint,
                 basePoint,
                 childIndex: activeTooltipIndex,
@@ -2039,6 +2041,7 @@ export const generateCategoricalChart = ({
                   height={this.props.height}
                   clipPathId={this.clipPathId}
                   margin={this.props.margin}
+                  layout={this.props.layout}
                 >
                   <div
                     className={clsx('recharts-wrapper', className)}

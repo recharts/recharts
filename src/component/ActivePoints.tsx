@@ -24,37 +24,38 @@ const renderActiveDot = (option: ActiveDotType, props: DotProps): React.ReactEle
   );
 };
 
+export interface PointType {
+  x: number;
+  y: number;
+  value: any;
+  payload: any;
+}
+
 export const renderActivePoints = ({
-  item,
   activePoint,
   basePoint,
   childIndex,
   mainColor,
+  activeDot,
+  dataKey,
+  keyPrefix,
 }: {
-  // The graphical item, for example Area or Bar.
-  item: {
-    props: { key: string };
-    item: {
-      props: { hide: boolean; activeDot: ActiveDotType; dataKey: DataKey<any> };
-    };
-  };
   // found in points array
-  activePoint: any;
-
-  basePoint: any;
+  activePoint: PointType;
+  activeDot: ActiveDotType;
+  basePoint: PointType;
   childIndex: number;
+  dataKey: DataKey<any>;
   /**
    * Different graphical elements have different opinion on what is their main color.
    * Sometimes stroke, sometimes fill, sometimes combination.
    */
   mainColor: string;
+  keyPrefix: string;
 }) => {
-  const { activeDot, dataKey } = item.item.props;
   const result = [];
-  // item.props is whatever getComposedData returns
-  const { key } = item.props;
-  // item.item.props are the original props on the DOM element
-  const dotProps = {
+  const dotProps: DotProps = {
+    // @ts-expect-error Dot does not expect the 'index' prop
     index: childIndex,
     dataKey,
     cx: activePoint.x,
@@ -65,7 +66,7 @@ export const renderActivePoints = ({
     stroke: '#fff',
     payload: activePoint.payload,
     value: activePoint.value,
-    key: `${key}-activePoint-${childIndex}`,
+    key: `${keyPrefix}-activePoint-${childIndex}`,
     ...filterProps(activeDot, false),
     ...adaptEventHandlers(activeDot),
   };
@@ -78,7 +79,7 @@ export const renderActivePoints = ({
         ...dotProps,
         cx: basePoint.x,
         cy: basePoint.y,
-        key: `${key}-basePoint-${childIndex}`,
+        key: `${keyPrefix}-basePoint-${childIndex}`,
       }),
     );
   }
