@@ -13,7 +13,6 @@ import invariant from 'tiny-invariant';
 import { Surface } from '../container/Surface';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
-import { isInRectangle } from '../shape/Rectangle';
 
 import {
   filterProps,
@@ -1898,17 +1897,7 @@ export const generateCategoricalChart = ({
           const { props, item } = graphicalItem;
           const itemDisplayName = getDisplayName(item.type);
 
-          if (itemDisplayName === 'Bar') {
-            const activeBarItem = (props.data || []).find(
-              (entry: { x: number; y: number; width: number; height: number }) => {
-                return isInRectangle(chartXY, entry);
-              },
-            );
-
-            if (activeBarItem) {
-              return { graphicalItem, payload: activeBarItem };
-            }
-          } else if (itemDisplayName === 'RadialBar') {
+          if (itemDisplayName === 'RadialBar') {
             const activeBarItem = (props.data || []).find((entry: GeometrySector) => {
               return inRangeOfSector(chartXY, entry);
             });
