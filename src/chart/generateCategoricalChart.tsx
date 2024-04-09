@@ -84,6 +84,8 @@ import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../ut
 import { Cursor } from '../component/Cursor';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
+import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
+import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 
 export interface MousePointer {
   pageX: number;
@@ -831,20 +833,32 @@ export interface CategoricalChartProps {
 }
 
 type AxisObj = {
-  xAxis?: BaseAxisProps;
+  xAxis?: XAxisProps;
   xAxisTicks?: Array<TickItem>;
 
-  yAxis?: BaseAxisProps;
+  yAxis?: YAxisProps;
   yAxisTicks?: Array<TickItem>;
 
-  zAxis?: BaseAxisProps;
+  zAxis?: ZAxisProps;
   zAxisTicks?: Array<TickItem>;
 
-  angleAxis?: BaseAxisProps;
+  angleAxis?: AngleAxisProps;
   angleAxisTicks?: Array<TickItem>;
 
-  radiusAxis?: BaseAxisProps;
+  radiusAxis?: RadiusAxisProps;
   radiusAxisTicks?: Array<TickItem>;
+};
+
+// Determine the size of the axis, used for calculation of relative bar sizes
+const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
+  if (axisName === 'xAxis') {
+    return axisObj[axisName].width;
+  }
+  if (axisName === 'yAxis') {
+    return axisObj[axisName].height;
+  }
+  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
+  return undefined;
 };
 
 export const generateCategoricalChart = ({
@@ -862,7 +876,7 @@ export const generateCategoricalChart = ({
     const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
-    const sizeList = hasBar && getBarSizeList({ barSize, stackGroups });
+
     const formattedItems = [] as any[];
 
     graphicalItems.forEach((item: ReactElement, index: number) => {
@@ -913,9 +927,11 @@ export const generateCategoricalChart = ({
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
       let barPosition: ReadonlyArray<BarPosition> = [];
+      const sizeList =
+        hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
 
       if (itemIsBar) {
-        // 如果是bar，计算bar的位置
+        // If it is bar, calculate the position of bar
         const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
         const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
         barPosition = getBarPosition({
