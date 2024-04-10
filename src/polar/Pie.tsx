@@ -135,9 +135,9 @@ interface State {
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
 
 export class Pie extends PureComponent<Props, State> {
-  pieRef: HTMLElement = null;
+  pieRef: SVGGElement = null;
 
-  sectorRefs: HTMLElement[] = [];
+  sectorRefs: SVGGElement[] = [];
 
   static displayName = 'Pie';
 
@@ -497,7 +497,7 @@ export class Pie extends PureComponent<Props, State> {
       };
       return (
         <Layer
-          ref={(ref: HTMLElement) => {
+          ref={(ref: SVGGElement) => {
             if (ref && !this.sectorRefs.includes(ref)) {
               this.sectorRefs.push(ref);
             }
@@ -571,14 +571,14 @@ export class Pie extends PureComponent<Props, State> {
     );
   }
 
-  attachKeyboardHandlers(pieRef: HTMLElement) {
+  attachKeyboardHandlers(pieRef: SVGGElement) {
     // eslint-disable-next-line no-param-reassign
     pieRef.onkeydown = (e: KeyboardEvent) => {
       if (!e.altKey) {
         switch (e.key) {
           case 'ArrowLeft': {
             const next = ++this.state.sectorToFocus % this.sectorRefs.length;
-            (this.sectorRefs[next] as HTMLElement).focus();
+            this.sectorRefs[next].focus();
             this.setState({ sectorToFocus: next });
             break;
           }
@@ -587,12 +587,12 @@ export class Pie extends PureComponent<Props, State> {
               --this.state.sectorToFocus < 0
                 ? this.sectorRefs.length - 1
                 : this.state.sectorToFocus % this.sectorRefs.length;
-            (this.sectorRefs[next] as HTMLElement).focus();
+            this.sectorRefs[next].focus();
             this.setState({ sectorToFocus: next });
             break;
           }
           case 'Escape': {
-            (this.sectorRefs[this.state.sectorToFocus] as HTMLElement).blur();
+            this.sectorRefs[this.state.sectorToFocus].blur();
             this.setState({ sectorToFocus: 0 });
             break;
           }
@@ -642,7 +642,7 @@ export class Pie extends PureComponent<Props, State> {
       <Layer
         tabIndex={this.props.rootTabIndex}
         className={layerClass}
-        ref={(ref: HTMLElement) => {
+        ref={ref => {
           this.pieRef = ref;
         }}
       >
