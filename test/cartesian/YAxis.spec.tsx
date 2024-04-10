@@ -314,7 +314,7 @@ describe('<YAxis />', () => {
     expect(allText).toContain('1560');
   });
 
-  it('should render all labels when stepRatioControl is 0.03', () => {
+  it('should render all labels when stepRatioControl is 0.01', () => {
     const { container } = render(
       <LineChart
         width={500}
