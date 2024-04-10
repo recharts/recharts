@@ -49,9 +49,22 @@ describe('getNiceTickValues', () => {
       expect(ticks).toContain(5);
       expect(ticks.length).toBe(5);
     });
+
+    it('should generate ticks for single value with decimal between 0 and 1', () => {
+      const ticks = getTickOfSingleValue(0.5, 3, false);
+      expect(ticks).toContain(-1);
+      expect(ticks.length).toBe(3);
+    });
   });
 
   describe('calculateStep', () => {
+    it('should return zeros for non-finite calculations', () => {
+      const step = calculateStep(Infinity, Infinity, 5, true, 0, 0.05);
+      expect(step.step.toNumber()).toBe(0);
+      expect(step.tickMin.toNumber()).toBe(0);
+      expect(step.tickMax.toNumber()).toBe(0);
+    });
+
     it('should calculate step correctly', () => {
       const step = calculateStep(100, 200, 5, true, 0, 0.05);
       expect(step.step.toNumber()).toBe(25);
