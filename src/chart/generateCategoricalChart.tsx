@@ -65,7 +65,6 @@ import {
   ChartOffset,
   Coordinate,
   DataKey,
-  GeometrySector,
   LayoutType,
   Margin,
   MouseInfo,
@@ -1868,7 +1867,7 @@ export const generateCategoricalChart = ({
          */
         const {
           graphicalItem: { item: xyItem = element, childIndex },
-        } = this.getItemByXY(this.state.activeCoordinate) ?? { graphicalItem };
+        } = this.getItemByXY() ?? { graphicalItem };
 
         const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
 
@@ -1889,23 +1888,14 @@ export const generateCategoricalChart = ({
         ...this.state,
       });
 
-    public getItemByXY(chartXY: { x: number; y: number }) {
+    public getItemByXY() {
       const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
         for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
           const graphicalItem = formattedGraphicalItems[i];
-          const { props, item } = graphicalItem;
-          const itemDisplayName = getDisplayName(item.type);
+          const { item } = graphicalItem;
 
-          if (itemDisplayName === 'RadialBar') {
-            const activeBarItem = (props.data || []).find((entry: GeometrySector) => {
-              return inRangeOfSector(chartXY, entry);
-            });
-
-            if (activeBarItem) {
-              return { graphicalItem, payload: activeBarItem };
-            }
-          } else if (
+          if (
             isFunnel(graphicalItem, activeItem) ||
             isPie(graphicalItem, activeItem) ||
             isScatter(graphicalItem, activeItem)
