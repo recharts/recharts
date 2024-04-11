@@ -655,7 +655,7 @@ export const getTicksOfAxis = (
     return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
-  // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
+  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (axis.isCategorical && axis.categoricalDomain) {
     return axis.categoricalDomain.map((entry: any, index: number) => ({
       coordinate: scale(entry) + offset,

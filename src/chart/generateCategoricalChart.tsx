@@ -1792,22 +1792,11 @@ export const generateCategoricalChart = ({
     }
 
     renderCursor = (element: ReactElement) => {
-      const { tooltipAxisBandSize } = this.state;
       const tooltipEventType = this.getTooltipEventType();
 
-      const { layout } = this.props;
       const key = element.key || '_recharts-cursor';
 
-      return (
-        <Cursor
-          key={key}
-          chartName={chartName}
-          element={element}
-          layout={layout}
-          tooltipAxisBandSize={tooltipAxisBandSize}
-          tooltipEventType={tooltipEventType}
-        />
-      );
+      return <Cursor key={key} chartName={chartName} element={element} tooltipEventType={tooltipEventType} />;
     };
 
     /**

@@ -21,7 +21,7 @@ import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { DataStartIndexContextProvider, DataEndIndexContextProvider } from './chartDataContext';
+import { DataEndIndexContextProvider, DataStartIndexContextProvider } from './chartDataContext';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -33,7 +33,7 @@ export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
-const LayoutContext = createContext<LayoutType>('horizontal');
+export const LayoutContext = createContext<LayoutType>('horizontal');
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
 const UpdateIdContext = createContext<number>(0);
 
@@ -328,21 +328,3 @@ export const useMargin = (): Margin => {
 export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
 
 export const useChartLayout = () => useContext(LayoutContext);
-
-export const useTooltipAxis = () => {
-  const layout = useChartLayout();
-  const xAxis = useArbitraryXAxis();
-  const yAxis = useArbitraryYAxis();
-  const angleAxis = useArbitraryPolarAngleAxis();
-  const radiusAxis = useArbitraryPolarRadiusAxis();
-  if (layout === 'horizontal') {
-    return xAxis;
-  }
-  if (layout === 'vertical') {
-    return yAxis;
-  }
-  if (layout === 'centric') {
-    return angleAxis;
-  }
-  return radiusAxis;
-};
