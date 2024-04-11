@@ -1867,7 +1867,7 @@ export const generateCategoricalChart = ({
          */
         const {
           graphicalItem: { item: xyItem = element, childIndex },
-        } = this.getItemByXY() ?? { graphicalItem };
+        } = this.getItemByActiveIndex() ?? { graphicalItem };
 
         const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
 
@@ -1888,7 +1888,7 @@ export const generateCategoricalChart = ({
         ...this.state,
       });
 
-    public getItemByXY() {
+    public getItemByActiveIndex() {
       const { formattedGraphicalItems, activeItem } = this.state;
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
         for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
