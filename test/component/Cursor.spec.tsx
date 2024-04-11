@@ -1,11 +1,10 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
-import { Cursor, CursorProps } from '../../src/component/Cursor';
+import { Cursor, CursorConnectedProps, CursorInternal, CursorProps } from '../../src/component/Cursor';
 import { Tooltip, TooltipProps } from '../../src/component/Tooltip';
 import { assertNotNull } from '../helper/assertNotNull';
 import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
-import { OffsetContext } from '../../src/context/chartLayoutContext';
 
 function getTooltipElement(props: TooltipProps<any, any>) {
   return <Tooltip {...props} />;
@@ -14,8 +13,6 @@ function getTooltipElement(props: TooltipProps<any, any>) {
 const defaultProps: CursorProps = {
   chartName: '',
   element: getTooltipElement({}),
-  layout: 'horizontal',
-  tooltipAxisBandSize: 0,
   tooltipEventType: 'axis',
 };
 
@@ -80,19 +77,18 @@ describe('Cursor', () => {
   });
 
   it('should render rectangle cursor for bar chart', () => {
-    const props: CursorProps = {
+    const props: CursorConnectedProps = {
+      layout: 'horizontal',
       ...defaultProps,
       tooltipAxisBandSize: 1,
       chartName: 'BarChart',
+      offset: { top: 0, height: 0 },
+      ...tooltipContext,
     };
     const { container } = render(
-      <OffsetContext.Provider value={{ top: 0, height: 0 }}>
-        <TooltipContextProvider value={tooltipContext}>
-          <svg width={100} height={100}>
-            <Cursor {...props} />
-          </svg>
-        </TooltipContextProvider>
-      </OffsetContext.Provider>,
+      <svg width={100} height={100}>
+        <CursorInternal {...props} />
+      </svg>,
     );
     const cursor = container.querySelector('.recharts-rectangle');
     assertNotNull(cursor);
@@ -100,10 +96,6 @@ describe('Cursor', () => {
   });
 
   it('should render sector cursor for radial layout charts', () => {
-    const props: CursorProps = {
-      ...defaultProps,
-      layout: 'radial',
-    };
     const radialTooltipContext: TooltipContextValue = {
       ...tooltipContext,
       coordinate: {
@@ -114,12 +106,17 @@ describe('Cursor', () => {
         y: 0,
       },
     };
+    const props: CursorConnectedProps = {
+      offset: {},
+      tooltipAxisBandSize: 0,
+      ...defaultProps,
+      layout: 'radial',
+      ...radialTooltipContext,
+    };
     const { container } = render(
-      <TooltipContextProvider value={radialTooltipContext}>
-        <svg width={100} height={100}>
-          <Cursor {...props} />
-        </svg>
-      </TooltipContextProvider>,
+      <svg width={100} height={100}>
+        <CursorInternal {...props} />
+      </svg>,
     );
     const cursor = container.querySelector('.recharts-sector');
     assertNotNull(cursor);

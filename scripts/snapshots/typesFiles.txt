@@ -60,6 +60,7 @@
   "types/polar/PolarAngleAxis.d.ts",
   "types/polar/Pie.d.ts",
   "types/numberAxis/Funnel.d.ts",
+  "types/context/useTooltipAxis.d.ts",
   "types/context/tooltipContext.d.ts",
   "types/context/legendPayloadContext.d.ts",
   "types/context/legendBoundingBoxContext.d.ts",

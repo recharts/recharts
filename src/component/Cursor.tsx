@@ -1,6 +1,6 @@
 import React, { ReactElement, cloneElement, createElement, isValidElement } from 'react';
 import clsx from 'clsx';
-import { LayoutType, TooltipEventType } from '../util/types';
+import { ChartCoordinate, ChartOffset, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -10,28 +10,39 @@ import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
 import { useTooltipContext } from '../context/tooltipContext';
-import { useOffset } from '../context/chartLayoutContext';
+import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 
 export type CursorProps = {
   chartName: string;
   element: ReactElement;
-  layout: LayoutType;
-  tooltipAxisBandSize: number;
   tooltipEventType: TooltipEventType;
 };
 
-/*
- * Cursor is the background, or a highlight,
- * that shows when user mouses over or activates
- * an area.
- *
- * It usually shows together with a tooltip
- * to emphasise which part of the chart does the tooltip refer to.
- */
-export function Cursor(props: CursorProps) {
-  const { element, tooltipEventType, tooltipAxisBandSize, layout, chartName } = props;
-  const { active, coordinate, payload, index } = useTooltipContext();
-  const offset = useOffset();
+export type CursorConnectedProps = CursorProps & {
+  tooltipAxisBandSize: number;
+  layout: LayoutType;
+  offset: ChartOffset;
+  active: boolean;
+  coordinate: ChartCoordinate;
+  payload: any[];
+  index: number;
+};
+
+export function CursorInternal(props: CursorConnectedProps) {
+  const {
+    active,
+    coordinate,
+    payload,
+    index,
+    offset,
+    tooltipAxisBandSize,
+    layout,
+    element,
+    tooltipEventType,
+    chartName,
+  } = props;
+
   // The cursor is a part of the Tooltip, and it should be shown (by default) when the Tooltip is active.
   const isActive: boolean = element.props.active ?? active;
   const activeCoordinate = coordinate;
@@ -85,4 +96,31 @@ export function Cursor(props: CursorProps) {
   return isValidElement(element.props.cursor)
     ? cloneElement(element.props.cursor, cursorProps)
     : createElement(cursorComp, cursorProps);
+}
+
+/*
+ * Cursor is the background, or a highlight,
+ * that shows when user mouses over or activates
+ * an area.
+ *
+ * It usually shows together with a tooltip
+ * to emphasise which part of the chart does the tooltip refer to.
+ */
+export function Cursor(props: CursorProps) {
+  const tooltipAxisBandSize = useTooltipAxisBandSize();
+  const { active, coordinate, payload, index } = useTooltipContext();
+  const offset = useOffset();
+  const layout = useChartLayout();
+  return (
+    <CursorInternal
+      {...props}
+      active={active}
+      coordinate={coordinate}
+      index={index}
+      payload={payload}
+      offset={offset}
+      layout={layout}
+      tooltipAxisBandSize={tooltipAxisBandSize}
+    />
+  );
 }

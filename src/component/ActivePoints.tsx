@@ -5,7 +5,7 @@ import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { useTooltipAxis } from '../context/chartLayoutContext';
+import { useTooltipAxis } from '../context/useTooltipAxis';
 import { useTooltipContext } from '../context/tooltipContext';
 import { findEntryInArray } from '../util/DataUtils';
 
