@@ -33,6 +33,14 @@ describe('arithmetic', () => {
       expect(getDigitCount(10)).toBe(2);
       expect(getDigitCount(99)).toBe(2);
     });
+
+    it('should return correct digit count for large numbers', () => {
+      expect(getDigitCount(1.1e21)).toBe(22);
+    });
+
+    it('should return correct digit count for small numbers', () => {
+      expect(getDigitCount(1.1e-21)).toBe(-20);
+    });
   });
 
   describe('rangeStep', () => {
@@ -44,6 +52,13 @@ describe('arithmetic', () => {
     it('should generate correct decimal range steps', () => {
       const result = rangeStep(new Decimal(0), new Decimal(1), new Decimal(0.1));
       expect(result).toEqual([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+    });
+
+    it('should generate correct decimal range steps with small values', () => {
+      const result = rangeStep(new Decimal(0), new Decimal(0.0000035), new Decimal(0.00000035));
+      expect(result).toEqual([
+        0, 0.00000035, 0.0000007, 0.00000105, 0.0000014, 0.00000175, 0.0000021, 0.00000245, 0.0000028, 0.00000315,
+      ]);
     });
   });
 
