@@ -64,5 +64,6 @@ export const Stacked = {
   args: {
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
+    id: 'BarChart-Stacked',
   },
 };
