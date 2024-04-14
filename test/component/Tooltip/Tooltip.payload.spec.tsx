@@ -305,7 +305,7 @@ const SunburstChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
-  expectedTooltipContent: ['Agricultural waste : 124.729'],
+  expectedTooltipContent: ['Child1 : 30'],
 };
 
 const TreemapTestCase: TooltipPayloadTestCase = {
@@ -344,8 +344,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   SankeyNodeHoverTestCase,
   SankeyLinkHoverTestCase,
   ScatterChartTestCase,
-  // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
-  // SunburstChartTestCase,
+  SunburstChartTestCase,
   TreemapTestCase,
 ];
 
