@@ -2,12 +2,49 @@ import React from 'react';
 import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
-import { ResizeObserverMock } from '../helper/resizeObserverMock';
+
+declare global {
+  interface Window {
+    ResizeObserver: unknown;
+  }
+}
 
 describe('<ResponsiveContainer />', () => {
+  /**
+   * Use this function to simulate a change fired by a window.ResizeObserver
+   * You just need to pass a param with ResizeObserverEntry structure like:
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
+   */
+  let notifyResizeObserverChange: (arg: unknown) => void;
+
+  /**
+   * ResizeObserver is not available so we have to create a mock to avoid error coming
+   * from `react-resize-detector`.
+   * @see https://github.com/maslianok/react-resize-detector/issues/145
+   *
+   * This mock also allow us to use {@link notifyResizeObserverChange} to fire changes
+   * from inside our test.
+   */
+  const resizeObserverMock = vi.fn().mockImplementation(callback => {
+    notifyResizeObserverChange = callback;
+
+    return {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    };
+  });
   const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
 
+  beforeAll(() => {
+    delete window.ResizeObserver;
+
+    window.ResizeObserver = resizeObserverMock;
+  });
+
   afterEach(() => {
+    resizeObserverMock.mockClear();
     consoleWarnSpy.mockClear();
   });
 
@@ -126,7 +163,7 @@ describe('<ResponsiveContainer />', () => {
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    ResizeObserverMock.notify([{ contentRect: { width: 100, height: 100 } }]);
+    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
 
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
@@ -142,11 +179,11 @@ describe('<ResponsiveContainer />', () => {
 
     const element = container.querySelector('.recharts-responsive-container');
 
-    ResizeObserverMock.notify([{ contentRect: { width: 50, height: 50 } }]);
+    notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    ResizeObserverMock.notify([{ contentRect: { width: 100, height: 100 } }]);
+    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     vi.advanceTimersByTime(200);
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
@@ -165,14 +202,14 @@ describe('<ResponsiveContainer />', () => {
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    ResizeObserverMock.notify([{ contentRect: { width: 100, height: 100 } }]);
+    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
 
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
 
     expect(onResize).toHaveBeenCalledTimes(1);
 
-    ResizeObserverMock.notify([{ contentRect: { width: 200, height: 200 } }]);
+    notifyResizeObserverChange([{ contentRect: { width: 200, height: 200 } }]);
 
     expect(onResize).toHaveBeenCalledTimes(2);
   });
