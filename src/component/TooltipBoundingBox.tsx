@@ -22,6 +22,10 @@ export type TooltipBoundingBoxProps = {
 type State = {
   dismissed: boolean;
   dismissedAtCoordinate: Coordinate;
+  lastBoundingBox: {
+    width: number;
+    height: number;
+  };
 };
 
 const EPSILON = 1;
@@ -30,11 +34,10 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
   state = {
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
-  };
-
-  lastBoundingBox = {
-    width: -1,
-    height: -1,
+    lastBoundingBox: {
+      width: -1,
+      height: -1,
+    },
   };
 
   private wrapperNode: HTMLDivElement;
@@ -44,15 +47,23 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       const box = this.wrapperNode.getBoundingClientRect();
 
       if (
-        Math.abs(box.width - this.lastBoundingBox.width) > EPSILON ||
-        Math.abs(box.height - this.lastBoundingBox.height) > EPSILON
+        Math.abs(box.width - this.state.lastBoundingBox.width) > EPSILON ||
+        Math.abs(box.height - this.state.lastBoundingBox.height) > EPSILON
       ) {
-        this.lastBoundingBox.width = box.width;
-        this.lastBoundingBox.height = box.height;
+        this.setState({
+          lastBoundingBox: {
+            width: box.width,
+            height: box.height,
+          },
+        });
       }
-    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
-      this.lastBoundingBox.width = -1;
-      this.lastBoundingBox.height = -1;
+    } else if (this.state.lastBoundingBox.width !== -1 || this.state.lastBoundingBox.height !== -1) {
+      this.setState({
+        lastBoundingBox: {
+          width: -1,
+          height: -1,
+        },
+      });
     }
   }
 
@@ -118,10 +129,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       offsetTopLeft: offset,
       position,
       reverseDirection,
-      tooltipBox: {
-        height: this.lastBoundingBox.height,
-        width: this.lastBoundingBox.width,
-      },
+      tooltipBox: this.state.lastBoundingBox,
       useTranslate3d,
       viewBox,
     });
