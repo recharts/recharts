@@ -11,13 +11,33 @@
 export type MouseHoverTooltipTriggerSelector = string;
 
 export const areaChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
+/**
+ * By default, BarChart renders tooltip when hovering anywhere in the chart.
+ * It uses the closest XAxis position and shows tooltip with all bars at that point.
+ */
 export const barChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
+/**
+ * With <Tooltip shared={false}> BarChart behaves differently;
+ * it no longer shows tooltip when hovering anywhere in the background,
+ * instead it only reacts to hovering over individual Bars.
+ */
+export const barMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-bar-rectangle';
 export const lineChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
 export const composedChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
 // hovering over the whole chart does nothing; Pie requires hovering over individual segments
 export const pieChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-pie-sector';
 export const radarChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
+/**
+ * By default, RadialBarChart renders tooltip when hovering anywhere in the chart.
+ * It uses the closest XAxis position and shows tooltip with all radial bars at that point.
+ */
 export const radialBarChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
+/**
+ * With <Tooltip shared={false}> RadialBarChart behaves differently;
+ * it no longer shows tooltip when hovering anywhere in the background,
+ * instead it only reacts to hovering over individual RadialBars.
+ */
+export const radialBarMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-radial-bar-sector';
 export const sankeyNodeChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
   '.recharts-sankey-nodes .recharts-rectangle';
 export const scatterChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-scatter-symbol';

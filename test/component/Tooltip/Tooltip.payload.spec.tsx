@@ -34,6 +34,7 @@ import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '.
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
+  barMouseHoverTooltipSelector,
   composedChartMouseHoverTooltipSelector,
   funnelChartMouseHoverTooltipSelector,
   lineChartMouseHoverTooltipSelector,
@@ -41,6 +42,7 @@ import {
   pieChartMouseHoverTooltipSelector,
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
+  radialBarMouseHoverTooltipSelector,
   sankeyChartMouseHoverTooltipSelector,
   sankeyNodeChartMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
@@ -456,5 +458,79 @@ describe('Tooltip payload', () => {
     showTooltip(container, ComposedChartTestCase.mouseHoverSelector, debug);
 
     expectTooltipPayload(container, 'C', ['value : 0.7', 'value : 0.4']);
+  });
+
+  describe('shared prop', () => {
+    describe('in BarChart', () => {
+      it('when true, should render tooltip payload with data from all Bars', () => {
+        const { container, debug } = render(
+          <BarChart {...commonChartProps} data={PageData}>
+            <Bar dataKey="uv" unit="kg" />
+            <Bar dataKey="pv" unit="$$$" name="My custom name" />
+            <Bar dataKey="amt" unit="" />
+            <Tooltip shared />
+          </BarChart>,
+        );
+
+        showTooltip(container, barChartMouseHoverTooltipSelector, debug);
+
+        const expectedTooltipTitle = '2';
+        const expectedTooltipContent = ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'];
+        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+      });
+
+      it('when false, should render tooltip payload with data from single Bar', () => {
+        const { container, debug } = render(
+          <BarChart {...commonChartProps} data={PageData}>
+            <Bar dataKey="uv" unit="kg" />
+            <Bar dataKey="pv" unit="$$$" name="My custom name" />
+            <Bar dataKey="amt" unit="" />
+            <Tooltip shared={false} />
+          </BarChart>,
+        );
+
+        showTooltip(container, barMouseHoverTooltipSelector, debug);
+
+        const expectedTooltipTitle = '';
+        const expectedTooltipContent = ['uv : 400kg'];
+        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+      });
+    });
+
+    describe('in RadialBarChart', () => {
+      it('when true, should render tooltip payload with data from all Bars', () => {
+        const { container, debug } = render(
+          <RadialBarChart height={600} width={600} data={PageData}>
+            <RadialBar dataKey="uv" />
+            <RadialBar dataKey="pv" name="My custom name" />
+            <RadialBar dataKey="amt" />
+            <Tooltip shared />
+          </RadialBarChart>,
+        );
+
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector, debug);
+
+        const expectedTooltipTitle = '4';
+        const expectedTooltipContent = ['uv : 278', 'My custom name : 3908', 'amt : 2400'];
+        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+      });
+
+      it('when false, should render tooltip payload with data from single Bar', () => {
+        const { container, debug } = render(
+          <RadialBarChart height={600} width={600} data={PageData}>
+            <RadialBar dataKey="uv" isAnimationActive={false} />
+            <RadialBar dataKey="pv" name="My custom name" isAnimationActive={false} />
+            <RadialBar dataKey="amt" isAnimationActive={false} />
+            <Tooltip shared={false} />
+          </RadialBarChart>,
+        );
+
+        showTooltip(container, radialBarMouseHoverTooltipSelector, debug);
+
+        const expectedTooltipTitle = '';
+        const expectedTooltipContent = ['uv : 400'];
+        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+      });
+    });
   });
 });
