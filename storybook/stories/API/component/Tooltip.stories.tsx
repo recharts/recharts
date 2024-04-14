@@ -1,13 +1,13 @@
 import React from 'react';
-import { ResponsiveContainer, Tooltip, LineChart, Line } from '../../../../src';
+import { Line, LineChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 const TooltipProps: StorybookArgs = {
   active: {
-    description:
-      'When set to true, the tooltip will remain visible, even after the user has moved off of the chart. Set `defaultIndex` if you want the tooltip to always be visible.',
+    description: `When set to true, the tooltip will remain visible, even after the user has moved off of the chart.
+      Set \`defaultIndex\` if you want the tooltip to be visible by default, before first mouse enter.`,
     defaultValue: false,
   },
   defaultIndex: {
@@ -207,6 +207,12 @@ const TooltipProps: StorybookArgs = {
         detail: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
       },
     },
+  },
+  shared: {
+    description: `If true, tooltip will appear on top of all bars on an axis tick.
+    If false, tooltip will appear on individual bars.
+    Currently only supported in BarChart and RadialBarChart.
+    Defaults to true.`,
   },
 };
 
