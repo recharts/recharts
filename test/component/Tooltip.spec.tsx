@@ -96,13 +96,13 @@ describe('<Tooltip />', () => {
         <Tooltip />
       </AreaChart>,
     );
-    mock.mockRestore();
 
     const chart = container.querySelector('.recharts-wrapper');
     fireEvent.mouseMove(chart!, { clientX: 200, clientY: 200 });
 
     const tooltip = container.querySelector('.recharts-tooltip-wrapper')!;
     expect(tooltip.getAttribute('style')!.includes('translate')).toBe(true);
+    mock.mockRestore();
   });
 
   test('Mouse over renders content with multiple data sets', () => {
