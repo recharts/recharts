@@ -1,13 +1,15 @@
-/* eslint-disable no-shadow */
 import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
 import {
   Area,
   Bar,
+  BarChart,
   CartesianGrid,
   ComposedChart,
   Line,
   LineChart,
+  RadialBar,
+  RadialBarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -302,4 +304,42 @@ export const IncludeHidden = {
     );
   },
   args: {},
+};
+
+export const SharedTooltipInBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={pageData}>
+          <Tooltip {...args} />
+          <Bar dataKey="uv" fill="green" />
+          <Bar dataKey="pv" fill="red" />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    shared: false,
+    defaultIndex: 2,
+    active: true,
+  },
+};
+
+export const SharedTooltipInRadialBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <RadialBarChart data={pageData}>
+          <Tooltip {...args} />
+          <RadialBar dataKey="uv" fill="green" />
+          <RadialBar dataKey="pv" fill="red" />
+        </RadialBarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    shared: false,
+    defaultIndex: 2,
+    active: true,
+  },
 };

@@ -1,4 +1,4 @@
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
+import React, { CSSProperties, PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import {
   DefaultTooltipContent,
   NameType,
@@ -52,7 +52,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * If false, then Tooltip is never displayed.
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
-  active?: boolean | undefined;
+  active?: boolean;
   /**
    * If true, then Tooltip will information about hidden series (defaults to false). Interacting with the hide property of Area, Bar, Line, Scatter.
    */
@@ -69,6 +69,12 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
   position?: Partial<Coordinate>;
   reverseDirection?: AllowInDimension;
+  /**
+   * If true, tooltip will appear on top of all bars on an axis tick.
+   * If false, tooltip will appear on individual bars.
+   * Currently only supported in BarChart and RadialBarChart.
+   * If undefined then defaults to true.
+   */
   shared?: boolean;
   trigger?: 'hover' | 'click';
   useTranslate3d?: boolean;
