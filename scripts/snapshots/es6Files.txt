@@ -1,5 +1,6 @@
 [
   "es6/util",
+  "es6/state",
   "es6/shape",
   "es6/polar",
   "es6/numberAxis",
@@ -44,6 +45,11 @@
   "es6/util/cursor/getRadialCursorPoints.js",
   "es6/util/cursor/getCursorRectangle.js",
   "es6/util/cursor/getCursorPoints.js",
+  "es6/state/store.js",
+  "es6/state/selectors.js",
+  "es6/state/optionsSlice.js",
+  "es6/state/hooks.js",
+  "es6/state/RechartsStoreProvider.js",
   "es6/shape/Trapezoid.js",
   "es6/shape/Symbols.js",
   "es6/shape/Sector.js",
