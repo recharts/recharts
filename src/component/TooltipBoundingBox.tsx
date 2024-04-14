@@ -22,39 +22,54 @@ export type TooltipBoundingBoxProps = {
 type State = {
   dismissed: boolean;
   dismissedAtCoordinate: Coordinate;
-  lastBoundingBox: { width: number; height: number };
 };
+
+const EPSILON = 1;
 
 export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, State> {
   state = {
     dismissed: false,
     dismissedAtCoordinate: { x: 0, y: 0 },
-    lastBoundingBox: { width: -1, height: -1 },
   };
 
-  private wrapperNode: React.RefObject<HTMLDivElement | null> = React.createRef();
+  lastBoundingBox = {
+    width: -1,
+    height: -1,
+  };
 
-  private resizeObserver?: ResizeObserver = null;
+  private wrapperNode: HTMLDivElement;
+
+  updateBBox() {
+    if (this.wrapperNode && this.wrapperNode.getBoundingClientRect) {
+      const box = this.wrapperNode.getBoundingClientRect();
+
+      if (
+        Math.abs(box.width - this.lastBoundingBox.width) > EPSILON ||
+        Math.abs(box.height - this.lastBoundingBox.height) > EPSILON
+      ) {
+        this.lastBoundingBox.width = box.width;
+        this.lastBoundingBox.height = box.height;
+      }
+    } else if (this.lastBoundingBox.width !== -1 || this.lastBoundingBox.height !== -1) {
+      this.lastBoundingBox.width = -1;
+      this.lastBoundingBox.height = -1;
+    }
+  }
 
   componentDidMount() {
-    this.resizeObserver = new ResizeObserver(entries => {
-      const { width, height } = entries[0]?.contentRect ?? { width: 0, height: 0 };
-      this.setState({ lastBoundingBox: { width, height } });
-    });
-    if (this.wrapperNode.current) {
-      this.resizeObserver.observe(this.wrapperNode.current);
-    }
     document.addEventListener('keydown', this.handleKeyDown);
+    this.updateBBox();
   }
 
   componentWillUnmount() {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-    }
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   componentDidUpdate() {
+    if (this.props.active) {
+      this.updateBBox();
+    }
+
     if (!this.state.dismissed) {
       return;
     }
@@ -103,7 +118,10 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       offsetTopLeft: offset,
       position,
       reverseDirection,
-      tooltipBox: this.state.lastBoundingBox,
+      tooltipBox: {
+        height: this.lastBoundingBox.height,
+        width: this.lastBoundingBox.width,
+      },
       useTranslate3d,
       viewBox,
     });
@@ -122,7 +140,14 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
     return (
       // This element allow listening to the `Escape` key.
       // See https://github.com/recharts/recharts/pull/2925
-      <div tabIndex={-1} className={cssClasses} style={outerStyle} ref={this.wrapperNode}>
+      <div
+        tabIndex={-1}
+        className={cssClasses}
+        style={outerStyle}
+        ref={node => {
+          this.wrapperNode = node;
+        }}
+      >
         {children}
       </div>
     );
