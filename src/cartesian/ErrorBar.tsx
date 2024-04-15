@@ -127,6 +127,8 @@ export function ErrorBar(props: Props) {
       lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMax, y2: yMin });
     }
 
+    const transformOrigin = `${x + offset}px ${y + offset}px`;
+
     return (
       <Layer
         className="recharts-errorBar"
@@ -137,14 +139,16 @@ export function ErrorBar(props: Props) {
           const lineStyle = isAnimationActive ? { transformOrigin: `${coordinates.x1 - 5}px` } : undefined;
           return (
             <Animate
-              from="scale(0, 1)"
-              to="scale(1, 1)"
-              attributeName="transform"
+              from={{ transform: 'scaleY(0)', transformOrigin }}
+              to={{ transform: 'scaleY(1)', transformOrigin }}
               begin={animationBegin}
               easing={animationEasing}
               isActive={isAnimationActive}
               duration={animationDuration}
               key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
+              style={{
+                transformOrigin,
+              }}
             >
               <line {...coordinates} style={lineStyle} />
             </Animate>
@@ -165,7 +169,7 @@ ErrorBar.defaultProps = {
   layout: 'horizontal',
   isAnimationActive: true,
   animationBegin: 0,
-  animationDuration: 200,
+  animationDuration: 400,
   animationEasing: 'ease-in-out',
 };
 ErrorBar.displayName = 'ErrorBar';
