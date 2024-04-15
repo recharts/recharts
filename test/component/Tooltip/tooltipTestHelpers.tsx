@@ -2,7 +2,7 @@ import { expect } from 'vitest';
 import { fireEvent } from '@testing-library/react';
 import { assertNotNull } from '../../helper/assertNotNull';
 
-export function getTooltip(container: HTMLElement): HTMLElement {
+export function getTooltip(container: Element): HTMLElement {
   const allWrappers = container.querySelectorAll('.recharts-tooltip-wrapper');
   assertNotNull(allWrappers);
   expect(allWrappers).toHaveLength(1);
@@ -24,4 +24,17 @@ export function showTooltip(container: Element, selector: string, debug?: () => 
   expect(tooltipTriggerElement).toBeVisible();
   fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
   return tooltipTriggerElement;
+}
+
+export function expectTooltipPayload(
+  container: Element,
+  expectedTooltipTitle: string,
+  expectedTooltipContent: ReadonlyArray<string>,
+) {
+  const tooltip = getTooltip(container);
+  expect(tooltip).toBeInTheDocument();
+  expect(tooltip).toBeVisible();
+  expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
+  const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
+  expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
 }

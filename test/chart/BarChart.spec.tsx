@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { Bar, BarChart, BarProps, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
+import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 
 type DataType = {
   name: string;
@@ -498,5 +499,98 @@ describe('<BarChart />', () => {
         },
       ),
     );
+  });
+
+  describe('chart synchronization', () => {
+    it('should render two independent charts by default', () => {
+      const { container } = render(
+        <>
+          <BarChart width={100} height={50} data={data}>
+            <Bar dataKey="uv" />
+            <Tooltip />
+          </BarChart>
+          <BarChart width={100} height={50} data={data}>
+            <Bar dataKey="pv" />
+            <Tooltip />
+          </BarChart>
+        </>,
+      );
+
+      const barCharts = container.querySelectorAll('.recharts-wrapper');
+      expect(barCharts).toHaveLength(2);
+      const tooltips0 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      // all tooltip wrapper are in the document at all times, they just happen to be hidden sometimes
+      expect(tooltips0).toHaveLength(2);
+      expect(tooltips0[0]).not.toBeVisible();
+      expect(tooltips0[1]).not.toBeVisible();
+
+      fireEvent.mouseOver(barCharts[0], { clientX: 20, clientY: 20 });
+      const tooltips1 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips1[0]).toBeVisible();
+      expect(tooltips1[1]).not.toBeVisible();
+
+      fireEvent.mouseOver(barCharts[1], { clientX: 20, clientY: 20 });
+      const tooltips2 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips2[0]).toBeVisible();
+      expectTooltipPayload(barCharts[0], '0', ['uv : 400']);
+      expect(tooltips2[1]).toBeVisible();
+      expectTooltipPayload(barCharts[1], '0', ['pv : 2400']);
+
+      fireEvent.mouseOut(barCharts[0]);
+      const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips3[0]).not.toBeVisible();
+      expect(tooltips3[1]).toBeVisible();
+
+      fireEvent.mouseOut(barCharts[1]);
+      const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips4[0]).not.toBeVisible();
+      expect(tooltips4[1]).not.toBeVisible();
+    });
+
+    it('should render two connected charts when given same syncId', () => {
+      const { container } = render(
+        <>
+          <BarChart syncId={1} width={100} height={50} data={data}>
+            <Bar dataKey="uv" />
+            <Tooltip />
+          </BarChart>
+          <BarChart syncId={1} width={100} height={50} data={data}>
+            <Bar dataKey="pv" />
+            <Tooltip />
+          </BarChart>
+        </>,
+      );
+
+      const barCharts = container.querySelectorAll('.recharts-wrapper');
+      expect(barCharts).toHaveLength(2);
+      const tooltips0 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      // all tooltip wrapper are in the document at all times, they just happen to be hidden sometimes
+      expect(tooltips0).toHaveLength(2);
+      expect(tooltips0[0]).not.toBeVisible();
+      expect(tooltips0[1]).not.toBeVisible();
+
+      fireEvent.mouseOver(barCharts[0], { clientX: 20, clientY: 20 });
+      const tooltips1 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      // Tooltips are synchronized, but each chart still shows their own data
+      expect(tooltips1[0]).toBeVisible();
+      expectTooltipPayload(barCharts[0], '0', ['uv : 400']);
+      expect(tooltips1[1]).toBeVisible();
+      expectTooltipPayload(barCharts[1], '0', ['pv : 2400']);
+
+      fireEvent.mouseOver(barCharts[1], { clientX: 20, clientY: 20 });
+      const tooltips2 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips2[0]).toBeVisible();
+      expect(tooltips2[1]).toBeVisible();
+
+      fireEvent.mouseOut(barCharts[0]);
+      const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips3[0]).not.toBeVisible();
+      expect(tooltips3[1]).not.toBeVisible();
+
+      fireEvent.mouseOut(barCharts[1]);
+      const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');
+      expect(tooltips4[0]).not.toBeVisible();
+      expect(tooltips4[1]).not.toBeVisible();
+    });
   });
 });
