@@ -95,13 +95,6 @@ export interface MousePointer {
   pageY: number;
 }
 
-export type GraphicalItem<Props = Record<string, any>> = ReactElement<
-  Props,
-  string | React.JSXElementConstructor<Props>
-> & {
-  item: ReactElement<Props, string | React.JSXElementConstructor<Props>>;
-};
-
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
