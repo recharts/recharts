@@ -78,7 +78,6 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
-import { getActiveShapeIndexForTooltip, isFunnel, isPie, isScatter } from '../util/ActiveShapeUtils';
 import { Cursor } from '../component/Cursor';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
@@ -1574,12 +1573,14 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * The handler of mouse entering a scatter
-     * @param {Object} el The active scatter
-     * @return {Object} no return
+     * The handler of mouse entering a graphical item, such as bar, pie, scatter, funnel, ...
+     * @param el The active graphical element
+     * @param index 0-based index of the active graphical element
+     * @returns undefined
      */
-    handleItemMouseEnter = (el: any) => {
+    handleItemMouseEnter = (el: any, index: number) => {
       this.setState(() => ({
+        activeTooltipIndex: index,
         isTooltipActive: true,
         activeItem: el,
         activePayload: el.tooltipPayload,
@@ -1819,7 +1820,6 @@ export const generateCategoricalChart = ({
       const { isTooltipActive, activeTooltipIndex } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
-      const { isRange } = item.props;
       const { hide, activeBar, activeShape } = item.item.props;
       const hasActive = Boolean(!hide && isTooltipActive && tooltipItem && (activeBar || activeShape));
       let itemEvents = {};
@@ -1838,33 +1838,11 @@ export const generateCategoricalChart = ({
       const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
 
       if (hasActive) {
-        if (activeTooltipIndex >= 0) {
-          if (activeShape || activeBar) {
-            const activeIndex =
-              element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
-            return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
-          }
-
-          return [graphicalItem];
+        if (activeShape || activeBar) {
+          const activeIndex = element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
+          return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
         }
-        /**
-         * We hit this block if consumer uses a Tooltip without XAxis and/or YAxis.
-         * In which case, this.state.activeTooltipIndex never gets set
-         * because the mouse events that trigger that value getting set never get trigged without the axis components.
-         *
-         * An example usage case is a FunnelChart
-         */
-        const {
-          graphicalItem: { item: xyItem = element, childIndex },
-        } = this.getItemByActiveIndex() ?? { graphicalItem };
-
-        const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
-
-        return [cloneElement(xyItem, elementProps), null, null];
-      }
-
-      if (isRange) {
-        return [graphicalItem, null, null];
+        return [graphicalItem];
       }
 
       return [graphicalItem, null];
@@ -1876,39 +1854,6 @@ export const generateCategoricalChart = ({
         ...this.props,
         ...this.state,
       });
-
-    public getItemByActiveIndex() {
-      const { formattedGraphicalItems, activeItem } = this.state;
-      if (formattedGraphicalItems && formattedGraphicalItems.length) {
-        for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
-          const graphicalItem = formattedGraphicalItems[i];
-          const { item } = graphicalItem;
-
-          if (
-            isFunnel(graphicalItem, activeItem) ||
-            isPie(graphicalItem, activeItem) ||
-            isScatter(graphicalItem, activeItem)
-          ) {
-            const activeIndex = getActiveShapeIndexForTooltip({
-              graphicalItem,
-              activeTooltipItem: activeItem,
-              itemData: item.props.data,
-            });
-
-            const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
-
-            return {
-              graphicalItem: { ...graphicalItem, childIndex },
-              payload: isScatter(graphicalItem, activeItem)
-                ? item.props.data[activeIndex]
-                : graphicalItem.props.data[activeIndex],
-            };
-          }
-        }
-      }
-
-      return null;
-    }
 
     renderMap = {
       CartesianGrid: { handler: renderAsIs, once: true },
