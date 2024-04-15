@@ -26,7 +26,7 @@ export const Simple = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={nodeLinkData} {...args} name="Sankey-Simple">
+        <Sankey data={nodeLinkData} {...args}>
           <Tooltip />
         </Sankey>
       </ResponsiveContainer>
@@ -41,7 +41,7 @@ export const Customized = {
   render: (args: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={nodeLinkData} {...args} name="Sankey-Customized" />
+        <Sankey data={nodeLinkData} {...args} />
       </ResponsiveContainer>
     );
   },
@@ -165,13 +165,7 @@ export const CustomNodeAndLink = {
 
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey
-          data={complexNodeLinkData}
-          node={CustomNode}
-          link={CustomLink}
-          {...args}
-          name="Sankey-CustomNodeAndLink"
-        />
+        <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args} />
       </ResponsiveContainer>
     );
   },
