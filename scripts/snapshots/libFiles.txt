@@ -1,5 +1,6 @@
 [
   "lib/util",
+  "lib/state",
   "lib/shape",
   "lib/polar",
   "lib/numberAxis",
@@ -44,6 +45,11 @@
   "lib/util/cursor/getRadialCursorPoints.js",
   "lib/util/cursor/getCursorRectangle.js",
   "lib/util/cursor/getCursorPoints.js",
+  "lib/state/store.js",
+  "lib/state/selectors.js",
+  "lib/state/optionsSlice.js",
+  "lib/state/hooks.js",
+  "lib/state/RechartsStoreProvider.js",
   "lib/shape/Trapezoid.js",
   "lib/shape/Symbols.js",
   "lib/shape/Sector.js",

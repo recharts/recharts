@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, ReactElement } from 'react';
+import React, { cloneElement, Component, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -89,6 +89,8 @@ import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
+import { ChartOptions } from '../state/optionsSlice';
+import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 
 export interface MousePointer {
   pageX: number;
@@ -1058,7 +1060,7 @@ export const generateCategoricalChart = ({
     };
   };
 
-  return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
+  class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
     readonly eventEmitterSymbol: Symbol = Symbol('rechartsEventEmitter');
@@ -1790,7 +1792,7 @@ export const generateCategoricalChart = ({
 
       const key = element.key || '_recharts-cursor';
 
-      return <Cursor key={key} chartName={chartName} element={element} tooltipEventType={tooltipEventType} />;
+      return <Cursor key={key} element={element} tooltipEventType={tooltipEventType} />;
     };
 
     /**
@@ -1955,5 +1957,18 @@ export const generateCategoricalChart = ({
         </ChartDataContextProvider>
       );
     }
+  }
+
+  return function CategoricalChart(props: CategoricalChartProps) {
+    const options: ChartOptions = {
+      chartName,
+      defaultTooltipEventType,
+      validateTooltipEventTypes,
+    };
+    return (
+      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.id ?? chartName}>
+        <CategoricalChartWrapper {...props} />
+      </RechartsStoreProvider>
+    );
   };
 };

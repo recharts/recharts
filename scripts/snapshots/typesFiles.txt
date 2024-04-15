@@ -1,5 +1,6 @@
 [
   "types/util",
+  "types/state",
   "types/shape",
   "types/polar",
   "types/numberAxis",
@@ -44,6 +45,11 @@
   "types/util/cursor/getRadialCursorPoints.d.ts",
   "types/util/cursor/getCursorRectangle.d.ts",
   "types/util/cursor/getCursorPoints.d.ts",
+  "types/state/store.d.ts",
+  "types/state/selectors.d.ts",
+  "types/state/optionsSlice.d.ts",
+  "types/state/hooks.d.ts",
+  "types/state/RechartsStoreProvider.d.ts",
   "types/shape/Trapezoid.d.ts",
   "types/shape/Symbols.d.ts",
   "types/shape/Sector.d.ts",

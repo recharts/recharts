@@ -29,8 +29,8 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { getTooltip, showTooltip } from './tooltipTestHelpers';
-import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
+import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
+import { exampleSunburstData, exampleTreemapData, PageData, SankeyData } from '../../_data';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -349,19 +349,6 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   SunburstChartTestCase,
   TreemapTestCase,
 ];
-
-function expectTooltipPayload(
-  container: HTMLElement,
-  expectedTooltipTitle: string,
-  expectedTooltipContent: ReadonlyArray<string>,
-) {
-  const tooltip = getTooltip(container);
-  expect(tooltip).toBeInTheDocument();
-  expect(tooltip).toBeVisible();
-  expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
-  const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
-  expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
-}
 
 describe('Tooltip payload', () => {
   describe.each(testCases)(

@@ -12,9 +12,9 @@ import { filterProps } from '../util/ReactUtils';
 import { useTooltipContext } from '../context/tooltipContext';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
+import { useChartName } from '../state/selectors';
 
 export type CursorProps = {
-  chartName: string;
   element: ReactElement;
   tooltipEventType: TooltipEventType;
 };
@@ -27,6 +27,7 @@ export type CursorConnectedProps = CursorProps & {
   coordinate: ChartCoordinate;
   payload: any[];
   index: number;
+  chartName: string;
 };
 
 export function CursorInternal(props: CursorConnectedProps) {
@@ -111,6 +112,7 @@ export function Cursor(props: CursorProps) {
   const { active, coordinate, payload, index } = useTooltipContext();
   const offset = useOffset();
   const layout = useChartLayout();
+  const chartName = useChartName();
   return (
     <CursorInternal
       {...props}
@@ -121,6 +123,7 @@ export function Cursor(props: CursorProps) {
       offset={offset}
       layout={layout}
       tooltipAxisBandSize={tooltipAxisBandSize}
+      chartName={chartName}
     />
   );
 }
