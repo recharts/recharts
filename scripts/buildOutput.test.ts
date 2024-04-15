@@ -29,17 +29,17 @@ describe('expected folder structure', () => {
 
     it('should point to a main file', () => {
       expect(packageJson.main).toEqual('lib/index.js');
-      expect(existsSync(`./${packageJson.main}.js`)).toBe(true);
+      expect(existsSync(`./${packageJson.main}`)).toBe(true);
     });
 
     it('should point to a main module file', () => {
       expect(packageJson.module).toEqual('es6/index.js');
-      expect(existsSync(`./${packageJson.module}.js`)).toBe(true);
+      expect(existsSync(`./${packageJson.module}`)).toBe(true);
     });
 
     it('should point to a jsnext:main file', () => {
       expect(packageJson['jsnext:main']).toEqual('es6/index.js');
-      expect(existsSync(`./${packageJson['jsnext:main']}.js`)).toBe(true);
+      expect(existsSync(`./${packageJson['jsnext:main']}`)).toBe(true);
     });
 
     it('should point to a types file', () => {
