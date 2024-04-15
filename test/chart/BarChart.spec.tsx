@@ -483,20 +483,20 @@ describe('<BarChart />', () => {
         },
       ),
     );
-  });
 
-  it(
-    'should set width and height in context',
-    testChartLayoutContext(
-      props => (
-        <BarChart width={100} height={50} barSize={20}>
-          {props.children}
-        </BarChart>
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <BarChart width={100} height={50} barSize={20}>
+            {props.children}
+          </BarChart>
+        ),
+        ({ width, height }) => {
+          expect(width).toBe(100);
+          expect(height).toBe(50);
+        },
       ),
-      ({ width, height }) => {
-        expect(width).toBe(100);
-        expect(height).toBe(50);
-      },
-    ),
-  );
+    );
+  });
 });
