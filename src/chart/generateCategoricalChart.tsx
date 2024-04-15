@@ -1831,11 +1831,8 @@ export const generateCategoricalChart = ({
       const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
 
       if (hasActive) {
-        if (activeShape || activeBar) {
-          const activeIndex = element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
-          return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
-        }
-        return [graphicalItem];
+        const activeIndex = element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
+        return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
       }
 
       return [graphicalItem, null];
