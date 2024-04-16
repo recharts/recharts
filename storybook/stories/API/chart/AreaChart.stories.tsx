@@ -19,8 +19,8 @@ export const Simple = {
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart {...args}>
           <Area dataKey="pv" strokeWidth={3} stroke="#2451B7" fill="#5376C4" />
-          <Tooltip />
           <CartesianGrid opacity={0.1} vertical={false} />
+          <Tooltip />
         </AreaChart>
       </ResponsiveContainer>
     );

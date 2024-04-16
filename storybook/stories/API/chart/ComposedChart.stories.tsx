@@ -73,7 +73,6 @@ export const ComplexChart = {
         <YAxis />
         <Legend layout="vertical" align="right" verticalAlign="middle" />
         <CartesianGrid stroke="#f5f5f5" />
-        <Tooltip />
         <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
         <Bar dataKey="uv" fill="#ff7300" />
         <Bar dataKey="pv" barSize={20} fill="#413ea0" />
@@ -84,6 +83,7 @@ export const ComplexChart = {
             <Line dataKey="uv" stroke="#ff7300" dot={false} />
           </LineChart>
         </Brush>
+        <Tooltip />
       </>
     ),
   },
@@ -99,12 +99,12 @@ export const LineBarAreaScatter = {
         <YAxis />
         <Legend layout="vertical" align="right" verticalAlign="middle" />
         <CartesianGrid stroke="#f5f5f5" />
-        <Tooltip />
         <Area type="monotone" dataKey="amt" fill="#8884d8" stroke="#8884d8" />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <Bar dataKey="pv" barSize={20} fill="#413ea0" />
         <Scatter dataKey="pv" fill="red" />
         <Brush />
+        <Tooltip />
       </>
     ),
   },
@@ -120,9 +120,9 @@ export const LineBarHorizontal = {
         <YAxis />
         <Legend />
         <CartesianGrid stroke="#f5f5f5" />
-        <Tooltip />
         <Bar dataKey="pv" barSize={20} fill="#413ea0" />
         <Line type="monotone" dataKey="pv" stroke="#ff7300" />
+        <Tooltip />
       </>
     ),
   },
@@ -155,11 +155,11 @@ export const LineBarAreaScatterTimeScale = {
                 tick={{ fontSize: 10, fill: 'red' }}
               />
               <YAxis />
-              <Tooltip />
               <Legend />
               <Area type="monotone" dataKey="y" fill="#8884d8" stroke="#8884d8" />
               <Bar dataKey="y" barSize={20} fill="#413ea0" />
               <Line type="monotone" dataKey="y" stroke="#ff7300" />
+              <Tooltip />
             </Composed>
           </div>
         </div>

@@ -53,7 +53,6 @@ export const Simple: Meta<ScatterProps> = {
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Scatter
             activeShape={args.activeShape}
             activeIndex={args.activeIndex}
@@ -61,6 +60,7 @@ export const Simple: Meta<ScatterProps> = {
             data={data}
             fill="#8884d8"
           />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -100,10 +100,10 @@ export const ThreeDim = {
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
           <ZAxis type="number" dataKey="z" range={[60, 400]} name="score" unit="km" />
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Legend />
           <Scatter name="A school" data={data01} fill="#8884d8" shape="star" />
           <Scatter name="B school" data={data02} fill="#82ca9d" shape="triangle" />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -142,10 +142,10 @@ export const JointLine = {
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
           <ZAxis type="number" range={[100]} />
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Legend />
           <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
           <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -282,8 +282,8 @@ export const BubbleChart = {
               label={{ value: 'Sunday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data01} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -317,8 +317,8 @@ export const BubbleChart = {
               label={{ value: 'Monday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data02} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -352,8 +352,8 @@ export const BubbleChart = {
               label={{ value: 'Tuesday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data01} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -387,8 +387,8 @@ export const BubbleChart = {
               label={{ value: 'Wednesday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data02} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -422,8 +422,8 @@ export const BubbleChart = {
               label={{ value: 'Thursday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data01} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -457,8 +457,8 @@ export const BubbleChart = {
               label={{ value: 'Friday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data02} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
 
@@ -491,8 +491,8 @@ export const BubbleChart = {
               label={{ value: 'Saturday', position: 'insideRight' }}
             />
             <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
             <Scatter data={data01} fill="#8884d8" />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
           </ScatterChart>
         </ResponsiveContainer>
       </div>
@@ -524,10 +524,10 @@ export const WithLabels = {
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Scatter name="A school" data={data} fill="#8884d8">
             <LabelList dataKey="x" />
           </Scatter>
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -580,9 +580,9 @@ export const MultipleYAxes = {
             orientation="right"
             stroke="#82ca9d"
           />
-          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Scatter yAxisId="left" name="A school" data={data01} fill="#8884d8" />
           <Scatter yAxisId="right" name="A school" data={data02} fill="#82ca9d" />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>
     );
@@ -614,12 +614,12 @@ export const WithCells = {
         <CartesianGrid />
         <XAxis type="number" dataKey="x" name="stature" unit="cm" />
         <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         <Scatter name="A school" data={data} fill="#8884d8">
           {data.map(({ x }, index) => (
             <Cell key={`cell-${x}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Scatter>
+        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       </ScatterChart>
     );
   },

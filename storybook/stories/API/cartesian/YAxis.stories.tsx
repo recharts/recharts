@@ -35,9 +35,9 @@ export const API = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis />
           <YAxis {...args} />
-          <Tooltip />
           <Legend />
           <Line dataKey="y" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );

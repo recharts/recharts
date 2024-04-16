@@ -2,19 +2,14 @@ import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import { Cursor, CursorConnectedProps, CursorInternal, CursorProps } from '../../src/component/Cursor';
-import { Tooltip, TooltipProps } from '../../src/component/Tooltip';
 import { assertNotNull } from '../helper/assertNotNull';
 import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { LayoutContext } from '../../src/context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
 
-function getTooltipElement(props: TooltipProps<any, any>) {
-  return <Tooltip {...props} />;
-}
-
 const defaultProps: CursorProps = {
-  element: getTooltipElement({}),
+  cursor: true,
   tooltipEventType: 'axis',
 };
 
@@ -50,7 +45,7 @@ describe('Cursor', () => {
       }
       const props: CursorConnectedProps = {
         ...connectedProps,
-        element: getTooltipElement({ cursor: <MyCustomCursor /> }),
+        cursor: <MyCustomCursor />,
       };
       const { getByText } = render(
         <TooltipContextProvider value={tooltipContext}>
@@ -133,7 +128,7 @@ describe('Cursor', () => {
       }
       const props: CursorProps = {
         ...defaultProps,
-        element: getTooltipElement({ cursor: <MyCustomCursor /> }),
+        cursor: <MyCustomCursor />,
       };
       const { getByText } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>

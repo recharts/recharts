@@ -477,11 +477,11 @@ export const API = {
           {/* All components are added to show the interaction with the Bar properties */}
           <Bar fill="red" stackId="1" dataKey="pv" />
           <Legend />
-          <Tooltip />
           <XAxis dataKey="name" />
           <YAxis />
           {/* The target component */}
           <Bar dataKey="uv" {...args} />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );

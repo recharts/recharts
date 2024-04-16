@@ -48,11 +48,11 @@ export const API = {
         >
           {/* All components are added to show the interaction with the Area properties */}
           <Legend />
-          <Tooltip />
           <XAxis dataKey="name" />
           <YAxis />
           {/* The target component */}
           <Line dataKey="uv" {...args} />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );
