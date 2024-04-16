@@ -17,7 +17,7 @@ import { pageData } from '../../data';
 
 const GeneralProps: Args = {
   component: {
-    description: `Use react element or function to render arbitrary customized content 
+    description: `Use react element or function to render arbitrary customized content
       which can use the internal state and props of chart.`,
     table: {
       type: {
@@ -56,11 +56,11 @@ const SimpleCustomized = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           {args.customizedComponent}
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );

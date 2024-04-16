@@ -237,9 +237,9 @@ export const API = {
           }}
           data={pageData}
         >
+          <Line dataKey="uv" />
           {/* The target component */}
           <Tooltip {...args} />
-          <Line dataKey="uv" />
         </LineChart>
       </ResponsiveContainer>
     );

@@ -40,9 +40,9 @@ export const API = {
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart width={400} height={400} data={pageDataWithFillColor}>
           <Legend />
-          <Tooltip />
           <PolarAngleAxis />
           <RadialBar dataKey="uv" {...args} />
+          <Tooltip />
         </RadialBarChart>
       </ResponsiveContainer>
     );

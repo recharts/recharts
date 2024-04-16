@@ -78,7 +78,6 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
-import { Cursor } from '../component/Cursor';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
@@ -1170,7 +1169,6 @@ export const generateCategoricalChart = ({
       };
 
       this.setState(nextState);
-      this.renderCursor(tooltipElem);
 
       // Make sure that anyone who keyboard-only users who tab to the chart will start their
       // cursors at defaultIndex
@@ -1787,25 +1785,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderCursor = (element: ReactElement) => {
-      const tooltipEventType = this.getTooltipEventType();
-
-      const key = element.key || '_recharts-cursor';
-
-      return <Cursor key={key} element={element} tooltipEventType={tooltipEventType} />;
-    };
-
-    /**
-     * Draw Tooltip
-     * @return {ReactElement}  The instance of Tooltip
-     */
-    renderTooltip = (): React.ReactElement => {
-      const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
-
-      return tooltipItem;
-    };
-
     renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
@@ -1863,7 +1842,7 @@ export const generateCategoricalChart = ({
       Scatter: { handler: this.renderGraphicChild },
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
-      Tooltip: { handler: this.renderCursor, once: true },
+      Tooltip: { handler: renderAsIs, once: true },
       PolarGrid: { handler: renderAsIs, once: true },
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
@@ -1948,7 +1927,6 @@ export const generateCategoricalChart = ({
                       <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
                       {renderByOrder(children, this.renderMap)}
                     </Surface>
-                    {this.renderTooltip()}
                   </div>
                 </ChartLayoutContextProvider>
               </AccessibilityContextProvider>

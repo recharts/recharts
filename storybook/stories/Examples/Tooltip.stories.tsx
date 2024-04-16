@@ -28,10 +28,10 @@ const SimpleTooltipStory = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
-          <Tooltip {...tooltipArgs} />
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" />
+          <Tooltip {...tooltipArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -184,10 +184,10 @@ export const SeparateDataSetsForChart = {
         <ComposedChart data={areaData}>
           <XAxis dataKey="category" type="category" />
           <YAxis dataKey="value" />
-          <Tooltip />
 
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -267,11 +267,11 @@ export const LargeDataArray = {
           }}
           data={generateMockData(1000, 334058656)}
         >
-          {/* The target component */}
-          <Tooltip {...args} />
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
+          {/* The target component */}
+          <Tooltip {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -295,10 +295,10 @@ export const IncludeHidden = {
           }}
           data={pageData}
         >
-          {/* The target component */}
-          <Tooltip includeHidden {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
+          {/* The target component */}
+          <Tooltip includeHidden {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -311,9 +311,9 @@ export const SharedTooltipInBarChart = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={pageData}>
-          <Tooltip {...args} />
           <Bar dataKey="uv" fill="green" />
           <Bar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -330,9 +330,9 @@ export const SharedTooltipInRadialBarChart = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart data={pageData}>
-          <Tooltip {...args} />
           <RadialBar dataKey="uv" fill="green" />
           <RadialBar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
         </RadialBarChart>
       </ResponsiveContainer>
     );

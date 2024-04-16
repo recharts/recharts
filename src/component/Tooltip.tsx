@@ -1,4 +1,4 @@
-import React, { CSSProperties, PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
+import React, { CSSProperties, PureComponent, ReactElement, ReactNode } from 'react';
 import {
   DefaultTooltipContent,
   NameType,
@@ -15,6 +15,8 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
+import { Cursor, CursorDefinition } from './Cursor';
+import { useTooltipEventType } from '../state/selectors';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -61,7 +63,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   content?: ContentType<TValue, TName>;
-  cursor?: boolean | ReactElement | SVGProps<SVGElement>;
+  cursor?: CursorDefinition;
   filterNull?: boolean;
   defaultIndex?: number;
   isAnimationActive?: boolean;
@@ -96,10 +98,13 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     reverseDirection,
     useTranslate3d,
     wrapperStyle,
+    cursor,
+    shared,
   } = props;
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
+  const tooltipEventType = useTooltipEventType(shared);
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
    * or `active=false` in which case the Tooltip never shows.
@@ -124,32 +129,35 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const hasPayload = finalPayload.length > 0;
 
   return (
-    <TooltipBoundingBox
-      allowEscapeViewBox={allowEscapeViewBox}
-      animationDuration={animationDuration}
-      animationEasing={animationEasing}
-      isAnimationActive={isAnimationActive}
-      active={finalIsActive}
-      coordinate={coordinate}
-      hasPayload={hasPayload}
-      offset={offset}
-      position={position}
-      reverseDirection={reverseDirection}
-      useTranslate3d={useTranslate3d}
-      viewBox={viewBox}
-      wrapperStyle={wrapperStyle}
-      lastBoundingBox={lastBoundingBox}
-      innerRef={updateBoundingBox}
-    >
-      {renderContent(content, {
-        ...props,
-        payload: finalPayload,
-        label,
-        active: finalIsActive,
-        coordinate,
-        accessibilityLayer,
-      })}
-    </TooltipBoundingBox>
+    <>
+      <TooltipBoundingBox
+        allowEscapeViewBox={allowEscapeViewBox}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
+        isAnimationActive={isAnimationActive}
+        active={finalIsActive}
+        coordinate={coordinate}
+        hasPayload={hasPayload}
+        offset={offset}
+        position={position}
+        reverseDirection={reverseDirection}
+        useTranslate3d={useTranslate3d}
+        viewBox={viewBox}
+        wrapperStyle={wrapperStyle}
+        lastBoundingBox={lastBoundingBox}
+        innerRef={updateBoundingBox}
+      >
+        {renderContent(content, {
+          ...props,
+          payload: finalPayload,
+          label,
+          active: finalIsActive,
+          coordinate,
+          accessibilityLayer,
+        })}
+      </TooltipBoundingBox>
+      {finalIsActive && <Cursor cursor={cursor} tooltipEventType={tooltipEventType} />}
+    </>
   );
 }
 
