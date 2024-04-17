@@ -90,7 +90,7 @@ import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brush
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { TooltipPortalContext } from '../context/tooltipPortalContext';
+import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1085,8 +1085,6 @@ export const generateCategoricalChart = ({
 
     container?: HTMLElement;
 
-    tooltipPortal: HTMLElement | null = null;
-
     constructor(props: CategoricalChartProps) {
       super(props);
 
@@ -1845,7 +1843,7 @@ export const generateCategoricalChart = ({
       Scatter: { handler: this.renderGraphicChild },
       Pie: { handler: this.renderGraphicChild },
       Funnel: { handler: this.renderGraphicChild },
-      Tooltip: { handler: renderAsIs, once: true },
+      Tooltip: { handler: renderAsIs },
       PolarGrid: { handler: renderAsIs, once: true },
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
@@ -1899,46 +1897,58 @@ export const generateCategoricalChart = ({
 
       const events = this.parseEventsOfWrapper();
       return (
-        <TooltipPortalContext.Provider value={this.tooltipPortal}>
-          <ChartDataContextProvider value={this.props.data}>
-            <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-              <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-                  <ChartLayoutContextProvider
-                    state={this.state}
-                    width={this.props.width}
-                    height={this.props.height}
-                    clipPathId={this.clipPathId}
-                    margin={this.props.margin}
-                    layout={this.props.layout}
-                  >
-                    <div
-                      className={clsx('recharts-wrapper', className)}
-                      style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                      {...events}
-                      ref={(node: HTMLDivElement) => {
-                        this.container = node;
-                      }}
+        <CursorPortalContext.Provider value={this.state.cursorPortal}>
+          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+            <ChartDataContextProvider value={this.props.data}>
+              <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+                <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+                  <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+                    <ChartLayoutContextProvider
+                      state={this.state}
+                      width={this.props.width}
+                      height={this.props.height}
+                      clipPathId={this.clipPathId}
+                      margin={this.props.margin}
+                      layout={this.props.layout}
                     >
-                      <Surface
-                        {...attrs}
-                        width={width}
-                        height={height}
-                        title={title}
-                        desc={desc}
-                        style={FULL_WIDTH_AND_HEIGHT}
+                      <div
+                        className={clsx('recharts-wrapper', className)}
+                        style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                        {...events}
+                        ref={(node: HTMLDivElement) => {
+                          this.container = node;
+                          if (this.state.tooltipPortal == null) {
+                            this.setState({ tooltipPortal: node });
+                          }
+                        }}
                       >
-                        <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
-                        {renderByOrder(children, this.renderMap)}
-                      </Surface>
-                      <div ref={(node: HTMLElement) => { this.tooltipPortal = node }}></div>
-                    </div>
-                  </ChartLayoutContextProvider>
-                </AccessibilityContextProvider>
-              </BrushUpdateDispatchContext.Provider>
-            </LegendBoundingBoxContext.Provider>
-          </ChartDataContextProvider>
-        </TooltipPortalContext.Provider>
+                        <Surface
+                          {...attrs}
+                          width={width}
+                          height={height}
+                          title={title}
+                          desc={desc}
+                          style={FULL_WIDTH_AND_HEIGHT}
+                        >
+                          <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
+                          <g
+                            className="recharts-cursor-portal"
+                            ref={(node: SVGElement) => {
+                              if (this.state.cursorPortal == null) {
+                                this.setState({ cursorPortal: node });
+                              }
+                            }}
+                          />
+                          {renderByOrder(children, this.renderMap)}
+                        </Surface>
+                      </div>
+                    </ChartLayoutContextProvider>
+                  </AccessibilityContextProvider>
+                </BrushUpdateDispatchContext.Provider>
+              </LegendBoundingBoxContext.Provider>
+            </ChartDataContextProvider>
+          </TooltipPortalContext.Provider>
+        </CursorPortalContext.Provider>
       );
     }
   }

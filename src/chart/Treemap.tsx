@@ -20,6 +20,7 @@ import { findChildByType, validateWidthHeight, filterProps } from '../util/React
 import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
+import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -287,6 +288,9 @@ interface State {
   prevDataKey?: DataKey<any>;
 
   prevAspectRatio?: number;
+
+  cursorPortal?: SVGElement | null;
+  tooltipPortal?: HTMLElement | null;
 }
 
 const defaultState: State = {
@@ -729,21 +733,38 @@ export class Treemap extends PureComponent<Props, State> {
     const viewBox = { x: 0, y: 0, width, height };
 
     return (
-      <ViewBoxContext.Provider value={viewBox}>
-        <TooltipContextProvider value={this.getTooltipContext()}>
-          <div
-            className={clsx('recharts-wrapper', className)}
-            style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-            role="region"
-          >
-            <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-              {this.renderAllNodes()}
-              {children}
-            </Surface>
-            {type === 'nest' && this.renderNestIndex()}
-          </div>
-        </TooltipContextProvider>
-      </ViewBoxContext.Provider>
+      <CursorPortalContext.Provider value={this.state.cursorPortal}>
+        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+          <ViewBoxContext.Provider value={viewBox}>
+            <TooltipContextProvider value={this.getTooltipContext()}>
+              <div
+                className={clsx('recharts-wrapper', className)}
+                style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+                role="region"
+                ref={(node: HTMLDivElement) => {
+                  if (this.state.tooltipPortal == null) {
+                    this.setState({ tooltipPortal: node });
+                  }
+                }}
+              >
+                <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (this.state.cursorPortal == null) {
+                        this.setState({ cursorPortal: node });
+                      }
+                    }}
+                  />
+                  {this.renderAllNodes()}
+                  {children}
+                </Surface>
+                {type === 'nest' && this.renderNestIndex()}
+              </div>
+            </TooltipContextProvider>
+          </ViewBoxContext.Provider>
+        </TooltipPortalContext.Provider>
+      </CursorPortalContext.Provider>
     );
   }
 }
