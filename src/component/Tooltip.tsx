@@ -17,6 +17,8 @@ import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
 import { useTooltipEventType } from '../state/selectors';
+import { useTooltipPortal } from '../context/tooltipPortalContext';
+import { createPortal } from 'react-dom';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -105,6 +107,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
   const tooltipEventType = useTooltipEventType(shared);
+  const tooltipPortal = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
    * or `active=false` in which case the Tooltip never shows.
@@ -128,37 +131,43 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
 
   const hasPayload = finalPayload.length > 0;
 
-  return (
+  const element = (
     <>
-      <TooltipBoundingBox
-        allowEscapeViewBox={allowEscapeViewBox}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
-        active={finalIsActive}
-        coordinate={coordinate}
-        hasPayload={hasPayload}
-        offset={offset}
-        position={position}
-        reverseDirection={reverseDirection}
-        useTranslate3d={useTranslate3d}
-        viewBox={viewBox}
-        wrapperStyle={wrapperStyle}
-        lastBoundingBox={lastBoundingBox}
-        innerRef={updateBoundingBox}
-      >
-        {renderContent(content, {
-          ...props,
-          payload: finalPayload,
-          label,
-          active: finalIsActive,
-          coordinate,
-          accessibilityLayer,
-        })}
-      </TooltipBoundingBox>
-      {finalIsActive && <Cursor cursor={cursor} tooltipEventType={tooltipEventType} />}
+      <>
+        <TooltipBoundingBox
+          allowEscapeViewBox={allowEscapeViewBox}
+          animationDuration={animationDuration}
+          animationEasing={animationEasing}
+          isAnimationActive={isAnimationActive}
+          active={finalIsActive}
+          coordinate={coordinate}
+          hasPayload={hasPayload}
+          offset={offset}
+          position={position}
+          reverseDirection={reverseDirection}
+          useTranslate3d={useTranslate3d}
+          viewBox={viewBox}
+          wrapperStyle={wrapperStyle}
+          lastBoundingBox={lastBoundingBox}
+          innerRef={updateBoundingBox}
+        >
+          {renderContent(content, {
+            ...props,
+            payload: finalPayload,
+            label,
+            active: finalIsActive,
+            coordinate,
+            accessibilityLayer,
+          })}
+        </TooltipBoundingBox>
+        {finalIsActive && <Cursor cursor={cursor} tooltipEventType={tooltipEventType} />}
+      </>
     </>
   );
+  if (tooltipPortal == null) {
+    return element;
+  }
+  return createPortal(element, tooltipPortal);
 }
 
 export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<

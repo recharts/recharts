@@ -343,3 +343,28 @@ export const SharedTooltipInRadialBarChart = {
     active: true,
   },
 };
+
+/**
+ * https://github.com/recharts/recharts/issues/2458
+ *
+ * Tooltip that's taller than the chart itself should not clip.
+ * It should instead overflow the chart.
+ */
+export const TallTooltipInNarrowChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={100}>
+        <LineChart data={pageData}>
+          <Line dataKey="uv" fill="green" />
+          <Line dataKey="pv" fill="red" />
+          <Line dataKey="amt" fill="amt" />
+          <Tooltip {...args} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    defaultIndex: 2,
+    active: true,
+  },
+};
