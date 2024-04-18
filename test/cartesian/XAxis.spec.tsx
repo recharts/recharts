@@ -177,6 +177,21 @@ describe('<XAxis />', () => {
     expect(bar).not.toBeInTheDocument();
   });
 
+  it('Should render the YAxis line without any ticks', () => {
+    const barData = [{ day: '05-01' }, { day: '05-02' }];
+    const { container } = render(
+      <BarChart width={300} height={300} data={barData}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="y" type="number" />
+      </BarChart>,
+    );
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-line');
+    expect(ticksGroup).toHaveLength(0);
+
+    const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
+    expect(axisLine).toHaveLength(1);
+  });
+
   it('Render Bars for a single data point with barSize=50%', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="50%">
