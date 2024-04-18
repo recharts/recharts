@@ -343,3 +343,60 @@ export const SharedTooltipInRadialBarChart = {
     active: true,
   },
 };
+
+/**
+ * https://github.com/recharts/recharts/issues/2458
+ *
+ * Tooltip that's taller than the chart itself should not clip.
+ * It should instead overflow the chart.
+ */
+export const TallTooltipInNarrowChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={50}>
+        <LineChart data={pageData}>
+          <Line dataKey="uv" fill="green" />
+          <Line dataKey="pv" fill="red" />
+          <Line dataKey="amt" fill="amt" />
+          <Tooltip {...args} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    defaultIndex: 2,
+    active: true,
+  },
+};
+
+export const TooltipWithPortal = {
+  render: (args: Record<string, any>) => {
+    const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+    return (
+      <>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={pageData}>
+            <Line dataKey="uv" fill="green" />
+            <Line dataKey="pv" fill="red" />
+            {portalRef && <Tooltip {...args} portal={portalRef} />}
+          </LineChart>
+        </ResponsiveContainer>
+        <div
+          ref={node => {
+            if (portalRef == null && node != null) {
+              setPortalRef(node);
+            }
+          }}
+        >
+          <p>Inspect the resulting HTML to see that the Tooltip element is rendered according to the portal ref.</p>
+          {/* The Tooltip will render here */}
+        </div>
+      </>
+    );
+  },
+  args: {
+    defaultIndex: 3,
+    active: true,
+  },
+};

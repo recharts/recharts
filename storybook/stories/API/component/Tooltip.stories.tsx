@@ -214,6 +214,17 @@ const TooltipProps: StorybookArgs = {
     Currently only supported in BarChart and RadialBarChart.
     Defaults to true.`,
   },
+  portal: {
+    description: `If portal is defined, then Tooltip will use this element as a target
+    for rendering using React Portal: https://react.dev/reference/react-dom/createPortal.
+    If this is undefined then Tooltip renders inside the recharts-wrapper element.`,
+    table: {
+      category: 'Position',
+      type: {
+        summary: 'HTMLElement | null',
+      },
+    },
+  },
 };
 
 export default {

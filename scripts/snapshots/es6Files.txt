@@ -67,6 +67,7 @@
   "es6/polar/Pie.js",
   "es6/numberAxis/Funnel.js",
   "es6/context/useTooltipAxis.js",
+  "es6/context/tooltipPortalContext.js",
   "es6/context/tooltipContext.js",
   "es6/context/legendPayloadContext.js",
   "es6/context/legendBoundingBoxContext.js",

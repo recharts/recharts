@@ -67,6 +67,7 @@
   "lib/polar/Pie.js",
   "lib/numberAxis/Funnel.js",
   "lib/context/useTooltipAxis.js",
+  "lib/context/tooltipPortalContext.js",
   "lib/context/tooltipContext.js",
   "lib/context/legendPayloadContext.js",
   "lib/context/legendBoundingBoxContext.js",
