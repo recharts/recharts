@@ -142,7 +142,6 @@ type BarBackgroundProps = {
 
 function BarBackground(props: BarBackgroundProps) {
   const { data, dataKey, activeIndex, background: backgroundFromProps, onAnimationStart, onAnimationEnd } = props;
-  console.log('BarBackground background', backgroundFromProps);
   if (!backgroundFromProps) {
     return null;
   }
@@ -173,6 +172,50 @@ function BarBackground(props: BarBackgroundProps) {
         };
 
         return <BarRectangle option={backgroundFromProps} isActive={i === activeIndex} {...barRectangleProps} />;
+      })}
+    </>
+  );
+}
+
+type BarRectanglesProps = Props & {
+  data: BarRectangleItem[];
+  onAnimationStart: () => void;
+  onAnimationEnd: () => void;
+};
+
+function BarRectangles(props: BarRectanglesProps) {
+  const { onAnimationStart, onAnimationEnd, ...rest } = props;
+  const baseProps = filterProps(rest, false);
+  const { data, shape, dataKey, activeIndex, activeBar } = props;
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <>
+      {data.map((entry, i) => {
+        const isActive = i === activeIndex;
+        const option = isActive ? activeBar : shape;
+        const barRectangleProps = {
+          ...baseProps,
+          ...entry,
+          isActive,
+          option,
+          index: i,
+          dataKey,
+          onAnimationStart,
+          onAnimationEnd,
+        };
+        return (
+          <Layer
+            className="recharts-bar-rectangle"
+            {...adaptEventsOfChild(rest, entry, i)}
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
+          >
+            <BarRectangle {...barRectangleProps} />
+          </Layer>
+        );
       })}
     </>
   );
@@ -361,34 +404,13 @@ export class Bar extends PureComponent<Props, State> {
   };
 
   renderRectanglesStatically(data: BarRectangleItem[]) {
-    const { shape, dataKey, activeIndex, activeBar } = this.props;
-    const baseProps = filterProps(this.props, false);
-
     return (
-      data &&
-      data.map((entry, i) => {
-        const isActive = i === activeIndex;
-        const option = isActive ? activeBar : shape;
-        const props = {
-          ...baseProps,
-          ...entry,
-          isActive,
-          option,
-          index: i,
-          dataKey,
-          onAnimationStart: this.handleAnimationStart,
-          onAnimationEnd: this.handleAnimationEnd,
-        };
-        return (
-          <Layer
-            className="recharts-bar-rectangle"
-            {...adaptEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
-          >
-            <BarRectangle {...props} />
-          </Layer>
-        );
-      })
+      <BarRectangles
+        {...this.props}
+        onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
+        data={data}
+      />
     );
   }
 
