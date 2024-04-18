@@ -131,6 +131,53 @@ function SetBarLegend(props: Props): null {
   return null;
 }
 
+type BarBackgroundProps = {
+  background?: ActiveShape<BarProps, SVGPathElement>;
+  data: BarRectangleItem[];
+  dataKey: DataKey<any>;
+  activeIndex?: number;
+  onAnimationStart: () => void;
+  onAnimationEnd: () => void;
+};
+
+function BarBackground(props: BarBackgroundProps) {
+  const { data, dataKey, activeIndex, background: backgroundFromProps, onAnimationStart, onAnimationEnd } = props;
+  console.log('BarBackground background', backgroundFromProps);
+  if (!backgroundFromProps) {
+    return null;
+  }
+
+  const backgroundProps = filterProps(backgroundFromProps, false);
+
+  return (
+    <>
+      {data.map((entry, i) => {
+        const { value, background: backgroundFromDataEntry, ...rest } = entry;
+
+        if (!backgroundFromDataEntry) {
+          return null;
+        }
+
+        const barRectangleProps = {
+          ...rest,
+          fill: '#eee',
+          ...backgroundFromDataEntry,
+          ...backgroundProps,
+          ...adaptEventsOfChild(props, entry, i),
+          onAnimationStart,
+          onAnimationEnd,
+          dataKey,
+          index: i,
+          key: `background-bar-${i}`,
+          className: 'recharts-bar-background-rectangle',
+        };
+
+        return <BarRectangle option={backgroundFromProps} isActive={i === activeIndex} {...barRectangleProps} />;
+      })}
+    </>
+  );
+}
+
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
 
@@ -415,35 +462,6 @@ export class Bar extends PureComponent<Props, State> {
     return this.renderRectanglesStatically(data);
   }
 
-  renderBackground() {
-    const { data, dataKey, activeIndex } = this.props;
-    const backgroundProps = filterProps(this.props.background, false);
-
-    return data.map((entry, i) => {
-      const { value, background, ...rest } = entry;
-
-      if (!background) {
-        return null;
-      }
-
-      const props = {
-        ...rest,
-        fill: '#eee',
-        ...background,
-        ...backgroundProps,
-        ...adaptEventsOfChild(this.props, entry, i),
-        onAnimationStart: this.handleAnimationStart,
-        onAnimationEnd: this.handleAnimationEnd,
-        dataKey,
-        index: i,
-        key: `background-bar-${i}`,
-        className: 'recharts-bar-background-rectangle',
-      };
-
-      return <BarRectangle option={this.props.background} isActive={i === activeIndex} {...props} />;
-    });
-  }
-
   renderErrorBar(needClip: boolean, clipPathId: string) {
     if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
       return null;
@@ -494,8 +512,21 @@ export class Bar extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, data, className, xAxis, yAxis, left, top, width, height, isAnimationActive, background, id } =
-      this.props;
+    const {
+      hide,
+      data,
+      dataKey,
+      className,
+      xAxis,
+      yAxis,
+      left,
+      top,
+      width,
+      height,
+      isAnimationActive,
+      background,
+      id,
+    } = this.props;
     if (hide || !data || !data.length) {
       return <SetBarLegend {...this.props} />;
     }
@@ -523,7 +554,13 @@ export class Bar extends PureComponent<Props, State> {
           </defs>
         ) : null}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-          {background ? this.renderBackground() : null}
+          <BarBackground
+            data={data}
+            dataKey={dataKey}
+            background={background}
+            onAnimationStart={this.handleAnimationStart}
+            onAnimationEnd={this.handleAnimationEnd}
+          />
           {this.renderRectangles()}
         </Layer>
         {this.renderErrorBar(needClip, clipPathId)}
