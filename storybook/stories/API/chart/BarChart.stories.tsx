@@ -53,10 +53,10 @@ export const Stacked = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="uv" stackId="a" fill="green" barSize={50} />
           <Bar dataKey="pv" stackId="a" fill="red" barSize={30} />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -65,5 +65,6 @@ export const Stacked = {
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
     stepRatioControl: 0.05,
+    id: 'BarChart-Stacked',
   },
 };

@@ -390,6 +390,49 @@ describe('Tooltip visibility', () => {
       expect(customizedContent).toBeInTheDocument();
     });
 
+    describe('portal prop', () => {
+      it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
+        const { container } = render(
+          <Wrapper>
+            <Tooltip />
+          </Wrapper>,
+        );
+        showTooltip(container, mouseHoverSelector);
+
+        expect(container.querySelectorAll('.recharts-wrapper svg .recharts-tooltip-wrapper')).toHaveLength(0);
+        expect(container.querySelector('.recharts-wrapper > .recharts-tooltip-wrapper')).toBeVisible();
+      });
+
+      it('should render in a custom portal if "portal" prop is set', () => {
+        function Example() {
+          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+          return (
+            <>
+              <Wrapper>
+                <Tooltip portal={portalRef} />
+              </Wrapper>
+              <div
+                data-testid="my-custom-portal-target"
+                ref={node => {
+                  if (portalRef == null && node != null) {
+                    setPortalRef(node);
+                  }
+                }}
+              />
+            </>
+          );
+        }
+        const { container } = render(<Example />);
+        showTooltip(container, mouseHoverSelector);
+
+        expect(container.querySelector('.recharts-wrapper .recharts-tooltip-wrapper')).not.toBeInTheDocument();
+        expect(
+          container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
+        ).toBeVisible();
+      });
+    });
+
     describe('active prop', () => {
       test('with active=true it should render tooltip even after moving the mouse out of the chart.', context => {
         if (name === 'Sankey') {
@@ -742,7 +785,7 @@ describe('Cursor visibility', () => {
     ComposedChartWithLineTestCase,
     RadarChartTestCase,
   ])('as a child of $name', ({ Wrapper, mouseHoverSelector }) => {
-    it('should display cursor', () => {
+    it('should display cursor inside of the SVG', () => {
       const { container, debug } = render(
         <Wrapper>
           <Tooltip />
@@ -752,7 +795,7 @@ describe('Cursor visibility', () => {
 
       showTooltip(container, mouseHoverSelector, debug);
 
-      expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
+      expect(container.querySelector('.recharts-wrapper svg .recharts-tooltip-cursor')).toBeVisible();
     });
 
     it('should not display cursor when cursor=false', () => {

@@ -388,4 +388,26 @@ describe('<PieChart />', () => {
       ),
     );
   });
+
+  test('classNames can be given to label and labelLine.', () => {
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          data={data}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label={{ className: 'label-custom-className' }}
+          labelLine={{ className: 'label-line-custom-className' }}
+        />
+        <Tooltip />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.label-custom-className')).toHaveLength(6);
+    expect(container.querySelectorAll('.label-line-custom-className')).toHaveLength(6);
+  });
 });

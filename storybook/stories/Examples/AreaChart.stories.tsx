@@ -2,7 +2,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
-import { pageData } from '../data';
+import { pageData, rangeData } from '../data';
 import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area } from '../../../src';
 
 export default {
@@ -30,8 +30,8 @@ export const Simple = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <Tooltip />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -56,10 +56,10 @@ export const StackedAreaChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          <Tooltip active defaultIndex={2} />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -133,10 +133,10 @@ export const PercentAreaChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" />
           <YAxis tickFormatter={toPercent} />
-          <Tooltip content={renderTooltipContent} />
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          <Tooltip content={renderTooltipContent} defaultIndex={3} active />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -163,9 +163,9 @@ export const CardinalAreaChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
           <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
+          <Tooltip />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -235,8 +235,8 @@ export const AreaChartConnectNulls = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </AreaChart>
         </ResponsiveContainer>
         <ResponsiveContainer width="100%" height={200}>
@@ -254,8 +254,8 @@ export const AreaChartConnectNulls = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -284,8 +284,8 @@ export const SynchronisedAreaChart = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </AreaChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
@@ -306,8 +306,8 @@ export const SynchronisedAreaChart = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+            <Tooltip />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -394,7 +394,6 @@ export const AreaChartFillByValue = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <defs>
             <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
               <stop offset={off} stopColor="green" stopOpacity={1} />
@@ -402,6 +401,32 @@ export const AreaChartFillByValue = {
             </linearGradient>
           </defs>
           <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+          <Tooltip />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const AreaChartRange = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          width={500}
+          height={400}
+          data={rangeData}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
+          <Tooltip defaultIndex={4} active />
         </AreaChart>
       </ResponsiveContainer>
     );

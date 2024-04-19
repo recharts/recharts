@@ -1,13 +1,15 @@
-/* eslint-disable no-shadow */
 import React, { useCallback, useState } from 'react';
 import { pageData } from '../data';
 import {
   Area,
   Bar,
+  BarChart,
   CartesianGrid,
   ComposedChart,
   Line,
   LineChart,
+  RadialBar,
+  RadialBarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -26,10 +28,10 @@ const SimpleTooltipStory = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
-          <Tooltip {...tooltipArgs} />
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" />
+          <Tooltip {...tooltipArgs} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -182,10 +184,10 @@ export const SeparateDataSetsForChart = {
         <ComposedChart data={areaData}>
           <XAxis dataKey="category" type="category" />
           <YAxis dataKey="value" />
-          <Tooltip />
 
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -265,11 +267,11 @@ export const LargeDataArray = {
           }}
           data={generateMockData(1000, 334058656)}
         >
-          {/* The target component */}
-          <Tooltip {...args} />
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
+          {/* The target component */}
+          <Tooltip {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -293,13 +295,108 @@ export const IncludeHidden = {
           }}
           data={pageData}
         >
-          {/* The target component */}
-          <Tooltip includeHidden {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
+          {/* The target component */}
+          <Tooltip includeHidden {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
   args: {},
+};
+
+export const SharedTooltipInBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={pageData}>
+          <Bar dataKey="uv" fill="green" />
+          <Bar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    shared: false,
+    defaultIndex: 2,
+    active: true,
+  },
+};
+
+export const SharedTooltipInRadialBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <RadialBarChart data={pageData}>
+          <RadialBar dataKey="uv" fill="green" />
+          <RadialBar dataKey="pv" fill="red" />
+          <Tooltip {...args} />
+        </RadialBarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    shared: false,
+    defaultIndex: 2,
+    active: true,
+  },
+};
+
+/**
+ * https://github.com/recharts/recharts/issues/2458
+ *
+ * Tooltip that's taller than the chart itself should not clip.
+ * It should instead overflow the chart.
+ */
+export const TallTooltipInNarrowChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={50}>
+        <LineChart data={pageData}>
+          <Line dataKey="uv" fill="green" />
+          <Line dataKey="pv" fill="red" />
+          <Line dataKey="amt" fill="amt" />
+          <Tooltip {...args} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    defaultIndex: 2,
+    active: true,
+  },
+};
+
+export const TooltipWithPortal = {
+  render: (args: Record<string, any>) => {
+    const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+    return (
+      <>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={pageData}>
+            <Line dataKey="uv" fill="green" />
+            <Line dataKey="pv" fill="red" />
+            {portalRef && <Tooltip {...args} portal={portalRef} />}
+          </LineChart>
+        </ResponsiveContainer>
+        <div
+          ref={node => {
+            if (portalRef == null && node != null) {
+              setPortalRef(node);
+            }
+          }}
+        >
+          <p>Inspect the resulting HTML to see that the Tooltip element is rendered according to the portal ref.</p>
+          {/* The Tooltip will render here */}
+        </div>
+      </>
+    );
+  },
+  args: {
+    defaultIndex: 3,
+    active: true,
+  },
 };

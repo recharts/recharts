@@ -36,9 +36,9 @@ export const AreaChartWithAccessibilityLayer: StoryObj = {
           <Area isAnimationActive={false} dataKey="uv" {...args} />
           {/* All further components are added to show the interaction with the Area properties */}
           <Legend />
-          <Tooltip />
           <XAxis dataKey="name" />
           <YAxis />
+          <Tooltip />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -81,10 +81,10 @@ export const AccessibleWithButton = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          {toggle && <Tooltip />}
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+          {toggle && <Tooltip />}
         </AreaChart>
       </div>
     );

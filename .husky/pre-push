@@ -3,6 +3,8 @@
 
 npm test
 
+npm run check-types
+
 npm run lint
 npm run lint-storybook
 npm run lint-test

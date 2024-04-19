@@ -1,6 +1,3 @@
-/**
- * @file TreemapChart
- */
 import React, { PureComponent, ReactElement, SVGProps } from 'react';
 import maxBy from 'lodash/maxBy';
 import min from 'lodash/min';
@@ -19,6 +16,7 @@ import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
+import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -412,6 +410,9 @@ interface State {
   prevNodeWidth?: number;
   prevNodePadding?: number;
   prevSort?: boolean;
+
+  cursorPortal?: SVGElement | null;
+  tooltipPortal?: HTMLElement | null;
 }
 
 export class Sankey extends PureComponent<Props, State> {
@@ -428,7 +429,7 @@ export class Sankey extends PureComponent<Props, State> {
     sort: true,
   };
 
-  state = {
+  state: State = {
     activeElement: null as any,
     activeElementType: null as any,
     isTooltipActive: false,
@@ -691,6 +692,7 @@ export class Sankey extends PureComponent<Props, State> {
       payload,
       coordinate,
       active: isTooltipActive,
+      index: 0,
     };
   }
 
@@ -705,21 +707,38 @@ export class Sankey extends PureComponent<Props, State> {
     const attrs = filterProps(others, false);
 
     return (
-      <ViewBoxContext.Provider value={viewBox}>
-        <TooltipContextProvider value={this.getTooltipContext()}>
-          <div
-            className={clsx('recharts-wrapper', className)}
-            style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-            role="region"
-          >
-            <Surface {...attrs} width={width} height={height}>
-              {children}
-              {this.renderLinks(links, nodes)}
-              {this.renderNodes(nodes)}
-            </Surface>
-          </div>
-        </TooltipContextProvider>
-      </ViewBoxContext.Provider>
+      <CursorPortalContext.Provider value={this.state.cursorPortal}>
+        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+          <ViewBoxContext.Provider value={viewBox}>
+            <TooltipContextProvider value={this.getTooltipContext()}>
+              <div
+                className={clsx('recharts-wrapper', className)}
+                style={{ ...style, position: 'relative', cursor: 'default', width, height }}
+                role="region"
+                ref={(node: HTMLDivElement) => {
+                  if (this.state.tooltipPortal == null) {
+                    this.setState({ tooltipPortal: node });
+                  }
+                }}
+              >
+                <Surface {...attrs} width={width} height={height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (this.state.cursorPortal == null) {
+                        this.setState({ cursorPortal: node });
+                      }
+                    }}
+                  />
+                  {children}
+                  {this.renderLinks(links, nodes)}
+                  {this.renderNodes(nodes)}
+                </Surface>
+              </div>
+            </TooltipContextProvider>
+          </ViewBoxContext.Provider>
+        </TooltipPortalContext.Provider>
+      </CursorPortalContext.Provider>
     );
   }
 }

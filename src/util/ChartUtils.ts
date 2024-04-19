@@ -219,10 +219,12 @@ export type BarSetup = {
  */
 export const getBarSizeList = ({
   barSize: globalSize,
+  totalSize,
   stackGroups = {},
 }: {
   barSize: number | string;
   stackGroups: AxisStackGroups;
+  totalSize: number;
 }): Record<string, ReadonlyArray<BarSetup>> => {
   if (!stackGroups) {
     return {};
@@ -248,10 +250,12 @@ export const getBarSizeList = ({
           result[cateId] = [];
         }
 
+        const barSize: string | number | undefined = isNil(selfSize) ? globalSize : selfSize;
+
         result[cateId].push({
           item: barItems[0],
           stackList: barItems.slice(1),
-          barSize: isNil(selfSize) ? globalSize : selfSize,
+          barSize: isNil(barSize) ? undefined : getPercentValue(barSize, totalSize, 0),
         });
       }
     }
@@ -652,7 +656,7 @@ export const getTicksOfAxis = (
     return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
-  // When axis is a categorial axis, but the type of axis is number or the scale of axis is not "auto"
+  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (axis.isCategorical && axis.categoricalDomain) {
     return axis.categoricalDomain.map((entry: any, index: number) => ({
       coordinate: scale(entry) + offset,

@@ -85,4 +85,7 @@ export interface CategoricalChartState {
   prevChildren?: any;
   prevStepRatioControl?: StepRatioControl;
   stackGroups?: AxisStackGroups;
+
+  tooltipPortal?: HTMLElement | null;
+  cursorPortal?: SVGElement | null;
 }

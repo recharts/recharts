@@ -36,8 +36,8 @@ export const MultiChartFlexbox = {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip />
               <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+              <Tooltip />
             </AreaChart>
           </ResponsiveContainer>
           <ResponsiveContainer className="flex-child">
@@ -53,8 +53,8 @@ export const MultiChartFlexbox = {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip />
               <Line type="monotone" dataKey="amt" stroke="orange" />
+              <Tooltip />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -85,8 +85,8 @@ export const ResponsiveContainerWithFlexbox = {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                <Tooltip />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -96,8 +96,8 @@ export const ResponsiveContainerWithFlexbox = {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+                <Tooltip />
               </AreaChart>
             </ResponsiveContainer>
           </div>

@@ -33,9 +33,9 @@ export const Default = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Legend />
             <Line type="monotone" dataKey={dataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </>
@@ -66,9 +66,9 @@ export const UsingReactKey = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Legend />
             <Line type="monotone" dataKey={dataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </>
@@ -100,9 +100,9 @@ export const UsingDataKey = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Legend />
             <Line type="monotone" dataKey={dataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </>

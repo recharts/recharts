@@ -40,7 +40,6 @@ export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useYAxisOrThrow(yAxisId);
-
   if (axisOptions == null) {
     return null;
   }

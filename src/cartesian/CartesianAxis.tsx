@@ -260,9 +260,9 @@ export class CartesianAxis extends Component<Props, IState> {
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @param {string} fontSize Fontsize to consider for tick spacing
    * @param {string} letterSpacing Letterspacing to consider for tick spacing
-   * @return {ReactComponent} renderedTicks
+   * @return {ReactElement | null} renderedTicks
    */
-  renderTicks(ticks: CartesianTickItem[], fontSize: string, letterSpacing: string) {
+  renderTicks(ticks: CartesianTickItem[] = [], fontSize: string, letterSpacing: string): React.ReactElement | null {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
@@ -313,7 +313,7 @@ export class CartesianAxis extends Component<Props, IState> {
       );
     });
 
-    return <g className="recharts-cartesian-axis-ticks">{items}</g>;
+    return items.length > 0 ? <g className="recharts-cartesian-axis-ticks">{items}</g> : null;
   }
 
   render() {
@@ -330,7 +330,7 @@ export class CartesianAxis extends Component<Props, IState> {
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 
-    if (width <= 0 || height <= 0 || !finalTicks || !finalTicks.length) {
+    if (width <= 0 || height <= 0) {
       return null;
     }
 

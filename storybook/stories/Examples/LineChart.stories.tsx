@@ -45,10 +45,10 @@ export const Simple = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -85,10 +85,10 @@ export const Dashed = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
+          <Tooltip defaultIndex={3} active />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -114,10 +114,10 @@ export const Vertical = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
-          <Tooltip />
           <Legend />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
+          <Tooltip defaultIndex={4} active />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -142,10 +142,10 @@ export const BiAxial = {
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" />
           <YAxis yAxisId="right" orientation="right" />
-          <Tooltip />
           <Legend />
           <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -170,10 +170,10 @@ export const VerticalWithSpecifiedDomain = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" domain={[0, 'dataMax + 1000']} />
           <YAxis dataKey="name" type="category" />
-          <Tooltip />
           <Legend />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -208,8 +208,8 @@ export const ConnectNulls = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
 
@@ -228,8 +228,8 @@ export const ConnectNulls = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </>
@@ -244,10 +244,10 @@ export const WithXAxisPadding = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -271,12 +271,12 @@ export const WithReferenceLines = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <ReferenceLine x="Page C" stroke="red" label="Anything" />
           <ReferenceLine y={1600} label="Something" stroke="red" />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -345,10 +345,10 @@ export const WithCustomizedDot = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={<CustomizedDot />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -375,9 +375,9 @@ export const ClipDot: StoryObj = {
             dot={{ clipDot: args.clipDot, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }}
           />
           <Line isAnimationActive={false} dataKey="pv" {...args} dot={{ clipDot: args.clipDot }} />
-          <Tooltip />
           <XAxis dataKey="name" allowDataOverflow />
           <YAxis />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -440,10 +440,10 @@ export const WithCustomizedLabel = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" height={60} tick={<CustomizedAxisTick />} />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" label={<CustomizedLabel />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -470,8 +470,8 @@ export const Synchronized = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
@@ -492,9 +492,9 @@ export const Synchronized = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Line type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Brush />
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
 
@@ -514,8 +514,8 @@ export const Synchronized = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+            <Tooltip />
           </AreaChart>
         </ResponsiveContainer>
       </>
@@ -634,13 +634,13 @@ export const HighlightAndZoom = {
             <XAxis allowDataOverflow dataKey="name" domain={left && right ? [left, right] : undefined} type="number" />
             <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" />
             <YAxis orientation="right" allowDataOverflow domain={[bottom2, top2]} type="number" yAxisId="2" />
-            <Tooltip />
             <Line yAxisId="1" type="natural" dataKey="cost" stroke="#8884d8" animationDuration={300} />
             <Line yAxisId="2" type="natural" dataKey="impression" stroke="#82ca9d" animationDuration={300} />
 
             {refAreaLeft && refAreaRight ? (
               <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
             ) : null}
+            <Tooltip />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -656,11 +656,11 @@ export const LineChartHasMultiSeries = {
           <CartesianGrid />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Line dataKey="uv" />
           <Line dataKey="pv" />
           <Line dataKey="amt" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -913,7 +913,6 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 tickMargin={25}
               />
               {yAxisComponents}
-              <Tooltip />
               <Line
                 name="PV"
                 type="monotone"
@@ -931,6 +930,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 yAxisId={yAxisComponents[1].props.yAxisId}
                 dot={false}
               />
+              <Tooltip />
             </>
           )}
         </LineChart>
@@ -948,11 +948,11 @@ export const WithBrush: StoryObj = {
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
           <Legend />
           <Brush dataKey="name" startIndex={2} height={30} stroke="#8884d8" />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -980,11 +980,11 @@ export const HideOnLegendClick: StoryObj = {
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
           <Legend height={36} iconType="circle" onClick={props => handleLegendClick(props.dataKey)} />
 
           <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -1005,7 +1005,6 @@ export const LineTrailingIcon: StoryObj = {
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line
@@ -1015,6 +1014,7 @@ export const LineTrailingIcon: StoryObj = {
             tooltipType="none"
             dot={{ stroke: 'red', strokeWidth: 1, r: 4 }}
           />
+          <Tooltip />
         </LineChart>
       </ResponsiveContainer>
     );

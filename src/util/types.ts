@@ -1278,6 +1278,20 @@ export const adaptEventsOfChild = (
   return out;
 };
 
+/**
+ * 'axis' means that all graphical items belonging to this axis tick will be highlighted,
+ * and all will be present in the tooltip.
+ * Tooltip with 'axis' will display when hovering on the chart background.
+ *
+ * 'item' means only the one graphical item being hovered will show in the tooltip.
+ * Tooltip with 'item' will display when hovering over individual graphical items.
+ *
+ * This is calculated internally;
+ * charts have a `defaultTooltipEventType` and `validateTooltipEventTypes` options.
+ *
+ * Users then use <Tooltip shared={true} /> or <Tooltip shared={false} /> to control their preference,
+ * and charts will then see what is allowed and what is not.
+ */
 export type TooltipEventType = 'axis' | 'item';
 
 export interface CategoricalChartOptions {

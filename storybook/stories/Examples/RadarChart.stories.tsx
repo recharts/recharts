@@ -68,12 +68,12 @@ export const ShouldBeCorrectAngle: StoryObj = {
     ];
     return (
       <RadarChart width={600} height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-        <Tooltip />
         <PolarGrid />
         <PolarRadiusAxis angle={90} type="number" />
         <PolarAngleAxis dataKey="angle" type="number" domain={[0, 360]} tickCount={9} />
 
         <Radar dataKey="value" fillOpacity={0} stroke="#000" />
+        <Tooltip />
       </RadarChart>
     );
   },
@@ -91,12 +91,12 @@ export const RadarWithLegend: StoryObj = {
       <RadarChart data={data} width={360} height={360}>
         <PolarGrid gridType="circle" />
         <Legend />
-        <Tooltip />
         <PolarRadiusAxis type="number" dataKey="r" />
 
         <PolarAngleAxis dataKey="angle" axisLineType="circle" type="number" domain={[0, 360]} />
 
         <Radar type="number" name="r" dataKey="r" fillOpacity={0} stroke="#000" />
+        <Tooltip defaultIndex={2} />
       </RadarChart>
     );
   },

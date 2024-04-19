@@ -9,7 +9,7 @@ import {
   useOffset,
   useViewBox,
 } from '../../src/context/chartLayoutContext';
-import { Tooltip } from '../../src/component/Tooltip';
+import { Customized } from '../../src/component/Customized';
 import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../../src/util/types';
 
 type AllContextPropertiesMixed = {
@@ -67,14 +67,14 @@ export function testChartLayoutContext(
          * other than rendering it as string and then parsing back:
          * https://testing-library.com/docs/example-react-context/
          *
-         * Good news is, we can work around with using the `content` prop in Tooltip
+         * Good news is, we can work around with using the `component` prop in Customized
          * which happens to do exactly what we need for this test:
          * renders arbitrary components directly to DOM. Yay.
          *
          * Later, when we make generateCategoricalChart render actual `{children}` as it should,
-         * we can remove the Tooltip, and read the Context directly from a hook or somewhere.
+         * we can remove the Customized, and read the Context directly from a hook or somewhere.
          */}
-        <Tooltip content={<Spy />} />
+        <Customized component={<Spy />} />
       </ChartParentComponent>,
     );
   };

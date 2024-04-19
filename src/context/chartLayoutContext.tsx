@@ -5,6 +5,7 @@ import every from 'lodash/every';
 import {
   CartesianViewBox,
   ChartOffset,
+  LayoutType,
   Margin,
   PolarAngleAxisMap,
   PolarRadiusAxisMap,
@@ -20,6 +21,7 @@ import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
+import { DataEndIndexContextProvider, DataStartIndexContextProvider } from './chartDataContext';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -31,6 +33,9 @@ export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
+export const LayoutContext = createContext<LayoutType>('horizontal');
+// is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
+const UpdateIdContext = createContext<number>(0);
 
 export type ChartLayoutContextProviderProps = {
   state: CategoricalChartState;
@@ -39,6 +44,7 @@ export type ChartLayoutContextProviderProps = {
   width: number;
   height: number;
   margin: Margin;
+  layout: LayoutType;
 };
 
 /**
@@ -61,12 +67,17 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       activePayload,
       isTooltipActive,
       activeCoordinate,
+      dataStartIndex,
+      dataEndIndex,
+      updateId,
+      activeTooltipIndex,
     },
     clipPathId,
     children,
     width,
     height,
     margin,
+    layout,
   } = props;
 
   /**
@@ -79,6 +90,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     payload: activePayload,
     coordinate: activeCoordinate,
     active: isTooltipActive,
+    index: activeTooltipIndex,
   };
 
   /*
@@ -89,35 +101,45 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * If we do that with one context, then we force re-render on components that might not even be interested
    * in the part of the state that has changed.
    *
-   * By splitting into smaller contexts, we allow each components to be optimized and only re-render when its dependencies change.
+   * By splitting into smaller contexts, we allow each component to be optimized and only re-render when its dependencies change.
    *
    * To actually achieve the optimal re-render, it is necessary to use React.memo().
    * See the test file for details.
    */
   return (
-    <MarginContext.Provider value={margin}>
-      <LegendPayloadProvider>
-        <XAxisContext.Provider value={xAxisMap}>
-          <YAxisContext.Provider value={yAxisMap}>
-            <PolarAngleAxisContext.Provider value={angleAxisMap}>
-              <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
-                <OffsetContext.Provider value={offset}>
-                  <ViewBoxContext.Provider value={viewBox}>
-                    <ClipPathIdContext.Provider value={clipPathId}>
-                      <ChartHeightContext.Provider value={height}>
-                        <ChartWidthContext.Provider value={width}>
-                          <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                        </ChartWidthContext.Provider>
-                      </ChartHeightContext.Provider>
-                    </ClipPathIdContext.Provider>
-                  </ViewBoxContext.Provider>
-                </OffsetContext.Provider>
-              </PolarRadiusAxisContext.Provider>
-            </PolarAngleAxisContext.Provider>
-          </YAxisContext.Provider>
-        </XAxisContext.Provider>
-      </LegendPayloadProvider>
-    </MarginContext.Provider>
+    <LayoutContext.Provider value={layout}>
+      <UpdateIdContext.Provider value={updateId}>
+        <DataStartIndexContextProvider value={dataStartIndex}>
+          <DataEndIndexContextProvider value={dataEndIndex}>
+            <MarginContext.Provider value={margin}>
+              <LegendPayloadProvider>
+                <XAxisContext.Provider value={xAxisMap}>
+                  <YAxisContext.Provider value={yAxisMap}>
+                    <PolarAngleAxisContext.Provider value={angleAxisMap}>
+                      <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
+                        <OffsetContext.Provider value={offset}>
+                          <ViewBoxContext.Provider value={viewBox}>
+                            <ClipPathIdContext.Provider value={clipPathId}>
+                              <ChartHeightContext.Provider value={height}>
+                                <ChartWidthContext.Provider value={width}>
+                                  <TooltipContextProvider value={tooltipContextValue}>
+                                    {children}
+                                  </TooltipContextProvider>
+                                </ChartWidthContext.Provider>
+                              </ChartHeightContext.Provider>
+                            </ClipPathIdContext.Provider>
+                          </ViewBoxContext.Provider>
+                        </OffsetContext.Provider>
+                      </PolarRadiusAxisContext.Provider>
+                    </PolarAngleAxisContext.Provider>
+                  </YAxisContext.Provider>
+                </XAxisContext.Provider>
+              </LegendPayloadProvider>
+            </MarginContext.Provider>
+          </DataEndIndexContextProvider>
+        </DataStartIndexContextProvider>
+      </UpdateIdContext.Provider>
+    </LayoutContext.Provider>
   );
 };
 
@@ -302,3 +324,7 @@ export const useChartHeight = (): number => {
 export const useMargin = (): Margin => {
   return useContext(MarginContext);
 };
+
+export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
+
+export const useChartLayout = () => useContext(LayoutContext);

@@ -152,7 +152,7 @@ describe('<YAxis />', () => {
     expect(ticks[1].getAttribute('y')).toBe('102.5');
   });
 
-  it("Don't render empty tick", () => {
+  it('Should skip rendering ticks with empty text', () => {
     const areaData = [
       { day: '05-01', weather: 'sunny' },
       { day: '05-02' },
@@ -168,6 +168,21 @@ describe('<YAxis />', () => {
     const ticks = document.querySelectorAll('text');
 
     expect(ticks).toHaveLength(3);
+  });
+
+  it('Should render the YAxis line without any ticks', () => {
+    const areaData = [{ day: '05-01' }, { day: '05-02' }];
+    const { container } = render(
+      <AreaChart width={400} height={400} data={areaData}>
+        <YAxis type="category" />
+        <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
+      </AreaChart>,
+    );
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick-line');
+    expect(ticksGroup).toHaveLength(0);
+
+    const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
+    expect(axisLine).toHaveLength(1);
   });
 
   it('should throw when attempting to render outside of Chart', () => {

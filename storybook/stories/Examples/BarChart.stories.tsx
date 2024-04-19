@@ -56,10 +56,10 @@ export const Simple = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
           <Bar dataKey="uv" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -84,10 +84,10 @@ export const Stacked = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -115,12 +115,12 @@ export const StackedWithErrorBar = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d">
             <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
           </Bar>
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -145,11 +145,11 @@ export const Mix = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="amt" stackId="a" fill="#82ca9d" />
           <Bar dataKey="uv" fill="#ffc658" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -187,12 +187,12 @@ export const CustomShape = {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <Tooltip />
         <YAxis />
         <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} label={{ position: 'top' }}>
           {pageData.map(({ name }, index) => (
             <Cell key={`cell-${name}`} fill={colors[index % 20]} />
           ))}
+          <Tooltip />
         </Bar>
       </BarChart>
     );
@@ -262,11 +262,11 @@ export const PositiveAndNegative = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <ReferenceLine y={0} stroke="#000" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -333,12 +333,12 @@ export const WithBrush = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
           <ReferenceLine y={0} stroke="#000" />
           <Brush dataKey="name" height={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -450,12 +450,12 @@ export const WithMinHeight = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" fill="#8884d8" minPointSize={5}>
             <LabelList dataKey="name" content={renderCustomizedLabel} />
           </Bar>
           <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -526,11 +526,11 @@ export const StackedBySign = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <ReferenceLine y={0} stroke="#000" />
           <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
           <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -556,10 +556,10 @@ export const Biaxial = {
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-          <Tooltip />
           <Legend />
           <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
           <Bar yAxisId="right" dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -584,10 +584,10 @@ export const HasBackground = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -723,10 +723,10 @@ export const WithMultiXAxis = {
             xAxisId="quarter"
           />
           <YAxis />
-          <Tooltip />
           <Legend />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -751,10 +751,10 @@ export const NoPadding = {
         >
           <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
           <YAxis />
-          <Tooltip />
           <Legend />
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -801,11 +801,38 @@ export const WithMinPointSize = {
         >
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
+          <Tooltip />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const OneDataPointPercentSize = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          width={500}
+          height={300}
+          data={[[4.5, 10]]}
+          barSize="30%" /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <XAxis dataKey={v => v[0]} type="number" domain={[0, 10]} />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar dataKey={v => v[1]} />
+          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );

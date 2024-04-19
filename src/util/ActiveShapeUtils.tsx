@@ -1,14 +1,12 @@
-import React, { isValidElement, cloneElement, SVGProps } from 'react';
+import React, { cloneElement, isValidElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
 import isBoolean from 'lodash/isBoolean';
-import isEqual from 'lodash/isEqual';
 
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
 import { Sector } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { GraphicalItem } from '../chart/generateCategoricalChart';
 import { Symbols, SymbolsProps } from '../shape/Symbols';
 
 /**
@@ -18,7 +16,7 @@ import { Symbols, SymbolsProps } from '../shape/Symbols';
  *  - an object of svg properties
  *  - a boolean
  *  - a render prop(inline function that returns jsx)
- *  - a react element
+ *  - a React element
  *
  * <ShapeSelector /> is a subcomponent of <Shape /> and used to match a component
  * to the value of props.shapeType that is passed to the root.
@@ -104,152 +102,4 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
   }
 
   return shape;
-}
-
-/**
- * This is an abstraction to handle identifying the active index from a tooltip mouse interaction
- */
-type GraphicalItemShapeKey = 'trapezoids' | 'sectors' | 'points';
-
-type FunnelItem = {
-  x: number;
-  y: number;
-  labelViewBox: { x: number; y: number };
-  tooltipPayload: Array<{ payload: { payload: ShapeData } }>;
-};
-
-type PieItem = {
-  startAngle: number;
-  endAngle: number;
-  tooltipPayload: Array<{ payload: { payload: ShapeData } }>;
-};
-
-type ScatterItem = {
-  x: number;
-  y: number;
-  z: number;
-  payload?: ShapeData;
-};
-
-type ShapeData = FunnelItem | PieItem | ScatterItem;
-
-type GetActiveShapeIndexForTooltip = {
-  activeTooltipItem: ShapeData;
-  graphicalItem: GraphicalItem;
-  itemData: unknown[];
-};
-
-export function isFunnel(graphicalItem: GraphicalItem, _item: unknown): _item is FunnelItem {
-  return _item != null && 'trapezoids' in graphicalItem.props;
-}
-
-export function isPie(graphicalItem: GraphicalItem, _item: unknown): _item is PieItem {
-  return _item != null && 'sectors' in graphicalItem.props;
-}
-
-export function isScatter(graphicalItem: GraphicalItem, _item: unknown): _item is ScatterItem {
-  return _item != null && 'points' in graphicalItem.props;
-}
-
-export function compareFunnel(shapeData: FunnelItem, activeTooltipItem: FunnelItem) {
-  const xMatches = shapeData.x === activeTooltipItem?.labelViewBox?.x || shapeData.x === activeTooltipItem.x;
-  const yMatches = shapeData.y === activeTooltipItem?.labelViewBox?.y || shapeData.y === activeTooltipItem.y;
-  return xMatches && yMatches;
-}
-
-export function comparePie(shapeData: PieItem, activeTooltipItem: PieItem) {
-  const startAngleMatches = shapeData.endAngle === activeTooltipItem.endAngle;
-  const endAngleMatches = shapeData.startAngle === activeTooltipItem.startAngle;
-  return startAngleMatches && endAngleMatches;
-}
-
-export function compareScatter(shapeData: ScatterItem, activeTooltipItem: ScatterItem) {
-  const xMatches = shapeData.x === activeTooltipItem.x;
-  const yMatches = shapeData.y === activeTooltipItem.y;
-  const zMatches = shapeData.z === activeTooltipItem.z;
-  return xMatches && yMatches && zMatches;
-}
-
-function getComparisonFn(graphicalItem: GraphicalItem, activeItem: unknown) {
-  let comparison: (shapeData: unknown, activeTooltipData: unknown) => boolean;
-
-  if (isFunnel(graphicalItem, activeItem)) {
-    comparison = compareFunnel;
-  } else if (isPie(graphicalItem, activeItem)) {
-    comparison = comparePie;
-  } else if (isScatter(graphicalItem, activeItem)) {
-    comparison = compareScatter;
-  }
-
-  return comparison;
-}
-
-function getShapeDataKey(graphicalItem: GraphicalItem, activeItem: unknown): GraphicalItemShapeKey {
-  let shapeKey: GraphicalItemShapeKey;
-
-  if (isFunnel(graphicalItem, activeItem)) {
-    shapeKey = 'trapezoids';
-  } else if (isPie(graphicalItem, activeItem)) {
-    shapeKey = 'sectors';
-  } else if (isScatter(graphicalItem, activeItem)) {
-    shapeKey = 'points';
-  }
-
-  return shapeKey;
-}
-
-function getActiveShapeTooltipPayload(graphicalItem: GraphicalItem, activeItem: unknown): ShapeData {
-  if (isFunnel(graphicalItem, activeItem)) {
-    return activeItem.tooltipPayload?.[0]?.payload?.payload;
-  }
-  if (isPie(graphicalItem, activeItem)) {
-    return activeItem.tooltipPayload?.[0]?.payload?.payload;
-  }
-
-  if (isScatter(graphicalItem, activeItem)) {
-    return activeItem.payload;
-  }
-
-  return {} as ShapeData;
-}
-/**
- *
- * @param {GetActiveShapeIndexForTooltip} arg an object of incoming attributes from Tooltip
- * @returns {number}
- *
- * To handle possible duplicates in the data set,
- * match both the data value of the active item to a data value on a graph item,
- * and match the mouse coordinates of the active item to the coordinates of in a particular components shape data.
- * This assumes equal lengths of shape objects to data items.
- */
-export function getActiveShapeIndexForTooltip({
-  activeTooltipItem,
-  graphicalItem,
-  itemData,
-}: GetActiveShapeIndexForTooltip): number {
-  const shapeKey = getShapeDataKey(graphicalItem, activeTooltipItem);
-  const tooltipPayload = getActiveShapeTooltipPayload(graphicalItem, activeTooltipItem);
-
-  const activeItemMatches = itemData.filter((datum: unknown, dataIndex: number) => {
-    const valuesMatch = isEqual(tooltipPayload, datum);
-
-    const mouseCoordinateMatches = graphicalItem.props[shapeKey].filter((shapeData: unknown) => {
-      const comparison = getComparisonFn(graphicalItem, activeTooltipItem);
-      return comparison(shapeData, activeTooltipItem);
-    });
-
-    // get the last index in case of multiple matches
-    const indexOfMouseCoordinates = graphicalItem.props[shapeKey].indexOf(
-      mouseCoordinateMatches[mouseCoordinateMatches.length - 1],
-    );
-
-    const coordinatesMatch = dataIndex === indexOfMouseCoordinates;
-
-    return valuesMatch && coordinatesMatch;
-  });
-
-  // get the last index in case of multiple matches
-  const activeIndex = itemData.indexOf(activeItemMatches[activeItemMatches.length - 1]);
-
-  return activeIndex;
 }

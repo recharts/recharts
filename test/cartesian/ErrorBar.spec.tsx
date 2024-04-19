@@ -144,7 +144,10 @@ describe('<ErrorBar />', () => {
     );
 
     assertErrorBars(container, 4);
-    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
+    assertAnimationStyles(container, true, {
+      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transform: 'scaleY(1)',
+    });
   });
 
   test('Renders Error Bars without animation', () => {
@@ -170,7 +173,10 @@ describe('<ErrorBar />', () => {
     );
 
     assertErrorBars(container, 4);
-    assertAnimationStyles(container, true, { transition: 'transform 200ms ease-in-out' });
+    assertAnimationStyles(container, true, {
+      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transform: 'scaleY(1)',
+    });
 
     const errorBars = container.querySelectorAll('.recharts-errorBar');
     errorBars.forEach(bar => {
@@ -188,7 +194,10 @@ describe('<ErrorBar />', () => {
     );
 
     assertErrorBars(container, 4);
-    assertAnimationStyles(container, true, { transition: 'transform 400ms ease-in-out' });
+    assertAnimationStyles(container, true, {
+      transition: 'transform 400ms ease-in-out,transform-origin 400ms ease-in-out',
+      transform: 'scaleY(1)',
+    });
   });
 
   test('Renders Error Bars with animation easing', () => {
@@ -201,6 +210,9 @@ describe('<ErrorBar />', () => {
     );
 
     assertErrorBars(container, 4);
-    assertAnimationStyles(container, true, { transition: 'transform 200ms linear' });
+    assertAnimationStyles(container, true, {
+      transition: 'transform 400ms linear,transform-origin 400ms linear',
+      transform: 'scaleY(1)',
+    });
   });
 });

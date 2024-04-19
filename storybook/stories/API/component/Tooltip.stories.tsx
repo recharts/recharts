@@ -1,13 +1,13 @@
 import React from 'react';
-import { ResponsiveContainer, Tooltip, LineChart, Line } from '../../../../src';
+import { Line, LineChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 const TooltipProps: StorybookArgs = {
   active: {
-    description:
-      'When set to true, the tooltip will remain visible, even after the user has moved off of the chart. Set `defaultIndex` if you want the tooltip to always be visible.',
+    description: `When set to true, the tooltip will remain visible, even after the user has moved off of the chart.
+      Set \`defaultIndex\` if you want the tooltip to be visible by default, before first mouse enter.`,
     defaultValue: false,
   },
   defaultIndex: {
@@ -208,6 +208,23 @@ const TooltipProps: StorybookArgs = {
       },
     },
   },
+  shared: {
+    description: `If true, tooltip will appear on top of all bars on an axis tick.
+    If false, tooltip will appear on individual bars.
+    Currently only supported in BarChart and RadialBarChart.
+    Defaults to true.`,
+  },
+  portal: {
+    description: `If portal is defined, then Tooltip will use this element as a target
+    for rendering using React Portal: https://react.dev/reference/react-dom/createPortal.
+    If this is undefined then Tooltip renders inside the recharts-wrapper element.`,
+    table: {
+      category: 'Position',
+      type: {
+        summary: 'HTMLElement | null',
+      },
+    },
+  },
 };
 
 export default {
@@ -231,9 +248,9 @@ export const API = {
           }}
           data={pageData}
         >
+          <Line dataKey="uv" />
           {/* The target component */}
           <Tooltip {...args} />
-          <Line dataKey="uv" />
         </LineChart>
       </ResponsiveContainer>
     );

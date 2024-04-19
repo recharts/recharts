@@ -1,4 +1,5 @@
-import React, { PureComponent, CSSProperties, ReactNode, ReactElement, SVGProps } from 'react';
+import React, { CSSProperties, PureComponent, ReactElement, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,
   NameType,
@@ -15,6 +16,9 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
+import { Cursor, CursorDefinition } from './Cursor';
+import { useTooltipEventType } from '../state/selectors';
+import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -25,7 +29,7 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
 }
 
 type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
-  TooltipContextValue & { accessibilityLayer: boolean };
+  Pick<TooltipContextValue, 'label' | 'payload' | 'coordinate' | 'active'> & { accessibilityLayer: boolean };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,
@@ -52,7 +56,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * If false, then Tooltip is never displayed.
    * If active is undefined, Recharts will control when the Tooltip displays. This includes mouse and keyboard controls.
    */
-  active?: boolean | undefined;
+  active?: boolean;
   /**
    * If true, then Tooltip will information about hidden series (defaults to false). Interacting with the hide property of Area, Bar, Line, Scatter.
    */
@@ -61,14 +65,27 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   content?: ContentType<TValue, TName>;
-  cursor?: boolean | ReactElement | SVGProps<SVGElement>;
+  cursor?: CursorDefinition;
   filterNull?: boolean;
   defaultIndex?: number;
   isAnimationActive?: boolean;
   offset?: number;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;
+  /**
+   * If portal is defined, then Tooltip will use this element as a target
+   * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal
+   *
+   * If this is undefined then Tooltip renders inside the recharts-wrapper element.
+   */
+  portal?: HTMLElement | null;
   position?: Partial<Coordinate>;
   reverseDirection?: AllowInDimension;
+  /**
+   * If true, tooltip will appear on top of all bars on an axis tick.
+   * If false, tooltip will appear on individual bars.
+   * Currently only supported in BarChart and RadialBarChart.
+   * If undefined then defaults to true.
+   */
   shared?: boolean;
   trigger?: 'hover' | 'click';
   useTranslate3d?: boolean;
@@ -90,10 +107,15 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     reverseDirection,
     useTranslate3d,
     wrapperStyle,
+    cursor,
+    shared,
+    portal: portalFromProps,
   } = props;
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
+  const tooltipEventType = useTooltipEventType(shared);
+  const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
    * or `active=false` in which case the Tooltip never shows.
@@ -102,6 +124,13 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    */
   const finalIsActive = activeFromProps ?? activeFromContext;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
+
+  const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
+  const cursorPortal = useCursorPortal();
+  if (tooltipPortal == null || cursorPortal == null) {
+    return null;
+  }
+
   let finalPayload: Payload<TValue, TName>[] = payload ?? [];
   if (!finalIsActive) {
     finalPayload = [];
@@ -117,7 +146,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
 
   const hasPayload = finalPayload.length > 0;
 
-  return (
+  const tooltipElement = (
     <TooltipBoundingBox
       allowEscapeViewBox={allowEscapeViewBox}
       animationDuration={animationDuration}
@@ -144,6 +173,15 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
         accessibilityLayer,
       })}
     </TooltipBoundingBox>
+  );
+
+  return (
+    <>
+      {/* Tooltip the HTML element renders through a React portal so that it escapes clipping, and it renders on top of everything else */}
+      {createPortal(tooltipElement, tooltipPortal)}
+      {/* Cursor is an SVG element and renders in another portal, so that it renders _below_ the graphical elements */}
+      {finalIsActive && createPortal(<Cursor cursor={cursor} tooltipEventType={tooltipEventType} />, cursorPortal)}
+    </>
   );
 }
 

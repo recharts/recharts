@@ -8,6 +8,7 @@ import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
+import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 
 export interface SunburstData {
   [key: string]: any;
@@ -117,6 +118,9 @@ export const SunburstChart = ({
   const sectors: React.ReactNode[] = [];
   const positions = new Map([]);
 
+  const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
+  const [cursorPortal, setCursorPortal] = useState<SVGElement | null>(null);
+
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
@@ -203,19 +207,36 @@ export const SunburstChart = ({
   const viewBox = { x: 0, y: 0, width, height };
 
   return (
-    <ViewBoxContext.Provider value={viewBox}>
-      <TooltipContextProvider value={getTooltipContext()}>
-        <div
-          className={clsx('recharts-wrapper', className)}
-          style={{ position: 'relative', width, height }}
-          role="region"
-        >
-          <Surface width={width} height={height}>
-            <Layer className={layerClass}>{sectors}</Layer>
-            {children}
-          </Surface>
-        </div>
-      </TooltipContextProvider>
-    </ViewBoxContext.Provider>
+    <CursorPortalContext.Provider value={cursorPortal}>
+      <TooltipPortalContext.Provider value={tooltipPortal}>
+        <ViewBoxContext.Provider value={viewBox}>
+          <TooltipContextProvider value={getTooltipContext()}>
+            <div
+              className={clsx('recharts-wrapper', className)}
+              style={{ position: 'relative', width, height }}
+              role="region"
+              ref={(node: HTMLDivElement) => {
+                if (tooltipPortal == null && node != null) {
+                  setTooltipPortal(node);
+                }
+              }}
+            >
+              <Surface width={width} height={height}>
+                <g
+                  className="recharts-cursor-portal"
+                  ref={(node: SVGElement) => {
+                    if (cursorPortal == null && node != null) {
+                      setCursorPortal(node);
+                    }
+                  }}
+                />
+                <Layer className={layerClass}>{sectors}</Layer>
+                {children}
+              </Surface>
+            </div>
+          </TooltipContextProvider>
+        </ViewBoxContext.Provider>
+      </TooltipPortalContext.Provider>
+    </CursorPortalContext.Provider>
   );
 };
