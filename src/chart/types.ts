@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import { StepRatioControl } from '../util/scale/getNiceTickValues';
 import {
   BaseAxisProps,
   ChartCoordinate,
@@ -83,7 +82,6 @@ export interface CategoricalChartState {
   prevStackOffset?: StackOffsetType;
   prevMargin?: Margin;
   prevChildren?: any;
-  prevStepRatioControl?: StepRatioControl;
   stackGroups?: AxisStackGroups;
 
   tooltipPortal?: HTMLElement | null;

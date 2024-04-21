@@ -20,13 +20,13 @@ describe('getNiceTickValues', () => {
   describe('getFormatStep', () => {
     it('should return 0 when roughStep is less than 0', () => {
       const rounghStep = new Decimal(-0.5);
-      const formattedStep = getFormatStep(rounghStep, true, 0, 0.05);
+      const formattedStep = getFormatStep(rounghStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0);
     });
 
     it('should return correct step', () => {
       const rounghStep = new Decimal(0.5);
-      const formattedStep = getFormatStep(rounghStep, true, 0, 0.05);
+      const formattedStep = getFormatStep(rounghStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0.5);
     });
   });
@@ -59,21 +59,21 @@ describe('getNiceTickValues', () => {
 
   describe('calculateStep', () => {
     it('should return zeros for non-finite calculations', () => {
-      const step = calculateStep(Infinity, Infinity, 5, true, 0, 0.05);
+      const step = calculateStep(Infinity, Infinity, 5, true, 0);
       expect(step.step.toNumber()).toBe(0);
       expect(step.tickMin.toNumber()).toBe(0);
       expect(step.tickMax.toNumber()).toBe(0);
     });
 
     it('should calculate step correctly', () => {
-      const step = calculateStep(100, 200, 5, true, 0, 0.05);
+      const step = calculateStep(100, 200, 5, true, 0);
       expect(step.step.toNumber()).toBe(25);
       expect(step.tickMin.toNumber()).toBe(100);
       expect(step.tickMax.toNumber()).toBe(200);
     });
 
     it('should contains 0 when min <= 0 and max >= 0', () => {
-      const step = calculateStep(-100, 100, 5, true, 0, 0.05);
+      const step = calculateStep(-100, 100, 5, true, 0);
       expect(step.step.toNumber()).toBe(50);
       expect(step.tickMin.toNumber()).toBe(-100);
       expect(step.tickMax.toNumber()).toBe(100);

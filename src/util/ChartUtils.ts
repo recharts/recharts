@@ -1052,7 +1052,7 @@ export const getStackGroupsByAxisId = (
  * @return {Object}      null
  */
 export const getTicksOfScale = (scale: any, opts: any) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals, stepRatioControl } = opts;
+  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
   const scaleType = realScaleType || opts.scale;
 
   if (scaleType !== 'auto' && scaleType !== 'linear') {
@@ -1071,7 +1071,7 @@ export const getTicksOfScale = (scale: any, opts: any) => {
       return null;
     }
 
-    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals, stepRatioControl);
+    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
     scale.domain([min(tickValues), max(tickValues)]);
     return { niceTicks: tickValues };
