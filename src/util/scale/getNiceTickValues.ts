@@ -158,6 +158,7 @@ export const calculateStep = (
     tickMax: middle.add(new Decimal(upCount).mul(step)),
   };
 };
+
 /**
  * Calculate the ticks of an interval, the count of ticks will be guraranteed
  *
@@ -192,4 +193,36 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
   return min > max ? reverse(values) : values;
 }
 
+/**
+ * Calculate the ticks of an interval, the count of ticks won't be guraranteed,
+ * but the domain will be guaranteed
+ *
+ * @param  {Number}  min, max      min: The minimum value, max: The maximum value
+ * @param  {Integer} tickCount     The count of ticks
+ * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
+ * @return {Array}   ticks
+ */
+function getTickValuesFixedDomainFn([min, max]: [number, number], tickCount: number, allowDecimals = true) {
+  // More than two ticks should be return
+  const [cormin, cormax] = getValidInterval([min, max]);
+
+  if (cormin === -Infinity || cormax === Infinity) {
+    return [min, max];
+  }
+
+  if (cormin === cormax) {
+    return [cormin];
+  }
+
+  const count = Math.max(tickCount, 2);
+  const step = getFormatStep(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
+  const values = [
+    ...rangeStep(new Decimal(cormin), new Decimal(cormax).sub(new Decimal(0.99).mul(step)), step),
+    cormax,
+  ];
+
+  return min > max ? reverse(values) : values;
+}
+
 export const getNiceTickValues = memoize(getNiceTickValuesFn);
+export const getTickValuesFixedDomain = memoize(getTickValuesFixedDomainFn);
