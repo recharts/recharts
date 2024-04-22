@@ -21,8 +21,8 @@ import isEqual from 'lodash/isEqual';
 import sortBy from 'lodash/sortBy';
 
 import { ReactElement, ReactNode } from 'react';
-import { getNiceTickValues, getTickValuesFixedDomain } from 'recharts-scale';
 
+import { getTickValuesFixedDomain } from 'recharts-scale';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
@@ -44,6 +44,7 @@ import {
 } from './types';
 import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
+import { getNiceTickValues } from './scale';
 import { Legend } from '../component/Legend';
 
 // Exported for backwards compatibility
@@ -1069,10 +1070,10 @@ export const getTicksOfScale = (scale: any, opts: any) => {
     if (!domain.length) {
       return null;
     }
+
     const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
 
     scale.domain([min(tickValues), max(tickValues)]);
-
     return { niceTicks: tickValues };
   }
   if (tickCount && type === 'number') {

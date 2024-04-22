@@ -82,7 +82,6 @@ export interface CategoricalChartState {
   prevStackOffset?: StackOffsetType;
   prevMargin?: Margin;
   prevChildren?: any;
-
   stackGroups?: AxisStackGroups;
 
   tooltipPortal?: HTMLElement | null;
