@@ -22,7 +22,6 @@ import sortBy from 'lodash/sortBy';
 
 import { ReactElement, ReactNode } from 'react';
 
-import { getTickValuesFixedDomain } from 'recharts-scale';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
@@ -44,7 +43,7 @@ import {
 } from './types';
 import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
-import { getNiceTickValues } from './scale';
+import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import { Legend } from '../component/Legend';
 
 // Exported for backwards compatibility
