@@ -78,6 +78,7 @@ import {
 } from '../util/types';
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
+import { StepRatioControl } from '../util/scale/getNiceTickValues';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
@@ -802,6 +803,7 @@ export interface CategoricalChartProps {
   data?: any[];
   layout?: LayoutType;
   stackOffset?: StackOffsetType;
+  stepRatioControl?: StepRatioControl;
   throttleDelay?: number;
   margin?: Margin;
   barCategoryGap?: number | string;
@@ -1006,7 +1008,7 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    const { children, layout, stackOffset, data, reverseStackOrder } = props;
+    const { children, layout, stackOffset, data, reverseStackOrder, stepRatioControl } = props;
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const graphicalItems = findAllByType(children, GraphicalChild);
     const stackGroups: AxisStackGroups = getStackGroupsByAxisId(
@@ -1035,7 +1037,7 @@ export const generateCategoricalChart = ({
     const offset: ChartOffset = calculateOffset({ ...axisObj, props }, prevState?.legendBBox);
 
     Object.keys(axisObj).forEach(key => {
-      axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
+      axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName, stepRatioControl);
     });
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
@@ -1080,6 +1082,7 @@ export const generateCategoricalChart = ({
       margin: { top: 5, right: 5, bottom: 5, left: 5 } as Margin,
       reverseStackOrder: false,
       syncMethod: 'index',
+      stepRatioControl: 0.05,
       ...defaultProps,
     };
 
@@ -1219,7 +1222,7 @@ export const generateCategoricalChart = ({
       nextProps: CategoricalChartProps,
       prevState: CategoricalChartState,
     ): CategoricalChartState => {
-      const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
+      const { dataKey, data, children, width, height, layout, stackOffset, margin, stepRatioControl } = nextProps;
       const { dataStartIndex, dataEndIndex } = prevState;
 
       if (prevState.updateId === undefined) {
@@ -1242,6 +1245,7 @@ export const generateCategoricalChart = ({
           prevHeight: height,
           prevLayout: layout,
           prevStackOffset: stackOffset,
+          prevStepRatioControl: stepRatioControl,
           prevMargin: margin,
           prevChildren: children,
         };
@@ -1253,6 +1257,7 @@ export const generateCategoricalChart = ({
         height !== prevState.prevHeight ||
         layout !== prevState.prevLayout ||
         stackOffset !== prevState.prevStackOffset ||
+        stepRatioControl !== prevState.prevStepRatioControl ||
         !shallowEqual(margin, prevState.prevMargin)
       ) {
         const defaultState = createDefaultState(nextProps);
@@ -1296,6 +1301,7 @@ export const generateCategoricalChart = ({
           prevHeight: height,
           prevLayout: layout,
           prevStackOffset: stackOffset,
+          prevStepRatioControl: stepRatioControl,
           prevMargin: margin,
           prevChildren: children,
         };
@@ -1856,7 +1862,8 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
+      const { children, className, width, height, style, compact, title, desc, stepRatioControl, ...others } =
+        this.props;
       const attrs = filterProps(others, false);
 
       // The "compact" mode is mainly used as the panorama within Brush

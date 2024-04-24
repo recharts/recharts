@@ -64,6 +64,7 @@ export const Stacked = {
   args: {
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
+    stepRatioControl: 0.05,
     id: 'BarChart-Stacked',
   },
 };

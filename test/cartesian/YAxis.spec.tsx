@@ -295,4 +295,70 @@ describe('<YAxis />', () => {
     expect(allText).toContain('1200');
     expect(allText).toContain('1600');
   });
+
+  it('should render all labels when stepRatioControl is 0.03', () => {
+    const { container } = render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        accessibilityLayer
+        stepRatioControl={0.03}
+        margin={{
+          top: 5,
+          right: 5,
+          bottom: 5,
+          left: 0,
+        }}
+      >
+        <YAxis />
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        <Tooltip />
+      </LineChart>,
+    );
+    const allLabels = container.querySelectorAll('.recharts-yAxis .recharts-text.recharts-cartesian-axis-tick-value');
+    expect.soft(allLabels).toHaveLength(5);
+    const allText = Array.from(allLabels).map(el => el.textContent);
+    expect.soft(allText).toHaveLength(5);
+    expect(allText).toContain('0');
+    expect(allText).toContain('390');
+    expect(allText).toContain('780');
+    expect(allText).toContain('1170');
+    expect(allText).toContain('1560');
+  });
+
+  it('should render all labels when stepRatioControl is 0.01', () => {
+    const { container } = render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        accessibilityLayer
+        stepRatioControl={0.01}
+        margin={{
+          top: 5,
+          right: 5,
+          bottom: 5,
+          left: 0,
+        }}
+      >
+        <YAxis />
+        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        <Tooltip />
+      </LineChart>,
+    );
+    const allLabels = container.querySelectorAll('.recharts-yAxis .recharts-text.recharts-cartesian-axis-tick-value');
+    expect.soft(allLabels).toHaveLength(5);
+    const allText = Array.from(allLabels).map(el => el.textContent);
+    expect.soft(allText).toHaveLength(5);
+    expect(allText).toContain('0');
+    expect(allText).toContain('380');
+    expect(allText).toContain('760');
+    expect(allText).toContain('1140');
+    expect(allText).toContain('1520');
+  });
 });
