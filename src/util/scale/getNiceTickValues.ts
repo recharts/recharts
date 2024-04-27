@@ -7,8 +7,6 @@ import Decimal from 'decimal.js-light';
 import { compose, range, memoize, map, reverse } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 
-export type StepRatioControl = 0.05 | 0.03 | 0.01;
-
 /**
  * Calculate a interval of a minimum value and a maximum value
  *
@@ -34,15 +32,9 @@ export const getValidInterval = ([min, max]: [number, number]) => {
  * difference by the tickCount
  * @param  {Boolean} allowDecimals    Allow the ticks to be decimals or not
  * @param  {Integer} correctionFactor A correction factor
- * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Decimal} The step which is easy to understand between two ticks
  */
-export const getFormatStep = (
-  roughStep: Decimal,
-  allowDecimals: boolean,
-  correctionFactor: number,
-  stepRatioControl: StepRatioControl = 0.05,
-) => {
+export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
   if (roughStep.lte(0)) {
     return new Decimal(0);
   }
@@ -53,7 +45,7 @@ export const getFormatStep = (
   const digitCountValue = new Decimal(10).pow(digitCount);
   const stepRatio = roughStep.div(digitCountValue);
   // When an integer and a float multiplied, the accuracy of result may be wrong
-  const stepRatioScale = digitCount !== 1 ? stepRatioControl : 0.1;
+  const stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
   const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
     .add(correctionFactor)
     .mul(stepRatioScale);
@@ -112,7 +104,6 @@ export const getTickOfSingleValue = (value: number, tickCount: number, allowDeci
  * @param  {Integer} tickCount        The count of ticks
  * @param  {Boolean} allowDecimals    Allow the ticks to be decimals or not
  * @param  {Number}  correctionFactor A correction factor
- * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Object}  The step, minimum value of ticks, maximum value of ticks
  */
 export const calculateStep = (
@@ -121,7 +112,6 @@ export const calculateStep = (
   tickCount: number,
   allowDecimals: boolean,
   correctionFactor = 0,
-  stepRatioControl: StepRatioControl = 0.05,
 ): any => {
   // dirty hack (for recharts' test)
   if (!Number.isFinite((max - min) / (tickCount - 1))) {
@@ -133,12 +123,7 @@ export const calculateStep = (
   }
 
   // The step which is easy to understand between two ticks
-  const step = getFormatStep(
-    new Decimal(max).sub(min).div(tickCount - 1),
-    allowDecimals,
-    correctionFactor,
-    stepRatioControl,
-  );
+  const step = getFormatStep(new Decimal(max).sub(min).div(tickCount - 1), allowDecimals, correctionFactor);
 
   // A medial value of ticks
   let middle;
@@ -159,7 +144,7 @@ export const calculateStep = (
 
   if (scaleCount > tickCount) {
     // When more ticks need to cover the interval, step should be bigger.
-    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1, stepRatioControl);
+    return calculateStep(min, max, tickCount, allowDecimals, correctionFactor + 1);
   }
   if (scaleCount < tickCount) {
     // When less ticks can cover the interval, we should add some additional ticks
@@ -180,15 +165,9 @@ export const calculateStep = (
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
  * @param  {Integer} tickCount     The count of ticks
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
- * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Array}   ticks
  */
-function getNiceTickValuesFn(
-  [min, max]: [number, number],
-  tickCount = 6,
-  allowDecimals = true,
-  stepRatioControl: StepRatioControl = 0.05,
-) {
+function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true) {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -207,7 +186,7 @@ function getNiceTickValuesFn(
   }
 
   // Get the step between two ticks
-  const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0, stepRatioControl);
+  const { step, tickMin, tickMax } = calculateStep(cormin, cormax, count, allowDecimals, 0);
 
   const values = rangeStep(tickMin, tickMax.add(new Decimal(0.1).mul(step)), step);
 

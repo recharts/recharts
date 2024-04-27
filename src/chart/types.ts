@@ -11,7 +11,6 @@ import {
 } from '../util/types';
 import { AxisStackGroups } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
-import { StepRatioControl } from '../util/scale/getNiceTickValues';
 
 export type AxisMap = {
   [axisId: string]: BaseAxisProps;
@@ -83,7 +82,6 @@ export interface CategoricalChartState {
   prevStackOffset?: StackOffsetType;
   prevMargin?: Margin;
   prevChildren?: any;
-  prevStepRatioControl?: StepRatioControl;
   stackGroups?: AxisStackGroups;
 
   tooltipPortal?: HTMLElement | null;

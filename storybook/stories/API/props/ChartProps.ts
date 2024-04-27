@@ -181,24 +181,6 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
-  stepRatioControl: {
-    description: `This parameter controls the domain range for the y-axis and the step increments within that domain. 
-    A lower value for this parameter moves the maximum y-axis value closer to the highest data point in the dataset. 
-    For example, with the dataset [0, 400, 800, 1200, 1600], a stepRatioControl value of 0.05 would set the y-axis domain to [0, 2000]. 
-    Conversely, setting stepRatioControl to 0.1 brings the y-axis domain closer to [0, 1600]. 
-    Regardless of the parameter chosen, the step sizes within the domain remain even and will have "nice" values.
-    Adjusting this parameter is recommended only when a minor change to the dataset's maximum/minimum values causes the default domain to shift dramatically.`,
-    options: ['0.01', '0.03', '0.05'],
-    control: {
-      type: 'select',
-    },
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'General',
-    },
-  },
   cx: {
     description: 'The x-coordinate of the center of the circle.',
     table: {
