@@ -45,12 +45,19 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
   const digitCountValue = new Decimal(10).pow(digitCount);
   const stepRatio = roughStep.div(digitCountValue);
   // When an integer and a float multiplied, the accuracy of result may be wrong
-  const stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
-  const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
-    .add(correctionFactor)
-    .mul(stepRatioScale);
+  let stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
 
-  const formatStep = amendStepRatio.mul(digitCountValue);
+  let formatStep: Decimal;
+
+  do {
+    const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
+      .add(correctionFactor)
+      .mul(stepRatioScale);
+
+    formatStep = amendStepRatio.mul(digitCountValue);
+
+    stepRatioScale -= 0.01;
+  } while (formatStep.mul(0.7).gt(roughStep) && stepRatioScale > 0.02);
 
   return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
 };
@@ -165,6 +172,7 @@ export const calculateStep = (
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
  * @param  {Integer} tickCount     The count of ticks
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
+ * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Array}   ticks
  */
 function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true) {

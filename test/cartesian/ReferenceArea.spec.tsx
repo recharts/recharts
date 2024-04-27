@@ -94,7 +94,7 @@ describe('<ReferenceArea />', () => {
     const allAreas = container.querySelectorAll('.recharts-reference-area-rect');
     expect(allAreas).toHaveLength(1);
     const area = allAreas[0];
-    expect(area).toHaveAttribute('d', 'M 20,109.44444444444444 h 960 v 25.555555555555557 h -960 Z');
+    expect(area).toHaveAttribute('d', 'M 20,103.05555555555556 h 960 v 31.944444444444443 h -960 Z');
   });
 
   test("Don't render any rect in ReferenceArea when no x1, x2, y1 or y2 is set", () => {
