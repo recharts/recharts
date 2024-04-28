@@ -37,6 +37,7 @@ import {
 import { polarToCartesian } from '../util/PolarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useTooltipContext } from '../context/tooltipContext';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -55,13 +56,15 @@ type RadialBarSectorsProps = {
 
 function RadialBarSectors(props: RadialBarSectorsProps) {
   const { sectors, allOtherRadialBarProps } = props;
-  const { shape, activeShape, activeIndex, cornerRadius, ...others } = allOtherRadialBarProps;
+  const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
   const baseProps = filterProps(others, false);
+
+  const { index: activeIndex } = useTooltipContext();
 
   return (
     <>
       {sectors.map((entry, i) => {
-        const isActive = i === activeIndex;
+        const isActive = activeShape && i === activeIndex;
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
@@ -90,7 +93,6 @@ interface InternalRadialBarProps {
   endAngle?: number;
   shape?: ActiveShape<SectorProps, SVGPathElement>;
   activeShape?: ActiveShape<SectorProps, SVGPathElement>;
-  activeIndex?: number;
   dataKey: string | number | ((obj: any) => any);
   cornerRadius?: string | number;
   forceCornerRadius?: boolean;
