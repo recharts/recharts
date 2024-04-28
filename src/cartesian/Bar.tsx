@@ -8,41 +8,46 @@ import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
-import { ErrorBar, Props as ErrorBarProps, ErrorBarDataPointFormatter } from './ErrorBar';
+import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
-import { uniqueId, mathSign, interpolateNumber } from '../util/DataUtils';
+import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
+  findPositionOfBar,
+  getBaseValueOfBar,
   getCateCoordinateOfBar,
+  getTooltipItem,
   getValueByDataKey,
   truncateByDomain,
-  getBaseValueOfBar,
-  findPositionOfBar,
-  getTooltipItem,
 } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import {
-  D3Scale,
-  TooltipType,
-  LegendType,
+  ActiveShape,
+  adaptEventsOfChild,
+  AnimationDuration,
   AnimationTiming,
   ChartOffset,
+  D3Scale,
   DataKey,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-  AnimationDuration,
-  ActiveShape,
   LayoutType,
+  LegendType,
+  PresentationAttributesAdaptChildEvent,
+  TickItem,
+  TooltipType,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-import { useTooltipContext } from '../context/tooltipContext';
+import {
+  useMouseClickItemDispatch,
+  useMouseEnterItemDispatch,
+  useMouseLeaveItemDispatch,
+  useTooltipContext,
+} from '../context/tooltipContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -98,7 +103,8 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius' | 'name'> & BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'> &
+  BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -144,6 +150,17 @@ function BarBackground(props: BarBackgroundProps) {
   const { index: activeIndex } = useTooltipContext();
 
   const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd, allOtherBarProps } = props;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch();
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch();
+  const onClickFromContext = useMouseClickItemDispatch();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    onClick: onItemClickFromProps,
+    ...restOfAllOtherProps
+  } = allOtherBarProps;
+
   if (!backgroundFromProps) {
     return null;
   }
@@ -152,13 +169,27 @@ function BarBackground(props: BarBackgroundProps) {
 
   return (
     <>
-      {data.map((entry, i) => {
+      {data.map((entry: BarRectangleItem, i: number) => {
         const { value, background: backgroundFromDataEntry, ...rest } = entry;
 
         if (!backgroundFromDataEntry) {
           return null;
         }
 
+        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onMouseEnterFromProps?.(entry, i, e);
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onMouseEnterFromContext?.(entry, i);
+        };
+        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onMouseLeaveFromProps?.(entry, i, e);
+          onMouseLeaveFromContext?.();
+        };
+        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onItemClickFromProps?.(entry, i, e);
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onClickFromContext?.(entry, i);
+        };
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: i === activeIndex,
@@ -167,7 +198,10 @@ function BarBackground(props: BarBackgroundProps) {
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,
-          ...adaptEventsOfChild(allOtherBarProps, entry, i),
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+          onMouseEnter,
+          onMouseLeave,
+          onClick,
           onAnimationStart,
           onAnimationEnd,
           dataKey,
@@ -194,6 +228,16 @@ function BarRectangles(props: BarRectanglesProps) {
 
   const { index: activeIndex } = useTooltipContext();
 
+  const onMouseEnterFromContext = useMouseEnterItemDispatch();
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch();
+  const onClickFromContext = useMouseClickItemDispatch();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = rest;
+
   if (!data) {
     return null;
   }
@@ -213,10 +257,27 @@ function BarRectangles(props: BarRectanglesProps) {
           onAnimationStart,
           onAnimationEnd,
         };
+        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onMouseEnterFromProps?.(entry, i, e);
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onMouseEnterFromContext?.(entry, i);
+        };
+        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onMouseLeaveFromProps?.(entry, i, e);
+          onMouseLeaveFromContext?.();
+        };
+        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          onItemClickFromProps?.(entry, i, e);
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onClickFromContext?.(entry, i);
+        };
         return (
           <Layer
             className="recharts-bar-rectangle"
-            {...adaptEventsOfChild(rest, entry, i)}
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onClick={onClick}
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
           >
             <BarRectangle {...barRectangleProps} />

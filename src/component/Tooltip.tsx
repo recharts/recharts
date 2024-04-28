@@ -19,6 +19,7 @@ import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
 import { useTooltipEventType } from '../state/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
+import { TooltipTrigger } from '../chart/types';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -87,7 +88,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * If undefined then defaults to true.
    */
   shared?: boolean;
-  trigger?: 'hover' | 'click';
+  trigger?: TooltipTrigger;
   useTranslate3d?: boolean;
   wrapperStyle?: CSSProperties;
 };

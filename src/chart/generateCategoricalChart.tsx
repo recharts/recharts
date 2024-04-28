@@ -79,7 +79,7 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, CategoricalChartState } from './types';
+import { AxisMap, CategoricalChartState, TooltipTrigger } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
@@ -91,6 +91,13 @@ import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import {
+  ActivateTooltipAction,
+  MouseClickItemDispatchContext,
+  MouseEnterItemDispatchContext,
+  MouseLeaveItemDispatchContext,
+  NoArgumentsAction,
+} from '../context/tooltipContext';
 
 export interface MousePointer {
   pageX: number;
@@ -1535,9 +1542,10 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * The handler of mouse entering chart
-     * @param  {Object} e              Event object
-     * @return {Null}                  null
+     * The handler of mouse entering chart.
+     * This handler is used for `tooltipEventType: axis` and Tooltip.trigger: 'hover'
+     * @param  e Event object
+     * @return undefined
      */
     handleMouseEnter = (e: React.MouseEvent) => {
       const mouse = this.getMouseInfo(e);
@@ -1569,11 +1577,12 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler of mouse entering a graphical item, such as bar, pie, scatter, funnel, ...
+     * This handler is used for `tooltipEventType: item` and both `Tooltip.trigger: hover` and `Tooltip.trigger: click`
      * @param el The active graphical element
      * @param index 0-based index of the active graphical element
-     * @returns undefined
+     * @return undefined
      */
-    handleItemMouseEnter = (el: any, index: number) => {
+    handleItemMouseEnter: ActivateTooltipAction = (el, index) => {
       this.setState(() => ({
         activeTooltipIndex: index,
         isTooltipActive: true,
@@ -1583,8 +1592,9 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * The handler of mouse leaving a scatter
-     * @return {Object} no return
+     * The handler of mouse leaving a graphical item.
+     * This handler is used for `tooltipEventType: item` and `Tooltip.trigger: hover`
+     * @return undefined
      */
     handleItemMouseLeave = () => {
       this.setState(() => ({
@@ -1594,10 +1604,10 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler of mouse moving in chart
-     * @param  {React.MouseEvent} e        Event object
-     * @return {void} no return
+     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
+     * @param e Event object
+     * @return undefined
      */
-
     handleMouseMove = (e: MousePointer & Partial<Omit<React.MouseEvent, keyof MousePointer>>): void => {
       e.persist();
       this.throttleTriggeredAfterMouseMove(e);
@@ -1605,10 +1615,11 @@ export const generateCategoricalChart = ({
 
     /**
      * The handler if mouse leaving chart
-     * @param {Object} e Event object
-     * @return {Null} no return
+     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
+     * @param e Event object
+     * @return undefined
      */
-    handleMouseLeave = (e: any) => {
+    handleMouseLeave = (e: React.MouseEvent) => {
       this.throttleTriggeredAfterMouseMove.cancel();
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
@@ -1670,18 +1681,33 @@ export const generateCategoricalChart = ({
       }
     };
 
+    /**
+     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
+     * @param e touch event
+     * @return undefined
+     */
     handleTouchMove = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.throttleTriggeredAfterMouseMove(e.changedTouches[0]);
       }
     };
 
+    /**
+     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
+     * @param e touch event
+     * @return undefined
+     */
     handleTouchStart = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseDown(e.changedTouches[0]);
       }
     };
 
+    /**
+     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
+     * @param e touch event
+     * @return undefined
+     */
     handleTouchEnd = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseUp(e.changedTouches[0]);
@@ -1783,6 +1809,48 @@ export const generateCategoricalChart = ({
         }
       }
 
+      return null;
+    }
+
+    getGraphicalItemClickHandler(
+      tooltipEventType: TooltipEventType,
+      trigger: TooltipTrigger | undefined,
+    ): ActivateTooltipAction | null {
+      if (tooltipEventType === 'axis') {
+        return null;
+      }
+
+      if (trigger === 'click') {
+        return this.handleItemMouseEnter;
+      }
+      return null;
+    }
+
+    getGraphicalItemMouseEnterHandler(
+      tooltipEventType: TooltipEventType,
+      trigger: TooltipTrigger | undefined,
+    ): ActivateTooltipAction | null {
+      if (tooltipEventType === 'axis') {
+        return null;
+      }
+
+      if (trigger === 'hover') {
+        return this.handleItemMouseEnter;
+      }
+      return null;
+    }
+
+    getGraphicalItemMouseLeaveHandler(
+      tooltipEventType: TooltipEventType,
+      trigger: TooltipTrigger | undefined,
+    ): NoArgumentsAction | null {
+      if (tooltipEventType === 'axis') {
+        return null;
+      }
+
+      if (trigger === 'hover') {
+        return this.handleItemMouseLeave;
+      }
       return null;
     }
 
@@ -1895,60 +1963,71 @@ export const generateCategoricalChart = ({
         };
       }
 
-      const events = this.parseEventsOfWrapper();
+      const wrapperEvents = this.parseEventsOfWrapper();
+      const tooltipEventType = this.getTooltipEventType();
+      const tooltipItem = findChildByType(this.props.children, Tooltip);
+      const onItemClick = this.getGraphicalItemClickHandler(tooltipEventType, tooltipItem?.props?.trigger);
+      const onItemMouseEnter = this.getGraphicalItemMouseEnterHandler(tooltipEventType, tooltipItem?.props?.trigger);
+      const onItemMouseLeave = this.getGraphicalItemMouseLeaveHandler(tooltipEventType, tooltipItem?.props?.trigger);
       return (
-        <CursorPortalContext.Provider value={this.state.cursorPortal}>
-          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <ChartDataContextProvider value={this.props.data}>
-              <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-                <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                  <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-                    <ChartLayoutContextProvider
-                      state={this.state}
-                      width={this.props.width}
-                      height={this.props.height}
-                      clipPathId={this.clipPathId}
-                      margin={this.props.margin}
-                      layout={this.props.layout}
-                    >
-                      <div
-                        className={clsx('recharts-wrapper', className)}
-                        style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                        {...events}
-                        ref={(node: HTMLDivElement) => {
-                          this.container = node;
-                          if (this.state.tooltipPortal == null) {
-                            this.setState({ tooltipPortal: node });
-                          }
-                        }}
-                      >
-                        <Surface
-                          {...attrs}
-                          width={width}
-                          height={height}
-                          title={title}
-                          desc={desc}
-                          style={FULL_WIDTH_AND_HEIGHT}
-                        >
-                          <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
-                          <g
-                            className="recharts-cursor-portal"
-                            ref={(node: SVGElement) => {
-                              if (this.state.cursorPortal == null) {
-                                this.setState({ cursorPortal: node });
-                              }
-                            }}
-                          />
-                          {renderByOrder(children, this.renderMap)}
-                        </Surface>
-                      </div>
-                    </ChartLayoutContextProvider>
-                  </AccessibilityContextProvider>
-                </BrushUpdateDispatchContext.Provider>
-              </LegendBoundingBoxContext.Provider>
-            </ChartDataContextProvider>
-          </TooltipPortalContext.Provider>
-        </CursorPortalContext.Provider>
+        <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
+          <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
+            <MouseClickItemDispatchContext.Provider value={onItemClick}>
+              <CursorPortalContext.Provider value={this.state.cursorPortal}>
+                <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+                  <ChartDataContextProvider value={this.props.data}>
+                    <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+                      <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+                        <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+                          <ChartLayoutContextProvider
+                            state={this.state}
+                            width={this.props.width}
+                            height={this.props.height}
+                            clipPathId={this.clipPathId}
+                            margin={this.props.margin}
+                            layout={this.props.layout}
+                          >
+                            <div
+                              className={clsx('recharts-wrapper', className)}
+                              style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+                              {...wrapperEvents}
+                              ref={(node: HTMLDivElement) => {
+                                this.container = node;
+                                if (this.state.tooltipPortal == null) {
+                                  this.setState({ tooltipPortal: node });
+                                }
+                              }}
+                            >
+                              <Surface
+                                {...attrs}
+                                width={width}
+                                height={height}
+                                title={title}
+                                desc={desc}
+                                style={FULL_WIDTH_AND_HEIGHT}
+                              >
+                                <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
+                                <g
+                                  className="recharts-cursor-portal"
+                                  ref={(node: SVGElement) => {
+                                    if (this.state.cursorPortal == null) {
+                                      this.setState({ cursorPortal: node });
+                                    }
+                                  }}
+                                />
+                                {renderByOrder(children, this.renderMap)}
+                              </Surface>
+                            </div>
+                          </ChartLayoutContextProvider>
+                        </AccessibilityContextProvider>
+                      </BrushUpdateDispatchContext.Provider>
+                    </LegendBoundingBoxContext.Provider>
+                  </ChartDataContextProvider>
+                </TooltipPortalContext.Provider>
+              </CursorPortalContext.Provider>
+            </MouseClickItemDispatchContext.Provider>
+          </MouseLeaveItemDispatchContext.Provider>
+        </MouseEnterItemDispatchContext.Provider>
       );
     }
   }

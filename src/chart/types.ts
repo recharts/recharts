@@ -84,3 +84,5 @@ export interface CategoricalChartState {
   tooltipPortal?: HTMLElement | null;
   cursorPortal?: SVGElement | null;
 }
+
+export type TooltipTrigger = 'hover' | 'click';
