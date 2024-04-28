@@ -307,14 +307,6 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     return null;
   }
 
-  getDeltaAngle() {
-    const { startAngle, endAngle } = this.props;
-    const sign = mathSign(endAngle - startAngle);
-    const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
-
-    return sign * deltaAngle;
-  }
-
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
