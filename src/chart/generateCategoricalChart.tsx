@@ -1576,7 +1576,6 @@ export const generateCategoricalChart = ({
       this.setState(() => ({
         activeTooltipIndex: index,
         isTooltipActive: true,
-        activeItem: el,
         activePayload: el.tooltipPayload,
         activeCoordinate: el.tooltipPosition || { x: el.cx, y: el.cy },
       }));

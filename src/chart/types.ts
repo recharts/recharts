@@ -60,9 +60,6 @@ export interface CategoricalChartState {
 
   tooltipAxisBandSize?: number;
 
-  /** active item */
-  activeItem?: any;
-
   /** Active label of data */
   activeLabel?: string;
 
