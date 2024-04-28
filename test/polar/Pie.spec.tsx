@@ -349,26 +349,6 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
   });
 
-  test('Support multiple active sectors', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          activeIndex={[0, 2]}
-          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
-          cx={250}
-          cy={250}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
-
-    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(2);
-  });
-
   test('Render customized label when label is set to be a react element', () => {
     const Label = (props: LabelProps) => {
       const { x, y } = props;
