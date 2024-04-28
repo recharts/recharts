@@ -48,6 +48,39 @@ type RadialBarDataItem = SectorProps & {
 
 type RadialBarBackground = ActiveShape<SectorProps>;
 
+type RadialBarSectorsProps = {
+  sectors: SectorProps[];
+  allOtherRadialBarProps: RadialBarProps;
+};
+
+function RadialBarSectors(props: RadialBarSectorsProps) {
+  const { sectors, allOtherRadialBarProps } = props;
+  const { shape, activeShape, activeIndex, cornerRadius, ...others } = allOtherRadialBarProps;
+  const baseProps = filterProps(others, false);
+
+  return (
+    <>
+      {sectors.map((entry, i) => {
+        const isActive = i === activeIndex;
+        const radialBarSectorProps: RadialBarSectorProps = {
+          ...baseProps,
+          cornerRadius: parseCornerRadius(cornerRadius),
+          ...entry,
+          ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
+          key: `sector-${i}`,
+          className: `recharts-radial-bar-sector ${entry.className}`,
+          forceCornerRadius: others.forceCornerRadius,
+          cornerIsExternal: others.cornerIsExternal,
+          isActive,
+          option: isActive ? activeShape : shape,
+        };
+
+        return <RadialBarSector {...radialBarSectorProps} />;
+      })}
+    </>
+  );
+}
+
 interface InternalRadialBarProps {
   animationId?: string | number;
   className?: string;
@@ -302,26 +335,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
   };
 
   renderSectorsStatically(sectors: SectorProps[]) {
-    const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
-    const baseProps = filterProps(others, false);
-
-    return sectors.map((entry, i) => {
-      const isActive = i === activeIndex;
-      const props: RadialBarSectorProps = {
-        ...baseProps,
-        cornerRadius: parseCornerRadius(cornerRadius),
-        ...entry,
-        ...adaptEventsOfChild(this.props, entry, i),
-        key: `sector-${i}`,
-        className: `recharts-radial-bar-sector ${entry.className}`,
-        forceCornerRadius: others.forceCornerRadius,
-        cornerIsExternal: others.cornerIsExternal,
-        isActive,
-        option: isActive ? activeShape : shape,
-      };
-
-      return <RadialBarSector {...props} />;
-    });
+    return <RadialBarSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
   }
 
   renderSectorsWithAnimation() {
