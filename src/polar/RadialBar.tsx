@@ -37,6 +37,7 @@ import {
 import { polarToCartesian } from '../util/PolarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useTooltipContext } from '../context/tooltipContext';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -48,6 +49,41 @@ type RadialBarDataItem = SectorProps & {
 
 type RadialBarBackground = ActiveShape<SectorProps>;
 
+type RadialBarSectorsProps = {
+  sectors: SectorProps[];
+  allOtherRadialBarProps: RadialBarProps;
+};
+
+function RadialBarSectors(props: RadialBarSectorsProps) {
+  const { sectors, allOtherRadialBarProps } = props;
+  const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
+  const baseProps = filterProps(others, false);
+
+  const { index: activeIndex } = useTooltipContext();
+
+  return (
+    <>
+      {sectors.map((entry, i) => {
+        const isActive = activeShape && i === activeIndex;
+        const radialBarSectorProps: RadialBarSectorProps = {
+          ...baseProps,
+          cornerRadius: parseCornerRadius(cornerRadius),
+          ...entry,
+          ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
+          key: `sector-${i}`,
+          className: `recharts-radial-bar-sector ${entry.className}`,
+          forceCornerRadius: others.forceCornerRadius,
+          cornerIsExternal: others.cornerIsExternal,
+          isActive,
+          option: isActive ? activeShape : shape,
+        };
+
+        return <RadialBarSector {...radialBarSectorProps} />;
+      })}
+    </>
+  );
+}
+
 interface InternalRadialBarProps {
   animationId?: string | number;
   className?: string;
@@ -57,7 +93,6 @@ interface InternalRadialBarProps {
   endAngle?: number;
   shape?: ActiveShape<SectorProps, SVGPathElement>;
   activeShape?: ActiveShape<SectorProps, SVGPathElement>;
-  activeIndex?: number;
   dataKey: string | number | ((obj: any) => any);
   cornerRadius?: string | number;
   forceCornerRadius?: boolean;
@@ -274,14 +309,6 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     return null;
   }
 
-  getDeltaAngle() {
-    const { startAngle, endAngle } = this.props;
-    const sign = mathSign(endAngle - startAngle);
-    const deltaAngle = Math.min(Math.abs(endAngle - startAngle), 360);
-
-    return sign * deltaAngle;
-  }
-
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
@@ -302,26 +329,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
   };
 
   renderSectorsStatically(sectors: SectorProps[]) {
-    const { shape, activeShape, activeIndex, cornerRadius, ...others } = this.props;
-    const baseProps = filterProps(others, false);
-
-    return sectors.map((entry, i) => {
-      const isActive = i === activeIndex;
-      const props: RadialBarSectorProps = {
-        ...baseProps,
-        cornerRadius: parseCornerRadius(cornerRadius),
-        ...entry,
-        ...adaptEventsOfChild(this.props, entry, i),
-        key: `sector-${i}`,
-        className: `recharts-radial-bar-sector ${entry.className}`,
-        forceCornerRadius: others.forceCornerRadius,
-        cornerIsExternal: others.cornerIsExternal,
-        isActive,
-        option: isActive ? activeShape : shape,
-      };
-
-      return <RadialBarSector {...props} />;
-    });
+    return <RadialBarSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
   }
 
   renderSectorsWithAnimation() {

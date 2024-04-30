@@ -21,7 +21,7 @@ export const Simple: Meta<RadialBarProps> = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart data={data}>
-          <RadialBar dataKey="uv" activeShape={args.activeShape} activeIndex={args.activeIndex} />
+          <RadialBar dataKey="uv" activeShape={args.activeShape} />
           <Tooltip />
         </RadialBarChart>
       </ResponsiveContainer>
@@ -30,7 +30,6 @@ export const Simple: Meta<RadialBarProps> = {
   args: {
     data: pageData,
     activeShape: { fill: 'red' },
-    activeIndex: undefined,
   },
 };
 
