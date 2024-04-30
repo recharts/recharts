@@ -27,7 +27,6 @@ export default {
 export const Simple: Meta<ScatterProps> = {
   args: {
     activeShape: { fill: 'red' },
-    activeIndex: undefined,
   },
   render: args => {
     const data = [
@@ -53,13 +52,7 @@ export const Simple: Meta<ScatterProps> = {
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-          <Scatter
-            activeShape={args.activeShape}
-            activeIndex={args.activeIndex}
-            name="A school"
-            data={data}
-            fill="#8884d8"
-          />
+          <Scatter activeShape={args.activeShape} name="A school" data={data} fill="#8884d8" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         </ScatterChart>
       </ResponsiveContainer>

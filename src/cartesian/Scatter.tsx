@@ -38,6 +38,7 @@ import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useTooltipContext } from '../context/tooltipContext';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -80,7 +81,6 @@ interface ScatterProps {
   className?: string;
   name?: string | number;
 
-  activeIndex?: number;
   activeShape?: ScatterCustomizedShape;
   shape?: ScatterCustomizedShape;
   points?: ScatterPointItem[];
@@ -124,6 +124,41 @@ const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload
 function SetScatterLegend(props: Props): null {
   useLegendPayloadDispatch(computeLegendPayloadFromScatterProps, props);
   return null;
+}
+
+type ScatterSymbolsProps = {
+  points: ScatterPointItem[];
+  allOtherScatterProps: Props;
+};
+
+function ScatterSymbols(props: ScatterSymbolsProps) {
+  const { points, allOtherScatterProps } = props;
+  const { shape, activeShape } = allOtherScatterProps;
+  const baseProps = filterProps(allOtherScatterProps, false);
+
+  const { index: activeIndex } = useTooltipContext();
+
+  return (
+    <>
+      {points.map((entry, i) => {
+        const isActive = activeShape && activeIndex === i;
+        const option = isActive ? activeShape : shape;
+        const symbolProps = { key: `symbol-${i}`, ...baseProps, ...entry };
+
+        return (
+          <Layer
+            className="recharts-scatter-symbol"
+            {...adaptEventsOfChild(allOtherScatterProps, entry, i)}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
+            role="img"
+          >
+            <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+          </Layer>
+        );
+      })}
+    </>
+  );
 }
 
 export class Scatter extends PureComponent<Props, State> {
@@ -291,26 +326,7 @@ export class Scatter extends PureComponent<Props, State> {
   id = uniqueId('recharts-scatter-');
 
   renderSymbolsStatically(points: ScatterPointItem[]) {
-    const { shape, activeShape, activeIndex } = this.props;
-    const baseProps = filterProps(this.props, false);
-
-    return points.map((entry, i) => {
-      const isActive = activeIndex === i;
-      const option = isActive ? activeShape : shape;
-      const props = { key: `symbol-${i}`, ...baseProps, ...entry };
-
-      return (
-        <Layer
-          className="recharts-scatter-symbol"
-          {...adaptEventsOfChild(this.props, entry, i)}
-          // eslint-disable-next-line react/no-array-index-key
-          key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
-          role="img"
-        >
-          <ScatterSymbol option={option} isActive={isActive} {...props} />
-        </Layer>
-      );
-    });
+    return <ScatterSymbols points={points} allOtherScatterProps={this.props} />;
   }
 
   renderSymbolsWithAnimation() {
