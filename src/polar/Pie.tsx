@@ -107,7 +107,7 @@ interface PieProps extends PieDef {
   labelLine?: PieLabelLine;
   label?: PieLabel;
 
-  activeIndex?: number | number[];
+  activeIndex?: number;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -384,21 +384,6 @@ export class Pie extends PureComponent<Props, State> {
 
   id = uniqueId('recharts-pie-');
 
-  isActiveIndex(i: number) {
-    const { activeIndex } = this.props;
-
-    if (Array.isArray(activeIndex)) {
-      return activeIndex.indexOf(i) !== -1;
-    }
-
-    return i === activeIndex;
-  }
-
-  hasActiveIndex() {
-    const { activeIndex } = this.props;
-    return Array.isArray(activeIndex) ? activeIndex.length !== 0 : activeIndex || activeIndex === 0;
-  }
-
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
 
@@ -506,11 +491,11 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
-    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
+    const { activeShape, activeIndex, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return sectors.map((entry, i) => {
       if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-      const isActive = this.isActiveIndex(i);
-      const inactiveShape = inactiveShapeProp && this.hasActiveIndex() ? inactiveShapeProp : null;
+      const isActive = i === activeIndex;
+      const inactiveShape = activeIndex == null ? null : inactiveShapeProp;
       const sectorOptions = isActive ? activeShape : inactiveShape;
       const sectorProps = {
         ...entry,
