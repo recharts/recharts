@@ -34,7 +34,7 @@ function typeguardBarRectangleProps(
   };
 }
 
-type BarRectangleProps = {
+export type BarRectangleProps = {
   option: ActiveShape<BarProps, SVGPathElement>;
   isActive: boolean;
 } & BarProps;

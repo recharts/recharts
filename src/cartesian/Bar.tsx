@@ -39,9 +39,10 @@ import {
   LayoutType,
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
-import { BarRectangle, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
+import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useTooltipContext } from '../context/tooltipContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -67,7 +68,6 @@ interface InternalBarProps {
 export interface BarProps extends InternalBarProps {
   className?: string;
   index?: Key;
-  activeIndex?: number;
   layout?: 'horizontal' | 'vertical';
   xAxisId?: string | number;
   yAxisId?: string | number;
@@ -135,13 +135,13 @@ type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
   data: BarRectangleItem[];
   dataKey: DataKey<any>;
-  activeIndex?: number;
   onAnimationStart: () => void;
   onAnimationEnd: () => void;
 };
 
 function BarBackground(props: BarBackgroundProps) {
-  const { data, dataKey, activeIndex, background: backgroundFromProps, onAnimationStart, onAnimationEnd } = props;
+  const { index: activeIndex } = useTooltipContext();
+  const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd } = props;
   if (!backgroundFromProps) {
     return null;
   }
@@ -157,8 +157,11 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        const barRectangleProps = {
+        const barRectangleProps: BarRectangleProps = {
+          option: backgroundFromProps,
+          isActive: i === activeIndex,
           ...rest,
+          // @ts-expect-error BarRectangle props do not accept `fill` property.
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,
@@ -167,11 +170,10 @@ function BarBackground(props: BarBackgroundProps) {
           onAnimationEnd,
           dataKey,
           index: i,
-          key: `background-bar-${i}`,
           className: 'recharts-bar-background-rectangle',
         };
 
-        return <BarRectangle option={backgroundFromProps} isActive={i === activeIndex} {...barRectangleProps} />;
+        return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
       })}
     </>
   );
@@ -186,7 +188,9 @@ type BarRectanglesProps = Props & {
 function BarRectangles(props: BarRectanglesProps) {
   const { onAnimationStart, onAnimationEnd, ...rest } = props;
   const baseProps = filterProps(rest, false);
-  const { data, shape, dataKey, activeIndex, activeBar } = props;
+  const { data, shape, dataKey, activeBar } = props;
+
+  const { index: activeIndex } = useTooltipContext();
 
   if (!data) {
     return null;
@@ -195,7 +199,7 @@ function BarRectangles(props: BarRectanglesProps) {
   return (
     <>
       {data.map((entry, i) => {
-        const isActive = i === activeIndex;
+        const isActive = activeBar && i === activeIndex;
         const option = isActive ? activeBar : shape;
         const barRectangleProps = {
           ...baseProps,
