@@ -6,6 +6,7 @@ import { Surface, Pie, Sector, LabelProps, SectorProps, PieChart } from '../../s
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
+import { focusTestHelper } from '../helper/focus';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -349,138 +350,140 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
   });
 
-  test('Render customized label when label is set to be a react element', () => {
-    const Label = (props: LabelProps) => {
-      const { x, y } = props;
-      return (
-        <text x={x} y={y} className="customized-label">
-          test
-        </text>
+  describe('label', () => {
+    test('Render customized label when label is set to be a react element', () => {
+      const Label = (props: LabelProps) => {
+        const { x, y } = props;
+        return (
+          <text x={x} y={y} className="customized-label">
+            test
+          </text>
+        );
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label={<Label />}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
+        </Surface>,
       );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          label={<Label />}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
 
-    expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
-  });
+      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
+    });
 
-  test('Render customized label when label is set to be a function that returns the label text', () => {
-    const Label = (props: LabelProps) => {
-      const { name, value } = props;
-      return `${name}: ${value}`;
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          label={Label}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
-
-    expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
-    expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
-  });
-
-  test('Render customized label when label is set to be a react element', () => {
-    const renderLabel = (props: LabelProps) => {
-      const { x, y } = props;
-      return (
-        <text x={x} y={y} className="customized-label">
-          test
-        </text>
+    test('Render customized label when label is set to be a function that returns the label text', () => {
+      const Label = (props: LabelProps) => {
+        const { name, value } = props;
+        return `${name}: ${value}`;
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label={Label}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
+        </Surface>,
       );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          label={renderLabel}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
 
-    expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
-  });
+      expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
+    });
 
-  test('Render customized label line when labelLine is set to be a react element', () => {
-    const LabelLine = (props: CustomizedLabelLineProps) => {
-      const { points } = props;
-      if (!points) return <></>;
-
-      return (
-        <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+    test('Render customized label when label is set to be a react element', () => {
+      const renderLabel = (props: LabelProps) => {
+        const { x, y } = props;
+        return (
+          <text x={x} y={y} className="customized-label">
+            test
+          </text>
+        );
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label={renderLabel}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
+        </Surface>,
       );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          label
-          labelLine={<LabelLine />}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
 
-    expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
-  });
+      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
+    });
 
-  test('Render customized label line when labelLine is set to be a function', () => {
-    const renderLabelLine = (props: CustomizedLabelLineProps) => {
-      const { points } = props;
-      if (!points) return <></>;
+    test('Render customized label line when labelLine is set to be a react element', () => {
+      const LabelLine = (props: CustomizedLabelLineProps) => {
+        const { points } = props;
+        if (!points) return <></>;
 
-      return (
-        <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+        return (
+          <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+        );
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label
+            labelLine={<LabelLine />}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
+        </Surface>,
       );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie
-          isAnimationActive={false}
-          cx={250}
-          cy={250}
-          label
-          labelLine={renderLabelLine}
-          innerRadius={0}
-          outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
-        />
-      </Surface>,
-    );
 
-    expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
+    });
+
+    test('Render customized label line when labelLine is set to be a function', () => {
+      const renderLabelLine = (props: CustomizedLabelLineProps) => {
+        const { points } = props;
+        if (!points) return <></>;
+
+        return (
+          <path d={`M${points[0].x},${points[0].y}L${points[1].x},${points[1].y}`} className="customized-label-line" />
+        );
+      };
+      const { container } = render(
+        <Surface width={500} height={500}>
+          <Pie
+            isAnimationActive={false}
+            cx={250}
+            cy={250}
+            label
+            labelLine={renderLabelLine}
+            innerRadius={0}
+            outerRadius={200}
+            sectors={sectors}
+            dataKey="cy"
+          />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
+    });
   });
 
   test("Don't render any sector when data is empty", () => {
@@ -530,140 +533,158 @@ describe('<Pie />', () => {
     });
   });
 
-  test('Handles keyboard interaction: Tab can focus in and out of the pie chart', async () => {
-    expect.assertions(3);
-    const timeout = 2000;
-    const { container } = render(
-      <div role="button" tabIndex={0} className="container">
-        <Surface width={500} height={500}>
-          <Pie
-            isAnimationActive={false}
-            cx={250}
-            cy={250}
-            label
-            innerRadius={0}
-            outerRadius={200}
-            sectors={sectors}
-            dataKey="cy"
-          />
-        </Surface>
-      </div>,
-    );
-    const pie = container.getElementsByClassName('recharts-pie')[0];
-    const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
+  describe('keyboard interaction', () => {
+    test('Tab can focus in and out of the pie chart', async () => {
+      expect.assertions(3);
+      const timeout = 2000;
+      const { container } = render(
+        <div role="button" tabIndex={0} className="container">
+          <Surface width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label
+              innerRadius={0}
+              outerRadius={200}
+              sectors={sectors}
+              dataKey="cy"
+            />
+          </Surface>
+        </div>,
+      );
+      const pie = container.getElementsByClassName('recharts-pie')[0];
+      const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
 
-    pieContainer.focus();
-    await waitFor(
-      () => {
-        expect(document.activeElement).toBe(pieContainer);
-      },
-      { timeout },
-    );
+      pieContainer.focus();
+      await waitFor(
+        () => {
+          expect(document.activeElement).toBe(pieContainer);
+        },
+        { timeout },
+      );
 
-    // Testing that pressing tab goes into pie chart
-    await userEvent.tab();
-    await waitFor(
-      () => {
-        expect(document.activeElement).toBe(pie);
-      },
-      { timeout },
-    );
+      // Testing that pressing tab goes into pie chart
+      await userEvent.tab();
+      await waitFor(
+        () => {
+          expect(document.activeElement).toBe(pie);
+        },
+        { timeout },
+      );
 
-    // Testing that pressing tab goes out of pie chart
-    await userEvent.tab();
-    await waitFor(
-      () => {
-        expect(document.activeElement).toBe(document.body);
-      },
-      { timeout },
-    );
-  });
+      // Testing that pressing tab goes out of pie chart
+      await userEvent.tab();
+      await waitFor(
+        () => {
+          expect(document.activeElement).toBe(document.body);
+        },
+        { timeout },
+      );
+    });
 
-  test('Handles keyboard interaction: Tab can not focus in and out of the pie chart', async () => {
-    expect.assertions(3);
-    const timeout = 2000;
-    const { container } = render(
-      <div role="button" tabIndex={0} className="container">
-        <Surface width={500} height={500}>
-          <Pie
-            isAnimationActive={false}
-            cx={250}
-            cy={250}
-            label
-            innerRadius={0}
-            outerRadius={200}
-            sectors={sectors}
-            dataKey="cy"
-            rootTabIndex={-1}
-          />
-        </Surface>
-      </div>,
-    );
-    const pie = container.getElementsByClassName('recharts-pie')[0];
-    const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
+    test('Tab can not focus in and out of the pie chart', async () => {
+      expect.assertions(3);
+      const timeout = 2000;
+      const { container } = render(
+        <div role="button" tabIndex={0} className="container">
+          <Surface width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label
+              innerRadius={0}
+              outerRadius={200}
+              sectors={sectors}
+              dataKey="cy"
+              rootTabIndex={-1}
+            />
+          </Surface>
+        </div>,
+      );
+      const pie = container.getElementsByClassName('recharts-pie')[0];
+      const pieContainer = document.getElementsByClassName('container')[0] as HTMLElement;
 
-    pieContainer.focus();
-    await waitFor(
-      () => {
-        expect(document.activeElement).toBe(pieContainer);
-      },
-      { timeout },
-    );
+      pieContainer.focus();
+      await waitFor(
+        () => {
+          expect(document.activeElement).toBe(pieContainer);
+        },
+        { timeout },
+      );
 
-    // Testing that pressing tab goes into pie chart
-    await userEvent.tab();
-    await waitFor(
-      () => {
-        expect(document.activeElement).not.toBe(pie);
-      },
-      { timeout },
-    );
+      // Testing that pressing tab goes into pie chart
+      await userEvent.tab();
+      await waitFor(
+        () => {
+          expect(document.activeElement).not.toBe(pie);
+        },
+        { timeout },
+      );
 
-    // Testing that pressing tab goes out of pie chart
-    await userEvent.tab();
-    await waitFor(
-      () => {
-        expect(document.activeElement).not.toBe(document.body);
-      },
-      { timeout },
-    );
-  });
+      // Testing that pressing tab goes out of pie chart
+      await userEvent.tab();
+      await waitFor(
+        () => {
+          expect(document.activeElement).not.toBe(document.body);
+        },
+        { timeout },
+      );
+    });
 
-  test('Handles keyboard interaction: arrow keys can move focus into sectors', async () => {
-    expect.assertions(2);
-    const timeout = 2000;
-    const { container } = render(
-      <div role="button" tabIndex={0} className="container">
-        <Surface width={500} height={500}>
-          <Pie
-            isAnimationActive={false}
-            cx={250}
-            cy={250}
-            label
-            innerRadius={0}
-            outerRadius={200}
-            sectors={sectors}
-            dataKey="cy"
-          />
-        </Surface>
-      </div>,
-    );
-    const pie = container.getElementsByClassName('recharts-pie')[0] as HTMLElement;
-    pie.focus();
-    await waitFor(
-      () => {
-        expect(document.activeElement?.classList.contains('recharts-pie-sector')).toBe(false);
-      },
-      { timeout },
-    );
+    test('Arrows move between sectors, wrap around, and escape blurs', async () => {
+      const { container, debug } = render(
+        <div role="button" tabIndex={0} className="container">
+          <Surface width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label
+              innerRadius={0}
+              outerRadius={200}
+              sectors={sectors}
+              dataKey="cy"
+            />
+          </Surface>
+        </div>,
+      );
 
-    await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(document.body);
+      const pie = focusTestHelper(container, '.recharts-pie', debug);
+      expect(document.activeElement).toBe(pie);
 
-    await waitFor(
-      () => {
-        expect(document.activeElement?.classList.contains('recharts-pie-sector')).toBe(true);
-      },
-      { timeout },
-    );
+      const allSectors = pie.querySelectorAll('.recharts-pie-sector');
+      expect(allSectors).toHaveLength(5);
+
+      await userEvent.keyboard('{ArrowRight}');
+
+      expect(document.activeElement).toBe(allSectors[4]);
+      await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(allSectors[3]);
+      await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(allSectors[2]);
+      await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(allSectors[1]);
+      await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(allSectors[0]);
+      await userEvent.keyboard('{ArrowRight}');
+      expect(document.activeElement).toBe(allSectors[4]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[0]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[1]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[2]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[3]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[4]);
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(document.activeElement).toBe(allSectors[0]);
+      await userEvent.keyboard('{Escape}');
+      expect(document.activeElement).toBe(document.body);
+    });
   });
 });
