@@ -137,11 +137,13 @@ type BarBackgroundProps = {
   dataKey: DataKey<any>;
   onAnimationStart: () => void;
   onAnimationEnd: () => void;
+  allOtherBarProps: Props;
 };
 
 function BarBackground(props: BarBackgroundProps) {
   const { index: activeIndex } = useTooltipContext();
-  const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd } = props;
+
+  const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd, allOtherBarProps } = props;
   if (!backgroundFromProps) {
     return null;
   }
@@ -165,7 +167,7 @@ function BarBackground(props: BarBackgroundProps) {
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,
-          ...adaptEventsOfChild(props, entry, i),
+          ...adaptEventsOfChild(allOtherBarProps, entry, i),
           onAnimationStart,
           onAnimationEnd,
           dataKey,
@@ -586,6 +588,7 @@ export class Bar extends PureComponent<Props, State> {
             background={background}
             onAnimationStart={this.handleAnimationStart}
             onAnimationEnd={this.handleAnimationEnd}
+            allOtherBarProps={this.props}
           />
           {this.renderRectangles()}
         </Layer>
