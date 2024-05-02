@@ -1073,6 +1073,7 @@ export const generateCategoricalChart = ({
 
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
+      accessibilityLayer: true,
       layout: 'horizontal',
       stackOffset: 'none',
       barCategoryGap: '10%',
