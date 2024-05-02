@@ -9,7 +9,7 @@ vi.mock('../../../src/util/ReactUtils');
 
 const spy = vi.mocked(findAllByType);
 
-function mockErrorBarElements(items: ReactNode[]): ReactElement {
+function mockErrorBarElements(items: Partial<ReactNode>[]): ReactElement {
   spy.mockReturnValueOnce(items);
   return <></>;
 }

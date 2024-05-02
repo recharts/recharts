@@ -16,7 +16,7 @@ function mockDomElement(item: ReactNode) {
 }
 
 function mockLegendProps(props: ReturnType<typeof getLegendProps>): ReactNode[] {
-  const mockLegendItem = { props };
+  const mockLegendItem: ReactNode = { props } as ReactNode;
   mockDomElement(mockLegendItem);
   return [mockLegendItem];
 }

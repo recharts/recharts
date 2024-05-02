@@ -4,6 +4,7 @@ import { vi, describe, test } from 'vitest';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 
+// TODO: tests here fail without legacyRoot rendering. Unsure why.
 describe('AccessibilityLayer', () => {
   const data = [
     { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -19,6 +20,7 @@ describe('AccessibilityLayer', () => {
       <AreaChart width={100} height={50} data={data} accessibilityLayer>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
@@ -37,6 +39,7 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     // Confirm that the tooltip container exists, but isn't displaying anything
@@ -54,6 +57,7 @@ describe('AccessibilityLayer', () => {
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     // Confirm that the tooltip container exists, but isn't displaying anything
@@ -82,6 +86,7 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
@@ -166,6 +171,7 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
@@ -206,6 +212,7 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" reversed />
         <YAxis />
       </AreaChart>,
+      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
@@ -299,7 +306,7 @@ describe('AccessibilityLayer', () => {
   };
 
   test('When chart updates, arrow keys still work', () => {
-    const { container } = render(<Expand />);
+    const { container } = render(<Expand />, { legacyRoot: true });
 
     const pre = container.querySelector('pre');
     const svg = container.querySelector('svg');
@@ -410,7 +417,7 @@ describe('AccessibilityLayer', () => {
   //    reproduce or debug. It's not that hard to test, and could potentially save someone some
   //    stress down the line. That trade-off feels worth it!
   test('When chart is forced to rerender without a redraw, arrow keys still work', () => {
-    const { container } = render(<Counter />);
+    const { container } = render(<Counter />, { legacyRoot: true });
 
     expect(container.querySelectorAll('button')).toHaveLength(1);
 
@@ -466,7 +473,7 @@ describe('AccessibilityLayer', () => {
   };
 
   test('When a tooltip is removed, the AccessibilityLayer responds gracefully', () => {
-    const { container } = render(<BugExample />);
+    const { container } = render(<BugExample />, { legacyRoot: true });
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
@@ -517,7 +524,7 @@ describe('AccessibilityLayer', () => {
   };
 
   test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
-    const { container } = render(<DirectionSwitcher />);
+    const { container } = render(<DirectionSwitcher />, { legacyRoot: true });
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);

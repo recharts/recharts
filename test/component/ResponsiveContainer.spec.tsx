@@ -149,11 +149,13 @@ describe('<ResponsiveContainer />', () => {
     expect(container.querySelector('.recharts-responsive-container')).toHaveAttribute('id', 'testing-id-attr');
   });
 
+  // TODO: the following tests fail with React 18 createRoot rendering. Unsure why.
   it('should resize when ResizeObserver notify a change', () => {
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
+      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
@@ -172,6 +174,7 @@ describe('<ResponsiveContainer />', () => {
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
+      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
@@ -193,6 +196,7 @@ describe('<ResponsiveContainer />', () => {
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
+      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
