@@ -7,6 +7,10 @@ import Decimal from 'decimal.js-light';
 import { compose, range, memoize, map, reverse } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 
+const MIN_SCALE_RATIO = 0.02;
+const SCALE_RATIO_DECREMENT = 0.01;
+const STEP_THRESHOLD_FACTOR = 0.7;
+
 /**
  * Calculate a interval of a minimum value and a maximum value
  *
@@ -49,15 +53,19 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
 
   let formatStep: Decimal;
 
-  do {
+  while (stepRatioScale > MIN_SCALE_RATIO) {
     const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
       .add(correctionFactor)
       .mul(stepRatioScale);
 
     formatStep = amendStepRatio.mul(digitCountValue);
 
-    stepRatioScale -= 0.01;
-  } while (formatStep.mul(0.7).gt(roughStep) && stepRatioScale > 0.02);
+    if (formatStep.mul(STEP_THRESHOLD_FACTOR).lt(roughStep)) {
+      break;
+    }
+
+    stepRatioScale -= SCALE_RATIO_DECREMENT;
+  }
 
   return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
 };
