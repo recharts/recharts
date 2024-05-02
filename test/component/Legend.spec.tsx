@@ -452,6 +452,7 @@ describe('<Legend />', () => {
     });
 
     it('should pass parameters to the function', () => {
+      // TODO: this test does not work correctly without legacyRoot. Unsure why.
       mockGetBoundingClientRect({ width: 70, height: 20 });
       const customContent = (params: unknown): null => {
         expect(params).toMatchSnapshot();
@@ -463,6 +464,7 @@ describe('<Legend />', () => {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
         </LineChart>,
+        { legacyRoot: true },
       );
     });
   });
@@ -547,7 +549,7 @@ describe('<Legend />', () => {
           </LineChart>,
         );
 
-        const legendItems = screen.getAllByRole(/listitem/i);
+        const legendItems = screen.getAllByRole('listitem');
         legendItems.forEach(item => {
           expect(item).toHaveTextContent('');
         });

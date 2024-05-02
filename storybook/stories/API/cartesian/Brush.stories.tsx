@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent } from '@storybook/test';
+import { fireEvent, within, expect } from '@storybook/test';
 import { Args } from '@storybook/react';
 import { pageData } from '../../data';
 import { Brush, ResponsiveContainer, ComposedChart, Line, Area, Bar, Scatter, ScatterChart } from '../../../../src';
@@ -95,13 +95,14 @@ export const API = {
   ),
   args: getStoryArgsFromArgsTypesObject(GeneralProps),
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    setTimeout(() => {
-      const leftBrushSlide = canvasElement.querySelector('.recharts-brush-traveller');
+    const canvas = within(canvasElement);
+    const slider = await canvas.findAllByRole('slider');
+    const leftSlider = slider[0];
+    expect(leftSlider).toBeTruthy();
 
-      fireEvent.mouseDown(leftBrushSlide);
-      fireEvent.mouseMove(leftBrushSlide, { clientX: 200 });
-      fireEvent.mouseUp(leftBrushSlide);
-    }, 0);
+    fireEvent.mouseDown(leftSlider);
+    fireEvent.mouseMove(leftSlider, { clientX: 200 });
+    fireEvent.mouseUp(leftSlider);
   },
 };
 
