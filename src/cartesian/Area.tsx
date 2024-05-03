@@ -325,12 +325,13 @@ export class Area extends PureComponent<Props, State> {
         r: 3,
         ...areaProps,
         ...customDotProps,
-        dataKey,
+        index: i,
         cx: entry.x,
         cy: entry.y,
-        index: i,
+        dataKey,
         value: entry.value,
         payload: entry.payload,
+        points,
       };
 
       return Area.renderDotItem(dot, dotProps);

@@ -113,8 +113,10 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
   describe('dot', () => {
     test('Render customized dot when dot is set to be a function', () => {
+      let areaDotProps;
       const renderDot = (props: { cx: number; cy: number }) => {
         const { cx, cy } = props;
+        areaDotProps = props;
 
         return <circle role="cell" key={cx} x={cx} y={cy} r={5} className="customized-dot" />;
       };
@@ -126,6 +128,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
 
       expect(screen.getAllByRole('cell')).toHaveLength(data.length);
+      expect(areaDotProps).toHaveProperty('points');
     });
 
     test('Render customized dot when dot is set to be a react element', () => {
