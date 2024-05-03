@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mock, MockInstance, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
 
 declare global {
@@ -149,20 +149,20 @@ describe('<ResponsiveContainer />', () => {
     expect(container.querySelector('.recharts-responsive-container')).toHaveAttribute('id', 'testing-id-attr');
   });
 
-  // TODO: the following tests fail with React 18 createRoot rendering. Unsure why.
   it('should resize when ResizeObserver notify a change', () => {
     const { container } = render(
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
-      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
 
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
@@ -174,17 +174,20 @@ describe('<ResponsiveContainer />', () => {
       <ResponsiveContainer id="testing-id-attr" width="100%" height={200} debounce={200}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
-      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
 
-    notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 50, height: 50 } }]);
+    });
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
-    vi.advanceTimersByTime(200);
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+      vi.advanceTimersByTime(200);
+    });
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
   });
@@ -196,21 +199,24 @@ describe('<ResponsiveContainer />', () => {
       <ResponsiveContainer width="100%" height={200} onResize={onResize}>
         <div data-testid="inside" />
       </ResponsiveContainer>,
-      { legacyRoot: true },
     );
 
     const element = container.querySelector('.recharts-responsive-container');
     expect(element).not.toHaveAttribute('width');
     expect(element).not.toHaveAttribute('height');
 
-    notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
+    });
 
     expect(element.firstElementChild).toHaveAttribute('width', '100');
     expect(element.firstElementChild).toHaveAttribute('height', '200');
 
     expect(onResize).toHaveBeenCalledTimes(1);
 
-    notifyResizeObserverChange([{ contentRect: { width: 200, height: 200 } }]);
+    act(() => {
+      notifyResizeObserverChange([{ contentRect: { width: 200, height: 200 } }]);
+    });
 
     expect(onResize).toHaveBeenCalledTimes(2);
   });
