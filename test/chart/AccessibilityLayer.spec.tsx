@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, act } from '@testing-library/react';
 import { vi, describe, test } from 'vitest';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
+import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 
-// TODO: tests here fail without legacyRoot rendering. Unsure why.
 describe('AccessibilityLayer', () => {
   const data = [
     { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -20,7 +20,6 @@ describe('AccessibilityLayer', () => {
       <AreaChart width={100} height={50} data={data} accessibilityLayer>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
@@ -39,15 +38,14 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     // Confirm that the tooltip container exists, but isn't displaying anything
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip?.textContent).toBe('');
+    const tooltip = getTooltip(container);
+    expect(tooltip.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    container.querySelector('svg')?.focus();
+    act(() => container.querySelector('svg')?.focus());
     expect(tooltip).toHaveTextContent('Page A');
   });
 
@@ -57,15 +55,14 @@ describe('AccessibilityLayer', () => {
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     // Confirm that the tooltip container exists, but isn't displaying anything
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
-    expect(tooltip?.textContent).toBe('');
+    const tooltip = getTooltip(container);
+    expect(tooltip.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    container.querySelector('svg')?.focus();
+    act(() => container.querySelector('svg')?.focus());
     expect(tooltip).toHaveTextContent('uv : 400');
 
     // Use keyboard to move around
@@ -86,18 +83,17 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
     expect(mockMouseMovements.mock.instances).toHaveLength(1);
 
@@ -171,17 +167,16 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" />
         <YAxis />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
-    // Once the chart receives focus, the tooltip should display
+    // vertical chart ignores arrow keys (why?)
     svg.focus();
     expect(tooltip).toHaveTextContent('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
@@ -212,18 +207,17 @@ describe('AccessibilityLayer', () => {
         <XAxis dataKey="name" reversed />
         <YAxis />
       </AreaChart>,
-      { legacyRoot: true },
     );
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
     expect(mockMouseMovements).toHaveBeenCalledTimes(0);
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
     expect(mockMouseMovements).toHaveBeenCalledTimes(1);
 
@@ -306,18 +300,18 @@ describe('AccessibilityLayer', () => {
   };
 
   test('When chart updates, arrow keys still work', () => {
-    const { container } = render(<Expand />, { legacyRoot: true });
+    const { container } = render(<Expand />);
 
     const pre = container.querySelector('pre');
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
     expect(pre?.textContent).toBe('6');
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
 
     fireEvent.keyDown(svg, {
@@ -417,18 +411,18 @@ describe('AccessibilityLayer', () => {
   //    reproduce or debug. It's not that hard to test, and could potentially save someone some
   //    stress down the line. That trade-off feels worth it!
   test('When chart is forced to rerender without a redraw, arrow keys still work', () => {
-    const { container } = render(<Counter />, { legacyRoot: true });
+    const { container } = render(<Counter />);
 
     expect(container.querySelectorAll('button')).toHaveLength(1);
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
 
     // Ignore left arrow when you're already at the left
@@ -473,15 +467,15 @@ describe('AccessibilityLayer', () => {
   };
 
   test('When a tooltip is removed, the AccessibilityLayer responds gracefully', () => {
-    const { container } = render(<BugExample />, { legacyRoot: true });
+    const { container } = render(<BugExample />);
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
 
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
 
     // Make sure we move around, to get the AccessibilityManager's active index above 0
@@ -524,15 +518,15 @@ describe('AccessibilityLayer', () => {
   };
 
   test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
-    const { container } = render(<DirectionSwitcher />, { legacyRoot: true });
+    const { container } = render(<DirectionSwitcher />);
 
     const svg = container.querySelector('svg');
     assertNotNull(svg);
-    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    const tooltip = getTooltip(container);
 
-    expect(tooltip?.textContent).toBe('');
+    expect(tooltip.textContent).toBe('');
 
-    svg.focus();
+    act(() => svg.focus());
     expect(tooltip).toHaveTextContent('Page A');
 
     fireEvent.keyDown(svg, {
