@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, AreaChart, CartesianGrid, Funnel, FunnelChart, Legend, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { PageData } from '../_data';
@@ -552,6 +552,119 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
     });
   });
+
+  describe('FunnelChart', () => {
+    test('Add tabindex and role to the svg element', () => {
+      const { container } = render(
+        <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        </FunnelChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).not.toBeNull();
+      expect(svg).not.toBeUndefined();
+      expect(svg).toHaveAttribute('role', 'application');
+      expect(svg).toHaveAttribute('tabindex', '0');
+    });
+
+    test('tooltip does not show when chart receives focus', () => {
+      const { container } = render(
+        <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+        </FunnelChart>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).toHaveTextContent('');
+
+      act(() => container.querySelector('svg')?.focus());
+      expect(tooltip).toHaveTextContent('');
+    });
+
+    test('Chart does not update when it receives left/right arrow keystrokes', () => {
+      const mockMouseMovements = vi.fn();
+
+      const { container } = render(
+        <FunnelChart
+          width={100}
+          height={50}
+          data={PageData}
+          accessibilityLayer={accessibilityLayer}
+          onMouseMove={mockMouseMovements}
+        >
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+        </FunnelChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      const tooltip = getTooltip(container);
+
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Once the chart receives focus, the tooltip should display
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Ignore left arrow when you're already at the left
+      fireEvent.keyDown(svg, {
+        key: 'ArrowLeft',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Respect right arrow when there's something to the right
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Page C
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+
+      // Page D
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Ignore right arrow when you're already at the right
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Respect left arrow when there's something to the left
+      fireEvent.keyDown(svg, {
+        key: 'ArrowLeft',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Chart ignores non-arrow keys
+      fireEvent.keyDown(svg, {
+        key: 'a',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+    });
+  });
 });
 
 describe('AccessibilityLayer with accessibilityLayer=false', () => {
@@ -716,6 +829,118 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
       // Left arrow key should also be ignored
       fireEvent.keyDown(svg, {
         key: 'ArrowLeft',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+    });
+  });
+
+  describe('FunnelChart', () => {
+    test('does not add tabindex and role to the svg element', () => {
+      const { container } = render(
+        <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        </FunnelChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      expect(svg).not.toBeNull();
+      expect(svg).not.toBeUndefined();
+      expect(svg).not.toHaveAttribute('role');
+      expect(svg).not.toHaveAttribute('tabindex');
+    });
+
+    test('does not show tooltip when chart receives focus', () => {
+      const { container } = render(
+        <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+        </FunnelChart>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).toHaveTextContent('');
+
+      act(() => container.querySelector('svg')?.focus());
+      expect(tooltip).toHaveTextContent('');
+    });
+
+    test('Chart does not update when it receives left/right arrow keystrokes', () => {
+      const mockMouseMovements = vi.fn();
+
+      const { container } = render(
+        <FunnelChart
+          width={100}
+          height={50}
+          data={PageData}
+          accessibilityLayer={accessibilityLayer}
+          onMouseMove={mockMouseMovements}
+        >
+          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+          <Tooltip />
+          <Legend />
+        </FunnelChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      assertNotNull(svg);
+      const tooltip = getTooltip(container);
+
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      act(() => svg.focus());
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Ignore left arrow when you're already at the left
+      fireEvent.keyDown(svg, {
+        key: 'ArrowLeft',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Respect right arrow when there's something to the right
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Page C
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+
+      // Page D
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Ignore right arrow when you're already at the right
+      fireEvent.keyDown(svg, {
+        key: 'ArrowRight',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Respect left arrow when there's something to the left
+      fireEvent.keyDown(svg, {
+        key: 'ArrowLeft',
+      });
+      expect(tooltip).toHaveTextContent('');
+      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+      // Chart ignores non-arrow keys
+      fireEvent.keyDown(svg, {
+        key: 'a',
       });
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
