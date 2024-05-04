@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
-import { fireEvent, render, act } from '@testing-library/react';
-import { vi, describe, test } from 'vitest';
+import { act, fireEvent, render } from '@testing-library/react';
+import { describe, expect, test, vi } from 'vitest';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { PageData } from '../_data';
 
-describe('AccessibilityLayer', () => {
-  const data = [
-    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-    { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
-    { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-    { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-    { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-  ];
-
+describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s', accessibilityLayer => {
   test('Add tabindex and role to the svg element', () => {
     const { container } = render(
-      <AreaChart width={100} height={50} data={data} accessibilityLayer>
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
@@ -31,7 +23,7 @@ describe('AccessibilityLayer', () => {
 
   test('When chart receives focus, show the tooltip for the first point', () => {
     const { container } = render(
-      <AreaChart width={100} height={50} data={data} accessibilityLayer>
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
         <Legend />
@@ -51,7 +43,7 @@ describe('AccessibilityLayer', () => {
 
   test('accessibilityLayer works, even without *Axis elements', () => {
     const { container } = render(
-      <AreaChart width={100} height={50} data={data} accessibilityLayer>
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
       </AreaChart>,
@@ -76,7 +68,13 @@ describe('AccessibilityLayer', () => {
     const mockMouseMovements = vi.fn();
 
     const { container } = render(
-      <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
+      <AreaChart
+        width={100}
+        height={50}
+        data={PageData}
+        accessibilityLayer={accessibilityLayer}
+        onMouseMove={mockMouseMovements}
+      >
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
         <Legend />
@@ -157,7 +155,7 @@ describe('AccessibilityLayer', () => {
         layout="vertical"
         width={100}
         height={50}
-        data={data}
+        data={PageData}
         accessibilityLayer
         onMouseMove={mockMouseMovements}
       >
@@ -177,7 +175,9 @@ describe('AccessibilityLayer', () => {
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
     // vertical chart ignores arrow keys (why?)
-    svg.focus();
+    act(() => {
+      svg.focus();
+    });
     expect(tooltip).toHaveTextContent('');
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
@@ -200,7 +200,13 @@ describe('AccessibilityLayer', () => {
     const mockMouseMovements = vi.fn();
 
     const { container } = render(
-      <AreaChart width={100} height={50} data={data} accessibilityLayer onMouseMove={mockMouseMovements}>
+      <AreaChart
+        width={100}
+        height={50}
+        data={PageData}
+        accessibilityLayer={accessibilityLayer}
+        onMouseMove={mockMouseMovements}
+      >
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
         <Tooltip />
         <Legend />
@@ -275,11 +281,11 @@ describe('AccessibilityLayer', () => {
 
   const Expand = () => {
     const [width, setWidth] = useState(6);
-    const myData = data.slice(0, width);
+    const myData = PageData.slice(0, width);
 
     return (
       <div>
-        <pre>{width}</pre>
+        <pre>{myData.length}</pre>
 
         <button id="my3" type="button" onClick={() => setWidth(3)}>
           Show 3
@@ -288,7 +294,7 @@ describe('AccessibilityLayer', () => {
           Show 5
         </button>
 
-        <AreaChart width={100} height={50} data={myData} accessibilityLayer>
+        <AreaChart width={100} height={50} data={myData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
           <Tooltip />
           <Legend />
@@ -303,12 +309,13 @@ describe('AccessibilityLayer', () => {
     const { container } = render(<Expand />);
 
     const pre = container.querySelector('pre');
+    assertNotNull(pre);
     const svg = container.querySelector('svg');
     assertNotNull(svg);
     const tooltip = getTooltip(container);
 
     expect(tooltip.textContent).toBe('');
-    expect(pre?.textContent).toBe('6');
+    expect(pre.textContent).toBe('6');
 
     // Once the chart receives focus, the tooltip should display
     act(() => svg.focus());
@@ -341,7 +348,7 @@ describe('AccessibilityLayer', () => {
     expect(tooltip).toHaveTextContent('Page F');
 
     fireEvent.click(container.querySelector('#my3') as HTMLButtonElement);
-    expect(pre?.textContent).toBe('3');
+    expect(pre.textContent).toBe('3');
 
     // The chart only goes from A - C now, so the AccessibilityManager should think "C" is active.
 
@@ -351,7 +358,7 @@ describe('AccessibilityLayer', () => {
     expect(tooltip).toHaveTextContent('Page B');
 
     fireEvent.click(container.querySelector('#my5') as HTMLButtonElement);
-    expect(pre?.textContent).toBe('5');
+    expect(pre.textContent).toBe('5');
 
     // The chart now goes from A - E. Since the focus was already on B, B can remain active.
     expect(tooltip).toHaveTextContent('Page B');
@@ -392,7 +399,7 @@ describe('AccessibilityLayer', () => {
           Bump counter
         </button>
 
-        <AreaChart width={100} height={50} data={data} accessibilityLayer>
+        <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
           <Tooltip />
           <Legend />
@@ -445,14 +452,14 @@ describe('AccessibilityLayer', () => {
         <AreaChart
           width={500}
           height={400}
-          data={data}
+          data={PageData}
           margin={{
             top: 10,
             right: 30,
             left: 0,
             bottom: 0,
           }}
-          accessibilityLayer
+          accessibilityLayer={accessibilityLayer}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
@@ -466,7 +473,7 @@ describe('AccessibilityLayer', () => {
     );
   };
 
-  test('When a tooltip is removed, the AccessibilityLayer responds gracefully', () => {
+  test('When a tooltip is removed, the AccessibilityLayer does not throw', () => {
     const { container } = render(<BugExample />);
 
     const svg = container.querySelector('svg');
@@ -490,7 +497,7 @@ describe('AccessibilityLayer', () => {
     expect(container.querySelector('.recharts-tooltip-wrapper')).toBeNull();
 
     expect(() => {
-      svg.focus();
+      act(() => svg.focus());
       fireEvent.keyDown(svg, {
         key: 'ArrowRight',
       });
@@ -506,7 +513,7 @@ describe('AccessibilityLayer', () => {
           Change directions
         </button>
 
-        <AreaChart width={100} height={50} data={data} accessibilityLayer>
+        <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
           <Tooltip />
           <Legend />
@@ -542,5 +549,171 @@ describe('AccessibilityLayer', () => {
       key: 'ArrowRight',
     });
     expect(tooltip).toHaveTextContent('Page A');
+  });
+});
+
+describe('AccessibilityLayer with accessibilityLayer=false', () => {
+  const accessibilityLayer = false;
+  test('does not add tabindex and role to the svg element', () => {
+    const { container } = render(
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).not.toBeNull();
+    expect(svg).not.toBeUndefined();
+    expect(svg).not.toHaveAttribute('role');
+    expect(svg).not.toHaveAttribute('tabindex');
+  });
+
+  test('does not show tooltip when chart receives focus', () => {
+    const { container } = render(
+      <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </AreaChart>,
+    );
+
+    const tooltip = getTooltip(container);
+    expect(tooltip).toHaveTextContent('');
+
+    act(() => container.querySelector('svg')?.focus());
+    expect(tooltip).toHaveTextContent('');
+  });
+
+  test('Chart does not update when it receives left/right arrow keystrokes', () => {
+    const mockMouseMovements = vi.fn();
+
+    const { container } = render(
+      <AreaChart
+        width={100}
+        height={50}
+        data={PageData}
+        accessibilityLayer={accessibilityLayer}
+        onMouseMove={mockMouseMovements}
+      >
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </AreaChart>,
+    );
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = getTooltip(container);
+
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    act(() => svg.focus());
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Ignore left arrow when you're already at the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Respect right arrow when there's something to the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Page C
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+
+    // Page D
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Ignore right arrow when you're already at the right
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Respect left arrow when there's something to the left
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Chart ignores non-arrow keys
+    fireEvent.keyDown(svg, {
+      key: 'a',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+  });
+
+  test('Vertical chart ignores arrow keys', () => {
+    const mockMouseMovements = vi.fn();
+
+    const { container } = render(
+      <AreaChart
+        layout="vertical"
+        width={100}
+        height={50}
+        data={PageData}
+        accessibilityLayer
+        onMouseMove={mockMouseMovements}
+      >
+        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Tooltip />
+        <Legend />
+        <XAxis dataKey="name" />
+        <YAxis />
+      </AreaChart>,
+    );
+
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+    const tooltip = getTooltip(container);
+
+    expect(tooltip.textContent).toBe('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // vertical chart ignores arrow keys (why?)
+    act(() => {
+      svg.focus();
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Vertical charts aren't supported, so right arrow key should be ignored
+    fireEvent.keyDown(svg, {
+      key: 'ArrowRight',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
+
+    // Left arrow key should also be ignored
+    fireEvent.keyDown(svg, {
+      key: 'ArrowLeft',
+    });
+    expect(tooltip).toHaveTextContent('');
+    expect(mockMouseMovements.mock.instances).toHaveLength(0);
   });
 });
