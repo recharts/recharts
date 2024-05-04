@@ -6,6 +6,47 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { PageData } from '../_data';
 
+function assertChartA11yAttributes(svg: Element) {
+  expect(svg).not.toBeNull();
+  expect(svg).not.toBeUndefined();
+  expect(svg).toHaveAttribute('role', 'application');
+  expect(svg).toHaveAttribute('tabindex', '0');
+}
+
+function assertNoA11yAttributes(svg: Element) {
+  expect(svg).not.toBeNull();
+  expect(svg).not.toBeUndefined();
+  expect(svg).not.toHaveAttribute('role');
+  expect(svg).not.toHaveAttribute('tabindex');
+}
+
+function arrowRight(container: Element) {
+  fireEvent.keyDown(container, {
+    key: 'ArrowRight',
+  });
+}
+
+function arrowLeft(container: Element) {
+  fireEvent.keyDown(container, {
+    key: 'ArrowLeft',
+  });
+}
+
+function assertNoKeyboardInteractions(container: HTMLElement) {
+  const svg = container.querySelector('svg');
+  assertNotNull(svg);
+  const tooltip = getTooltip(container);
+  expect(tooltip).toHaveTextContent('');
+  act(() => {
+    svg.focus();
+  });
+  expect(tooltip).toHaveTextContent('');
+  arrowRight(svg);
+  expect(tooltip).toHaveTextContent('');
+  arrowLeft(svg);
+  expect(tooltip).toHaveTextContent('');
+}
+
 describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s', accessibilityLayer => {
   describe('AreaChart', () => {
     test('Add tabindex and role to the svg element', () => {
@@ -16,10 +57,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
 
       const svg = container.querySelector('svg');
-      expect(svg).not.toBeNull();
-      expect(svg).not.toBeUndefined();
-      expect(svg).toHaveAttribute('role', 'application');
-      expect(svg).toHaveAttribute('tabindex', '0');
+      assertChartA11yAttributes(svg);
     });
 
     test('When chart receives focus, show the tooltip for the first point', () => {
@@ -59,7 +97,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('uv : 400');
 
       // Use keyboard to move around
-      fireEvent.keyDown(document.querySelector('svg') as SVGSVGElement, {
+      fireEvent.keyDown(document.querySelector('svg'), {
         key: 'ArrowRight',
       });
       expect(tooltip).toHaveTextContent('uv : 300');
@@ -97,46 +135,32 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements.mock.instances).toHaveLength(1);
 
       // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page A');
       expect(mockMouseMovements.mock.instances).toHaveLength(2);
 
       // Respect right arrow when there's something to the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
       expect(mockMouseMovements.mock.instances).toHaveLength(3);
 
       // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
       // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
       expect(mockMouseMovements.mock.instances).toHaveLength(6);
 
       // Ignore right arrow when you're already at the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page F');
       expect(mockMouseMovements.mock.instances).toHaveLength(7);
 
       // Respect left arrow when there's something to the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page E');
       expect(mockMouseMovements.mock.instances).toHaveLength(8);
 
@@ -148,7 +172,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements.mock.instances).toHaveLength(8);
     });
 
-    test('Vertical chart ignores arrow keys', () => {
+    test('Vertical chart ignores arrow keys because vertical charts are not supported (why?)', () => {
       const mockMouseMovements = vi.fn();
 
       const { container } = render(
@@ -168,32 +192,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </AreaChart>,
       );
 
-      const svg = container.querySelector('svg');
-      assertNotNull(svg);
-      const tooltip = getTooltip(container);
-
-      expect(tooltip.textContent).toBe('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // vertical chart ignores arrow keys (why?)
-      act(() => {
-        svg.focus();
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Vertical charts aren't supported, so right arrow key should be ignored
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Left arrow key should also be ignored
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
+      assertNoKeyboardInteractions(container);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
     });
 
@@ -229,46 +228,32 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements).toHaveBeenCalledTimes(1);
 
       // Ignore right arrow when you're already at the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page A');
       expect(mockMouseMovements).toHaveBeenCalledTimes(2);
 
       // Respect left arrow when there's something to the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page B');
       expect(mockMouseMovements).toHaveBeenCalledTimes(3);
 
       // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
 
       // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page E');
       expect(mockMouseMovements).toHaveBeenCalledTimes(6);
 
       // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page F');
       expect(mockMouseMovements).toHaveBeenCalledTimes(7);
 
       // Respect right arrow when there's something to the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
       expect(mockMouseMovements).toHaveBeenCalledTimes(8);
 
@@ -322,30 +307,20 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
 
       // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
       // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
       // Page E
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
       // Page F
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page F');
 
       fireEvent.click(container.querySelector('#my3') as HTMLButtonElement);
@@ -353,9 +328,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       // The chart only goes from A - C now, so the AccessibilityManager should think "C" is active.
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page B');
 
       fireEvent.click(container.querySelector('#my5') as HTMLButtonElement);
@@ -364,25 +337,17 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       // The chart now goes from A - E. Since the focus was already on B, B can remain active.
       expect(tooltip).toHaveTextContent('Page B');
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page C');
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page D');
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
 
       // The chart only goes from A - E, so we shouldn't be able to go right any further.
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
     });
 
@@ -434,9 +399,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
 
       // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page A');
     });
 
@@ -487,9 +450,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
 
       // Make sure we move around, to get the AccessibilityManager's active index above 0
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
 
       // Remove tooltip component
@@ -537,18 +498,14 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
 
       const button = container.querySelector('BUTTON') as HTMLButtonElement;
       fireEvent.click(button);
 
       // Key events should now go in reverse
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page A');
     });
   });
@@ -562,10 +519,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
 
       const svg = container.querySelector('svg');
-      expect(svg).not.toBeNull();
-      expect(svg).not.toBeUndefined();
-      expect(svg).toHaveAttribute('role', 'application');
-      expect(svg).toHaveAttribute('tabindex', '0');
+      assertChartA11yAttributes(svg);
     });
 
     test('tooltip does not show when chart receives focus', () => {
@@ -614,46 +568,32 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Respect right arrow when there's something to the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
       // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
 
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Ignore right arrow when you're already at the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
+      arrowRight(svg);
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Respect left arrow when there's something to the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
+      arrowLeft(svg);
       expect(tooltip).toHaveTextContent('');
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
@@ -679,13 +619,10 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
       );
 
       const svg = container.querySelector('svg');
-      expect(svg).not.toBeNull();
-      expect(svg).not.toBeUndefined();
-      expect(svg).not.toHaveAttribute('role');
-      expect(svg).not.toHaveAttribute('tabindex');
+      assertNoA11yAttributes(svg);
     });
 
-    test('does not show tooltip when chart receives focus', () => {
+    test('does not show tooltip using keyboard', () => {
       const { container } = render(
         <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -696,93 +633,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </AreaChart>,
       );
 
-      const tooltip = getTooltip(container);
-      expect(tooltip).toHaveTextContent('');
-
-      act(() => container.querySelector('svg')?.focus());
-      expect(tooltip).toHaveTextContent('');
-    });
-
-    test('Chart does not update when it receives left/right arrow keystrokes', () => {
-      const mockMouseMovements = vi.fn();
-
-      const { container } = render(
-        <AreaChart
-          width={100}
-          height={50}
-          data={PageData}
-          accessibilityLayer={accessibilityLayer}
-          onMouseMove={mockMouseMovements}
-        >
-          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-          <Tooltip />
-          <Legend />
-          <XAxis dataKey="name" />
-          <YAxis />
-        </AreaChart>,
-      );
-
-      const svg = container.querySelector('svg');
-      assertNotNull(svg);
-      const tooltip = getTooltip(container);
-
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      act(() => svg.focus());
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Respect right arrow when there's something to the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-
-      // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Ignore right arrow when you're already at the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Respect left arrow when there's something to the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Chart ignores non-arrow keys
-      fireEvent.keyDown(svg, {
-        key: 'a',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+      assertNoKeyboardInteractions(container);
     });
 
     test('Vertical chart ignores arrow keys', () => {
@@ -805,32 +656,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </AreaChart>,
       );
 
-      const svg = container.querySelector('svg');
-      assertNotNull(svg);
-      const tooltip = getTooltip(container);
-
-      expect(tooltip.textContent).toBe('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // vertical chart ignores arrow keys (why?)
-      act(() => {
-        svg.focus();
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Vertical charts aren't supported, so right arrow key should be ignored
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Left arrow key should also be ignored
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
+      assertNoKeyboardInteractions(container);
       expect(mockMouseMovements.mock.instances).toHaveLength(0);
     });
   });
@@ -844,13 +670,10 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
       );
 
       const svg = container.querySelector('svg');
-      expect(svg).not.toBeNull();
-      expect(svg).not.toBeUndefined();
-      expect(svg).not.toHaveAttribute('role');
-      expect(svg).not.toHaveAttribute('tabindex');
+      assertNoA11yAttributes(svg);
     });
 
-    test('does not show tooltip when chart receives focus', () => {
+    test('does not show tooltip using keyboard', () => {
       const { container } = render(
         <FunnelChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -859,91 +682,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </FunnelChart>,
       );
 
-      const tooltip = getTooltip(container);
-      expect(tooltip).toHaveTextContent('');
-
-      act(() => container.querySelector('svg')?.focus());
-      expect(tooltip).toHaveTextContent('');
-    });
-
-    test('Chart does not update when it receives left/right arrow keystrokes', () => {
-      const mockMouseMovements = vi.fn();
-
-      const { container } = render(
-        <FunnelChart
-          width={100}
-          height={50}
-          data={PageData}
-          accessibilityLayer={accessibilityLayer}
-          onMouseMove={mockMouseMovements}
-        >
-          <Funnel type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-          <Tooltip />
-          <Legend />
-        </FunnelChart>,
-      );
-
-      const svg = container.querySelector('svg');
-      assertNotNull(svg);
-      const tooltip = getTooltip(container);
-
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      act(() => svg.focus());
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Ignore left arrow when you're already at the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Respect right arrow when there's something to the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Page C
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-
-      // Page D
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Ignore right arrow when you're already at the right
-      fireEvent.keyDown(svg, {
-        key: 'ArrowRight',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Respect left arrow when there's something to the left
-      fireEvent.keyDown(svg, {
-        key: 'ArrowLeft',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-
-      // Chart ignores non-arrow keys
-      fireEvent.keyDown(svg, {
-        key: 'a',
-      });
-      expect(tooltip).toHaveTextContent('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
+      assertNoKeyboardInteractions(container);
     });
   });
 });
