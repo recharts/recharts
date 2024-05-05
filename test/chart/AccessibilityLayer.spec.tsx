@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { Area, AreaChart, CartesianGrid, Funnel, FunnelChart, Legend, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Funnel,
+  FunnelChart,
+  Legend,
+  Pie,
+  PieChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { PageData } from '../_data';
@@ -510,6 +522,32 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
     });
   });
 
+  describe('PieChart', () => {
+    test('Add tabindex and role to the svg element', () => {
+      const { container } = render(
+        <PieChart width={100} height={50} accessibilityLayer={accessibilityLayer}>
+          <Pie data={PageData} dataKey="uv" />
+        </PieChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      assertChartA11yAttributes(svg);
+    });
+
+    test('does not show tooltip using keyboard', async () => {
+      const mockMouseMovements = vi.fn();
+
+      const { container } = render(
+        <PieChart width={100} height={50} accessibilityLayer={accessibilityLayer} onMouseMove={mockMouseMovements}>
+          <Pie dataKey="uv" data={PageData} />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      assertNoKeyboardInteractions(container);
+    });
+  });
+
   describe('FunnelChart', () => {
     test('Add tabindex and role to the svg element', () => {
       const { container } = render(
@@ -680,6 +718,32 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
           <Tooltip />
           <Legend />
         </FunnelChart>,
+      );
+
+      assertNoKeyboardInteractions(container);
+    });
+  });
+
+  describe('PieChart', () => {
+    test('does not tabindex and role to the svg element', () => {
+      const { container } = render(
+        <PieChart width={100} height={50} accessibilityLayer={accessibilityLayer}>
+          <Pie data={PageData} dataKey="uv" />
+        </PieChart>,
+      );
+
+      const svg = container.querySelector('svg');
+      assertNoA11yAttributes(svg);
+    });
+
+    test('does not show tooltip using keyboard', async () => {
+      const mockMouseMovements = vi.fn();
+
+      const { container } = render(
+        <PieChart width={100} height={50} accessibilityLayer={accessibilityLayer} onMouseMove={mockMouseMovements}>
+          <Pie dataKey="uv" data={PageData} />
+          <Tooltip />
+        </PieChart>,
       );
 
       assertNoKeyboardInteractions(container);

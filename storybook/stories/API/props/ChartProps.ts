@@ -84,7 +84,7 @@ toggling between multiple dataKey.`,
       type: {
         summary: 'boolean',
       },
-      defaultValue: false,
+      defaultValue: true,
       category: 'General',
     },
   },
@@ -275,7 +275,7 @@ toggling between multiple dataKey.`,
   },
   stackOffset: {
     description: `Determines how values are stacked:
-    
+
 - \`none\` is the default, it adds values on top of each other. No smarts. Negative values will overlap.
 - \`expand\` make it so that the values always add up to 1 - so the chart will look like a rectangle.
 - \`wiggle\` and \`silhouette\` tries to keep the chart centered.

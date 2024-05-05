@@ -3,6 +3,7 @@ import { Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   argTypes: {
@@ -26,6 +27,7 @@ export const Simple = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
     activeShape: { fill: 'red' },
   },
@@ -43,6 +45,7 @@ export const Donut = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
   },
 };
