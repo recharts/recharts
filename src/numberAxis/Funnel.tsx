@@ -29,7 +29,8 @@ import {
   AnimationDuration,
   ActiveShape,
 } from '../util/types';
-import { FunnelTrapezoid } from '../util/FunnelUtils';
+import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
+import { useTooltipContext } from '../context/tooltipContext';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -47,7 +48,6 @@ interface InternalFunnelProps {
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
-  activeIndex?: number;
   lastShapeType?: 'triangle' | 'rectangle';
   reversed?: boolean;
 
@@ -79,6 +79,40 @@ type FunnelComposedData = {
   trapezoids: FunnelTrapezoidItem[];
   data: RealFunnelData[];
 };
+
+type FunnelTrapezoidsProps = {
+  trapezoids: FunnelTrapezoidItem[];
+  shape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  allOtherFunnelProps: FunnelProps;
+};
+
+function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
+  const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
+  const { index: activeIndex } = useTooltipContext();
+
+  return trapezoids.map((entry, i) => {
+    const isActiveIndex = activeShape && activeIndex === i;
+    const trapezoidOptions = isActiveIndex ? activeShape : shape;
+    const trapezoidProps: FunnelTrapezoidProps = {
+      ...entry,
+      option: trapezoidOptions,
+      isActive: isActiveIndex,
+      stroke: entry.stroke,
+    };
+
+    return (
+      <Layer
+        className="recharts-funnel-trapezoid"
+        {...adaptEventsOfChild(allOtherFunnelProps, entry, i)}
+        key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
+        role="img"
+      >
+        <FunnelTrapezoid {...trapezoidProps} />
+      </Layer>
+    );
+  });
+}
 
 export class Funnel extends PureComponent<FunnelProps, State> {
   static displayName = 'Funnel';
@@ -268,28 +302,16 @@ export class Funnel extends PureComponent<FunnelProps, State> {
   };
 
   renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
-    const { shape, activeIndex, activeShape } = this.props;
+    const { shape, activeShape } = this.props;
 
-    return trapezoids.map((entry, i) => {
-      const isActiveIndex = activeShape && activeIndex === i;
-      const trapezoidOptions = isActiveIndex ? activeShape : shape;
-      const trapezoidProps = {
-        ...entry,
-        isActive: isActiveIndex,
-        stroke: entry.stroke,
-      };
-
-      return (
-        <Layer
-          className="recharts-funnel-trapezoid"
-          {...adaptEventsOfChild(this.props, entry, i)}
-          key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
-          role="img"
-        >
-          <FunnelTrapezoid option={trapezoidOptions} {...trapezoidProps} />
-        </Layer>
-      );
-    });
+    return (
+      <FunnelTrapezoids
+        trapezoids={trapezoids}
+        shape={shape}
+        activeShape={activeShape}
+        allOtherFunnelProps={this.props}
+      />
+    );
   }
 
   renderTrapezoidsWithAnimation() {
