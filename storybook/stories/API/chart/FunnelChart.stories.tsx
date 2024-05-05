@@ -16,12 +16,9 @@ export const Simple: Meta<FunnelProps> = {
   render: (args: Record<string, any>) => {
     const { data } = args;
     return (
-      // <div style={{ height: 200, width: 200 }}>
-      // </div>
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
           <Funnel
-            activeIndex={args.activeIndex}
             width={400}
             data={data}
             dataKey="value"
@@ -43,7 +40,6 @@ export const Simple: Meta<FunnelProps> = {
   args: {
     shape: {},
     activeShape: { fill: 'gold', stroke: 'purple' },
-    activeIndex: undefined,
     data: [
       {
         fill: '#EEEEEE',

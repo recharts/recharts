@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 const data = [
   { value: 100, name: '展现' },
@@ -52,12 +54,11 @@ describe('<Funnel />', () => {
   });
 
   it('active shape in simple funnel', () => {
-    const { container } = render(
+    const { container, debug } = render(
       <FunnelChart width={500} height={500}>
         <Funnel
           dataKey="value"
           data={data}
-          activeIndex={1}
           isAnimationActive={false}
           activeShape={(payload: FunnelProps) => (
             <rect
@@ -79,7 +80,11 @@ describe('<Funnel />', () => {
       </FunnelChart>,
     );
 
-    expect(container.querySelectorAll('.custom-active-shape').length).toBe(1);
+    expect(container.querySelectorAll('.custom-active-shape')).toHaveLength(0);
+
+    showTooltip(container, funnelChartMouseHoverTooltipSelector, debug);
+
+    expect(container.querySelectorAll('.custom-active-shape')).toHaveLength(1);
   });
 
   it('Renders funnel custom cell in simple FunnelChart', () => {
