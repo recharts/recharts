@@ -137,7 +137,7 @@ export default class Demo extends Component {
             <ReferenceArea x1={250} x2={300} ifOverflow="extendDomain" label="any label" />
             <ReferenceLine x={159} stroke="red" />
             <ReferenceLine y={237.5} stroke="red" />
-            <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" isFront />
+            <ReferenceDot x={170} y={290} r={15} label="AB" stroke="none" fill="red" />
           </ScatterChart>
         </div>
 
