@@ -13,7 +13,6 @@ import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/char
 interface ReferenceDotProps {
   r?: number;
 
-  isFront?: boolean;
   ifOverflow?: IfOverflow;
   x?: number | string;
   y?: number | string;
@@ -91,7 +90,6 @@ export function ReferenceDot(props: Props) {
 
 ReferenceDot.displayName = 'ReferenceDot';
 ReferenceDot.defaultProps = {
-  isFront: false,
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,

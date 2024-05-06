@@ -307,7 +307,7 @@ export default class AreaChartDemo extends React.Component<any, any> {
             <CartesianGrid stroke="#f5f5f5" />
             <ReferenceArea x1="Page A" x2="Page E" />
             <ReferenceLine y={7500} stroke="#387908" />
-            <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" isFront />
+            <ReferenceDot x="Page C" y={1398} r={10} fill="#387908" />
             <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
           </AreaChart>
         </div>

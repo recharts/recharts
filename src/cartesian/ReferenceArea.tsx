@@ -16,7 +16,6 @@ import { filterProps } from '../util/ReactUtils';
 import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
 
 interface ReferenceAreaProps {
-  isFront?: boolean;
   ifOverflow?: IfOverflow;
   x1?: number | string;
   x2?: number | string;
@@ -115,7 +114,6 @@ export function ReferenceArea(props: Props) {
 
 ReferenceArea.displayName = 'ReferenceArea';
 ReferenceArea.defaultProps = {
-  isFront: false,
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,

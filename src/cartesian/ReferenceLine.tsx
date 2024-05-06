@@ -31,7 +31,6 @@ export type Segment = {
 export type ReferenceLinePosition = 'middle' | 'start' | 'end';
 
 interface ReferenceLineProps extends InternalReferenceLineProps {
-  isFront?: boolean;
   ifOverflow?: IfOverflow;
 
   x?: number | string;
@@ -192,7 +191,6 @@ export function ReferenceLine(props: Props) {
 
 ReferenceLine.displayName = 'ReferenceLine';
 ReferenceLine.defaultProps = {
-  isFront: false,
   ifOverflow: 'discard',
   xAxisId: 0,
   yAxisId: 0,
