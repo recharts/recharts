@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useState } from 'react';
+import React from 'react';
 import { Args } from '@storybook/react';
 import { Pie, PieChart, ResponsiveContainer, Sector } from '../../../../src';
 import { PieSectorDataItem } from '../../../../src/polar/Pie';
@@ -17,12 +17,6 @@ const data = [
 
 export const CustomActiveShapePie = {
   render: (args: Args) => {
-    const [activeIndex, setActiveIndex] = useState<number>(0);
-
-    const onPieEnter = (_: void, index: number) => {
-      setActiveIndex(index);
-    };
-
     const renderActiveShape = (props: PieSectorDataItem) => {
       const RADIAN = Math.PI / 180;
       const {
@@ -84,13 +78,7 @@ export const CustomActiveShapePie = {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
-          <Pie
-            dataKey="value"
-            {...args}
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape}
-            onMouseEnter={onPieEnter}
-          />
+          <Pie dataKey="value" {...args} activeShape={renderActiveShape} />
         </PieChart>
       </ResponsiveContainer>
     );

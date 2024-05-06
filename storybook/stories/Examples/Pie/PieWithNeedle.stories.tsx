@@ -69,7 +69,6 @@ export const PieWithNeedle = {
             outerRadius={oR}
             stroke="none"
             fill="none"
-            activeIndex={1}
             activeShape={Needle}
           />
         </PieChart>
