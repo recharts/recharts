@@ -36,6 +36,7 @@ import {
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useTooltipContext } from '../context/tooltipContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -107,7 +108,6 @@ interface PieProps extends PieDef {
   labelLine?: PieLabelLine;
   label?: PieLabel;
 
-  activeIndex?: number;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -179,6 +179,49 @@ const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInpu
 function SetPiePayloadLegend(props: PiePayloadInputProps): null {
   useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
   return null;
+}
+
+type PieSectorsProps = {
+  sectors: PieSectorDataItem[];
+  activeShape: ActiveShape<PieSectorDataItem>;
+  blendStroke: boolean;
+  inactiveShape: ActiveShape<PieSectorDataItem>;
+  allOtherPieProps: Props;
+  sectorRefs: SVGGElement[];
+};
+
+function PieSectors(props: PieSectorsProps) {
+  const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
+
+  const { index: activeIndex } = useTooltipContext();
+
+  return sectors.map((entry, i) => {
+    if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
+    const isSectorActive = activeShape && i === activeIndex;
+    const inactiveShape = activeIndex === -1 ? null : inactiveShapeProp;
+    const sectorOptions = isSectorActive ? activeShape : inactiveShape;
+    const sectorProps = {
+      ...entry,
+      stroke: blendStroke ? entry.fill : entry.stroke,
+      tabIndex: -1,
+    };
+    return (
+      <Layer
+        ref={(ref: SVGGElement) => {
+          if (ref && !sectorRefs.includes(ref)) {
+            sectorRefs.push(ref);
+          }
+        }}
+        tabIndex={-1}
+        className="recharts-pie-sector"
+        {...adaptEventsOfChild(allOtherPieProps, entry, i)}
+        // eslint-disable-next-line react/no-array-index-key
+        key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
+      >
+        <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
+      </Layer>
+    );
+  });
 }
 
 export class Pie extends PureComponent<Props, State> {
@@ -491,34 +534,17 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   renderSectorsStatically(sectors: PieSectorDataItem[]) {
-    const { activeShape, activeIndex, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
-    return sectors.map((entry, i) => {
-      if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-      const isActive = i === activeIndex;
-      const inactiveShape = activeIndex == null ? null : inactiveShapeProp;
-      const sectorOptions = isActive ? activeShape : inactiveShape;
-      const sectorProps = {
-        ...entry,
-        stroke: blendStroke ? entry.fill : entry.stroke,
-        tabIndex: -1,
-      };
-      return (
-        <Layer
-          ref={(ref: SVGGElement) => {
-            if (ref && !this.sectorRefs.includes(ref)) {
-              this.sectorRefs.push(ref);
-            }
-          }}
-          tabIndex={-1}
-          className="recharts-pie-sector"
-          {...adaptEventsOfChild(this.props, entry, i)}
-          // eslint-disable-next-line react/no-array-index-key
-          key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
-        >
-          <Shape option={sectorOptions} isActive={isActive} shapeType="sector" {...sectorProps} />
-        </Layer>
-      );
-    });
+    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
+    return (
+      <PieSectors
+        sectors={sectors}
+        activeShape={activeShape}
+        blendStroke={blendStroke}
+        inactiveShape={inactiveShapeProp}
+        allOtherPieProps={this.props}
+        sectorRefs={this.sectorRefs}
+      />
+    );
   }
 
   renderSectorsWithAnimation() {

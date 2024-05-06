@@ -7,6 +7,8 @@ import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -51,7 +53,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
@@ -71,7 +72,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
           cx={250}
           cy={250}
@@ -91,7 +91,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={{ fill: '#ff7300' }}
           cx={250}
           cy={250}
@@ -111,7 +110,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           inactiveShape={<Sector fill="#ff7300" className="customized-inactive-shape" />}
           cx={250}
@@ -138,7 +136,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={renderActiveShape}
           inactiveShape={renderInactiveShape}
           cx={250}
@@ -158,7 +155,6 @@ describe('<Pie />', () => {
       <Surface width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={{ fill: '#ff7300' }}
           inactiveShape={{ fill: '#ff7322' }}
           cx={250}
@@ -178,11 +174,10 @@ describe('<Pie />', () => {
     'when data is $data then activeShape function does not receive payload',
     ({ data }) => {
       const activeShape = vi.fn();
-      render(
+      const { container, debug } = render(
         <PieChart width={400} height={400}>
           <Pie
             isAnimationActive={false}
-            activeIndex={0}
             activeShape={activeShape}
             inactiveShape={{ fill: '#ff7322' }}
             cx={250}
@@ -195,6 +190,9 @@ describe('<Pie />', () => {
           />
         </PieChart>,
       );
+      expect(activeShape).toHaveBeenCalledTimes(0);
+
+      showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
       expect(activeShape).toHaveBeenCalledTimes(1);
       expect(activeShape).toHaveBeenCalledWith({
@@ -214,11 +212,10 @@ describe('<Pie />', () => {
 
   test('when data is defined and matching dataKey then activeShape receives payload prop', () => {
     const activeShape = vi.fn();
-    render(
+    const { container, debug } = render(
       <PieChart width={400} height={400}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={activeShape}
           inactiveShape={{ fill: '#ff7322' }}
           cx={250}
@@ -231,6 +228,10 @@ describe('<Pie />', () => {
         />
       </PieChart>,
     );
+
+    expect(activeShape).toHaveBeenCalledTimes(0);
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(activeShape).toHaveBeenCalledTimes(1);
     expect(activeShape).toHaveBeenCalledWith({
@@ -308,7 +309,6 @@ describe('<Pie />', () => {
       <PieChart width={400} height={400}>
         <Pie
           isAnimationActive={false}
-          activeIndex={0}
           activeShape={activeShape}
           inactiveShape={{ fill: '#ff7322' }}
           cx={250}
@@ -333,7 +333,7 @@ describe('<Pie />', () => {
       <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
     );
     const { container } = render(
-      <Surface width={500} height={500}>
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeShape={renderActiveShape}
@@ -345,7 +345,7 @@ describe('<Pie />', () => {
           sectors={sectors}
           dataKey="cy"
         />
-      </Surface>,
+      </PieChart>,
     );
     expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
   });
