@@ -121,6 +121,9 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
         label: 'test',
         onAnimationEnd: expect.any(Function),
         onAnimationStart: expect.any(Function),
+        onMouseEnter: expect.any(Function),
+        onMouseLeave: expect.any(Function),
+        onClick: expect.any(Function),
         width: 20,
         x: expect.any(Number),
         y: 50,
@@ -565,6 +568,149 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         fireEvent.click(trigger, { clientX: 200, clientY: 200 });
 
         expect(tooltip).not.toBeVisible();
+      });
+    });
+
+    describe('with trigger=click and shared=false', () => {
+      it('should not display anything when hovering over chart root element', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500}>
+            <Bar isAnimationActive={false} data={data} dataKey="value" />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-wrapper');
+        assertNotNull(trigger);
+
+        fireEvent.mouseOver(trigger, { clientX: 0, clientY: 0 });
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not display anything when clicking on the chart root element', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500}>
+            <Bar isAnimationActive={false} data={data} dataKey="value" />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-wrapper');
+        assertNotNull(trigger);
+
+        fireEvent.click(trigger, { clientX: 0, clientY: 0 });
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not display tooltip when hovering over the bar element', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Bar isAnimationActive={false} dataKey="value" />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-bar-rectangle');
+        assertNotNull(trigger);
+
+        fireEvent.mouseOver(trigger, { clientX: 20, clientY: 20 });
+
+        expect(tooltip).not.toBeVisible();
+
+        fireEvent.mouseOut(trigger);
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not display tooltip when hovering over the bar background', () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Bar isAnimationActive={false} dataKey="value" background={{ stroke: 'red' }} />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-bar-background-rectangle');
+        assertNotNull(trigger);
+
+        fireEvent.mouseOver(trigger, { clientX: 20, clientY: 20 });
+
+        const trigger2 = container.querySelector('.recharts-bar-background-rectangle');
+        assertNotNull(trigger2);
+
+        expect(tooltip).not.toBeVisible();
+
+        fireEvent.mouseOut(trigger2);
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should display tooltip when clicking on bar rectangle, and keep it displayed after second click and after mouseLeave', async () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Bar isAnimationActive={false} dataKey="value" />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-bar-rectangle');
+        assertNotNull(trigger);
+
+        fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+        expect(tooltip).toBeVisible();
+
+        fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+        expect(tooltip).toBeVisible();
+
+        fireEvent.mouseLeave(trigger);
+        expect(tooltip).toBeVisible();
+
+        fireEvent.mouseLeave(container);
+        expect(tooltip).toBeVisible();
+      });
+
+      it('should display tooltip when clicking on bar background, and keep it displayed after second click and after mouseLeave', async () => {
+        const { container } = render(
+          <ChartElement width={500} height={500} data={data}>
+            <Bar isAnimationActive={false} dataKey="value" background={{ stroke: 'red' }} />
+            <Tooltip trigger="click" shared={false} />
+          </ChartElement>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-bar-background-rectangle');
+        assertNotNull(trigger);
+
+        fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+        expect(tooltip).toBeVisible();
+
+        fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+        expect(tooltip).toBeVisible();
+
+        fireEvent.mouseLeave(trigger);
+        expect(tooltip).toBeVisible();
+
+        fireEvent.mouseLeave(container);
+        expect(tooltip).toBeVisible();
       });
     });
   });
