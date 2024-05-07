@@ -11,6 +11,7 @@ import {
 } from '../util/types';
 import { AxisStackGroups } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
+import { TooltipPayloadType } from '../context/tooltipContext';
 
 export type AxisMap = {
   [axisId: string]: BaseAxisProps;
@@ -56,7 +57,7 @@ export interface CategoricalChartState {
   formattedGraphicalItems?: any;
 
   /** active tooltip payload */
-  activePayload?: any[];
+  activePayload?: TooltipPayloadType;
 
   tooltipAxisBandSize?: number;
 

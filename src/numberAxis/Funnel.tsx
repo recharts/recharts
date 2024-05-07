@@ -30,7 +30,12 @@ import {
   ActiveShape,
 } from '../util/types';
 import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
-import { useTooltipContext } from '../context/tooltipContext';
+import {
+  useMouseClickItemDispatch,
+  useMouseEnterItemDispatch,
+  useMouseLeaveItemDispatch,
+  useTooltipContext,
+} from '../context/tooltipContext';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -90,6 +95,16 @@ type FunnelTrapezoidsProps = {
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
   const { index: activeIndex } = useTooltipContext();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = allOtherFunnelProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
 
   return trapezoids.map((entry, i) => {
     const isActiveIndex = activeShape && activeIndex === i;
@@ -100,11 +115,26 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
       isActive: isActiveIndex,
       stroke: entry.stroke,
     };
+    const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onMouseEnterFromContext(entry, i, e);
+    };
+    const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onMouseLeaveFromContext(entry, i, e);
+    };
+    const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onClickFromContext(entry, i, e);
+    };
 
     return (
       <Layer
         className="recharts-funnel-trapezoid"
-        {...adaptEventsOfChild(allOtherFunnelProps, entry, i)}
+        {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
         key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
         role="img"
       >

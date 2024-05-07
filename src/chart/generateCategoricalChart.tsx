@@ -96,7 +96,7 @@ import {
   MouseClickItemDispatchContext,
   MouseEnterItemDispatchContext,
   MouseLeaveItemDispatchContext,
-  NoArgumentsAction,
+  TooltipPayloadType,
 } from '../context/tooltipContext';
 
 export interface MousePointer {
@@ -1582,7 +1582,7 @@ export const generateCategoricalChart = ({
      * @param index 0-based index of the active graphical element
      * @return undefined
      */
-    handleItemMouseEnter: ActivateTooltipAction = (el, index) => {
+    handleItemMouseEnter: ActivateTooltipAction<TooltipPayloadType> = (el, index) => {
       this.setState(() => ({
         activeTooltipIndex: index,
         isTooltipActive: true,
@@ -1815,7 +1815,7 @@ export const generateCategoricalChart = ({
     getGraphicalItemClickHandler(
       tooltipEventType: TooltipEventType,
       trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction | null {
+    ): ActivateTooltipAction<TooltipPayloadType> | null {
       if (tooltipEventType === 'axis') {
         return null;
       }
@@ -1829,7 +1829,7 @@ export const generateCategoricalChart = ({
     getGraphicalItemMouseEnterHandler(
       tooltipEventType: TooltipEventType,
       trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction | null {
+    ): ActivateTooltipAction<TooltipPayloadType> | null {
       if (tooltipEventType === 'axis') {
         return null;
       }
@@ -1843,7 +1843,7 @@ export const generateCategoricalChart = ({
     getGraphicalItemMouseLeaveHandler(
       tooltipEventType: TooltipEventType,
       trigger: TooltipTrigger | undefined,
-    ): NoArgumentsAction | null {
+    ): ActivateTooltipAction<TooltipPayloadType> | null {
       if (tooltipEventType === 'axis') {
         return null;
       }
