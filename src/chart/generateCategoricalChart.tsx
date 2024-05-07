@@ -1854,17 +1854,14 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): any[] => {
+    renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): ReactElement | null => {
       const item = this.filterFormatItem(element, displayName, index);
       if (!item) {
         return null;
       }
       const tooltipEventType = this.getTooltipEventType();
-      const { isTooltipActive, activeTooltipIndex } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
-      const { hide, activeBar, activeShape } = item.item.props;
-      const hasActive = Boolean(!hide && isTooltipActive && tooltipItem && (activeBar || activeShape));
       let itemEvents = {};
 
       if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
@@ -1878,14 +1875,7 @@ export const generateCategoricalChart = ({
         };
       }
 
-      const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
-
-      if (hasActive) {
-        const activeIndex = element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
-        return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
-      }
-
-      return [graphicalItem, null];
+      return cloneElement(element, { ...item.props, ...itemEvents });
     };
 
     renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>
