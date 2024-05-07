@@ -151,9 +151,6 @@ function BarBackground(props: BarBackgroundProps) {
 
   const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd, allOtherBarProps } = props;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch();
-  const onMouseLeaveFromContext = useMouseLeaveItemDispatch();
-  const onClickFromContext = useMouseClickItemDispatch();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onMouseLeave: onMouseLeaveFromProps,
@@ -161,6 +158,9 @@ function BarBackground(props: BarBackgroundProps) {
     ...restOfAllOtherProps
   } = allOtherBarProps;
 
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
   if (!backgroundFromProps) {
     return null;
   }
@@ -177,18 +177,16 @@ function BarBackground(props: BarBackgroundProps) {
         }
 
         const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onMouseEnterFromProps?.(entry, i, e);
           // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseEnterFromContext?.(entry, i);
+          onMouseEnterFromContext(entry, i, e);
         };
         const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onMouseLeaveFromProps?.(entry, i, e);
-          onMouseLeaveFromContext?.();
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onMouseLeaveFromContext(entry, i, e);
         };
         const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onItemClickFromProps?.(entry, i, e);
           // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onClickFromContext?.(entry, i);
+          onClickFromContext(entry, i, e);
         };
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
@@ -227,16 +225,16 @@ function BarRectangles(props: BarRectanglesProps) {
   const { data, shape, dataKey, activeBar } = props;
 
   const { index: activeIndex } = useTooltipContext();
-
-  const onMouseEnterFromContext = useMouseEnterItemDispatch();
-  const onMouseLeaveFromContext = useMouseLeaveItemDispatch();
-  const onClickFromContext = useMouseClickItemDispatch();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     ...restOfAllOtherProps
   } = rest;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
 
   if (!data) {
     return null;
@@ -258,18 +256,16 @@ function BarRectangles(props: BarRectanglesProps) {
           onAnimationEnd,
         };
         const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onMouseEnterFromProps?.(entry, i, e);
           // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseEnterFromContext?.(entry, i);
+          onMouseEnterFromContext(entry, i, e);
         };
         const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onMouseLeaveFromProps?.(entry, i, e);
-          onMouseLeaveFromContext?.();
+          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+          onMouseLeaveFromContext(entry, i, e);
         };
         const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          onItemClickFromProps?.(entry, i, e);
           // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onClickFromContext?.(entry, i);
+          onClickFromContext(entry, i, e);
         };
         return (
           <Layer
