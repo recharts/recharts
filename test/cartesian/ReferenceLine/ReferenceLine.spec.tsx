@@ -1,7 +1,7 @@
 import React from 'react';
 import { MockInstance, vi, beforeEach } from 'vitest';
 import { screen, render } from '@testing-library/react';
-import { BarChart, ReferenceLine, Bar, XAxis, YAxis } from '../../../src';
+import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
 
 describe('<ReferenceLine />', () => {
@@ -364,5 +364,30 @@ describe('<ReferenceLine />', () => {
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  /**
+   * Note: this test will fail if we remove defaultProps without proper refactoring
+   * https://github.com/recharts/recharts/issues/3615
+   */
+  test('extends the domain when ifOverflow="extendDomain" and y value is out of normal bounds', () => {
+    const dataMax = Math.max(...data.map(d => d.uv));
+    const { container } = render(
+      <LineChart width={500} height={250} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Line dataKey="uv" />
+        {/* extend the domain by ~100 */}
+        <ReferenceLine y={dataMax + 100} ifOverflow="extendDomain" />
+      </LineChart>,
+    );
+    const refLine = container.querySelectorAll('.recharts-reference-line-line');
+    const yAxis = container.querySelector('.recharts-yAxis');
+    const ticks = yAxis.querySelectorAll('.recharts-cartesian-axis-tick-value');
+    const topTick = ticks[ticks.length - 1];
+    expect(refLine).toHaveLength(1);
+
+    expect(refLine[0]).toHaveAttribute('y', '104.3');
+    expect(topTick.textContent).toEqual('105');
   });
 });
