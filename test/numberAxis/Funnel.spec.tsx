@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
-import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Cell, Funnel, FunnelChart, FunnelProps, LabelList, Tooltip } from '../../src';
+import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 const data = [
@@ -111,5 +112,118 @@ describe('<Funnel />', () => {
     );
 
     expect(container.querySelectorAll('.custom-label')).toHaveLength(data.length);
+  });
+
+  describe('with Tooltip', () => {
+    describe('default case', () => {
+      function renderSample() {
+        return render(
+          <FunnelChart width={500} height={500}>
+            <Funnel dataKey="value" data={data} />
+            <Tooltip />
+          </FunnelChart>,
+        );
+      }
+      it('should not display tooltip before any user interactions', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should render tooltip when hovering over funnel element', () => {
+        const { container, debug } = renderSample();
+        const tooltip = getTooltip(container);
+
+        showTooltip(container, funnelChartMouseHoverTooltipSelector, debug);
+        expect(tooltip).toBeVisible();
+      });
+
+      it('should render nothing when hovering over chart area', () => {
+        const { container, debug } = renderSample();
+        const tooltip = getTooltip(container);
+
+        showTooltip(container, '.recharts-wrapper', debug);
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should render nothing when clicking on the chart area', async () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        const user = userEvent.setup();
+
+        await user.click(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should render nothing when clicking on Funnel', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        // we cannot do userEvent.click here because the click fires mouse Enter first which renders the tooltip
+        fireEvent.click(container.querySelector('.recharts-funnel-trapezoid'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+    });
+
+    describe('with trigger=click', () => {
+      function renderSample() {
+        return render(
+          <FunnelChart width={500} height={500}>
+            <Funnel dataKey="value" data={data} />
+            <Tooltip trigger="click" />
+          </FunnelChart>,
+        );
+      }
+
+      it('should not display Tooltip before any user interactions', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should do nothing when clicking in a chart', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.click(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should do nothing when hovering over the chart', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.mouseOver(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should do nothing when hovering over funnel element', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.mouseOver(container.querySelector('.recharts-funnel-trapezoid'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should display tooltip when clicking on funnel, and keep it displayed on second click', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.click(container.querySelector('.recharts-funnel-trapezoid'));
+
+        expect(tooltip).toBeVisible();
+
+        fireEvent.click(container.querySelector('.recharts-funnel-trapezoid'));
+
+        expect(tooltip).toBeVisible();
+      });
+    });
   });
 });
