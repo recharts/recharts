@@ -651,7 +651,6 @@ const tooltipTicksGenerator = (axisMap: AxisMap) => {
     tooltipTicks,
     orderedTooltipTicks: sortBy(tooltipTicks, o => o.coordinate),
     tooltipAxis: axis,
-    tooltipAxisBandSize: getBandSizeOfAxis(axis, tooltipTicks),
   };
 };
 
