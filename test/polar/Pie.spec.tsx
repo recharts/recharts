@@ -600,6 +600,10 @@ describe('<Pie />', () => {
         await user.hover(container.querySelector('.recharts-pie-sector'));
 
         expect(tooltip).toBeVisible();
+
+        await user.unhover(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).not.toBeVisible();
       });
     });
 
