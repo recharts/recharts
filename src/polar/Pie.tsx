@@ -36,7 +36,12 @@ import {
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-import { useTooltipContext } from '../context/tooltipContext';
+import {
+  useMouseClickItemDispatch,
+  useMouseEnterItemDispatch,
+  useMouseLeaveItemDispatch,
+  useTooltipContext,
+} from '../context/tooltipContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -194,6 +199,16 @@ function PieSectors(props: PieSectorsProps) {
   const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const { index: activeIndex } = useTooltipContext();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = allOtherPieProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
 
   return sectors.map((entry, i) => {
     if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
@@ -205,6 +220,18 @@ function PieSectors(props: PieSectorsProps) {
       stroke: blendStroke ? entry.fill : entry.stroke,
       tabIndex: -1,
     };
+    const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onMouseEnterFromContext(entry, i, e);
+    };
+    const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onMouseLeaveFromContext(entry, i, e);
+    };
+    const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+      // @ts-expect-error the types need a bit of attention
+      onClickFromContext(entry, i, e);
+    };
     return (
       <Layer
         ref={(ref: SVGGElement) => {
@@ -214,7 +241,10 @@ function PieSectors(props: PieSectorsProps) {
         }}
         tabIndex={-1}
         className="recharts-pie-sector"
-        {...adaptEventsOfChild(allOtherPieProps, entry, i)}
+        {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
         // eslint-disable-next-line react/no-array-index-key
         key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
       >

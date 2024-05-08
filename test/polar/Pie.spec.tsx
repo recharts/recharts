@@ -2,7 +2,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Surface, Pie, Sector, LabelProps, SectorProps, PieChart, Tooltip } from '../../src';
+import { LabelProps, Pie, PieChart, Sector, SectorProps, Surface, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
