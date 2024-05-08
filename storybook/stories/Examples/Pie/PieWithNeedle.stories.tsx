@@ -1,12 +1,11 @@
 /* eslint-disable no-shadow */
 import React from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 
 export default {
   component: Pie,
 };
 
-const RADIAN = Math.PI / 180;
 const data = [
   { name: 'A', value: 80, color: '#ff0000' },
   { name: 'B', value: 45, color: '#00ff00' },
@@ -18,16 +17,23 @@ const iR = 50;
 const oR = 100;
 
 const NEEDLE_BASE_RADIUS_PX = 5;
-const NEEDLE_LENGTH_PX = 35;
 const NEEDLE_COLOR = '#d0d000';
-const Needle = ({ cx, cy, midAngle }: { cx: number; cy: number; midAngle: number }) => {
-  const sin = Math.sin(-RADIAN * midAngle);
-  const cos = Math.cos(-RADIAN * midAngle);
+const Needle = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+}: {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  midAngle: number;
+}) => {
   const needleBaseCenterX = cx;
   const needleBaseCenterY = cy;
-  const xbb = needleBaseCenterX - NEEDLE_BASE_RADIUS_PX * sin;
-  const ybb = needleBaseCenterY + NEEDLE_BASE_RADIUS_PX * cos;
-  const xp = needleBaseCenterX + NEEDLE_LENGTH_PX * cos;
+  const needleLength = innerRadius + (outerRadius - innerRadius) / 2;
 
   return (
     <g>
@@ -39,10 +45,14 @@ const Needle = ({ cx, cy, midAngle }: { cx: number; cy: number; midAngle: number
         stroke="none"
       />
       <path
-        d={`M${needleBaseCenterX},${needleBaseCenterY}L${xbb + 65},${ybb - 65},L${xp}`}
+        d={`M${needleBaseCenterX},${needleBaseCenterY}l${needleLength},0`}
         strokeWidth={2}
         stroke={NEEDLE_COLOR}
         fill={NEEDLE_COLOR}
+        style={{
+          transform: `rotate(-${midAngle}deg)`,
+          transformOrigin: `${needleBaseCenterX}px ${needleBaseCenterY}px`,
+        }}
       />
     </g>
   );
@@ -71,6 +81,7 @@ export const PieWithNeedle = {
             fill="none"
             activeShape={Needle}
           />
+          <Tooltip defaultIndex={1} />
         </PieChart>
       </ResponsiveContainer>
     );
