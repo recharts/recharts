@@ -499,7 +499,7 @@ export class Brush extends PureComponent<Props, State> {
       height,
     };
 
-    const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex].name}, Max value: ${data[endIndex].name}`;
+    const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex]?.name}, Max value: ${data[endIndex]?.name}`;
 
     return (
       <Layer
