@@ -1,14 +1,15 @@
 import React from 'react';
 import { vi } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Surface, Pie, Sector, LabelProps, SectorProps, PieChart } from '../../src';
+import { LabelProps, Pie, PieChart, Sector, SectorProps, Surface, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
-import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { PageData } from '../_data';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -496,7 +497,7 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
   });
 
-  test('Pie event handler', async () => {
+  test('Pie event handlers', async () => {
     expect.assertions(3);
     const onMouseEnter = vi.fn();
     const onMouseLeave = vi.fn();
@@ -530,6 +531,152 @@ describe('<Pie />', () => {
     await userEvent.click(sector);
     await waitFor(() => {
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('tooltip', () => {
+    describe.each([undefined, 'hover'])('tooltip.trigger=%s', () => {
+      function renderSample() {
+        return render(
+          <PieChart width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              innerRadius={0}
+              outerRadius={200}
+              data={PageData}
+              dataKey="uv"
+            />
+            <Tooltip />
+          </PieChart>,
+        );
+      }
+
+      it('should not show tooltip before user interaction', () => {
+        const { container } = renderSample();
+        expect(PageData.length).toBeGreaterThan(0);
+        expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not show tooltip when hovering over the chart area', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.mouseOver(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not show tooltip when clicking on the chart area', async () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        const user = userEvent.setup();
+
+        await user.click(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not show tooltip when clicking on Pie sector', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.click(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should show tooltip when hovering over Pie sector', async () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        const user = userEvent.setup();
+
+        await user.hover(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).toBeVisible();
+
+        await user.unhover(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+    });
+
+    describe('tooltip.trigger=click', () => {
+      function renderSample() {
+        return render(
+          <PieChart width={500} height={500}>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              innerRadius={0}
+              outerRadius={200}
+              data={PageData}
+              dataKey="uv"
+            />
+            <Tooltip trigger="click" />
+          </PieChart>,
+        );
+      }
+
+      it('should not show tooltip before user interaction', () => {
+        const { container } = renderSample();
+        expect(PageData.length).toBeGreaterThan(0);
+        expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not show tooltip when hovering over the chart area', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.mouseOver(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should not show tooltip when clicking on the chart area', async () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        const user = userEvent.setup();
+
+        await user.click(container.querySelector('.recharts-wrapper'));
+
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should show tooltip when clicking on Pie sector, and keep it displayed after second click', () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        fireEvent.click(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).toBeVisible();
+
+        fireEvent.click(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).toBeVisible();
+      });
+
+      it('should not show tooltip when hovering over Pie sector', async () => {
+        const { container } = renderSample();
+        const tooltip = getTooltip(container);
+
+        const user = userEvent.setup();
+
+        await user.hover(container.querySelector('.recharts-pie-sector'));
+
+        expect(tooltip).not.toBeVisible();
+      });
     });
   });
 

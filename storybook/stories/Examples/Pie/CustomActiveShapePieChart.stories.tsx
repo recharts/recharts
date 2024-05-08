@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 import React from 'react';
 import { Args } from '@storybook/react';
-import { Pie, PieChart, ResponsiveContainer, Sector } from '../../../../src';
+import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { PieSectorDataItem } from '../../../../src/polar/Pie';
 
 export default {
@@ -14,6 +14,8 @@ const data = [
   { name: 'Group C', value: 300 },
   { name: 'Group D', value: 200 },
 ];
+
+const NoContent = (): null => null;
 
 export const CustomActiveShapePie = {
   render: (args: Args) => {
@@ -79,6 +81,7 @@ export const CustomActiveShapePie = {
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
           <Pie dataKey="value" {...args} activeShape={renderActiveShape} />
+          <Tooltip defaultIndex={0} content={NoContent} />
         </PieChart>
       </ResponsiveContainer>
     );

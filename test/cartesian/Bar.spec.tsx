@@ -394,7 +394,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
    * tooltip does not render in the compact chart so that's why this excludes the compact cases
    */
   describe('with Tooltip', () => {
-    describe('default case', () => {
+    describe.each([undefined, 'hover'])('with tooltip.trigger=%s and shared=undefined', () => {
       it('should display tooltip when hovering anywhere on the chart', async () => {
         const { container } = render(
           <ChartElement width={500} height={500}>
@@ -482,7 +482,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       });
     });
 
-    describe('with shared=false', () => {
+    describe.each([undefined, 'hover'])('with tooltip.trigger=%s and shared=false', () => {
       it('should not display anything when hovering over chart root element', () => {
         const { container } = render(
           <ChartElement width={500} height={500}>

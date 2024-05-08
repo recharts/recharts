@@ -115,7 +115,7 @@ describe('<Funnel />', () => {
   });
 
   describe('with Tooltip', () => {
-    describe('default case', () => {
+    describe.each([undefined, 'hover'])('with trigger=%s', () => {
       function renderSample() {
         return render(
           <FunnelChart width={500} height={500}>
