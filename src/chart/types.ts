@@ -59,8 +59,6 @@ export interface CategoricalChartState {
   /** active tooltip payload */
   activePayload?: TooltipPayloadType;
 
-  tooltipAxisBandSize?: number;
-
   /** Active label of data */
   activeLabel?: string;
 
