@@ -123,4 +123,4 @@ Thanks to [Chromatic](https://www.chromatic.com/) for providing the visual testi
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2015-2023 Recharts Group.
+Copyright (c) 2015-2024 Recharts Group.
