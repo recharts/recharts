@@ -4,10 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PageData } from '../../_data';
 import { getTooltip } from './tooltipTestHelpers';
-import { Bar, BarChart, Funnel, FunnelChart, Tooltip } from '../../../src';
+import { Bar, BarChart, Funnel, FunnelChart, Pie, PieChart, Tooltip } from '../../../src';
 import {
   barChartItemMouseHoverTooltipSelector,
   funnelChartMouseHoverTooltipSelector,
+  pieChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { TooltipTrigger } from '../../../src/chart/types';
 import { assertNotNull } from '../../helper/assertNotNull';
@@ -64,6 +65,24 @@ const itemTestCases: ReadonlyArray<TooltipEventTypeItemTestCase> = [
       </FunnelChart>
     ),
     itemSelector: funnelChartMouseHoverTooltipSelector,
+  },
+  {
+    testName: 'PieChart',
+    Component: ({ tooltipTrigger }) => (
+      <PieChart width={500} height={500}>
+        <Pie
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          data={PageData}
+          dataKey="uv"
+        />
+        <Tooltip trigger={tooltipTrigger} />
+      </PieChart>
+    ),
+    itemSelector: pieChartMouseHoverTooltipSelector,
   },
 ];
 
