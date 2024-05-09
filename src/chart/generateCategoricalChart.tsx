@@ -1833,7 +1833,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      if (trigger === 'hover') {
+      if (trigger === 'hover' || trigger == null) {
         return this.handleItemMouseEnter;
       }
       return null;
@@ -1847,7 +1847,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      if (trigger === 'hover') {
+      if (trigger === 'hover' || trigger == null) {
         return this.handleItemMouseLeave;
       }
       return null;
