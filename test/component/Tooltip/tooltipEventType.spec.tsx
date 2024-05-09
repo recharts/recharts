@@ -4,11 +4,25 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PageData } from '../../_data';
 import { getTooltip } from './tooltipTestHelpers';
-import { Bar, BarChart, Funnel, FunnelChart, Pie, PieChart, Tooltip } from '../../../src';
+import {
+  Bar,
+  BarChart,
+  Funnel,
+  FunnelChart,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+} from '../../../src';
 import {
   barChartItemMouseHoverTooltipSelector,
   funnelChartMouseHoverTooltipSelector,
   pieChartMouseHoverTooltipSelector,
+  radialBarMouseHoverTooltipSelector,
+  scatterChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { TooltipTrigger } from '../../../src/chart/types';
 import { assertNotNull } from '../../helper/assertNotNull';
@@ -30,6 +44,15 @@ const axisTestCases: ReadonlyArray<TooltipEventTypeTestCase> = [
         <Bar isAnimationActive={false} dataKey="uv" />
         <Tooltip trigger={tooltipTrigger} />
       </BarChart>
+    ),
+  },
+  {
+    testName: 'RadialBarChart',
+    Component: ({ tooltipTrigger }) => (
+      <RadialBarChart width={500} height={500} data={PageData}>
+        <RadialBar dataKey="uv" />
+        <Tooltip trigger={tooltipTrigger} />
+      </RadialBarChart>
     ),
   },
 ];
@@ -83,6 +106,26 @@ const itemTestCases: ReadonlyArray<TooltipEventTypeItemTestCase> = [
       </PieChart>
     ),
     itemSelector: pieChartMouseHoverTooltipSelector,
+  },
+  {
+    testName: 'ScatterChart',
+    Component: ({ tooltipTrigger }) => (
+      <ScatterChart width={500} height={500}>
+        <Scatter data={PageData} dataKey="uv" />
+        <Tooltip trigger={tooltipTrigger} />
+      </ScatterChart>
+    ),
+    itemSelector: scatterChartMouseHoverTooltipSelector,
+  },
+  {
+    testName: 'RadialBarChart with shared=false',
+    Component: ({ tooltipTrigger }) => (
+      <RadialBarChart width={500} height={500} data={PageData}>
+        <RadialBar dataKey="uv" isAnimationActive={false} />
+        <Tooltip shared={false} trigger={tooltipTrigger} />
+      </RadialBarChart>
+    ),
+    itemSelector: radialBarMouseHoverTooltipSelector,
   },
 ];
 
