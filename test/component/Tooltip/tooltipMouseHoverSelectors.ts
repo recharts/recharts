@@ -16,6 +16,7 @@ export const areaChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelecto
  * It uses the closest XAxis position and shows tooltip with all bars at that point.
  */
 export const barChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-wrapper';
+export const barChartItemMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-bar-rectangle';
 /**
  * With <Tooltip shared={false}> BarChart behaves differently;
  * it no longer shows tooltip when hovering anywhere in the background,

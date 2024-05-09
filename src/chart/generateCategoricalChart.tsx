@@ -34,7 +34,6 @@ import {
   AxisStackGroups,
   BarPosition,
   calculateActiveTickIndex,
-  combineEventHandlers,
   getBandSizeOfAxis,
   getBarPosition,
   getBarSizeList,
@@ -1833,7 +1832,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      if (trigger === 'hover') {
+      if (trigger === 'hover' || trigger == null) {
         return this.handleItemMouseEnter;
       }
       return null;
@@ -1847,7 +1846,7 @@ export const generateCategoricalChart = ({
         return null;
       }
 
-      if (trigger === 'hover') {
+      if (trigger === 'hover' || trigger == null) {
         return this.handleItemMouseLeave;
       }
       return null;
@@ -1858,23 +1857,8 @@ export const generateCategoricalChart = ({
       if (!item) {
         return null;
       }
-      const tooltipEventType = this.getTooltipEventType();
-      const { children } = this.props;
-      const tooltipItem = findChildByType(children, Tooltip);
-      let itemEvents = {};
 
-      if (tooltipEventType !== 'axis' && tooltipItem && tooltipItem.props.trigger === 'click') {
-        itemEvents = {
-          onClick: combineEventHandlers(this.handleItemMouseEnter, element.props.onClick),
-        };
-      } else if (tooltipEventType !== 'axis') {
-        itemEvents = {
-          onMouseLeave: combineEventHandlers(this.handleItemMouseLeave, element.props.onMouseLeave),
-          onMouseEnter: combineEventHandlers(this.handleItemMouseEnter, element.props.onMouseEnter),
-        };
-      }
-
-      return cloneElement(element, { ...item.props, ...itemEvents });
+      return cloneElement(element, item.props);
     };
 
     renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>

@@ -38,7 +38,12 @@ import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-import { useTooltipContext } from '../context/tooltipContext';
+import {
+  useMouseClickItemDispatch,
+  useMouseEnterItemDispatch,
+  useMouseLeaveItemDispatch,
+  useTooltipContext,
+} from '../context/tooltipContext';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -137,6 +142,16 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   const baseProps = filterProps(allOtherScatterProps, false);
 
   const { index: activeIndex } = useTooltipContext();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = allOtherScatterProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
 
   return (
     <>
@@ -145,10 +160,26 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
         const option = isActive ? activeShape : shape;
         const symbolProps = { key: `symbol-${i}`, ...baseProps, ...entry };
 
+        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onMouseEnterFromContext(entry, i, e);
+        };
+        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onMouseLeaveFromContext(entry, i, e);
+        };
+        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onClickFromContext(entry, i, e);
+        };
+
         return (
           <Layer
             className="recharts-scatter-symbol"
-            {...adaptEventsOfChild(allOtherScatterProps, entry, i)}
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onClick={onClick}
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             role="img"

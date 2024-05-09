@@ -681,37 +681,6 @@ export const getTicksOfAxis = (
 };
 
 /**
- * combine the handlers
- * @param  {Function} defaultHandler Internal private handler
- * @param  {Function} childHandler Handler function specified in child component
- * @return {Function}                The combined handler
- */
-
-const handlerWeakMap = new WeakMap();
-export const combineEventHandlers = (defaultHandler: Function, childHandler: Function | undefined): Function => {
-  if (typeof childHandler !== 'function') {
-    return defaultHandler;
-  }
-
-  if (!handlerWeakMap.has(defaultHandler)) {
-    handlerWeakMap.set(defaultHandler, new WeakMap());
-  }
-  const childWeakMap = handlerWeakMap.get(defaultHandler);
-
-  if (childWeakMap.has(childHandler)) {
-    return childWeakMap.get(childHandler);
-  }
-
-  const combineHandler = (...args: any[]) => {
-    defaultHandler(...args);
-    childHandler(...args);
-  };
-
-  childWeakMap.set(childHandler, combineHandler);
-  return combineHandler;
-};
-
-/**
  * Parse the scale function of axis
  * @param  {Object}   axis          The option of axis
  * @param  {String}   chartType     The displayName of chart
