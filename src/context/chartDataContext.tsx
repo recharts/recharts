@@ -27,6 +27,23 @@ export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
 export const useChartData = () => useContext(ChartDataContext);
 
 /**
+ * Return the chart data sliced by current Brush index
+ * @todo this does not account for child data and is parent data only, account for data children from the graphical child
+ * @return data array that takes Brush startIndex, endIndex into account
+ */
+export const useDisplayedChartData = () => {
+  const data = useContext(ChartDataContext);
+  const startIndex = useContext(DataStartIndexContext);
+  const endIndex = useContext(DataEndIndexContext);
+
+  if (data && data.length && Number.isInteger(startIndex) && Number.isInteger(endIndex)) {
+    return data.slice(startIndex, endIndex + 1);
+  }
+
+  return data;
+};
+
+/**
  * startIndex and endIndex are data boundaries, set through Brush.
  *
  * @return object with startIndex and endIndex
