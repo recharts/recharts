@@ -37,7 +37,12 @@ import {
 import { polarToCartesian } from '../util/PolarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-import { useTooltipContext } from '../context/tooltipContext';
+import {
+  useMouseClickItemDispatch,
+  useMouseEnterItemDispatch,
+  useMouseLeaveItemDispatch,
+  useTooltipContext,
+} from '../context/tooltipContext';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -60,16 +65,42 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   const baseProps = filterProps(others, false);
 
   const { index: activeIndex } = useTooltipContext();
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = allOtherRadialBarProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
 
   return (
     <>
       {sectors.map((entry, i) => {
         const isActive = activeShape && i === activeIndex;
+        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onMouseEnterFromContext(entry, i, e);
+        };
+        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onMouseLeaveFromContext(entry, i, e);
+        };
+        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+          // @ts-expect-error the types need a bit of attention
+          onClickFromContext(entry, i, e);
+        };
+
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
           ...entry,
-          ...adaptEventsOfChild(allOtherRadialBarProps, entry, i),
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+          onMouseEnter,
+          onMouseLeave,
+          onClick,
           key: `sector-${i}`,
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,
