@@ -103,7 +103,7 @@
     "@storybook/react": "^8.0.4",
     "@storybook/react-webpack5": "^8.0.4",
     "@storybook/source-loader": "^8.0.4",
-    "@storybook/test-runner": "^0.17.0",
+    "@storybook/test-runner": "^0.18.0",
     "@storybook/theming": "^8.0.4",
     "@stryker-mutator/typescript-checker": "^8.2.6",
     "@stryker-mutator/vitest-runner": "^8.2.5",
