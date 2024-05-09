@@ -4,8 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PageData } from '../../_data';
 import { getTooltip } from './tooltipTestHelpers';
-import { Bar, BarChart, Tooltip } from '../../../src';
-import { barChartItemMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
+import { Bar, BarChart, Funnel, FunnelChart, Tooltip } from '../../../src';
+import {
+  barChartItemMouseHoverTooltipSelector,
+  funnelChartMouseHoverTooltipSelector,
+} from './tooltipMouseHoverSelectors';
 import { TooltipTrigger } from '../../../src/chart/types';
 import { assertNotNull } from '../../helper/assertNotNull';
 
@@ -42,7 +45,7 @@ const itemTestCases: ReadonlyArray<TooltipEventTypeItemTestCase> = [
     itemSelector: barChartItemMouseHoverTooltipSelector,
   },
   {
-    // This is a bit special case - Bar shows tooltip when rendering over its background, too.
+    // This is a special case - Bar shows tooltip when rendering over its background, too.
     testName: 'BarChart Background with tooltip.shared=false',
     Component: ({ tooltipTrigger }) => (
       <BarChart width={500} height={500} data={PageData}>
@@ -51,6 +54,16 @@ const itemTestCases: ReadonlyArray<TooltipEventTypeItemTestCase> = [
       </BarChart>
     ),
     itemSelector: '.recharts-bar-background-rectangle',
+  },
+  {
+    testName: 'FunnelChart',
+    Component: ({ tooltipTrigger }) => (
+      <FunnelChart width={500} height={500}>
+        <Funnel dataKey="uv" data={PageData} />
+        <Tooltip trigger={tooltipTrigger} />
+      </FunnelChart>
+    ),
+    itemSelector: funnelChartMouseHoverTooltipSelector,
   },
 ];
 
