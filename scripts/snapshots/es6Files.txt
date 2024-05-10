@@ -55,6 +55,7 @@
   "es6/state/selectors.js",
   "es6/state/optionsSlice.js",
   "es6/state/hooks.js",
+  "es6/state/chartDataSlice.js",
   "es6/state/RechartsStoreProvider.js",
   "es6/shape/Trapezoid.js",
   "es6/shape/Symbols.js",
