@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '../../src/state/hooks';
 import { createRechartsStore } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
+import { setChartData } from '../../src/state/chartDataSlice';
 
 describe('useAppSelector', () => {
   it('should return undefined when used outside of Redux context', () => {
@@ -17,11 +18,37 @@ describe('useAppSelector', () => {
     render(<Spy />);
   });
 
+  it('should not throw an error when used outside of Redux context', () => {
+    const Spy = (): null => {
+      useAppSelector(s => s);
+      return null;
+    };
+    expect(() => render(<Spy />)).not.toThrow();
+  });
+
   it('should return state when inside a Redux context', () => {
     expect.assertions(1);
     const Spy = (): null => {
       const state = useAppSelector(s => s);
       expect(state).not.toBe(undefined);
+      return null;
+    };
+    render(
+      <RechartsStoreProvider>
+        <Spy />
+      </RechartsStoreProvider>,
+    );
+  });
+
+  it('should trigger update after an action changes the state', () => {
+    expect.assertions(2);
+    const Spy = (): null => {
+      const state = useAppSelector(s => s);
+      const dispatch = useAppDispatch();
+      expect(state).not.toBe(undefined);
+      if (state.chartData.chartData == null) {
+        dispatch(setChartData([]));
+      }
       return null;
     };
     render(
