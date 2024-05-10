@@ -55,6 +55,7 @@
   "lib/state/selectors.js",
   "lib/state/optionsSlice.js",
   "lib/state/hooks.js",
+  "lib/state/chartDataSlice.js",
   "lib/state/RechartsStoreProvider.js",
   "lib/shape/Trapezoid.js",
   "lib/shape/Symbols.js",

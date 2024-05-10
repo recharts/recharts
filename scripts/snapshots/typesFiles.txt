@@ -55,6 +55,7 @@
   "types/state/selectors.d.ts",
   "types/state/optionsSlice.d.ts",
   "types/state/hooks.d.ts",
+  "types/state/chartDataSlice.d.ts",
   "types/state/RechartsStoreProvider.d.ts",
   "types/shape/Trapezoid.d.ts",
   "types/shape/Symbols.d.ts",

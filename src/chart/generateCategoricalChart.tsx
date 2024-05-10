@@ -236,35 +236,37 @@ const getTooltipContent = (
     return null;
   }
   // get data by activeIndex when the axis don't allow duplicated category
-  return graphicalItems.reduce((result, child) => {
-    /**
-     * Fixes: https://github.com/recharts/recharts/issues/3669
-     * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
-     * when a separate dataset is passed to chart prop data and specified on Line/Area/etc prop data
-     */
-    let data = child.props.data ?? chartData;
+  return graphicalItems
+    .map(child => {
+      /**
+       * Fixes: https://github.com/recharts/recharts/issues/3669
+       * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
+       * when a separate dataset is passed to chart prop data and specified on Line/Area/etc prop data
+       */
+      let data = child.props.data ?? chartData;
 
-    if (data && state.dataStartIndex + state.dataEndIndex !== 0) {
-      data = data.slice(state.dataStartIndex, state.dataEndIndex + 1);
-    }
+      if (data && state.dataStartIndex + state.dataEndIndex !== 0) {
+        data = data.slice(state.dataStartIndex, state.dataEndIndex + 1);
+      }
 
-    let payload;
+      let payload;
 
-    if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-      // graphic child has data props
-      const entries = data === undefined ? displayedData : data;
-      payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
-    } else {
-      payload = (data && data[activeIndex]) || displayedData[activeIndex];
-    }
+      if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
+        // graphic child has data props
+        const entries = data === undefined ? displayedData : data;
+        payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
+      } else {
+        payload = (data && data[activeIndex]) || displayedData[activeIndex];
+      }
 
-    if (!payload) {
-      return result;
-    }
+      if (!payload) {
+        return null;
+      }
 
-    // @ts-expect-error missing types
-    return [...result, getTooltipItem(child, payload)];
-  }, []);
+      // @ts-expect-error missing types
+      return getTooltipItem(child, payload);
+    })
+    .filter(Boolean);
 };
 
 /**
@@ -1943,12 +1945,13 @@ export const generateCategoricalChart = ({
       const onItemMouseEnter = this.getGraphicalItemMouseEnterHandler(tooltipEventType, tooltipItem?.props?.trigger);
       const onItemMouseLeave = this.getGraphicalItemMouseLeaveHandler(tooltipEventType, tooltipItem?.props?.trigger);
       return (
-        <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
-          <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
-            <MouseClickItemDispatchContext.Provider value={onItemClick}>
-              <CursorPortalContext.Provider value={this.state.cursorPortal}>
-                <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-                  <ChartDataContextProvider value={this.props.data}>
+        <>
+          <ChartDataContextProvider chartData={this.props.data} />
+          <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
+            <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
+              <MouseClickItemDispatchContext.Provider value={onItemClick}>
+                <CursorPortalContext.Provider value={this.state.cursorPortal}>
+                  <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
                     <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
                       <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
                         <AccessibilityContextProvider value={this.props.accessibilityLayer}>
@@ -1995,12 +1998,12 @@ export const generateCategoricalChart = ({
                         </AccessibilityContextProvider>
                       </BrushUpdateDispatchContext.Provider>
                     </LegendBoundingBoxContext.Provider>
-                  </ChartDataContextProvider>
-                </TooltipPortalContext.Provider>
-              </CursorPortalContext.Provider>
-            </MouseClickItemDispatchContext.Provider>
-          </MouseLeaveItemDispatchContext.Provider>
-        </MouseEnterItemDispatchContext.Provider>
+                  </TooltipPortalContext.Provider>
+                </CursorPortalContext.Provider>
+              </MouseClickItemDispatchContext.Provider>
+            </MouseLeaveItemDispatchContext.Provider>
+          </MouseEnterItemDispatchContext.Provider>
+        </>
       );
     }
   }

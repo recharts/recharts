@@ -1,10 +1,22 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
+import { ChartData, setChartData } from '../state/chartDataSlice';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { RechartsRootState } from '../state/store';
 
-const ChartDataContext = createContext<any[] | undefined>(undefined);
 const DataStartIndexContext = createContext<number>(0);
 const DataEndIndexContext = createContext<number>(0);
 
-export const ChartDataContextProvider = ChartDataContext.Provider;
+export const ChartDataContextProvider = (props: { chartData: ChartData }): null => {
+  const { chartData } = props;
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setChartData(chartData));
+    return () => {
+      dispatch(setChartData([]));
+    };
+  }, [chartData, dispatch]);
+  return null;
+};
 export const DataStartIndexContextProvider = DataStartIndexContext.Provider;
 export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
 
@@ -24,7 +36,8 @@ export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
  *
  * @return data array for some charts and undefined for other
  */
-export const useChartData = () => useContext(ChartDataContext);
+export const useChartData = (): ChartData | undefined =>
+  useAppSelector((state: RechartsRootState) => state.chartData.chartData);
 
 /**
  * startIndex and endIndex are data boundaries, set through Brush.

@@ -20,7 +20,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   name: TName,
   item: Payload<TValue, TName>,
   index: number,
-  payload: Array<Payload<TValue, TName>>,
+  payload: ReadonlyArray<Payload<TValue, TName>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
 
 export interface Payload<TValue extends ValueType, TName extends NameType> {
@@ -48,9 +48,9 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   contentStyle?: CSSProperties;
   itemStyle?: CSSProperties;
   labelStyle?: CSSProperties;
-  labelFormatter?: (label: any, payload: Array<Payload<TValue, TName>>) => ReactNode;
+  labelFormatter?: (label: any, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
   label?: any;
-  payload?: Array<Payload<TValue, TName>>;
+  payload?: ReadonlyArray<Payload<TValue, TName>>;
   itemSorter?: (item: Payload<TValue, TName>) => number | string;
   accessibilityLayer: boolean;
 }
