@@ -1,8 +1,10 @@
 import { Action, combineReducers, configureStore, Dispatch } from '@reduxjs/toolkit';
 import { optionsReducer } from './optionsSlice';
+import { chartDataReducer } from './chartDataSlice';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
+  chartData: chartDataReducer,
 });
 
 export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {
@@ -11,10 +13,7 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
     preloadedState,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
-        serializableCheck: {
-          ignoredActions: ['legend/addSupplier', 'legend/removeSupplier'],
-          ignoredPaths: ['legend.payloadSuppliers'],
-        },
+        serializableCheck: false,
       }),
     devTools: {
       serialize: true,

@@ -1945,12 +1945,13 @@ export const generateCategoricalChart = ({
       const onItemMouseEnter = this.getGraphicalItemMouseEnterHandler(tooltipEventType, tooltipItem?.props?.trigger);
       const onItemMouseLeave = this.getGraphicalItemMouseLeaveHandler(tooltipEventType, tooltipItem?.props?.trigger);
       return (
-        <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
-          <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
-            <MouseClickItemDispatchContext.Provider value={onItemClick}>
-              <CursorPortalContext.Provider value={this.state.cursorPortal}>
-                <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-                  <ChartDataContextProvider value={this.props.data}>
+        <>
+          <ChartDataContextProvider chartData={this.props.data} />
+          <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
+            <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
+              <MouseClickItemDispatchContext.Provider value={onItemClick}>
+                <CursorPortalContext.Provider value={this.state.cursorPortal}>
+                  <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
                     <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
                       <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
                         <AccessibilityContextProvider value={this.props.accessibilityLayer}>
@@ -1997,12 +1998,12 @@ export const generateCategoricalChart = ({
                         </AccessibilityContextProvider>
                       </BrushUpdateDispatchContext.Provider>
                     </LegendBoundingBoxContext.Provider>
-                  </ChartDataContextProvider>
-                </TooltipPortalContext.Provider>
-              </CursorPortalContext.Provider>
-            </MouseClickItemDispatchContext.Provider>
-          </MouseLeaveItemDispatchContext.Provider>
-        </MouseEnterItemDispatchContext.Provider>
+                  </TooltipPortalContext.Provider>
+                </CursorPortalContext.Provider>
+              </MouseClickItemDispatchContext.Provider>
+            </MouseLeaveItemDispatchContext.Provider>
+          </MouseEnterItemDispatchContext.Provider>
+        </>
       );
     }
   }
