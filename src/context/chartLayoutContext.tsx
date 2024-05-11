@@ -22,6 +22,8 @@ import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { DataEndIndexContextProvider, DataStartIndexContextProvider } from './chartDataContext';
+import { useAppDispatch } from '../state/hooks';
+import { setActiveTooltipIndex } from '../state/tooltipSlice';
 
 export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
 export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
@@ -92,6 +94,9 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     active: isTooltipActive,
     index: activeTooltipIndex,
   };
+
+  const dispatch = useAppDispatch();
+  dispatch(setActiveTooltipIndex(tooltipContextValue.index));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.

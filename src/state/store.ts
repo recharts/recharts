@@ -1,9 +1,11 @@
 import { Action, combineReducers, configureStore, Dispatch } from '@reduxjs/toolkit';
 import { optionsReducer } from './optionsSlice';
+import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
+  tooltip: tooltipReducer,
   chartData: chartDataReducer,
 });
 
