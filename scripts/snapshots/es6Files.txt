@@ -51,6 +51,7 @@
   "es6/util/cursor/getRadialCursorPoints.js",
   "es6/util/cursor/getCursorRectangle.js",
   "es6/util/cursor/getCursorPoints.js",
+  "es6/state/tooltipSlice.js",
   "es6/state/store.js",
   "es6/state/selectors.js",
   "es6/state/optionsSlice.js",

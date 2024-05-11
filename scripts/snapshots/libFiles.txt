@@ -51,6 +51,7 @@
   "lib/util/cursor/getRadialCursorPoints.js",
   "lib/util/cursor/getCursorRectangle.js",
   "lib/util/cursor/getCursorPoints.js",
+  "lib/state/tooltipSlice.js",
   "lib/state/store.js",
   "lib/state/selectors.js",
   "lib/state/optionsSlice.js",
