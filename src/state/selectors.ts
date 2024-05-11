@@ -19,12 +19,19 @@ export function useTooltipEventType(shared: boolean | undefined) {
   return validateTooltipEventTypes.includes(eventType) ? eventType : defaultTooltipEventType;
 }
 
+function getSliced<T>(arr: ReadonlyArray<T>, startIndex: number, endIndex: number): ReadonlyArray<T> {
+  if (arr && startIndex + endIndex !== 0) {
+    return arr.slice(startIndex, endIndex + 1);
+  }
+  return arr;
+}
+
 export function selectTooltipPayload(state: RechartsRootState): TooltipPayload | undefined {
   const { activeIndex, tooltipItemPayloads } = state.tooltip;
   if (activeIndex === -1) {
     return undefined;
   }
-  const { chartData } = state.chartData;
+  const { chartData, dataStartIndex, dataEndIndex } = state.chartData;
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
@@ -32,8 +39,7 @@ export function selectTooltipPayload(state: RechartsRootState): TooltipPayload |
   return tooltipItemPayloads.map(({ dataDefinedOnItem, settings }) => {
     const finalData = dataDefinedOnItem ?? chartData;
 
-    // TODO slicing
-    const sliced = finalData;
+    const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
 
     // TODO settings coming from Tooltip props
     const tooltipPayload = sliced?.[activeIndex];
