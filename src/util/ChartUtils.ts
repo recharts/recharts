@@ -1,3 +1,14 @@
+import flatMap from 'lodash/flatMap';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import isFunction from 'lodash/isFunction';
+import isNan from 'lodash/isNaN';
+import isNil from 'lodash/isNil';
+import isString from 'lodash/isString';
+import max from 'lodash/max';
+import min from 'lodash/min';
+import sortBy from 'lodash/sortBy';
+import upperFirst from 'lodash/upperFirst';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   Series,
@@ -8,17 +19,6 @@ import {
   stackOffsetWiggle,
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
-import max from 'lodash/max';
-import min from 'lodash/min';
-import isNil from 'lodash/isNil';
-import isFunction from 'lodash/isFunction';
-import isString from 'lodash/isString';
-import get from 'lodash/get';
-import flatMap from 'lodash/flatMap';
-import isNan from 'lodash/isNaN';
-import upperFirst from 'lodash/upperFirst';
-import isEqual from 'lodash/isEqual';
-import sortBy from 'lodash/sortBy';
 
 import { ReactElement, ReactNode } from 'react';
 
@@ -27,24 +27,26 @@ import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniq
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
+import { Legend } from '../component/Legend';
+import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
+import { getLegendProps } from './getLegendProps';
+import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
   AxisType,
   BaseAxisProps,
+  CategoricalDomain,
+  ChartOffset,
   DataKey,
   LayoutType,
-  PolarLayoutType,
-  NumberDomain,
-  TickItem,
-  CategoricalDomain,
-  StackOffsetType,
   Margin,
-  ChartOffset,
+  NumberDomain,
+  PolarLayoutType,
+  StackOffsetType,
+  TickItem,
   XAxisMap,
 } from './types';
-import { getLegendProps } from './getLegendProps';
 import { BoundingBox } from './useGetBoundingClientRect';
-import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
-import { Legend } from '../component/Legend';
+import { ValueType } from '../component/DefaultTooltipContent';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1296,6 +1298,12 @@ export const parseDomainOfCategoryAxis = <T>(
   return specifiedDomain;
 };
 
+/**
+ * @deprecated instead use {@link getTooltipEntry}
+ * @param graphicalItem do not use
+ * @param payload do not use
+ * @return do not use
+ */
 export const getTooltipItem = (
   graphicalItem: {
     type: { displayName: string };
@@ -1329,6 +1337,25 @@ export const getTooltipItem = (
     hide,
   };
 };
+
+export function getTooltipEntry({
+  tooltipEntrySettings,
+  dataKey,
+  payload,
+  value,
+}: {
+  tooltipEntrySettings: TooltipEntrySettings;
+  dataKey: string | number;
+  payload: any;
+  value: ValueType;
+}): TooltipPayloadEntry {
+  return {
+    ...tooltipEntrySettings,
+    dataKey,
+    payload,
+    value,
+  };
+}
 
 export const isAxisLTR = (axisMap: XAxisMap) => {
   const axes = Object.values(axisMap ?? {});
