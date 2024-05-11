@@ -12,6 +12,7 @@ import React, {
   TouchEvent,
   useCallback,
   useContext,
+  useEffect,
 } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
@@ -27,6 +28,8 @@ import { filterProps } from '../util/ReactUtils';
 import { useMargin, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
+import { useAppDispatch } from '../state/hooks';
+import { setDataStartEndIndexes } from '../state/chartDataSlice';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -831,6 +834,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 }
 
 function BrushInternal(props: Props) {
+  const dispatch = useAppDispatch();
   const offset = useOffset();
   const margin = useMargin();
   const chartData = useChartData();
@@ -838,12 +842,24 @@ function BrushInternal(props: Props) {
   const updateId = useUpdateId();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
+  const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
+  useEffect(() => {
+    const resolvedStartIndex = startIndexFromProps ?? startIndex;
+    const resolvedEndIndex = endIndexFromProps ?? endIndex;
+    // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
+    if (resolvedStartIndex !== startIndex || resolvedEndIndex !== endIndex) {
+      dispatch(setDataStartEndIndexes({ startIndex: resolvedStartIndex, endIndex: resolvedEndIndex }));
+    }
+  }, [dispatch, startIndexFromProps, endIndexFromProps, startIndex, endIndex]);
   const onChange = useCallback(
     (nextState: BrushStartEndIndex) => {
-      onChangeFromContext?.(nextState);
-      onChangeFromProps?.(nextState);
+      if (nextState.startIndex !== startIndex || nextState.endIndex !== endIndex) {
+        onChangeFromContext?.(nextState);
+        onChangeFromProps?.(nextState);
+        dispatch(setDataStartEndIndexes(nextState));
+      }
     },
-    [onChangeFromProps, onChangeFromContext],
+    [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
   );
   const contextProperties: PropertiesFromContext = {
     data: chartData,

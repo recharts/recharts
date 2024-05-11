@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { BrushStartEndIndex } from '../context/brushUpdateContext';
 
 /**
  * This is the data that's coming through main chart `data` prop
@@ -31,19 +32,20 @@ const chartDataSlice = createSlice({
   initialState,
   /* eslint-disable no-param-reassign */
   reducers: {
-    setChartData(state, action: PayloadAction<ChartData>) {
+    setChartData(state, action: PayloadAction<ChartData | undefined>) {
       state.chartData = action.payload;
+      if (state.dataEndIndex <= 0 && action.payload != null) {
+        state.dataEndIndex = action.payload.length - 1;
+      }
     },
-    setDataStartIndex(state, action: PayloadAction<number>) {
-      state.dataStartIndex = action.payload;
-    },
-    setDataEndIndex(state, action: PayloadAction<number>) {
-      state.dataEndIndex = action.payload;
+    setDataStartEndIndexes(state, action: PayloadAction<BrushStartEndIndex>) {
+      state.dataStartIndex = action.payload.startIndex;
+      state.dataEndIndex = action.payload.endIndex;
     },
   },
   /* eslint-enable no-param-reassign */
 });
 
-export const { setChartData, setDataStartIndex, setDataEndIndex } = chartDataSlice.actions;
+export const { setChartData, setDataStartEndIndexes } = chartDataSlice.actions;
 
 export const chartDataReducer = chartDataSlice.reducer;
