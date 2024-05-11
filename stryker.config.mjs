@@ -15,6 +15,6 @@ const config = {
     "prioritizePerformanceOverAccuracy": true
   },
   ignoreStatic: true,
-  mutate: ['src/component/Legend.tsx']
+  mutate: ['src/state/selectors.ts']
 };
 export default config;

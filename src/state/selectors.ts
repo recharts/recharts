@@ -21,6 +21,9 @@ export function useTooltipEventType(shared: boolean | undefined) {
 
 export function selectTooltipPayload(state: RechartsRootState): TooltipPayload | undefined {
   const { activeIndex, tooltipItemPayloads } = state.tooltip;
+  if (activeIndex === -1) {
+    return undefined;
+  }
   const { chartData } = state.chartData;
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
@@ -33,12 +36,12 @@ export function selectTooltipPayload(state: RechartsRootState): TooltipPayload |
     const sliced = finalData;
 
     // TODO settings coming from Tooltip props
-    const tooltipPayload = sliced[activeIndex];
+    const tooltipPayload = sliced?.[activeIndex];
     const tooltipEntry = getTooltipEntry({
       tooltipEntrySettings: settings,
-      dataKey: settings.dataKey,
+      dataKey: settings?.dataKey,
       payload: tooltipPayload,
-      value: getValueByDataKey(tooltipPayload, settings.dataKey),
+      value: getValueByDataKey(tooltipPayload, settings?.dataKey),
     });
     return tooltipEntry;
   });
