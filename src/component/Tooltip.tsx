@@ -114,7 +114,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   } = props;
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
-  const { active: activeFromContext, payload, coordinate, label } = useTooltipContext();
+  const { active: activeFromContext, payload: payloadFromProps, coordinate, label } = useTooltipContext();
+  // TODO this will fail tests until Area, Bar, and Line all push their own payloads
+  // const payloadFromContext = useAppSelector(selectTooltipPayload);
+  // const payload = payloadFromContext?.length > 0 ? payloadFromContext : payloadFromProps;
+  const payload = payloadFromProps;
   const tooltipEventType = useTooltipEventType(shared);
   const tooltipPortalFromContext = useTooltipPortal();
   /*

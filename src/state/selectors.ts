@@ -21,7 +21,7 @@ export function useTooltipEventType(shared: boolean | undefined) {
 
 export function selectTooltipPayload(state: RechartsRootState): TooltipPayload | undefined {
   const { activeIndex, tooltipItemPayloads } = state.tooltip;
-  const chartData = state.chartData.chartData;
+  const { chartData } = state.chartData;
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.

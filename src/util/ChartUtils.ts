@@ -1345,7 +1345,7 @@ export function getTooltipEntry({
   value,
 }: {
   tooltipEntrySettings: TooltipEntrySettings;
-  dataKey: string | number;
+  dataKey: DataKey<any>;
   payload: any;
   value: ValueType;
 }): TooltipPayloadEntry {
@@ -1355,6 +1355,16 @@ export function getTooltipEntry({
     payload,
     value,
   };
+}
+
+export function getTooltipNameProp(nameFromItem: string | undefined, dataKey: DataKey<any>): string | undefined {
+  if (nameFromItem) {
+    return nameFromItem;
+  }
+  if (typeof dataKey === 'string') {
+    return dataKey;
+  }
+  return undefined;
 }
 
 export const isAxisLTR = (axisMap: XAxisMap) => {

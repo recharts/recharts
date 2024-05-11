@@ -54,6 +54,7 @@ const initialState: TooltipState = {
 const tooltipSlice = createSlice({
   name: 'tooltip',
   initialState,
+  /* eslint-disable no-param-reassign */
   reducers: {
     addTooltipEntrySettings(state, action: PayloadAction<TooltipPayloadConfiguration>) {
       state.tooltipItemPayloads.push(action.payload);
@@ -68,6 +69,7 @@ const tooltipSlice = createSlice({
       state.activeIndex = action.payload;
     },
   },
+  /* eslint-enable no-param-reassign */
 });
 
 export const { addTooltipEntrySettings, removeTooltipEntrySettings, setActiveTooltipIndex } = tooltipSlice.actions;
