@@ -51,6 +51,7 @@
   "types/util/cursor/getRadialCursorPoints.d.ts",
   "types/util/cursor/getCursorRectangle.d.ts",
   "types/util/cursor/getCursorPoints.d.ts",
+  "types/state/tooltipSlice.d.ts",
   "types/state/store.d.ts",
   "types/state/selectors.d.ts",
   "types/state/optionsSlice.d.ts",

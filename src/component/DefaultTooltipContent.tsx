@@ -7,6 +7,7 @@ import sortBy from 'lodash/sortBy';
 import isNil from 'lodash/isNil';
 import clsx from 'clsx';
 import { isNumOrStr } from '../util/DataUtils';
+import { DataKey } from '../util/types';
 
 function defaultFormatter<TValue extends ValueType>(value: TValue) {
   return Array.isArray(value) && isNumOrStr(value[0]) && isNumOrStr(value[1]) ? (value.join(' ~ ') as TValue) : value;
@@ -30,7 +31,8 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   name?: TName;
   value?: TValue;
   unit?: ReactNode;
-  dataKey?: string | number;
+  fill?: string;
+  dataKey?: DataKey<any>;
   payload?: any;
   chartType?: string;
   stroke?: string;

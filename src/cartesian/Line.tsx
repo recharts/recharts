@@ -1,40 +1,46 @@
 /**
  * @fileOverview Line
  */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent, ReactElement, useEffect } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
 import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
-import { Curve, CurveType, Props as CurveProps, Point as CurvePoint } from '../shape/Curve';
+import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
-import { uniqueId, interpolateNumber } from '../util/DataUtils';
-import { findAllByType, filterProps, isDotProps } from '../util/ReactUtils';
+import { interpolateNumber, uniqueId } from '../util/DataUtils';
+import { filterProps, findAllByType, isDotProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import {
-  D3Scale,
-  LegendType,
-  TooltipType,
+  ActiveDotType,
+  AnimationDuration,
   AnimationTiming,
   ChartOffset,
+  D3Scale,
   DataKey,
-  TickItem,
-  AnimationDuration,
   LayoutType,
-  ActiveDotType,
+  LegendType,
+  TickItem,
+  TooltipType,
 } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
+import { useAppDispatch } from '../state/hooks';
+import {
+  addTooltipEntrySettings,
+  removeTooltipEntrySettings,
+  TooltipPayloadConfiguration,
+} from '../state/tooltipSlice';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -113,6 +119,35 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
 
 function SetLineLegend(props: Props): null {
   useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
+  return null;
+}
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, data, stroke, strokeWidth, fill, name, hide } = props;
+  return {
+    dataDefinedOnItem: data,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: props.tooltipType,
+      color: props.stroke,
+    },
+  };
+}
+
+function SetTooltipEntrySettings(props: Props): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const tooltipEntrySettings = getTooltipEntrySettings(props);
+    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
+    return () => {
+      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
+    };
+  }, [props, dispatch]);
   return null;
 }
 
@@ -512,7 +547,12 @@ export class Line extends PureComponent<Props, State> {
     const { hide, dot, points, className, xAxis, yAxis, top, left, width, height, isAnimationActive, id } = this.props;
 
     if (hide || !points || !points.length) {
-      return <SetLineLegend {...this.props} />;
+      return (
+        <>
+          <SetLineLegend {...this.props} />
+          <SetTooltipEntrySettings {...this.props} />
+        </>
+      );
     }
 
     const { isAnimationFinished } = this.state;
@@ -530,6 +570,7 @@ export class Line extends PureComponent<Props, State> {
       <>
         <Layer className={layerClass}>
           <SetLineLegend {...this.props} />
+          <SetTooltipEntrySettings {...this.props} />
           {needClipX || needClipY ? (
             <defs>
               <clipPath id={`clipPath-${clipPathId}`}>

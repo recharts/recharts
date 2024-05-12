@@ -1,10 +1,8 @@
-import { createContext, useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ChartData, setChartData } from '../state/chartDataSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
-
-const DataStartIndexContext = createContext<number>(0);
-const DataEndIndexContext = createContext<number>(0);
+import { BrushStartEndIndex } from './brushUpdateContext';
 
 export const ChartDataContextProvider = (props: { chartData: ChartData }): null => {
   const { chartData } = props;
@@ -17,8 +15,8 @@ export const ChartDataContextProvider = (props: { chartData: ChartData }): null 
   }, [chartData, dispatch]);
   return null;
 };
-export const DataStartIndexContextProvider = DataStartIndexContext.Provider;
-export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
+
+const selectChartData = (state: RechartsRootState): ChartData | undefined => state.chartData.chartData;
 
 /**
  * "data" is the data of the chart - it has no type because this part of recharts is very flexible.
@@ -36,8 +34,12 @@ export const DataEndIndexContextProvider = DataEndIndexContext.Provider;
  *
  * @return data array for some charts and undefined for other
  */
-export const useChartData = (): ChartData | undefined =>
-  useAppSelector((state: RechartsRootState) => state.chartData.chartData);
+export const useChartData = (): ChartData | undefined => useAppSelector(selectChartData);
+
+const selectDataIndex = (state: RechartsRootState): BrushStartEndIndex => {
+  const { dataStartIndex, dataEndIndex } = state.chartData;
+  return { startIndex: dataStartIndex, endIndex: dataEndIndex };
+};
 
 /**
  * startIndex and endIndex are data boundaries, set through Brush.
@@ -45,7 +47,5 @@ export const useChartData = (): ChartData | undefined =>
  * @return object with startIndex and endIndex
  */
 export const useDataIndex = () => {
-  const startIndex = useContext(DataStartIndexContext);
-  const endIndex = useContext(DataEndIndexContext);
-  return { startIndex, endIndex };
+  return useAppSelector(selectDataIndex);
 };
