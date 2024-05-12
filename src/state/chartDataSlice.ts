@@ -32,7 +32,6 @@ type BrushStartEndIndexActionPayload = Partial<BrushStartEndIndex>;
 const chartDataSlice = createSlice({
   name: 'chartData',
   initialState,
-  /* eslint-disable no-param-reassign */
   reducers: {
     setChartData(state, action: PayloadAction<ChartData | undefined>) {
       state.chartData = action.payload;
@@ -50,7 +49,6 @@ const chartDataSlice = createSlice({
       }
     },
   },
-  /* eslint-enable no-param-reassign */
 });
 
 export const { setChartData, setDataStartEndIndexes } = chartDataSlice.actions;
