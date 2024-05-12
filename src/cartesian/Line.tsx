@@ -123,7 +123,7 @@ function SetLineLegend(props: Props): null {
 }
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, fill, name, hide } = props;
+  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
   return {
     dataDefinedOnItem: data,
     settings: {
@@ -135,6 +135,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       hide,
       type: props.tooltipType,
       color: props.stroke,
+      unit,
     },
   };
 }

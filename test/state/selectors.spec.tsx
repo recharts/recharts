@@ -125,6 +125,7 @@ describe('selectTooltipPayload', () => {
         fill: 'green',
         dataKey: 'x',
         name: 'foo',
+        unit: 'bar',
       },
       dataDefinedOnItem: [
         { x: 8, y: 9 },
@@ -138,6 +139,7 @@ describe('selectTooltipPayload', () => {
       fill: 'green',
       payload: { x: 10, y: 11 },
       value: 10,
+      unit: 'bar',
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
@@ -154,6 +156,7 @@ describe('selectTooltipPayload', () => {
         fill: 'green',
         dataKey: 'y',
         name: 'foo',
+        unit: 'bar',
       },
       dataDefinedOnItem: undefined,
     };
@@ -173,6 +176,7 @@ describe('selectTooltipPayload', () => {
       fill: 'green',
       payload: { x: 1, y: 2 },
       value: 2,
+      unit: 'bar',
     };
 
     expect(selectTooltipPayload(store.getState())).toEqual([expectedEntry]);
