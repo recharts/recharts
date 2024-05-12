@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Key, PureComponent, ReactElement } from 'react';
+import React, { Key, PureComponent, ReactElement, useEffect } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
@@ -19,6 +19,7 @@ import {
   getBaseValueOfBar,
   getCateCoordinateOfBar,
   getTooltipItem,
+  getTooltipNameProp,
   getValueByDataKey,
   truncateByDomain,
 } from '../util/ChartUtils';
@@ -48,6 +49,12 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
+import { useAppDispatch } from '../state/hooks';
+import {
+  addTooltipEntrySettings,
+  removeTooltipEntrySettings,
+  TooltipPayloadConfiguration,
+} from '../state/tooltipSlice';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -134,6 +141,35 @@ const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => 
 
 function SetBarLegend(props: Props): null {
   useLegendPayloadDispatch(computeLegendPayloadFromBarData, props);
+  return null;
+}
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, data, stroke, strokeWidth, fill, name, hide } = props;
+  return {
+    dataDefinedOnItem: data,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: props.tooltipType,
+      color: props.fill,
+    },
+  };
+}
+
+function SetTooltipEntrySettings(props: Props): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = getTooltipEntrySettings(props);
+    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
+    return () => {
+      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
+    };
+  }, [props, dispatch]);
   return null;
 }
 
@@ -613,7 +649,12 @@ export class Bar extends PureComponent<Props, State> {
       id,
     } = this.props;
     if (hide || !data || !data.length) {
-      return <SetBarLegend {...this.props} />;
+      return (
+        <>
+          <SetBarLegend {...this.props} />
+          <SetTooltipEntrySettings {...this.props} />
+        </>
+      );
     }
 
     const { isAnimationFinished } = this.state;
@@ -626,6 +667,7 @@ export class Bar extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass}>
         <SetBarLegend {...this.props} />
+        <SetTooltipEntrySettings {...this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
