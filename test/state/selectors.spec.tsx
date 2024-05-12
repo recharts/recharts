@@ -12,7 +12,7 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
 } from '../../src/state/tooltipSlice';
-import { setChartData } from '../../src/state/chartDataSlice';
+import { setChartData, setDataStartEndIndexes } from '../../src/state/chartDataSlice';
 
 describe('useTooltipEventType', () => {
   type TooltipEventTypeTestScenario = {
@@ -178,7 +178,41 @@ describe('selectTooltipPayload', () => {
     expect(selectTooltipPayload(store.getState())).toEqual([expectedEntry]);
   });
 
-  it.todo('should return sliced data if set by Brush');
+  it('should return sliced data if set by Brush', () => {
+    const store = createRechartsStore();
+    const tooltipSettings: TooltipPayloadConfiguration = {
+      settings: {
+        stroke: 'red',
+        fill: 'green',
+        dataKey: 'y',
+        name: 'foo',
+      },
+      dataDefinedOnItem: [
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ],
+    };
+    store.dispatch(addTooltipEntrySettings(tooltipSettings));
+    store.dispatch(
+      setChartData([
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ]),
+    );
+    expect(selectTooltipPayload(store.getState())).toEqual(undefined);
+    store.dispatch(setActiveTooltipIndex(0));
+    store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
+    const expectedEntry: TooltipPayloadEntry = {
+      name: 'foo',
+      dataKey: 'y',
+      stroke: 'red',
+      fill: 'green',
+      payload: { x: 3, y: 4 },
+      value: 4,
+    };
+    expect(selectTooltipPayload(store.getState())).toEqual([expectedEntry]);
+  });
+
   it.todo('should prefer to use dataKey from tooltipAxis, if it is defined');
   it.todo('should do something - not quite sure what exactly yet - with tooltipAxis.allowDuplicatedCategory');
 });
