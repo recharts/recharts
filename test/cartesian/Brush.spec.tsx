@@ -342,7 +342,7 @@ describe('<Brush />', () => {
       await user.clear(endIndexInput);
       await user.type(endIndexInput, '5');
 
-      const brushTexts = container.getElementsByClassName('recharts-brush-texts').item(0)!.children;
+      const brushTexts = container.getElementsByClassName('recharts-brush-texts').item(0).children;
       expect(brushTexts.item(0)).toBeInTheDocument();
 
       expect(brushTexts.item(0)?.textContent).toContain('2');
