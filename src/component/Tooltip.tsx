@@ -115,7 +115,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const { active: activeFromContext, payload: payloadFromProps, coordinate, label } = useTooltipContext();
-  // TODO this will fail tests until Area, Bar, and Line all push their own payloads
+  // TODO this will fail tests until Tooltip props and tooltipAxis are in Redux
   // const payloadFromContext = useAppSelector(selectTooltipPayload);
   // const payload = payloadFromContext?.length > 0 ? payloadFromContext : payloadFromProps;
   const payload = payloadFromProps;

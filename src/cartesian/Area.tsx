@@ -1,7 +1,7 @@
 /**
  * @fileOverview Area
  */
-import React, { PureComponent, SVGProps } from 'react';
+import React, { PureComponent, SVGProps, useEffect } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
@@ -15,7 +15,7 @@ import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
 import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
-import { getCateCoordinateOfLine, getValueByDataKey } from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import {
@@ -35,6 +35,12 @@ import { filterProps, isDotProps } from '../util/ReactUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
+import {
+  addTooltipEntrySettings,
+  removeTooltipEntrySettings,
+  TooltipPayloadConfiguration,
+} from '../state/tooltipSlice';
+import { useAppDispatch } from '../state/hooks';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -127,6 +133,36 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
 
 function SetAreaLegend(props: Props): null {
   useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
+  return null;
+}
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
+  return {
+    dataDefinedOnItem: data,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: props.tooltipType,
+      color: getLegendItemColor(stroke, fill),
+      unit,
+    },
+  };
+}
+
+function SetTooltipEntrySettings(props: Props): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const tooltipEntrySettings: TooltipPayloadConfiguration = getTooltipEntrySettings(props);
+    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
+    return () => {
+      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
+    };
+  }, [props, dispatch]);
   return null;
 }
 
@@ -581,7 +617,12 @@ export class Area extends PureComponent<Props, State> {
       this.props;
 
     if (hide || !points || !points.length) {
-      return <SetAreaLegend {...this.props} />;
+      return (
+        <>
+          <SetAreaLegend {...this.props} />
+          <SetTooltipEntrySettings {...this.props} />
+        </>
+      );
     }
 
     const { isAnimationFinished } = this.state;
@@ -599,6 +640,7 @@ export class Area extends PureComponent<Props, State> {
       <>
         <Layer className={layerClass}>
           <SetAreaLegend {...this.props} />
+          <SetTooltipEntrySettings {...this.props} />
           {needClipX || needClipY ? (
             <defs>
               <clipPath id={`clipPath-${clipPathId}`}>

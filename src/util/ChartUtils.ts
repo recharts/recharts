@@ -1357,9 +1357,12 @@ export function getTooltipEntry({
   };
 }
 
-export function getTooltipNameProp(nameFromItem: string | undefined, dataKey: DataKey<any>): string | undefined {
+export function getTooltipNameProp(
+  nameFromItem: string | number | undefined,
+  dataKey: DataKey<any>,
+): string | undefined {
   if (nameFromItem) {
-    return nameFromItem;
+    return String(nameFromItem);
   }
   if (typeof dataKey === 'string') {
     return dataKey;

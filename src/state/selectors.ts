@@ -41,7 +41,7 @@ export function selectTooltipPayload(state: RechartsRootState): TooltipPayload |
 
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
 
-    // TODO settings coming from Tooltip props
+    // TODO settings coming from Tooltip props, and tooltipAxis
     const tooltipPayload = sliced?.[activeIndex];
     const tooltipEntry = getTooltipEntry({
       tooltipEntrySettings: settings,
