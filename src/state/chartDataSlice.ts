@@ -27,6 +27,8 @@ const initialState: ChartDataState = {
   dataEndIndex: 0,
 };
 
+type BrushStartEndIndexActionPayload = Partial<BrushStartEndIndex>;
+
 const chartDataSlice = createSlice({
   name: 'chartData',
   initialState,
@@ -38,9 +40,14 @@ const chartDataSlice = createSlice({
         state.dataEndIndex = action.payload.length - 1;
       }
     },
-    setDataStartEndIndexes(state, action: PayloadAction<BrushStartEndIndex>) {
-      state.dataStartIndex = action.payload.startIndex;
-      state.dataEndIndex = action.payload.endIndex;
+    setDataStartEndIndexes(state, action: PayloadAction<BrushStartEndIndexActionPayload>) {
+      const { startIndex, endIndex } = action.payload;
+      if (startIndex != null) {
+        state.dataStartIndex = startIndex;
+      }
+      if (endIndex != null) {
+        state.dataEndIndex = endIndex;
+      }
     },
   },
   /* eslint-enable no-param-reassign */
