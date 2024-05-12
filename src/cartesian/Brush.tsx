@@ -501,6 +501,24 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       };
     }
 
+    if (
+      !prevState.isSlideMoving &&
+      !prevState.isTravellerMoving &&
+      !prevState.isTravellerFocused &&
+      !prevState.isTextActive
+    ) {
+      /*
+       * If the startIndex and endIndex are controlled from the outside,
+       * we need to keep the startX and end up to date.
+       * Also we do not want to do that while user is interacting in the brush,
+       * because this will trigger re-render and interrupt the drag&drop.
+       */
+      return {
+        startX: prevState.scale(nextProps.startIndex),
+        endX: prevState.scale(nextProps.endIndex),
+      };
+    }
+
     return null;
   }
 
@@ -844,11 +862,9 @@ function BrushInternal(props: Props) {
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
   useEffect(() => {
-    const resolvedStartIndex = startIndexFromProps ?? startIndex;
-    const resolvedEndIndex = endIndexFromProps ?? endIndex;
     // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
-    if (resolvedStartIndex !== startIndex || resolvedEndIndex !== endIndex) {
-      dispatch(setDataStartEndIndexes({ startIndex: resolvedStartIndex, endIndex: resolvedEndIndex }));
+    if (startIndexFromProps !== startIndex || endIndexFromProps !== endIndex) {
+      dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
     }
   }, [dispatch, startIndexFromProps, endIndexFromProps, startIndex, endIndex]);
   const onChange = useCallback(

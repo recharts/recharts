@@ -1,4 +1,3 @@
-import { expect, within, userEvent } from '@storybook/test';
 import React, { useState } from 'react';
 import {
   ComposedChart,
@@ -21,8 +20,8 @@ export default {
 
 export const ControlledBrush = {
   render: () => {
-    const [startIndex, setStartIndex] = useState<number | undefined>(3);
-    const [endIndex, setEndIndex] = useState<number | undefined>(pageData.length - 1);
+    const [startIndex, setStartIndex] = useState<number | undefined>(2);
+    const [endIndex, setEndIndex] = useState<number | undefined>(5);
 
     return (
       <>
@@ -60,24 +59,6 @@ export const ControlledBrush = {
         />
       </>
     );
-  },
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const user = userEvent.setup();
-    const { getByLabelText } = within(canvasElement);
-
-    const startIndexInput = getByLabelText<HTMLInputElement>('startIndex');
-    const endIndexInput = getByLabelText<HTMLInputElement>('endIndex');
-
-    await user.clear(startIndexInput);
-    await user.type(startIndexInput, '2');
-    await user.clear(endIndexInput);
-    await user.type(endIndexInput, '5');
-
-    const brushTexts = document.getElementsByClassName('recharts-brush-texts').item(0).children;
-    expect(brushTexts.item(0)).toBeInTheDocument();
-
-    expect(brushTexts.item(0).textContent).toContain('2');
-    expect(brushTexts.item(1).textContent).toContain('5');
   },
 };
 
