@@ -1,7 +1,7 @@
 /**
  * @fileOverview Render a group of bar
  */
-import React, { Key, PureComponent, ReactElement, useEffect } from 'react';
+import React, { Key, PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
@@ -49,12 +49,8 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
-import { useAppDispatch } from '../state/hooks';
-import {
-  addTooltipEntrySettings,
-  removeTooltipEntrySettings,
-  TooltipPayloadConfiguration,
-} from '../state/tooltipSlice';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -160,18 +156,6 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       unit,
     },
   };
-}
-
-function SetTooltipEntrySettings(props: Props): null {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    const tooltipEntrySettings: TooltipPayloadConfiguration = getTooltipEntrySettings(props);
-    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
-    return () => {
-      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
-    };
-  }, [props, dispatch]);
-  return null;
 }
 
 type BarBackgroundProps = {
@@ -653,7 +637,7 @@ export class Bar extends PureComponent<Props, State> {
       return (
         <>
           <SetBarLegend {...this.props} />
-          <SetTooltipEntrySettings {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
       );
     }
@@ -668,7 +652,7 @@ export class Bar extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass}>
         <SetBarLegend {...this.props} />
-        <SetTooltipEntrySettings {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>

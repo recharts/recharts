@@ -1,7 +1,7 @@
 /**
  * @fileOverview Line
  */
-import React, { PureComponent, ReactElement, useEffect } from 'react';
+import React, { PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
@@ -35,12 +35,8 @@ import {
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
-import { useAppDispatch } from '../state/hooks';
-import {
-  addTooltipEntrySettings,
-  removeTooltipEntrySettings,
-  TooltipPayloadConfiguration,
-} from '../state/tooltipSlice';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -138,18 +134,6 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       unit,
     },
   };
-}
-
-function SetTooltipEntrySettings(props: Props): null {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    const tooltipEntrySettings = getTooltipEntrySettings(props);
-    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
-    return () => {
-      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
-    };
-  }, [props, dispatch]);
-  return null;
 }
 
 export class Line extends PureComponent<Props, State> {
@@ -551,7 +535,7 @@ export class Line extends PureComponent<Props, State> {
       return (
         <>
           <SetLineLegend {...this.props} />
-          <SetTooltipEntrySettings {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
       );
     }
@@ -571,7 +555,7 @@ export class Line extends PureComponent<Props, State> {
       <>
         <Layer className={layerClass}>
           <SetLineLegend {...this.props} />
-          <SetTooltipEntrySettings {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (
             <defs>
               <clipPath id={`clipPath-${clipPathId}`}>

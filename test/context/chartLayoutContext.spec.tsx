@@ -15,6 +15,7 @@ import {
 } from '../../src/context/chartLayoutContext';
 import { CategoricalChartState } from '../../src/chart/types';
 import { BaseAxisMap, XAxisMap, YAxisMap } from '../../src/util/types';
+import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 
 describe('ChartLayoutContextProvider', () => {
   const minimalState: CategoricalChartState = {
@@ -193,7 +194,7 @@ describe('ChartLayoutContextProvider', () => {
     });
   });
 
-  describe('XAxisContext', () => {
+  describe('XAxis state', () => {
     const exampleXAxisMap: XAxisMap = {
       a: {
         width: 200,
@@ -237,9 +238,11 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow(
           'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
@@ -265,9 +268,11 @@ describe('ChartLayoutContextProvider', () => {
         const xAxisMap: XAxisMap = {};
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, xAxisMap }}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, xAxisMap }}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow('Invariant failed: Could not find xAxis by id "a" [string]. There are no available ids.');
       });
@@ -279,9 +284,11 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow('Invariant failed: Could not find xAxis by id "wrong ID" [string]. Available ids are: a.');
       });
@@ -298,9 +305,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
     });
@@ -326,9 +335,11 @@ describe('ChartLayoutContextProvider', () => {
         };
 
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -352,9 +363,11 @@ describe('ChartLayoutContextProvider', () => {
 
         const xAxisMap: XAxisMap = {};
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, xAxisMap }}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, xAxisMap }}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -366,9 +379,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -384,9 +399,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
     });
@@ -400,15 +417,19 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(2);
       });
@@ -424,19 +445,23 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID is different now"
-            state={mockState1}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID is different now"
+              state={mockState1}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -450,19 +475,23 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID but this time different"
-            state={mockState2}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID but this time different"
+              state={mockState2}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -479,15 +508,19 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -502,19 +535,23 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID is not important for this hook"
-            state={mockState2}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID is not important for this hook"
+              state={mockState2}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(2);
       });
@@ -528,19 +565,23 @@ describe('ChartLayoutContextProvider', () => {
         });
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID has changed but that should not affect xAxis hook"
-            state={mockState1}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID has changed but that should not affect xAxis hook"
+              state={mockState1}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect.soft(renderCount).toBe(1);
         const mockStateWithYAxisMap: CategoricalChartState = {
@@ -553,20 +594,22 @@ describe('ChartLayoutContextProvider', () => {
           },
         };
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID has changed but that should not affect xAxis hook"
-            state={mockStateWithYAxisMap}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID has changed but that should not affect xAxis hook"
+              state={mockStateWithYAxisMap}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
     });
   });
 
-  describe('YAxisContext', () => {
+  describe('YAxis state', () => {
     const exampleYAxisMap: YAxisMap = {
       m: {
         width: 200,
@@ -610,9 +653,11 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow(
           'Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
@@ -638,9 +683,11 @@ describe('ChartLayoutContextProvider', () => {
         const yAxisMap: YAxisMap = {};
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, yAxisMap }}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, yAxisMap }}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow('Invariant failed: Could not find yAxis by id "a" [string]. There are no available ids.');
       });
@@ -652,9 +699,11 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(() =>
           render(
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>,
+            <RechartsStoreProvider>
+              <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+                <MockConsumer />
+              </ChartLayoutContextProvider>
+            </RechartsStoreProvider>,
           ),
         ).toThrow('Invariant failed: Could not find yAxis by id "wrong ID" [string]. Available ids are: m.');
       });
@@ -671,9 +720,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
     });
@@ -699,9 +750,11 @@ describe('ChartLayoutContextProvider', () => {
         };
 
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -726,9 +779,11 @@ describe('ChartLayoutContextProvider', () => {
 
         const yAxisMap: YAxisMap = {};
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, yAxisMap }}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={{ ...minimalState, yAxisMap }}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -740,9 +795,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
 
@@ -758,9 +815,11 @@ describe('ChartLayoutContextProvider', () => {
           return null;
         };
         render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
       });
     });
@@ -774,15 +833,19 @@ describe('ChartLayoutContextProvider', () => {
         };
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(2);
       });
@@ -798,19 +861,23 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID is different now"
-            state={mockState1}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID is different now"
+              state={mockState1}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -824,19 +891,23 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID but this time different"
-            state={mockState2}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID but this time different"
+              state={mockState2}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -853,15 +924,19 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
@@ -876,15 +951,19 @@ describe('ChartLayoutContextProvider', () => {
 
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState2}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState2}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(2);
       });
@@ -898,19 +977,23 @@ describe('ChartLayoutContextProvider', () => {
         });
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID has changed but that should not affect xAxis hook"
-            state={mockState1}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID has changed but that should not affect xAxis hook"
+              state={mockState1}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect.soft(renderCount).toBe(1);
         const mockStateWithXAxisMap: CategoricalChartState = {
@@ -923,20 +1006,22 @@ describe('ChartLayoutContextProvider', () => {
           },
         };
         rerender(
-          <ChartLayoutContextProvider
-            {...mockContextProviderProps}
-            clipPathId="my mock ID has changed but that should not affect xAxis hook"
-            state={mockStateWithXAxisMap}
-          >
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
+          <RechartsStoreProvider>
+            <ChartLayoutContextProvider
+              {...mockContextProviderProps}
+              clipPathId="my mock ID has changed but that should not affect xAxis hook"
+              state={mockStateWithXAxisMap}
+            >
+              <MockConsumer />
+            </ChartLayoutContextProvider>
+          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
     });
   });
 
-  describe('PolarAngleAxisContext', () => {
+  describe('PolarAngleAxis state', () => {
     const exampleBaseAxisMap: BaseAxisMap = {
       m: { type: 'category', axisType: 'angleAxis' },
     };
@@ -955,14 +1040,16 @@ describe('ChartLayoutContextProvider', () => {
         return null;
       };
       render(
-        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
+        <RechartsStoreProvider>
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>
+        </RechartsStoreProvider>,
       );
     });
   });
 
-  describe('PolarRadiusAxisContext', () => {
+  describe('PolarRadiusAxis state', () => {
     const exampleBaseAxisMap: BaseAxisMap = {
       m: { type: 'category', axisType: 'radiusAxis' },
     };
@@ -981,9 +1068,11 @@ describe('ChartLayoutContextProvider', () => {
         return null;
       };
       render(
-        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
+        <RechartsStoreProvider>
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>
+        </RechartsStoreProvider>,
       );
     });
   });

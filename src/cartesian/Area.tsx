@@ -1,7 +1,7 @@
 /**
  * @fileOverview Area
  */
-import React, { PureComponent, SVGProps, useEffect } from 'react';
+import React, { PureComponent, SVGProps } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
@@ -14,33 +14,29 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { isNumber, uniqueId, interpolateNumber } from '../util/DataUtils';
+import { interpolateNumber, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import {
-  D3Scale,
-  LegendType,
-  TooltipType,
+  ActiveDotType,
+  AnimationDuration,
   AnimationTiming,
   ChartOffset,
   Coordinate,
+  D3Scale,
   DataKey,
-  TickItem,
-  AnimationDuration,
   LayoutType,
-  ActiveDotType,
+  LegendType,
+  TickItem,
+  TooltipType,
 } from '../util/types';
 import { filterProps, isDotProps } from '../util/ReactUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
-import {
-  addTooltipEntrySettings,
-  removeTooltipEntrySettings,
-  TooltipPayloadConfiguration,
-} from '../state/tooltipSlice';
-import { useAppDispatch } from '../state/hooks';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -152,18 +148,6 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       unit,
     },
   };
-}
-
-function SetTooltipEntrySettings(props: Props): null {
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    const tooltipEntrySettings: TooltipPayloadConfiguration = getTooltipEntrySettings(props);
-    dispatch(addTooltipEntrySettings(tooltipEntrySettings));
-    return () => {
-      dispatch(removeTooltipEntrySettings(tooltipEntrySettings));
-    };
-  }, [props, dispatch]);
-  return null;
 }
 
 export class Area extends PureComponent<Props, State> {
@@ -620,7 +604,7 @@ export class Area extends PureComponent<Props, State> {
       return (
         <>
           <SetAreaLegend {...this.props} />
-          <SetTooltipEntrySettings {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
       );
     }
@@ -640,7 +624,7 @@ export class Area extends PureComponent<Props, State> {
       <>
         <Layer className={layerClass}>
           <SetAreaLegend {...this.props} />
-          <SetTooltipEntrySettings {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (
             <defs>
               <clipPath id={`clipPath-${clipPathId}`}>

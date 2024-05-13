@@ -76,6 +76,7 @@
     "clsx": "^2.0.0",
     "decimal.js-light": "^2.4.1",
     "eventemitter3": "^4.0.1",
+    "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "react-is": "^16.10.2",
     "react-redux": "^8.1.3",
