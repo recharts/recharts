@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useContext } from 'react';
 import invariant from 'tiny-invariant';
 import find from 'lodash/find';
 import every from 'lodash/every';
+import { createSelector } from '@reduxjs/toolkit';
 import {
   CartesianViewBox,
   ChartOffset,
@@ -184,6 +185,11 @@ export const useMaybeXAxis = (xAxisId: string | number): XAxisProps | undefined 
   return xAxisMap?.[xAxisId];
 };
 
+export const selectArbitraryXAxis: (state: RechartsRootState) => XAxisProps | undefined = createSelector(
+  selectXAxisMap,
+  getAnyElementOfObject,
+);
+
 /**
  * This will find an arbitrary first XAxis. If there's exactly one it always returns that one
  * - but if there are multiple then it can return any of those.
@@ -192,10 +198,12 @@ export const useMaybeXAxis = (xAxisId: string | number): XAxisProps | undefined 
  *
  * @returns X axisOptions, or undefined - if there are no X axes
  */
-export const useArbitraryXAxis = (): XAxisProps | undefined => {
-  const xAxisMap = useAppSelector(selectXAxisMap);
-  return getAnyElementOfObject(xAxisMap);
-};
+export const useArbitraryXAxis = (): XAxisProps | undefined => useAppSelector(selectArbitraryXAxis);
+
+export const selectArbitraryYAxis: (state: RechartsRootState) => YAxisProps | undefined = createSelector(
+  selectYAxisMap,
+  getAnyElementOfObject,
+);
 
 /**
  * This will find an arbitrary first YAxis. If there's exactly one it always returns that one
@@ -205,10 +213,7 @@ export const useArbitraryXAxis = (): XAxisProps | undefined => {
  *
  * @returns Y axisOptions, or undefined - if there are no Y axes
  */
-export const useArbitraryYAxis = (): XAxisProps | undefined => {
-  const yAxisMap = useAppSelector(selectYAxisMap);
-  return getAnyElementOfObject(yAxisMap);
-};
+export const useArbitraryYAxis = (): YAxisProps | undefined => useAppSelector(selectArbitraryYAxis);
 
 /**
  * This hooks will:
@@ -268,16 +273,17 @@ export const useMaybePolarAngleAxis = (axisId: string | number): PolarAngleAxisP
   return polarAngleAxisMap?.[axisId];
 };
 
+export const selectArbitraryPolarAngleAxis: (state: RechartsRootState) => PolarAngleAxisProps | undefined =
+  createSelector(selectPolarAngleAxisMap, getAnyElementOfObject);
+
 /**
  * This will find an arbitrary first PolarAngleAxis. If there's exactly one it always returns that one
  * - but if there are multiple then it can return any of those.
  *
  * @returns polarAngle axisOptions, or undefined - if there are no PolarAngleAxes
  */
-export const useArbitraryPolarAngleAxis = (): PolarAngleAxisProps | undefined => {
-  const polarAngleAxisMap = useAppSelector(selectPolarAngleAxisMap);
-  return getAnyElementOfObject(polarAngleAxisMap);
-};
+export const useArbitraryPolarAngleAxis = (): PolarAngleAxisProps | undefined =>
+  useAppSelector(selectArbitraryPolarAngleAxis);
 
 /**
  * This either finds and returns Axis by the specified ID, or returns undefined if an axis with this ID does not exist.
@@ -290,16 +296,17 @@ export const useMaybePolarRadiusAxis = (axisId: string | number): PolarRadiusAxi
   return polarRadiusAxisMap?.[axisId];
 };
 
+export const selectArbitraryPolarRadiusAxis: (state: RechartsRootState) => PolarRadiusAxisProps | undefined =
+  createSelector(selectPolarRadiusAxisMap, getAnyElementOfObject);
+
 /**
  * This will find an arbitrary first PolarRadiusAxis . If there's exactly one it always returns that one
  * - but if there are multiple then it can return any of those.
  *
  * @returns polarAngle axisOptions, or undefined - if there are no PolarRadiusAxes
  */
-export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined => {
-  const polarRadiusAxisMap = useAppSelector(selectPolarRadiusAxisMap);
-  return getAnyElementOfObject(polarRadiusAxisMap);
-};
+export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined =>
+  useAppSelector(selectArbitraryPolarRadiusAxis);
 
 export const useViewBox = (): CartesianViewBox => {
   return useContext(ViewBoxContext);
@@ -323,6 +330,6 @@ export const useMargin = (): Margin => {
 
 export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
 
-const selectLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
+export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
 
-export const useChartLayout = () => useAppSelector(selectLayout);
+export const useChartLayout = () => useAppSelector(selectChartLayout);
