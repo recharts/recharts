@@ -55,6 +55,7 @@
   "lib/state/store.js",
   "lib/state/selectors.js",
   "lib/state/optionsSlice.js",
+  "lib/state/layoutSlice.js",
   "lib/state/hooks.js",
   "lib/state/chartDataSlice.js",
   "lib/state/axisSlice.js",

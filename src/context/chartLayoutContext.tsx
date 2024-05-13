@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setActiveTooltipIndex } from '../state/tooltipSlice';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
+import { setLayout } from '../state/layoutSlice';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const OffsetContext = createContext<ChartOffset>({});
@@ -32,7 +33,6 @@ export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
-export const LayoutContext = createContext<LayoutType>('horizontal');
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
 const UpdateIdContext = createContext<number>(0);
 
@@ -96,6 +96,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   dispatch(setYAxisMap(yAxisMap));
   dispatch(setPolarAngleAxisMap(angleAxisMap));
   dispatch(setPolarRadiusAxisMap(radiusAxisMap));
+  dispatch(setLayout(layout));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -111,25 +112,23 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    * See the test file for details.
    */
   return (
-    <LayoutContext.Provider value={layout}>
-      <UpdateIdContext.Provider value={updateId}>
-        <MarginContext.Provider value={margin}>
-          <LegendPayloadProvider>
-            <OffsetContext.Provider value={offset}>
-              <ViewBoxContext.Provider value={viewBox}>
-                <ClipPathIdContext.Provider value={clipPathId}>
-                  <ChartHeightContext.Provider value={height}>
-                    <ChartWidthContext.Provider value={width}>
-                      <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                    </ChartWidthContext.Provider>
-                  </ChartHeightContext.Provider>
-                </ClipPathIdContext.Provider>
-              </ViewBoxContext.Provider>
-            </OffsetContext.Provider>
-          </LegendPayloadProvider>
-        </MarginContext.Provider>
-      </UpdateIdContext.Provider>
-    </LayoutContext.Provider>
+    <UpdateIdContext.Provider value={updateId}>
+      <MarginContext.Provider value={margin}>
+        <LegendPayloadProvider>
+          <OffsetContext.Provider value={offset}>
+            <ViewBoxContext.Provider value={viewBox}>
+              <ClipPathIdContext.Provider value={clipPathId}>
+                <ChartHeightContext.Provider value={height}>
+                  <ChartWidthContext.Provider value={width}>
+                    <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                  </ChartWidthContext.Provider>
+                </ChartHeightContext.Provider>
+              </ClipPathIdContext.Provider>
+            </ViewBoxContext.Provider>
+          </OffsetContext.Provider>
+        </LegendPayloadProvider>
+      </MarginContext.Provider>
+    </UpdateIdContext.Provider>
   );
 };
 
@@ -324,4 +323,6 @@ export const useMargin = (): Margin => {
 
 export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
 
-export const useChartLayout = () => useContext(LayoutContext);
+const selectLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
+
+export const useChartLayout = () => useAppSelector(selectLayout);

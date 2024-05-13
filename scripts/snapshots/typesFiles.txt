@@ -55,6 +55,7 @@
   "types/state/store.d.ts",
   "types/state/selectors.d.ts",
   "types/state/optionsSlice.d.ts",
+  "types/state/layoutSlice.d.ts",
   "types/state/hooks.d.ts",
   "types/state/chartDataSlice.d.ts",
   "types/state/axisSlice.d.ts",

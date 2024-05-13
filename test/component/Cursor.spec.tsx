@@ -5,7 +5,6 @@ import { Cursor, CursorConnectedProps, CursorInternal, CursorProps } from '../..
 import { assertNotNull } from '../helper/assertNotNull';
 import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
-import { LayoutContext } from '../../src/context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
 
 const defaultProps: CursorProps = {
@@ -35,6 +34,11 @@ const connectedProps: CursorConnectedProps = {
 
 const preloadedState: Partial<RechartsRootState> = {
   options: { chartName: '' },
+};
+
+const preloadedRadialState: Partial<RechartsRootState> = {
+  ...preloadedState,
+  layout: { layoutType: 'radial' },
 };
 
 describe('Cursor', () => {
@@ -175,15 +179,13 @@ describe('Cursor', () => {
         },
       };
       const { container } = render(
-        <LayoutContext.Provider value="radial">
-          <RechartsStoreProvider preloadedState={preloadedState}>
-            <TooltipContextProvider value={radialTooltipContext}>
-              <svg width={100} height={100}>
-                <Cursor {...defaultProps} />
-              </svg>
-            </TooltipContextProvider>
-          </RechartsStoreProvider>
-        </LayoutContext.Provider>,
+        <RechartsStoreProvider preloadedState={preloadedRadialState}>
+          <TooltipContextProvider value={radialTooltipContext}>
+            <svg width={100} height={100}>
+              <Cursor {...defaultProps} />
+            </svg>
+          </TooltipContextProvider>
+        </RechartsStoreProvider>,
       );
       const cursor = container.querySelector('.recharts-sector');
       assertNotNull(cursor);
