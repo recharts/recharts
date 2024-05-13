@@ -59,6 +59,7 @@
   "types/state/hooks.d.ts",
   "types/state/chartDataSlice.d.ts",
   "types/state/axisSlice.d.ts",
+  "types/state/SetTooltipEntrySettings.d.ts",
   "types/state/RechartsStoreProvider.d.ts",
   "types/shape/Trapezoid.d.ts",
   "types/shape/Symbols.d.ts",

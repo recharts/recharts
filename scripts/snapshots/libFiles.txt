@@ -59,6 +59,7 @@
   "lib/state/hooks.js",
   "lib/state/chartDataSlice.js",
   "lib/state/axisSlice.js",
+  "lib/state/SetTooltipEntrySettings.js",
   "lib/state/RechartsStoreProvider.js",
   "lib/shape/Trapezoid.js",
   "lib/shape/Symbols.js",
