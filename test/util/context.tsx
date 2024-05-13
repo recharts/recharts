@@ -1,8 +1,6 @@
-import React, { ComponentType, ReactNode, useContext } from 'react';
+import React, { ComponentType, ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import {
-  XAxisContext,
-  YAxisContext,
   useChartHeight,
   useChartWidth,
   useClipPathId,
@@ -11,6 +9,7 @@ import {
 } from '../../src/context/chartLayoutContext';
 import { Customized } from '../../src/component/Customized';
 import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../../src/util/types';
+import { useAppSelector } from '../../src/state/hooks';
 
 type AllContextPropertiesMixed = {
   clipPathId: string | undefined;
@@ -45,8 +44,7 @@ export function testChartLayoutContext(
     function Spy() {
       const clipPathId = useClipPathId();
       const viewBox = useViewBox();
-      const xAxisMap = useContext(XAxisContext);
-      const yAxisMap = useContext(YAxisContext);
+      const { xAxisMap, yAxisMap } = useAppSelector(state => state.axis) || {};
       const width = useChartWidth();
       const height = useChartHeight();
       const offset = useOffset();

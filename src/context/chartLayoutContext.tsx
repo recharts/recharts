@@ -21,11 +21,11 @@ import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setActiveTooltipIndex } from '../state/tooltipSlice';
+import { setXAxisMap, setYAxisMap } from '../state/axisSlice';
+import { RechartsRootState } from '../state/store';
 
-export const XAxisContext = createContext<XAxisMap | undefined>(undefined);
-export const YAxisContext = createContext<YAxisMap | undefined>(undefined);
 export const PolarAngleAxisContext = createContext<PolarAngleAxisMap | undefined>(undefined);
 export const PolarRadiusAxisContext = createContext<PolarRadiusAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
@@ -94,6 +94,8 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
 
   const dispatch = useAppDispatch();
   dispatch(setActiveTooltipIndex(tooltipContextValue.index));
+  dispatch(setXAxisMap(xAxisMap));
+  dispatch(setYAxisMap(yAxisMap));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -113,25 +115,21 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       <UpdateIdContext.Provider value={updateId}>
         <MarginContext.Provider value={margin}>
           <LegendPayloadProvider>
-            <XAxisContext.Provider value={xAxisMap}>
-              <YAxisContext.Provider value={yAxisMap}>
-                <PolarAngleAxisContext.Provider value={angleAxisMap}>
-                  <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
-                    <OffsetContext.Provider value={offset}>
-                      <ViewBoxContext.Provider value={viewBox}>
-                        <ClipPathIdContext.Provider value={clipPathId}>
-                          <ChartHeightContext.Provider value={height}>
-                            <ChartWidthContext.Provider value={width}>
-                              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                            </ChartWidthContext.Provider>
-                          </ChartHeightContext.Provider>
-                        </ClipPathIdContext.Provider>
-                      </ViewBoxContext.Provider>
-                    </OffsetContext.Provider>
-                  </PolarRadiusAxisContext.Provider>
-                </PolarAngleAxisContext.Provider>
-              </YAxisContext.Provider>
-            </XAxisContext.Provider>
+            <PolarAngleAxisContext.Provider value={angleAxisMap}>
+              <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
+                <OffsetContext.Provider value={offset}>
+                  <ViewBoxContext.Provider value={viewBox}>
+                    <ClipPathIdContext.Provider value={clipPathId}>
+                      <ChartHeightContext.Provider value={height}>
+                        <ChartWidthContext.Provider value={width}>
+                          <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                        </ChartWidthContext.Provider>
+                      </ChartHeightContext.Provider>
+                    </ClipPathIdContext.Provider>
+                  </ViewBoxContext.Provider>
+                </OffsetContext.Provider>
+              </PolarRadiusAxisContext.Provider>
+            </PolarAngleAxisContext.Provider>
           </LegendPayloadProvider>
         </MarginContext.Provider>
       </UpdateIdContext.Provider>
@@ -151,6 +149,9 @@ function getKeysForDebug(object: Record<string, unknown>) {
   return `Available ids are: ${keys}.`;
 }
 
+const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
+const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
+
 /**
  * This either finds and returns Axis by the specified ID, or throws an exception if an axis with this ID does not exist.
  *
@@ -159,7 +160,7 @@ function getKeysForDebug(object: Record<string, unknown>) {
  * @throws Error if no axis with this ID exists
  */
 export const useXAxisOrThrow = (xAxisId: string | number): XAxisProps => {
-  const xAxisMap = useContext(XAxisContext);
+  const xAxisMap = useAppSelector(selectXAxisMap);
 
   invariant(
     xAxisMap != null,
@@ -180,7 +181,7 @@ export const useXAxisOrThrow = (xAxisId: string | number): XAxisProps => {
  * @returns axis configuration object, or undefined
  */
 export const useMaybeXAxis = (xAxisId: string | number): XAxisProps | undefined => {
-  const xAxisMap = useContext(XAxisContext);
+  const xAxisMap = useAppSelector(selectXAxisMap);
   return xAxisMap?.[xAxisId];
 };
 
@@ -193,7 +194,7 @@ export const useMaybeXAxis = (xAxisId: string | number): XAxisProps | undefined 
  * @returns X axisOptions, or undefined - if there are no X axes
  */
 export const useArbitraryXAxis = (): XAxisProps | undefined => {
-  const xAxisMap = useContext(XAxisContext);
+  const xAxisMap = useAppSelector(selectXAxisMap);
   return getAnyElementOfObject(xAxisMap);
 };
 
@@ -206,7 +207,7 @@ export const useArbitraryXAxis = (): XAxisProps | undefined => {
  * @returns Y axisOptions, or undefined - if there are no Y axes
  */
 export const useArbitraryYAxis = (): XAxisProps | undefined => {
-  const yAxisMap = useContext(YAxisContext);
+  const yAxisMap = useAppSelector(selectYAxisMap);
   return getAnyElementOfObject(yAxisMap);
 };
 
@@ -219,7 +220,7 @@ export const useArbitraryYAxis = (): XAxisProps | undefined => {
  * @returns Either Y axisOptions, or undefined if there are no Y axes
  */
 export const useYAxisWithFiniteDomainOrRandom = (): YAxisProps | undefined => {
-  const yAxisMap = useContext(YAxisContext);
+  const yAxisMap = useAppSelector(selectYAxisMap);
   const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
   return yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
 };
@@ -232,7 +233,7 @@ export const useYAxisWithFiniteDomainOrRandom = (): YAxisProps | undefined => {
  * @throws Error if no axis with this ID exists
  */
 export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
-  const yAxisMap = useContext(YAxisContext);
+  const yAxisMap = useAppSelector(selectYAxisMap);
 
   invariant(
     yAxisMap != null,
@@ -253,7 +254,7 @@ export const useYAxisOrThrow = (yAxisId: string | number): YAxisProps => {
  * @returns axis configuration object, or undefined
  */
 export const useMaybeYAxis = (yAxisId: string | number): YAxisProps | undefined => {
-  const yAxisMap = useContext(YAxisContext);
+  const yAxisMap = useAppSelector(selectYAxisMap);
   return yAxisMap?.[yAxisId];
 };
 

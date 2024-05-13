@@ -2,11 +2,13 @@ import { Action, combineReducers, configureStore, Dispatch } from '@reduxjs/tool
 import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
+import { axisReducer } from './axisSlice';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
   tooltip: tooltipReducer,
   chartData: chartDataReducer,
+  axis: axisReducer,
 });
 
 export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {
