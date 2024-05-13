@@ -23,11 +23,9 @@ import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setActiveTooltipIndex } from '../state/tooltipSlice';
-import { setXAxisMap, setYAxisMap } from '../state/axisSlice';
+import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 
-export const PolarAngleAxisContext = createContext<PolarAngleAxisMap | undefined>(undefined);
-export const PolarRadiusAxisContext = createContext<PolarRadiusAxisMap | undefined>(undefined);
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const OffsetContext = createContext<ChartOffset>({});
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
@@ -96,6 +94,8 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   dispatch(setActiveTooltipIndex(tooltipContextValue.index));
   dispatch(setXAxisMap(xAxisMap));
   dispatch(setYAxisMap(yAxisMap));
+  dispatch(setPolarAngleAxisMap(angleAxisMap));
+  dispatch(setPolarRadiusAxisMap(radiusAxisMap));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -115,21 +115,17 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       <UpdateIdContext.Provider value={updateId}>
         <MarginContext.Provider value={margin}>
           <LegendPayloadProvider>
-            <PolarAngleAxisContext.Provider value={angleAxisMap}>
-              <PolarRadiusAxisContext.Provider value={radiusAxisMap}>
-                <OffsetContext.Provider value={offset}>
-                  <ViewBoxContext.Provider value={viewBox}>
-                    <ClipPathIdContext.Provider value={clipPathId}>
-                      <ChartHeightContext.Provider value={height}>
-                        <ChartWidthContext.Provider value={width}>
-                          <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                        </ChartWidthContext.Provider>
-                      </ChartHeightContext.Provider>
-                    </ClipPathIdContext.Provider>
-                  </ViewBoxContext.Provider>
-                </OffsetContext.Provider>
-              </PolarRadiusAxisContext.Provider>
-            </PolarAngleAxisContext.Provider>
+            <OffsetContext.Provider value={offset}>
+              <ViewBoxContext.Provider value={viewBox}>
+                <ClipPathIdContext.Provider value={clipPathId}>
+                  <ChartHeightContext.Provider value={height}>
+                    <ChartWidthContext.Provider value={width}>
+                      <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                    </ChartWidthContext.Provider>
+                  </ChartHeightContext.Provider>
+                </ClipPathIdContext.Provider>
+              </ViewBoxContext.Provider>
+            </OffsetContext.Provider>
           </LegendPayloadProvider>
         </MarginContext.Provider>
       </UpdateIdContext.Provider>
@@ -151,6 +147,10 @@ function getKeysForDebug(object: Record<string, unknown>) {
 
 const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
 const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
+const selectPolarAngleAxisMap = (state: RechartsRootState): PolarAngleAxisMap | undefined =>
+  state.axis.polarAngleAxisMap;
+const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusAxisMap | undefined =>
+  state.axis.polarRadiusAxisMap;
 
 /**
  * This either finds and returns Axis by the specified ID, or throws an exception if an axis with this ID does not exist.
@@ -265,7 +265,7 @@ export const useMaybeYAxis = (yAxisId: string | number): YAxisProps | undefined 
  * @returns axis configuration object, or undefined
  */
 export const useMaybePolarAngleAxis = (axisId: string | number): PolarAngleAxisProps | undefined => {
-  const polarAngleAxisMap = useContext(PolarAngleAxisContext);
+  const polarAngleAxisMap = useAppSelector(selectPolarAngleAxisMap);
   return polarAngleAxisMap?.[axisId];
 };
 
@@ -276,7 +276,7 @@ export const useMaybePolarAngleAxis = (axisId: string | number): PolarAngleAxisP
  * @returns polarAngle axisOptions, or undefined - if there are no PolarAngleAxes
  */
 export const useArbitraryPolarAngleAxis = (): PolarAngleAxisProps | undefined => {
-  const polarAngleAxisMap = useContext(PolarAngleAxisContext);
+  const polarAngleAxisMap = useAppSelector(selectPolarAngleAxisMap);
   return getAnyElementOfObject(polarAngleAxisMap);
 };
 
@@ -287,7 +287,7 @@ export const useArbitraryPolarAngleAxis = (): PolarAngleAxisProps | undefined =>
  * @returns axis configuration object, or undefined
  */
 export const useMaybePolarRadiusAxis = (axisId: string | number): PolarRadiusAxisProps | undefined => {
-  const polarRadiusAxisMap = useContext(PolarRadiusAxisContext);
+  const polarRadiusAxisMap = useAppSelector(selectPolarRadiusAxisMap);
   return polarRadiusAxisMap?.[axisId];
 };
 
@@ -298,7 +298,7 @@ export const useMaybePolarRadiusAxis = (axisId: string | number): PolarRadiusAxi
  * @returns polarAngle axisOptions, or undefined - if there are no PolarRadiusAxes
  */
 export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined => {
-  const polarRadiusAxisMap = useContext(PolarRadiusAxisContext);
+  const polarRadiusAxisMap = useAppSelector(selectPolarRadiusAxisMap);
   return getAnyElementOfObject(polarRadiusAxisMap);
 };
 

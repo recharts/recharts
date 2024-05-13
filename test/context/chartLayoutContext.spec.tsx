@@ -1021,7 +1021,7 @@ describe('ChartLayoutContextProvider', () => {
     });
   });
 
-  describe('PolarAngleAxisContext', () => {
+  describe('PolarAngleAxis state', () => {
     const exampleBaseAxisMap: BaseAxisMap = {
       m: { type: 'category', axisType: 'angleAxis' },
     };
@@ -1040,14 +1040,16 @@ describe('ChartLayoutContextProvider', () => {
         return null;
       };
       render(
-        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
+        <RechartsStoreProvider>
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>
+        </RechartsStoreProvider>,
       );
     });
   });
 
-  describe('PolarRadiusAxisContext', () => {
+  describe('PolarRadiusAxis state', () => {
     const exampleBaseAxisMap: BaseAxisMap = {
       m: { type: 'category', axisType: 'radiusAxis' },
     };
@@ -1066,9 +1068,11 @@ describe('ChartLayoutContextProvider', () => {
         return null;
       };
       render(
-        <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
+        <RechartsStoreProvider>
+          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+            <MockConsumer />
+          </ChartLayoutContextProvider>
+        </RechartsStoreProvider>,
       );
     });
   });
