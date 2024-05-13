@@ -51,6 +51,7 @@ import {
   sunburstChartMouseHoverTooltipSelector,
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -626,7 +627,8 @@ describe('Tooltip visibility', () => {
       expect(tooltipPayload).toHaveLength(0);
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+      assertNotNull(chart);
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12345');
     });
@@ -654,7 +656,8 @@ describe('Tooltip visibility', () => {
       expect(tooltipPayload).toHaveLength(0);
 
       const chart = container.querySelector('.recharts-wrapper');
-      fireEvent.mouseOver(chart!, { clientX: 200, clientY: 200 });
+      assertNotNull(chart);
+      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
       expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
     });
