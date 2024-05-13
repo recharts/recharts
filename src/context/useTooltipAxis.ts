@@ -10,10 +10,10 @@ import { getBandSizeOfAxis, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppSelector } from '../state/hooks';
 import { XAxisProps, YAxisProps } from '../index';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { LayoutType } from '../util/types';
+import { BaseAxisProps, LayoutType } from '../util/types';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 
-const selectTooltipAxis = createSelector(
+export const selectTooltipAxis = createSelector(
   selectChartLayout,
   selectArbitraryXAxis,
   selectArbitraryYAxis,
@@ -25,7 +25,7 @@ const selectTooltipAxis = createSelector(
     yAxis: YAxisProps,
     angleAxis: PolarAngleAxisProps,
     radiusAxis: PolarRadiusAxisProps,
-  ) => {
+  ): BaseAxisProps => {
     if (layout === 'horizontal') {
       return xAxis;
     }
@@ -39,7 +39,7 @@ const selectTooltipAxis = createSelector(
   },
 );
 
-export const useTooltipAxis = () => useAppSelector(selectTooltipAxis);
+export const useTooltipAxis = (): BaseAxisProps => useAppSelector(selectTooltipAxis);
 
 export const useTooltipAxisBandSize = (): number | undefined => {
   const tooltipAxis = useTooltipAxis();
