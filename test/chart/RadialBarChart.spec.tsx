@@ -14,6 +14,21 @@ import {
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 
+function assertActiveShapeInteractions(container: HTMLElement) {
+  const sectorNodes = container.querySelectorAll('.recharts-sector');
+  expect(sectorNodes.length).toBeGreaterThanOrEqual(2);
+  const [sector1, sector2] = Array.from(sectorNodes);
+
+  fireEvent.mouseOver(sector1, { clientX: 200, clientY: 200 });
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
+
+  fireEvent.mouseOver(sector2, { clientX: 200, clientY: 200 });
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
+
+  fireEvent.mouseOut(sector2);
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(0);
+}
+
 describe('<RadialBarChart />', () => {
   const data = [
     { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8' },
@@ -256,12 +271,7 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-sector');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   test('Renders customized active bar when activeBar set to be a ReactElement', () => {
@@ -281,12 +291,7 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-sector');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
@@ -306,12 +311,7 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-sector');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
@@ -356,13 +356,7 @@ describe('<RadialBarChart />', () => {
       </RadialBarChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-sector');
-
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { clientX: 200, clientY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   describe('RadialBarChart layout context', () => {
