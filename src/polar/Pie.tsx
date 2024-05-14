@@ -578,9 +578,9 @@ export class Pie extends PureComponent<Props, State> {
   }
 
   renderSectorsWithAnimation() {
-    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
+    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
 
-    const { prevSectors, prevIsAnimationActive } = this.state;
+    const { prevSectors } = this.state;
 
     return (
       <Animate
@@ -590,7 +590,6 @@ export class Pie extends PureComponent<Props, State> {
         easing={animationEasing}
         from={{ t: 0 }}
         to={{ t: 1 }}
-        key={`pie-${animationId}-${prevIsAnimationActive}`}
         onAnimationStart={this.handleAnimationStart}
         onAnimationEnd={this.handleAnimationEnd}
       >
