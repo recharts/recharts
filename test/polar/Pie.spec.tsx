@@ -2,55 +2,47 @@ import React from 'react';
 import { vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LabelProps, Pie, PieChart, Sector, SectorProps, Surface } from '../../src';
+import { LabelProps, Pie, PieChart, Sector, SectorProps, Surface, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { PageData } from '../_data';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
 describe('<Pie />', () => {
   const sectors = [
-    {
-      cx: 250,
-      cy: 250,
-      innerRadius: 50,
-      outerRadius: 100,
-      startAngle: 0,
-      endAngle: 72,
-      name: 'A',
-      value: 40,
-    },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 0, endAngle: 72, name: 'A', value: 40 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 216, endAngle: 288 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 288, endAngle: 360 },
   ];
 
-  test('Render 5 sectors in a simple Pie', () => {
+  test('Render sectors in a simple Pie', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           cx={250}
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+      </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(sectors.length);
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
   });
 
   test('Render customized active sector when activeShape is set to be an element', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
@@ -58,18 +50,21 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+        <Tooltip />
+      </PieChart>,
     );
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
   test('Render customized active sector when activeShape is set to be a function', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
@@ -77,37 +72,43 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+        <Tooltip />
+      </PieChart>,
     );
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
 
     expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
   test('Render customized active sector when activeShape is set to be an object', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeShape={{ fill: '#ff7300' }}
+          activeShape={{ fill: '#ff7300', className: 'customized-active-shape' }}
           cx={250}
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+        <Tooltip />
+      </PieChart>,
     );
 
-    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(0);
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
+
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
   });
 
   test('Render customized active sector when inactiveShape is set to be an element', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
@@ -116,12 +117,18 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+        <Tooltip />
+      </PieChart>,
     );
-    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(4);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
+
+    expect(container.querySelectorAll('.customized-active-shape')).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(5);
   });
 
   test('Render customized inactive sector when inactiveShape is set to be a function', () => {
@@ -132,8 +139,8 @@ describe('<Pie />', () => {
     const renderInactiveShape = (props: PieSectorDataItem) => (
       <Sector {...props} fill="#ff7300" className="customized-inactive-shape" />
     );
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           activeShape={renderActiveShape}
@@ -142,39 +149,72 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+      </PieChart>,
     );
-    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(4);
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
+
+    expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(5);
   });
 
   test('Render customized inactive sector when inactiveShape is set to be an object', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
+    const { container, debug } = render(
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
-          activeShape={{ fill: '#ff7300' }}
-          inactiveShape={{ fill: '#ff7322' }}
+          fill="red"
+          activeShape={{ fill: 'green' }}
+          inactiveShape={{ fill: 'blue' }}
           cx={250}
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
-          dataKey="cy"
+          data={PageData}
+          dataKey="uv"
         />
-      </Surface>,
+        <Tooltip />
+      </PieChart>,
     );
+    const renderedSectors = container.querySelectorAll('.recharts-sector');
+    expect(renderedSectors).toHaveLength(PageData.length);
+    renderedSectors.forEach(s => {
+      expect(s.getAttribute('fill')).toBe('red');
+    });
 
     expect(container.querySelectorAll('.customized-inactive-shape')).toHaveLength(0);
+
+    showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
+
+    const renderedSectors2 = container.querySelectorAll('.recharts-sector');
+    expect(renderedSectors2).toHaveLength(PageData.length);
+    expect(renderedSectors2[0].getAttributeNames()).toEqual([
+      'cx',
+      'cy',
+      'name',
+      'fill',
+      'stroke',
+      'tabindex',
+      'class',
+      'd',
+      'role',
+    ]);
+    expect(renderedSectors2[0]).toHaveAttribute('fill', 'green');
+    expect(renderedSectors2[1]).toHaveAttribute('fill', 'blue');
+    expect(renderedSectors2[2]).toHaveAttribute('fill', 'blue');
+    expect(renderedSectors2[3]).toHaveAttribute('fill', 'blue');
+    expect(renderedSectors2[4]).toHaveAttribute('fill', 'blue');
+    expect(renderedSectors2[5]).toHaveAttribute('fill', 'blue');
   });
 
   test.each([{ data: undefined }, { data: [] }])(
     'when data is $data then activeShape function does not receive payload',
     ({ data }) => {
       const activeShape = vi.fn();
-      const { container, debug } = render(
+      render(
         <PieChart width={400} height={400}>
           <Pie
             isAnimationActive={false}
@@ -184,29 +224,13 @@ describe('<Pie />', () => {
             cy={250}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
-            dataKey="y"
+            dataKey="uv"
             data={data}
           />
+          <Tooltip />
         </PieChart>,
       );
       expect(activeShape).toHaveBeenCalledTimes(0);
-
-      showTooltip(container, pieChartMouseHoverTooltipSelector, debug);
-
-      expect(activeShape).toHaveBeenCalledTimes(1);
-      expect(activeShape).toHaveBeenCalledWith({
-        cx: 250,
-        cy: 250,
-        endAngle: 72,
-        innerRadius: 50,
-        name: 'A',
-        outerRadius: 100,
-        startAngle: 0,
-        stroke: undefined,
-        tabIndex: -1,
-        value: 40,
-      });
     },
   );
 
@@ -315,7 +339,6 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
           dataKey="this-key-does-not-exist-in-data"
           data={generateMockData(5, 0.603)}
         />

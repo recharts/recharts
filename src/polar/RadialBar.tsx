@@ -64,7 +64,7 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
   const baseProps = filterProps(others, false);
 
-  const { index: activeIndex } = useTooltipContext();
+  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -79,7 +79,7 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   return (
     <>
       {sectors.map((entry, i) => {
-        const isActive = activeShape && i === activeIndex;
+        const isActive = isTooltipActive && activeShape && i === activeIndex;
         const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
           // @ts-expect-error the types need a bit of attention
           onMouseEnterFromContext(entry, i, e);

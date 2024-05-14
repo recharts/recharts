@@ -141,7 +141,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   const { shape, activeShape } = allOtherScatterProps;
   const baseProps = filterProps(allOtherScatterProps, false);
 
-  const { index: activeIndex } = useTooltipContext();
+  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -156,7 +156,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   return (
     <>
       {points.map((entry, i) => {
-        const isActive = activeShape && activeIndex === i;
+        const isActive = isTooltipActive && activeShape && activeIndex === i;
         const option = isActive ? activeShape : shape;
         const symbolProps = { key: `symbol-${i}`, ...baseProps, ...entry };
 

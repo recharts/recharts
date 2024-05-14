@@ -14,7 +14,7 @@ export const doNotDisplayTooltip: TooltipContextValue = {
   payload: [],
   coordinate: { x: 0, y: 0 },
   active: false,
-  index: 0,
+  index: -1,
 };
 
 const TooltipContext = createContext<TooltipContextValue>(doNotDisplayTooltip);

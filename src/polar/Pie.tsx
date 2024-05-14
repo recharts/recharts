@@ -198,7 +198,7 @@ type PieSectorsProps = {
 function PieSectors(props: PieSectorsProps) {
   const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
-  const { index: activeIndex } = useTooltipContext();
+  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -212,7 +212,7 @@ function PieSectors(props: PieSectorsProps) {
 
   return sectors.map((entry, i) => {
     if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-    const isSectorActive = activeShape && i === activeIndex;
+    const isSectorActive = isTooltipActive && activeShape && i === activeIndex;
     const inactiveShape = activeIndex === -1 ? null : inactiveShapeProp;
     const sectorOptions = isSectorActive ? activeShape : inactiveShape;
     const sectorProps = {
