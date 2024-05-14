@@ -13,6 +13,17 @@ type DataType = {
   pv: number;
 };
 
+function assertActiveBarInteractions(container: HTMLElement) {
+  const chart = container.querySelector('.recharts-wrapper');
+  assertNotNull(chart);
+
+  fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
+  expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(1);
+
+  fireEvent.mouseOut(chart);
+  expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(0);
+}
+
 describe('<BarChart />', () => {
   const data: DataType[] = [
     { name: 'food', uv: 400, pv: 2400 },
@@ -169,13 +180,7 @@ describe('<BarChart />', () => {
       </div>,
     );
 
-    const chart = container.querySelector('.recharts-wrapper');
-    assertNotNull(chart);
-    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
-
-    vi.advanceTimersByTime(100);
-    const bar = container.querySelectorAll('.recharts-active-bar');
-    expect(bar).toHaveLength(1);
+    assertActiveBarInteractions(container);
   });
 
   test('Renders customized active bar when activeBar set to be a ReactElement', () => {
@@ -189,13 +194,7 @@ describe('<BarChart />', () => {
       </div>,
     );
 
-    const chart = container.querySelector('.recharts-wrapper');
-    assertNotNull(chart);
-    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
-    vi.advanceTimersByTime(100);
-
-    const bar = container.querySelectorAll('.recharts-active-bar');
-    expect(bar).toHaveLength(1);
+    assertActiveBarInteractions(container);
   });
 
   test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
@@ -209,13 +208,7 @@ describe('<BarChart />', () => {
       </div>,
     );
 
-    const chart = container.querySelector('.recharts-wrapper');
-    assertNotNull(chart);
-    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
-
-    vi.advanceTimersByTime(100);
-    const bar = container.querySelectorAll('.recharts-active-bar');
-    expect(bar).toHaveLength(1);
+    assertActiveBarInteractions(container);
   });
 
   test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
@@ -248,13 +241,7 @@ describe('<BarChart />', () => {
       </div>,
     );
 
-    const chart = container.querySelector('.recharts-wrapper');
-    assertNotNull(chart);
-    fireEvent.mouseOver(chart, { clientX: 100, clientY: 100 });
-
-    vi.advanceTimersByTime(100);
-    const bar = container.querySelectorAll('.recharts-active-bar');
-    expect(bar).toHaveLength(1);
+    assertActiveBarInteractions(container);
   });
 
   test('Render empty when data is empty', () => {
@@ -266,7 +253,7 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('path')).toHaveLength(0);
   });
 
-  test('Render customized shapem when shape is set to be a react element', () => {
+  test('Render customized shape when shape is set to be a react element', () => {
     const Shape = (props: any) => {
       const { x, y } = props;
 
@@ -280,7 +267,7 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('.customized-shape')).toHaveLength(4);
   });
 
-  test('Render customized shapem when shape is set to be a function', () => {
+  test('Render customized shape when shape is set to be a function', () => {
     const renderShape = (props: BarProps): React.ReactElement => {
       const { x, y } = props;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { Area, AreaChart, ComposedChart, Line, LineChart, Radar, RadarChart, Tooltip } from '../../../src';
 import { PageData } from '../../_data';
 import { showTooltip } from './tooltipTestHelpers';
@@ -27,7 +27,7 @@ describe('ActiveDot', () => {
         </AreaChart>,
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -43,6 +43,9 @@ describe('ActiveDot', () => {
       expect(circle.getAttribute('fill')).toEqual('#3182bd');
       expect(circle.getAttribute('stroke-width')).toEqual('2');
       expect(circle.getAttribute('stroke')).toEqual('#fff');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should clone custom Dot element and inject extra sneaky props', () => {
@@ -54,7 +57,7 @@ describe('ActiveDot', () => {
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
-      showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -86,6 +89,9 @@ describe('ActiveDot', () => {
       expect(customElement.getAttribute('stroke')).toEqual('#fff');
       expect(customElement.getAttribute('payload')).toEqual('[object Object]'); // sic!
       expect(customElement.getAttribute('value')).toEqual('0,300');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
 
     it('should render custom Dot component, give it props, and render what it returned', () => {
@@ -102,7 +108,7 @@ describe('ActiveDot', () => {
       );
       expect(spy).toHaveBeenCalledTimes(0);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(container.querySelector('.recharts-active-dot')).toBeVisible();
       expect(spy).toHaveBeenCalledWith({
@@ -122,6 +128,9 @@ describe('ActiveDot', () => {
         strokeWidth: 2,
         value: [0, 300],
       });
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
   });
 
@@ -134,7 +143,7 @@ describe('ActiveDot', () => {
         </LineChart>,
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -150,6 +159,9 @@ describe('ActiveDot', () => {
       expect(circle.getAttribute('fill')).toEqual('#3182bd');
       expect(circle.getAttribute('stroke-width')).toEqual('2');
       expect(circle.getAttribute('stroke')).toEqual('#fff');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should clone custom Dot element and inject extra sneaky props', () => {
@@ -161,7 +173,7 @@ describe('ActiveDot', () => {
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
-      showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -193,6 +205,9 @@ describe('ActiveDot', () => {
       expect(customElement.getAttribute('stroke')).toEqual('#fff');
       expect(customElement.getAttribute('payload')).toEqual('[object Object]'); // sic!
       expect(customElement.getAttribute('value')).toEqual('300');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should render custom Dot component, give it props, and render what it returned', () => {
@@ -209,7 +224,7 @@ describe('ActiveDot', () => {
       );
       expect(spy).toHaveBeenCalledTimes(0);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, lineChartMouseHoverTooltipSelector, debug);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(container.querySelector('.recharts-active-dot')).toBeVisible();
       expect(spy).toHaveBeenCalledWith({
@@ -229,6 +244,9 @@ describe('ActiveDot', () => {
         strokeWidth: 2,
         value: 300,
       });
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
   });
 
@@ -241,7 +259,7 @@ describe('ActiveDot', () => {
         </ComposedChart>,
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -257,6 +275,9 @@ describe('ActiveDot', () => {
       expect(circle.getAttribute('fill')).toEqual('#3182bd');
       expect(circle.getAttribute('stroke-width')).toEqual('2');
       expect(circle.getAttribute('stroke')).toEqual('#fff');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should clone custom Dot element and inject extra sneaky props', () => {
@@ -268,7 +289,7 @@ describe('ActiveDot', () => {
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
-      showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -300,6 +321,9 @@ describe('ActiveDot', () => {
       expect(customElement.getAttribute('stroke')).toEqual('#fff');
       expect(customElement.getAttribute('payload')).toEqual('[object Object]'); // sic!
       expect(customElement.getAttribute('value')).toEqual('300');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
 
     it('should render custom Dot component, give it props, and render what it returned', () => {
@@ -316,7 +340,7 @@ describe('ActiveDot', () => {
       );
       expect(spy).toHaveBeenCalledTimes(0);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, composedChartMouseHoverTooltipSelector, debug);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(container.querySelector('.recharts-active-dot')).toBeVisible();
       expect(spy).toHaveBeenCalledWith({
@@ -336,6 +360,9 @@ describe('ActiveDot', () => {
         strokeWidth: 2,
         value: 300,
       });
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
   });
 
@@ -348,7 +375,7 @@ describe('ActiveDot', () => {
         </RadarChart>,
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -364,6 +391,9 @@ describe('ActiveDot', () => {
       expect(circle.getAttribute('r')).toEqual('4');
       expect(circle.getAttribute('stroke-width')).toEqual('2');
       expect(circle.getAttribute('stroke')).toEqual('#fff');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should clone custom Dot element and inject extra sneaky props', () => {
@@ -375,7 +405,7 @@ describe('ActiveDot', () => {
       );
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       expect(container.querySelector('[data-testid="my-custom-dot"]')).not.toBeInTheDocument();
-      showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
       const activeDot = container.querySelector('.recharts-active-dot');
       expect(activeDot).toBeVisible();
       expect(activeDot.getAttributeNames()).toEqual(['class']);
@@ -406,6 +436,9 @@ describe('ActiveDot', () => {
       expect(customElement.getAttribute('stroke')).toEqual('#fff');
       expect(customElement.getAttribute('payload')).toEqual('[object Object]'); // sic!
       expect(customElement.getAttribute('value')).toEqual('189');
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(activeDot).not.toBeVisible();
     });
 
     it('should render custom Dot component, give it props, and render what it returned', () => {
@@ -422,7 +455,7 @@ describe('ActiveDot', () => {
       );
       expect(spy).toHaveBeenCalledTimes(0);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
-      showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
+      const tooltipTrigger = showTooltip(container, radarChartMouseHoverTooltipSelector, debug);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(container.querySelector('.recharts-active-dot')).toBeVisible();
       expect(spy).toHaveBeenCalledWith({
@@ -441,6 +474,9 @@ describe('ActiveDot', () => {
         strokeWidth: 2,
         value: 189,
       });
+
+      fireEvent.mouseOut(tooltipTrigger);
+      expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
     });
   });
 });

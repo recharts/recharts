@@ -2,16 +2,16 @@ import React from 'react';
 import { vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import {
-  ScatterChart,
-  Scatter,
   CartesianGrid,
+  Legend,
+  Scatter,
+  ScatterChart,
+  Symbols,
+  SymbolsProps,
   Tooltip,
   XAxis,
   YAxis,
   ZAxis,
-  Legend,
-  Symbols,
-  SymbolsProps,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 
@@ -92,6 +92,20 @@ describe('ScatterChart of three dimension data', () => {
   });
 });
 
+function assertActiveShapeInteractions(container: HTMLElement) {
+  const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
+  expect(sectorNodes.length).toBeGreaterThanOrEqual(2);
+  const [sector1, sector2] = Array.from(sectorNodes);
+  fireEvent.mouseOver(sector1, { pageX: 200, pageY: 200 });
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
+
+  fireEvent.mouseOver(sector2, { pageX: 200, pageY: 200 });
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(1);
+
+  fireEvent.mouseOut(sector2);
+  expect(container.querySelectorAll('.recharts-active-shape')).toHaveLength(0);
+}
+
 describe('ScatterChart of two dimension data', () => {
   const data = [
     { x: 100, y: 200, z: 200 },
@@ -136,12 +150,7 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   test('Renders customized active shape when activeShape set to be an object as symbols props', () => {
@@ -160,12 +169,7 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
-
-    const activeSector = container.querySelectorAll('.triangle-symbols-type');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
   test('Renders customized active shape when activeShape set to be a function', () => {
@@ -184,15 +188,10 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
-  test('Renders customized active bar when activeBar set to be a ReactElement', () => {
+  test('Renders customized active shape when activeShape set to be a ReactElement', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -202,15 +201,10 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
-  test('Renders customized active bar when activeBar is set to be a truthy boolean', () => {
+  test('Renders customized active shape when activeShape is set to be a truthy boolean', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -220,15 +214,10 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    const sectorNodes = container.querySelectorAll('.recharts-scatter-symbol');
-    const [sector] = Array.from(sectorNodes);
-    fireEvent.mouseOver(sector, { pageX: 200, pageY: 200 });
-
-    const activeSector = container.querySelectorAll('.recharts-active-shape');
-    expect(activeSector).toHaveLength(1);
+    assertActiveShapeInteractions(container);
   });
 
-  test('Does not render customized active bar when activeBar set to be a falsy boolean', () => {
+  test('Does not render customized active shape when activeShape set to be a falsy boolean', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />

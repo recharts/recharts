@@ -245,7 +245,7 @@ function BarRectangles(props: BarRectanglesProps) {
   const baseProps = filterProps(rest, false);
   const { data, shape, dataKey, activeBar } = props;
 
-  const { index: activeIndex } = useTooltipContext();
+  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -264,7 +264,7 @@ function BarRectangles(props: BarRectanglesProps) {
   return (
     <>
       {data.map((entry, i) => {
-        const isActive = activeBar && i === activeIndex;
+        const isActive = isTooltipActive && activeBar && i === activeIndex;
         const option = isActive ? activeBar : shape;
         const barRectangleProps = {
           ...baseProps,
