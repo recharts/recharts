@@ -12,6 +12,8 @@ import {
 import { AxisStackGroups } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { TooltipPayloadType } from '../context/tooltipContext';
+import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
+import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 
 export type AxisMap = {
   [axisId: string]: BaseAxisProps;
@@ -85,3 +87,20 @@ export interface CategoricalChartState {
 }
 
 export type TooltipTrigger = 'hover' | 'click';
+
+export type AxisObj = {
+  xAxis?: XAxisProps;
+  xAxisTicks?: Array<TickItem>;
+
+  yAxis?: YAxisProps;
+  yAxisTicks?: Array<TickItem>;
+
+  zAxis?: ZAxisProps;
+  zAxisTicks?: Array<TickItem>;
+
+  angleAxis?: AngleAxisProps;
+  angleAxisTicks?: Array<TickItem>;
+
+  radiusAxis?: RadiusAxisProps;
+  radiusAxisTicks?: Array<TickItem>;
+};

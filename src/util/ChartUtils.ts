@@ -47,6 +47,7 @@ import {
 } from './types';
 import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
+import { AxisObj } from '../chart/types';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -66,6 +67,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
 
   return defaultValue;
 }
+
 /**
  * Get domain of data by key.
  * @param  {Array}   data      The data displayed in the chart
@@ -1379,4 +1381,16 @@ export const isAxisLTR = (axisMap: XAxisMap) => {
   // If there are any cases of reversed=true, then the chart is right-to-left (returning false).
   // Otherwise, the chart is left-to-right (returning true)
   return !axes.some(({ reversed }) => reversed);
+};
+
+// Determine the size of the axis, used for calculation of relative bar sizes
+export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
+  if (axisName === 'xAxis') {
+    return axisObj[axisName].width;
+  }
+  if (axisName === 'yAxis') {
+    return axisObj[axisName].height;
+  }
+  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
+  return undefined;
 };

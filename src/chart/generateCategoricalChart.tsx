@@ -37,6 +37,7 @@ import {
   getBandSizeOfAxis,
   getBarPosition,
   getBarSizeList,
+  getCartesianAxisSize,
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
@@ -78,12 +79,10 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, CategoricalChartState, TooltipTrigger } from './types';
+import { AxisMap, AxisObj, CategoricalChartState, TooltipTrigger } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
-import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
-import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
@@ -840,35 +839,6 @@ export interface CategoricalChartProps {
   role?: string;
   tabIndex?: number;
 }
-
-type AxisObj = {
-  xAxis?: XAxisProps;
-  xAxisTicks?: Array<TickItem>;
-
-  yAxis?: YAxisProps;
-  yAxisTicks?: Array<TickItem>;
-
-  zAxis?: ZAxisProps;
-  zAxisTicks?: Array<TickItem>;
-
-  angleAxis?: AngleAxisProps;
-  angleAxisTicks?: Array<TickItem>;
-
-  radiusAxis?: RadiusAxisProps;
-  radiusAxisTicks?: Array<TickItem>;
-};
-
-// Determine the size of the axis, used for calculation of relative bar sizes
-const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
-  if (axisName === 'xAxis') {
-    return axisObj[axisName].width;
-  }
-  if (axisName === 'yAxis') {
-    return axisObj[axisName].height;
-  }
-  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
-  return undefined;
-};
 
 export const generateCategoricalChart = ({
   chartName,
