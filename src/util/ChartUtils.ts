@@ -756,7 +756,7 @@ export const checkDomainOfScale = (scale: any) => {
   }
 };
 
-export const findPositionOfBar = (barPosition: any[], child: ReactNode) => {
+export const findPositionOfBar = (barPosition: ReadonlyArray<BarPosition>, child: ReactNode) => {
   if (!barPosition) {
     return null;
   }
