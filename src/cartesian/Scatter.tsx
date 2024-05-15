@@ -17,7 +17,7 @@ import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
-import { getValueByDataKey, getCateCoordinateOfLine } from '../util/ChartUtils';
+import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp } from '../util/ChartUtils';
 import {
   LegendType,
   AnimationTiming,
@@ -44,6 +44,8 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
+import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 interface ScattterPointNode {
   x?: number | string;
@@ -57,6 +59,7 @@ export interface ScatterPointItem {
   size?: number;
   node?: ScattterPointNode;
   payload?: any;
+  tooltipPayload?: ReadonlyArray<TooltipPayload>;
 }
 
 export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
@@ -103,13 +106,13 @@ export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & Sca
 
 interface State {
   isAnimationFinished?: boolean;
-  prevPoints?: ScatterPointItem[];
-  curPoints?: ScatterPointItem[];
+  prevPoints?: ReadonlyArray<ScatterPointItem>;
+  curPoints?: ReadonlyArray<ScatterPointItem>;
   prevAnimationId?: number;
 }
 
 type ScatterComposedData = ChartOffset & {
-  points: ScatterPointItem[];
+  points: ReadonlyArray<ScatterPointItem>;
 };
 
 const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
@@ -192,6 +195,24 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, points, stroke, strokeWidth, fill, name, hide } = props;
+  return {
+    dataDefinedOnItem: points.map((p: ScatterPointItem) => p.tooltipPayload),
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: props.tooltipType,
+      color: fill,
+      unit: '', // why doesn't Scatter support unit?
+    },
+  };
+}
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -249,12 +270,13 @@ export class Scatter extends PureComponent<Props, State> {
     const defaultZ = defaultRangeZ && defaultRangeZ[0];
     const xBandSize = (xAxis.scale as any).bandwidth ? (xAxis.scale as any).bandwidth() : 0;
     const yBandSize = (yAxis.scale as any).bandwidth ? (yAxis.scale as any).bandwidth() : 0;
-    const points = displayedData.map((entry, index) => {
+    const points: ReadonlyArray<ScatterPointItem> = displayedData.map((entry, index): ScatterPointItem => {
       const x = getValueByDataKey(entry, xAxisDataKey);
       const y = getValueByDataKey(entry, yAxisDataKey);
       const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
-      const tooltipPayload = [
+      const tooltipPayload: Array<TooltipPayloadEntry> = [
         {
+          // @ts-expect-error name prop should not have dataKey in it
           name: isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
           unit: xAxis.unit || '',
           value: x,
@@ -263,6 +285,7 @@ export class Scatter extends PureComponent<Props, State> {
           type: tooltipType,
         },
         {
+          // @ts-expect-error name prop should not have dataKey in it
           name: isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
           unit: yAxis.unit || '',
           value: y,
@@ -274,6 +297,7 @@ export class Scatter extends PureComponent<Props, State> {
 
       if (z !== '-') {
         tooltipPayload.push({
+          // @ts-expect-error name prop should not have dataKey in it
           name: zAxis.name || zAxis.dataKey,
           unit: zAxis.unit || '',
           value: z,
@@ -490,7 +514,12 @@ export class Scatter extends PureComponent<Props, State> {
   render() {
     const { hide, points, line, className, xAxis, yAxis, left, top, width, height, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
-      return <SetScatterLegend {...this.props} />;
+      return (
+        <>
+          <SetScatterLegend {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        </>
+      );
     }
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
@@ -502,6 +531,7 @@ export class Scatter extends PureComponent<Props, State> {
     return (
       <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
         <SetScatterLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {needClipX || needClipY ? (
           <defs>
             <clipPath id={`clipPath-${clipPathId}`}>
