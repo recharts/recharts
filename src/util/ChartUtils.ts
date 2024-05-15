@@ -47,6 +47,7 @@ import {
 } from './types';
 import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
+import { AxisObj } from '../chart/types';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -66,6 +67,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
 
   return defaultValue;
 }
+
 /**
  * Get domain of data by key.
  * @param  {Array}   data      The data displayed in the chart
@@ -265,23 +267,25 @@ export const getBarSizeList = ({
   return result;
 };
 
+export type BarPositionPosition = {
+  /**
+   * Offset is returned always from zero position.
+   * So in a way it's "absolute".
+   *
+   * NOT inbetween bars, but always from zero.
+   */
+  offset: number;
+  /**
+   * Size of the bar.
+   * This will be usually a number.
+   * But if the input data is not well formed, undefined or NaN will be on the output too.
+   */
+  size: number | undefined | typeof NaN;
+};
+
 export type BarPosition = {
   item: ReactElement;
-  position: {
-    /**
-     * Offset is returned always from zero position.
-     * So in a way it's "absolute".
-     *
-     * NOT inbetween bars, but always from zero.
-     */
-    offset: number;
-    /**
-     * Size of the bar.
-     * This will be usually a number.
-     * But if the input data is not well formed, undefined or NaN will be on the output too.
-     */
-    size: number | undefined | typeof NaN;
-  };
+  position: BarPositionPosition;
 };
 
 /**
@@ -754,7 +758,10 @@ export const checkDomainOfScale = (scale: any) => {
   }
 };
 
-export const findPositionOfBar = (barPosition: any[], child: ReactNode) => {
+export const findPositionOfBar = (
+  barPosition: ReadonlyArray<BarPosition>,
+  child: ReactNode,
+): BarPositionPosition | null => {
   if (!barPosition) {
     return null;
   }
@@ -1247,7 +1254,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  */
 export const getBandSizeOfAxis = (
   axis?: BaseAxisProps,
-  ticks?: Array<TickItem>,
+  ticks?: ReadonlyArray<TickItem>,
   isBar?: boolean,
 ): number | undefined => {
   // @ts-expect-error we need to rethink scale type
@@ -1380,3 +1387,72 @@ export const isAxisLTR = (axisMap: XAxisMap) => {
   // Otherwise, the chart is left-to-right (returning true)
   return !axes.some(({ reversed }) => reversed);
 };
+
+// Determine the size of the axis, used for calculation of relative bar sizes
+export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
+  if (axisName === 'xAxis') {
+    return axisObj[axisName].width;
+  }
+  if (axisName === 'yAxis') {
+    return axisObj[axisName].height;
+  }
+  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
+  return undefined;
+};
+
+export function getBarPositions({
+  axisObj,
+  hasBar,
+  itemIsBar,
+  childMaxBarSize,
+  globalMaxBarSize,
+  cateTicks,
+  cateAxis,
+  barSize,
+  barGap,
+  barCategoryGap,
+  cateAxisName,
+  bandSize,
+  stackGroups,
+  cateAxisId,
+}: {
+  axisObj: AxisObj;
+  cateAxisId: any;
+  hasBar: boolean;
+  itemIsBar: boolean;
+  childMaxBarSize: any;
+  globalMaxBarSize: number;
+  cateAxis: BaseAxisProps;
+  cateTicks: ReadonlyArray<TickItem>;
+  cateAxisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+  barSize: number | string | undefined;
+  barGap: number | string | undefined;
+  barCategoryGap: number | string | undefined;
+  bandSize: number | undefined;
+  stackGroups: AxisStackGroups | undefined;
+}): ReadonlyArray<BarPosition> {
+  let barPosition: ReadonlyArray<BarPosition> = [];
+  const sizeList =
+    hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
+
+  if (itemIsBar) {
+    // If it is bar, calculate the position of bar
+    const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+    const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
+    barPosition = getBarPosition({
+      barGap,
+      barCategoryGap,
+      bandSize: barBandSize !== bandSize ? barBandSize : bandSize,
+      sizeList: sizeList[cateAxisId],
+      maxBarSize,
+    });
+
+    if (barBandSize !== bandSize) {
+      barPosition = barPosition.map(pos => ({
+        ...pos,
+        position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
+      }));
+    }
+  }
+  return barPosition;
+}

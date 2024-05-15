@@ -15,6 +15,8 @@ import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
+  BarPosition,
+  BarPositionPosition,
   findPositionOfBar,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
@@ -349,7 +351,7 @@ export class Bar extends PureComponent<Props, State> {
   }: {
     props: Props;
     item: ReactElement;
-    barPosition: any;
+    barPosition: ReadonlyArray<BarPosition>;
     bandSize: number;
     xAxis: InternalBarProps['xAxis'];
     yAxis: InternalBarProps['yAxis'];
@@ -360,7 +362,7 @@ export class Bar extends PureComponent<Props, State> {
     offset: ChartOffset;
     displayedData: any[];
   }): BarComposedData => {
-    const pos = findPositionOfBar(barPosition, item);
+    const pos: BarPositionPosition | null = findPositionOfBar(barPosition, item);
     if (!pos) {
       return null;
     }

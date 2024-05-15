@@ -35,8 +35,7 @@ import {
   BarPosition,
   calculateActiveTickIndex,
   getBandSizeOfAxis,
-  getBarPosition,
-  getBarSizeList,
+  getBarPositions,
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
@@ -78,12 +77,10 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, CategoricalChartState, TooltipTrigger } from './types';
+import { AxisMap, AxisObj, CategoricalChartState, TooltipTrigger } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
-import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
-import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
@@ -841,35 +838,6 @@ export interface CategoricalChartProps {
   tabIndex?: number;
 }
 
-type AxisObj = {
-  xAxis?: XAxisProps;
-  xAxisTicks?: Array<TickItem>;
-
-  yAxis?: YAxisProps;
-  yAxisTicks?: Array<TickItem>;
-
-  zAxis?: ZAxisProps;
-  zAxisTicks?: Array<TickItem>;
-
-  angleAxis?: AngleAxisProps;
-  angleAxisTicks?: Array<TickItem>;
-
-  radiusAxis?: RadiusAxisProps;
-  radiusAxisTicks?: Array<TickItem>;
-};
-
-// Determine the size of the axis, used for calculation of relative bar sizes
-const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
-  if (axisName === 'xAxis') {
-    return axisObj[axisName].width;
-  }
-  if (axisName === 'yAxis') {
-    return axisObj[axisName].height;
-  }
-  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
-  return undefined;
-};
-
 export const generateCategoricalChart = ({
   chartName,
   GraphicalChild,
@@ -934,29 +902,23 @@ export const generateCategoricalChart = ({
         getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-      let barPosition: ReadonlyArray<BarPosition> = [];
-      const sizeList =
-        hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
+      const barPosition: ReadonlyArray<BarPosition> = getBarPositions({
+        axisObj,
+        hasBar,
+        itemIsBar,
+        childMaxBarSize,
+        globalMaxBarSize,
+        cateTicks,
+        cateAxis,
+        barSize,
+        barGap,
+        barCategoryGap,
+        cateAxisName,
+        bandSize,
+        stackGroups,
+        cateAxisId,
+      });
 
-      if (itemIsBar) {
-        // If it is bar, calculate the position of bar
-        const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-        const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
-        barPosition = getBarPosition({
-          barGap,
-          barCategoryGap,
-          bandSize: barBandSize !== bandSize ? barBandSize : bandSize,
-          sizeList: sizeList[cateAxisId],
-          maxBarSize,
-        });
-
-        if (barBandSize !== bandSize) {
-          barPosition = barPosition.map(pos => ({
-            ...pos,
-            position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
-          }));
-        }
-      }
       // @ts-expect-error we should stop reading data from ReactElements
       const composedFn = item && item.type && item.type.getComposedData;
 
