@@ -35,9 +35,7 @@ import {
   BarPosition,
   calculateActiveTickIndex,
   getBandSizeOfAxis,
-  getBarPosition,
-  getBarSizeList,
-  getCartesianAxisSize,
+  getBarPositions,
   getDomainOfDataByKey,
   getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
@@ -904,29 +902,23 @@ export const generateCategoricalChart = ({
         getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-      let barPosition: ReadonlyArray<BarPosition> = [];
-      const sizeList =
-        hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
+      const barPosition: ReadonlyArray<BarPosition> = getBarPositions({
+        axisObj,
+        hasBar,
+        itemIsBar,
+        childMaxBarSize,
+        globalMaxBarSize,
+        cateTicks,
+        cateAxis,
+        barSize,
+        barGap,
+        barCategoryGap,
+        cateAxisName,
+        bandSize,
+        stackGroups,
+        cateAxisId,
+      });
 
-      if (itemIsBar) {
-        // If it is bar, calculate the position of bar
-        const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-        const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
-        barPosition = getBarPosition({
-          barGap,
-          barCategoryGap,
-          bandSize: barBandSize !== bandSize ? barBandSize : bandSize,
-          sizeList: sizeList[cateAxisId],
-          maxBarSize,
-        });
-
-        if (barBandSize !== bandSize) {
-          barPosition = barPosition.map(pos => ({
-            ...pos,
-            position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
-          }));
-        }
-      }
       // @ts-expect-error we should stop reading data from ReactElements
       const composedFn = item && item.type && item.type.getComposedData;
 

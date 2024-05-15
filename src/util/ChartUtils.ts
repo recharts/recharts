@@ -1249,7 +1249,7 @@ export const parseSpecifiedDomain = (specifiedDomain: any, dataDomain: any, allo
  */
 export const getBandSizeOfAxis = (
   axis?: BaseAxisProps,
-  ticks?: Array<TickItem>,
+  ticks?: ReadonlyArray<TickItem>,
   isBar?: boolean,
 ): number | undefined => {
   // @ts-expect-error we need to rethink scale type
@@ -1394,3 +1394,60 @@ export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxi
   // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
   return undefined;
 };
+
+export function getBarPositions({
+  axisObj,
+  hasBar,
+  itemIsBar,
+  childMaxBarSize,
+  globalMaxBarSize,
+  cateTicks,
+  cateAxis,
+  barSize,
+  barGap,
+  barCategoryGap,
+  cateAxisName,
+  bandSize,
+  stackGroups,
+  cateAxisId,
+}: {
+  axisObj: AxisObj;
+  cateAxisId: any;
+  hasBar: boolean;
+  itemIsBar: boolean;
+  childMaxBarSize: any;
+  globalMaxBarSize: number;
+  cateAxis: BaseAxisProps;
+  cateTicks: ReadonlyArray<TickItem>;
+  cateAxisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+  barSize: number | string | undefined;
+  barGap: number | string | undefined;
+  barCategoryGap: number | string | undefined;
+  bandSize: number | undefined;
+  stackGroups: AxisStackGroups | undefined;
+}): ReadonlyArray<BarPosition> {
+  let barPosition: ReadonlyArray<BarPosition> = [];
+  const sizeList =
+    hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
+
+  if (itemIsBar) {
+    // If it is bar, calculate the position of bar
+    const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+    const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
+    barPosition = getBarPosition({
+      barGap,
+      barCategoryGap,
+      bandSize: barBandSize !== bandSize ? barBandSize : bandSize,
+      sizeList: sizeList[cateAxisId],
+      maxBarSize,
+    });
+
+    if (barBandSize !== bandSize) {
+      barPosition = barPosition.map(pos => ({
+        ...pos,
+        position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
+      }));
+    }
+  }
+  return barPosition;
+}
