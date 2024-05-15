@@ -21,7 +21,7 @@ export type ChartDataState = {
   dataEndIndex: number;
 };
 
-const initialState: ChartDataState = {
+export const initialChartDataState: ChartDataState = {
   chartData: undefined,
   dataStartIndex: 0,
   dataEndIndex: 0,
@@ -31,7 +31,7 @@ type BrushStartEndIndexActionPayload = Partial<BrushStartEndIndex>;
 
 const chartDataSlice = createSlice({
   name: 'chartData',
-  initialState,
+  initialState: initialChartDataState,
   reducers: {
     setChartData(state, action: PayloadAction<ChartData | undefined>) {
       state.chartData = action.payload;
