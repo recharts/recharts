@@ -16,6 +16,7 @@ import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   BarPosition,
+  BarPositionPosition,
   findPositionOfBar,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
@@ -361,7 +362,7 @@ export class Bar extends PureComponent<Props, State> {
     offset: ChartOffset;
     displayedData: any[];
   }): BarComposedData => {
-    const pos = findPositionOfBar(barPosition, item);
+    const pos: BarPositionPosition | null = findPositionOfBar(barPosition, item);
     if (!pos) {
       return null;
     }

@@ -267,23 +267,25 @@ export const getBarSizeList = ({
   return result;
 };
 
+export type BarPositionPosition = {
+  /**
+   * Offset is returned always from zero position.
+   * So in a way it's "absolute".
+   *
+   * NOT inbetween bars, but always from zero.
+   */
+  offset: number;
+  /**
+   * Size of the bar.
+   * This will be usually a number.
+   * But if the input data is not well formed, undefined or NaN will be on the output too.
+   */
+  size: number | undefined | typeof NaN;
+};
+
 export type BarPosition = {
   item: ReactElement;
-  position: {
-    /**
-     * Offset is returned always from zero position.
-     * So in a way it's "absolute".
-     *
-     * NOT inbetween bars, but always from zero.
-     */
-    offset: number;
-    /**
-     * Size of the bar.
-     * This will be usually a number.
-     * But if the input data is not well formed, undefined or NaN will be on the output too.
-     */
-    size: number | undefined | typeof NaN;
-  };
+  position: BarPositionPosition;
 };
 
 /**
@@ -756,7 +758,10 @@ export const checkDomainOfScale = (scale: any) => {
   }
 };
 
-export const findPositionOfBar = (barPosition: ReadonlyArray<BarPosition>, child: ReactNode) => {
+export const findPositionOfBar = (
+  barPosition: ReadonlyArray<BarPosition>,
+  child: ReactNode,
+): BarPositionPosition | null => {
   if (!barPosition) {
     return null;
   }
