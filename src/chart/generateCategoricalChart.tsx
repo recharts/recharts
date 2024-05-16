@@ -853,7 +853,7 @@ export const generateCategoricalChart = ({
     const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
     const hasBar = hasGraphicalBarItem(graphicalItems);
 
-    const formattedItems = [] as any[];
+    const formattedItems: any[] = [];
 
     graphicalItems.forEach((item: ReactElement, index: number) => {
       const displayedData = getDisplayedData(props.data, { graphicalItems: [item], dataStartIndex, dataEndIndex });
@@ -968,7 +968,17 @@ export const generateCategoricalChart = ({
    * @return {Object} state New state to set
    */
   const updateStateOfAxisMapsOffsetAndStackGroups = (
-    { props, dataStartIndex, dataEndIndex, updateId }: any,
+    {
+      props,
+      dataStartIndex,
+      dataEndIndex,
+      updateId,
+    }: {
+      props: CategoricalChartProps;
+      dataStartIndex?: number;
+      dataEndIndex?: number;
+      updateId: number;
+    },
     prevState?: CategoricalChartState,
   ): any => {
     if (!validateWidthHeight({ props })) {
@@ -1047,7 +1057,7 @@ export const generateCategoricalChart = ({
       stackOffset: 'none',
       barCategoryGap: '10%',
       barGap: 4,
-      margin: { top: 5, right: 5, bottom: 5, left: 5 } as Margin,
+      margin: { top: 5, right: 5, bottom: 5, left: 5 },
       reverseStackOrder: false,
       syncMethod: 'index',
       ...defaultProps,
