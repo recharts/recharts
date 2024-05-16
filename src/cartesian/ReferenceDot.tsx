@@ -52,7 +52,7 @@ const useCoordinate = (
   return result;
 };
 
-export function ReferenceDot(props: Props) {
+function ReferenceDotImpl(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
@@ -88,27 +88,36 @@ export function ReferenceDot(props: Props) {
   );
 }
 
-ReferenceDot.displayName = 'ReferenceDot';
-ReferenceDot.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#fff',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-};
-ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
-  let dot;
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class ReferenceDot extends React.Component<Props> {
+  static displayName = 'ReferenceDot';
 
-  if (React.isValidElement(option)) {
-    dot = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    dot = option(props);
-  } else {
-    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+  static defaultProps = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#fff',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+  };
+
+  static renderDot = (option: Props['shape'], props: any) => {
+    let dot;
+
+    if (React.isValidElement(option)) {
+      dot = React.cloneElement(option, props);
+    } else if (isFunction(option)) {
+      dot = option(props);
+    } else {
+      dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+    }
+
+    return dot;
+  };
+
+  render() {
+    return <ReferenceDotImpl {...this.props} />;
   }
-
-  return dot;
-};
+}

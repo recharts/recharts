@@ -1,7 +1,7 @@
 /**
  * @fileOverview X Axis
  */
-import type { FunctionComponent, SVGProps } from 'react';
+import type { SVGProps } from 'react';
 import React from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
@@ -34,9 +34,9 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<SVGProps<SVGElement>, 'ref' | 'scale'> & XAxisProps;
 
-export const XAxis: FunctionComponent<Props> = ({ xAxisId }: Props) => {
+function XAxisImpl({ xAxisId }: Props) {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useXAxisOrThrow(xAxisId);
@@ -54,22 +54,30 @@ export const XAxis: FunctionComponent<Props> = ({ xAxisId }: Props) => {
       ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
     />
   );
-};
+}
 
-XAxis.displayName = 'XAxis';
-XAxis.defaultProps = {
-  allowDecimals: true,
-  hide: false,
-  orientation: 'bottom',
-  width: 0,
-  height: 30,
-  mirror: false,
-  xAxisId: 0,
-  tickCount: 5,
-  type: 'category',
-  padding: { left: 0, right: 0 },
-  allowDataOverflow: false,
-  scale: 'auto',
-  reversed: false,
-  allowDuplicatedCategory: true,
-};
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class XAxis extends React.Component<Props> {
+  static displayName = 'XAxis';
+
+  static defaultProps = {
+    allowDecimals: true,
+    hide: false,
+    orientation: 'bottom',
+    width: 0,
+    height: 30,
+    mirror: false,
+    xAxisId: 0,
+    tickCount: 5,
+    type: 'category',
+    padding: { left: 0, right: 0 },
+    allowDataOverflow: false,
+    scale: 'auto',
+    reversed: false,
+    allowDuplicatedCategory: true,
+  };
+
+  render() {
+    return <XAxisImpl {...this.props} />;
+  }
+}

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Z Axis
  */
-import type { FunctionComponent } from 'react';
+import React from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
 
 export interface Props {
@@ -21,12 +21,18 @@ export interface Props {
   domain?: AxisDomain;
 }
 
-export const ZAxis: FunctionComponent<Props> = () => null;
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class ZAxis extends React.Component<Props> {
+  static displayName = 'ZAxis';
 
-ZAxis.displayName = 'ZAxis';
-ZAxis.defaultProps = {
-  zAxisId: 0,
-  range: [64, 64],
-  scale: 'auto',
-  type: 'number',
-};
+  static defaultProps = {
+    zAxisId: 0,
+    range: [64, 64],
+    scale: 'auto',
+    type: 'number',
+  };
+
+  render(): React.ReactNode {
+    return null;
+  }
+}

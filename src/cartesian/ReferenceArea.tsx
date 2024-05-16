@@ -77,7 +77,7 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
   return rect;
 };
 
-export function ReferenceArea(props: Props) {
+function ReferenceAreaImpl(props: Props) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
   const xAxis = useMaybeXAxis(xAxisId);
@@ -112,14 +112,22 @@ export function ReferenceArea(props: Props) {
   );
 }
 
-ReferenceArea.displayName = 'ReferenceArea';
-ReferenceArea.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#ccc',
-  fillOpacity: 0.5,
-  stroke: 'none',
-  strokeWidth: 1,
-};
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class ReferenceArea extends React.Component<Props> {
+  static displayName = 'ReferenceArea';
+
+  static defaultProps = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#ccc',
+    fillOpacity: 0.5,
+    stroke: 'none',
+    strokeWidth: 1,
+  };
+
+  render() {
+    return <ReferenceAreaImpl {...this.props} />;
+  }
+}

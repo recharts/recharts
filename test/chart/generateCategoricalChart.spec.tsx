@@ -84,28 +84,24 @@ describe('generateCategoricalChart', () => {
     allowDuplicatedCategory: true,
   };
 
-  const xAxes: ReadonlyArray<ReactElement> = [
-    // @ts-expect-error this isn't a proper ReactElement
-    {
-      props: { ...axisProps, xAxisId: 0, dataKey: 'name' },
-    },
-  ];
+  function FakeAxis(_props: Record<string, any>): null {
+    return null;
+  }
+
+  const xAxes: ReadonlyArray<ReactElement> = [<FakeAxis xAxisId={0} dataKey="name" {...axisProps} />];
 
   const yAxes: ReadonlyArray<ReactElement> = [
-    // @ts-expect-error this isn't a proper ReactElement
-    {
-      props: {
-        ...axisProps,
-        orientation: 'left',
-        width: 0,
-        height: 30,
-        mirror: false,
-        yAxisId: 0,
-        tickCount: 2,
-        type: 'number',
-        dataKey: 'uv',
-      },
-    },
+    <FakeAxis
+      {...axisProps}
+      orientation="left"
+      width={0}
+      height={30}
+      mirror={false}
+      yAxisId={0}
+      tickCount={2}
+      type="number"
+      dataKey="uv"
+    />,
   ];
 
   describe('getAxisMapByAxes', () => {
