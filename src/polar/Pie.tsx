@@ -171,9 +171,9 @@ export class Pie extends PureComponent<Props, State> {
     return sign * deltaAngle;
   };
 
-  static getRealPieData = (item: Pie) => {
-    const { data, children } = item.props;
-    const presentationProps = filterProps(item.props, false);
+  static getRealPieData = (itemProps: Props) => {
+    const { data, children } = itemProps;
+    const presentationProps = filterProps(itemProps, false);
     const cells = findAllByType(children, Cell);
 
     if (data && data.length) {
@@ -192,27 +192,37 @@ export class Pie extends PureComponent<Props, State> {
     return [];
   };
 
-  static parseCoordinateOfPie = (item: Pie, offset: ChartOffset) => {
+  static parseCoordinateOfPie = (itemProps: Props, offset: ChartOffset) => {
     const { top, left, width, height } = offset;
     const maxPieRadius = getMaxRadius(width, height);
-    const cx = left + getPercentValue(item.props.cx, width, width / 2);
-    const cy = top + getPercentValue(item.props.cy, height, height / 2);
-    const innerRadius = getPercentValue(item.props.innerRadius, maxPieRadius, 0);
-    const outerRadius = getPercentValue(item.props.outerRadius, maxPieRadius, maxPieRadius * 0.8);
-    const maxRadius = item.props.maxRadius || Math.sqrt(width * width + height * height) / 2;
+    const cx = left + getPercentValue(itemProps.cx, width, width / 2);
+    const cy = top + getPercentValue(itemProps.cy, height, height / 2);
+    const innerRadius = getPercentValue(itemProps.innerRadius, maxPieRadius, 0);
+    const outerRadius = getPercentValue(itemProps.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+    const maxRadius = itemProps.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
     return { cx, cy, innerRadius, outerRadius, maxRadius };
   };
 
-  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): Omit<Props, 'dataKey'> => {
-    const pieData = Pie.getRealPieData(item);
+  static getComposedData = ({
+    item,
+    offset,
+  }: {
+    item: React.ReactElement<Props>;
+    offset: ChartOffset;
+  }): Omit<Props, 'dataKey'> => {
+    const itemProps: Props =
+      (item.type as any).defaultProps !== undefined
+        ? { ...(item.type as any).defaultProps, ...item.props }
+        : item.props;
+    const pieData = Pie.getRealPieData(itemProps);
     if (!pieData || !pieData.length) {
       return null;
     }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = item.props;
-    const minAngle = Math.abs(item.props.minAngle);
-    const coordinate = Pie.parseCoordinateOfPie(item, offset);
+    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, valueKey, tooltipType } = itemProps;
+    const minAngle = Math.abs(itemProps.minAngle);
+    const coordinate = Pie.parseCoordinateOfPie(itemProps, offset);
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
 

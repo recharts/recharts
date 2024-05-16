@@ -137,7 +137,7 @@ export const getEndPoints = (
   return null;
 };
 
-export function ReferenceLine(props: Props) {
+function ReferenceLineImpl(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, alwaysShow } = props;
 
   const clipPathId = useClipPathId();
@@ -192,15 +192,23 @@ export function ReferenceLine(props: Props) {
   );
 }
 
-ReferenceLine.displayName = 'ReferenceLine';
-ReferenceLine.defaultProps = {
-  isFront: false,
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  fill: 'none',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-  position: 'middle',
-};
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class ReferenceLine extends React.Component {
+  static displayName = 'ReferenceLine';
+
+  static defaultProps = {
+    isFront: false,
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    fill: 'none',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+    position: 'middle',
+  };
+
+  render() {
+    return <ReferenceLineImpl {...this.props} />;
+  }
+}

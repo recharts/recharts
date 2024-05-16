@@ -54,71 +54,76 @@ const getCoordinate = (props: Props) => {
   return result;
 };
 
-export function ReferenceDot(props: Props) {
-  const { x, y, r, alwaysShow, clipPathId } = props;
-  const isX = isNumOrStr(x);
-  const isY = isNumOrStr(y);
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class ReferenceDot extends React.Component<Props> {
+  static displayName = 'ReferenceDot';
 
-  warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
-
-  if (!isX || !isY) {
-    return null;
-  }
-
-  const coordinate = getCoordinate(props);
-
-  if (!coordinate) {
-    return null;
-  }
-
-  const { x: cx, y: cy } = coordinate;
-
-  const { shape, className } = props;
-
-  const clipPath = ifOverflowMatches(props, 'hidden') ? `url(#${clipPathId})` : undefined;
-
-  const dotProps = {
-    clipPath,
-    ...filterProps(props, true),
-    cx,
-    cy,
+  static defaultProps = {
+    isFront: false,
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#fff',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
   };
 
-  return (
-    <Layer className={clsx('recharts-reference-dot', className)}>
-      {ReferenceDot.renderDot(shape, dotProps)}
-      {Label.renderCallByParent(props, {
-        x: cx - r,
-        y: cy - r,
-        width: 2 * r,
-        height: 2 * r,
-      })}
-    </Layer>
-  );
-}
+  static renderDot = (option: Props['shape'], props: any) => {
+    let dot;
 
-ReferenceDot.displayName = 'ReferenceDot';
-ReferenceDot.defaultProps = {
-  isFront: false,
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#fff',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-};
-ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
-  let dot;
+    if (React.isValidElement(option)) {
+      dot = React.cloneElement(option, props);
+    } else if (isFunction(option)) {
+      dot = option(props);
+    } else {
+      dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+    }
 
-  if (React.isValidElement(option)) {
-    dot = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    dot = option(props);
-  } else {
-    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+    return dot;
+  };
+
+  render() {
+    const { x, y, r, alwaysShow, clipPathId } = this.props;
+    const isX = isNumOrStr(x);
+    const isY = isNumOrStr(y);
+
+    warn(alwaysShow === undefined, 'The alwaysShow prop is deprecated. Please use ifOverflow="extendDomain" instead.');
+
+    if (!isX || !isY) {
+      return null;
+    }
+
+    const coordinate = getCoordinate(this.props);
+
+    if (!coordinate) {
+      return null;
+    }
+
+    const { x: cx, y: cy } = coordinate;
+
+    const { shape, className } = this.props;
+
+    const clipPath = ifOverflowMatches(this.props, 'hidden') ? `url(#${clipPathId})` : undefined;
+
+    const dotProps = {
+      clipPath,
+      ...filterProps(this.props, true),
+      cx,
+      cy,
+    };
+
+    return (
+      <Layer className={clsx('recharts-reference-dot', className)}>
+        {ReferenceDot.renderDot(shape, dotProps)}
+        {Label.renderCallByParent(this.props, {
+          x: cx - r,
+          y: cy - r,
+          width: 2 * r,
+          height: 2 * r,
+        })}
+      </Layer>
+    );
   }
-
-  return dot;
-};
+}

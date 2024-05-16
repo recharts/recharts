@@ -2,7 +2,7 @@
  * @fileOverview Y Axis
  */
 import React from 'react';
-import type { FunctionComponent, SVGProps } from 'react';
+import type { SVGProps } from 'react';
 import clsx from 'clsx';
 import { BaseAxisProps, AxisInterval } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
@@ -36,7 +36,7 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
 
-export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
+const YAxisImpl = ({ yAxisId }: Props) => {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useYAxisOrThrow(yAxisId);
@@ -56,20 +56,28 @@ export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
   );
 };
 
-YAxis.displayName = 'YAxis';
-YAxis.defaultProps = {
-  allowDuplicatedCategory: true,
-  allowDecimals: true,
-  hide: false,
-  orientation: 'left',
-  width: 60,
-  height: 0,
-  mirror: false,
-  yAxisId: 0,
-  tickCount: 5,
-  type: 'number',
-  padding: { top: 0, bottom: 0 },
-  allowDataOverflow: false,
-  scale: 'auto',
-  reversed: false,
-};
+// eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
+export class YAxis extends React.Component<Props> {
+  static displayName = 'YAxis';
+
+  static defaultProps = {
+    allowDuplicatedCategory: true,
+    allowDecimals: true,
+    hide: false,
+    orientation: 'left',
+    width: 60,
+    height: 0,
+    mirror: false,
+    yAxisId: 0,
+    tickCount: 5,
+    type: 'number',
+    padding: { top: 0, bottom: 0 },
+    allowDataOverflow: false,
+    scale: 'auto',
+    reversed: false,
+  };
+
+  render() {
+    return <YAxisImpl {...this.props} />;
+  }
+}

@@ -331,15 +331,23 @@ export const getAxisMapByAxes = (
 
   // Eliminate duplicated axes
   return axes.reduce((result: AxisMap, child: ReactElement): AxisMap => {
-    const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = child.props;
-    const axisId = child.props[axisIdKey];
+    const childProps =
+      (child.type as any).defaultProps !== undefined
+        ? { ...(child.type as any).defaultProps, ...child.props }
+        : child.props;
+    const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = childProps;
+    const axisId = childProps[axisIdKey];
 
     if (result[axisId]) {
       return result;
     }
 
     const displayedData = getDisplayedData(props.data, {
-      graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
+      graphicalItems: graphicalItems.filter(item => {
+        const itemAxisId =
+          axisIdKey in item.props ? item.props[axisIdKey] : (item.type as any).defaultProps?.[axisIdKey];
+        return itemAxisId === axisId;
+      }),
       dataStartIndex,
       dataEndIndex,
     });
@@ -355,8 +363,8 @@ export const getAxisMapByAxes = (
      * The only thing that would prohibit short-circuiting is when the user doesn't allow data overflow,
      * because the axis is supposed to ignore the specified domain that way.
      */
-    if (isDomainSpecifiedByUser(child.props.domain, allowDataOverflow, type)) {
-      domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
+    if (isDomainSpecifiedByUser(childProps.domain, allowDataOverflow, type)) {
+      domain = parseSpecifiedDomain(childProps.domain, null, allowDataOverflow);
       /* The chart can be categorical and have the domain specified in numbers
        * we still need to calculate the categorical domain
        * TODO: refactor this more
@@ -371,7 +379,7 @@ export const getAxisMapByAxes = (
 
     // we didn't create the domain from user's props above, so we need to calculate it
     if (!domain || domain.length === 0) {
-      const childDomain = child.props.domain ?? defaultDomain;
+      const childDomain = childProps.domain ?? defaultDomain;
 
       if (dataKey) {
         // has dataKey in <Axis />
@@ -409,7 +417,12 @@ export const getAxisMapByAxes = (
           // the field type is numerical
           const errorBarsDomain = parseErrorBarsOfAxis(
             displayedData,
-            graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
+            graphicalItems.filter(item => {
+              const itemAxisId =
+                axisIdKey in item.props ? item.props[axisIdKey] : (item.type as any).defaultProps?.[axisIdKey];
+              const itemHide = 'hide' in item.props ? item.props.hide : (item.type as any).defaultProps?.hide;
+              return itemAxisId === axisId && (includeHidden || !itemHide);
+            }),
             dataKey,
             axisType,
             layout,
@@ -435,7 +448,12 @@ export const getAxisMapByAxes = (
       } else {
         domain = getDomainOfItemsWithSameAxis(
           displayedData,
-          graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
+          graphicalItems.filter(item => {
+            const itemAxisId =
+              axisIdKey in item.props ? item.props[axisIdKey] : (item.type as any).defaultProps[axisIdKey];
+            const itemHide = 'hide' in item.props ? item.props.hide : (item.type as any).defaultProps.hide;
+            return itemAxisId === axisId && (includeHidden || !itemHide);
+          }),
           type,
           layout,
           true,
@@ -462,12 +480,12 @@ export const getAxisMapByAxes = (
     return {
       ...result,
       [axisId]: {
-        ...child.props,
+        ...childProps,
         axisType,
         domain,
         categoricalDomain,
         duplicateDomain,
-        originalDomain: child.props.domain ?? defaultDomain,
+        originalDomain: childProps.domain ?? defaultDomain,
         isCategorical,
         layout,
       },
@@ -523,7 +541,11 @@ const getAxisMapByItems = (
   // The default type of y-axis is number axis
   // The default contents of y-axis is the domain of data
   return graphicalItems.reduce((result: AxisMap, child: ReactElement): AxisMap => {
-    const axisId = child.props[axisIdKey];
+    const childProps =
+      (child.type as any).defaultProps !== undefined
+        ? { ...(child.type as any).defaultProps, ...child.props }
+        : child.props;
+    const axisId = childProps[axisIdKey];
 
     const originalDomain = getDefaultDomainByAxisType('number');
 
@@ -541,7 +563,12 @@ const getAxisMapByItems = (
           originalDomain,
           getDomainOfItemsWithSameAxis(
             displayedData,
-            graphicalItems.filter((item: ReactElement) => item.props[axisIdKey] === axisId && !item.props.hide),
+            graphicalItems.filter((item: ReactElement) => {
+              const itemAxisId =
+                axisIdKey in item.props ? item.props[axisIdKey] : (item.type as any).defaultProps?.[axisIdKey];
+              const itemHide = 'hide' in item.props ? item.props.hide : (item.type as any).defaultProps?.hide;
+              return itemAxisId === axisId && !itemHide;
+            }),
             'number',
             layout,
           ),
@@ -881,11 +908,15 @@ export const generateCategoricalChart = ({
 
     graphicalItems.forEach((item: ReactElement, index: number) => {
       const displayedData = getDisplayedData(props.data, { graphicalItems: [item], dataStartIndex, dataEndIndex });
-      const { dataKey, maxBarSize: childMaxBarSize } = item.props;
+      const itemProps =
+        (item.type as any).defaultProps !== undefined
+          ? { ...(item.type as any).defaultProps, ...item.props }
+          : item.props;
+      const { dataKey, maxBarSize: childMaxBarSize } = itemProps;
       // axisId of the numerical axis
-      const numericAxisId = item.props[`${numericAxisName}Id`];
+      const numericAxisId = itemProps[`${numericAxisName}Id`];
       // axisId of the categorical axis
-      const cateAxisId = item.props[`${cateAxisName}Id`];
+      const cateAxisId = itemProps[`${cateAxisName}Id`];
 
       const axisObjInitialValue: AxisObj = {};
 
@@ -893,7 +924,7 @@ export const generateCategoricalChart = ({
         // map of axisId to axis for a specific axis type
         const axisMap: AxisMap | undefined = currentState[`${entry.axisType}Map` as const];
         // axisId of axis we are currently computing
-        const id: string = item.props[`${entry.axisType}Id`];
+        const id: string = itemProps[`${entry.axisType}Id`];
 
         /**
          * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
@@ -1952,8 +1983,13 @@ export const generateCategoricalChart = ({
 
     renderActivePoints = ({ item, activePoint, basePoint, childIndex, isRange }: any) => {
       const result = [];
+      // item is not a React Element so we don't need to resolve defaultProps.
       const { key } = item.props;
-      const { activeDot, dataKey } = item.item.props;
+      const itemItemProps =
+        item.item.type.defaultProps !== undefined
+          ? { ...item.item.type.defaultProps, ...item.item.props }
+          : item.item.props;
+      const { activeDot, dataKey } = itemItemProps;
       const dotProps = {
         index: childIndex,
         dataKey,
@@ -1997,8 +2033,13 @@ export const generateCategoricalChart = ({
       const { isTooltipActive, tooltipAxis, activeTooltipIndex, activeLabel } = this.state;
       const { children } = this.props;
       const tooltipItem = findChildByType(children, Tooltip);
+      // item is not a React Element so we don't need to resolve defaultProps
       const { points, isRange, baseLine } = item.props;
-      const { activeDot, hide, activeBar, activeShape } = item.item.props;
+      const itemItemProps =
+        item.item.type.defaultProps !== undefined
+          ? { ...item.item.type.defaultProps, ...item.item.props }
+          : item.item.props;
+      const { activeDot, hide, activeBar, activeShape } = itemItemProps;
       const hasActive = Boolean(!hide && isTooltipActive && tooltipItem && (activeDot || activeBar || activeShape));
       let itemEvents = {};
 
@@ -2013,7 +2054,11 @@ export const generateCategoricalChart = ({
         };
       }
 
-      const graphicalItem = cloneElement(element, { ...item.props, ...itemEvents });
+      const graphicalItem = cloneElement(element, {
+        // item is not a React Element so we don't need to resolve defaultProps
+        ...item.props,
+        ...itemEvents,
+      });
 
       function findWithPayload(entry: any) {
         // TODO needs to verify dataKey is Function
@@ -2040,7 +2085,17 @@ export const generateCategoricalChart = ({
           if (activeShape || activeBar) {
             const activeIndex =
               element.props.activeIndex !== undefined ? element.props.activeIndex : activeTooltipIndex;
-            return [cloneElement(element, { ...item.props, ...itemEvents, activeIndex }), null, null];
+
+            return [
+              cloneElement(element, {
+                // item is not a React Element so we don't need to resolve defaultProps
+                ...item.props,
+                ...itemEvents,
+                activeIndex,
+              }),
+              null,
+              null,
+            ];
           }
 
           if (!isNil(activePoint)) {
@@ -2067,7 +2122,12 @@ export const generateCategoricalChart = ({
             graphicalItem: { item: xyItem = element, childIndex },
           } = this.getItemByXY(this.state.activeCoordinate) ?? { graphicalItem };
 
-          const elementProps = { ...item.props, ...itemEvents, activeIndex: childIndex };
+          const elementProps = {
+            // `item` is not a React Element so we don't need to resolve defaultProps
+            ...item.props,
+            ...itemEvents,
+            activeIndex: childIndex,
+          };
 
           return [cloneElement(xyItem, elementProps), null, null];
         }
@@ -2141,7 +2201,10 @@ export const generateCategoricalChart = ({
       if (formattedGraphicalItems && formattedGraphicalItems.length) {
         for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
           const graphicalItem = formattedGraphicalItems[i];
+          // graphicalItem is not a React Element so we don't need to resolve defaultProps
           const { props, item } = graphicalItem;
+          const itemProps =
+            item.type.defaultProps !== undefined ? { ...item.type.defaultProps, ...item.props } : item.props;
           const itemDisplayName = getDisplayName(item.type);
 
           if (itemDisplayName === 'Bar') {
@@ -2170,15 +2233,15 @@ export const generateCategoricalChart = ({
             const activeIndex = getActiveShapeIndexForTooltip({
               graphicalItem,
               activeTooltipItem: activeItem,
-              itemData: item.props.data,
+              itemData: itemProps.data,
             });
 
-            const childIndex = item.props.activeIndex === undefined ? activeIndex : item.props.activeIndex;
+            const childIndex = itemProps.activeIndex === undefined ? activeIndex : itemProps.activeIndex;
 
             return {
               graphicalItem: { ...graphicalItem, childIndex },
               payload: isScatter(graphicalItem, activeItem)
-                ? item.props.data[activeIndex]
+                ? itemProps.data[activeIndex]
                 : graphicalItem.props.data[activeIndex],
             };
           }
