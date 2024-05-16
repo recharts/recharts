@@ -45,8 +45,10 @@ NPM is the easiest and fastest way to get started using Recharts. It is also the
 
 ```sh
 # latest stable
-$ npm install recharts
+$ npm install recharts react-is
 ```
+
+`react-is` needs to match the version of your installed `react` package.
 
 ### umd
 
@@ -55,6 +57,7 @@ The UMD build is also available on unpkg.com:
 ```html
 <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/react-is/umd/react-is.production.min.js"></script>
 <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
 ```
 

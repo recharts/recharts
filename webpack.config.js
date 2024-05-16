@@ -44,6 +44,12 @@ const config = {
       commonjs: 'react-dom',
       amd: 'react-dom',
     },
+    'react-is': {
+      root: 'ReactIs',
+      commonjs2: 'react-is',
+      commonjs: 'react-is',
+      amd: 'react-is',
+    },
     'prop-types': {
       root: 'PropTypes',
       commonjs2: 'prop-types',
