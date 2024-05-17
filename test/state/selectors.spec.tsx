@@ -268,6 +268,7 @@ describe('selectTooltipPayload', () => {
     const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       tooltipState,
+      0,
       chartDataState,
       tooltipAxis,
       activeLabel,
@@ -316,6 +317,7 @@ describe('selectTooltipPayload', () => {
     const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       tooltipState,
+      0,
       chartDataState,
       tooltipAxis,
       activeLabel,

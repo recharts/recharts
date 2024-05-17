@@ -67,12 +67,13 @@ function selectFinalData(
 
 export const combineTooltipPayload = (
   tooltipState: TooltipState,
+  activeIndex: number,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
   shared: boolean | undefined,
 ): TooltipPayload | undefined => {
-  const { activeIndex, tooltipItemPayloads } = tooltipState;
+  const { tooltipItemPayloads } = tooltipState;
   if (activeIndex === -1) {
     return undefined;
   }
@@ -132,6 +133,7 @@ export const selectTooltipPayload: (
   shared: boolean | undefined,
 ) => TooltipPayload | undefined = createSelector(
   selectTooltipState,
+  selectActiveIndex,
   selectChartData,
   selectTooltipAxis,
   selectActiveLabel,
