@@ -23,7 +23,6 @@ import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setActiveMouseOverItemIndex } from '../state/tooltipSlice';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setLayout } from '../state/layoutSlice';
@@ -92,7 +91,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   };
 
   const dispatch = useAppDispatch();
-  dispatch(setActiveMouseOverItemIndex(tooltipContextValue.index));
   dispatch(setXAxisMap(xAxisMap));
   dispatch(setYAxisMap(yAxisMap));
   dispatch(setPolarAngleAxisMap(angleAxisMap));
