@@ -64,12 +64,13 @@ const tooltipSlice = createSlice({
         state.tooltipItemPayloads.splice(index, 1);
       }
     },
-    setActiveTooltipIndex(state, action: PayloadAction<TooltipIndex>) {
+    setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipIndex>) {
       state.activeIndex = action.payload;
     },
   },
 });
 
-export const { addTooltipEntrySettings, removeTooltipEntrySettings, setActiveTooltipIndex } = tooltipSlice.actions;
+export const { addTooltipEntrySettings, removeTooltipEntrySettings, setActiveMouseOverItemIndex } =
+  tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;
