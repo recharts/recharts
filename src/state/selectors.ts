@@ -86,19 +86,17 @@ export function selectTooltipPayloadConfigurations(
   if (tooltipEventType === 'axis') {
     return tooltipState.tooltipItemPayloads;
   }
-  // TODO
-  return tooltipState.tooltipItemPayloads;
-  // let filterByDataKey: DataKey<any> | undefined;
+  let filterByDataKey: DataKey<any> | undefined;
   /*
    * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
    * item means that only the hovered or clicked item will be present in the tooltip.
    */
-  // if (trigger === 'hover') {
-  //   filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
-  // } else {
-  //   filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
-  // }
-  // return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
+  if (trigger === 'hover') {
+    filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+  } else {
+    filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+  }
+  return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
 }
 
 export const combineTooltipPayload = (

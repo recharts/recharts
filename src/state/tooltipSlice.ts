@@ -127,10 +127,37 @@ const tooltipSlice = createSlice({
       state.itemInteraction.activeMouseOverIndex = action.payload.activeIndex;
       state.itemInteraction.activeMouseOverDataKey = action.payload.activeDataKey;
     },
+    setActiveClickItemIndex(
+      state,
+      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+    ) {
+      state.itemInteraction.activeClickIndex = action.payload.activeIndex;
+      state.itemInteraction.activeClickDataKey = action.payload.activeDataKey;
+    },
+    setMouseOverAxisIndex(
+      state,
+      action: PayloadAction<{ activeIndex: number; activeDataKey: DataKey<any> | undefined }>,
+    ) {
+      state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
+      state.axisInteraction.activeMouseOverAxisDataKey = action.payload.activeDataKey;
+    },
+    setMouseClickAxisIndex(
+      state,
+      action: PayloadAction<{ activeIndex: number; activeDataKey: DataKey<any> | undefined }>,
+    ) {
+      state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
+      state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
+    },
   },
 });
 
-export const { addTooltipEntrySettings, removeTooltipEntrySettings, setActiveMouseOverItemIndex } =
-  tooltipSlice.actions;
+export const {
+  addTooltipEntrySettings,
+  removeTooltipEntrySettings,
+  setActiveMouseOverItemIndex,
+  setActiveClickItemIndex,
+  setMouseOverAxisIndex,
+  setMouseClickAxisIndex,
+} = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;

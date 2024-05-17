@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { ChartCoordinate, Coordinate } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
-import { setActiveMouseOverItemIndex } from '../state/tooltipSlice';
+import { setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
 
 export type TooltipContextValue = {
   label: string;
@@ -76,7 +76,6 @@ export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
   return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
     onMouseClickFromProps?.(data, index, event);
     onMouseClickFromContext?.(data, index, event);
-    // TODO make this the click index dispatch
-    dispatch(setActiveMouseOverItemIndex({ activeIndex: index, activeDataKey: undefined }));
+    dispatch(setActiveClickItemIndex({ activeIndex: index, activeDataKey: undefined }));
   };
 };

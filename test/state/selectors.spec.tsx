@@ -1,6 +1,7 @@
 import React from 'react';
-import { describe, it, test, expect } from 'vitest';
+import { describe, it, test, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
+import { Store } from '@reduxjs/toolkit';
 import {
   combineTooltipPayload,
   selectActiveIndex,
@@ -14,7 +15,10 @@ import { BaseAxisProps, TooltipEventType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
 import {
   addTooltipEntrySettings,
+  setActiveClickItemIndex,
   setActiveMouseOverItemIndex,
+  setMouseClickAxisIndex,
+  setMouseOverAxisIndex,
   TooltipPayload,
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
@@ -33,6 +37,7 @@ const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
     fill: 'fill',
     name: 'name is ignored in Scatter in recharts 2.x',
     color: 'color',
+    dataKey: 'dataKey1',
   },
   dataDefinedOnItem: [
     [
@@ -67,6 +72,7 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
     fill: 'fill 2',
     name: 'name 2',
     color: 'color 2',
+    dataKey: 'dataKey2',
   },
   dataDefinedOnItem: [
     [
@@ -204,7 +210,7 @@ describe('selectTooltipPayload', () => {
     },
   );
 
-  it('should return settings and data from a graphical item hover, if activeIndex is set for the item', () => {
+  it('should return settings and data from axis hover, if activeIndex is set for the item', () => {
     const store = createRechartsStore();
     const tooltipSettings1: TooltipPayloadConfiguration = {
       settings: undefined,
@@ -239,9 +245,9 @@ describe('selectTooltipPayload', () => {
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
-    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual(undefined);
-    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 1, activeDataKey: 'x' }));
-    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry1, expectedEntry2]);
+    expect(selectTooltipPayload(store.getState(), 'axis', 'hover')).toEqual(undefined);
+    store.dispatch(setMouseOverAxisIndex({ activeIndex: 1, activeDataKey: undefined }));
+    expect(selectTooltipPayload(store.getState(), 'axis', 'hover')).toEqual([expectedEntry1, expectedEntry2]);
   });
 
   it('should fill in chartData, if it is not defined on the item for item hover', () => {
@@ -410,6 +416,14 @@ describe('selectActiveIndex', () => {
 });
 
 describe('selectTooltipPayloadConfigurations', () => {
+  let exampleStore: Store<RechartsRootState>;
+
+  beforeEach(() => {
+    exampleStore = createRechartsStore();
+    exampleStore.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration1));
+    exampleStore.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration2));
+  });
+
   describe.each(allTooltipCombinations)(
     'tooltipEventType: $tooltipEventType tooltipTrigger: $trigger',
     ({ tooltipEventType, trigger }) => {
@@ -432,17 +446,36 @@ describe('selectTooltipPayloadConfigurations', () => {
 
   describe.each(['hover', 'click'])('tooltipEventType: "axis" tooltipTrigger: %s', (trigger: TooltipTrigger) => {
     it('should return unfiltered configurations with tooltipEventType: axis', () => {
-      const store = createRechartsStore();
       const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         exampleTooltipPayloadConfiguration1,
         exampleTooltipPayloadConfiguration2,
       ];
-      expect(selectTooltipPayloadConfigurations(store.getState(), 'axis', trigger)).toEqual([]);
-      store.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration1));
-      store.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration2));
-      expect(selectTooltipPayloadConfigurations(store.getState(), 'axis', trigger)).toEqual(expected);
+      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'axis', trigger)).toEqual(expected);
     });
+  });
 
-    it.todo('should filter by dataKey with tooltipEventType: item');
+  it('should filter by dataKey with tooltipEventType: item and trigger: hover', () => {
+    exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: 1, activeDataKey: 'dataKey1' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover')).toEqual([
+      exampleTooltipPayloadConfiguration1,
+    ]);
+    exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: 1, activeDataKey: 'dataKey2' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover')).toEqual([
+      exampleTooltipPayloadConfiguration2,
+    ]);
+  });
+
+  it('should return nothing if the tooltipEventType is hover but the only interactions are clicks', () => {
+    exampleStore.dispatch(setActiveClickItemIndex({ activeIndex: 1, activeDataKey: 'dataKey1' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover')).toEqual([]);
+    exampleStore.dispatch(setMouseClickAxisIndex({ activeIndex: 1, activeDataKey: 'dataKey2' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover')).toEqual([]);
+  });
+
+  it('should return nothing if the tooltipEventType is click but the only interactions are hovers', () => {
+    exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: 1, activeDataKey: 'dataKey1' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'click')).toEqual([]);
+    exampleStore.dispatch(setMouseOverAxisIndex({ activeIndex: 1, activeDataKey: 'dataKey2' }));
+    expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'click')).toEqual([]);
   });
 });
