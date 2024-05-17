@@ -5,8 +5,9 @@ import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry, Toolt
 import { getTicksOfAxis, getTooltipEntry, getValueByDataKey } from '../util/ChartUtils';
 import { ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
-import { BaseAxisProps, DataKey, TickItem } from '../util/types';
+import { BaseAxisProps, DataKey, TickItem, TooltipEventType } from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
+import { TooltipTrigger } from '../chart/types';
 
 export const useChartName = (): string => {
   return useAppSelector((state: RechartsRootState) => state.options.chartName);
@@ -38,11 +39,11 @@ const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseA
   getTicksOfAxis(tooltipAxis, false, true),
 );
 
-// TODO support for tooltipEventType, and trigger
-export const selectActiveIndex: (state: RechartsRootState) => number = createSelector(
-  selectTooltipState,
-  (tooltipState: TooltipState) => tooltipState.activeIndex,
-);
+export const selectActiveIndex: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+) => number = createSelector(selectTooltipState, (tooltipState: TooltipState) => tooltipState.activeIndex);
 
 const selectActiveLabel = createSelector(
   selectTooltipTicks,
@@ -51,18 +52,11 @@ const selectActiveLabel = createSelector(
     tooltipTicks?.[activeIndex]?.value,
 );
 
-function selectFinalData(
-  dataDefinedOnItem: ReadonlyArray<unknown>,
-  dataDefinedOnChart: ReadonlyArray<unknown>,
-  sharedTooltip: boolean | undefined,
-) {
+function selectFinalData(dataDefinedOnItem: ReadonlyArray<unknown>, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
    */
-  if (sharedTooltip === false) {
-    return dataDefinedOnItem;
-  }
   if (dataDefinedOnItem?.length > 0) {
     return dataDefinedOnItem;
   }
@@ -80,7 +74,6 @@ export const combineTooltipPayload = (
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
-  shared: boolean | undefined,
 ): TooltipPayload | undefined => {
   if (activeIndex === -1) {
     return undefined;
@@ -90,7 +83,7 @@ export const combineTooltipPayload = (
   const init: Array<TooltipPayloadEntry> = [];
 
   return tooltipItemPayloads.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
-    const finalData = selectFinalData(dataDefinedOnItem, chartData, shared);
+    const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
 
@@ -138,13 +131,13 @@ export const combineTooltipPayload = (
 
 export const selectTooltipPayload: (
   state: RechartsRootState,
-  shared: boolean | undefined,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
 ) => TooltipPayload | undefined = createSelector(
   selectTooltipItemPayloads,
   selectActiveIndex,
   selectChartData,
   selectTooltipAxis,
   selectActiveLabel,
-  (_: void, shared: boolean | undefined) => shared,
   combineTooltipPayload,
 );

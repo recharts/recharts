@@ -1,7 +1,12 @@
 import React from 'react';
 import { describe, it, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { combineTooltipPayload, selectTooltipPayload, useTooltipEventType } from '../../src/state/selectors';
+import {
+  combineTooltipPayload,
+  selectActiveIndex,
+  selectTooltipPayload,
+  useTooltipEventType,
+} from '../../src/state/selectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { BaseAxisProps, TooltipEventType } from '../../src/util/types';
@@ -19,6 +24,14 @@ import {
   setChartData,
   setDataStartEndIndexes,
 } from '../../src/state/chartDataSlice';
+import { TooltipTrigger } from '../../src/chart/types';
+
+const allTooltipCombinations: ReadonlyArray<{ tooltipEventType: TooltipEventType; trigger: TooltipTrigger }> = [
+  { tooltipEventType: 'axis', trigger: 'hover' },
+  { tooltipEventType: 'axis', trigger: 'click' },
+  { tooltipEventType: 'item', trigger: 'hover' },
+  { tooltipEventType: 'item', trigger: 'click' },
+];
 
 describe('useTooltipEventType', () => {
   type TooltipEventTypeTestScenario = {
@@ -99,22 +112,28 @@ describe('useTooltipEventType', () => {
 });
 
 describe('selectTooltipPayload', () => {
-  it('should return undefined when outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const payload = useAppSelector(state => selectTooltipPayload(state, true));
-      expect(payload).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
+  it.each(allTooltipCombinations)(
+    'should return undefined when outside of Redux context for $tooltipEventType $trigger',
+    ({ tooltipEventType, trigger }) => {
+      expect.assertions(1);
+      const Comp = (): null => {
+        const payload = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger));
+        expect(payload).toBe(undefined);
+        return null;
+      };
+      render(<Comp />);
+    },
+  );
 
-  it('initial state should return undefined', () => {
-    const store = createRechartsStore();
-    expect(selectTooltipPayload(store.getState(), true)).toEqual(undefined);
-  });
+  it.each(allTooltipCombinations)(
+    'initial state should return undefined for $tooltipEventType $trigger',
+    ({ tooltipEventType, trigger }) => {
+      const store = createRechartsStore();
+      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual(undefined);
+    },
+  );
 
-  it('should return settings and data from a graphical item, if activeIndex is set', () => {
+  it('should return settings and data from a graphical item hover, if activeIndex is set for item hover', () => {
     const store = createRechartsStore();
     const tooltipSettings1: TooltipPayloadConfiguration = {
       settings: undefined,
@@ -149,79 +168,85 @@ describe('selectTooltipPayload', () => {
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
-    expect(selectTooltipPayload(store.getState(), true)).toEqual(undefined);
-    store.dispatch(setActiveTooltipIndex(1));
-    expect(selectTooltipPayload(store.getState(), true)).toEqual([expectedEntry1, expectedEntry2]);
+    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual(undefined);
+    store.dispatch(setActiveTooltipIndex(1)); // TODO this should be only item hover action
+    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry1, expectedEntry2]);
   });
 
-  it('should fill in chartData, if it is not defined on the item', () => {
-    const store = createRechartsStore();
-    const tooltipSettings: TooltipPayloadConfiguration = {
-      settings: {
+  it.each(allTooltipCombinations)(
+    'should fill in chartData, if it is not defined on the item for $tooltipEventType $trigger',
+    ({ tooltipEventType, trigger }) => {
+      const store = createRechartsStore();
+      const tooltipSettings: TooltipPayloadConfiguration = {
+        settings: {
+          stroke: 'red',
+          fill: 'green',
+          dataKey: 'y',
+          name: 'foo',
+          unit: 'bar',
+        },
+        dataDefinedOnItem: undefined,
+      };
+      store.dispatch(addTooltipEntrySettings(tooltipSettings));
+      store.dispatch(
+        setChartData([
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ]),
+      );
+      store.dispatch(setActiveTooltipIndex(0));
+
+      const expectedEntry: TooltipPayloadEntry = {
+        name: 'foo',
+        dataKey: 'y',
         stroke: 'red',
         fill: 'green',
-        dataKey: 'y',
-        name: 'foo',
+        payload: { x: 1, y: 2 },
+        value: 2,
         unit: 'bar',
-      },
-      dataDefinedOnItem: undefined,
-    };
-    store.dispatch(addTooltipEntrySettings(tooltipSettings));
-    store.dispatch(
-      setChartData([
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ]),
-    );
-    store.dispatch(setActiveTooltipIndex(0));
+      };
 
-    const expectedEntry: TooltipPayloadEntry = {
-      name: 'foo',
-      dataKey: 'y',
-      stroke: 'red',
-      fill: 'green',
-      payload: { x: 1, y: 2 },
-      value: 2,
-      unit: 'bar',
-    };
+      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual([expectedEntry]);
+    },
+  );
 
-    expect(selectTooltipPayload(store.getState(), true)).toEqual([expectedEntry]);
-  });
-
-  it('should return sliced data if set by Brush', () => {
-    const store = createRechartsStore();
-    const tooltipSettings: TooltipPayloadConfiguration = {
-      settings: {
+  it.each(allTooltipCombinations)(
+    'should return sliced data if set by Brush for $tooltipEventType $trigger',
+    ({ tooltipEventType, trigger }) => {
+      const store = createRechartsStore();
+      const tooltipSettings: TooltipPayloadConfiguration = {
+        settings: {
+          stroke: 'red',
+          fill: 'green',
+          dataKey: 'y',
+          name: 'foo',
+        },
+        dataDefinedOnItem: [
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ],
+      };
+      store.dispatch(addTooltipEntrySettings(tooltipSettings));
+      store.dispatch(
+        setChartData([
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ]),
+      );
+      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual(undefined);
+      store.dispatch(setActiveTooltipIndex(0));
+      store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
+      const expectedEntry: TooltipPayloadEntry = {
+        name: 'foo',
+        dataKey: 'y',
         stroke: 'red',
         fill: 'green',
-        dataKey: 'y',
-        name: 'foo',
-      },
-      dataDefinedOnItem: [
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ],
-    };
-    store.dispatch(addTooltipEntrySettings(tooltipSettings));
-    store.dispatch(
-      setChartData([
-        { x: 1, y: 2 },
-        { x: 3, y: 4 },
-      ]),
-    );
-    expect(selectTooltipPayload(store.getState(), true)).toEqual(undefined);
-    store.dispatch(setActiveTooltipIndex(0));
-    store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
-    const expectedEntry: TooltipPayloadEntry = {
-      name: 'foo',
-      dataKey: 'y',
-      stroke: 'red',
-      fill: 'green',
-      payload: { x: 3, y: 4 },
-      value: 4,
-    };
-    expect(selectTooltipPayload(store.getState(), true)).toEqual([expectedEntry]);
-  });
+        payload: { x: 3, y: 4 },
+        value: 4,
+      };
+      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual([expectedEntry]);
+    },
+  );
 
   it('should return array of payloads for Scatter because Scatter naturally does its own special thing', () => {
     const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
@@ -260,14 +285,12 @@ describe('selectTooltipPayload', () => {
     const chartDataState: ChartDataState = initialChartDataState;
     const tooltipAxis: BaseAxisProps | undefined = undefined;
     const activeLabel: string | undefined = undefined;
-    const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       [tooltipPayloadConfiguration],
       0,
       chartDataState,
       tooltipAxis,
       activeLabel,
-      shared,
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
@@ -305,18 +328,31 @@ describe('selectTooltipPayload', () => {
       dataKey: 'dataKeyOnAxis',
     };
     const activeLabel: string | undefined = undefined;
-    const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
       [tooltipPayloadConfiguration],
       0,
       chartDataState,
       tooltipAxis,
       activeLabel,
-      shared,
     );
     const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: null, value: undefined };
     expect(actual).toEqual([expected]);
   });
 
   it.todo('should do something - not quite sure what exactly yet - with tooltipAxis.allowDuplicatedCategory');
+});
+
+describe('selectActiveIndex', () => {
+  it('should return -1 for initial state', () => {
+    const initialState = createRechartsStore().getState();
+    expect(selectActiveIndex(initialState, 'axis', 'hover')).toBe(-1);
+    expect(selectActiveIndex(initialState, 'axis', 'click')).toBe(-1);
+    expect(selectActiveIndex(initialState, 'item', 'hover')).toBe(-1);
+    expect(selectActiveIndex(initialState, 'item', 'click')).toBe(-1);
+  });
+
+  it.todo('should return item hover index');
+  it.todo('should return item click index');
+  it.todo('should return axis hover index');
+  it.todo('should return axis click index');
 });
