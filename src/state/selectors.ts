@@ -39,7 +39,10 @@ const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseA
 );
 
 // TODO support for tooltipEventType, and trigger
-const selectActiveIndex = createSelector(selectTooltipState, (tooltipState: TooltipState) => tooltipState.activeIndex);
+export const selectActiveIndex: (state: RechartsRootState) => number = createSelector(
+  selectTooltipState,
+  (tooltipState: TooltipState) => tooltipState.activeIndex,
+);
 
 const selectActiveLabel = createSelector(
   selectTooltipTicks,
@@ -66,7 +69,7 @@ function selectFinalData(
   return dataDefinedOnChart;
 }
 
-function selectTooltipItemPayloads(state: RechartsRootState) {
+function selectTooltipItemPayloads(state: RechartsRootState): ReadonlyArray<TooltipPayloadConfiguration> {
   // TODO support for tooltipEventType, and trigger
   return state.tooltip.tooltipItemPayloads;
 }
