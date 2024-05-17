@@ -238,7 +238,7 @@ describe('selectTooltipPayload', () => {
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
     expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual(undefined);
-    store.dispatch(setActiveMouseOverItemIndex(1)); // TODO this should be only item hover action
+    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 1, activeDataKey: 'x' }));
     expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry1, expectedEntry2]);
   });
 
@@ -263,7 +263,7 @@ describe('selectTooltipPayload', () => {
           { x: 3, y: 4 },
         ]),
       );
-      store.dispatch(setActiveMouseOverItemIndex(0));
+      store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
 
       const expectedEntry: TooltipPayloadEntry = {
         name: 'foo',
@@ -303,7 +303,7 @@ describe('selectTooltipPayload', () => {
         ]),
       );
       expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual(undefined);
-      store.dispatch(setActiveMouseOverItemIndex(0));
+      store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
       store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
       const expectedEntry: TooltipPayloadEntry = {
         name: 'foo',

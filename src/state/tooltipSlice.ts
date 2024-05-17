@@ -1,5 +1,6 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
+import { DataKey } from '../util/types';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -64,8 +65,11 @@ const tooltipSlice = createSlice({
         state.tooltipItemPayloads.splice(index, 1);
       }
     },
-    setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipIndex>) {
-      state.activeIndex = action.payload;
+    setActiveMouseOverItemIndex(
+      state,
+      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+    ) {
+      state.activeIndex = action.payload.activeIndex;
     },
   },
 });

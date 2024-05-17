@@ -52,7 +52,7 @@ export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
   return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
     onMouseEnterFromProps?.(data, index, event);
     onMouseEnterFromContext?.(data, index, event);
-    dispatch(setActiveMouseOverItemIndex(index));
+    dispatch(setActiveMouseOverItemIndex({ activeIndex: index, activeDataKey: undefined }));
   };
 };
 
@@ -64,7 +64,7 @@ export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
   return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
     onMouseLeaveFromProps?.(data, index, event);
     onMouseLeaveFromContext?.(data, index, event);
-    dispatch(setActiveMouseOverItemIndex(index));
+    dispatch(setActiveMouseOverItemIndex({ activeIndex: -1, activeDataKey: undefined }));
   };
 };
 
@@ -76,6 +76,7 @@ export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
   return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
     onMouseClickFromProps?.(data, index, event);
     onMouseClickFromContext?.(data, index, event);
-    dispatch(setActiveMouseOverItemIndex(index));
+    // TODO make this the click index dispatch
+    dispatch(setActiveMouseOverItemIndex({ activeIndex: index, activeDataKey: undefined }));
   };
 };
