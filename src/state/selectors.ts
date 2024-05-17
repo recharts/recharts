@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { useAppSelector } from './hooks';
 import { RechartsRootState } from './store';
-import { TooltipPayload, TooltipPayloadEntry, TooltipState } from './tooltipSlice';
+import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry, TooltipState } from './tooltipSlice';
 import { getTicksOfAxis, getTooltipEntry, getValueByDataKey } from '../util/ChartUtils';
 import { ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
@@ -38,6 +38,7 @@ const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseA
   getTicksOfAxis(tooltipAxis, false, true),
 );
 
+// TODO support for tooltipEventType, and trigger
 const selectActiveIndex = createSelector(selectTooltipState, (tooltipState: TooltipState) => tooltipState.activeIndex);
 
 const selectActiveLabel = createSelector(
@@ -65,15 +66,19 @@ function selectFinalData(
   return dataDefinedOnChart;
 }
 
+function selectTooltipItemPayloads(state: RechartsRootState) {
+  // TODO support for tooltipEventType, and trigger
+  return state.tooltip.tooltipItemPayloads;
+}
+
 export const combineTooltipPayload = (
-  tooltipState: TooltipState,
+  tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
   activeIndex: number,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
   shared: boolean | undefined,
 ): TooltipPayload | undefined => {
-  const { tooltipItemPayloads } = tooltipState;
   if (activeIndex === -1) {
     return undefined;
   }
@@ -132,7 +137,7 @@ export const selectTooltipPayload: (
   state: RechartsRootState,
   shared: boolean | undefined,
 ) => TooltipPayload | undefined = createSelector(
-  selectTooltipState,
+  selectTooltipItemPayloads,
   selectActiveIndex,
   selectChartData,
   selectTooltipAxis,

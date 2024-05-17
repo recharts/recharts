@@ -12,7 +12,6 @@ import {
   TooltipPayload,
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
-  TooltipState,
 } from '../../src/state/tooltipSlice';
 import {
   ChartDataState,
@@ -258,16 +257,12 @@ describe('selectTooltipPayload', () => {
         ],
       ],
     };
-    const tooltipState: TooltipState = {
-      activeIndex: 0,
-      tooltipItemPayloads: [tooltipPayloadConfiguration],
-    };
     const chartDataState: ChartDataState = initialChartDataState;
     const tooltipAxis: BaseAxisProps | undefined = undefined;
     const activeLabel: string | undefined = undefined;
     const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
-      tooltipState,
+      [tooltipPayloadConfiguration],
       0,
       chartDataState,
       tooltipAxis,
@@ -305,10 +300,6 @@ describe('selectTooltipPayload', () => {
       settings: {},
       dataDefinedOnItem: [],
     };
-    const tooltipState: TooltipState = {
-      activeIndex: 0,
-      tooltipItemPayloads: [tooltipPayloadConfiguration],
-    };
     const chartDataState: ChartDataState = initialChartDataState;
     const tooltipAxis: BaseAxisProps = {
       dataKey: 'dataKeyOnAxis',
@@ -316,7 +307,7 @@ describe('selectTooltipPayload', () => {
     const activeLabel: string | undefined = undefined;
     const shared = false;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
-      tooltipState,
+      [tooltipPayloadConfiguration],
       0,
       chartDataState,
       tooltipAxis,
