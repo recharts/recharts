@@ -5,6 +5,7 @@ import {
   combineTooltipPayload,
   selectActiveIndex,
   selectTooltipPayload,
+  selectTooltipPayloadConfigurations,
   useTooltipEventType,
 } from '../../src/state/selectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
@@ -25,6 +26,74 @@ import {
   setDataStartEndIndexes,
 } from '../../src/state/chartDataSlice';
 import { TooltipTrigger } from '../../src/chart/types';
+
+const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
+  settings: {
+    fill: 'fill',
+    name: 'name is ignored in Scatter in recharts 2.x',
+    color: 'color',
+  },
+  dataDefinedOnItem: [
+    [
+      {
+        name: 'stature',
+        unit: 'cm',
+        value: 100,
+        payload: {
+          x: 100,
+          y: 200,
+          z: 200,
+        },
+        dataKey: 'x',
+      },
+      {
+        name: 'weight',
+        unit: 'kg',
+        value: 200,
+        payload: {
+          x: 100,
+          y: 200,
+          z: 200,
+        },
+        dataKey: 'y',
+      },
+    ],
+  ],
+};
+
+const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
+  settings: {
+    fill: 'fill 2',
+    name: 'name 2',
+    color: 'color 2',
+  },
+  dataDefinedOnItem: [
+    [
+      {
+        name: 'height',
+        unit: 'cm',
+        value: 100,
+        payload: {
+          x: 100,
+          y: 200,
+          z: 200,
+        },
+        dataKey: 'x',
+      },
+      {
+        name: 'width',
+        unit: 'm',
+        value: 4,
+        payload: {
+          x: 10,
+          y: 20,
+          z: 20,
+        },
+        dataKey: 'y',
+      },
+    ],
+  ],
+};
 
 const allTooltipCombinations: ReadonlyArray<{ tooltipEventType: TooltipEventType; trigger: TooltipTrigger }> = [
   { tooltipEventType: 'axis', trigger: 'hover' },
@@ -249,44 +318,11 @@ describe('selectTooltipPayload', () => {
   );
 
   it('should return array of payloads for Scatter because Scatter naturally does its own special thing', () => {
-    const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
-      settings: {
-        fill: 'fill',
-        name: 'name is ignored in Scatter in recharts 2.x',
-        color: 'color',
-      },
-      dataDefinedOnItem: [
-        [
-          {
-            name: 'stature',
-            unit: 'cm',
-            value: 100,
-            payload: {
-              x: 100,
-              y: 200,
-              z: 200,
-            },
-            dataKey: 'x',
-          },
-          {
-            name: 'weight',
-            unit: 'kg',
-            value: 200,
-            payload: {
-              x: 100,
-              y: 200,
-              z: 200,
-            },
-            dataKey: 'y',
-          },
-        ],
-      ],
-    };
     const chartDataState: ChartDataState = initialChartDataState;
     const tooltipAxis: BaseAxisProps | undefined = undefined;
     const activeLabel: string | undefined = undefined;
     const actual: TooltipPayload | undefined = combineTooltipPayload(
-      [tooltipPayloadConfiguration],
+      [exampleTooltipPayloadConfiguration1],
       0,
       chartDataState,
       tooltipAxis,
@@ -355,4 +391,42 @@ describe('selectActiveIndex', () => {
   it.todo('should return item click index');
   it.todo('should return axis hover index');
   it.todo('should return axis click index');
+});
+
+describe('selectTooltipPayloadConfigurations', () => {
+  describe.each(allTooltipCombinations)(
+    'tooltipEventType: $tooltipEventType tooltipTrigger: $trigger',
+    ({ tooltipEventType, trigger }) => {
+      it('should return undefined when outside of Redux context', () => {
+        expect.assertions(1);
+        const Comp = (): null => {
+          const result = useAppSelector(state => selectTooltipPayloadConfigurations(state, tooltipEventType, trigger));
+          expect(result).toBe(undefined);
+          return null;
+        };
+        render(<Comp />);
+      });
+
+      it('should return empty array from empty state', () => {
+        const store = createRechartsStore();
+        expect(selectTooltipPayloadConfigurations(store.getState(), tooltipEventType, trigger)).toEqual([]);
+      });
+    },
+  );
+
+  describe.each(['hover', 'click'])('tooltipEventType: "axis" tooltipTrigger: %s', (trigger: TooltipTrigger) => {
+    it('should return unfiltered configurations with tooltipEventType: axis', () => {
+      const store = createRechartsStore();
+      const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
+        exampleTooltipPayloadConfiguration1,
+        exampleTooltipPayloadConfiguration2,
+      ];
+      expect(selectTooltipPayloadConfigurations(store.getState(), 'axis', trigger)).toEqual([]);
+      store.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration1));
+      store.dispatch(addTooltipEntrySettings(exampleTooltipPayloadConfiguration2));
+      expect(selectTooltipPayloadConfigurations(store.getState(), 'axis', trigger)).toEqual(expected);
+    });
+
+    it.todo('should filter by dataKey with tooltipEventType: item');
+  });
 });

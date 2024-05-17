@@ -63,9 +63,30 @@ function selectFinalData(dataDefinedOnItem: ReadonlyArray<unknown>, dataDefinedO
   return dataDefinedOnChart;
 }
 
-function selectTooltipItemPayloads(state: RechartsRootState): ReadonlyArray<TooltipPayloadConfiguration> {
-  // TODO support for tooltipEventType, and trigger
-  return state.tooltip.tooltipItemPayloads;
+export function selectTooltipPayloadConfigurations(
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  trigger: TooltipTrigger,
+): ReadonlyArray<TooltipPayloadConfiguration> {
+  const tooltipState = selectTooltipState(state);
+  // if tooltip reacts to axis interaction, then we display all items at the same time.
+  if (tooltipEventType === 'axis') {
+    return tooltipState.tooltipItemPayloads;
+  }
+  // TODO
+  return tooltipState.tooltipItemPayloads;
+  // let filterByDataKey: DataKey<any> | undefined;
+  /*
+   * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
+   * item means that only the hovered or clicked item will be present in the tooltip.
+   */
+  // if (trigger === 'hover') {
+  //   filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+  // } else {
+  //   filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+  // }
+  // return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
 }
 
 export const combineTooltipPayload = (
@@ -134,7 +155,7 @@ export const selectTooltipPayload: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
 ) => TooltipPayload | undefined = createSelector(
-  selectTooltipItemPayloads,
+  selectTooltipPayloadConfigurations,
   selectActiveIndex,
   selectChartData,
   selectTooltipAxis,
