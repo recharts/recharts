@@ -13,7 +13,7 @@ export const useChartName = (): string => {
   return useAppSelector((state: RechartsRootState) => state.options.chartName);
 };
 
-export function useTooltipEventType(shared: boolean | undefined) {
+export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {
   const defaultTooltipEventType = useAppSelector((state: RechartsRootState) => state.options.defaultTooltipEventType);
   const validateTooltipEventTypes = useAppSelector(
     (state: RechartsRootState) => state.options.validateTooltipEventTypes,

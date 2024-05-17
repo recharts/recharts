@@ -206,9 +206,9 @@ function PieSectors(props: PieSectorsProps) {
     ...restOfAllOtherProps
   } = allOtherPieProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
 
   return sectors.map((entry, i) => {
     if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
