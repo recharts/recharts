@@ -181,9 +181,9 @@ function BarBackground(props: BarBackgroundProps) {
     ...restOfAllOtherProps
   } = allOtherBarProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
   if (!backgroundFromProps) {
     return null;
   }
@@ -255,9 +255,9 @@ function BarRectangles(props: BarRectanglesProps) {
     ...restOfAllOtherProps
   } = rest;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
 
   if (!data) {
     return null;

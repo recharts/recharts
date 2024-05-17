@@ -1,18 +1,19 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { useAppSelector } from './hooks';
 import { RechartsRootState } from './store';
-import { TooltipPayload, TooltipPayloadEntry, TooltipState } from './tooltipSlice';
+import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry, TooltipState } from './tooltipSlice';
 import { getTicksOfAxis, getTooltipEntry, getValueByDataKey } from '../util/ChartUtils';
 import { ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
-import { BaseAxisProps, DataKey, TickItem } from '../util/types';
+import { BaseAxisProps, DataKey, TickItem, TooltipEventType } from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
+import { TooltipTrigger } from '../chart/types';
 
 export const useChartName = (): string => {
   return useAppSelector((state: RechartsRootState) => state.options.chartName);
 };
 
-export function useTooltipEventType(shared: boolean | undefined) {
+export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {
   const defaultTooltipEventType = useAppSelector((state: RechartsRootState) => state.options.defaultTooltipEventType);
   const validateTooltipEventTypes = useAppSelector(
     (state: RechartsRootState) => state.options.validateTooltipEventTypes,
@@ -38,7 +39,23 @@ const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseA
   getTicksOfAxis(tooltipAxis, false, true),
 );
 
-const selectActiveIndex = createSelector(selectTooltipState, (tooltipState: TooltipState) => tooltipState.activeIndex);
+export function selectActiveIndex(
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): number {
+  const tooltipState: TooltipState = selectTooltipState(state);
+  if (tooltipEventType === 'item') {
+    if (trigger === 'hover') {
+      return tooltipState.itemInteraction.activeMouseOverIndex;
+    }
+    return tooltipState.itemInteraction.activeClickIndex;
+  }
+  if (trigger === 'hover') {
+    return tooltipState.axisInteraction.activeMouseOverAxisIndex;
+  }
+  return tooltipState.axisInteraction.activeClickAxisIndex;
+}
 
 const selectActiveLabel = createSelector(
   selectTooltipTicks,
@@ -47,32 +64,48 @@ const selectActiveLabel = createSelector(
     tooltipTicks?.[activeIndex]?.value,
 );
 
-function selectFinalData(
-  dataDefinedOnItem: ReadonlyArray<unknown>,
-  dataDefinedOnChart: ReadonlyArray<unknown>,
-  sharedTooltip: boolean | undefined,
-) {
+function selectFinalData(dataDefinedOnItem: ReadonlyArray<unknown>, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
    */
-  if (sharedTooltip === false) {
-    return dataDefinedOnItem;
-  }
   if (dataDefinedOnItem?.length > 0) {
     return dataDefinedOnItem;
   }
   return dataDefinedOnChart;
 }
 
+export function selectTooltipPayloadConfigurations(
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  trigger: TooltipTrigger,
+): ReadonlyArray<TooltipPayloadConfiguration> {
+  const tooltipState = selectTooltipState(state);
+  // if tooltip reacts to axis interaction, then we display all items at the same time.
+  if (tooltipEventType === 'axis') {
+    return tooltipState.tooltipItemPayloads;
+  }
+  let filterByDataKey: DataKey<any> | undefined;
+  /*
+   * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
+   * item means that only the hovered or clicked item will be present in the tooltip.
+   */
+  if (trigger === 'hover') {
+    filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+  } else {
+    filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+  }
+  return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
+}
+
 export const combineTooltipPayload = (
-  tooltipState: TooltipState,
+  tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
+  activeIndex: number,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
-  shared: boolean | undefined,
 ): TooltipPayload | undefined => {
-  const { activeIndex, tooltipItemPayloads } = tooltipState;
   if (activeIndex === -1) {
     return undefined;
   }
@@ -81,7 +114,7 @@ export const combineTooltipPayload = (
   const init: Array<TooltipPayloadEntry> = [];
 
   return tooltipItemPayloads.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
-    const finalData = selectFinalData(dataDefinedOnItem, chartData, shared);
+    const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
 
@@ -129,12 +162,13 @@ export const combineTooltipPayload = (
 
 export const selectTooltipPayload: (
   state: RechartsRootState,
-  shared: boolean | undefined,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
 ) => TooltipPayload | undefined = createSelector(
-  selectTooltipState,
+  selectTooltipPayloadConfigurations,
+  selectActiveIndex,
   selectChartData,
   selectTooltipAxis,
   selectActiveLabel,
-  (_: void, shared: boolean | undefined) => shared,
   combineTooltipPayload,
 );

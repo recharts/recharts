@@ -102,9 +102,9 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
 
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps);
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherFunnelProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
 
   return trapezoids.map((entry, i) => {
     const isActiveIndex = activeShape && activeIndex === i;

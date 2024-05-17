@@ -17,9 +17,11 @@ import { TooltipContextValue, useTooltipContext } from '../context/tooltipContex
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
-import { useTooltipEventType } from '../state/selectors';
+import { selectTooltipPayload, useTooltipEventType } from '../state/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
+import { useAppSelector } from '../state/hooks';
+import { TooltipPayload } from '../state/tooltipSlice';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -93,6 +95,8 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   wrapperStyle?: CSSProperties;
 };
 
+const emptyPayload: TooltipPayload = [];
+
 function TooltipInternal<TValue extends ValueType, TName extends NameType>(props: TooltipProps<TValue, TName>) {
   const {
     active: activeFromProps,
@@ -110,16 +114,16 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     wrapperStyle,
     cursor,
     shared,
+    trigger,
     portal: portalFromProps,
   } = props;
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
-  const { active: activeFromContext, payload: payloadFromProps, coordinate, label } = useTooltipContext();
-  // TODO this will fail tests if we use the selector, uncomment and fix
-  // const payloadFromContext = useAppSelector(state => selectTooltipPayload(state, shared));
-  // const payload = payloadFromContext?.length > 0 ? payloadFromContext : payloadFromProps;
-  const payload = payloadFromProps;
   const tooltipEventType = useTooltipEventType(shared);
+  const { active: activeFromContext, payload: payloadFromProps, coordinate, label } = useTooltipContext();
+  const payloadFromContext = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger));
+  // TODO remove the fallback to payloadFromProps
+  const payload: TooltipPayload = payloadFromContext?.length > 0 ? payloadFromContext : payloadFromProps;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
@@ -136,9 +140,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     return null;
   }
 
-  let finalPayload: Payload<TValue, TName>[] = payload ?? [];
+  let finalPayload: TooltipPayload = payload ?? emptyPayload;
   if (!finalIsActive) {
-    finalPayload = [];
+    finalPayload = emptyPayload;
   }
 
   if (filterNull && finalPayload.length) {
@@ -171,6 +175,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     >
       {renderContent(content, {
         ...props,
+        // @ts-expect-error renderContent method expects the payload to be mutable, TODO make it immutable
         payload: finalPayload,
         label,
         active: finalIsActive,
