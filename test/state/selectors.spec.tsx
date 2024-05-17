@@ -26,6 +26,7 @@ import {
   setDataStartEndIndexes,
 } from '../../src/state/chartDataSlice';
 import { TooltipTrigger } from '../../src/chart/types';
+import { produceState } from './produceState';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -95,7 +96,8 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
   ],
 };
 
-const allTooltipCombinations: ReadonlyArray<{ tooltipEventType: TooltipEventType; trigger: TooltipTrigger }> = [
+type TestCaseTooltipCombination = { tooltipEventType: TooltipEventType; trigger: TooltipTrigger };
+const allTooltipCombinations: ReadonlyArray<TestCaseTooltipCombination> = [
   { tooltipEventType: 'axis', trigger: 'hover' },
   { tooltipEventType: 'axis', trigger: 'click' },
   { tooltipEventType: 'item', trigger: 'hover' },
@@ -202,7 +204,7 @@ describe('selectTooltipPayload', () => {
     },
   );
 
-  it('should return settings and data from a graphical item hover, if activeIndex is set for item hover', () => {
+  it('should return settings and data from a graphical item hover, if activeIndex is set for the item', () => {
     const store = createRechartsStore();
     const tooltipSettings1: TooltipPayloadConfiguration = {
       settings: undefined,
@@ -242,80 +244,74 @@ describe('selectTooltipPayload', () => {
     expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry1, expectedEntry2]);
   });
 
-  it.each(allTooltipCombinations)(
-    'should fill in chartData, if it is not defined on the item for $tooltipEventType $trigger',
-    ({ tooltipEventType, trigger }) => {
-      const store = createRechartsStore();
-      const tooltipSettings: TooltipPayloadConfiguration = {
-        settings: {
-          stroke: 'red',
-          fill: 'green',
-          dataKey: 'y',
-          name: 'foo',
-          unit: 'bar',
-        },
-        dataDefinedOnItem: undefined,
-      };
-      store.dispatch(addTooltipEntrySettings(tooltipSettings));
-      store.dispatch(
-        setChartData([
-          { x: 1, y: 2 },
-          { x: 3, y: 4 },
-        ]),
-      );
-      store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
-
-      const expectedEntry: TooltipPayloadEntry = {
-        name: 'foo',
-        dataKey: 'y',
+  it('should fill in chartData, if it is not defined on the item for item hover', () => {
+    const store = createRechartsStore();
+    const tooltipSettings: TooltipPayloadConfiguration = {
+      settings: {
         stroke: 'red',
         fill: 'green',
-        payload: { x: 1, y: 2 },
-        value: 2,
+        dataKey: 'y',
+        name: 'foo',
         unit: 'bar',
-      };
+      },
+      dataDefinedOnItem: undefined,
+    };
+    store.dispatch(addTooltipEntrySettings(tooltipSettings));
+    store.dispatch(
+      setChartData([
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ]),
+    );
+    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
 
-      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual([expectedEntry]);
-    },
-  );
+    const expectedEntry: TooltipPayloadEntry = {
+      name: 'foo',
+      dataKey: 'y',
+      stroke: 'red',
+      fill: 'green',
+      payload: { x: 1, y: 2 },
+      value: 2,
+      unit: 'bar',
+    };
 
-  it.each(allTooltipCombinations)(
-    'should return sliced data if set by Brush for $tooltipEventType $trigger',
-    ({ tooltipEventType, trigger }) => {
-      const store = createRechartsStore();
-      const tooltipSettings: TooltipPayloadConfiguration = {
-        settings: {
-          stroke: 'red',
-          fill: 'green',
-          dataKey: 'y',
-          name: 'foo',
-        },
-        dataDefinedOnItem: [
-          { x: 1, y: 2 },
-          { x: 3, y: 4 },
-        ],
-      };
-      store.dispatch(addTooltipEntrySettings(tooltipSettings));
-      store.dispatch(
-        setChartData([
-          { x: 1, y: 2 },
-          { x: 3, y: 4 },
-        ]),
-      );
-      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual(undefined);
-      store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
-      store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
-      const expectedEntry: TooltipPayloadEntry = {
-        name: 'foo',
-        dataKey: 'y',
+    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry]);
+  });
+
+  it('should return sliced data if set by Brush for item hover', () => {
+    const store = createRechartsStore();
+    const tooltipSettings: TooltipPayloadConfiguration = {
+      settings: {
         stroke: 'red',
         fill: 'green',
-        payload: { x: 3, y: 4 },
-        value: 4,
-      };
-      expect(selectTooltipPayload(store.getState(), tooltipEventType, trigger)).toEqual([expectedEntry]);
-    },
-  );
+        dataKey: 'y',
+        name: 'foo',
+      },
+      dataDefinedOnItem: [
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ],
+    };
+    store.dispatch(addTooltipEntrySettings(tooltipSettings));
+    store.dispatch(
+      setChartData([
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+      ]),
+    );
+    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual(undefined);
+    store.dispatch(setActiveMouseOverItemIndex({ activeIndex: 0, activeDataKey: 'y' }));
+    store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
+    const expectedEntry: TooltipPayloadEntry = {
+      name: 'foo',
+      dataKey: 'y',
+      stroke: 'red',
+      fill: 'green',
+      payload: { x: 3, y: 4 },
+      value: 4,
+    };
+    expect(selectTooltipPayload(store.getState(), 'item', 'hover')).toEqual([expectedEntry]);
+  });
 
   it('should return array of payloads for Scatter because Scatter naturally does its own special thing', () => {
     const chartDataState: ChartDataState = initialChartDataState;
@@ -387,10 +383,30 @@ describe('selectActiveIndex', () => {
     expect(selectActiveIndex(initialState, 'item', 'click')).toBe(-1);
   });
 
-  it.todo('should return item hover index');
-  it.todo('should return item click index');
-  it.todo('should return axis hover index');
-  it.todo('should return axis click index');
+  it('should return item hover index', () => {
+    const state = produceState(draft => {
+      draft.tooltip.itemInteraction.activeMouseOverIndex = 7;
+    });
+    expect(selectActiveIndex(state, 'item', 'hover')).toBe(7);
+  });
+  it('should return item click index', () => {
+    const state = produceState(draft => {
+      draft.tooltip.itemInteraction.activeClickIndex = 7;
+    });
+    expect(selectActiveIndex(state, 'item', 'click')).toBe(7);
+  });
+  it('should return axis hover index', () => {
+    const state = produceState(draft => {
+      draft.tooltip.axisInteraction.activeMouseOverAxisIndex = 7;
+    });
+    expect(selectActiveIndex(state, 'axis', 'hover')).toBe(7);
+  });
+  it('should return axis click index', () => {
+    const state = produceState(draft => {
+      draft.tooltip.axisInteraction.activeClickAxisIndex = 7;
+    });
+    expect(selectActiveIndex(state, 'axis', 'click')).toBe(7);
+  });
 });
 
 describe('selectTooltipPayloadConfigurations', () => {

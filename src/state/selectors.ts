@@ -39,11 +39,23 @@ const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseA
   getTicksOfAxis(tooltipAxis, false, true),
 );
 
-export const selectActiveIndex: (
+export function selectActiveIndex(
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-) => number = createSelector(selectTooltipState, (tooltipState: TooltipState) => tooltipState.activeIndex);
+): number {
+  const tooltipState: TooltipState = selectTooltipState(state);
+  if (tooltipEventType === 'item') {
+    if (trigger === 'hover') {
+      return tooltipState.itemInteraction.activeMouseOverIndex;
+    }
+    return tooltipState.itemInteraction.activeClickIndex;
+  }
+  if (trigger === 'hover') {
+    return tooltipState.axisInteraction.activeMouseOverAxisIndex;
+  }
+  return tooltipState.axisInteraction.activeClickAxisIndex;
+}
 
 const selectActiveLabel = createSelector(
   selectTooltipTicks,
