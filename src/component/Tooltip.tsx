@@ -120,10 +120,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
-  const { active: activeFromContext, payload: payloadFromProps, coordinate, label } = useTooltipContext();
-  const payloadFromContext = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger));
-  // TODO remove the fallback to payloadFromProps
-  const payload: TooltipPayload = payloadFromContext?.length > 0 ? payloadFromContext : payloadFromProps;
+  // TODO swap the other properties from generateCategoricalChart context, to redux
+  const { active: activeFromContext, payload: payloadFromContext, coordinate, label } = useTooltipContext();
+  const payloadFromRedux = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger));
+  // TODO remove the payloadFromContext fallback
+  const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
