@@ -115,14 +115,18 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     cursor,
     shared,
     trigger,
+    defaultIndex,
     portal: portalFromProps,
   } = props;
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
+
   // TODO swap the other properties from generateCategoricalChart context, to redux
   const { active: activeFromContext, payload: payloadFromContext, coordinate, label } = useTooltipContext();
-  const payloadFromRedux = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger));
+  const payloadFromRedux = useAppSelector(state =>
+    selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
+  );
   // TODO remove the payloadFromContext fallback
   const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();
