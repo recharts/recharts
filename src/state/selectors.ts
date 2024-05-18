@@ -180,3 +180,21 @@ export const selectTooltipPayload: (
   selectActiveLabel,
   combineTooltipPayload,
 );
+
+export const selectIsTooltipActive = (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): boolean => {
+  if (tooltipEventType === 'axis') {
+    if (trigger === 'hover') {
+      return state.tooltip.axisInteraction.activeHover;
+    }
+    return state.tooltip.axisInteraction.activeClick;
+  }
+
+  if (trigger === 'hover') {
+    return state.tooltip.itemInteraction.activeHover;
+  }
+  return state.tooltip.itemInteraction.activeClick;
+};
