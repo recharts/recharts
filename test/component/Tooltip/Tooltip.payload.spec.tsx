@@ -30,7 +30,7 @@ import {
   YAxis,
 } from '../../../src';
 import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
-import { exampleSunburstData, exampleTreemapData, PageData, SankeyData } from '../../_data';
+import { exampleSunburstData, exampleTreemapData, PageData, exampleSankeyData } from '../../_data';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -261,7 +261,7 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
 const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
   name: 'Sankey Node hover',
   Wrapper: ({ children }) => (
-    <Sankey height={600} width={600} data={SankeyData}>
+    <Sankey height={600} width={600} data={exampleSankeyData}>
       {children}
     </Sankey>
   ),
@@ -273,7 +273,7 @@ const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
 const SankeyLinkHoverTestCase: TooltipPayloadTestCase = {
   name: 'Sankey Link hover',
   Wrapper: ({ children }) => (
-    <Sankey height={600} width={600} data={SankeyData}>
+    <Sankey height={600} width={600} data={exampleSankeyData}>
       {children}
     </Sankey>
   ),

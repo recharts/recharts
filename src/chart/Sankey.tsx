@@ -339,7 +339,7 @@ interface LinkDataItem {
   [key: string]: any;
 }
 
-interface SankeyData {
+export interface SankeyData {
   nodes: any[];
   links: LinkDataItem[];
 }

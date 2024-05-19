@@ -28,7 +28,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { PageData as data, SankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
+import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
 
 const svgTagMustHaveLabelViolation = expect.objectContaining({
   description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
@@ -147,7 +147,7 @@ describe('Static scanning for accessibility markup issues', () => {
   });
 
   test('Sankey chart', async () => {
-    const { container } = render(<Sankey width={1000} height={500} data={SankeyData} />);
+    const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
     expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'region');
   });

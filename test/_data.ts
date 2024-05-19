@@ -9,7 +9,7 @@ export const PageData = [
   { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
 ];
 
-export const SankeyData = {
+export const exampleSankeyData = {
   nodes: [
     { name: 'Agricultural waste' },
     { name: 'Bio-conversion' },

@@ -34,7 +34,7 @@ import {
   YAxis,
 } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
-import { PageData, SankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
+import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
 import { getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -231,7 +231,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
 const SankeyTestCase: TooltipVisibilityTestCase = {
   name: 'Sankey',
   Wrapper: ({ children }) => (
-    <Sankey width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} data={SankeyData}>
+    <Sankey width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }} data={exampleSankeyData}>
       {children}
     </Sankey>
   ),
