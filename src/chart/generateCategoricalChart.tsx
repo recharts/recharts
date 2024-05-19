@@ -6,7 +6,6 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import throttle from 'lodash/throttle';
 
-import clsx from 'clsx';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
@@ -94,6 +93,7 @@ import {
   MouseLeaveItemDispatchContext,
   TooltipPayloadType,
 } from '../context/tooltipContext';
+import { RechartsWrapper } from './RechartsWrapper';
 
 export interface MousePointer {
   pageX: number;
@@ -1330,6 +1330,11 @@ export const generateCategoricalChart = ({
       this.throttleTriggeredAfterMouseMove.cancel();
     }
 
+    /**
+     * @deprecated instead use `useTooltipEventType` hook
+     *
+     * @returns do not use
+     */
     getTooltipEventType(): TooltipEventType {
       const tooltipItem = findChildByType(this.props.children, Tooltip);
 
@@ -1935,10 +1940,12 @@ export const generateCategoricalChart = ({
                             margin={this.props.margin}
                             layout={this.props.layout}
                           >
-                            <div
-                              className={clsx('recharts-wrapper', className)}
-                              style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-                              {...wrapperEvents}
+                            <RechartsWrapper
+                              className={className}
+                              style={style}
+                              wrapperEvents={wrapperEvents}
+                              width={width}
+                              height={height}
                               ref={(node: HTMLDivElement) => {
                                 this.container = node;
                                 if (this.state.tooltipPortal == null) {
@@ -1965,7 +1972,7 @@ export const generateCategoricalChart = ({
                                 />
                                 {renderByOrder(children, this.renderMap)}
                               </Surface>
-                            </div>
+                            </RechartsWrapper>
                           </ChartLayoutContextProvider>
                         </AccessibilityContextProvider>
                       </BrushUpdateDispatchContext.Provider>

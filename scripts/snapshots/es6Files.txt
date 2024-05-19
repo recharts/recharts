@@ -108,6 +108,7 @@
   "es6/chart/SunburstChart.js",
   "es6/chart/ScatterChart.js",
   "es6/chart/Sankey.js",
+  "es6/chart/RechartsWrapper.js",
   "es6/chart/RadialBarChart.js",
   "es6/chart/RadarChart.js",
   "es6/chart/PieChart.js",

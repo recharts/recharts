@@ -108,6 +108,7 @@
   "lib/chart/SunburstChart.js",
   "lib/chart/ScatterChart.js",
   "lib/chart/Sankey.js",
+  "lib/chart/RechartsWrapper.js",
   "lib/chart/RadialBarChart.js",
   "lib/chart/RadarChart.js",
   "lib/chart/PieChart.js",
