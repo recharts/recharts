@@ -36,7 +36,13 @@ export type ChartTestCase = {
     data?: any[];
     layout?: LayoutType;
     compact?: boolean;
-    onClick?: (param: any) => void;
+    onClick?: (param: unknown) => void;
+    onMouseEnter?: (param: unknown) => void;
+    onMouseMove?: (param: unknown) => void;
+    onMouseLeave?: (param: unknown) => void;
+    onTouchStart?: (param: unknown) => void;
+    onTouchMove?: (param: unknown) => void;
+    onTouchEnd?: (param: unknown) => void;
   }>;
   testName: string;
 };
