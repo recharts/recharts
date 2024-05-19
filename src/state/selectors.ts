@@ -43,18 +43,25 @@ export function selectActiveIndex(
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
 ): number {
   const tooltipState: TooltipState = selectTooltipState(state);
+  let activeIndex: number;
   if (tooltipEventType === 'item') {
     if (trigger === 'hover') {
-      return tooltipState.itemInteraction.activeMouseOverIndex;
+      activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+    } else {
+      activeIndex = tooltipState.itemInteraction.activeClickIndex;
     }
-    return tooltipState.itemInteraction.activeClickIndex;
+  } else if (trigger === 'hover') {
+    activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+  } else {
+    activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
   }
-  if (trigger === 'hover') {
-    return tooltipState.axisInteraction.activeMouseOverAxisIndex;
+  if (activeIndex === -1 && defaultIndex != null) {
+    return defaultIndex;
   }
-  return tooltipState.axisInteraction.activeClickAxisIndex;
+  return activeIndex;
 }
 
 const selectActiveLabel = createSelector(
@@ -164,6 +171,7 @@ export const selectTooltipPayload: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
 ) => TooltipPayload | undefined = createSelector(
   selectTooltipPayloadConfigurations,
   selectActiveIndex,
@@ -172,3 +180,21 @@ export const selectTooltipPayload: (
   selectActiveLabel,
   combineTooltipPayload,
 );
+
+export const selectIsTooltipActive = (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): boolean => {
+  if (tooltipEventType === 'axis') {
+    if (trigger === 'hover') {
+      return state.tooltip.axisInteraction.activeHover;
+    }
+    return state.tooltip.axisInteraction.activeClick;
+  }
+
+  if (trigger === 'hover') {
+    return state.tooltip.itemInteraction.activeHover;
+  }
+  return state.tooltip.itemInteraction.activeClick;
+};

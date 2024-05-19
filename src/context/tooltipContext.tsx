@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { ChartCoordinate, Coordinate, DataKey } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
-import { setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
+import { mouseLeaveItem, setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
 
 export type TooltipContextValue = {
   label: string;
@@ -65,7 +65,7 @@ export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
   return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
     onMouseLeaveFromProps?.(data, index, event);
     onMouseLeaveFromContext?.(data, index, event);
-    dispatch(setActiveMouseOverItemIndex({ activeIndex: -1, activeDataKey: undefined }));
+    dispatch(mouseLeaveItem());
   };
 };
 
