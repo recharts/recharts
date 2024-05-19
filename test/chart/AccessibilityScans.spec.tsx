@@ -30,6 +30,14 @@ import {
 } from '../../src';
 import { PageData as data, SankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
 
+const svgTagMustHaveLabelViolation = expect.objectContaining({
+  description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
+  help: '<svg> elements with an img role must have an alternative text',
+  helpUrl: 'https://dequeuniversity.com/rules/axe/4.7/svg-img-alt?application=axeAPI',
+  id: 'svg-img-alt',
+  impact: 'serious',
+});
+
 describe('Static scanning for accessibility markup issues', () => {
   test('Area chart', async () => {
     const { container } = render(
@@ -37,17 +45,17 @@ describe('Static scanning for accessibility markup issues', () => {
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
-  test.skip('chart with accessibilityLayer', async () => {
+  test('chart with accessibilityLayer', async () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data} accessibilityLayer>
         <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
 
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   test('Chart with tooltip, legend, axes, brush, grid, margins', async () => {
@@ -62,7 +70,7 @@ describe('Static scanning for accessibility markup issues', () => {
         <Brush />
       </AreaChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   test('Bar chart', async () => {
@@ -71,17 +79,17 @@ describe('Static scanning for accessibility markup issues', () => {
         <Bar dataKey="uv" fill="#ff7300" />
       </BarChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
-  test.skip('Funnel chart', async () => {
+  test('Funnel chart', async () => {
     const { container } = render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} />
       </FunnelChart>,
     );
 
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
   });
 
   test('Line chart', async () => {
@@ -90,7 +98,7 @@ describe('Static scanning for accessibility markup issues', () => {
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   test('Pie chart', async () => {
@@ -99,7 +107,7 @@ describe('Static scanning for accessibility markup issues', () => {
         <Pie dataKey="value" data={[data[0]]} cx={200} cy={200} outerRadius={80} fill="#ff7300" label />
       </PieChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
   test('Radar chart', async () => {
@@ -108,10 +116,10 @@ describe('Static scanning for accessibility markup issues', () => {
         <Radar dataKey="value" />
       </RadarChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([]);
   });
 
-  test.skip('Radial bar chart', async () => {
+  test('Radial bar chart', async () => {
     const { container } = render(
       <RadialBarChart
         width={500}
@@ -126,15 +134,15 @@ describe('Static scanning for accessibility markup issues', () => {
         <RadialBar label={{ orientation: 'outer' }} background dataKey="uv" isAnimationActive={false} />
       </RadialBarChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
   });
 
-  test.skip('Sankey chart', async () => {
+  test('Sankey chart', async () => {
     const { container } = render(<Sankey width={1000} height={500} data={SankeyData} />);
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
   });
 
-  test.skip('Scatter chart', async () => {
+  test('Scatter chart', async () => {
     const { container } = render(
       <ScatterChart width={400} height={400}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -143,16 +151,25 @@ describe('Static scanning for accessibility markup issues', () => {
         <Tooltip />
       </ScatterChart>,
     );
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
   });
 
-  test.skip('Sunburst', async () => {
+  test('Sunburst', async () => {
     const { container } = render(<SunburstChart data={exampleSunburstData} />);
 
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([
+      expect.objectContaining({
+        description: "Ensures ARIA attributes are allowed for an element's role",
+        help: 'Elements must only use allowed ARIA attributes',
+        helpUrl: 'https://dequeuniversity.com/rules/axe/4.7/aria-allowed-attr?application=axeAPI',
+        id: 'aria-allowed-attr',
+        impact: 'serious',
+      }),
+      svgTagMustHaveLabelViolation,
+    ]);
   });
 
-  test.skip('Treemap', async () => {
+  test('Treemap', async () => {
     const { container } = render(
       <Treemap
         width={500}
@@ -164,6 +181,6 @@ describe('Static scanning for accessibility markup issues', () => {
       />,
     );
 
-    expect((await axe(container)).violations).toHaveLength(0);
+    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
   });
 });
