@@ -108,6 +108,7 @@
   "types/chart/SunburstChart.d.ts",
   "types/chart/ScatterChart.d.ts",
   "types/chart/Sankey.d.ts",
+  "types/chart/RechartsWrapper.d.ts",
   "types/chart/RadialBarChart.d.ts",
   "types/chart/RadarChart.d.ts",
   "types/chart/PieChart.d.ts",
