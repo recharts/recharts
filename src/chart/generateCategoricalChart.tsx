@@ -213,7 +213,7 @@ function getDefaultDomainByAxisType(axisType: 'number' | string) {
 }
 
 /**
- * Get the content to be displayed in the tooltip
+ * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
  * @param  {Object} state          Current state
  * @param  {Array}  chartData      The data defined in chart
  * @param  {Number} activeIndex    Active index of data
@@ -1367,7 +1367,14 @@ export const generateCategoricalChart = ({
 
       const scale = boundingRect.width / element.offsetWidth || 1;
 
-      const rangeObj = this.inRange(e.chartX, e.chartY, scale);
+      const rangeObj = this.inRange(
+        e.chartX,
+        e.chartY,
+        scale,
+        this.props.layout,
+        this.state.angleAxisMap,
+        this.state.radiusAxisMap,
+      );
       if (!rangeObj) {
         return null;
       }
@@ -1396,9 +1403,14 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    inRange(x: number, y: number, scale = 1): RangeObj {
-      const { layout } = this.props;
-
+    inRange(
+      x: number,
+      y: number,
+      scale = 1,
+      layout: LayoutType,
+      angleAxisMap: AxisMap | undefined,
+      radiusAxisMap: AxisMap | undefined,
+    ): RangeObj {
       const [scaledX, scaledY] = [x / scale, y / scale];
 
       if (layout === 'horizontal' || layout === 'vertical') {
@@ -1412,8 +1424,6 @@ export const generateCategoricalChart = ({
 
         return isInRange ? { x: scaledX, y: scaledY } : null;
       }
-
-      const { angleAxisMap, radiusAxisMap } = this.state;
 
       if (angleAxisMap && radiusAxisMap) {
         const angleAxis = getAnyElementOfObject(angleAxisMap);
