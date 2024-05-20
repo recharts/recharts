@@ -42,6 +42,7 @@ import {
   getStackGroupsByAxisId,
   getTicksOfAxis,
   getTooltipItem,
+  inRange,
   isAxisLTR,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
@@ -49,7 +50,7 @@ import {
   parseSpecifiedDomain,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
-import { inRangeOfSector, polarToCartesian } from '../util/PolarUtils';
+import { polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
@@ -1367,13 +1368,14 @@ export const generateCategoricalChart = ({
 
       const scale = boundingRect.width / element.offsetWidth || 1;
 
-      const rangeObj = this.inRange(
+      const rangeObj = inRange(
         e.chartX,
         e.chartY,
         scale,
         this.props.layout,
         this.state.angleAxisMap,
         this.state.radiusAxisMap,
+        this.state.offset,
       );
       if (!rangeObj) {
         return null;
@@ -1398,36 +1400,6 @@ export const generateCategoricalChart = ({
           ...e,
           ...toolTipData,
         };
-      }
-
-      return null;
-    }
-
-    inRange(
-      x: number,
-      y: number,
-      scale = 1,
-      layout: LayoutType,
-      angleAxisMap: AxisMap | undefined,
-      radiusAxisMap: AxisMap | undefined,
-    ): RangeObj {
-      const [scaledX, scaledY] = [x / scale, y / scale];
-
-      if (layout === 'horizontal' || layout === 'vertical') {
-        const { offset } = this.state;
-
-        const isInRange =
-          scaledX >= offset.left &&
-          scaledX <= offset.left + offset.width &&
-          scaledY >= offset.top &&
-          scaledY <= offset.top + offset.height;
-
-        return isInRange ? { x: scaledX, y: scaledY } : null;
-      }
-
-      if (angleAxisMap && radiusAxisMap) {
-        const angleAxis = getAnyElementOfObject(angleAxisMap);
-        return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
       }
 
       return null;
