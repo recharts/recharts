@@ -32,7 +32,7 @@ const data = [
 describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it(`Render ${data.length} rectangles in horizontal Bar`, () => {
     const { container } = render(
-      <ChartElement width={500} height={500}>
+      <ChartElement>
         <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" />
       </ChartElement>,
     );
@@ -42,7 +42,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
   it(`Render ${data.length} rectangles in vertical Bar`, () => {
     const { container } = render(
-      <ChartElement width={500} height={500}>
+      <ChartElement>
         <Bar isAnimationActive={false} layout="vertical" data={data} dataKey="value" />
       </ChartElement>,
     );
@@ -52,7 +52,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
   it("Don't render any rectangle when data is empty", () => {
     const { container } = render(
-      <ChartElement width={500} height={500}>
+      <ChartElement>
         <Bar data={[]} dataKey="value" />
       </ChartElement>,
     );
@@ -84,7 +84,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
     it('Will create a background Rectangle with the passed in props', () => {
       const { container } = render(
-        <ChartElement width={500} height={500}>
+        <ChartElement>
           <Bar data={composedDataWithBackground} background={{ fill: '#000' }} dataKey="value" />
         </ChartElement>,
       );
@@ -100,7 +100,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
         return <div key={uniqueId()} className={className} />;
       };
       const { container } = render(
-        <ChartElement width={500} height={500}>
+        <ChartElement>
           <Bar data={composedDataWithBackground} background={backgroundComponent} dataKey="value" />
         </ChartElement>,
       );
@@ -130,7 +130,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
         return <></>;
       };
       render(
-        <ChartElement width={500} height={500}>
+        <ChartElement>
           <Bar data={composedDataWithBackground} background={backgroundComponent} dataKey="value" />
         </ChartElement>,
       );
@@ -141,7 +141,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
     describe('as boolean', () => {
       it('should draw default labels when label = true', () => {
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive={false} data={data} label dataKey="value" />
           </ChartElement>,
         );
@@ -160,7 +160,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
       it('should not draw labels while animating', () => {
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive data={data} label dataKey="value" />
           </ChartElement>,
         );
@@ -170,7 +170,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
       it('should not draw labels when label = false', () => {
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive={false} data={data} label={false} dataKey="value" />
           </ChartElement>,
         );
@@ -182,7 +182,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
     describe('as svg properties object', () => {
       it('should draw labels and add extra props from the object', () => {
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar
               isAnimationActive={false}
               data={data}
@@ -210,7 +210,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
       it('should overwrite the recharts-label className but keep recharts-text className', () => {
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar
               isAnimationActive={false}
               data={data}
@@ -235,7 +235,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       it('should pass props to the label function', () => {
         const spy = vi.fn().mockReturnValue(null);
         render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive={false} data={data} label={spy} dataKey="value" />
           </ChartElement>,
         );
@@ -266,7 +266,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       it('should render what the label function returned', () => {
         const labelFn = () => <g className="my-mock-class" />;
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive={false} data={data} label={labelFn} dataKey="value" />
           </ChartElement>,
         );
@@ -286,7 +286,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       it('should pass props to the minPointSize function', () => {
         const spy = vi.fn().mockImplementation(() => 5);
         render(
-          <ChartElement width={500} height={500} data={data}>
+          <ChartElement data={data}>
             <XAxis dataKey="name" />
             <YAxis />
             <Bar isAnimationActive={false} minPointSize={spy} dataKey="value" />
@@ -304,7 +304,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           { name: 'test3', value: 1 },
         ];
         const { container } = render(
-          <ChartElement width={500} height={500} data={highLowData}>
+          <ChartElement data={highLowData}>
             <XAxis dataKey="name" />
             <YAxis />
             <Bar isAnimationActive={false} minPointSize={(value: number) => (value > 0 ? 2 : 0)} dataKey="value" />
@@ -326,7 +326,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
                 - but not all of them, and not the same as in the other ways of rendering labels`, () => {
         const MyLabel = <g className="my-mock-class" />;
         const { container } = render(
-          <ChartElement width={500} height={500}>
+          <ChartElement>
             <Bar isAnimationActive={false} data={data} label={MyLabel} dataKey="value" />
           </ChartElement>,
         );
@@ -366,7 +366,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     test.each(allLegendTypesExceptNone)('should render legendType %s', legendType => {
       const { container } = render(
-        <ChartElement width={500} height={500}>
+        <ChartElement>
           <Bar data={data} dataKey="value" legendType={legendType} />
           <Legend />
         </ChartElement>,
@@ -377,7 +377,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should not render any legend if legendType = none', () => {
       const { container } = render(
-        <ChartElement width={500} height={500}>
+        <ChartElement>
           <Bar data={data} dataKey="value" legendType="none" />
           <Legend />
         </ChartElement>,
@@ -391,7 +391,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 describe.each(chartsThatDoNotSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it('should not render anything', () => {
     const { container } = render(
-      <ChartElement width={500} height={500}>
+      <ChartElement>
         <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" data-testid="customized-bar" />
       </ChartElement>,
     );

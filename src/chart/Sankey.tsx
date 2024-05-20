@@ -5,7 +5,6 @@ import get from 'lodash/get';
 import sumBy from 'lodash/sumBy';
 import isFunction from 'lodash/isFunction';
 
-import clsx from 'clsx';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -17,6 +16,7 @@ import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { RechartsWrapper } from './RechartsWrapper';
 
 const defaultCoordinateOfTooltip = { x: 0, y: 0 };
 
@@ -339,7 +339,7 @@ interface LinkDataItem {
   [key: string]: any;
 }
 
-interface SankeyData {
+export interface SankeyData {
   nodes: any[];
   links: LinkDataItem[];
 }
@@ -711,10 +711,11 @@ export class Sankey extends PureComponent<Props, State> {
         <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
           <ViewBoxContext.Provider value={viewBox}>
             <TooltipContextProvider value={this.getTooltipContext()}>
-              <div
-                className={clsx('recharts-wrapper', className)}
-                style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-                role="region"
+              <RechartsWrapper
+                className={className}
+                style={style}
+                width={width}
+                height={height}
                 ref={(node: HTMLDivElement) => {
                   if (this.state.tooltipPortal == null) {
                     this.setState({ tooltipPortal: node });
@@ -734,7 +735,7 @@ export class Sankey extends PureComponent<Props, State> {
                   {this.renderLinks(links, nodes)}
                   {this.renderNodes(nodes)}
                 </Surface>
-              </div>
+              </RechartsWrapper>
             </TooltipContextProvider>
           </ViewBoxContext.Provider>
         </TooltipPortalContext.Provider>

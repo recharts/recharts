@@ -58,7 +58,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       };
 
       render(
-        <ChartElement width={500} height={500} data={data}>
+        <ChartElement data={data}>
           <Area dataKey="value" isAnimationActive={false} baseLine={200} label={renderLabel} />
         </ChartElement>,
       );
@@ -78,7 +78,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       };
 
       render(
-        <ChartElement width={500} height={500} data={data}>
+        <ChartElement data={data}>
           <Area
             dataKey="value"
             isAnimationActive={false}
@@ -103,7 +103,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       };
 
       render(
-        <ChartElement width={500} height={500} data={data}>
+        <ChartElement data={data}>
           <Area dataKey="value" isAnimationActive={false} baseLine={200} dot={renderDot} />
         </ChartElement>,
       );
@@ -118,7 +118,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
 
       render(
-        <ChartElement width={500} height={500} data={data}>
+        <ChartElement data={data}>
           <Area
             dataKey="value"
             isAnimationActive={false}
@@ -133,7 +133,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
     test('Does not throw when dot is null', () => {
       const { container } = render(
-        <ChartElement width={500} height={500} data={data}>
+        <ChartElement data={data}>
           {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
           {/* TypeScript should flag this as an error, but we have strict null checks disabled in config */}
           <Area dataKey="value" dot={null} />
@@ -151,7 +151,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const layout = 'horizontal';
       it('should default baseValue to zero if no domain is defined in the axis', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <YAxis />
           </ChartElement>,
@@ -166,7 +166,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should default baseValue to the first number in domain', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <YAxis domain={[20, 300]} />
           </ChartElement>,
@@ -184,7 +184,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to dataMin', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" baseValue="dataMin" />
             <YAxis domain={[20, 300]} />
           </ChartElement>,
@@ -202,7 +202,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to dataMax', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" baseValue="dataMax" />
             <YAxis domain={[20, 300]} />
           </ChartElement>,
@@ -220,7 +220,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const layout = 'vertical';
       it('should default baseValue to zero if no domain is defined in the axis', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <XAxis type="number" />
             <YAxis dataKey="y" />
@@ -243,7 +243,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
          * But at this point I am only writing tests, not fixing bugs.
          */
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <XAxis type="number" />
           </ChartElement>,
@@ -260,7 +260,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
          * But at this point I am only writing tests, not fixing bugs.
          */
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <XAxis type="number" />
             <YAxis />
@@ -274,7 +274,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should default baseValue to the first number in domain', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" />
             <XAxis type="number" />
             <YAxis dataKey="y" domain={[20, 300]} />
@@ -293,7 +293,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to dataMin', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" baseValue="dataMin" />
             <XAxis type="number" />
             <YAxis dataKey="y" domain={[20, 300]} />
@@ -312,7 +312,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to dataMax', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data} layout={layout}>
+          <ChartElement data={data} layout={layout}>
             <Area dataKey="value" baseValue="dataMax" />
             <XAxis type="number" />
             <YAxis dataKey="y" domain={[20, 300]} />
@@ -336,7 +336,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     describe('with no axes', () => {
       it('should default baseValue to 0', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data}>
+          <ChartElement data={data}>
             <Area dataKey="value" />
           </ChartElement>,
         );
@@ -350,7 +350,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to a number', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data}>
+          <ChartElement data={data}>
             <Area dataKey="value" baseValue={9} />
           </ChartElement>,
         );
@@ -367,7 +367,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to 0 when dataMin', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data}>
+          <ChartElement data={data}>
             <Area dataKey="value" baseValue="dataMin" />
           </ChartElement>,
         );
@@ -381,7 +381,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       it('should set baseValue to dataMax', () => {
         const { container } = render(
-          <ChartElement width={500} height={500} data={data}>
+          <ChartElement data={data}>
             <Area dataKey="value" baseValue="dataMax" />
           </ChartElement>,
         );
@@ -397,7 +397,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
   test.each([{ myData: undefined }, { myData: [] }])("Don't render any path when data is $myData", ({ myData }) => {
     const { container } = render(
-      <ChartElement width={500} height={500} data={myData}>
+      <ChartElement data={myData}>
         <Area dataKey="value" />
       </ChartElement>,
     );
@@ -409,7 +409,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
   test('renders the curve with the stroke on top (2nd) of the curve with the fill (1st)', () => {
     const { container } = render(
-      <ChartElement width={500} height={500} data={data}>
+      <ChartElement data={data}>
         <Area dataKey="value" baseLine={200} stroke="teal" fill="teal" />
       </ChartElement>,
     );
@@ -427,7 +427,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 describe.each(chartsThatDoNotSupportArea)('<Area /> as a child of $testName', ({ ChartElement }) => {
   it('should not render any curves', () => {
     const { container } = render(
-      <ChartElement width={500} height={500} data={data}>
+      <ChartElement data={data}>
         <Area dataKey="value" baseLine={200} stroke="teal" fill="teal" />
       </ChartElement>,
     );
