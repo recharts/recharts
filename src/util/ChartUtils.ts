@@ -23,7 +23,15 @@ import {
 import { ReactElement, ReactNode } from 'react';
 
 import { ErrorBar } from '../cartesian/ErrorBar';
-import { findEntryInArray, getPercentValue, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
+import {
+  findEntryInArray,
+  getAnyElementOfObject,
+  getPercentValue,
+  isNumber,
+  isNumOrStr,
+  mathSign,
+  uniqueId,
+} from './DataUtils';
 import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
@@ -41,13 +49,15 @@ import {
   Margin,
   NumberDomain,
   PolarLayoutType,
+  RangeObj,
   StackOffsetType,
   TickItem,
   XAxisMap,
 } from './types';
 import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisObj } from '../chart/types';
+import { AxisMap, AxisObj } from '../chart/types';
+import { inRangeOfSector } from './PolarUtils';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1462,4 +1472,33 @@ export function getBarPositions({
     }
   }
   return barPosition;
+}
+
+export function inRange(
+  x: number,
+  y: number,
+  scale: number,
+  layout: LayoutType,
+  angleAxisMap: AxisMap | undefined,
+  radiusAxisMap: AxisMap | undefined,
+  offset: ChartOffset,
+): RangeObj {
+  const [scaledX, scaledY] = [x / scale, y / scale];
+
+  if (layout === 'horizontal' || layout === 'vertical') {
+    const isInRange =
+      scaledX >= offset.left &&
+      scaledX <= offset.left + offset.width &&
+      scaledY >= offset.top &&
+      scaledY <= offset.top + offset.height;
+
+    return isInRange ? { x: scaledX, y: scaledY } : null;
+  }
+
+  if (angleAxisMap && radiusAxisMap) {
+    const angleAxis = getAnyElementOfObject(angleAxisMap);
+    return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
+  }
+
+  return null;
 }
