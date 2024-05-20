@@ -12,10 +12,14 @@ export type RechartsWrapperProps = {
 };
 
 export const RechartsWrapper = forwardRef(
-  ({ children, width, height, className, style, wrapperEvents }: RechartsWrapperProps, ref: Ref<HTMLDivElement>) => (
+  (
+    { children, width, height, className, style = {}, wrapperEvents = {} }: RechartsWrapperProps,
+    ref: Ref<HTMLDivElement>,
+  ) => (
     <div
       className={clsx('recharts-wrapper', className)}
       style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+      role="application"
       {...wrapperEvents}
       ref={ref}
     >

@@ -9,6 +9,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { RechartsWrapper } from './RechartsWrapper';
 
 export interface SunburstData {
   [key: string]: any;
@@ -211,10 +212,11 @@ export const SunburstChart = ({
       <TooltipPortalContext.Provider value={tooltipPortal}>
         <ViewBoxContext.Provider value={viewBox}>
           <TooltipContextProvider value={getTooltipContext()}>
-            <div
-              className={clsx('recharts-wrapper', className)}
-              style={{ position: 'relative', width, height }}
-              role="region"
+            <RechartsWrapper
+              className={className}
+              width={width}
+              // Sunburst doesn't support `style` property, why?
+              height={height}
               ref={(node: HTMLDivElement) => {
                 if (tooltipPortal == null && node != null) {
                   setTooltipPortal(node);
@@ -233,7 +235,7 @@ export const SunburstChart = ({
                 <Layer className={layerClass}>{sectors}</Layer>
                 {children}
               </Surface>
-            </div>
+            </RechartsWrapper>
           </TooltipContextProvider>
         </ViewBoxContext.Provider>
       </TooltipPortalContext.Provider>

@@ -98,6 +98,13 @@ export function getDomainOfDataByKey<T>(
 }
 
 export const calculateActiveTickIndex = (
+  /**
+   * For different layouts, `coordinate` is different:
+   * In horizontal layout, this is expected to be the `x` coordinate
+   * vertical -> y
+   * centric -> angle
+   * radial -> radius
+   */
   coordinate: number,
   ticks: Array<TickItem> = [],
   unsortedTicks?: Array<TickItem>,

@@ -3,7 +3,6 @@ import isNan from 'lodash/isNaN';
 import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
-import clsx from 'clsx';
 import Smooth from 'react-smooth';
 
 import { Tooltip } from '../component/Tooltip';
@@ -21,6 +20,7 @@ import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../uti
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { RechartsWrapper } from './RechartsWrapper';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -737,10 +737,11 @@ export class Treemap extends PureComponent<Props, State> {
         <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
           <ViewBoxContext.Provider value={viewBox}>
             <TooltipContextProvider value={this.getTooltipContext()}>
-              <div
-                className={clsx('recharts-wrapper', className)}
-                style={{ ...style, position: 'relative', cursor: 'default', width, height }}
-                role="region"
+              <RechartsWrapper
+                className={className}
+                style={style}
+                width={width}
+                height={height}
                 ref={(node: HTMLDivElement) => {
                   if (this.state.tooltipPortal == null) {
                     this.setState({ tooltipPortal: node });
@@ -760,7 +761,7 @@ export class Treemap extends PureComponent<Props, State> {
                   {children}
                 </Surface>
                 {type === 'nest' && this.renderNestIndex()}
-              </div>
+              </RechartsWrapper>
             </TooltipContextProvider>
           </ViewBoxContext.Provider>
         </TooltipPortalContext.Provider>
