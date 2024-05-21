@@ -1359,7 +1359,7 @@ export const generateCategoricalChart = ({
       }
 
       const element = this.container;
-      const boundingRect = element.getBoundingClientRect();
+      const boundingRect: DOMRect = element.getBoundingClientRect();
       const containerOffset = getOffset(boundingRect);
       const e = {
         chartX: Math.round(event.pageX - containerOffset.left),
