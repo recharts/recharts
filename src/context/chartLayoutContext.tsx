@@ -25,10 +25,9 @@ import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
-import { setLayout } from '../state/layoutSlice';
+import { setLayout, setOffset } from '../state/layoutSlice';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
-export const OffsetContext = createContext<ChartOffset>({});
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ChartHeightContext = createContext<number>(0);
 export const ChartWidthContext = createContext<number>(0);
@@ -96,6 +95,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   dispatch(setPolarAngleAxisMap(angleAxisMap));
   dispatch(setPolarRadiusAxisMap(radiusAxisMap));
   dispatch(setLayout(layout));
+  dispatch(setOffset(offset));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -114,17 +114,15 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     <UpdateIdContext.Provider value={updateId}>
       <MarginContext.Provider value={margin}>
         <LegendPayloadProvider>
-          <OffsetContext.Provider value={offset}>
-            <ViewBoxContext.Provider value={viewBox}>
-              <ClipPathIdContext.Provider value={clipPathId}>
-                <ChartHeightContext.Provider value={height}>
-                  <ChartWidthContext.Provider value={width}>
-                    <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                  </ChartWidthContext.Provider>
-                </ChartHeightContext.Provider>
-              </ClipPathIdContext.Provider>
-            </ViewBoxContext.Provider>
-          </OffsetContext.Provider>
+          <ViewBoxContext.Provider value={viewBox}>
+            <ClipPathIdContext.Provider value={clipPathId}>
+              <ChartHeightContext.Provider value={height}>
+                <ChartWidthContext.Provider value={width}>
+                  <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+                </ChartWidthContext.Provider>
+              </ChartHeightContext.Provider>
+            </ClipPathIdContext.Provider>
+          </ViewBoxContext.Provider>
         </LegendPayloadProvider>
       </MarginContext.Provider>
     </UpdateIdContext.Provider>
@@ -310,8 +308,10 @@ export const useViewBox = (): CartesianViewBox => {
   return useContext(ViewBoxContext);
 };
 
+const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
+
 export const useOffset = (): ChartOffset => {
-  return useContext(OffsetContext);
+  return useAppSelector(state => state.layout.offset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
 export const useChartWidth = (): number => {

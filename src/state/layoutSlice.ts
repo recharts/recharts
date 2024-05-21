@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { LayoutType } from '../util/types';
+import { ChartOffset, LayoutType } from '../util/types';
 
 interface HasDomRect {
   getBoundingClientRect: () => DOMRect;
@@ -8,6 +8,7 @@ interface HasDomRect {
 
 type ChartLayout = {
   layoutType: LayoutType;
+  offset: ChartOffset;
   /**
    * Why not DOMRect? Because resize
    */
@@ -17,6 +18,7 @@ type ChartLayout = {
 const initialState: ChartLayout = {
   layoutType: 'horizontal',
   container: null,
+  offset: {},
 };
 
 const chartLayoutSlice = createSlice({
@@ -29,9 +31,12 @@ const chartLayoutSlice = createSlice({
     setContainer(state, action: PayloadAction<HasDomRect | null>) {
       state.container = castDraft(action.payload);
     },
+    setOffset(state, action: PayloadAction<ChartOffset>) {
+      state.offset = action.payload;
+    },
   },
 });
 
-export const { setLayout, setContainer } = chartLayoutSlice.actions;
+export const { setLayout, setContainer, setOffset } = chartLayoutSlice.actions;
 
 export const chartLayoutReducer = chartLayoutSlice.reducer;
