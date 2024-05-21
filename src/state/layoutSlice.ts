@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartOffset, LayoutType } from '../util/types';
 
-interface HasDomRect {
+export interface HasDomRect {
   getBoundingClientRect: () => DOMRect;
 }
 
