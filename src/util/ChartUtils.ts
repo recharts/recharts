@@ -116,8 +116,8 @@ export const calculateActiveTickIndex = (
    * radial -> radius
    */
   coordinate: number,
-  ticks: Array<TickItem> = [],
-  unsortedTicks?: Array<TickItem>,
+  ticks: ReadonlyArray<TickItem> = [],
+  unsortedTicks?: ReadonlyArray<TickItem>,
   axis?: BaseAxisProps,
 ): number => {
   let index = -1;
@@ -1502,3 +1502,17 @@ export function inRange(
 
   return null;
 }
+
+export const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
+  if (layout === 'horizontal') {
+    return rangeObj.x;
+  }
+  if (layout === 'vertical') {
+    return rangeObj.y;
+  }
+  if (layout === 'centric') {
+    return rangeObj.angle;
+  }
+
+  return rangeObj.radius;
+};

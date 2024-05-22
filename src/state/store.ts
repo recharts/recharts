@@ -4,6 +4,7 @@ import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
 import { axisReducer } from './axisSlice';
 import { chartLayoutReducer } from './layoutSlice';
+import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
@@ -20,7 +21,7 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-      }),
+      }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware]),
     devTools: {
       serialize: {
         replacer(key, value) {

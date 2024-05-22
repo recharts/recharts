@@ -2,6 +2,7 @@ import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref } from 
 import clsx from 'clsx';
 import { setContainer } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
+import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 
 export type RechartsWrapperProps = {
   children: ReactNode;
@@ -22,12 +23,24 @@ export const RechartsWrapper = forwardRef(
         ref(node);
       }
     };
+    const myOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(mouseClickAction(e));
+      wrapperEvents?.onClick?.(e);
+    };
+    const myOnMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(mouseMoveAction(e));
+      wrapperEvents?.onMouseMove?.(e);
+    };
     return (
+      // TODO fix these two a11y violations - we should probably add AccessibilityManager in here ?
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
       <div
         className={clsx('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', width, height, ...style }}
         role="application"
         {...wrapperEvents}
+        onClick={myOnClick}
+        onMouseMove={myOnMouseMove}
         ref={innerRef}
       >
         {children}
