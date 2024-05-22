@@ -1,11 +1,12 @@
 import React from 'react';
-import { describe, it, test, expect, beforeEach } from 'vitest';
+import { describe, it, test, expect, beforeEach, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Store } from '@reduxjs/toolkit';
 import {
   combineTooltipPayload,
   selectActiveIndex,
   selectIsTooltipActive,
+  selectRootContainerDomRect,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
   useTooltipEventType,
@@ -33,6 +34,8 @@ import {
 } from '../../src/state/chartDataSlice';
 import { TooltipTrigger } from '../../src/chart/types';
 import { produceState } from './produceState';
+import { setContainer } from '../../src/state/layoutSlice';
+import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -631,5 +634,62 @@ describe('selectIsTooltipActive', () => {
         expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toBe(true);
       });
     });
+  });
+});
+
+describe('selectRootContainerDomRect', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const rect = useAppSelector(selectRootContainerDomRect);
+      expect(rect).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return undefined for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectRootContainerDomRect(store.getState())).toBe(undefined);
+  });
+
+  it('should return DOM rect of root container if set', () => {
+    const store = createRechartsStore();
+    const mockRect: DOMRect = getMockDomRect({
+      x: 1,
+      y: 2,
+      width: 3,
+      height: 4,
+    });
+    const mockElement = {
+      getBoundingClientRect: () => mockRect,
+    };
+    store.dispatch(setContainer(mockElement));
+    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRect);
+  });
+
+  it('should return updated DOM rect after browser window resize', () => {
+    const store = createRechartsStore();
+    const spy = vi.fn();
+    const mockRect: DOMRect = getMockDomRect({
+      x: 1,
+      y: 2,
+      width: 3,
+      height: 4,
+    });
+    const mockRectUpdated: DOMRect = getMockDomRect({
+      x: 5,
+      y: 6,
+      width: 7,
+      height: 8,
+    });
+    const mockElement = {
+      getBoundingClientRect: spy,
+    };
+    spy.mockReturnValue(mockRect);
+    store.dispatch(setContainer(mockElement));
+    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRect);
+    spy.mockReturnValue(mockRectUpdated);
+    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRectUpdated);
   });
 });

@@ -502,6 +502,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     if (
+      prevState.scale &&
       !prevState.isSlideMoving &&
       !prevState.isTravellerMoving &&
       !prevState.isTravellerFocused &&

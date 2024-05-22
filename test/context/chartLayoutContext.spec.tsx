@@ -9,6 +9,7 @@ import {
   useMaybePolarRadiusAxis,
   useMaybeXAxis,
   useMaybeYAxis,
+  useOffset,
   useViewBox,
   useXAxisOrThrow,
   useYAxisOrThrow,
@@ -16,6 +17,7 @@ import {
 import { CategoricalChartState } from '../../src/chart/types';
 import { BaseAxisMap, XAxisMap, YAxisMap } from '../../src/util/types';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
+import { Brush, ComposedChart, Customized } from '../../src';
 
 describe('ChartLayoutContextProvider', () => {
   const minimalState: CategoricalChartState = {
@@ -1324,4 +1326,88 @@ describe('ChartLayoutContextProvider', () => {
       });
     });
   });
+});
+
+describe('useOffset', () => {
+  it('should return empty object when used outside of chart', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const offset = useOffset();
+      expect(offset).toEqual({});
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return default offset in an empty chart', () => {
+    expect.assertions(2);
+    const Comp = (): null => {
+      const offset = useOffset();
+      expect(offset).toEqual({ top: 5, right: 5, bottom: 5, left: 5, brushBottom: 5, height: 190, width: 90 });
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={200}>
+        <Customized component={Comp} />
+      </ComposedChart>,
+    );
+  });
+
+  it('should add chart margin', () => {
+    expect.assertions(2);
+    const Comp = (): null => {
+      const offset = useOffset();
+      expect(offset).toEqual({ top: 10, right: 20, bottom: 30, left: 40, brushBottom: 30, height: 160, width: 40 });
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={200} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <Customized component={Comp} />
+      </ComposedChart>,
+    );
+  });
+
+  it('should include default Brush height (40) in bottom property', () => {
+    expect.assertions(2);
+    const Comp = (): null => {
+      const offset = useOffset();
+      expect(offset).toEqual({ top: 10, right: 20, bottom: 70, left: 40, brushBottom: 30, height: 120, width: 40 });
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={200} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <Customized component={Comp} />
+        <Brush />
+      </ComposedChart>,
+    );
+  });
+
+  it('should include explicit brush height in bottom property', () => {
+    expect.assertions(2);
+    const Comp = (): null => {
+      const offset = useOffset();
+      expect(offset).toEqual({ top: 10, right: 20, bottom: 43, left: 40, brushBottom: 30, height: 147, width: 40 });
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={200} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <Customized component={Comp} />
+        <Brush height={13} />
+      </ComposedChart>,
+    );
+  });
+
+  it.todo('should include width of YAxis');
+  it.todo('should include width of multiple YAxis on left and right');
+  it.todo('should exclude hidden YAxis dimensions');
+  it.todo('should include height of XAxis');
+  it.todo('should include height of multiple XAxis on top and bottom');
+  it.todo('should exclude hidden XAxis dimensions');
+
+  /*
+   * The test for Legend can be simple and test only one case;
+   * all the various Legend positioning and cases are covered by appendOffsetOfLegend tests
+   * so no need to duplicate.
+   */
+  it.todo('should include width and height on Legend - see appendOffsetOfLegend for detailed behaviour');
 });

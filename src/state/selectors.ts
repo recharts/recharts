@@ -198,3 +198,7 @@ export const selectIsTooltipActive = (
   }
   return state.tooltip.itemInteraction.activeClick;
 };
+
+export function selectRootContainerDomRect(state: RechartsRootState): DOMRect | undefined {
+  return state.layout.container?.getBoundingClientRect();
+}
