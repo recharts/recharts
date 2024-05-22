@@ -5,6 +5,7 @@ import { chartDataReducer } from './chartDataSlice';
 import { axisReducer } from './axisSlice';
 import { chartLayoutReducer } from './layoutSlice';
 import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
+import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
@@ -24,15 +25,7 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
       }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware]),
     devTools: {
       serialize: {
-        replacer(key, value) {
-          if (value instanceof HTMLElement) {
-            return `HTMLElement <${value.tagName} class="${value.className}">`;
-          }
-          if (value === window) {
-            return 'global.window';
-          }
-          return value;
-        },
+        replacer: reduxDevtoolsJsonStringifyReplacer,
       },
       name: `recharts-${chartName}`,
     },
