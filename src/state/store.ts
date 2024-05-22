@@ -22,7 +22,17 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
         serializableCheck: false,
       }),
     devTools: {
-      serialize: true,
+      serialize: {
+        replacer(key, value) {
+          if (value instanceof HTMLElement) {
+            return `HTMLElement <${value.tagName} class="${value.className}">`;
+          }
+          if (value === window) {
+            return 'global.window';
+          }
+          return value;
+        },
+      },
       name: `recharts-${chartName}`,
     },
   });
