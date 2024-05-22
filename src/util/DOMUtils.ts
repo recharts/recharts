@@ -126,7 +126,7 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}):
   }
 };
 
-interface ContainerOffset {
+export interface ContainerOffset {
   top: number;
   left: number;
 }

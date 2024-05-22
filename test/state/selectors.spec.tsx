@@ -34,7 +34,7 @@ import {
 } from '../../src/state/chartDataSlice';
 import { TooltipTrigger } from '../../src/chart/types';
 import { produceState } from './produceState';
-import { setContainer } from '../../src/state/layoutSlice';
+import { RechartsHTMLContainer, setContainer } from '../../src/state/layoutSlice';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
@@ -661,7 +661,8 @@ describe('selectRootContainerDomRect', () => {
       width: 3,
       height: 4,
     });
-    const mockElement = {
+    const mockElement: RechartsHTMLContainer = {
+      offsetWidth: 5,
       getBoundingClientRect: () => mockRect,
     };
     store.dispatch(setContainer(mockElement));
@@ -683,7 +684,8 @@ describe('selectRootContainerDomRect', () => {
       width: 7,
       height: 8,
     });
-    const mockElement = {
+    const mockElement: RechartsHTMLContainer = {
+      offsetWidth: 9,
       getBoundingClientRect: spy,
     };
     spy.mockReturnValue(mockRect);

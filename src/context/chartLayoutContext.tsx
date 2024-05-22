@@ -141,11 +141,11 @@ function getKeysForDebug(object: Record<string, unknown>) {
   return `Available ids are: ${keys}.`;
 }
 
-const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
-const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
-const selectPolarAngleAxisMap = (state: RechartsRootState): PolarAngleAxisMap | undefined =>
+export const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
+export const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
+export const selectPolarAngleAxisMap = (state: RechartsRootState): PolarAngleAxisMap | undefined =>
   state.axis.polarAngleAxisMap;
-const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusAxisMap | undefined =>
+export const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusAxisMap | undefined =>
   state.axis.polarRadiusAxisMap;
 
 /**
@@ -308,10 +308,11 @@ export const useViewBox = (): CartesianViewBox => {
   return useContext(ViewBoxContext);
 };
 
-const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
+export const selectChartOffset = (state: RechartsRootState): ChartOffset => state.layout.offset;
 
+const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
 export const useOffset = (): ChartOffset => {
-  return useAppSelector(state => state.layout.offset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
+  return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
 export const useChartWidth = (): number => {

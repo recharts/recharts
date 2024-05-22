@@ -33,6 +33,7 @@ import {
   AxisStackGroups,
   BarPosition,
   calculateActiveTickIndex,
+  calculateTooltipPos,
   getBandSizeOfAxis,
   getBarPositions,
   getDomainOfDataByKey,
@@ -101,6 +102,11 @@ export interface MousePointer {
   pageY: number;
 }
 
+export interface ChartPointer {
+  chartX: number;
+  chartY: number;
+}
+
 const ORIENT_MAP = {
   xAxis: ['bottom', 'top'],
   yAxis: ['left', 'right'],
@@ -125,20 +131,6 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 function renderAsIs(element: React.ReactElement): React.ReactElement {
   return element;
 }
-
-const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
-  if (layout === 'horizontal') {
-    return rangeObj.x;
-  }
-  if (layout === 'vertical') {
-    return rangeObj.y;
-  }
-  if (layout === 'centric') {
-    return rangeObj.angle;
-  }
-
-  return rangeObj.radius;
-};
 
 const getActiveCoordinate = (
   layout: LayoutType,
