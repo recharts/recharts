@@ -1,13 +1,13 @@
 /**
  * @fileOverview Y Axis
  */
-import React from 'react';
-import type { FunctionComponent, SVGProps } from 'react';
 import clsx from 'clsx';
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import type { ReactElement, SVGProps } from 'react';
+import React from 'react';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
-import { CartesianAxis } from './CartesianAxis';
 import { getTicksOfAxis } from '../util/ChartUtils';
+import { AxisInterval, BaseAxisProps } from '../util/types';
+import { CartesianAxis } from './CartesianAxis';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -36,7 +36,7 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
 
-export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
+export function YAxis({ yAxisId }: Props): ReactElement<Props> | null {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useYAxisOrThrow(yAxisId);
@@ -53,7 +53,7 @@ export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
       ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
     />
   );
-};
+}
 
 YAxis.displayName = 'YAxis';
 YAxis.defaultProps = {

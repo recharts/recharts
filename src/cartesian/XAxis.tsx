@@ -1,13 +1,13 @@
 /**
  * @fileOverview X Axis
  */
-import type { FunctionComponent, SVGProps } from 'react';
-import React from 'react';
 import clsx from 'clsx';
+import type { ReactElement, SVGProps } from 'react';
+import React from 'react';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
-import { CartesianAxis } from './CartesianAxis';
-import { BaseAxisProps, AxisInterval } from '../util/types';
 import { getTicksOfAxis } from '../util/ChartUtils';
+import { AxisInterval, BaseAxisProps } from '../util/types';
+import { CartesianAxis } from './CartesianAxis';
 
 /** Define of XAxis props */
 interface XAxisProps extends BaseAxisProps {
@@ -36,7 +36,7 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
 
-export const XAxis: FunctionComponent<Props> = ({ xAxisId }: Props) => {
+export function XAxis({ xAxisId }: Props): ReactElement<Props> | null {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useXAxisOrThrow(xAxisId);
@@ -54,7 +54,7 @@ export const XAxis: FunctionComponent<Props> = ({ xAxisId }: Props) => {
       ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
     />
   );
-};
+}
 
 XAxis.displayName = 'XAxis';
 XAxis.defaultProps = {
