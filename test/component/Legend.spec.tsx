@@ -110,7 +110,7 @@ describe('<Legend />', () => {
       </LineChart>,
     );
 
-    const legendItems = screen.getAllByRole(/listitem/i);
+    const legendItems = screen.getAllByRole('listitem');
     legendItems.forEach(item => {
       expect(item).toHaveTextContent('');
     });
