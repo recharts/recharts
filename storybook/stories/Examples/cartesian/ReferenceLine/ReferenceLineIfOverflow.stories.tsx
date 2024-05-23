@@ -1,5 +1,5 @@
-import { expect } from '@storybook/jest';
-import { within } from '@storybook/testing-library';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { expect, within } from '@storybook/test';
 import React from 'react';
 import {
   ComposedChart,
