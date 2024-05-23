@@ -17,7 +17,7 @@ import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
-import { getValueByDataKey } from '../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   LegendType,
   TooltipType,
@@ -36,6 +36,8 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -91,6 +93,24 @@ type FunnelTrapezoidsProps = {
   activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   allOtherFunnelProps: FunnelProps;
 };
+
+function getTooltipEntrySettings(props: FunnelProps): TooltipPayloadConfiguration {
+  const { dataKey, trapezoids, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  return {
+    dataDefinedOnItem: trapezoids,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: tooltipType,
+      color: fill,
+      unit: '', // Funnel does not have unit, why?
+    },
+  };
+}
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
@@ -423,13 +443,14 @@ export class Funnel extends PureComponent<FunnelProps, State> {
     const { isAnimationFinished } = this.state;
 
     if (hide || !trapezoids || !trapezoids.length) {
-      return null;
+      return <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />;
     }
 
     const layerClass = clsx('recharts-trapezoids', className);
 
     return (
       <Layer className={layerClass}>
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {this.renderTrapezoids()}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, trapezoids)}
       </Layer>
