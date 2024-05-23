@@ -21,6 +21,8 @@ import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -306,6 +308,24 @@ const defaultState: State = {
 
   nestIndex: [] as TreemapNode[],
 };
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, data, stroke, fill } = props;
+  return {
+    dataDefinedOnItem: data,
+    settings: {
+      stroke,
+      strokeWidth: undefined,
+      fill,
+      dataKey,
+      name: '',
+      hide: false,
+      type: undefined,
+      color: fill,
+      unit: '',
+    },
+  };
+}
 
 export class Treemap extends PureComponent<Props, State> {
   static displayName = 'Treemap';
@@ -735,6 +755,7 @@ export class Treemap extends PureComponent<Props, State> {
     return (
       <CursorPortalContext.Provider value={this.state.cursorPortal}>
         <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           <ViewBoxContext.Provider value={viewBox}>
             <TooltipContextProvider value={this.getTooltipContext()}>
               <RechartsWrapper

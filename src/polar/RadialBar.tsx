@@ -22,6 +22,7 @@ import {
   truncateByDomain,
   getBaseValueOfBar,
   getTooltipItem,
+  getTooltipNameProp,
 } from '../util/ChartUtils';
 import {
   LegendType,
@@ -43,6 +44,8 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -178,6 +181,24 @@ const computeLegendPayloadFromRadarData = ({ data, legendType }: RadialBarPayloa
 function SetRadialBarPayloadLegend(props: RadialBarPayloadInputProps): null {
   useLegendPayloadDispatch(computeLegendPayloadFromRadarData, props);
   return null;
+}
+
+function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {
+  const { dataKey, data, stroke, strokeWidth, name, hide, fill, tooltipType } = props;
+  return {
+    dataDefinedOnItem: data,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: tooltipType,
+      color: fill,
+      unit: '', // Why does RadialBar not support unit?
+    },
+  };
 }
 
 export class RadialBar extends PureComponent<RadialBarProps, State> {
@@ -449,7 +470,10 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     const { hide, data, className, background, isAnimationActive } = this.props;
 
     if (hide || !data || !data.length) {
-      return null;
+      <>
+        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+      </>;
     }
 
     const { isAnimationFinished } = this.state;
@@ -458,6 +482,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     return (
       <Layer className={layerClass}>
         <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
 
         <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>

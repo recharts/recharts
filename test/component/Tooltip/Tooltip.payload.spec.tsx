@@ -184,7 +184,7 @@ const FunnelChartTestCase: TooltipPayloadTestCase = {
         isAnimationActive={false}
         dataKey="uv"
         nameKey="name"
-        name="This is not going to the tooltip title unfortunately"
+        name="This is now definitely going to the tooltip title same as other charts"
         data={PageData}
       />
       {children}
@@ -192,7 +192,7 @@ const FunnelChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
-  expectedTooltipContent: ['Page A : 400'],
+  expectedTooltipContent: ['This is now definitely going to the tooltip title same as other charts : 400'],
 };
 
 const PieChartWithCustomNameKeyTestCase: TooltipPayloadTestCase = {
@@ -297,7 +297,6 @@ const ScatterChartTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['stature : 400cm', 'weight : 2400kg'],
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SunburstChartTestCase: TooltipPayloadTestCase = {
   name: 'SunburstChart',
   Wrapper: ({ children }) => (

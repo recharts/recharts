@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
-import { getValueByDataKey } from '../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -22,6 +22,8 @@ import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 interface RadarPoint {
   x: number;
@@ -105,6 +107,30 @@ const computeLegendPayloadFromRadarSectors = (props: Props): Array<LegendPayload
 function SetRadarPayloadLegend(props: RadarProps): null {
   useLegendPayloadDispatch(computeLegendPayloadFromRadarSectors, props);
   return null;
+}
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  return {
+    /*
+     * I suppose this here _could_ return props.points
+     * because while Radar does not support item tooltip mode, it _could_ support it.
+     * But when I actually do return the points here, a defaultIndex test starts failing.
+     * So, undefined it is.
+     */
+    dataDefinedOnItem: undefined,
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: tooltipType,
+      color: getLegendItemColor(stroke, fill),
+      unit: '', // why doesn't Radar support unit?
+    },
+  };
 }
 
 export class Radar extends PureComponent<Props, State> {
@@ -378,7 +404,12 @@ export class Radar extends PureComponent<Props, State> {
        * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
        * But for now I will keep it as-is.
        */
-      return <SetRadarPayloadLegend {...this.props} />;
+      return (
+        <>
+          <SetRadarPayloadLegend {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        </>
+      );
     }
 
     const { isAnimationFinished } = this.state;
@@ -387,6 +418,7 @@ export class Radar extends PureComponent<Props, State> {
     return (
       <>
         <Layer className={layerClass}>
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           <SetRadarPayloadLegend {...this.props} />
           {this.renderPolygon()}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
