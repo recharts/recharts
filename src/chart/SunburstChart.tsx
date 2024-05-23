@@ -10,6 +10,8 @@ import { ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 export interface SunburstData {
   [key: string]: any;
@@ -85,6 +87,29 @@ function getMaxDepthOf(node: SunburstData): number {
   // Calculate depth for each child and find the maximum
   const childDepths = node.children.map(d => getMaxDepthOf(d));
   return 1 + Math.max(...childDepths);
+}
+
+function getTooltipEntrySettings({
+  dataKey,
+  data,
+  stroke,
+  fill,
+}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill'>): TooltipPayloadConfiguration {
+  return {
+    dataDefinedOnItem: data.children,
+    // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
+    settings: {
+      stroke,
+      strokeWidth: undefined,
+      fill,
+      dataKey,
+      name: dataKey,
+      hide: false,
+      type: undefined,
+      color: fill,
+      unit: '',
+    },
+  };
 }
 
 export const SunburstChart = ({
@@ -233,6 +258,7 @@ export const SunburstChart = ({
                   }}
                 />
                 <Layer className={layerClass}>{sectors}</Layer>
+                <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
                 {children}
               </Surface>
             </RechartsWrapper>

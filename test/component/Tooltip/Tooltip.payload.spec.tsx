@@ -297,7 +297,6 @@ const ScatterChartTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['stature : 400cm', 'weight : 2400kg'],
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SunburstChartTestCase: TooltipPayloadTestCase = {
   name: 'SunburstChart',
   Wrapper: ({ children }) => (
