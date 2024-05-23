@@ -19,7 +19,7 @@ import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
-import { getValueByDataKey } from '../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
@@ -42,6 +42,8 @@ import {
   useMouseLeaveItemDispatch,
   useTooltipContext,
 } from '../context/tooltipContext';
+import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -87,6 +89,7 @@ export type PieSectorData = {
   paddingAngle?: number;
   dataKey?: string;
   payload?: any;
+  tooltipPayload?: ReadonlyArray<TooltipPayload>;
 };
 
 export type PieSectorDataItem = SectorProps & PieSectorData;
@@ -194,6 +197,24 @@ type PieSectorsProps = {
   allOtherPieProps: Props;
   sectorRefs: SVGGElement[];
 };
+
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  const { dataKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  return {
+    dataDefinedOnItem: sectors?.map((p: PieSectorDataItem) => p.tooltipPayload),
+    settings: {
+      stroke,
+      strokeWidth,
+      fill,
+      dataKey,
+      name: getTooltipNameProp(name, dataKey),
+      hide,
+      type: tooltipType,
+      color: fill,
+      unit: '', // why doesn't Pie support unit?
+    },
+  };
+}
 
 function PieSectors(props: PieSectorsProps) {
   const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
@@ -364,7 +385,7 @@ export class Pie extends PureComponent<Props, State> {
           tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
         const midAngle = (tempStartAngle + tempEndAngle) / 2;
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload = [
+        const tooltipPayload: TooltipPayload = [
           {
             name,
             value: val,
@@ -702,7 +723,12 @@ export class Pie extends PureComponent<Props, State> {
        * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
        * But for now I will keep it as-is.
        */
-      return <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />;
+      return (
+        <>
+          <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        </>
+      );
     }
 
     const layerClass = clsx('recharts-pie', className);
@@ -719,6 +745,7 @@ export class Pie extends PureComponent<Props, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>
     );

@@ -196,7 +196,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 }
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, points, stroke, strokeWidth, fill, name, hide } = props;
+  const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: points.map((p: ScatterPointItem) => p.tooltipPayload),
     settings: {
@@ -206,7 +206,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       dataKey,
       name: getTooltipNameProp(name, dataKey),
       hide,
-      type: props.tooltipType,
+      type: tooltipType,
       color: fill,
       unit: '', // why doesn't Scatter support unit?
     },
