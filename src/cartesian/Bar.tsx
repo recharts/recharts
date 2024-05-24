@@ -165,7 +165,9 @@ export class Bar extends PureComponent<Props, State> {
     }
 
     const { layout } = props;
-    const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
+    const itemDefaultProps = (item.type as any).defaultProps;
+    const itemProps = itemDefaultProps !== undefined ? { ...itemDefaultProps, ...item.props } : item.props;
+    const { dataKey, children, minPointSize: minPointSizeProp } = itemProps;
     const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
@@ -408,11 +410,17 @@ export class Bar extends PureComponent<Props, State> {
         onAnimationEnd: this.handleAnimationEnd,
         dataKey,
         index: i,
-        key: `background-bar-${i}`,
         className: 'recharts-bar-background-rectangle',
       };
 
-      return <BarRectangle option={this.props.background} isActive={i === activeIndex} {...props} />;
+      return (
+        <BarRectangle
+          key={`background-bar-${i}`}
+          option={this.props.background}
+          isActive={i === activeIndex}
+          {...props}
+        />
+      );
     });
   }
 

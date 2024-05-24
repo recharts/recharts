@@ -1825,10 +1825,13 @@ export const generateCategoricalChart = ({
       );
     };
 
-    renderPolarAxis = (element: any, displayName: string, index: number) => {
+    renderPolarAxis = (element: React.ReactElement<any>, displayName: string, index: number) => {
       const axisType = get(element, 'type.axisType');
       const axisMap = get(this.state, `${axisType}Map`);
-      const axisOption: BaseAxisProps | undefined = axisMap && axisMap[element.props[`${axisType}Id`]];
+      const elementDefaultProps = (element.type as any).defaultProps;
+      const elementProps =
+        elementDefaultProps !== undefined ? { ...elementDefaultProps, ...element.props } : element.props;
+      const axisOption: BaseAxisProps | undefined = axisMap && axisMap[elementProps[`${axisType}Id`]];
 
       return cloneElement(element, {
         ...axisOption,
@@ -1947,7 +1950,8 @@ export const generateCategoricalChart = ({
       }
       const { clipPathId } = this;
       const { xAxisMap, yAxisMap, offset } = this.state;
-      const { xAxisId, yAxisId } = element.props;
+      const elementDefaultProps = (element.type as any).defaultProps || {};
+      const { xAxisId = elementDefaultProps.xAxisId, yAxisId = elementDefaultProps.yAxisId } = element.props;
 
       return cloneElement(element, {
         key: element.key || `${displayName}-${index}`,
@@ -1963,7 +1967,7 @@ export const generateCategoricalChart = ({
       });
     };
 
-    static renderActiveDot = (option: any, props: any): React.ReactElement => {
+    static renderActiveDot = (option: any, props: any, key: string): React.ReactElement => {
       let dot;
 
       if (isValidElement(option)) {
@@ -1975,7 +1979,7 @@ export const generateCategoricalChart = ({
       }
 
       return (
-        <Layer className="recharts-active-dot" key={props.key}>
+        <Layer className="recharts-active-dot" key={key}>
           {dot}
         </Layer>
       );
@@ -2001,21 +2005,23 @@ export const generateCategoricalChart = ({
         stroke: '#fff',
         payload: activePoint.payload,
         value: activePoint.value,
-        key: `${key}-activePoint-${childIndex}`,
         ...filterProps(activeDot, false),
         ...adaptEventHandlers(activeDot),
       };
 
-      result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps));
+      result.push(CategoricalChartWrapper.renderActiveDot(activeDot, dotProps, `${key}-activePoint-${childIndex}`));
 
       if (basePoint) {
         result.push(
-          CategoricalChartWrapper.renderActiveDot(activeDot, {
-            ...dotProps,
-            cx: basePoint.x,
-            cy: basePoint.y,
-            key: `${key}-basePoint-${childIndex}`,
-          }),
+          CategoricalChartWrapper.renderActiveDot(
+            activeDot,
+            {
+              ...dotProps,
+              cx: basePoint.x,
+              cy: basePoint.y,
+            },
+            `${key}-basePoint-${childIndex}`,
+          ),
         );
       } else if (isRange) {
         result.push(null);

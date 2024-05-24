@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { vi, describe, test } from 'vitest';
 import { Area, AreaChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
@@ -44,7 +44,10 @@ describe('AccessibilityLayer', () => {
     expect(tooltip?.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    container.querySelector('svg')?.focus();
+
+    act(() => {
+      container.querySelector('svg')?.focus();
+    });
     expect(tooltip).toHaveTextContent('Page A');
   });
 
@@ -69,7 +72,9 @@ describe('AccessibilityLayer', () => {
     expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => {
+      svg.focus();
+    });
     expect(tooltip).toHaveTextContent('Page A');
     expect(mockMouseMovements.mock.instances).toHaveLength(1);
 
@@ -210,7 +215,9 @@ describe('AccessibilityLayer', () => {
     expect(pre?.textContent).toBe('6');
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => {
+      svg.focus();
+    });
     expect(tooltip).toHaveTextContent('Page A');
 
     fireEvent.keyDown(svg, {
@@ -320,7 +327,9 @@ describe('AccessibilityLayer', () => {
     expect(tooltip?.textContent).toBe('');
 
     // Once the chart receives focus, the tooltip should display
-    svg.focus();
+    act(() => {
+      svg.focus();
+    });
     expect(tooltip).toHaveTextContent('Page A');
 
     // Ignore left arrow when you're already at the left
@@ -373,7 +382,9 @@ describe('AccessibilityLayer', () => {
 
     expect(tooltip?.textContent).toBe('');
 
-    svg.focus();
+    act(() => {
+      svg.focus();
+    });
     expect(tooltip).toHaveTextContent('Page A');
 
     // Make sure we move around, to get the AccessibilityManager's active index above 0

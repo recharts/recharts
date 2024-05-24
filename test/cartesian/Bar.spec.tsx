@@ -278,7 +278,9 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             x: expect.any(Number),
             y: 50,
           },
-          {}, // this object arrives as a second argument, I am not sure where that comes from
+          // React always calls function components with undefined as the second argument
+          // This used to be where legacy context was passed
+          undefined,
         );
       });
 

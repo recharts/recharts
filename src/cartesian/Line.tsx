@@ -333,8 +333,9 @@ export class Line extends PureComponent<Props, State> {
     } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
+      const { key, ...dotProps } = props;
       const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
+      dotItem = <Dot key={key} {...dotProps} className={className} />;
     }
 
     return dotItem;

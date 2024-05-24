@@ -282,7 +282,6 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         cornerRadius: parseCornerRadius(cornerRadius),
         ...entry,
         ...adaptEventsOfChild(this.props, entry, i),
-        key: `sector-${i}`,
         className: `recharts-radial-bar-sector ${entry.className}`,
         forceCornerRadius: others.forceCornerRadius,
         cornerIsExternal: others.cornerIsExternal,
@@ -290,7 +289,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         option: isActive ? activeShape : shape,
       };
 
-      return <RadialBarSector {...props} />;
+      return <RadialBarSector key={`sector-${i}`} {...props} />;
     });
   }
 
@@ -366,13 +365,12 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         ...backgroundProps,
         ...adaptEventsOfChild(this.props, entry, i),
         index: i,
-        key: `sector-${i}`,
         className: clsx('recharts-radial-bar-background-sector', backgroundProps?.className),
         option: background,
         isActive: false,
       };
 
-      return <RadialBarSector {...props} />;
+      return <RadialBarSector key={`sector-${i}`} {...props} />;
     });
   }
 
