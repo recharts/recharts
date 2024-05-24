@@ -272,17 +272,23 @@ export class Scatter extends PureComponent<Props, State> {
     return points.map((entry, i) => {
       const isActive = activeIndex === i;
       const option = isActive ? activeShape : shape;
-      const props = { key: `symbol-${i}`, ...baseProps, ...entry };
+      const props = { ...baseProps, ...entry };
 
       return (
         <Layer
           className="recharts-scatter-symbol"
-          {...adaptEventsOfChild(this.props, entry, i)}
           // eslint-disable-next-line react/no-array-index-key
           key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
+          {...adaptEventsOfChild(this.props, entry, i)}
           role="img"
         >
-          <ScatterSymbol option={option} isActive={isActive} {...props} />
+          <ScatterSymbol
+            option={option}
+            isActive={isActive}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`symbol-${i}`}
+            {...props}
+          />
         </Layer>
       );
     });

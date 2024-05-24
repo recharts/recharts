@@ -7,6 +7,7 @@ module.exports = {
     './stories/**/*.mdx',
     './stories/**/*.stories.@(ts|tsx)',
   ],
+
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
@@ -14,16 +15,18 @@ module.exports = {
     '@storybook/addon-a11y',
     '@storybook/addon-storysource',
     '@storybook/addon-docs',
-    'storybook-addon-performance',
+    '@storybook/addon-webpack5-compiler-swc',
+    '@storybook/addon-mdx-gfm',
   ],
+
   framework: {
     name: '@storybook/react-webpack5',
     options: {},
   },
+
   features: {
     interactionsDebugger: true,
   },
-  docs: {
-    autodocs: false,
-  },
+
+  docs: {},
 };

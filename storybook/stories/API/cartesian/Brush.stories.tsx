@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent } from '@storybook/testing-library';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fireEvent, within, expect } from '@storybook/test';
 import { Args } from '@storybook/react';
 import { pageData } from '../../data';
 import { Brush, ResponsiveContainer, ComposedChart, Line } from '../../../../src';
@@ -94,12 +95,13 @@ export const API = {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
   },
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    setTimeout(() => {
-      const leftBrushSlide = canvasElement.querySelector('.recharts-brush-traveller');
+    const canvas = within(canvasElement);
+    const slider = await canvas.findAllByRole('slider');
+    const leftSlider = slider[0];
+    expect(leftSlider).toBeTruthy();
 
-      fireEvent.mouseDown(leftBrushSlide);
-      fireEvent.mouseMove(leftBrushSlide, { clientX: 200 });
-      fireEvent.mouseUp(leftBrushSlide);
-    }, 0);
+    fireEvent.mouseDown(leftSlider);
+    fireEvent.mouseMove(leftSlider, { clientX: 200 });
+    fireEvent.mouseUp(leftSlider);
   },
 };

@@ -404,7 +404,7 @@ export class Pie extends PureComponent<Props, State> {
     }
   };
 
-  static renderLabelLineItem(option: PieLabelLine, props: any) {
+  static renderLabelLineItem(option: PieLabelLine, props: any, key: string) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
     }
@@ -413,7 +413,7 @@ export class Pie extends PureComponent<Props, State> {
     }
 
     const className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
-    return <Curve {...props} type="linear" className={className} />;
+    return <Curve key={key} {...props} type="linear" className={className} />;
   }
 
   static renderLabelItem(option: PieLabel, props: any, value: any) {
@@ -471,7 +471,6 @@ export class Pie extends PureComponent<Props, State> {
         ...customLabelLineProps,
         index: i,
         points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-        key: 'line',
       };
       let realDataKey = dataKey;
       // TODO: compatible to lower versions
@@ -484,7 +483,7 @@ export class Pie extends PureComponent<Props, State> {
       return (
         // eslint-disable-next-line react/no-array-index-key
         <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
-          {labelLine && Pie.renderLabelLineItem(labelLine, lineProps)}
+          {labelLine && Pie.renderLabelLineItem(labelLine, lineProps, 'line')}
           {Pie.renderLabelItem(label, labelProps, getValueByDataKey(entry, realDataKey))}
         </Layer>
       );

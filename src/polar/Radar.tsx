@@ -218,8 +218,13 @@ export class Radar extends PureComponent<Props, State> {
     } else if (isFunction(option)) {
       dotItem = option(props);
     } else {
+      const { key, ...dotProps } = props;
       dotItem = (
-        <Dot {...props} className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')} />
+        <Dot
+          key={key}
+          {...dotProps}
+          className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')}
+        />
       );
     }
 

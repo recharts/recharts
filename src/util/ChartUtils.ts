@@ -245,8 +245,11 @@ export const getBarSizeList = ({
       const barItems = items.filter(item => getDisplayName(item.type).indexOf('Bar') >= 0);
 
       if (barItems && barItems.length) {
-        const { barSize: selfSize } = barItems[0].props;
-        const cateId = barItems[0].props[cateAxisId];
+        const barItemDefaultProps = (barItems[0].type as any).defaultProps;
+        const barItemProps =
+          barItemDefaultProps !== undefined ? { ...barItemDefaultProps, ...barItems[0].props } : barItems[0].props;
+        const { barSize: selfSize } = barItemProps;
+        const cateId = barItemProps[cateAxisId];
 
         if (!result[cateId]) {
           result[cateId] = [];

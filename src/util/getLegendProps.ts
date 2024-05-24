@@ -43,7 +43,9 @@ export const getLegendProps = ({
     }, []);
   } else {
     legendData = (formattedGraphicalItems || []).map(({ item }): LegendPayload => {
-      const { dataKey, name, legendType, hide } = item.props;
+      const itemDefaultProps = (item.type as any).defaultProps;
+      const itemProps: typeof item.props = itemDefaultProps !== undefined ? { ...itemDefaultProps, ...item.props } : {};
+      const { dataKey, name, legendType, hide } = itemProps;
 
       return {
         inactive: hide,
@@ -52,7 +54,7 @@ export const getLegendProps = ({
         color: getMainColorOfGraphicItem(item),
         value: name || dataKey,
         // @ts-expect-error property strokeDasharray is required in Payload but optional in props
-        payload: item.props,
+        payload: itemProps,
       };
     });
   }

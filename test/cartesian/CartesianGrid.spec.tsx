@@ -778,7 +778,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
     describe('horizontal as a function', () => {
       it('should pass props, add default stroke, and then render result of the function', () => {
-        const horizontal = vi.fn().mockReturnValue(<g data-testid="my_mock_line" />);
+        const horizontal = vi.fn().mockImplementation(({ key }) => <g key={key} data-testid="my_mock_line" />);
         const { container } = render(
           <ChartElement width={500} height={500}>
             <CartesianGrid
@@ -890,7 +890,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
     describe('vertical as a function', () => {
       it('should pass props, add default stroke, and then render result of the function', () => {
-        const vertical = vi.fn().mockReturnValue(<g data-testid="my_mock_line" />);
+        const vertical = vi.fn().mockImplementation(({ key }) => <g key={key} data-testid="my_mock_line" />);
         const { container } = render(
           <ChartElement width={500} height={500}>
             <CartesianGrid
@@ -1008,15 +1008,17 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       test.each([true, undefined])('should render horizontal stripes if horizontal prop = %s', horizontal => {
         const extraSpaceAtTheTopOfChart = 7;
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            height={Math.max(...horizontalPoints) + extraSpaceAtTheTopOfChart}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-            fillOpacity="20%"
-            horizontal={horizontal}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              height={Math.max(...horizontalPoints) + extraSpaceAtTheTopOfChart}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+              fillOpacity="20%"
+              horizontal={horizontal}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(horizontalPoints.length + 1);
@@ -1078,15 +1080,17 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should not render anything if horizontal=false', () => {
         const extraSpaceAtTheTopOfChart = 1;
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            height={Math.max(...horizontalPoints) + extraSpaceAtTheTopOfChart}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-            fillOpacity="20%"
-            horizontal={false}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              height={Math.max(...horizontalPoints) + extraSpaceAtTheTopOfChart}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+              fillOpacity="20%"
+              horizontal={false}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(0);
@@ -1094,13 +1098,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       test.each(emptyFillCases)('should render nothing if horizontalFill is $fill', ({ fill }) => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            height={Math.max(...horizontalPoints) + 1}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={fill}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              height={Math.max(...horizontalPoints) + 1}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={fill}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(0);
@@ -1108,14 +1114,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should leave out the stripe at the beginning if the smallest horizontalPoints happens to be exactly at position y', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            y={Math.min(...horizontalPoints)}
-            height={Math.max(...horizontalPoints) + 1}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              y={Math.min(...horizontalPoints)}
+              height={Math.max(...horizontalPoints) + 1}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(horizontalPoints.length);
@@ -1123,14 +1131,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('render the stripe at the beginning if the smallest horizontalPoints is smaller than position y', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            y={Math.min(...horizontalPoints) - 1}
-            height={Math.max(...horizontalPoints) + 1}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              y={Math.min(...horizontalPoints) - 1}
+              height={Math.max(...horizontalPoints) + 1}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         /*
@@ -1141,14 +1151,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('removes the one stripe at the end if it would render outside of the Grid', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            y={0}
-            height={Math.max(...horizontalPoints) - 1}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              y={0}
+              height={Math.max(...horizontalPoints) - 1}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(horizontalPoints.length);
@@ -1156,13 +1168,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('removes still only one stripe even if all of them render outside of the grid', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            height={1}
-            verticalPoints={verticalPoints}
-            horizontalPoints={horizontalPoints}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              height={1}
+              verticalPoints={verticalPoints}
+              horizontalPoints={horizontalPoints}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         /*
@@ -1173,15 +1187,17 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should round horizontalPoints [https://github.com/recharts/recharts/pull/3075]', () => {
         const { container } = render(
-          <CartesianGrid
-            x={0}
-            y={0}
-            width={500}
-            height={500}
-            verticalPoints={verticalPoints}
-            horizontalPoints={floatingPointPrecisionExamples}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalPoints={verticalPoints}
+              horizontalPoints={floatingPointPrecisionExamples}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         /*
@@ -1201,12 +1217,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should ignore stripes that have computed height 0', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            verticalPoints={verticalPoints}
-            horizontalPoints={[10, 20, 10, 500]}
-            horizontalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              verticalPoints={verticalPoints}
+              horizontalPoints={[10, 20, 10, 500]}
+              horizontalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allStripes).toHaveLength(3);
@@ -1227,14 +1245,18 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       test.each([true, undefined])('should render vertical stripes if vertical prop = %s', vertical => {
         const extraSpaceAtTheEndOfChart = 7;
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            width={Math.max(...verticalPoints) + extraSpaceAtTheEndOfChart}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-            fillOpacity="20%"
-            vertical={vertical}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              width={Math.max(...verticalPoints) + extraSpaceAtTheEndOfChart}
+              // TODO: No OffsetContext or horizontalPoints trigger "Warning: Received NaN for the `y1` attribute" throughout this suite
+              // horizontalPoints={[1]}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+              fillOpacity="20%"
+              vertical={vertical}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(verticalPoints.length + 1);
@@ -1295,14 +1317,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       it('should not render anything if vertical=false', () => {
         const extraSpaceAtTheTopOfChart = 1;
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            width={Math.max(...verticalPoints) + extraSpaceAtTheTopOfChart}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-            fillOpacity="20%"
-            vertical={false}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              width={Math.max(...verticalPoints) + extraSpaceAtTheTopOfChart}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+              fillOpacity="20%"
+              vertical={false}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(0);
@@ -1310,12 +1334,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       test.each(emptyFillCases)('should render nothing if verticalFill is $fill', ({ fill }) => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            width={Math.max(...verticalPoints) + 1}
-            verticalPoints={verticalPoints}
-            verticalFill={fill}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              width={Math.max(...verticalPoints) + 1}
+              verticalPoints={verticalPoints}
+              verticalFill={fill}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(0);
@@ -1323,13 +1349,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should leave out the stripe at the beginning if the smallest verticalPoints happens to be exactly at position x', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            x={Math.min(...verticalPoints)}
-            width={Math.max(...verticalPoints) + 1}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              x={Math.min(...verticalPoints)}
+              width={Math.max(...verticalPoints) + 1}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(verticalPoints.length);
@@ -1337,13 +1365,15 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('render the stripe at the beginning if the smallest verticalPoints is smaller than position x', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            x={Math.min(...verticalPoints) - 1}
-            width={Math.max(...verticalPoints) + 1}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              x={Math.min(...verticalPoints) - 1}
+              width={Math.max(...verticalPoints) + 1}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         /*
@@ -1354,12 +1384,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('removes the one stripe at the end if it would render outside of the Grid', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            width={Math.max(...verticalPoints) - 1}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              width={Math.max(...verticalPoints) - 1}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(verticalPoints.length);
@@ -1367,12 +1399,14 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('removes still only one stripe even if all of them render outside of the grid', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            width={1}
-            verticalPoints={verticalPoints}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              width={1}
+              verticalPoints={verticalPoints}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         /*
@@ -1383,14 +1417,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should round verticalPoints [https://github.com/recharts/recharts/pull/3075]', () => {
         const { container } = render(
-          <CartesianGrid
-            x={0}
-            y={0}
-            width={500}
-            height={500}
-            verticalPoints={floatingPointPrecisionExamples}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              x={0}
+              y={0}
+              width={500}
+              height={500}
+              verticalPoints={floatingPointPrecisionExamples}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         /*
@@ -1414,11 +1450,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
 
       it('should ignore stripes that have computed width 0', () => {
         const { container } = render(
-          <CartesianGrid
-            {...exampleCartesianGridDimensions}
-            verticalPoints={[10, 20, 10, 500]}
-            verticalFill={['red', 'green']}
-          />,
+          <svg>
+            <CartesianGrid
+              {...exampleCartesianGridDimensions}
+              verticalPoints={[10, 20, 10, 500]}
+              verticalFill={['red', 'green']}
+            />
+          </svg>,
         );
         const allStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
         expect(allStripes).toHaveLength(3);

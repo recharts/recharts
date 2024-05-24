@@ -97,7 +97,12 @@ describe('<Radar />', () => {
   it('Render customized dot when dot is set to be a react element', () => {
     render(
       <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} dot={props => <CustomizedDot {...props} />} />
+        <Radar
+          dataKey="y"
+          isAnimationActive={false}
+          points={data}
+          dot={props => <CustomizedDot {...props} key={props.key} />}
+        />
       </Surface>,
     );
 

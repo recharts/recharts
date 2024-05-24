@@ -7,7 +7,7 @@ import { SunburstData as data } from '../_data';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
-    const { container } = render(<SunburstChart data={data} />);
+    const { container } = render(<SunburstChart data={data} width={500} height={500} />);
 
     const sectors = container.querySelectorAll('.recharts-sector');
 
@@ -24,7 +24,14 @@ describe('<Sunburst />', () => {
     const onClick = vi.fn();
 
     const { container } = render(
-      <SunburstChart onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} data={data} />,
+      <SunburstChart
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        data={data}
+        width={500}
+        height={500}
+      />,
     );
     const sector = container.querySelectorAll('.recharts-sector')[0];
 

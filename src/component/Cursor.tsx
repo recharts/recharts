@@ -44,9 +44,10 @@ export function Cursor(props: CursorProps) {
     layout,
     chartName,
   } = props;
+  const elementPropsCursor = element.props.cursor ?? (element.type as any).defaultProps?.cursor;
   if (
     !element ||
-    !element.props.cursor ||
+    !elementPropsCursor ||
     !isActive ||
     !activeCoordinate ||
     (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')
@@ -83,13 +84,13 @@ export function Cursor(props: CursorProps) {
     pointerEvents: 'none',
     ...offset,
     ...restProps,
-    ...filterProps(element.props.cursor, false),
+    ...filterProps(elementPropsCursor, false),
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
-    className: clsx('recharts-tooltip-cursor', element.props.cursor.className),
+    className: clsx('recharts-tooltip-cursor', elementPropsCursor.className),
   };
 
-  return isValidElement(element.props.cursor)
-    ? cloneElement(element.props.cursor, cursorProps)
+  return isValidElement(elementPropsCursor)
+    ? cloneElement(elementPropsCursor, cursorProps)
     : createElement(cursorComp, cursorProps);
 }

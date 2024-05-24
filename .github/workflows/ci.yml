@@ -9,10 +9,10 @@ jobs:
   build-and-test:
     name: Build and Test on ${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -23,6 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
+        # Using a React prerelase that caused peer dependency mismatches that can be ignored.
         run: npm ci
       - name: Run build
         run: npm run build --if-present
@@ -33,4 +34,3 @@ jobs:
           npm test
       - name: Serve Storybook and run tests
         run: npm run test-storybook:ci
-

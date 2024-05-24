@@ -151,6 +151,7 @@ export const SunburstChart = ({
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
+        // TODO: Missing key warning. Can we use `key={d.name}`?
         <g aria-label={d.name} tabIndex={0}>
           <Sector
             onClick={() => handleClick(d)}
