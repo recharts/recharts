@@ -92,6 +92,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
+      // @ts-expect-error this could still be Iterable<ReactNode> and TS does not like that
       result.push(child);
     }
   });
