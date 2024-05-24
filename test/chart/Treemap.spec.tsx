@@ -48,8 +48,8 @@ describe('<Treemap />', () => {
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
           expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
+          expect(xAxisMap).toEqual({});
+          expect(yAxisMap).toEqual({});
         },
       ),
     );
@@ -77,7 +77,7 @@ describe('<Treemap />', () => {
             <YAxis type="category" dataKey="name" />
           </Treemap>,
         ),
-      ).toThrowError('Invariant failed: Could not find Recharts context');
+      ).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
     });
   });
 });

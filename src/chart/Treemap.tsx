@@ -23,8 +23,16 @@ import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPor
 import { RechartsWrapper } from './RechartsWrapper';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { ChartOptions } from '../state/optionsSlice';
+import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 
 const NODE_VALUE_KEY = 'value';
+
+const options: ChartOptions = {
+  chartName: 'Treemap',
+  defaultTooltipEventType: 'item',
+  validateTooltipEventTypes: ['item'],
+};
 
 const computeNode = ({
   depth,
@@ -753,40 +761,42 @@ export class Treemap extends PureComponent<Props, State> {
     const viewBox = { x: 0, y: 0, width, height };
 
     return (
-      <CursorPortalContext.Provider value={this.state.cursorPortal}>
-        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          <ViewBoxContext.Provider value={viewBox}>
-            <TooltipContextProvider value={this.getTooltipContext()}>
-              <RechartsWrapper
-                className={className}
-                style={style}
-                width={width}
-                height={height}
-                ref={(node: HTMLDivElement) => {
-                  if (this.state.tooltipPortal == null) {
-                    this.setState({ tooltipPortal: node });
-                  }
-                }}
-              >
-                <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-                  <g
-                    className="recharts-cursor-portal"
-                    ref={(node: SVGElement) => {
-                      if (this.state.cursorPortal == null) {
-                        this.setState({ cursorPortal: node });
-                      }
-                    }}
-                  />
-                  {this.renderAllNodes()}
-                  {children}
-                </Surface>
-                {type === 'nest' && this.renderNestIndex()}
-              </RechartsWrapper>
-            </TooltipContextProvider>
-          </ViewBoxContext.Provider>
-        </TooltipPortalContext.Provider>
-      </CursorPortalContext.Provider>
+      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
+        <CursorPortalContext.Provider value={this.state.cursorPortal}>
+          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+            <ViewBoxContext.Provider value={viewBox}>
+              <TooltipContextProvider value={this.getTooltipContext()}>
+                <RechartsWrapper
+                  className={className}
+                  style={style}
+                  width={width}
+                  height={height}
+                  ref={(node: HTMLDivElement) => {
+                    if (this.state.tooltipPortal == null) {
+                      this.setState({ tooltipPortal: node });
+                    }
+                  }}
+                >
+                  <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+                    <g
+                      className="recharts-cursor-portal"
+                      ref={(node: SVGElement) => {
+                        if (this.state.cursorPortal == null) {
+                          this.setState({ cursorPortal: node });
+                        }
+                      }}
+                    />
+                    {this.renderAllNodes()}
+                    {children}
+                  </Surface>
+                  {type === 'nest' && this.renderNestIndex()}
+                </RechartsWrapper>
+              </TooltipContextProvider>
+            </ViewBoxContext.Provider>
+          </TooltipPortalContext.Provider>
+        </CursorPortalContext.Provider>
+      </RechartsStoreProvider>
     );
   }
 }
