@@ -248,15 +248,11 @@ const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) =>
     },
   );
 
-const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
+export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
   selectRootContainer,
   selectRootContainerDomRect,
-  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number => {
-    if (!container || !rect) {
-      return 1;
-    }
-    return rect.width / container.offsetWidth;
-  },
+  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number =>
+    rect?.width / container?.offsetWidth || 1,
 );
 
 export const combineActiveIndex = (
