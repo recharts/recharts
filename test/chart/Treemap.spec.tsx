@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import { Treemap, XAxis, YAxis } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { exampleTreemapData } from '../_data';
+import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -79,5 +80,39 @@ describe('<Treemap />', () => {
         ),
       ).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
     });
+  });
+});
+
+describe('addToTreemapNodeIndex + treemapPayloadSearcher tandem', () => {
+  const dummyRoot: TreemapNode = {
+    // @ts-expect-error Treemap types are a mess
+    children: exampleTreemapData,
+    value: 0,
+    depth: 0,
+    index: 0,
+  };
+  const computedRootNode: TreemapNode = computeNode({
+    depth: 0,
+    index: 0,
+    node: dummyRoot,
+    dataKey: 'value',
+  });
+  it('should return index for root node and then look it up', () => {
+    const activeIndex = addToTreemapNodeIndex(undefined, 4);
+    expect(activeIndex).toEqual('children[4]');
+    expect(computedRootNode.children[4]).toBeDefined();
+    expect(treemapPayloadSearcher(computedRootNode, activeIndex)).toBe(computedRootNode.children[4]);
+  });
+
+  it('should return index for nested node and then look it up', () => {
+    const level1 = computedRootNode.children[0];
+    const activeIndex1 = addToTreemapNodeIndex(undefined, 0);
+    const level2 = level1.children[1];
+    const activeIndex2 = addToTreemapNodeIndex(activeIndex1, 1);
+    expect(activeIndex2).toEqual('children[0]children[1]');
+    expect(level1).toBeDefined();
+    expect(level2).toBeDefined();
+    expect(treemapPayloadSearcher(computedRootNode, activeIndex1)).toBe(level1);
+    expect(treemapPayloadSearcher(computedRootNode, activeIndex2)).toBe(level2);
   });
 });

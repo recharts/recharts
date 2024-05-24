@@ -8,6 +8,7 @@ import {
   TooltipPayload,
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
+  TooltipPayloadSearcher,
   TooltipState,
 } from './tooltipSlice';
 import {
@@ -51,7 +52,14 @@ export function useTooltipEventType(shared: boolean | undefined): TooltipEventTy
   return validateTooltipEventTypes.includes(eventType) ? eventType : defaultTooltipEventType;
 }
 
-function getSliced<T>(arr: ReadonlyArray<T>, startIndex: number, endIndex: number): ReadonlyArray<T> {
+function getSliced<T>(
+  arr: unknown | ReadonlyArray<T>,
+  startIndex: number,
+  endIndex: number,
+): ReadonlyArray<T> | unknown {
+  if (!Array.isArray(arr)) {
+    return arr;
+  }
   if (arr && startIndex + endIndex !== 0) {
     return arr.slice(startIndex, endIndex + 1);
   }
@@ -106,12 +114,12 @@ const selectActiveLabel = createSelector(
   },
 );
 
-function selectFinalData(dataDefinedOnItem: ReadonlyArray<unknown>, dataDefinedOnChart: ReadonlyArray<unknown>) {
+function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
    */
-  if (dataDefinedOnItem?.length > 0) {
+  if (dataDefinedOnItem != null) {
     return dataDefinedOnItem;
   }
   return dataDefinedOnChart;
@@ -147,8 +155,9 @@ export const combineTooltipPayload = (
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
+  tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
 ): TooltipPayload | undefined => {
-  if (activeIndex == null) {
+  if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
   }
   const { chartData, dataStartIndex, dataEndIndex } = chartDataState;
@@ -162,11 +171,10 @@ export const combineTooltipPayload = (
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxis?.dataKey;
     let tooltipPayload: unknown;
-    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory) {
+    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
-      // TODO replace the array access with chart-specific getter
-      tooltipPayload = sliced?.[Number(activeIndex)];
+      tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex);
     }
 
     if (Array.isArray(tooltipPayload)) {
@@ -203,6 +211,9 @@ export const combineTooltipPayload = (
   }, init);
 };
 
+const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
+  state.options.tooltipPayloadSearcher;
+
 export const selectTooltipPayload: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
@@ -214,6 +225,7 @@ export const selectTooltipPayload: (
   selectChartData,
   selectTooltipAxis,
   selectActiveLabel,
+  selectTooltipPayloadSearcher,
   combineTooltipPayload,
 );
 

@@ -32,13 +32,22 @@ export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
  */
 export type TooltipIndex = string | null;
 
-// TODO type TooltipPayloadSearcher = (data: unknown[], index: TooltipIndex) => TooltipPayload | undefined;
+/**
+ * Different items have different data shapes so the state has no opinion on what the data shape should be;
+ * the only requirement is that the chart also provides a searcher function
+ * that accepts the data, and a key, and returns whatever the payload in Tooltip should be.
+ */
+export type TooltipPayloadSearcher<T = unknown, R = unknown> = (data: T, index: TooltipIndex) => R | undefined;
 
 export type TooltipPayloadConfiguration = {
   // This is the data that is the same for all tooltip payloads, regardless of activeIndex
   settings: TooltipEntrySettings;
-  // This is the data that changes for each index
-  dataDefinedOnItem: unknown[] | undefined;
+  /**
+   * This is the data that the item has provided, all of it mixed together.
+   * Later as user is interacting with the chart, a redux selector will use this
+   * data + activeIndex, pass it to the TooltipPayloadSearcher, and render the result in a Tooltip.
+   */
+  dataDefinedOnItem: unknown;
 };
 
 /**

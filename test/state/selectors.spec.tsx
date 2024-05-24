@@ -38,6 +38,7 @@ import { TooltipTrigger } from '../../src/chart/types';
 import { produceState } from './produceState';
 import { RechartsHTMLContainer, setContainer } from '../../src/state/layoutSlice';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
+import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -118,6 +119,12 @@ const allTooltipCombinations: ReadonlyArray<TestCaseTooltipCombination> = [
 ];
 const allTooltipEventTypes: ReadonlyArray<TooltipEventType> = ['axis', 'item'];
 
+const preloadedState: Partial<RechartsRootState> = {
+  options: {
+    tooltipPayloadSearcher: arrayTooltipSearcher,
+  },
+};
+
 describe('useTooltipEventType', () => {
   type TooltipEventTypeTestScenario = {
     testName: string;
@@ -184,11 +191,15 @@ describe('useTooltipEventType', () => {
         expect(eventType).toBe(expected);
         return null;
       };
-      const preloadedState: Partial<RechartsRootState> = {
-        options: { defaultTooltipEventType, validateTooltipEventTypes },
+      const myPreloadedState: Partial<RechartsRootState> = {
+        options: {
+          defaultTooltipEventType,
+          validateTooltipEventTypes,
+          tooltipPayloadSearcher: arrayTooltipSearcher,
+        },
       };
       render(
-        <RechartsStoreProvider preloadedState={preloadedState}>
+        <RechartsStoreProvider preloadedState={myPreloadedState}>
           <Comp />
         </RechartsStoreProvider>,
       );
@@ -219,7 +230,7 @@ describe('selectTooltipPayload', () => {
   );
 
   it('should return settings and data from axis hover, if activeIndex is set for the item', () => {
-    const store = createRechartsStore();
+    const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
       settings: undefined,
       dataDefinedOnItem: undefined,
@@ -262,7 +273,7 @@ describe('selectTooltipPayload', () => {
   });
 
   it('should fill in chartData, if it is not defined on the item for item hover', () => {
-    const store = createRechartsStore();
+    const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
       settings: {
         stroke: 'red',
@@ -296,7 +307,7 @@ describe('selectTooltipPayload', () => {
   });
 
   it('should return sliced data if set by Brush for item hover', () => {
-    const store = createRechartsStore();
+    const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
       settings: {
         stroke: 'red',
@@ -340,6 +351,7 @@ describe('selectTooltipPayload', () => {
       chartDataState,
       tooltipAxis,
       activeLabel,
+      arrayTooltipSearcher,
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
@@ -383,6 +395,7 @@ describe('selectTooltipPayload', () => {
       chartDataState,
       tooltipAxis,
       activeLabel,
+      arrayTooltipSearcher,
     );
     const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: null, value: undefined };
     expect(actual).toEqual([expected]);
@@ -740,7 +753,7 @@ describe('selectContainerScale', () => {
     /*
      * This is a little bit of a case of "trust me" because:
      8 jsdom returns zeroes everywhere so that doesn't test anything
-     * and the browser spec is everything so I went and tested it in Firefox version 126.0
+     * and the browser spec is everything, so I went and tested it in Firefox version 126.0
      * In a browser devtools I select arbitrary element and run:
      *
         console.table({

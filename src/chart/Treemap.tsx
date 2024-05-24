@@ -16,25 +16,69 @@ import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
-import { AnimationDuration, AnimationTiming, DataKey, TreemapNode } from '../util/types';
+import { AnimationDuration, AnimationTiming, DataKey } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
-import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { TooltipIndex, TooltipPayloadConfiguration, TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 
 const NODE_VALUE_KEY = 'value';
 
+/**
+ * This is what end users defines as `data` on Treemap.
+ */
+export interface TreemapDataType {
+  children?: ReadonlyArray<TreemapDataType>;
+  [key: string]: unknown;
+}
+
+/**
+ * This is what is returned from `squarify`, the final treemap data structure
+ * that gets rendered and is stored in
+ */
+export interface TreemapNode {
+  children: ReadonlyArray<TreemapNode>;
+  value: number;
+  depth: number;
+  index: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  name: string;
+  tooltipIndex: TooltipIndex;
+  [k: string]: any;
+}
+
+export const treemapPayloadSearcher: TooltipPayloadSearcher<TreemapNode, TreemapNode> = (
+  data: TreemapNode,
+  activeIndex: TooltipIndex,
+): TreemapNode | undefined => {
+  return get(data, activeIndex);
+};
+
+export const addToTreemapNodeIndex = (
+  activeTooltipIndexSoFar: TooltipIndex | undefined,
+  indexInChildrenArr: number,
+): TooltipIndex => {
+  if (activeTooltipIndexSoFar == null) {
+    return `children[${indexInChildrenArr}]`;
+  }
+  return `${activeTooltipIndexSoFar}children[${indexInChildrenArr}]`;
+};
+
 const options: ChartOptions = {
   chartName: 'Treemap',
   defaultTooltipEventType: 'item',
   validateTooltipEventTypes: ['item'],
+  tooltipPayloadSearcher: treemapPayloadSearcher,
 };
 
-const computeNode = ({
+export const computeNode = ({
   depth,
   node,
   index,
@@ -44,7 +88,7 @@ const computeNode = ({
   node: TreemapNode;
   index: number;
   dataKey: DataKey<any>;
-}) => {
+}): TreemapNode => {
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren =
@@ -53,7 +97,7 @@ const computeNode = ({
           computeNode({ depth: childDepth, node: child, index: i, dataKey }),
         )
       : null;
-  let nodeValue;
+  let nodeValue: number;
 
   if (children && children.length) {
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
@@ -68,13 +112,14 @@ const computeNode = ({
     [NODE_VALUE_KEY]: nodeValue,
     depth,
     index,
+    tooltipIndex: addToTreemapNodeIndex(node.tooltipIndex, index),
   };
 };
 
 const filterRect = (node: TreemapNode) => ({ x: node.x, y: node.y, width: node.width, height: node.height });
 
 // Compute the area for each child based on value & scale.
-const getAreaOfChildren = (children: TreemapNode[], areaValueRatio: number) => {
+const getAreaOfChildren = (children: ReadonlyArray<TreemapNode>, areaValueRatio: number) => {
   const ratio = areaValueRatio < 0 ? 0 : areaValueRatio;
 
   return children.map((child: TreemapNode) => {
@@ -317,10 +362,16 @@ const defaultState: State = {
   nestIndex: [] as TreemapNode[],
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, fill } = props;
+function getTooltipEntrySettings({
+  props,
+  currentRoot,
+}: {
+  props: Props;
+  currentRoot: TreemapNode | null;
+}): TooltipPayloadConfiguration {
+  const { dataKey, stroke, fill } = props;
   return {
-    dataDefinedOnItem: data,
+    dataDefinedOnItem: currentRoot,
     settings: {
       stroke,
       strokeWidth: undefined,
@@ -362,13 +413,14 @@ export class Treemap extends PureComponent<Props, State> {
       nextProps.dataKey !== prevState.prevDataKey ||
       nextProps.aspectRatio !== prevState.prevAspectRatio
     ) {
-      const root = computeNode({
+      const root: TreemapNode = computeNode({
         depth: 0,
-        node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height } as TreemapNode,
+        // @ts-expect-error missing properties
+        node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height },
         index: 0,
         dataKey: nextProps.dataKey,
       });
-      const formatRoot = squarify(root, nextProps.aspectRatio);
+      const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio);
 
       return {
         ...prevState,
@@ -764,7 +816,10 @@ export class Treemap extends PureComponent<Props, State> {
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+            <SetTooltipEntrySettings
+              fn={getTooltipEntrySettings}
+              args={{ props: this.props, currentRoot: this.state.currentRoot }}
+            />
             <ViewBoxContext.Provider value={viewBox}>
               <TooltipContextProvider value={this.getTooltipContext()}>
                 <RechartsWrapper
