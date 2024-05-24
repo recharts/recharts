@@ -2,7 +2,15 @@ import { createSelector } from '@reduxjs/toolkit';
 import sortBy from 'lodash/sortBy';
 import { useAppSelector } from './hooks';
 import { RechartsRootState } from './store';
-import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry, TooltipState } from './tooltipSlice';
+import {
+  TooltipEntrySettings,
+  TooltipIndex,
+  TooltipPayload,
+  TooltipPayloadConfiguration,
+  TooltipPayloadEntry,
+  TooltipPayloadSearcher,
+  TooltipState,
+} from './tooltipSlice';
 import {
   calculateActiveTickIndex,
   calculateTooltipPos,
@@ -44,7 +52,14 @@ export function useTooltipEventType(shared: boolean | undefined): TooltipEventTy
   return validateTooltipEventTypes.includes(eventType) ? eventType : defaultTooltipEventType;
 }
 
-function getSliced<T>(arr: ReadonlyArray<T>, startIndex: number, endIndex: number): ReadonlyArray<T> {
+function getSliced<T>(
+  arr: unknown | ReadonlyArray<T>,
+  startIndex: number,
+  endIndex: number,
+): ReadonlyArray<T> | unknown {
+  if (!Array.isArray(arr)) {
+    return arr;
+  }
   if (arr && startIndex + endIndex !== 0) {
     return arr.slice(startIndex, endIndex + 1);
   }
@@ -67,9 +82,9 @@ export function selectActiveIndex(
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: number | undefined,
-): number {
+): TooltipIndex {
   const tooltipState: TooltipState = selectTooltipState(state);
-  let activeIndex: number;
+  let activeIndex: TooltipIndex;
   if (tooltipEventType === 'item') {
     if (trigger === 'hover') {
       activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
@@ -81,8 +96,8 @@ export function selectActiveIndex(
   } else {
     activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
   }
-  if (activeIndex === -1 && defaultIndex != null) {
-    return defaultIndex;
+  if (activeIndex == null && defaultIndex != null) {
+    return `${defaultIndex}`;
   }
   return activeIndex;
 }
@@ -90,16 +105,21 @@ export function selectActiveIndex(
 const selectActiveLabel = createSelector(
   selectTooltipTicks,
   selectActiveIndex,
-  (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: number): string | undefined =>
-    tooltipTicks?.[activeIndex]?.value,
+  (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {
+    const n = Number(activeIndex);
+    if (Number.isNaN(n)) {
+      return undefined;
+    }
+    return tooltipTicks?.[n]?.value;
+  },
 );
 
-function selectFinalData(dataDefinedOnItem: ReadonlyArray<unknown>, dataDefinedOnChart: ReadonlyArray<unknown>) {
+function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
    */
-  if (dataDefinedOnItem?.length > 0) {
+  if (dataDefinedOnItem != null) {
     return dataDefinedOnItem;
   }
   return dataDefinedOnChart;
@@ -131,12 +151,13 @@ export function selectTooltipPayloadConfigurations(
 
 export const combineTooltipPayload = (
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
-  activeIndex: number,
+  activeIndex: TooltipIndex,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
+  tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
 ): TooltipPayload | undefined => {
-  if (activeIndex === -1) {
+  if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
   }
   const { chartData, dataStartIndex, dataEndIndex } = chartDataState;
@@ -150,21 +171,21 @@ export const combineTooltipPayload = (
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxis?.dataKey;
     let tooltipPayload: unknown;
-    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory) {
+    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
-      tooltipPayload = sliced?.[activeIndex];
+      tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex);
     }
 
     if (Array.isArray(tooltipPayload)) {
       tooltipPayload.forEach(item => {
-        const newSettings = {
+        const newSettings: TooltipEntrySettings = {
           ...settings,
           name: item.name,
           unit: item.unit,
-          // @ts-expect-error okay so color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
+          // color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
           color: undefined,
-          // @ts-expect-error okay so color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
+          // color and fill are erased to keep 100% the identical behaviour to recharts 2.x - but there's nothing stopping us from returning them here. It's technically a breaking change.
           fill: undefined,
         };
         agg.push(
@@ -190,6 +211,9 @@ export const combineTooltipPayload = (
   }, init);
 };
 
+const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
+  state.options.tooltipPayloadSearcher;
+
 export const selectTooltipPayload: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
@@ -201,6 +225,7 @@ export const selectTooltipPayload: (
   selectChartData,
   selectTooltipAxis,
   selectActiveLabel,
+  selectTooltipPayloadSearcher,
   combineTooltipPayload,
 );
 
@@ -248,15 +273,11 @@ const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) =>
     },
   );
 
-const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
+export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
   selectRootContainer,
   selectRootContainerDomRect,
-  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number => {
-    if (!container || !rect) {
-      return 1;
-    }
-    return rect.width / container.offsetWidth;
-  },
+  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number =>
+    rect?.width / container?.offsetWidth || 1,
 );
 
 export const combineActiveIndex = (
@@ -271,35 +292,33 @@ export const combineActiveIndex = (
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,
-): number | undefined => {
+): TooltipIndex => {
   if (!chartEvent || !scale || !layout || !tooltipAxis || !tooltipTicks) {
-    return undefined;
+    return null;
   }
   const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, angleAxisMap, radiusAxisMap, offset);
   if (!rangeObj) {
-    return undefined;
+    return null;
   }
   const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
 
   const activeIndex = calculateActiveTickIndex(pos, orderedTooltipTicks, tooltipTicks, tooltipAxis);
 
-  return activeIndex;
+  return String(activeIndex);
 };
 
-export const selectActiveIndexFromMousePointer: (
-  state: RechartsRootState,
-  mousePointer: MousePointer,
-) => number | undefined = createSelector(
-  selectChartCoordinates,
-  selectContainerScale,
-  selectChartLayout,
-  selectXAxisMap,
-  selectYAxisMap,
-  selectPolarAngleAxisMap,
-  selectPolarRadiusAxisMap,
-  selectTooltipAxis,
-  selectTooltipTicks,
-  selectOrderedTooltipTicks,
-  selectChartOffset,
-  combineActiveIndex,
-);
+export const selectActiveIndexFromMousePointer: (state: RechartsRootState, mousePointer: MousePointer) => TooltipIndex =
+  createSelector(
+    selectChartCoordinates,
+    selectContainerScale,
+    selectChartLayout,
+    selectXAxisMap,
+    selectYAxisMap,
+    selectPolarAngleAxisMap,
+    selectPolarRadiusAxisMap,
+    selectTooltipAxis,
+    selectTooltipTicks,
+    selectOrderedTooltipTicks,
+    selectChartOffset,
+    combineActiveIndex,
+  );

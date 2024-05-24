@@ -1,8 +1,6 @@
-/**
- * @fileOverview Funnel Chart
- */
 import { generateCategoricalChart } from './generateCategoricalChart';
 import { Funnel } from '../numberAxis/Funnel';
+import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const FunnelChart = generateCategoricalChart({
   chartName: 'FunnelChart',
@@ -13,4 +11,5 @@ export const FunnelChart = generateCategoricalChart({
   defaultProps: {
     layout: 'centric',
   },
+  tooltipPayloadSearcher: arrayTooltipSearcher,
 });

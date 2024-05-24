@@ -839,6 +839,7 @@ export const generateCategoricalChart = ({
   axisComponents,
   formatAxisMap,
   defaultProps,
+  tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
   const getFormatItems = (props: CategoricalChartProps, currentState: CategoricalChartState): any[] => {
     const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
@@ -1966,6 +1967,7 @@ export const generateCategoricalChart = ({
       chartName,
       defaultTooltipEventType,
       validateTooltipEventTypes,
+      tooltipPayloadSearcher,
     };
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.id ?? chartName}>

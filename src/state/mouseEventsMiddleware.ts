@@ -2,7 +2,7 @@ import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadActio
 import { AppDispatch, RechartsRootState } from './store';
 import { selectActiveIndexFromMousePointer } from './selectors';
 import { MousePointer } from '../chart/generateCategoricalChart';
-import { setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
+import { setMouseClickAxisIndex, setMouseOverAxisIndex, TooltipIndex } from './tooltipSlice';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 
@@ -12,7 +12,7 @@ mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeIndex: number | undefined = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
+    const activeIndex: TooltipIndex = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
     if (activeIndex != null) {
       listenerApi.dispatch(setMouseClickAxisIndex({ activeIndex, activeDataKey: undefined }));
     }
@@ -27,7 +27,7 @@ mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeIndex: number | undefined = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
+    const activeIndex: TooltipIndex = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
     if (activeIndex != null) {
       listenerApi.dispatch(setMouseOverAxisIndex({ activeIndex, activeDataKey: undefined }));
     }

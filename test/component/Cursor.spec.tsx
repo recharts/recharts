@@ -6,6 +6,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
+import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -33,7 +34,10 @@ const connectedProps: CursorConnectedProps = {
 };
 
 const preloadedState: Partial<RechartsRootState> = {
-  options: { chartName: '' },
+  options: {
+    chartName: '',
+    tooltipPayloadSearcher: arrayTooltipSearcher,
+  },
 };
 
 const preloadedRadialState: Partial<RechartsRootState> = {
@@ -155,6 +159,7 @@ describe('Cursor', () => {
         ...preloadedState,
         options: {
           chartName: 'ScatterChart',
+          tooltipPayloadSearcher: arrayTooltipSearcher,
         },
       };
       const { container } = render(

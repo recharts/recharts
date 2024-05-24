@@ -29,6 +29,7 @@ import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
 import type { Props as DotProps } from '../shape/Dot';
+import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 
 /**
  * Determines how values are stacked:
@@ -1302,19 +1303,7 @@ export interface CategoricalChartOptions {
   axisComponents?: BaseAxisProps[];
   formatAxisMap?: any;
   defaultProps?: any;
-}
-
-export interface TreemapNode {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  depth: number;
-  index: number;
-  children?: any;
-  name: string;
-  value: number;
-  [k: string]: any;
+  tooltipPayloadSearcher: TooltipPayloadSearcher;
 }
 
 export interface SankeyNode {
