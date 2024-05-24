@@ -43,9 +43,11 @@ export const CustomizedLabel: StoryObj = {
   },
 
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const { getAllByText } = within(canvasElement);
-    // to make getAllByText works
-    await new Promise(r => setTimeout(r, 0));
-    expect(getAllByText(/Customized Label/)).toHaveLength(pageData.length);
+    const { findAllByText } = within(canvasElement);
+    expect(
+      await findAllByText('Customized Label', {
+        exact: false,
+      }),
+    ).toHaveLength(pageData.length);
   },
 };

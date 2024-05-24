@@ -280,7 +280,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
           },
           // React always calls function components with undefined as the second argument
           // This used to be where legacy context was passed
-          undefined,
+          {},
         );
       });
 
