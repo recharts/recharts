@@ -23,7 +23,16 @@ export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'
  */
 export type TooltipPayload = ReadonlyArray<TooltipPayloadEntry>;
 
-type TooltipIndex = number;
+/**
+ * null means no active index
+ * string means: whichever index from the chart data it is.
+ * Different charts have different requirements on data shapes,
+ * and are also responsible for providing a function that will accept this index
+ * and return data.
+ */
+export type TooltipIndex = string | null;
+
+// TODO type TooltipPayloadSearcher = (data: unknown[], index: TooltipIndex) => TooltipPayload | undefined;
 
 export type TooltipPayloadConfiguration = {
   // This is the data that is the same for all tooltip payloads, regardless of activeIndex
@@ -85,7 +94,7 @@ export type TooltipState = {
     /**
      * Same as the index above but this one only gets set by clicking on a chart item.
      */
-    activeClickIndex: TooltipIndex | undefined;
+    activeClickIndex: TooltipIndex;
     /**
      * Same as the dataKey above but this one only gets set by clicking on a chart item.
      */
@@ -100,9 +109,9 @@ export type TooltipState = {
   axisInteraction: {
     activeClick: boolean;
     activeHover: boolean;
-    activeMouseOverAxisIndex: number | undefined;
+    activeMouseOverAxisIndex: TooltipIndex;
     activeMouseOverAxisDataKey: DataKey<any> | undefined;
-    activeClickAxisIndex: number | undefined;
+    activeClickAxisIndex: TooltipIndex;
     activeClickAxisDataKey: DataKey<any> | undefined;
   };
   /**
@@ -117,17 +126,17 @@ const initialState: TooltipState = {
   itemInteraction: {
     activeClick: false,
     activeHover: false,
-    activeMouseOverIndex: -1,
+    activeMouseOverIndex: null,
     activeMouseOverDataKey: undefined,
-    activeClickIndex: -1,
+    activeClickIndex: null,
     activeClickDataKey: undefined,
   },
   axisInteraction: {
     activeClick: false,
     activeHover: false,
-    activeMouseOverAxisIndex: -1,
+    activeMouseOverAxisIndex: null,
     activeMouseOverAxisDataKey: undefined,
-    activeClickAxisIndex: -1,
+    activeClickAxisIndex: null,
     activeClickAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
@@ -167,7 +176,7 @@ const tooltipSlice = createSlice({
     },
     setMouseOverAxisIndex(
       state,
-      action: PayloadAction<{ activeIndex: number; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
     ) {
       state.axisInteraction.activeHover = true;
       state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
@@ -175,7 +184,7 @@ const tooltipSlice = createSlice({
     },
     setMouseClickAxisIndex(
       state,
-      action: PayloadAction<{ activeIndex: number; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
     ) {
       state.axisInteraction.activeClick = true;
       state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
