@@ -362,6 +362,57 @@ const defaultState: State = {
   nestIndex: [] as TreemapNode[],
 };
 
+function renderContentItem(
+  content: any,
+  nodeProps: TreemapNode,
+  type: string,
+  colorPanel: string[],
+): React.ReactElement {
+  if (React.isValidElement(content)) {
+    return React.cloneElement(content, nodeProps);
+  }
+  if (isFunction(content)) {
+    return content(nodeProps);
+  }
+  // optimize default shape
+  const { x, y, width, height, index } = nodeProps;
+  let arrow = null;
+  if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
+    arrow = (
+      <Polygon
+        points={[
+          { x: x + 2, y: y + height / 2 },
+          { x: x + 6, y: y + height / 2 + 3 },
+          { x: x + 2, y: y + height / 2 + 6 },
+        ]}
+      />
+    );
+  }
+  let text = null;
+  const nameSize = getStringSize(nodeProps.name);
+  if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
+    text = (
+      <text x={x + 8} y={y + height / 2 + 7} fontSize={14}>
+        {nodeProps.name}
+      </text>
+    );
+  }
+
+  const colors = colorPanel || COLOR_PANEL;
+  return (
+    <g>
+      <Rectangle
+        fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
+        stroke="#fff"
+        {...omit(nodeProps, 'children')}
+        role="img"
+      />
+      {arrow}
+      {text}
+    </g>
+  );
+}
+
 function getTooltipEntrySettings({
   props,
   currentRoot,
@@ -574,7 +625,7 @@ export class Treemap extends PureComponent<Props, State> {
     if (!isAnimationActive) {
       return (
         <Layer {...event}>
-          {(this.constructor as any).renderContentItem(
+          {renderContentItem(
             content,
             {
               ...nodeProps,
@@ -616,11 +667,11 @@ export class Treemap extends PureComponent<Props, State> {
           >
             <Layer {...event}>
               {(() => {
-                // when animation Duration , only render depth=1 nodes
+                // when animation is in progress , only render depth=1 nodes
                 if (depth > 2 && !isAnimationFinished) {
                   return null;
                 }
-                return (this.constructor as any).renderContentItem(
+                return renderContentItem(
                   content,
                   {
                     ...nodeProps,
@@ -639,57 +690,6 @@ export class Treemap extends PureComponent<Props, State> {
           </Smooth>
         )}
       </Smooth>
-    );
-  }
-
-  static renderContentItem(
-    content: any,
-    nodeProps: TreemapNode,
-    type: string,
-    colorPanel: string[],
-  ): React.ReactElement {
-    if (React.isValidElement(content)) {
-      return React.cloneElement(content, nodeProps);
-    }
-    if (isFunction(content)) {
-      return content(nodeProps);
-    }
-    // optimize default shape
-    const { x, y, width, height, index } = nodeProps;
-    let arrow = null;
-    if (width > 10 && height > 10 && nodeProps.children && type === 'nest') {
-      arrow = (
-        <Polygon
-          points={[
-            { x: x + 2, y: y + height / 2 },
-            { x: x + 6, y: y + height / 2 + 3 },
-            { x: x + 2, y: y + height / 2 + 6 },
-          ]}
-        />
-      );
-    }
-    let text = null;
-    const nameSize = getStringSize(nodeProps.name);
-    if (width > 20 && height > 20 && nameSize.width < width && nameSize.height < height) {
-      text = (
-        <text x={x + 8} y={y + height / 2 + 7} fontSize={14}>
-          {nodeProps.name}
-        </text>
-      );
-    }
-
-    const colors = colorPanel || COLOR_PANEL;
-    return (
-      <g>
-        <Rectangle
-          fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
-          stroke="#fff"
-          {...omit(nodeProps, 'children')}
-          role="img"
-        />
-        {arrow}
-        {text}
-      </g>
     );
   }
 
