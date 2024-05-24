@@ -362,12 +362,14 @@ const defaultState: State = {
   nestIndex: [] as TreemapNode[],
 };
 
-function renderContentItem(
-  content: any,
-  nodeProps: TreemapNode,
-  type: string,
-  colorPanel: string[],
-): React.ReactElement {
+type ContentItemProps = {
+  content: any;
+  nodeProps: TreemapNode;
+  type: string;
+  colorPanel: string[];
+};
+
+function ContentItem({ content, nodeProps, type, colorPanel }: ContentItemProps): React.ReactElement {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, nodeProps);
   }
@@ -625,9 +627,9 @@ export class Treemap extends PureComponent<Props, State> {
     if (!isAnimationActive) {
       return (
         <Layer {...event}>
-          {renderContentItem(
-            content,
-            {
+          <ContentItem
+            content={content}
+            nodeProps={{
               ...nodeProps,
               isAnimationActive: false,
               isUpdateAnimationActive: false,
@@ -635,10 +637,10 @@ export class Treemap extends PureComponent<Props, State> {
               height,
               x,
               y,
-            },
-            type,
-            colorPanel,
-          )}
+            }}
+            type={type}
+            colorPanel={colorPanel}
+          />
         </Layer>
       );
     }
@@ -666,14 +668,12 @@ export class Treemap extends PureComponent<Props, State> {
             duration={animationDuration}
           >
             <Layer {...event}>
-              {(() => {
-                // when animation is in progress , only render depth=1 nodes
-                if (depth > 2 && !isAnimationFinished) {
-                  return null;
-                }
-                return renderContentItem(
-                  content,
-                  {
+              {/* when animation is in progress , only render depth=1 nodes */}
+              {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
+              {depth > 2 && !isAnimationFinished ? null : (
+                <ContentItem
+                  content={content}
+                  nodeProps={{
                     ...nodeProps,
                     isAnimationActive,
                     isUpdateAnimationActive: !isUpdateAnimationActive,
@@ -681,11 +681,11 @@ export class Treemap extends PureComponent<Props, State> {
                     height: currHeight,
                     x: currX,
                     y: currY,
-                  },
-                  type,
-                  colorPanel,
-                );
-              })()}
+                  }}
+                  type={type}
+                  colorPanel={colorPanel}
+                />
+              )}
             </Layer>
           </Smooth>
         )}
