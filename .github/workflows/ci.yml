@@ -9,7 +9,7 @@ jobs:
   build-and-test:
     name: Build and Test on ${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
@@ -23,7 +23,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        # Using a React prerelase that caused peer dependency mismatches that can be ignored.
+        run: npm ci --legacy-peer-deps
       - name: Run build
         run: npm run build --if-present
       - name: Test
