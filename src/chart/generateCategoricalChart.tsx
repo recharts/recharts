@@ -297,6 +297,7 @@ const getTooltipData = (
 };
 
 /**
+ * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
  * Get the configuration of axis by the options of axis instance
  * @param  {Object} props         Latest props
  * @param {Array}  axes           The instance of axes
@@ -478,6 +479,8 @@ export const getAxisMapByAxes = (
 };
 
 /**
+ * @deprecated this is relying on direct DOM access, do not use
+ *
  * Get the configuration of axis by the options of item,
  * this kind of axis does not display in chart
  * @param  {Object} props         Latest props
@@ -574,6 +577,8 @@ const getAxisMapByItems = (
 };
 
 /**
+ * @deprecated this is relying on direct DOM access, do not use
+ *
  * Get the configuration of all x-axis or y-axis
  * @param  {Object} props          Latest props
  * @param  {String} axisType       The type of axis
@@ -948,6 +953,8 @@ export const generateCategoricalChart = ({
   };
 
   /**
+   * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
+   *
    * The AxisMaps are expensive to render on large data sets
    * so provide the ability to store them in state and only update them when necessary
    * they are dependent upon the start and end index of

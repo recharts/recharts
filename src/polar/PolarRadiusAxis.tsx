@@ -33,7 +33,7 @@ export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   radiusAxisId?: string | number;
   angle?: number;
   orientation?: 'left' | 'right' | 'middle';
-  ticks?: TickItem[];
+  ticks?: ReadonlyArray<TickItem>;
   reversed?: boolean;
 }
 
@@ -44,11 +44,12 @@ const AXIS_TYPE = 'radiusAxis';
 export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { radiusAxisId } = defaultsAndInputs;
 
-  const axisOptions = useMaybePolarRadiusAxis(radiusAxisId);
+  const axisOptions: PolarRadiusAxisProps = useMaybePolarRadiusAxis(radiusAxisId);
 
   const props = { ...defaultsAndInputs, ...axisOptions };
   const { tick, axisLine } = props;
 
+  // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
   const ticks = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
 
   if (!ticks || !ticks.length) {

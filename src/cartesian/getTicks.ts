@@ -13,9 +13,9 @@ function getTicksEnd(
   sign: Sign,
   boundaries: { start: number; end: number },
   getTickSize: (tick: CartesianTickItem, index: number) => number,
-  ticks: CartesianTickItem[],
+  ticks: ReadonlyArray<CartesianTickItem>,
   minTickGap: number,
-): CartesianTickItem[] {
+): ReadonlyArray<CartesianTickItem> {
   const result = (ticks || []).slice();
   const len = result.length;
 
@@ -58,11 +58,12 @@ function getTicksStart(
   sign: Sign,
   boundaries: { start: number; end: number },
   getTickSize: (tick: CartesianTickItem, index: number) => number,
-  ticks: CartesianTickItem[],
+  ticks: ReadonlyArray<CartesianTickItem>,
   minTickGap: number,
   preserveEnd?: boolean,
-): CartesianTickItem[] {
-  const result = (ticks || []).slice();
+): ReadonlyArray<CartesianTickItem> {
+  // This method is mutating the array so clone is indeed necessary here
+  const result: Array<CartesianTickItem> = (ticks || []).slice();
   const len = result.length;
 
   let { start, end } = boundaries;
@@ -118,7 +119,11 @@ function getTicksStart(
   return result;
 }
 
-export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpacing?: string): any[] {
+export function getTicks(
+  props: CartesianAxisProps,
+  fontSize?: string,
+  letterSpacing?: string,
+): ReadonlyArray<CartesianTickItem> {
   const { tick, ticks, viewBox, minTickGap, orientation, interval, tickFormatter, unit, angle } = props;
 
   if (!ticks || !ticks.length || !tick) {
@@ -129,7 +134,7 @@ export function getTicks(props: CartesianAxisProps, fontSize?: string, letterSpa
     return getNumberIntervalTicks(ticks, typeof interval === 'number' && isNumber(interval) ? interval : 0);
   }
 
-  let candidates: CartesianTickItem[] = [];
+  let candidates: ReadonlyArray<CartesianTickItem> = [];
 
   const sizeKey = orientation === 'top' || orientation === 'bottom' ? 'width' : 'height';
   const unitSize: Size =

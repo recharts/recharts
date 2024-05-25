@@ -4,7 +4,7 @@
 import React from 'react';
 import type { FunctionComponent, SVGProps } from 'react';
 import clsx from 'clsx';
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { getTicksOfAxis } from '../util/ChartUtils';
@@ -16,8 +16,8 @@ interface YAxisProps extends BaseAxisProps {
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
    */
-  ticks?: (string | number)[];
-  /** The width of axis, which need to be setted by user */
+  ticks?: ReadonlyArray<AxisTick>;
+  /** The width of axis, which need to be set by user */
   width?: number;
   /** The height of axis which is usually calculated in Chart */
   height?: number;

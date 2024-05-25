@@ -8,10 +8,10 @@
  * @returns {T[]} The result array of the same type as the input array.
  */
 export function getEveryNthWithCondition<Type>(
-  array: Type[],
+  array: ReadonlyArray<Type>,
   n: number,
   isValid?: (candidate: Type) => boolean,
-): Type[] | undefined {
+): ReadonlyArray<Type> | undefined {
   if (n < 1) {
     return [];
   }

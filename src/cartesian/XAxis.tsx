@@ -6,7 +6,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
 import { getTicksOfAxis } from '../util/ChartUtils';
 
 /** Define of XAxis props */
@@ -15,7 +15,7 @@ interface XAxisProps extends BaseAxisProps {
   xAxisId?: string | number;
   /** The width of axis which is usually calculated internally */
   width?: number;
-  /** The height of axis, which need to be setted by user */
+  /** The height of axis, which need to be set by user */
   height?: number;
   mirror?: boolean;
   // The orientation of axis
@@ -24,7 +24,7 @@ interface XAxisProps extends BaseAxisProps {
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
    */
-  ticks?: (string | number)[];
+  ticks?: ReadonlyArray<AxisTick>;
   padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
   minTickGap?: number;
   interval?: AxisInterval;

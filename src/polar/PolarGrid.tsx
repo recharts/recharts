@@ -147,10 +147,12 @@ export const PolarGrid = ({ gridType = 'polygon', radialLines = true, ...inputs 
 
   const polarAngles = Array.isArray(polarAnglesInput)
     ? polarAnglesInput
-    : getTicksOfAxis(angleAxis, true)?.map(entry => entry.coordinate);
+    : // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
+      getTicksOfAxis(angleAxis, true)?.map(entry => entry.coordinate);
   const polarRadius = Array.isArray(polarRadiusInput)
     ? polarRadiusInput
-    : getTicksOfAxis(radiusAxis, true)?.map(entry => entry.coordinate);
+    : // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
+      getTicksOfAxis(radiusAxis, true)?.map(entry => entry.coordinate);
 
   return (
     <g className="recharts-polar-grid">

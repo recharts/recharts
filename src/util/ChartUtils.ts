@@ -40,6 +40,7 @@ import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice
 import { getLegendProps } from './getLegendProps';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
+  AxisTick,
   AxisType,
   BaseAxisProps,
   CategoricalDomain,
@@ -470,6 +471,15 @@ const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, dir
   return true;
 };
 
+/**
+ * @deprecated - this is using direct DOM access. Use different approach.
+ * @param data do not use
+ * @param item do not use
+ * @param dataKey do not use
+ * @param layout do not use
+ * @param axisType do not use
+ * @returns do not use
+ */
 export const getDomainOfErrorBars = (
   data: Array<object>,
   item: ReactElement,
@@ -511,6 +521,15 @@ export const getDomainOfErrorBars = (
   return null;
 };
 
+/**
+ * @deprecated this is relying on direct DOM access, do not use
+ * @param data do not use
+ * @param items do not use
+ * @param dataKey do not use
+ * @param axisType do not use
+ * @param layout do not use
+ * @returns do not use
+ */
 export const parseErrorBarsOfAxis = (
   data: any[],
   items: any[],
@@ -533,6 +552,8 @@ export const parseErrorBarsOfAxis = (
 };
 
 /**
+ * @deprecated this is relying on direct DOM access, do not use.
+ *
  * Get domain of data by the configuration of item element
  * @param  {Array}   data      The data displayed in the chart
  * @param  {Array}   items     The instances of item
@@ -599,7 +620,7 @@ export const isCategoricalAxis = (layout: LayoutType | PolarLayoutType, axisType
  * @return {Array}                 Coordinates
  */
 export const getCoordinatesOfGrid = (
-  ticks: Array<TickItem>,
+  ticks: ReadonlyArray<TickItem>,
   minValue: number,
   maxValue: number,
   syncWithTicks: Boolean,
@@ -639,31 +660,45 @@ export const getCoordinatesOfGrid = (
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (
-  axis: BaseAxisProps & {
-    duplicateDomain?: any;
+  axis: null | {
+    duplicateDomain?: ReadonlyArray<any>;
     realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
     scale?: any;
     axisType?: AxisType;
-    ticks?: any;
-    niceTicks?: any;
+    ticks?: ReadonlyArray<AxisTick>;
+    niceTicks?: ReadonlyArray<AxisTick>;
     isCategorical?: boolean;
-    categoricalDomain?: any;
+    categoricalDomain?: ReadonlyArray<any>;
+    type?: 'number' | 'category';
+    range?: Array<number>;
+    tickCount?: number;
   },
   isGrid?: boolean,
   isAll?: boolean,
-): TickItem[] | null => {
+): ReadonlyArray<TickItem> | null => {
   if (!axis) return null;
-  const { scale } = axis;
-  const { duplicateDomain, type, range } = axis;
+  const {
+    duplicateDomain,
+    type,
+    range,
+    scale,
+    realScaleType,
+    isCategorical,
+    categoricalDomain,
+    tickCount,
+    ticks,
+    niceTicks,
+    axisType,
+  } = axis;
 
-  const offsetForBand = axis.realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axis.axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset = axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
   // The ticks set by user should only affect the ticks adjacent to axis line
-  if (isGrid && (axis.ticks || axis.niceTicks)) {
-    const result = (axis.ticks || axis.niceTicks).map((entry: TickItem) => {
+  if (isGrid && (ticks || niceTicks)) {
+    const result = (ticks || niceTicks).map((entry: AxisTick) => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -679,28 +714,37 @@ export const getTicksOfAxis = (
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-  if (axis.isCategorical && axis.categoricalDomain) {
-    return axis.categoricalDomain.map((entry: any, index: number) => ({
-      coordinate: scale(entry) + offset,
-      value: entry,
-      index,
-      offset,
-    }));
+  if (isCategorical && categoricalDomain) {
+    return categoricalDomain.map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: entry,
+        index,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      }),
+    );
   }
 
   if (scale.ticks && !isAll) {
-    return scale
-      .ticks(axis.tickCount)
-      .map((entry: any) => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+    return (
+      scale
+        .ticks(tickCount)
+        // @ts-expect-error why does the offset go here? The type does not require it
+        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+    );
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map((entry: any, index: number) => ({
-    coordinate: scale(entry) + offset,
-    value: duplicateDomain ? duplicateDomain[entry] : entry,
-    index,
-    offset,
-  }));
+  return scale.domain().map(
+    (entry: any, index: number): TickItem => ({
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
+      // @ts-expect-error why does the offset go here? The type does not require it
+      offset,
+    }),
+  );
 };
 
 /**
@@ -1301,6 +1345,8 @@ export const getBandSizeOfAxis = (
   return isBar ? undefined : 0;
 };
 /**
+ * @deprecated this is reading defaultProps - do not use, try to come up with different approach.
+ *
  * parse the domain of a category axis when a domain is specified
  * @param   {Array}        specifiedDomain  The domain specified by users
  * @param   {Array}        calculatedDomain The domain calculated by dateKey

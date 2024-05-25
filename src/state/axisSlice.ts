@@ -16,6 +16,12 @@ const initialState: AxisState = {
   polarRadiusAxisMap: undefined,
 };
 
+/**
+ * @deprecated this is a temporary Redux slice for storing axismaps.
+ * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
+ * This is a temporary workaround, so TODO delete this and come with something better.
+ * Perhaps the individual axes should push their data instead of the wrapper parsing the DOM?
+ */
 const axisSlice = createSlice({
   name: 'axis',
   initialState,

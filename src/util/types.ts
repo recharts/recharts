@@ -1176,6 +1176,13 @@ export interface BaseAxisProps {
  */
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
 
+/**
+ * Ticks can be any type when the axis is the type of category.
+ *
+ * Ticks must be numbers when the axis is the type of number.
+ */
+export type AxisTick = number | string;
+
 export interface TickItem {
   value?: any;
   coordinate: number;
