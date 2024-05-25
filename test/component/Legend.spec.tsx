@@ -1519,7 +1519,6 @@ describe('<Legend />', () => {
       const { container } = render(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
-          {/* @ts-expect-error TypeScript correctly points out that dataKey is required but I want a test for this anyway */}
           <Bar />
         </BarChart>,
       );
