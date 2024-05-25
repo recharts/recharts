@@ -20,7 +20,7 @@ export interface PolarAngleAxisProps extends BaseAxisProps {
   cy?: number;
   radius?: number;
   axisLineType?: 'polygon' | 'circle';
-  ticks?: TickItem[];
+  ticks?: ReadonlyArray<TickItem>;
   orientation?: 'inner' | 'outer';
 }
 
@@ -36,6 +36,7 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
   const props = { ...defaultsAndInputs, ...axisOptions };
   const { axisLine } = props;
 
+  // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
   const ticks = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
 
   if (!ticks || !ticks.length) {

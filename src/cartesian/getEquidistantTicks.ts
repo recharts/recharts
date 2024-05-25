@@ -7,9 +7,10 @@ export function getEquidistantTicks(
   sign: Sign,
   boundaries: { start: number; end: number },
   getTickSize: (tick: CartesianTickItem, index: number) => number,
-  ticks: CartesianTickItem[],
+  ticks: ReadonlyArray<CartesianTickItem>,
   minTickGap: number,
-): CartesianTickItem[] {
+): ReadonlyArray<CartesianTickItem> {
+  // If the ticks are readonly, then the slice might not be necessary
   const result = (ticks || []).slice();
 
   const { start: initialStart, end } = boundaries;
@@ -25,7 +26,7 @@ export function getEquidistantTicks(
 
     const entry = ticks?.[index];
 
-    // Break condition - If we have evaluate all the ticks, then we are done.
+    // Break condition - If we have evaluated all the ticks, then we are done.
     if (entry === undefined) {
       return getEveryNthWithCondition(ticks, stepsize);
     }

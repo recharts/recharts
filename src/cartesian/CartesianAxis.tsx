@@ -47,10 +47,10 @@ export interface CartesianAxisProps {
   label?: any;
 
   minTickGap?: number;
-  ticks?: CartesianTickItem[];
+  ticks?: ReadonlyArray<CartesianTickItem>;
   tickSize?: number;
   tickFormatter?: TickFormatter;
-  ticksGenerator?: (props?: CartesianAxisProps) => CartesianTickItem[];
+  ticksGenerator?: (props?: CartesianAxisProps) => ReadonlyArray<CartesianTickItem>;
   interval?: AxisInterval;
   /** Angle in which ticks will be rendered. */
   angle?: number;
@@ -262,7 +262,11 @@ export class CartesianAxis extends Component<Props, IState> {
    * @param {string} letterSpacing Letterspacing to consider for tick spacing
    * @return {ReactElement | null} renderedTicks
    */
-  renderTicks(ticks: CartesianTickItem[] = [], fontSize: string, letterSpacing: string): React.ReactElement | null {
+  renderTicks(
+    ticks: ReadonlyArray<CartesianTickItem> = [],
+    fontSize: string,
+    letterSpacing: string,
+  ): React.ReactElement | null {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
@@ -274,7 +278,7 @@ export class CartesianAxis extends Component<Props, IState> {
       fill: 'none',
       ...filterProps(tickLine, false),
     };
-    const items = finalTicks.map((entry, i) => {
+    const items = finalTicks.map((entry: CartesianTickItem, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
       const tickProps = {
         textAnchor,

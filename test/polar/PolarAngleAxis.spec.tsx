@@ -6,7 +6,7 @@ import { exampleRadarData } from '../_data';
 import { pageData } from '../../storybook/stories/data/Page';
 
 describe('<PolarAngleAxis />', () => {
-  const ticks: TickItem[] = [
+  const ticks: ReadonlyArray<TickItem> = [
     { coordinate: 10 },
     { coordinate: 1000 },
     { coordinate: 20 },
