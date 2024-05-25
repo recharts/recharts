@@ -33,6 +33,7 @@ export interface Payload<TValue extends ValueType, TName extends NameType> {
   unit?: ReactNode;
   fill?: string;
   dataKey?: DataKey<any>;
+  nameKey?: DataKey<any>;
   payload?: any;
   chartType?: string;
   stroke?: string;

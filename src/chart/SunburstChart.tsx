@@ -102,6 +102,7 @@ function getTooltipEntrySettings({
       stroke,
       strokeWidth: undefined,
       fill,
+      nameKey: undefined,
       dataKey,
       name: dataKey,
       hide: false,

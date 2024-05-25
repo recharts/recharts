@@ -203,6 +203,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       stroke,
       strokeWidth,
       fill,
+      nameKey: undefined,
       dataKey,
       name: getTooltipNameProp(name, dataKey),
       hide,

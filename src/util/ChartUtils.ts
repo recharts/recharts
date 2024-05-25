@@ -1367,17 +1367,20 @@ export function getTooltipEntry({
   dataKey,
   payload,
   value,
+  name,
 }: {
   tooltipEntrySettings: TooltipEntrySettings;
   dataKey: DataKey<any>;
   payload: any;
   value: ValueType;
+  name: string | undefined;
 }): TooltipPayloadEntry {
   return {
     ...tooltipEntrySettings,
     dataKey,
     payload,
     value,
+    name,
   };
 }
 

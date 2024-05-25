@@ -16,7 +16,9 @@ export type TooltipPayloadEntry = Payload<ValueType, NameType>;
  *
  * So this type is all the settings, other than the data + dataKey complications.
  */
-export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'>;
+export type TooltipEntrySettings = Omit<TooltipPayloadEntry, 'payload' | 'value'> & {
+  nameKey: DataKey<any> | undefined;
+};
 
 /**
  * This is what Tooltip renders.

@@ -199,7 +199,7 @@ type PieSectorsProps = {
 };
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  const { dataKey, nameKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: sectors?.map((p: PieSectorDataItem) => p.tooltipPayload),
     settings: {
@@ -207,6 +207,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       strokeWidth,
       fill,
       dataKey,
+      nameKey,
       name: getTooltipNameProp(name, dataKey),
       hide,
       type: tooltipType,

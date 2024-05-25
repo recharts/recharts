@@ -46,6 +46,7 @@ const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
     name: 'name is ignored in Scatter in recharts 2.x',
     color: 'color',
     dataKey: 'dataKey1',
+    nameKey: 'nameKey1',
   },
   dataDefinedOnItem: [
     [
@@ -81,6 +82,7 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
     name: 'name 2',
     color: 'color 2',
     dataKey: 'dataKey2',
+    nameKey: 'nameKey2',
   },
   dataDefinedOnItem: [
     [
@@ -238,6 +240,7 @@ describe('selectTooltipPayload', () => {
     const expectedEntry1: TooltipPayloadEntry = {
       payload: undefined,
       dataKey: undefined,
+      nameKey: undefined,
       value: undefined,
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
@@ -245,6 +248,7 @@ describe('selectTooltipPayload', () => {
         stroke: 'red',
         fill: 'green',
         dataKey: 'x',
+        nameKey: 'y',
         name: 'foo',
         unit: 'bar',
       },
@@ -254,8 +258,9 @@ describe('selectTooltipPayload', () => {
       ],
     };
     const expectedEntry2: TooltipPayloadEntry = {
-      name: 'foo',
+      name: 11,
       dataKey: 'x',
+      nameKey: 'y',
       stroke: 'red',
       fill: 'green',
       payload: { x: 10, y: 11 },
@@ -279,6 +284,7 @@ describe('selectTooltipPayload', () => {
         stroke: 'red',
         fill: 'green',
         dataKey: 'y',
+        nameKey: 'x',
         name: 'foo',
         unit: 'bar',
       },
@@ -294,8 +300,9 @@ describe('selectTooltipPayload', () => {
     store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '0', activeDataKey: 'y' }));
 
     const expectedEntry: TooltipPayloadEntry = {
-      name: 'foo',
+      name: 1,
       dataKey: 'y',
+      nameKey: 'x',
       stroke: 'red',
       fill: 'green',
       payload: { x: 1, y: 2 },
@@ -313,6 +320,7 @@ describe('selectTooltipPayload', () => {
         stroke: 'red',
         fill: 'green',
         dataKey: 'y',
+        nameKey: 'x',
         name: 'foo',
       },
       dataDefinedOnItem: [
@@ -331,8 +339,9 @@ describe('selectTooltipPayload', () => {
     store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '0', activeDataKey: 'y' }));
     store.dispatch(setDataStartEndIndexes({ startIndex: 1, endIndex: 10 }));
     const expectedEntry: TooltipPayloadEntry = {
-      name: 'foo',
+      name: 3,
       dataKey: 'y',
+      nameKey: 'x',
       stroke: 'red',
       fill: 'green',
       payload: { x: 3, y: 4 },
@@ -355,6 +364,8 @@ describe('selectTooltipPayload', () => {
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
+      color: undefined,
+      fill: undefined,
       unit: 'cm',
       value: 100,
       payload: {
@@ -363,9 +374,12 @@ describe('selectTooltipPayload', () => {
         z: 200,
       },
       dataKey: 'x',
+      nameKey: 'nameKey1',
     };
     const expectedEntry2: TooltipPayloadEntry = {
       name: 'weight',
+      color: undefined,
+      fill: undefined,
       unit: 'kg',
       value: 200,
       payload: {
@@ -374,6 +388,7 @@ describe('selectTooltipPayload', () => {
         z: 200,
       },
       dataKey: 'y',
+      nameKey: 'nameKey1',
     };
     const expected: ReadonlyArray<TooltipPayloadEntry> = [expectedEntry1, expectedEntry2];
     expect(actual).toEqual(expected);
@@ -381,7 +396,7 @@ describe('selectTooltipPayload', () => {
 
   it('should use dataKey from tooltipAxis, if item dataKey is undefined', () => {
     const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
-      settings: {},
+      settings: { nameKey: undefined },
       dataDefinedOnItem: [],
     };
     const chartDataState: ChartDataState = initialChartDataState;

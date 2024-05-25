@@ -123,6 +123,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       stroke,
       strokeWidth,
       fill,
+      nameKey: undefined, // RadarChart does not have nameKey unfortunately
       dataKey,
       name: getTooltipNameProp(name, dataKey),
       hide,

@@ -96,11 +96,13 @@ describe('addToTreemapNodeIndex + treemapPayloadSearcher tandem', () => {
     index: 0,
     node: dummyRoot,
     dataKey: 'value',
+    nameKey: undefined,
+    nestedActiveTooltipIndex: undefined,
   });
   it('should return index for root node and then look it up', () => {
+    expect(computedRootNode.children[4]).toBeDefined();
     const activeIndex = addToTreemapNodeIndex(undefined, 4);
     expect(activeIndex).toEqual('children[4]');
-    expect(computedRootNode.children[4]).toBeDefined();
     expect(treemapPayloadSearcher(computedRootNode, activeIndex)).toBe(computedRootNode.children[4]);
   });
 

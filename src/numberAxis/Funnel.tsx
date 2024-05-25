@@ -17,7 +17,7 @@ import { Cell, Props as CellProps } from '../component/Cell';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
-import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
+import { getValueByDataKey } from '../util/ChartUtils';
 import {
   LegendType,
   TooltipType,
@@ -95,7 +95,7 @@ type FunnelTrapezoidsProps = {
 };
 
 function getTooltipEntrySettings(props: FunnelProps): TooltipPayloadConfiguration {
-  const { dataKey, trapezoids, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  const { dataKey, nameKey, trapezoids, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: trapezoids,
     settings: {
@@ -103,7 +103,8 @@ function getTooltipEntrySettings(props: FunnelProps): TooltipPayloadConfiguratio
       strokeWidth,
       fill,
       dataKey,
-      name: getTooltipNameProp(name, dataKey),
+      name,
+      nameKey,
       hide,
       type: tooltipType,
       color: fill,
