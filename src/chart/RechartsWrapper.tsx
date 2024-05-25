@@ -27,6 +27,10 @@ export const RechartsWrapper = forwardRef(
       dispatch(mouseClickAction(e));
       wrapperEvents?.onClick?.(e);
     };
+    const myOnMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(mouseMoveAction(e));
+      wrapperEvents?.onMouseEnter?.(e);
+    };
     const myOnMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseMoveAction(e));
       wrapperEvents?.onMouseMove?.(e);
@@ -41,6 +45,7 @@ export const RechartsWrapper = forwardRef(
         {...wrapperEvents}
         onClick={myOnClick}
         onMouseMove={myOnMouseMove}
+        onMouseEnter={myOnMouseEnter}
         ref={innerRef}
       >
         {children}
