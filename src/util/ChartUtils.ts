@@ -470,6 +470,15 @@ const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, dir
   return true;
 };
 
+/**
+ * @deprecated - this is using direct DOM access. Use different approach.
+ * @param data do not use
+ * @param item do not use
+ * @param dataKey do not use
+ * @param layout do not use
+ * @param axisType do not use
+ * @returns do not use
+ */
 export const getDomainOfErrorBars = (
   data: Array<object>,
   item: ReactElement,
@@ -511,6 +520,15 @@ export const getDomainOfErrorBars = (
   return null;
 };
 
+/**
+ * @deprecated this is relying on direct DOM access, do not use
+ * @param data do not use
+ * @param items do not use
+ * @param dataKey do not use
+ * @param axisType do not use
+ * @param layout do not use
+ * @returns do not use
+ */
 export const parseErrorBarsOfAxis = (
   data: any[],
   items: any[],
@@ -533,6 +551,8 @@ export const parseErrorBarsOfAxis = (
 };
 
 /**
+ * @deprecated this is relying on direct DOM access, do not use.
+ *
  * Get domain of data by the configuration of item element
  * @param  {Array}   data      The data displayed in the chart
  * @param  {Array}   items     The instances of item
@@ -1301,6 +1321,8 @@ export const getBandSizeOfAxis = (
   return isBar ? undefined : 0;
 };
 /**
+ * @deprecated this is reading defaultProps - do not use, try to come up with different approach.
+ *
  * parse the domain of a category axis when a domain is specified
  * @param   {Array}        specifiedDomain  The domain specified by users
  * @param   {Array}        calculatedDomain The domain calculated by dateKey

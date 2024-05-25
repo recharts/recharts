@@ -5,6 +5,15 @@ import { ReferenceArea } from '../cartesian/ReferenceArea';
 import { findAllByType } from './ReactUtils';
 import { isNumber } from './DataUtils';
 
+/**
+ * @deprecated this is relying on direct DOM access, do not use
+ * @param children do not use
+ * @param domain do not use
+ * @param axisId do not use
+ * @param axisType do not use
+ * @param specifiedTicks do not use
+ * @returns do not use
+ */
 export const detectReferenceElementsDomain = (
   children: ReactNode[],
   domain: number[],
