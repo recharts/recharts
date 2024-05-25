@@ -752,7 +752,7 @@ describe('selectContainerScale', () => {
   it('should return scale as the ratio of DOMRect / offsetWidth', () => {
     /*
      * This is a little bit of a case of "trust me" because:
-     8 jsdom returns zeroes everywhere so that doesn't test anything
+     * jsdom returns zeroes everywhere so that doesn't test anything
      * and the browser spec is everything, so I went and tested it in Firefox version 126.0
      * In a browser devtools I select arbitrary element and run:
      *
