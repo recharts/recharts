@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { Treemap, XAxis, YAxis } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { exampleTreemapData } from '../_data';
@@ -35,6 +35,30 @@ describe('<Treemap />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
+  });
+
+  test('navigates through nested nodes correctly', () => {
+    const { container, getByText } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+        type="nest"
+      />,
+    );
+
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(20);
+
+    const nodeWithChildren = getByText('A');
+    fireEvent.click(nodeWithChildren);
+
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(3);
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')[0]).toHaveTextContent('U');
   });
 
   describe('Treemap layout context', () => {
