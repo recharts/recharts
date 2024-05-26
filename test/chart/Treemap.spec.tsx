@@ -51,11 +51,14 @@ describe('<Treemap />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(21);
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(20);
 
     const nodeWithChildren = getByText('A');
     fireEvent.click(nodeWithChildren);
 
+    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
     expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(3);
+    expect(container.querySelectorAll('.recharts-treemap-depth-1')[0]).toHaveTextContent('U');
   });
 
   describe('Treemap layout context', () => {
