@@ -35,7 +35,7 @@ All development is done on the `master` branch. The current latest release and s
 </LineChart>
 ```
 
-All the components of Recharts are clearly separated. The lineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
+All the components of Recharts are clearly separated. The LineChart is composed of x axis, tooltip, grid, and line items, and each of them is an independent React Component. The clear separation and composition of components is one of the principle Recharts follows.
 
 ## Installation
 
