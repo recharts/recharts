@@ -53,11 +53,10 @@ import {
   RangeObj,
   StackOffsetType,
   TickItem,
-  XAxisMap,
 } from './types';
 import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisMap, AxisObj } from '../chart/types';
+import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
 import { inRangeOfSector } from './PolarUtils';
 
 // Exported for backwards compatibility
@@ -119,7 +118,7 @@ export const calculateActiveTickIndex = (
   coordinate: number,
   ticks: ReadonlyArray<TickItem> = [],
   unsortedTicks?: ReadonlyArray<TickItem>,
-  axis?: BaseAxisProps,
+  axis?: AxisPropsWithExtraComputedData,
 ): number => {
   let index = -1;
   const len = ticks?.length ?? 0;
@@ -652,6 +651,27 @@ export const getCoordinatesOfGrid = (
   return values;
 };
 
+export type ScaleForTicksGenerator = {
+  domain: () => ReadonlyArray<unknown>;
+  bandwidth?: () => number;
+  ticks?: (count: number) => any;
+  (args: any): number;
+};
+
+export type AxisPropsNeededForTicksGenerator = {
+  duplicateDomain?: ReadonlyArray<any>;
+  realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+  scale: ScaleForTicksGenerator;
+  axisType?: AxisType;
+  ticks?: ReadonlyArray<AxisTick>;
+  niceTicks?: ReadonlyArray<AxisTick>;
+  isCategorical?: boolean;
+  categoricalDomain?: ReadonlyArray<any>;
+  type?: 'number' | 'category';
+  range?: Array<number>;
+  tickCount?: number;
+};
+
 /**
  * Get the ticks of an axis
  * @param  {Object}  axis The configuration of an axis
@@ -660,19 +680,7 @@ export const getCoordinatesOfGrid = (
  * @return {Array}  Ticks
  */
 export const getTicksOfAxis = (
-  axis: null | {
-    duplicateDomain?: ReadonlyArray<any>;
-    realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
-    scale?: any;
-    axisType?: AxisType;
-    ticks?: ReadonlyArray<AxisTick>;
-    niceTicks?: ReadonlyArray<AxisTick>;
-    isCategorical?: boolean;
-    categoricalDomain?: ReadonlyArray<any>;
-    type?: 'number' | 'category';
-    range?: Array<number>;
-    tickCount?: number;
-  },
+  axis: null | AxisPropsNeededForTicksGenerator,
   isGrid?: boolean,
   isAll?: boolean,
 ): ReadonlyArray<TickItem> | null => {
@@ -1443,7 +1451,11 @@ export function getTooltipNameProp(
   return undefined;
 }
 
-export const isAxisLTR = (axisMap: XAxisMap) => {
+export interface Reversible {
+  reversed: boolean;
+}
+
+export const isAxisLTR = (axisMap: { [key: string]: Reversible }) => {
   const axes = Object.values(axisMap ?? {});
   // If there are no <XAxis /> elements in the chart, then the chart is left-to-right (returning true).
   if (axes.length === 0) {

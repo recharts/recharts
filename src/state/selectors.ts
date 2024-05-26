@@ -12,6 +12,7 @@ import {
   TooltipState,
 } from './tooltipSlice';
 import {
+  AxisPropsNeededForTicksGenerator,
   calculateActiveTickIndex,
   calculateTooltipPos,
   getTicksOfAxis,
@@ -23,7 +24,7 @@ import { ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
 import { BaseAxisProps, ChartOffset, DataKey, LayoutType, TickItem, TooltipEventType } from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
-import { AxisMap, TooltipTrigger } from '../chart/types';
+import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../chart/types';
 import { ContainerOffset, getOffset } from '../util/DOMUtils';
 import { RechartsHTMLContainer } from './layoutSlice';
 import {
@@ -69,7 +70,7 @@ function getSliced<T>(
 const selectTooltipState = (state: RechartsRootState) => state.tooltip;
 const selectChartData = (state: RechartsRootState) => state.chartData;
 
-const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: BaseAxisProps) =>
+const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: AxisPropsNeededForTicksGenerator) =>
   getTicksOfAxis(tooltipAxis, false, true),
 );
 
@@ -293,7 +294,7 @@ export const combineActiveIndex = (
   yAxisMap: AxisMap | undefined,
   angleAxisMap: AxisMap | undefined,
   radiusAxisMap: AxisMap | undefined,
-  tooltipAxis: BaseAxisProps | undefined,
+  tooltipAxis: AxisPropsWithExtraComputedData | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,

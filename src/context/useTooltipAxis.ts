@@ -1,4 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
+import { AxisPropsWithExtraComputedData, XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
+import { useAppSelector } from '../state/hooks';
+import { getBandSizeOfAxis, getTicksOfAxis } from '../util/ChartUtils';
+import { LayoutType } from '../util/types';
 import {
   selectArbitraryPolarAngleAxis,
   selectArbitraryPolarRadiusAxis,
@@ -6,12 +10,6 @@ import {
   selectArbitraryYAxis,
   selectChartLayout,
 } from './chartLayoutContext';
-import { getBandSizeOfAxis, getTicksOfAxis } from '../util/ChartUtils';
-import { useAppSelector } from '../state/hooks';
-import { XAxisProps, YAxisProps } from '../index';
-import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { BaseAxisProps, LayoutType } from '../util/types';
-import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 
 export const selectTooltipAxis = createSelector(
   selectChartLayout,
@@ -21,11 +19,11 @@ export const selectTooltipAxis = createSelector(
   selectArbitraryPolarRadiusAxis,
   (
     layout: LayoutType,
-    xAxis: XAxisProps,
-    yAxis: YAxisProps,
-    angleAxis: PolarAngleAxisProps,
-    radiusAxis: PolarRadiusAxisProps,
-  ): BaseAxisProps => {
+    xAxis: XAxisWithExtraData,
+    yAxis: YAxisWithExtraData,
+    angleAxis: AxisPropsWithExtraComputedData,
+    radiusAxis: AxisPropsWithExtraComputedData,
+  ): AxisPropsWithExtraComputedData => {
     if (layout === 'horizontal') {
       return xAxis;
     }
@@ -39,7 +37,7 @@ export const selectTooltipAxis = createSelector(
   },
 );
 
-export const useTooltipAxis = (): BaseAxisProps => useAppSelector(selectTooltipAxis);
+export const useTooltipAxis = (): AxisPropsWithExtraComputedData => useAppSelector(selectTooltipAxis);
 
 export const useTooltipAxisBandSize = (): number | undefined => {
   const tooltipAxis = useTooltipAxis();

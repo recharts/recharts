@@ -115,6 +115,7 @@ export const WithD3Scale = {
             left: 20,
           }}
         >
+          {/* @ts-expect-error error in ref type */}
           <XAxis dataKey="x" {...args} {...xAxisArgs} />
           <Line dataKey="y" />
           <Tooltip />

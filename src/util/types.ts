@@ -3,6 +3,7 @@ import {
   AriaAttributes,
   ClipboardEvent,
   Component,
+  ComponentType,
   CompositionEvent,
   DragEvent,
   FocusEvent,
@@ -26,10 +27,9 @@ import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
-import type { Props as XAxisProps } from '../cartesian/XAxis';
-import type { Props as YAxisProps } from '../cartesian/YAxis';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
+import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
 
 /**
  * Determines how values are stacked:
@@ -1157,8 +1157,6 @@ export interface BaseAxisProps {
   name?: string;
   /** The unit of data displayed in the axis */
   unit?: string | number;
-  /** The type of axis */
-  axisType?: AxisType;
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
@@ -1302,12 +1300,14 @@ export const adaptEventsOfChild = (
  */
 export type TooltipEventType = 'axis' | 'item';
 
+export type AllowedAxisComponent = { axisType: AxisType; AxisComp: ComponentType };
+
 export interface CategoricalChartOptions {
   chartName?: string;
   GraphicalChild?: any;
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
-  axisComponents?: BaseAxisProps[];
+  axisComponents?: ReadonlyArray<AllowedAxisComponent>;
   formatAxisMap?: any;
   defaultProps?: any;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
@@ -1364,11 +1364,11 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | boolean;
 
 export type XAxisMap = {
-  [axisId: string]: XAxisProps;
+  [axisId: string]: XAxisWithExtraData;
 };
 
 export type YAxisMap = {
-  [axisId: string]: YAxisProps;
+  [axisId: string]: YAxisWithExtraData;
 };
 
 export type PolarAngleAxisMap = {

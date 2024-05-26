@@ -1,15 +1,16 @@
 /**
  * @fileOverview X Axis
  */
-import type { FunctionComponent, SVGProps } from 'react';
-import React from 'react';
+import type { SVGProps } from 'react';
+import React, { Component, useEffect } from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
-import { getTicksOfAxis } from '../util/ChartUtils';
+import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
+import { useAppDispatch } from '../state/hooks';
+import { XAxisSettings, addXAxis } from '../state/axisMapSlice';
 
-/** Define of XAxis props */
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
   xAxisId?: string | number;
@@ -36,40 +37,76 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
 
-export const XAxis: FunctionComponent<Props> = ({ xAxisId }: Props) => {
+function SetXAxisSettings({ xAxisId }: Props): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const settings: XAxisSettings = {
+      id: xAxisId,
+    };
+    dispatch(addXAxis(settings));
+    // TODO the cleanup function is causing trouble with Redux dev extension. Figure out what it is and fix it.
+    // While it's commented, switching axes is not working
+    // return () => {
+    // console.log('dispatch removeXAxis', settings);
+    // dispatch(removeXAxis(settings));
+    // };
+  }, [xAxisId, dispatch]);
+  return null;
+}
+
+const XAxisImpl = (props: Props) => {
+  const { xAxisId, className } = props;
   const width = useChartWidth();
   const height = useChartHeight();
   const axisOptions = useXAxisOrThrow(xAxisId);
+  const axisType = 'xAxis';
 
   if (axisOptions == null) {
     return null;
   }
 
   return (
-    // @ts-expect-error the axisOptions type is not exactly what CartesianAxis is expecting.
+    // @ts-expect-error ref type does not match
     <CartesianAxis
       {...axisOptions}
-      className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
+      className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
+      ticksGenerator={(axis: AxisPropsNeededForTicksGenerator) => getTicksOfAxis(axis, true)}
     />
   );
 };
 
-XAxis.displayName = 'XAxis';
-XAxis.defaultProps = {
-  allowDecimals: true,
-  hide: false,
-  orientation: 'bottom',
-  width: 0,
-  height: 30,
-  mirror: false,
-  xAxisId: 0,
-  tickCount: 5,
-  type: 'category',
-  padding: { left: 0, right: 0 },
-  allowDataOverflow: false,
-  scale: 'auto',
-  reversed: false,
-  allowDuplicatedCategory: true,
+const XAxisSettingsDispatcher = (props: Props) => {
+  return (
+    <>
+      <SetXAxisSettings xAxisId={props.xAxisId} />
+      <XAxisImpl {...props} />
+    </>
+  );
 };
+
+// eslint-disable-next-line react/prefer-stateless-function
+export class XAxis extends Component<Props> {
+  static displayName = 'XAxis';
+
+  static defaultProps = {
+    allowDecimals: true,
+    hide: false,
+    orientation: 'bottom',
+    width: 0,
+    height: 30,
+    mirror: false,
+    xAxisId: 0,
+    tickCount: 5,
+    type: 'category',
+    padding: { left: 0, right: 0 },
+    allowDataOverflow: false,
+    scale: 'auto',
+    reversed: false,
+    allowDuplicatedCategory: true,
+  };
+
+  render() {
+    return <XAxisSettingsDispatcher {...this.props} />;
+  }
+}

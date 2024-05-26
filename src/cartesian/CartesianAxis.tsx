@@ -20,6 +20,7 @@ import {
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
+import { AxisPropsNeededForTicksGenerator, ScaleForTicksGenerator } from '../util/ChartUtils';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -50,17 +51,29 @@ export interface CartesianAxisProps {
   ticks?: ReadonlyArray<CartesianTickItem>;
   tickSize?: number;
   tickFormatter?: TickFormatter;
-  ticksGenerator?: (props?: CartesianAxisProps) => ReadonlyArray<CartesianTickItem>;
+  ticksGenerator?: (props?: AxisPropsNeededForTicksGenerator) => ReadonlyArray<CartesianTickItem>;
   interval?: AxisInterval;
   /** Angle in which ticks will be rendered. */
   angle?: number;
+  /**
+   * This is NOT SVG scale attribute;
+   * this is Recharts scale, based on d3-scale.
+   */
+  scale?: ScaleForTicksGenerator;
 }
 
 interface IState {
   fontSize: string;
   letterSpacing: string;
 }
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox'> & CartesianAxisProps;
+
+/*
+ * `viewBox` and `scale` are SVG attributes.
+ * Recharts however - unfortunately - has its own attributes named `viewBox` and `scale`
+ * that are completely different data shape and different purpose.
+ */
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale'> &
+  CartesianAxisProps;
 
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
@@ -328,9 +341,17 @@ export class CartesianAxis extends Component<Props, IState> {
     }
 
     const { ticks, ...noTicksProps } = this.props;
-    let finalTicks = ticks;
+    let finalTicks: ReadonlyArray<CartesianTickItem> = ticks;
 
     if (isFunction(ticksGenerator)) {
+      /*
+       * ticksGenerator says it accepts different ticks type than this.props provide.
+       * Somehow this is not a problem in any charts because it just so happens that
+       * the ticksGenerator and props.ticks are never actually set at the same time:
+       * Either the generator is null, or the ticks are null, never both.
+       * So it kinda works.
+       */
+      // @ts-expect-error ticks type does not match
       finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
     }
 
