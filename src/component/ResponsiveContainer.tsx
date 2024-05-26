@@ -171,8 +171,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDi
         aspect,
       );
 
-      const isCharts =
-        !Array.isArray(children) && isElement(children) && getDisplayName(children.type).endsWith('Chart');
+      const isCharts = !Array.isArray(children) && getDisplayName(children.type).endsWith('Chart');
 
       return React.Children.map(children, child => {
         if (isElement(child)) {
