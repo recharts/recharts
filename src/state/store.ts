@@ -6,12 +6,14 @@ import { axisReducer } from './axisSlice';
 import { chartLayoutReducer } from './layoutSlice';
 import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
 import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
+import { axisMapReducer } from './axisMapSlice';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
   tooltip: tooltipReducer,
   chartData: chartDataReducer,
   axis: axisReducer,
+  axisMap: axisMapReducer,
   layout: chartLayoutReducer,
 });
 

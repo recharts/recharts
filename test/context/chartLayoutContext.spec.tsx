@@ -1,6 +1,7 @@
 import React, { ComponentType, memo } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
+import { scaleLinear, scaleTime } from 'victory-vendor/d3-scale';
 import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
@@ -14,8 +15,14 @@ import {
   useXAxisOrThrow,
   useYAxisOrThrow,
 } from '../../src/context/chartLayoutContext';
-import { CategoricalChartState } from '../../src/chart/types';
-import { BaseAxisMap, XAxisMap, YAxisMap } from '../../src/util/types';
+import {
+  AxisMap,
+  AxisPropsWithExtraComputedData,
+  CategoricalChartState,
+  XAxisWithExtraData,
+  YAxisWithExtraData,
+} from '../../src/chart/types';
+import { XAxisMap, YAxisMap } from '../../src/util/types';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { Brush, ComposedChart, Customized } from '../../src';
 
@@ -196,19 +203,31 @@ describe('ChartLayoutContextProvider', () => {
     });
   });
 
+  const exampleXAxis1: XAxisWithExtraData = {
+    axisType: 'xAxis',
+    mirror: false,
+    orientation: 'bottom',
+    reversed: false,
+    scale: scaleLinear(),
+    width: 200,
+    height: 10,
+  };
   describe('XAxis state', () => {
     const exampleXAxisMap: XAxisMap = {
-      a: {
-        width: 200,
-        height: 10,
-      },
+      a: exampleXAxis1,
     };
 
+    const exampleXAxis2: XAxisWithExtraData = {
+      axisType: 'xAxis',
+      mirror: false,
+      orientation: 'bottom',
+      reversed: false,
+      scale: scaleLinear(),
+      width: 300,
+      height: 40,
+    };
     const exampleXAxisMap2: XAxisMap = {
-      a: {
-        width: 300,
-        height: 40,
-      },
+      a: exampleXAxis2,
     };
 
     const mockState1: CategoricalChartState = {
@@ -298,11 +317,17 @@ describe('ChartLayoutContextProvider', () => {
       it('should read xAxis from context', () => {
         expect.assertions(2);
         const MockConsumer: ComponentType = () => {
-          const xAxis = useXAxisOrThrow('a');
-          expect(xAxis).toEqual({
+          const xAxis: XAxisWithExtraData = useXAxisOrThrow('a');
+          const expected: XAxisWithExtraData = {
+            axisType: 'xAxis',
+            mirror: false,
+            orientation: 'bottom',
+            reversed: false,
+            scale: expect.any(Function),
             width: 200,
             height: 10,
-          });
+          };
+          expect(xAxis).toEqual(expected);
           expect(xAxis).toBe(exampleXAxisMap.a);
           return null;
         };
@@ -392,11 +417,17 @@ describe('ChartLayoutContextProvider', () => {
       it('should read xAxis from context', () => {
         expect.assertions(2);
         const MockConsumer: ComponentType = () => {
-          const xAxis = useMaybeXAxis('a');
-          expect(xAxis).toEqual({
+          const xAxis: XAxisWithExtraData = useMaybeXAxis('a');
+          const expected: XAxisWithExtraData = {
+            axisType: 'xAxis',
+            mirror: false,
+            orientation: 'bottom',
+            reversed: false,
+            scale: expect.any(Function),
             width: 200,
             height: 10,
-          });
+          };
+          expect(xAxis).toEqual(expected);
           expect(xAxis).toBe(exampleXAxisMap.a);
           return null;
         };
@@ -586,13 +617,19 @@ describe('ChartLayoutContextProvider', () => {
           </RechartsStoreProvider>,
         );
         expect.soft(renderCount).toBe(1);
+        const mockYAxis: YAxisWithExtraData = {
+          axisType: 'yAxis',
+          mirror: false,
+          orientation: 'left',
+          reversed: false,
+          scale: scaleLinear(),
+          allowDecimals: false,
+          label: 'yAxisMap is different and that still should not affect the xAxis hook',
+        };
         const mockStateWithYAxisMap: CategoricalChartState = {
           ...mockState1,
           yAxisMap: {
-            y: {
-              allowDecimals: false,
-              label: 'yAxisMap is different and that still should not affect the xAxis hook',
-            },
+            y: mockYAxis,
           },
         };
         rerender(
@@ -612,18 +649,21 @@ describe('ChartLayoutContextProvider', () => {
   });
 
   describe('YAxis state', () => {
+    const exampleYAxis1: YAxisWithExtraData = {
+      axisType: 'yAxis',
+      mirror: false,
+      orientation: 'left',
+      reversed: false,
+      scale: scaleLinear(),
+      width: 200,
+      height: 10,
+    };
     const exampleYAxisMap: YAxisMap = {
-      m: {
-        width: 200,
-        height: 10,
-      },
+      m: exampleYAxis1,
     };
 
     const exampleYAxisMap2: YAxisMap = {
-      m: {
-        width: 200,
-        height: 10,
-      },
+      m: { ...exampleYAxis1 },
     };
 
     const mockState1: CategoricalChartState = {
@@ -713,11 +753,17 @@ describe('ChartLayoutContextProvider', () => {
       it('should read yAxis from context', () => {
         expect.assertions(2);
         const MockConsumer: ComponentType = () => {
-          const yAxis = useYAxisOrThrow('m');
-          expect(yAxis).toEqual({
+          const yAxis: YAxisWithExtraData = useYAxisOrThrow('m');
+          const expected: YAxisWithExtraData = {
+            axisType: 'yAxis',
+            mirror: false,
+            orientation: 'left',
+            reversed: false,
+            scale: expect.any(Function),
             width: 200,
             height: 10,
-          });
+          };
+          expect(yAxis).toEqual(expected);
           expect(yAxis).toBe(exampleYAxisMap.m);
           return null;
         };
@@ -808,11 +854,17 @@ describe('ChartLayoutContextProvider', () => {
       it('should read yAxis from context', () => {
         expect.assertions(2);
         const MockConsumer: ComponentType = () => {
-          const yAxis = useMaybeYAxis('m');
-          expect(yAxis).toEqual({
+          const yAxis: YAxisWithExtraData = useMaybeYAxis('m');
+          const expected: YAxisWithExtraData = {
+            axisType: 'yAxis',
+            mirror: false,
+            orientation: 'left',
+            reversed: false,
+            scale: expect.any(Function),
             width: 200,
             height: 10,
-          });
+          };
+          expect(yAxis).toEqual(expected);
           expect(yAxis).toBe(exampleYAxisMap.m);
           return null;
         };
@@ -998,13 +1050,19 @@ describe('ChartLayoutContextProvider', () => {
           </RechartsStoreProvider>,
         );
         expect.soft(renderCount).toBe(1);
+        const mockXAxis: XAxisWithExtraData = {
+          axisType: 'xAxis',
+          mirror: false,
+          orientation: 'bottom',
+          reversed: false,
+          scale: scaleLinear(),
+          allowDecimals: false,
+          label: 'xAxisMap is different and that still should not affect the yAxis hook',
+        };
         const mockStateWithXAxisMap: CategoricalChartState = {
           ...mockState1,
           xAxisMap: {
-            x: {
-              allowDecimals: false,
-              label: 'xAxisMap is different and that still should not affect the yAxis hook',
-            },
+            x: mockXAxis,
           },
         };
         rerender(
@@ -1024,8 +1082,15 @@ describe('ChartLayoutContextProvider', () => {
   });
 
   describe('PolarAngleAxis state', () => {
-    const exampleBaseAxisMap: BaseAxisMap = {
-      m: { type: 'category', axisType: 'angleAxis' },
+    const exampleAxis: AxisPropsWithExtraComputedData = {
+      mirror: false,
+      reversed: false,
+      scale: scaleLinear(),
+      type: 'category',
+      axisType: 'angleAxis',
+    };
+    const exampleBaseAxisMap: AxisMap = {
+      m: exampleAxis,
     };
 
     const mockState1: CategoricalChartState = {
@@ -1037,7 +1102,13 @@ describe('ChartLayoutContextProvider', () => {
       expect.assertions(2);
       const MockConsumer: ComponentType = () => {
         const angleAxis = useMaybePolarAngleAxis('m');
-        expect(angleAxis).toEqual({ type: 'category', axisType: 'angleAxis' });
+        expect(angleAxis).toEqual({
+          type: 'category',
+          axisType: 'angleAxis',
+          mirror: false,
+          reversed: false,
+          scale: expect.any(Function),
+        });
         expect(angleAxis).toBe(exampleBaseAxisMap.m);
         return null;
       };
@@ -1052,8 +1123,15 @@ describe('ChartLayoutContextProvider', () => {
   });
 
   describe('PolarRadiusAxis state', () => {
-    const exampleBaseAxisMap: BaseAxisMap = {
-      m: { type: 'category', axisType: 'radiusAxis' },
+    const exampleAxis: AxisPropsWithExtraComputedData = {
+      mirror: false,
+      reversed: false,
+      scale: scaleLinear(),
+      type: 'category',
+      axisType: 'radiusAxis',
+    };
+    const exampleBaseAxisMap: AxisMap = {
+      m: exampleAxis,
     };
 
     const mockState1: CategoricalChartState = {
@@ -1065,7 +1143,13 @@ describe('ChartLayoutContextProvider', () => {
       expect.assertions(2);
       const MockConsumer: ComponentType = () => {
         const radiusAxis = useMaybePolarRadiusAxis('m');
-        expect(radiusAxis).toEqual({ type: 'category', axisType: 'radiusAxis' });
+        expect(radiusAxis).toEqual({
+          type: 'category',
+          axisType: 'radiusAxis',
+          mirror: false,
+          reversed: false,
+          scale: expect.any(Function),
+        });
         expect(radiusAxis).toBe(exampleBaseAxisMap.m);
         return null;
       };
@@ -1304,13 +1388,19 @@ describe('ChartLayoutContextProvider', () => {
           </ChartLayoutContextProvider>,
         );
         expect.soft(renderCount).toBe(1);
+        const mockXAxis: XAxisWithExtraData = {
+          mirror: false,
+          reversed: false,
+          orientation: 'bottom',
+          axisType: 'xAxis',
+          scale: scaleTime(),
+          allowDecimals: false,
+          label: 'xAxisMap is different and that still should not affect viewBox hook',
+        };
         const mockStateWithXAxisMap: CategoricalChartState = {
           ...mockState1,
           xAxisMap: {
-            x: {
-              allowDecimals: false,
-              label: 'xAxisMap is different and that still should not affect viewBox hook',
-            },
+            x: mockXAxis,
           },
         };
         rerender(

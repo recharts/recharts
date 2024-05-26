@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import {
+  AxisType,
   BaseAxisProps,
   ChartCoordinate,
   ChartOffset,
@@ -8,15 +9,15 @@ import {
   Margin,
   StackOffsetType,
   TickItem,
+  XAxisMap,
+  YAxisMap,
 } from '../util/types';
-import { AxisStackGroups } from '../util/ChartUtils';
+import { AxisStackGroups, ScaleForTicksGenerator } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { TooltipPayloadType } from '../context/tooltipContext';
-import { XAxisProps, YAxisProps, ZAxisProps } from '../index';
-import { AngleAxisProps, RadiusAxisProps } from '../polar/types';
 
 export type AxisMap = {
-  [axisId: string]: BaseAxisProps;
+  [axisId: string]: AxisPropsWithExtraComputedData;
 };
 
 export interface CategoricalChartState {
@@ -34,15 +35,15 @@ export interface CategoricalChartState {
 
   updateId?: number;
 
-  xAxisMap?: AxisMap;
+  xAxisMap?: XAxisMap;
 
-  yAxisMap?: AxisMap;
+  yAxisMap?: YAxisMap;
 
   zAxisMap?: AxisMap;
 
   orderedTooltipTicks?: any;
 
-  tooltipAxis?: BaseAxisProps;
+  tooltipAxis?: AxisPropsWithExtraComputedData;
 
   tooltipTicks?: TickItem[];
 
@@ -88,19 +89,42 @@ export interface CategoricalChartState {
 
 export type TooltipTrigger = 'hover' | 'click';
 
+/**
+ * Components like XAxis and YAxis accept BaseAxisProps as their external props
+ * and then generateCategoricalChart will gather those and compute extra stuff and save it as axisMaps.
+ */
+export type AxisPropsWithExtraComputedData = Omit<BaseAxisProps, 'scale'> & {
+  axisType: AxisType;
+  width?: number;
+  height?: number;
+  mirror: boolean;
+  reversed: boolean;
+  scale: ScaleForTicksGenerator;
+};
+
+export type XAxisWithExtraData = AxisPropsWithExtraComputedData & {
+  axisType: 'xAxis';
+  orientation: 'top' | 'bottom';
+};
+
+export type YAxisWithExtraData = AxisPropsWithExtraComputedData & {
+  axisType: 'yAxis';
+  orientation: 'left' | 'right';
+};
+
 export type AxisObj = {
-  xAxis?: XAxisProps;
+  xAxis?: XAxisWithExtraData;
   xAxisTicks?: Array<TickItem>;
 
-  yAxis?: YAxisProps;
+  yAxis?: YAxisWithExtraData;
   yAxisTicks?: Array<TickItem>;
 
-  zAxis?: ZAxisProps;
+  zAxis?: AxisPropsWithExtraComputedData;
   zAxisTicks?: Array<TickItem>;
 
-  angleAxis?: AngleAxisProps;
+  angleAxis?: AxisPropsWithExtraComputedData;
   angleAxisTicks?: Array<TickItem>;
 
-  radiusAxis?: RadiusAxisProps;
+  radiusAxis?: AxisPropsWithExtraComputedData;
   radiusAxisTicks?: Array<TickItem>;
 };

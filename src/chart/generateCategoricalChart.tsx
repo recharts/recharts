@@ -30,6 +30,7 @@ import { getOffset } from '../util/DOMUtils';
 import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isNumber, uniqueId } from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
+  AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
   BarPosition,
   calculateActiveTickIndex,
@@ -56,6 +57,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
+  AllowedAxisComponent,
   AxisType,
   BaseAxisProps,
   CartesianViewBox,
@@ -78,7 +80,14 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, AxisObj, CategoricalChartState, TooltipTrigger } from './types';
+import {
+  AxisMap,
+  AxisObj,
+  CategoricalChartState,
+  TooltipTrigger,
+  XAxisWithExtraData,
+  YAxisWithExtraData,
+} from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
@@ -640,7 +649,7 @@ const getAxisMap = (
 };
 
 const tooltipTicksGenerator = (axisMap: AxisMap) => {
-  const axis: BaseAxisProps = getAnyElementOfObject(axisMap);
+  const axis: AxisPropsNeededForTicksGenerator = getAnyElementOfObject(axisMap);
   const tooltipTicks = getTicksOfAxis(axis, false, true);
 
   return {
@@ -737,7 +746,7 @@ const calculateOffset = (
 
   const offsetH = Object.keys(yAxisMap).reduce(
     (result, id) => {
-      const entry = yAxisMap[id];
+      const entry: YAxisWithExtraData = yAxisMap[id];
       const { orientation } = entry;
 
       if (!entry.mirror && !entry.hide) {
@@ -751,7 +760,7 @@ const calculateOffset = (
 
   const offsetV = Object.keys(xAxisMap).reduce(
     (result, id) => {
-      const entry = xAxisMap[id];
+      const entry: XAxisWithExtraData = xAxisMap[id];
       const { orientation } = entry;
 
       if (!entry.mirror && !entry.hide) {
@@ -864,7 +873,7 @@ export const generateCategoricalChart = ({
 
       const axisObjInitialValue: AxisObj = {};
 
-      const axisObj: AxisObj = axisComponents.reduce((result: AxisObj, entry: BaseAxisProps): AxisObj => {
+      const axisObj: AxisObj = axisComponents.reduce((result: AxisObj, entry: AllowedAxisComponent): AxisObj => {
         // map of axisId to axis for a specific axis type
         const axisMap: AxisMap | undefined = currentState[`${entry.axisType}Map` as const];
         // axisId of axis we are currently computing
@@ -884,7 +893,7 @@ export const generateCategoricalChart = ({
         );
 
         // the axis we are currently formatting
-        const axis = axisMap[id];
+        const axis: AxisPropsNeededForTicksGenerator = axisMap[id];
 
         return {
           ...result,
@@ -997,7 +1006,7 @@ export const generateCategoricalChart = ({
       stackOffset,
       reverseStackOrder,
     );
-    const axisObj: AxisMapMap = axisComponents.reduce((result: AxisMapMap, entry: BaseAxisProps): AxisMapMap => {
+    const axisObj: AxisMapMap = axisComponents.reduce((result: AxisMapMap, entry: AllowedAxisComponent): AxisMapMap => {
       const name = `${entry.axisType}Map`;
 
       return {

@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { getTicksOfAxis } from '../util/ChartUtils';
+import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -50,7 +50,7 @@ export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
       {...axisOptions}
       className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      ticksGenerator={(axis: any) => getTicksOfAxis(axis, true)}
+      ticksGenerator={(axis: AxisPropsNeededForTicksGenerator) => getTicksOfAxis(axis, true)}
     />
   );
 };
