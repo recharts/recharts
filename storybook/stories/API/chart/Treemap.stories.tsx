@@ -16,12 +16,16 @@ import { GeneralStyle } from '../props/Styles';
 
 export default {
   argTypes: {
-    type: { description: 'TODO' },
+    type: {
+      description:
+        'Rendering mode of the Treemap. Options: "flat" (show entire treemap) or "nest" (show depth-1 nodes, allowing click-through).',
+    },
     style: {
-      description: 'TODO',
+      description: 'Custom inline styles for the Treemap component. Accepts a JavaScript object with CSS properties.',
     },
     nestIndexContent: {
-      description: 'TODO',
+      description:
+        'Custom content for the nest index in "nest" mode. Accepts a React element or a function that returns a React element.',
     },
     nameKey: {
       ...dataKey, // The name key is a data key.
