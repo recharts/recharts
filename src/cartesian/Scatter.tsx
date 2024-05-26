@@ -47,7 +47,7 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 
-interface ScattterPointNode {
+interface ScatterPointNode {
   x?: number | string;
   y?: number | string;
   z?: number | string;
@@ -57,7 +57,7 @@ export interface ScatterPointItem {
   cx?: number;
   cy?: number;
   size?: number;
-  node?: ScattterPointNode;
+  node?: ScatterPointNode;
   payload?: any;
   tooltipPayload?: ReadonlyArray<TooltipPayload>;
 }
@@ -203,6 +203,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       stroke,
       strokeWidth,
       fill,
+      nameKey: undefined,
       dataKey,
       name: getTooltipNameProp(name, dataKey),
       hide,

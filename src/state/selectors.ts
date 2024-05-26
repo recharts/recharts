@@ -170,6 +170,8 @@ export const combineTooltipPayload = (
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxis?.dataKey;
+    // BaseAxisProps does not support nameKey but it could!
+    const finalNameKey: DataKey<any> | undefined = settings?.nameKey; // ?? tooltipAxis?.nameKey;
     let tooltipPayload: unknown;
     if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
@@ -194,16 +196,19 @@ export const combineTooltipPayload = (
             dataKey: item.dataKey,
             payload: item.payload,
             value: getValueByDataKey(item.payload, item.dataKey),
+            name: item.name,
           }),
         );
       });
     } else {
+      // I am not quite sure why these two branches (Array vs Array of Arrays) have to behave differently - I imagine we should unify these. 3.x breaking change?
       agg.push(
         getTooltipEntry({
           tooltipEntrySettings: settings,
           dataKey: finalDataKey,
           payload: tooltipPayload,
           value: getValueByDataKey(tooltipPayload, finalDataKey),
+          name: getValueByDataKey(tooltipPayload, finalNameKey) ?? settings?.name,
         }),
       );
     }

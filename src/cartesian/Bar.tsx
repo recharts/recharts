@@ -151,6 +151,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
       strokeWidth,
       fill,
       dataKey,
+      nameKey: undefined,
       name: getTooltipNameProp(name, dataKey),
       hide,
       type: props.tooltipType,
@@ -307,16 +308,18 @@ function BarRectangles(props: BarRectanglesProps) {
   );
 }
 
+const defaultMinPointSize: number = 0;
+
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     xAxisId: 0,
     yAxisId: 0,
     legendType: 'rect',
-    minPointSize: 0,
+    minPointSize: defaultMinPointSize,
     hide: false,
-    data: [] as BarRectangleItem[],
+    data: null,
     layout: 'vertical',
     activeBar: false,
     isAnimationActive: !Global.isSsr,
@@ -386,7 +389,7 @@ export class Bar extends PureComponent<Props, State> {
         }
       }
 
-      const minPointSize = minPointSizeCallback(minPointSizeProp, this.defaultProps.minPointSize)(value[1], index);
+      const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
 
       if (layout === 'horizontal') {
         const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];

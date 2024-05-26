@@ -614,6 +614,8 @@ describe('Tooltip visibility', () => {
           <Line dataKey="uv" hide name="3" />
           <Scatter dataKey="uv" hide name="4" />
           <Line dataKey="uv" name="5" />
+          <XAxis type="number" dataKey="uv" name="stature" unit="cm" />
+          <YAxis type="number" dataKey="pv" name="weight" unit="kg" />
           <Tooltip
             includeHidden
             content={({ payload }) => {
@@ -630,7 +632,7 @@ describe('Tooltip visibility', () => {
       assertNotNull(chart);
       fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
-      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12345');
+      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('123statureweight5');
     });
 
     test('false - Should hide tooltip for hidden items', () => {

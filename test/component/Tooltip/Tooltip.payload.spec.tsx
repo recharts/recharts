@@ -156,7 +156,7 @@ const ComposedChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'uv : 300kg', 'amt : 2400'],
 };
 
 const PieChartTestCase: TooltipPayloadTestCase = {
@@ -180,11 +180,24 @@ const FunnelChartTestCase: TooltipPayloadTestCase = {
   name: 'FunnelChart',
   Wrapper: ({ children }) => (
     <FunnelChart width={700} height={500}>
+      <Funnel isAnimationActive={false} dataKey="uv" data={PageData} />
+      {children}
+    </FunnelChart>
+  ),
+  mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '',
+  expectedTooltipContent: ['Page A : 400'],
+};
+
+const FunnelChartWithNameTestCase: TooltipPayloadTestCase = {
+  name: 'FunnelChart with name',
+  Wrapper: ({ children }) => (
+    <FunnelChart width={700} height={500}>
       <Funnel
         isAnimationActive={false}
         dataKey="uv"
-        nameKey="name"
-        name="This is now definitely going to the tooltip title same as other charts"
+        nameKey="does not exist in the data"
+        name="This is now going to the tooltip title and it will override the 'name' property in data"
         data={PageData}
       />
       {children}
@@ -192,7 +205,28 @@ const FunnelChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
-  expectedTooltipContent: ['This is now definitely going to the tooltip title same as other charts : 400'],
+  expectedTooltipContent: [
+    "This is now going to the tooltip title and it will override the 'name' property in data : 400",
+  ],
+};
+
+const FunnelChartTestCaseWithNameKey: TooltipPayloadTestCase = {
+  name: 'FunnelChart with nameKey',
+  Wrapper: ({ children }) => (
+    <FunnelChart width={700} height={500}>
+      <Funnel
+        isAnimationActive={false}
+        dataKey="uv"
+        nameKey="pv"
+        name="This is now ignored because the nameKey pulls the name out of the data"
+        data={PageData}
+      />
+      {children}
+    </FunnelChart>
+  ),
+  mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '',
+  expectedTooltipContent: ['2400 : 400'],
 };
 
 const PieChartWithCustomNameKeyTestCase: TooltipPayloadTestCase = {
@@ -337,6 +371,8 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   LineChartVerticalTestCase,
   ComposedChartTestCase,
   FunnelChartTestCase,
+  FunnelChartWithNameTestCase,
+  FunnelChartTestCaseWithNameKey,
   PieChartTestCase,
   PieChartWithCustomNameKeyTestCase,
   RadarChartTestCase,

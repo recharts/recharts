@@ -21,10 +21,18 @@ import { ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
-import { TooltipIndex, TooltipPayloadConfiguration, TooltipPayloadSearcher } from '../state/tooltipSlice';
+import {
+  TooltipIndex,
+  TooltipPayloadConfiguration,
+  TooltipPayloadSearcher,
+  mouseLeaveItem,
+  setActiveClickItemIndex,
+  setActiveMouseOverItemIndex,
+} from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
+import { useAppDispatch } from '../state/hooks';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -62,12 +70,9 @@ export const treemapPayloadSearcher: TooltipPayloadSearcher<TreemapNode, Treemap
 };
 
 export const addToTreemapNodeIndex = (
-  activeTooltipIndexSoFar: TooltipIndex | undefined,
+  activeTooltipIndexSoFar: TooltipIndex | undefined = '',
   indexInChildrenArr: number,
 ): TooltipIndex => {
-  if (activeTooltipIndexSoFar == null) {
-    return `children[${indexInChildrenArr}]`;
-  }
   return `${activeTooltipIndexSoFar}children[${indexInChildrenArr}]`;
 };
 
@@ -83,18 +88,30 @@ export const computeNode = ({
   node,
   index,
   dataKey,
+  nameKey,
+  nestedActiveTooltipIndex,
 }: {
   depth: number;
   node: TreemapNode;
   index: number;
   dataKey: DataKey<any>;
+  nameKey: DataKey<any>;
+  nestedActiveTooltipIndex: TooltipIndex | undefined;
 }): TreemapNode => {
+  const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(nestedActiveTooltipIndex, index);
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren =
     children && children.length
       ? children.map((child: TreemapNode, i: number) =>
-          computeNode({ depth: childDepth, node: child, index: i, dataKey }),
+          computeNode({
+            depth: childDepth,
+            node: child,
+            index: i,
+            dataKey,
+            nameKey,
+            nestedActiveTooltipIndex: currentTooltipIndex,
+          }),
         )
       : null;
   let nodeValue: number;
@@ -109,10 +126,11 @@ export const computeNode = ({
   return {
     ...node,
     children: computedChildren,
+    name: getValueByDataKey(node, nameKey, ''),
     [NODE_VALUE_KEY]: nodeValue,
     depth,
     index,
-    tooltipIndex: addToTreemapNodeIndex(node.tooltipIndex, index),
+    tooltipIndex: currentTooltipIndex,
   };
 };
 
@@ -268,7 +286,7 @@ export interface Props {
 
   height?: number;
 
-  data?: any[];
+  data?: ReadonlyArray<TreemapDataType>;
 
   animationId?: number;
 
@@ -332,7 +350,7 @@ interface State {
 
   nestIndex?: TreemapNode[];
 
-  prevData?: any[];
+  prevData?: ReadonlyArray<TreemapDataType>;
 
   prevType?: 'flat' | 'nest';
 
@@ -367,9 +385,21 @@ type ContentItemProps = {
   nodeProps: TreemapNode;
   type: string;
   colorPanel: string[];
+  dataKey: DataKey<any>;
+  onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
 };
 
-function ContentItem({ content, nodeProps, type, colorPanel }: ContentItemProps): React.ReactElement {
+function ContentItem({
+  content,
+  nodeProps,
+  type,
+  colorPanel,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+}: ContentItemProps): React.ReactElement {
   if (React.isValidElement(content)) {
     return React.cloneElement(content, nodeProps);
   }
@@ -408,11 +438,28 @@ function ContentItem({ content, nodeProps, type, colorPanel }: ContentItemProps)
         stroke="#fff"
         {...omit(nodeProps, 'children')}
         role="img"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
       />
       {arrow}
       {text}
     </g>
   );
+}
+
+function ContentItemWithEvents(props: ContentItemProps) {
+  const dispatch = useAppDispatch();
+  const onMouseEnter = () => {
+    dispatch(setActiveMouseOverItemIndex({ activeIndex: props.nodeProps.tooltipIndex, activeDataKey: props.dataKey }));
+  };
+  const onMouseLeave = () => {
+    dispatch(mouseLeaveItem());
+  };
+  const onClick = () => {
+    dispatch(setActiveClickItemIndex({ activeIndex: props.nodeProps.tooltipIndex, activeDataKey: props.dataKey }));
+  };
+  return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
 function getTooltipEntrySettings({
@@ -422,7 +469,7 @@ function getTooltipEntrySettings({
   props: Props;
   currentRoot: TreemapNode | null;
 }): TooltipPayloadConfiguration {
-  const { dataKey, stroke, fill } = props;
+  const { dataKey, nameKey, stroke, fill } = props;
   return {
     dataDefinedOnItem: currentRoot,
     settings: {
@@ -430,13 +477,24 @@ function getTooltipEntrySettings({
       strokeWidth: undefined,
       fill,
       dataKey,
-      name: '',
+      nameKey,
+      name: undefined, // Each TreemapNode has its own name
       hide: false,
       type: undefined,
       color: fill,
       unit: '',
     },
   };
+}
+
+function createTooltipPayload(activeNode: TreemapNode) {
+  return [
+    {
+      payload: activeNode,
+      name: activeNode.name,
+      value: activeNode.value,
+    },
+  ];
 }
 
 export class Treemap extends PureComponent<Props, State> {
@@ -472,6 +530,7 @@ export class Treemap extends PureComponent<Props, State> {
         node: { children: nextProps.data, x: 0, y: 0, width: nextProps.width, height: nextProps.height },
         index: 0,
         dataKey: nextProps.dataKey,
+        nameKey: nextProps.nameKey,
       });
       const formatRoot: TreemapNode = squarify(root, nextProps.aspectRatio);
 
@@ -557,12 +616,15 @@ export class Treemap extends PureComponent<Props, State> {
   handleClick(node: TreemapNode) {
     const { onClick, type } = this.props;
     if (type === 'nest' && node.children) {
-      const { width, height, dataKey, aspectRatio } = this.props;
+      const { width, height, dataKey, nameKey, aspectRatio } = this.props;
       const root = computeNode({
         depth: 0,
         node: { ...node, x: 0, y: 0, width, height },
         index: 0,
         dataKey,
+        nameKey,
+        // with Treemap nesting, should this continue nesting the index or start from empty string?
+        nestedActiveTooltipIndex: node.tooltipIndex,
       });
 
       const formatRoot = squarify(root, aspectRatio);
@@ -583,12 +645,15 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleNestIndex(node: TreemapNode, i: number) {
     let { nestIndex } = this.state;
-    const { width, height, dataKey, aspectRatio } = this.props;
+    const { width, height, dataKey, nameKey, aspectRatio } = this.props;
     const root = computeNode({
       depth: 0,
       node: { ...node, x: 0, y: 0, width, height },
       index: 0,
       dataKey,
+      nameKey,
+      // with Treemap nesting, should this continue nesting the index or start from empty string?
+      nestedActiveTooltipIndex: node.tooltipIndex,
     });
 
     const formatRoot = squarify(root, aspectRatio);
@@ -611,6 +676,7 @@ export class Treemap extends PureComponent<Props, State> {
       type,
       animationId,
       colorPanel,
+      dataKey,
     } = this.props;
     const { isAnimationFinished } = this.state;
     const { width, height, x, y, depth } = nodeProps;
@@ -627,8 +693,9 @@ export class Treemap extends PureComponent<Props, State> {
     if (!isAnimationActive) {
       return (
         <Layer {...event}>
-          <ContentItem
+          <ContentItemWithEvents
             content={content}
+            dataKey={dataKey}
             nodeProps={{
               ...nodeProps,
               isAnimationActive: false,
@@ -671,8 +738,9 @@ export class Treemap extends PureComponent<Props, State> {
               {/* when animation is in progress , only render depth=1 nodes */}
               {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
               {depth > 2 && !isAnimationFinished ? null : (
-                <ContentItem
+                <ContentItemWithEvents
                   content={content}
+                  dataKey={dataKey}
                   nodeProps={{
                     ...nodeProps,
                     isAnimationActive,
@@ -774,8 +842,6 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   getTooltipContext(): TooltipContextValue {
-    const { nameKey } = this.props;
-
     const { isTooltipActive, activeNode } = this.state;
     const coordinate = activeNode
       ? {
@@ -783,16 +849,7 @@ export class Treemap extends PureComponent<Props, State> {
           y: activeNode.y + activeNode.height / 2,
         }
       : null;
-    const payload =
-      isTooltipActive && activeNode
-        ? [
-            {
-              payload: activeNode,
-              name: getValueByDataKey(activeNode, nameKey, ''),
-              value: getValueByDataKey(activeNode, NODE_VALUE_KEY),
-            },
-          ]
-        : [];
+    const payload = isTooltipActive && activeNode ? createTooltipPayload(activeNode) : [];
 
     return {
       active: isTooltipActive,

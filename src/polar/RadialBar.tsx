@@ -191,6 +191,7 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
       stroke,
       strokeWidth,
       fill,
+      nameKey: undefined, // RadialBar does not have nameKey, why?
       dataKey,
       name: getTooltipNameProp(name, dataKey),
       hide,
