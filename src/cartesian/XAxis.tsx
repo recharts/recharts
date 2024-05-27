@@ -6,10 +6,11 @@ import React, { Component, useEffect } from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
+import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppDispatch } from '../state/hooks';
-import { XAxisSettings, addXAxis } from '../state/axisMapSlice';
+import { addXAxis, XAxisSettings } from '../state/axisMapSlice';
+import { XAxisWithExtraData } from '../chart/types';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -35,7 +36,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<SVGProps<SVGLineElement>, 'scale'> & XAxisProps;
 
 function SetXAxisSettings({ xAxisId }: Props): null {
   const dispatch = useAppDispatch();
@@ -58,20 +59,41 @@ const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
   const width = useChartWidth();
   const height = useChartHeight();
-  const axisOptions = useXAxisOrThrow(xAxisId);
+  const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
 
   if (axisOptions == null) {
     return null;
   }
 
+  const tickGeneratorInput: AxisPropsNeededForTicksGenerator = {
+    axisType,
+    categoricalDomain: axisOptions.categoricalDomain,
+    duplicateDomain: axisOptions.duplicateDomain,
+    isCategorical: axisOptions.isCategorical,
+    niceTicks: axisOptions.niceTicks,
+    range: axisOptions.range,
+    realScaleType: axisOptions.realScaleType,
+    scale: axisOptions.scale,
+    tickCount: props.tickCount,
+    ticks: props.ticks,
+    type: props.type,
+  };
+  const cartesianTickItems: ReadonlyArray<CartesianTickItem> = getTicksOfAxis(tickGeneratorInput, true);
+
+  const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+
   return (
-    // @ts-expect-error ref type does not match
     <CartesianAxis
-      {...axisOptions}
+      {...allOtherProps}
+      scale={axisOptions.scale}
+      x={axisOptions.x}
+      y={axisOptions.y}
+      width={axisOptions.width}
+      height={axisOptions.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      ticksGenerator={(axis: AxisPropsNeededForTicksGenerator) => getTicksOfAxis(axis, true)}
+      cartesianTickItems={cartesianTickItems}
     />
   );
 };

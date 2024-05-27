@@ -659,14 +659,14 @@ export type ScaleForTicksGenerator = {
 };
 
 export type AxisPropsNeededForTicksGenerator = {
-  duplicateDomain?: ReadonlyArray<any>;
+  duplicateDomain?: ReadonlyArray<AxisTick>;
   realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
   scale: ScaleForTicksGenerator;
   axisType?: AxisType;
   ticks?: ReadonlyArray<AxisTick>;
   niceTicks?: ReadonlyArray<AxisTick>;
   isCategorical?: boolean;
-  categoricalDomain?: ReadonlyArray<any>;
+  categoricalDomain?: ReadonlyArray<AxisTick>;
   type?: 'number' | 'category';
   range?: Array<number>;
   tickCount?: number;

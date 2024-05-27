@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import {
+  AxisTick,
   AxisType,
   BaseAxisProps,
   ChartCoordinate,
@@ -100,6 +101,14 @@ export type AxisPropsWithExtraComputedData = Omit<BaseAxisProps, 'scale'> & {
   mirror: boolean;
   reversed: boolean;
   scale: ScaleForTicksGenerator;
+  categoricalDomain?: ReadonlyArray<AxisTick>;
+  duplicateDomain?: ReadonlyArray<AxisTick>;
+  niceTicks?: ReadonlyArray<AxisTick>;
+  isCategorical: boolean;
+  range?: Array<number>;
+  realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+  x: number;
+  y: number;
 };
 
 export type XAxisWithExtraData = AxisPropsWithExtraComputedData & {

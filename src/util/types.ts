@@ -1128,7 +1128,7 @@ export interface BaseAxisProps {
   /** The option for axisLine */
   axisLine?: boolean | SVGProps<SVGLineElement>;
   /** The option for tickLine */
-  tickLine?: boolean | SVGProps<SVGTextElement>;
+  tickLine?: boolean | SVGProps<SVGElement>;
   /** The size of tick line */
   tickSize?: number;
   /** The formatter function of tick */

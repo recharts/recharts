@@ -20,7 +20,7 @@ import {
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
-import { AxisPropsNeededForTicksGenerator, ScaleForTicksGenerator } from '../util/ChartUtils';
+import { ScaleForTicksGenerator } from '../util/ChartUtils';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -41,17 +41,16 @@ export interface CartesianAxisProps {
   viewBox?: CartesianViewBox;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   axisLine?: boolean | SVGProps<SVGLineElement>;
-  tickLine?: boolean | SVGProps<SVGLineElement>;
+  tickLine?: boolean | SVGProps<SVGElement>;
   mirror?: boolean;
   tickMargin?: number;
   hide?: boolean;
   label?: any;
 
   minTickGap?: number;
-  ticks?: ReadonlyArray<CartesianTickItem>;
+  cartesianTickItems?: ReadonlyArray<CartesianTickItem>;
   tickSize?: number;
   tickFormatter?: TickFormatter;
-  ticksGenerator?: (props?: AxisPropsNeededForTicksGenerator) => ReadonlyArray<CartesianTickItem>;
   interval?: AxisInterval;
   /** Angle in which ticks will be rendered. */
   angle?: number;
@@ -59,7 +58,7 @@ export interface CartesianAxisProps {
    * This is NOT SVG scale attribute;
    * this is Recharts scale, based on d3-scale.
    */
-  scale?: ScaleForTicksGenerator;
+  scale: ScaleForTicksGenerator;
 }
 
 interface IState {
@@ -78,7 +77,7 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     x: 0,
     y: 0,
     width: 0,
@@ -87,7 +86,7 @@ export class CartesianAxis extends Component<Props, IState> {
     // The orientation of axis
     orientation: 'bottom',
     // The ticks
-    ticks: [] as CartesianAxisProps['ticks'],
+    cartesianTickItems: [] as CartesianAxisProps['cartesianTickItems'],
 
     stroke: '#666',
     tickLine: true,
@@ -334,26 +333,13 @@ export class CartesianAxis extends Component<Props, IState> {
   }
 
   render() {
-    const { axisLine, width, height, ticksGenerator, className, hide } = this.props;
+    const { axisLine, width, height, className, hide } = this.props;
 
     if (hide) {
       return null;
     }
 
-    const { ticks, ...noTicksProps } = this.props;
-    let finalTicks: ReadonlyArray<CartesianTickItem> = ticks;
-
-    if (isFunction(ticksGenerator)) {
-      /*
-       * ticksGenerator says it accepts different ticks type than this.props provide.
-       * Somehow this is not a problem in any charts because it just so happens that
-       * the ticksGenerator and props.ticks are never actually set at the same time:
-       * Either the generator is null, or the ticks are null, never both.
-       * So it kinda works.
-       */
-      // @ts-expect-error ticks type does not match
-      finalTicks = ticks && ticks.length > 0 ? ticksGenerator(this.props) : ticksGenerator(noTicksProps);
-    }
+    const { cartesianTickItems } = this.props;
 
     if (width <= 0 || height <= 0) {
       return null;
@@ -367,7 +353,7 @@ export class CartesianAxis extends Component<Props, IState> {
         }}
       >
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks(finalTicks, this.state.fontSize, this.state.letterSpacing)}
+        {this.renderTicks(cartesianTickItems, this.state.fontSize, this.state.letterSpacing)}
         {Label.renderCallByParent(this.props)}
       </Layer>
     );

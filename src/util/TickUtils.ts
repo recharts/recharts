@@ -41,6 +41,9 @@ export function isVisible(
   return sign * (tickPosition - (sign * size) / 2 - start) >= 0 && sign * (tickPosition + (sign * size) / 2 - end) <= 0;
 }
 
-export function getNumberIntervalTicks(ticks: ReadonlyArray<CartesianTickItem>, interval: number) {
+export function getNumberIntervalTicks(
+  ticks: ReadonlyArray<CartesianTickItem>,
+  interval: number,
+): ReadonlyArray<CartesianTickItem> {
   return getEveryNthWithCondition(ticks, interval + 1);
 }
