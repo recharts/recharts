@@ -24,6 +24,9 @@ export const getLegendProps = ({
   if (!legendItem) {
     return null;
   }
+  const legendDefaultProps = Legend.defaultProps as LegendProps;
+  const legendProps: typeof legendItem.props =
+    legendDefaultProps !== undefined ? { ...legendDefaultProps, ...legendItem.props } : {};
 
   let legendData: LegendPayload[];
   if (legendItem.props && legendItem.props.payload) {
@@ -50,7 +53,7 @@ export const getLegendProps = ({
       return {
         inactive: hide,
         dataKey,
-        type: legendItem.props.iconType || legendType || 'square',
+        type: legendProps.iconType || legendType || 'square',
         color: getMainColorOfGraphicItem(item),
         value: name || dataKey,
         // @ts-expect-error property strokeDasharray is required in Payload but optional in props
@@ -60,7 +63,7 @@ export const getLegendProps = ({
   }
 
   return {
-    ...legendItem.props,
+    ...legendProps,
     ...Legend.getWithHeight(legendItem, legendWidth),
     payload: legendData,
     item: legendItem,
