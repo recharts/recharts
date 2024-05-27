@@ -64,7 +64,7 @@ export class Legend extends PureComponent<Props, State> {
     item: { props: { layout?: LayoutType; height?: number; width?: number } },
     chartWidth: number,
   ): null | { height: number } | { width: number } {
-    const { layout } = item.props;
+    const { layout } = { ...this.defaultProps, ...item.props };
 
     if (layout === 'vertical' && isNumber(item.props.height)) {
       return {

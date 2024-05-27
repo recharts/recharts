@@ -62,11 +62,11 @@ describe('getLegendProps', () => {
   });
 
   describe('layout: undefined', () => {
-    it('should not add height nor width', () => {
+    it('should add 0 width by default', () => {
       const item = { props: {} };
       const result = getLegendProps({ children: createChildren(item), legendWidth: 0 });
       assertNotNull(result);
-      expect(result.width).toBe(undefined);
+      expect(result.width).toBe(0);
       expect(result.height).toBe(undefined);
     });
     it('should pass through height and width', () => {
