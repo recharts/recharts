@@ -25,7 +25,8 @@ import {
   scaleTime,
   scaleUtc,
 } from 'victory-vendor/d3-scale';
-import { parseScale } from '../../../src/util/ChartUtils';
+import { expect, test } from 'vitest';
+import { parseScale, ParseScaleAxisInput } from '../../../src/util/ChartUtils';
 
 describe('parseScale', () => {
   describe('d3-scale function string', () => {
@@ -56,15 +57,15 @@ describe('parseScale', () => {
       ['ordinal', 'scaleOrdinal', scaleOrdinal()],
       ['band', 'scaleBand', scaleBand()],
       ['point', 'scalePoint', scalePoint()],
-    ])('with input %s should return %s', (input, expectedName, expectedFn) => {
-      const result = parseScale({ scale: input });
+    ] satisfies [string, string, object][])('with input %s should return %s', (input, expectedName, expectedFn) => {
+      const result = parseScale({ axisType: undefined, layout: undefined, type: undefined, scale: input }, undefined);
       expect(result).toEqual({
         realScaleType: expectedName,
         scale: expect.any(Function),
       });
       // when defined as a d3-scale keyword then the `realScaleType` starts with the prefix `scale`
       expect(result.realScaleType).toContain('scale');
-      // This isn't really a great way to compare two functions but I couldn't figure out how to do any better with jest
+      // This isn't really a great way to compare two functions, but I couldn't figure out how to do any better with jest
       expect(Object.keys(result.scale)).toEqual(Object.keys(expectedFn));
     });
   });
@@ -84,7 +85,7 @@ describe('parseScale', () => {
       'lInEaR',
       'scaleLinear',
     ])('%o', input => {
-      const result = parseScale({ scale: input } as never);
+      const result = parseScale({ scale: input } as never, undefined);
       expect(result).toEqual({
         realScaleType: 'point', // sic! not 'scalePoint' but 'point'!
         scale: expect.any(Function),
@@ -96,7 +97,10 @@ describe('parseScale', () => {
     function anon() {
       return 0;
     }
-    const result = parseScale({ scale: anon });
+
+    // @ts-expect-error this type is indeed wrong but the parseScale does not check for it
+    const axis: ParseScaleAxisInput = { axisType: undefined, layout: undefined, type: undefined, scale: anon };
+    const result = parseScale(axis, undefined);
     expect(result).toEqual({
       scale: anon,
     });
@@ -104,7 +108,8 @@ describe('parseScale', () => {
 
   describe('scale: auto', () => {
     it('should return band scale for radial layout and radius axis', () => {
-      const result = parseScale({ scale: 'auto', layout: 'radial', axisType: 'radiusAxis' });
+      const axis: ParseScaleAxisInput = { type: undefined, scale: 'auto', layout: 'radial', axisType: 'radiusAxis' };
+      const result = parseScale(axis, undefined);
       expect(result).toEqual({
         realScaleType: 'band', // no `scale` prefix either
         scale: expect.any(Function),
@@ -112,7 +117,8 @@ describe('parseScale', () => {
     });
 
     it('should return linear scale for radial layout and angle axis', () => {
-      const result = parseScale({ scale: 'auto', layout: 'radial', axisType: 'angleAxis' });
+      const axis: ParseScaleAxisInput = { type: undefined, scale: 'auto', layout: 'radial', axisType: 'angleAxis' };
+      const result = parseScale(axis, undefined);
       expect(result).toEqual({
         realScaleType: 'linear',
         scale: expect.any(Function),
@@ -135,7 +141,11 @@ describe('parseScale', () => {
     test.each(pointChartTypes)(
       'should return pointScale if chartType = %s and type = category and hasBar is false',
       chartType => {
-        const result = parseScale({ scale: 'auto', type: 'category' }, chartType, false);
+        const result = parseScale(
+          { scale: 'auto', type: 'category', axisType: undefined, layout: undefined },
+          chartType,
+          false,
+        );
         expect(result).toEqual({
           realScaleType: 'point',
           scale: expect.any(Function),
@@ -146,7 +156,11 @@ describe('parseScale', () => {
     test.each(pointChartTypes)(
       'should return pointScale if chartType = %s and type = category and hasBar is undefined',
       chartType => {
-        const result = parseScale({ scale: 'auto', type: 'category' }, chartType, undefined);
+        const result = parseScale(
+          { axisType: undefined, layout: undefined, scale: 'auto', type: 'category' },
+          chartType,
+          undefined,
+        );
         expect(result).toEqual({
           realScaleType: 'point',
           scale: expect.any(Function),
@@ -155,7 +169,11 @@ describe('parseScale', () => {
     );
 
     it('should return bandScale if chartType = ComposedChart and type = category and hasBar is true', () => {
-      const result = parseScale({ scale: 'auto', type: 'category' }, 'ComposedChart', true);
+      const result = parseScale(
+        { axisType: undefined, layout: undefined, scale: 'auto', type: 'category' },
+        'ComposedChart',
+        true,
+      );
       expect(result).toEqual({
         realScaleType: 'band',
         scale: expect.any(Function),
@@ -163,7 +181,11 @@ describe('parseScale', () => {
     });
 
     it('should return pointScale if chartType = ComposedChart and type = category and hasBar is false', () => {
-      const result = parseScale({ scale: 'auto', type: 'category' }, 'ComposedChart', false);
+      const result = parseScale(
+        { axisType: undefined, layout: undefined, scale: 'auto', type: 'category' },
+        'ComposedChart',
+        false,
+      );
       expect(result).toEqual({
         realScaleType: 'point',
         scale: expect.any(Function),
@@ -171,7 +193,11 @@ describe('parseScale', () => {
     });
 
     it('should return pointScale if chartType = ComposedChart and type = category and hasBar is undefined', () => {
-      const result = parseScale({ scale: 'auto', type: 'category' }, 'ComposedChart', undefined);
+      const result = parseScale(
+        { axisType: undefined, layout: undefined, scale: 'auto', type: 'category' },
+        'ComposedChart',
+        undefined,
+      );
       expect(result).toEqual({
         realScaleType: 'point',
         scale: expect.any(Function),
@@ -179,7 +205,7 @@ describe('parseScale', () => {
     });
 
     test.each(otherChartTypes)('should return bandScale if chartType = %s and type = category', chartType => {
-      const result = parseScale({ scale: 'auto', type: 'category' }, chartType);
+      const result = parseScale({ axisType: undefined, layout: undefined, scale: 'auto', type: 'category' }, chartType);
       expect(result).toEqual({
         realScaleType: 'band',
         scale: expect.any(Function),
@@ -187,7 +213,7 @@ describe('parseScale', () => {
     });
 
     test.each(otherChartTypes)('should return linearScale if chartType = %s and type = number', chartType => {
-      const result = parseScale({ scale: 'auto', type: 'number' }, chartType);
+      const result = parseScale({ axisType: undefined, layout: undefined, scale: 'auto', type: 'number' }, chartType);
       expect(result).toEqual({
         realScaleType: 'linear',
         scale: expect.any(Function),

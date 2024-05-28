@@ -341,11 +341,11 @@ export const getAxisMapByAxes = (
   const { layout, children, stackOffset } = props;
   const isCategorical = isCategoricalAxis(layout, axisType);
 
-  // Eliminate duplicated axes
   return axes.reduce((result: AxisMap, child: ReactElement): AxisMap => {
     const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = child.props;
     const axisId = child.props[axisIdKey];
 
+    // Eliminate duplicated axes
     if (result[axisId]) {
       return result;
     }

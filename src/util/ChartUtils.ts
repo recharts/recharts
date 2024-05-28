@@ -51,6 +51,7 @@ import {
   NumberDomain,
   PolarLayoutType,
   RangeObj,
+  ScaleType,
   StackOffsetType,
   TickItem,
 } from './types';
@@ -651,17 +652,23 @@ export const getCoordinatesOfGrid = (
   return values;
 };
 
-export type ScaleForTicksGenerator = {
-  domain: () => ReadonlyArray<unknown>;
+/**
+ * A subset of d3-scale that Recharts is using
+ */
+export interface RechartsScale {
+  domain(): ReadonlyArray<unknown>;
+  domain(newDomain: ReadonlyArray<unknown>): this;
+  range(): ReadonlyArray<unknown>;
+  range(newRange: ReadonlyArray<unknown>): this;
   bandwidth?: () => number;
   ticks?: (count: number) => any;
   (args: any): number;
-};
+}
 
 export type AxisPropsNeededForTicksGenerator = {
   duplicateDomain?: ReadonlyArray<AxisTick>;
   realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
-  scale: ScaleForTicksGenerator;
+  scale: RechartsScale;
   axisType?: AxisType;
   ticks?: ReadonlyArray<AxisTick>;
   niceTicks?: ReadonlyArray<AxisTick>;
@@ -755,6 +762,18 @@ export const getTicksOfAxis = (
   );
 };
 
+export type ParseScaleAxisInput = {
+  scale: string | ScaleType | RechartsScale;
+  type: BaseAxisProps['type'];
+  layout: 'radial' | unknown;
+  axisType: 'radiusAxis' | 'angleAxis' | unknown;
+};
+
+export type ParsedScaleReturn = {
+  scale: RechartsScale | undefined;
+  realScaleType: string | undefined;
+};
+
 /**
  * Parse the scale function of axis
  * @param  {Object}   axis          The option of axis
@@ -763,21 +782,18 @@ export const getTicksOfAxis = (
  * @return {object}               The scale function and resolved name
  */
 export const parseScale = (
-  axis: {
-    scale: 'auto' | string | Function;
-    type?: BaseAxisProps['type'];
-    layout?: 'radial' | unknown;
-    axisType?: 'radiusAxis' | 'angleAxis' | unknown;
-  },
-  chartType?: string,
-  hasBar?: boolean,
-): { scale: any; realScaleType?: string } => {
+  axis: ParseScaleAxisInput,
+  chartType: string | undefined,
+  hasBar: boolean = false,
+): ParsedScaleReturn => {
   const { scale, type, layout, axisType } = axis;
   if (scale === 'auto') {
     if (layout === 'radial' && axisType === 'radiusAxis') {
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
     }
     if (layout === 'radial' && axisType === 'angleAxis') {
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
     }
 
@@ -788,12 +804,15 @@ export const parseScale = (
         chartType.indexOf('AreaChart') >= 0 ||
         (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
     ) {
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
     }
     if (type === 'category') {
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
     }
 
+    // @ts-expect-error we need to wrap the d3 scales in unified interface
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   }
   if (isString(scale)) {
@@ -805,7 +824,10 @@ export const parseScale = (
     };
   }
 
-  return isFunction(scale) ? { scale } : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
+  // @ts-expect-error we need to wrap the d3 scales in unified interface
+  return isFunction(scale)
+    ? { scale, realScaleType: undefined }
+    : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {

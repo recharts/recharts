@@ -3,7 +3,7 @@ import { TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from './tooltipSlice';
 
 export type ChartOptions = {
-  chartName?: string;
+  chartName: string;
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   // Should this instead be a property of a graphical item? Do we want to mix items with different data types in one chart?
@@ -22,6 +22,7 @@ export const arrayTooltipSearcher: TooltipPayloadSearcher = (
 };
 
 const initialState: ChartOptions = {
+  chartName: '',
   tooltipPayloadSearcher: undefined,
 };
 

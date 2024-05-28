@@ -30,6 +30,7 @@ import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
+import { RechartsScale } from './ChartUtils';
 
 /**
  * Determines how values are stacked:
@@ -1117,10 +1118,10 @@ export interface BaseAxisProps {
   type?: 'number' | 'category';
   /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
-  /** Whether or not display the axis */
+  /** Whether display the axis */
   hide?: boolean;
-  /** The scale type or functor of scale */
-  scale?: ScaleType | Function;
+  /** The scale type as a string, or scale function */
+  scale?: ScaleType | RechartsScale;
   /** The option for tick */
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   /** The count of ticks */
@@ -1303,7 +1304,7 @@ export type TooltipEventType = 'axis' | 'item';
 export type AllowedAxisComponent = { axisType: AxisType; AxisComp: ComponentType };
 
 export interface CategoricalChartOptions {
-  chartName?: string;
+  chartName: string;
   GraphicalChild?: any;
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;

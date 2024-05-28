@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, CartesianAxis } from '../../src';
 import { CartesianTickItem } from '../../src/util/types';
+import { RechartsScale } from '../../src/util/ChartUtils';
 
 const CustomizeLabel = ({ x, y }: any) => (
   <text data-testid="customized-label" x={x} y={y}>
@@ -17,7 +18,8 @@ const CustomizedTick = ({ x, y }: any) => (
   </text>
 );
 
-const exampleScale = scaleLinear();
+// @ts-expect-error we need to wrap the d3 scales in unified interface
+const exampleScale: RechartsScale = scaleLinear();
 
 describe('<CartesianAxis />', () => {
   const ticks: ReadonlyArray<CartesianTickItem> = [
@@ -37,7 +39,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="test"
           scale={exampleScale}
         />
@@ -57,7 +59,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={[]}
+          ticks={[]}
           label="test"
           scale={exampleScale}
         />
@@ -76,7 +78,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="test"
           interval="preserveStartEnd"
           scale={exampleScale}
@@ -101,7 +103,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="test"
           interval="preserveStartEnd"
           scale={exampleScale}
@@ -123,7 +125,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="test"
           interval="preserveStart"
           scale={exampleScale}
@@ -143,7 +145,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="top"
           scale={exampleScale}
         />
@@ -163,7 +165,7 @@ describe('<CartesianAxis />', () => {
           width={50}
           height={400}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="left"
           scale={exampleScale}
         />
@@ -183,7 +185,7 @@ describe('<CartesianAxis />', () => {
           width={50}
           height={400}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label="right"
           scale={exampleScale}
         />
@@ -203,7 +205,7 @@ describe('<CartesianAxis />', () => {
           width={50}
           height={400}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label={CustomizeLabel}
           scale={exampleScale}
         />
@@ -223,7 +225,7 @@ describe('<CartesianAxis />', () => {
           width={50}
           height={400}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           label={<CustomizeLabel />}
           scale={exampleScale}
         />
@@ -243,7 +245,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           tick={<CustomizedTick />}
           interval={0}
           scale={exampleScale}
@@ -263,7 +265,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           tick={<CustomizedTick />}
           interval={0}
           scale={exampleScale}
@@ -283,7 +285,7 @@ describe('<CartesianAxis />', () => {
           width={400}
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
-          cartesianTickItems={ticks}
+          ticks={ticks}
           tick={CustomizedTick}
           interval={0}
           scale={exampleScale}

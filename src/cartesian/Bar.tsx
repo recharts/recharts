@@ -53,6 +53,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { ReportBar } from '../state/ReportBar';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -641,6 +642,7 @@ export class Bar extends PureComponent<Props, State> {
     if (hide || !data || !data.length) {
       return (
         <>
+          <ReportBar />
           <SetBarLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -656,6 +658,7 @@ export class Bar extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass}>
+        <ReportBar />
         <SetBarLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {needClipX || needClipY ? (

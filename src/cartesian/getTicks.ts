@@ -119,7 +119,7 @@ function getTicksStart(
   return result;
 }
 
-type GetTicksInput = Pick<
+export type GetTicksInput = Pick<
   CartesianAxisProps,
   'tick' | 'viewBox' | 'minTickGap' | 'orientation' | 'interval' | 'tickFormatter' | 'unit' | 'angle'
 > & {

@@ -20,7 +20,7 @@ import {
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
-import { ScaleForTicksGenerator } from '../util/ChartUtils';
+import { RechartsScale } from '../util/ChartUtils';
 
 /** The orientation of the axis in correspondence to the chart */
 export type Orientation = 'top' | 'bottom' | 'left' | 'right';
@@ -48,7 +48,10 @@ export interface CartesianAxisProps {
   label?: any;
 
   minTickGap?: number;
-  cartesianTickItems?: ReadonlyArray<CartesianTickItem>;
+  /**
+   * Careful - this is the same name as XAxis + YAxis `ticks` but completely different object!
+   */
+  ticks?: ReadonlyArray<CartesianTickItem>;
   tickSize?: number;
   tickFormatter?: TickFormatter;
   interval?: AxisInterval;
@@ -58,7 +61,7 @@ export interface CartesianAxisProps {
    * This is NOT SVG scale attribute;
    * this is Recharts scale, based on d3-scale.
    */
-  scale: ScaleForTicksGenerator;
+  scale: RechartsScale;
 }
 
 interface IState {
@@ -86,7 +89,7 @@ export class CartesianAxis extends Component<Props, IState> {
     // The orientation of axis
     orientation: 'bottom',
     // The ticks
-    cartesianTickItems: [] as CartesianAxisProps['cartesianTickItems'],
+    ticks: [] as CartesianAxisProps['ticks'],
 
     stroke: '#666',
     tickLine: true,
@@ -339,7 +342,7 @@ export class CartesianAxis extends Component<Props, IState> {
       return null;
     }
 
-    const { cartesianTickItems } = this.props;
+    const { ticks } = this.props;
 
     if (width <= 0 || height <= 0) {
       return null;
@@ -353,7 +356,7 @@ export class CartesianAxis extends Component<Props, IState> {
         }}
       >
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks(cartesianTickItems, this.state.fontSize, this.state.letterSpacing)}
+        {this.renderTicks(ticks, this.state.fontSize, this.state.letterSpacing)}
         {Label.renderCallByParent(this.props)}
       </Layer>
     );

@@ -37,8 +37,10 @@ import {
 } from '../context/chartLayoutContext';
 import { ChartPointer, MousePointer } from '../chart/generateCategoricalChart';
 
+export const selectChartName = (state: RechartsRootState) => state.options.chartName;
+
 export const useChartName = (): string => {
-  return useAppSelector((state: RechartsRootState) => state.options.chartName);
+  return useAppSelector(selectChartName);
 };
 
 export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {

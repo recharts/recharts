@@ -13,7 +13,7 @@ import {
   XAxisMap,
   YAxisMap,
 } from '../util/types';
-import { AxisStackGroups, ScaleForTicksGenerator } from '../util/ChartUtils';
+import { AxisStackGroups, RechartsScale } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { TooltipPayloadType } from '../context/tooltipContext';
 
@@ -100,7 +100,7 @@ export type AxisPropsWithExtraComputedData = Omit<BaseAxisProps, 'scale'> & {
   height?: number;
   mirror: boolean;
   reversed: boolean;
-  scale: ScaleForTicksGenerator;
+  scale: RechartsScale;
   categoricalDomain?: ReadonlyArray<AxisTick>;
   duplicateDomain?: ReadonlyArray<AxisTick>;
   niceTicks?: ReadonlyArray<AxisTick>;

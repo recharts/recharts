@@ -74,7 +74,7 @@ export const YAxis: FunctionComponent<Props> = (props: Props) => {
       height={axisOptions.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      cartesianTickItems={cartesianTickItems}
+      ticks={cartesianTickItems}
     />
   );
 };

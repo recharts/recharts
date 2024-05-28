@@ -25,6 +25,7 @@ import {
 import { XAxisMap, YAxisMap } from '../../src/util/types';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { Brush, ComposedChart, Customized } from '../../src';
+import { RechartsScale } from '../../src/util/ChartUtils';
 
 describe('ChartLayoutContextProvider', () => {
   const minimalState: CategoricalChartState = {
@@ -203,12 +204,17 @@ describe('ChartLayoutContextProvider', () => {
     });
   });
 
+  // @ts-expect-error we need to wrap the d3 scales in unified interface
+  const linear: RechartsScale = scaleLinear();
   const exampleXAxis1: XAxisWithExtraData = {
+    isCategorical: false,
+    x: 0,
+    y: 0,
     axisType: 'xAxis',
     mirror: false,
     orientation: 'bottom',
     reversed: false,
-    scale: scaleLinear(),
+    scale: linear,
     width: 200,
     height: 10,
   };
@@ -218,11 +224,14 @@ describe('ChartLayoutContextProvider', () => {
     };
 
     const exampleXAxis2: XAxisWithExtraData = {
+      isCategorical: false,
+      x: 0,
+      y: 0,
       axisType: 'xAxis',
       mirror: false,
       orientation: 'bottom',
       reversed: false,
-      scale: scaleLinear(),
+      scale: linear,
       width: 300,
       height: 40,
     };
@@ -319,6 +328,9 @@ describe('ChartLayoutContextProvider', () => {
         const MockConsumer: ComponentType = () => {
           const xAxis: XAxisWithExtraData = useXAxisOrThrow('a');
           const expected: XAxisWithExtraData = {
+            isCategorical: false,
+            x: 0,
+            y: 0,
             axisType: 'xAxis',
             mirror: false,
             orientation: 'bottom',
@@ -419,6 +431,9 @@ describe('ChartLayoutContextProvider', () => {
         const MockConsumer: ComponentType = () => {
           const xAxis: XAxisWithExtraData = useMaybeXAxis('a');
           const expected: XAxisWithExtraData = {
+            isCategorical: false,
+            x: 0,
+            y: 0,
             axisType: 'xAxis',
             mirror: false,
             orientation: 'bottom',
@@ -618,11 +633,14 @@ describe('ChartLayoutContextProvider', () => {
         );
         expect.soft(renderCount).toBe(1);
         const mockYAxis: YAxisWithExtraData = {
+          isCategorical: false,
+          x: 0,
+          y: 0,
           axisType: 'yAxis',
           mirror: false,
           orientation: 'left',
           reversed: false,
-          scale: scaleLinear(),
+          scale: linear,
           allowDecimals: false,
           label: 'yAxisMap is different and that still should not affect the xAxis hook',
         };
@@ -650,11 +668,15 @@ describe('ChartLayoutContextProvider', () => {
 
   describe('YAxis state', () => {
     const exampleYAxis1: YAxisWithExtraData = {
+      isCategorical: false,
+      x: 0,
+      y: 0,
       axisType: 'yAxis',
       mirror: false,
       orientation: 'left',
       reversed: false,
-      scale: scaleLinear(),
+
+      scale: linear,
       width: 200,
       height: 10,
     };
@@ -755,6 +777,9 @@ describe('ChartLayoutContextProvider', () => {
         const MockConsumer: ComponentType = () => {
           const yAxis: YAxisWithExtraData = useYAxisOrThrow('m');
           const expected: YAxisWithExtraData = {
+            isCategorical: false,
+            x: 0,
+            y: 0,
             axisType: 'yAxis',
             mirror: false,
             orientation: 'left',
@@ -856,6 +881,9 @@ describe('ChartLayoutContextProvider', () => {
         const MockConsumer: ComponentType = () => {
           const yAxis: YAxisWithExtraData = useMaybeYAxis('m');
           const expected: YAxisWithExtraData = {
+            isCategorical: false,
+            x: 0,
+            y: 0,
             axisType: 'yAxis',
             mirror: false,
             orientation: 'left',
@@ -1051,11 +1079,14 @@ describe('ChartLayoutContextProvider', () => {
         );
         expect.soft(renderCount).toBe(1);
         const mockXAxis: XAxisWithExtraData = {
+          isCategorical: false,
+          x: 0,
+          y: 0,
           axisType: 'xAxis',
           mirror: false,
           orientation: 'bottom',
           reversed: false,
-          scale: scaleLinear(),
+          scale: linear,
           allowDecimals: false,
           label: 'xAxisMap is different and that still should not affect the yAxis hook',
         };
@@ -1083,9 +1114,12 @@ describe('ChartLayoutContextProvider', () => {
 
   describe('PolarAngleAxis state', () => {
     const exampleAxis: AxisPropsWithExtraComputedData = {
+      isCategorical: false,
+      x: 0,
+      y: 0,
       mirror: false,
       reversed: false,
-      scale: scaleLinear(),
+      scale: linear,
       type: 'category',
       axisType: 'angleAxis',
     };
@@ -1103,6 +1137,9 @@ describe('ChartLayoutContextProvider', () => {
       const MockConsumer: ComponentType = () => {
         const angleAxis = useMaybePolarAngleAxis('m');
         expect(angleAxis).toEqual({
+          x: 0,
+          y: 0,
+          isCategorical: false,
           type: 'category',
           axisType: 'angleAxis',
           mirror: false,
@@ -1124,9 +1161,12 @@ describe('ChartLayoutContextProvider', () => {
 
   describe('PolarRadiusAxis state', () => {
     const exampleAxis: AxisPropsWithExtraComputedData = {
+      isCategorical: false,
+      x: 0,
+      y: 0,
       mirror: false,
       reversed: false,
-      scale: scaleLinear(),
+      scale: linear,
       type: 'category',
       axisType: 'radiusAxis',
     };
@@ -1144,6 +1184,9 @@ describe('ChartLayoutContextProvider', () => {
       const MockConsumer: ComponentType = () => {
         const radiusAxis = useMaybePolarRadiusAxis('m');
         expect(radiusAxis).toEqual({
+          x: 0,
+          y: 0,
+          isCategorical: false,
           type: 'category',
           axisType: 'radiusAxis',
           mirror: false,
@@ -1388,12 +1431,17 @@ describe('ChartLayoutContextProvider', () => {
           </ChartLayoutContextProvider>,
         );
         expect.soft(renderCount).toBe(1);
+        // @ts-expect-error we need to wrap the d3 scales in unified interface
+        const time: RechartsScale = scaleTime();
         const mockXAxis: XAxisWithExtraData = {
+          isCategorical: false,
+          x: 0,
+          y: 0,
           mirror: false,
           reversed: false,
           orientation: 'bottom',
           axisType: 'xAxis',
-          scale: scaleTime(),
+          scale: time,
           allowDecimals: false,
           label: 'xAxisMap is different and that still should not affect viewBox hook',
         };

@@ -38,11 +38,13 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGLineElement>, 'scale'> & XAxisProps;
 
-function SetXAxisSettings({ xAxisId }: Props): null {
+function SetXAxisSettings({ id, scale, type }: XAxisSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
     const settings: XAxisSettings = {
-      id: xAxisId,
+      scale,
+      type,
+      id,
     };
     dispatch(addXAxis(settings));
     // TODO the cleanup function is causing trouble with Redux dev extension. Figure out what it is and fix it.
@@ -51,7 +53,7 @@ function SetXAxisSettings({ xAxisId }: Props): null {
     // console.log('dispatch removeXAxis', settings);
     // dispatch(removeXAxis(settings));
     // };
-  }, [xAxisId, dispatch]);
+  }, [id, scale, type, dispatch]);
   return null;
 }
 
@@ -93,7 +95,7 @@ const XAxisImpl = (props: Props) => {
       height={axisOptions.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      cartesianTickItems={cartesianTickItems}
+      ticks={cartesianTickItems}
     />
   );
 };
@@ -101,7 +103,7 @@ const XAxisImpl = (props: Props) => {
 const XAxisSettingsDispatcher = (props: Props) => {
   return (
     <>
-      <SetXAxisSettings xAxisId={props.xAxisId} />
+      <SetXAxisSettings id={props.xAxisId} scale={props.scale} type={props.type} />
       <XAxisImpl {...props} />
     </>
   );

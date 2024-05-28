@@ -46,6 +46,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { ReportBar } from '../state/ReportBar';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -471,10 +472,14 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     const { hide, data, className, background, isAnimationActive } = this.props;
 
     if (hide || !data || !data.length) {
-      <>
-        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-      </>;
+      // TODO this needs tests - for a while I was missing a `return` here and nothing failed!
+      return (
+        <>
+          <ReportBar />
+          <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        </>
+      );
     }
 
     const { isAnimationFinished } = this.state;
@@ -482,6 +487,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
     return (
       <Layer className={layerClass}>
+        <ReportBar />
         <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}

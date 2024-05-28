@@ -1,6 +1,9 @@
-import { render } from '@testing-library/react';
 import React from 'react';
-import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar } from '../../src';
+import { render } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar, Customized } from '../../src';
+import { selectAxisSettings } from '../../src/state/axisSelectors';
+import { useAppSelector } from '../../src/state/hooks';
 
 describe('<XAxis />', () => {
   const data = [
@@ -232,5 +235,29 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(0);
+  });
+
+  describe('state integration', () => {
+    it('should publish its configuration to redux store', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const settings = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'foo'));
+        spy(settings);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100}>
+          <XAxis xAxisId="foo" scale="log" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(container.querySelector('.xAxis')).toBeVisible();
+      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenLastCalledWith({
+        id: 'foo',
+        scale: 'log',
+        type: 'number',
+      });
+    });
   });
 });

@@ -294,7 +294,7 @@ export interface Props {
 
   aspectRatio?: number;
 
-  content?: React.ReactElement;
+  content?: React.ReactElement | ((props: TreemapNode) => React.ReactElement);
 
   fill?: string;
 

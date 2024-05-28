@@ -1,18 +1,33 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { AxisType, ScaleType } from '../util/types';
+import { RechartsScale } from '../util/ChartUtils';
 
-type AxisId = string | number;
+export type AxisId = string | number;
 
+/**
+ * These are the external props, visible for users as they set them using our public API.
+ * There is all sorts of internal computed things based on these but they will come through selectors.
+ */
 // TODO add the remaining properties here
-export type XAxisSettings = {
+export type AxisSettings = {
   id: AxisId;
+  scale: ScaleType | RechartsScale | undefined;
+  type: 'number' | 'category';
 };
 
+// TODO add the remaining properties here
+export type XAxisSettings = AxisSettings;
+
 type AxisMapState = {
-  xAxis: ReadonlyArray<XAxisSettings>;
+  [axisType in AxisType]: Record<AxisId, XAxisSettings>;
 };
 
 const initialState: AxisMapState = {
-  xAxis: [],
+  angleAxis: {},
+  radiusAxis: {},
+  xAxis: {},
+  yAxis: {},
+  zAxis: {},
 };
 
 /**
@@ -24,13 +39,10 @@ const axisMapSlice = createSlice({
   initialState,
   reducers: {
     addXAxis(state, action: PayloadAction<XAxisSettings>) {
-      state.xAxis.push(action.payload);
+      state.xAxis[action.payload.id] = action.payload;
     },
     removeXAxis(state, action: PayloadAction<XAxisSettings>) {
-      const index = state.xAxis.indexOf(action.payload);
-      if (index > -1) {
-        state.xAxis.splice(index, 1);
-      }
+      delete state.xAxis[action.payload.id];
     },
   },
 });
