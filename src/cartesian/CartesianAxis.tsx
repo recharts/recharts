@@ -41,7 +41,7 @@ export interface CartesianAxisProps {
   viewBox?: CartesianViewBox;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   axisLine?: boolean | SVGProps<SVGLineElement>;
-  tickLine?: boolean | SVGProps<SVGElement>;
+  tickLine?: boolean | SVGProps<SVGLineElement>;
   mirror?: boolean;
   tickMargin?: number;
   hide?: boolean;
