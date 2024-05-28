@@ -65,24 +65,29 @@ const formatMillisecond = timeFormat('.%L'),
   formatMonth = timeFormat('%B'),
   formatYear = timeFormat('%Y');
 
-function multiFormat(date: Date) {
-  return (
-    timeSecond(date) < date
-      ? formatMillisecond
-      : timeMinute(date) < date
-      ? formatSecond
-      : timeHour(date) < date
-      ? formatMinute
-      : timeDay(date) < date
-      ? formatHour
-      : timeMonth(date) < date
-      ? timeWeek(date) < date
-        ? formatDay
-        : formatWeek
-      : timeYear(date) < date
-      ? formatMonth
-      : formatYear
-  )(date);
+function multiFormat(date: Date): string {
+  if (timeSecond(date) < date) {
+    return formatMillisecond(date);
+  }
+  if (timeMinute(date) < date) {
+    return formatSecond(date);
+  }
+  if (timeHour(date) < date) {
+    return formatMinute(date);
+  }
+  if (timeDay(date) < date) {
+    return formatHour(date);
+  }
+  if (timeMonth(date) < date) {
+    if (timeWeek(date) < date) {
+      return formatDay(date);
+    }
+    return formatWeek(date);
+  }
+  if (timeYear(date) < date) {
+    return formatMonth(date);
+  }
+  return formatYear(date);
 }
 
 export const WithD3Scale = {
@@ -98,6 +103,7 @@ export const WithD3Scale = {
 
     const xAxisArgs: XAxisProps = {
       domain: timeScale.domain().map(date => date.valueOf()),
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: timeScale,
       type: 'number',
       ticks: timeScale.ticks(5).map(date => date.valueOf()),

@@ -124,6 +124,7 @@ const allTooltipEventTypes: ReadonlyArray<TooltipEventType> = ['axis', 'item'];
 const preloadedState: Partial<RechartsRootState> = {
   options: {
     tooltipPayloadSearcher: arrayTooltipSearcher,
+    chartName: '',
   },
 };
 
@@ -198,6 +199,7 @@ describe('useTooltipEventType', () => {
           defaultTooltipEventType,
           validateTooltipEventTypes,
           tooltipPayloadSearcher: arrayTooltipSearcher,
+          chartName: '',
         },
       };
       render(

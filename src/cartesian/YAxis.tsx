@@ -4,7 +4,7 @@
 import React from 'react';
 import type { FunctionComponent, SVGProps } from 'react';
 import clsx from 'clsx';
-import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
+import { BaseAxisProps, AxisInterval, AxisTick, CartesianTickItem } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
@@ -36,21 +36,45 @@ interface YAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
 
-export const YAxis: FunctionComponent<Props> = ({ yAxisId }: Props) => {
+export const YAxis: FunctionComponent<Props> = (props: Props) => {
+  const { yAxisId, className } = props;
   const width = useChartWidth();
   const height = useChartHeight();
+  const axisType = 'yAxis';
+
   const axisOptions = useYAxisOrThrow(yAxisId);
   if (axisOptions == null) {
     return null;
   }
 
+  const tickGeneratorInput: AxisPropsNeededForTicksGenerator = {
+    axisType,
+    categoricalDomain: axisOptions.categoricalDomain,
+    duplicateDomain: axisOptions.duplicateDomain,
+    isCategorical: axisOptions.isCategorical,
+    niceTicks: axisOptions.niceTicks,
+    range: axisOptions.range,
+    realScaleType: axisOptions.realScaleType,
+    scale: axisOptions.scale,
+    tickCount: props.tickCount,
+    ticks: props.ticks,
+    type: props.type,
+  };
+  const cartesianTickItems: ReadonlyArray<CartesianTickItem> = getTicksOfAxis(tickGeneratorInput, true);
+
+  const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+
   return (
-    // @ts-expect-error the axisOptions type is not exactly what CartesianAxis is expecting.
     <CartesianAxis
-      {...axisOptions}
-      className={clsx(`recharts-${axisOptions.axisType} ${axisOptions.axisType}`, axisOptions.className)}
+      {...allOtherProps}
+      scale={axisOptions.scale}
+      x={axisOptions.x}
+      y={axisOptions.y}
+      width={axisOptions.width}
+      height={axisOptions.height}
+      className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      ticksGenerator={(axis: AxisPropsNeededForTicksGenerator) => getTicksOfAxis(axis, true)}
+      ticks={cartesianTickItems}
     />
   );
 };

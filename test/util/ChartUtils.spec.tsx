@@ -16,11 +16,13 @@ import {
   getTicksOfAxis,
   getLegendProps,
   isAxisLTR,
+  AxisPropsNeededForTicksGenerator,
 } from '../../src/util/ChartUtils';
 import { BaseAxisProps, DataKey } from '../../src/util/types';
 
 describe('getTicksForAxis', () => {
-  const Y_AXIS_EXAMPLE = {
+  const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
+    // @ts-expect-error we need to wrap the d3 scales in unified interface
     scale: scaleLinear(),
     allowDuplicatedCategory: true,
     allowDecimals: true,
@@ -71,7 +73,8 @@ describe('getTicksForAxis', () => {
 
   it(`Ticks without a valid coordinate are filtered out,
   such as with a PointScale and an active Brush, filtering the domain.`, () => {
-    const XAxisWithActiveBrush = {
+    const XAxisWithActiveBrush: AxisPropsNeededForTicksGenerator = {
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scalePoint().domain(['13', '14', '15', '16', '17']).range([5, 866]),
       dataKey: 'name',
       interval: 0,
@@ -156,8 +159,9 @@ describe('getTicksForAxis', () => {
   });
 
   it('Tick coordinates depend on scale', () => {
-    const axis = {
+    const axis: AxisPropsNeededForTicksGenerator = {
       ...Y_AXIS_EXAMPLE,
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleLinear().domain([0, 1600]).range([0, 1000]),
     };
 
@@ -179,6 +183,7 @@ describe('getBandSizeOfAxis', () => {
   it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
     const axis: BaseAxisProps = {
       type: 'category',
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
     };
     expect(getBandSizeOfAxis(axis)).toBe(25);

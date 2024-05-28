@@ -6,10 +6,11 @@ import React, { Component, useEffect } from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { BaseAxisProps, AxisInterval, AxisTick } from '../util/types';
+import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppDispatch } from '../state/hooks';
-import { XAxisSettings, addXAxis } from '../state/axisMapSlice';
+import { addXAxis, XAxisSettings } from '../state/axisMapSlice';
+import { XAxisWithExtraData } from '../chart/types';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -35,13 +36,15 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<SVGProps<SVGLineElement>, 'scale'> & XAxisProps;
 
-function SetXAxisSettings({ xAxisId }: Props): null {
+function SetXAxisSettings({ id, scale, type }: XAxisSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
     const settings: XAxisSettings = {
-      id: xAxisId,
+      scale,
+      type,
+      id,
     };
     dispatch(addXAxis(settings));
     // TODO the cleanup function is causing trouble with Redux dev extension. Figure out what it is and fix it.
@@ -50,7 +53,7 @@ function SetXAxisSettings({ xAxisId }: Props): null {
     // console.log('dispatch removeXAxis', settings);
     // dispatch(removeXAxis(settings));
     // };
-  }, [xAxisId, dispatch]);
+  }, [id, scale, type, dispatch]);
   return null;
 }
 
@@ -58,20 +61,41 @@ const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
   const width = useChartWidth();
   const height = useChartHeight();
-  const axisOptions = useXAxisOrThrow(xAxisId);
+  const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
 
   if (axisOptions == null) {
     return null;
   }
 
+  const tickGeneratorInput: AxisPropsNeededForTicksGenerator = {
+    axisType,
+    categoricalDomain: axisOptions.categoricalDomain,
+    duplicateDomain: axisOptions.duplicateDomain,
+    isCategorical: axisOptions.isCategorical,
+    niceTicks: axisOptions.niceTicks,
+    range: axisOptions.range,
+    realScaleType: axisOptions.realScaleType,
+    scale: axisOptions.scale,
+    tickCount: props.tickCount,
+    ticks: props.ticks,
+    type: props.type,
+  };
+  const cartesianTickItems: ReadonlyArray<CartesianTickItem> = getTicksOfAxis(tickGeneratorInput, true);
+
+  const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+
   return (
-    // @ts-expect-error ref type does not match
     <CartesianAxis
-      {...axisOptions}
+      {...allOtherProps}
+      scale={axisOptions.scale}
+      x={axisOptions.x}
+      y={axisOptions.y}
+      width={axisOptions.width}
+      height={axisOptions.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
-      ticksGenerator={(axis: AxisPropsNeededForTicksGenerator) => getTicksOfAxis(axis, true)}
+      ticks={cartesianTickItems}
     />
   );
 };
@@ -79,7 +103,7 @@ const XAxisImpl = (props: Props) => {
 const XAxisSettingsDispatcher = (props: Props) => {
   return (
     <>
-      <SetXAxisSettings xAxisId={props.xAxisId} />
+      <SetXAxisSettings id={props.xAxisId} scale={props.scale} type={props.type} />
       <XAxisImpl {...props} />
     </>
   );

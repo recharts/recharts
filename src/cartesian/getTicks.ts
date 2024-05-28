@@ -119,8 +119,15 @@ function getTicksStart(
   return result;
 }
 
+export type GetTicksInput = Pick<
+  CartesianAxisProps,
+  'tick' | 'viewBox' | 'minTickGap' | 'orientation' | 'interval' | 'tickFormatter' | 'unit' | 'angle'
+> & {
+  ticks: ReadonlyArray<CartesianTickItem>;
+};
+
 export function getTicks(
-  props: CartesianAxisProps,
+  props: GetTicksInput,
   fontSize?: string,
   letterSpacing?: string,
 ): ReadonlyArray<CartesianTickItem> {

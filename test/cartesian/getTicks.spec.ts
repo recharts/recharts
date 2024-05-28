@@ -1,22 +1,13 @@
 import { vi } from 'vitest';
-import { getTicks } from '../../src/cartesian/getTicks';
+import { getTicks, GetTicksInput } from '../../src/cartesian/getTicks';
 import { CartesianTickItem } from '../../src/util/types';
-import { CartesianAxisProps } from '../../src';
 
-const EXAMPLE_INPUT: CartesianAxisProps = {
+const EXAMPLE_INPUT: GetTicksInput = {
   angle: undefined,
-  axisLine: true,
-  height: 50,
   interval: 'preserveStart' as const,
-  label: 'test',
   minTickGap: 5,
-  mirror: false,
   orientation: 'bottom' as const,
-  stroke: '#666',
   tick: true,
-  tickLine: true,
-  tickMargin: 2,
-  tickSize: 6,
   ticks: [
     { value: '10', coordinate: 50 },
     { value: '1000', coordinate: 100 },
@@ -26,9 +17,6 @@ const EXAMPLE_INPUT: CartesianAxisProps = {
     { value: 'A', coordinate: 300 },
   ],
   viewBox: { x: 0, y: 0, width: 500, height: 500 },
-  width: 400,
-  x: 0,
-  y: 100,
 };
 
 vi.mock('../../src/util/DOMUtils', () => ({
@@ -41,7 +29,7 @@ vi.mock('../../src/util/DOMUtils', () => ({
 describe('getTicks', () => {
   describe('ticks are always shown if there is space', () => {
     test('preserveEnd', () => {
-      const input = { ...EXAMPLE_INPUT, interval: 'preserveEnd' as const };
+      const input: GetTicksInput = { ...EXAMPLE_INPUT, interval: 'preserveEnd' as const };
 
       const result = getTicks(input);
 

@@ -1,7 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, CartesianAxis } from '../../src';
+import { CartesianTickItem } from '../../src/util/types';
+import { RechartsScale } from '../../src/util/ChartUtils';
 
 const CustomizeLabel = ({ x, y }: any) => (
   <text data-testid="customized-label" x={x} y={y}>
@@ -15,8 +18,11 @@ const CustomizedTick = ({ x, y }: any) => (
   </text>
 );
 
+// @ts-expect-error we need to wrap the d3 scales in unified interface
+const exampleScale: RechartsScale = scaleLinear();
+
 describe('<CartesianAxis />', () => {
-  const ticks = [
+  const ticks: ReadonlyArray<CartesianTickItem> = [
     { value: 10, coordinate: 50 },
     { value: 1000, coordinate: 100 },
     { value: 20, coordinate: 150 },
@@ -35,6 +41,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label="test"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -54,6 +61,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={[]}
           label="test"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -73,6 +81,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="test"
           interval="preserveStartEnd"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -97,6 +106,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="test"
           interval="preserveStartEnd"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -118,6 +128,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           label="test"
           interval="preserveStart"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -136,6 +147,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label="top"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -155,6 +167,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label="left"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -174,6 +187,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label="right"
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -193,6 +207,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label={CustomizeLabel}
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -212,6 +227,7 @@ describe('<CartesianAxis />', () => {
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           ticks={ticks}
           label={<CustomizeLabel />}
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -232,6 +248,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           tick={<CustomizedTick />}
           interval={0}
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -251,6 +268,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           tick={<CustomizedTick />}
           interval={0}
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -270,6 +288,7 @@ describe('<CartesianAxis />', () => {
           ticks={ticks}
           tick={CustomizedTick}
           interval={0}
+          scale={exampleScale}
         />
       </Surface>,
     );
@@ -287,6 +306,7 @@ describe('<CartesianAxis />', () => {
           height={50}
           viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
           tick={false}
+          scale={exampleScale}
         />
       </Surface>,
     );
