@@ -14,7 +14,7 @@ export const arrayTooltipSearcher: TooltipPayloadSearcher = (
   data: unknown[],
   strIndex: string | undefined,
 ): unknown => {
-  const numIndex = Number(strIndex);
+  const numIndex = Number.parseInt(strIndex, 10);
   if (Number.isNaN(numIndex)) {
     return undefined;
   }
