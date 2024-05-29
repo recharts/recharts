@@ -302,11 +302,11 @@ export const combineActiveIndex = (
   offset: ChartOffset,
 ): TooltipIndex => {
   if (!chartEvent || !scale || !layout || !tooltipAxis || !tooltipTicks) {
-    return null;
+    return undefined;
   }
   const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, angleAxisMap, radiusAxisMap, offset);
   if (!rangeObj) {
-    return null;
+    return undefined;
   }
   const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
 
