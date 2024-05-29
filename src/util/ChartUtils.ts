@@ -605,7 +605,7 @@ export const getDomainOfItemsWithSameAxis = (
   }, []);
 };
 
-export const isCategoricalAxis = (layout: LayoutType | PolarLayoutType, axisType: AxisType) =>
+export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType) =>
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis') ||
   (layout === 'centric' && axisType === 'angleAxis') ||

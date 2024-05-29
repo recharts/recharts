@@ -17,8 +17,9 @@ import {
   getLegendProps,
   isAxisLTR,
   AxisPropsNeededForTicksGenerator,
+  isCategoricalAxis,
 } from '../../src/util/ChartUtils';
-import { BaseAxisProps, DataKey } from '../../src/util/types';
+import { AxisType, BaseAxisProps, DataKey, LayoutType } from '../../src/util/types';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
@@ -737,4 +738,97 @@ test('isLTR', () => {
   ).toBeFalsy();
   // Empty set of axes
   expect(isAxisLTR({})).toBeTruthy();
+});
+
+describe('isCategoricalAxis', () => {
+  const casesWhereTrue: {
+    name: string;
+    layout: LayoutType;
+    axisType: AxisType;
+  }[] = [
+    {
+      name: 'xAxis in horizontal layout',
+      layout: 'horizontal',
+      axisType: 'xAxis',
+    },
+    {
+      name: 'yAxis in vertical layout',
+      layout: 'vertical',
+      axisType: 'yAxis',
+    },
+    {
+      name: 'angleAxis in centric layout',
+      layout: 'centric',
+      axisType: 'angleAxis',
+    },
+    {
+      name: 'radiusAxis in radial layout',
+      layout: 'radial',
+      axisType: 'radiusAxis',
+    },
+  ];
+
+  const casesWhereFalse: {
+    name: string;
+    layout: LayoutType;
+    axisType: AxisType;
+  }[] = [
+    {
+      name: 'xAxis in vertical layout',
+      layout: 'vertical',
+      axisType: 'xAxis',
+    },
+    {
+      name: 'yAxis in horizontal layout',
+      layout: 'horizontal',
+      axisType: 'yAxis',
+    },
+    {
+      name: 'angleAxis in radial layout',
+      layout: 'radial',
+      axisType: 'angleAxis',
+    },
+    {
+      name: 'radiusAxis in centric layout',
+      layout: 'centric',
+      axisType: 'radiusAxis',
+    },
+    {
+      name: 'xAxis in radial layout',
+      layout: 'radial',
+      axisType: 'xAxis',
+    },
+    {
+      name: 'yAxis in centric layout',
+      layout: 'centric',
+      axisType: 'yAxis',
+    },
+    {
+      name: 'angleAxis in horizontal layout',
+      layout: 'horizontal',
+      axisType: 'angleAxis',
+    },
+    {
+      name: 'radiusAxis in vertical layout',
+      layout: 'vertical',
+      axisType: 'radiusAxis',
+    },
+    {
+      name: 'xAxis in centric layout',
+      layout: 'centric',
+      axisType: 'xAxis',
+    },
+    {
+      name: 'yAxis in radial layout',
+      layout: 'radial',
+      axisType: 'yAxis',
+    },
+  ];
+  test.each(casesWhereTrue)('it should return true for $axisType axis in $layout chart', ({ axisType, layout }) => {
+    expect(isCategoricalAxis(layout, axisType)).toBe(true);
+  });
+
+  test.each(casesWhereFalse)('it should return false for $axisType axis in $layout chart', ({ axisType, layout }) => {
+    expect(isCategoricalAxis(layout, axisType)).toBe(false);
+  });
 });
