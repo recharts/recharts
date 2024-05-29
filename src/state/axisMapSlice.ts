@@ -1,8 +1,9 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { AxisType, ScaleType } from '../util/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AxisDomain, AxisType, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 
 export type AxisId = string | number;
+export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
 
 /**
  * These are the external props, visible for users as they set them using our public API.
@@ -13,6 +14,9 @@ export type AxisSettings = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
   type: 'number' | 'category';
+  padding: XAxisPadding;
+  domain: AxisDomain | undefined;
+  allowDataOverflow: boolean;
 };
 
 // TODO add the remaining properties here
