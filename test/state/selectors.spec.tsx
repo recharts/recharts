@@ -5,6 +5,7 @@ import { Store } from '@reduxjs/toolkit';
 import {
   combineTooltipPayload,
   selectActiveIndex,
+  selectActiveIndexFromMousePointer,
   selectContainerScale,
   selectIsTooltipActive,
   selectRootContainerDomRect,
@@ -39,6 +40,7 @@ import { produceState } from './produceState';
 import { RechartsHTMLContainer, setContainer } from '../../src/state/layoutSlice';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
+import { MousePointer } from '../../src/chart/generateCategoricalChart';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -818,5 +820,26 @@ describe('selectContainerScale', () => {
     };
     store.dispatch(setContainer(mockElement));
     expect(selectContainerScale(store.getState())).toBe(1);
+  });
+});
+
+describe('selectActiveIndexFromMousePointer', () => {
+  const exampleMousePointer: MousePointer = {
+    pageX: 0,
+    pageY: 0,
+  };
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const coordinates = useAppSelector(state => selectActiveIndexFromMousePointer(state, exampleMousePointer));
+      expect(coordinates).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return undefined for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectActiveIndexFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
   });
 });
