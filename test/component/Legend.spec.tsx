@@ -821,6 +821,24 @@ describe('<Legend />', () => {
         screen.getByText(/My Other Line Data/i);
       });
 
+      test('Legend defaults are read correctly', () => {
+        const { container } = render(
+          <LineChart width={500} height={500} data={categoricalData}>
+            <Legend />
+            <Line dataKey={row => row.value} name="My Line Data" />
+            <Line dataKey={row => row.color} name="My Other Line Data" />
+          </LineChart>,
+        );
+
+        const legendWrapper = container.getElementsByClassName('recharts-legend-wrapper')[0];
+        expect(legendWrapper).not.toHaveStyle({ width: 'auto' });
+        expect(legendWrapper).toHaveStyle({ height: 'auto' });
+        const legendItem = container.getElementsByClassName('legend-item-0')[0];
+        const surface = legendItem.getElementsByClassName('recharts-surface')[0];
+        expect(surface.getAttribute('height')).toBe('14');
+        expect(surface.getAttribute('width')).toBe('14');
+      });
+
       test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
         // Warning should be logged. Spy on it so we can confirm it was called.
         const consoleWarn = vi.spyOn(console, 'warn');
