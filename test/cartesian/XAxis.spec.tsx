@@ -259,5 +259,73 @@ describe('<XAxis />', () => {
         type: 'number',
       });
     });
+
+    it('should remove the configuration from store when DOM element is removed', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const foo = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'foo'));
+        const bar = useAppSelector(state => selectAxisSettings(state, 'xAxis', 'bar'));
+        spy({ foo, bar });
+        return null;
+      };
+      const { rerender } = render(
+        <BarChart width={100} height={100}>
+          <XAxis xAxisId="foo" scale="log" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: {
+          id: 'foo',
+          scale: 'log',
+          type: 'number',
+        },
+        bar: undefined,
+      });
+      rerender(
+        <BarChart width={100} height={100}>
+          <XAxis xAxisId="foo" scale="log" type="number" />
+          <XAxis xAxisId="bar" scale="utc" type="category" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: {
+          id: 'foo',
+          scale: 'log',
+          type: 'number',
+        },
+        bar: {
+          id: 'bar',
+          scale: 'utc',
+          type: 'category',
+        },
+      });
+      rerender(
+        <BarChart width={100} height={100}>
+          <XAxis xAxisId="bar" scale="utc" type="category" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: undefined,
+        bar: {
+          id: 'bar',
+          scale: 'utc',
+          type: 'category',
+        },
+      });
+      rerender(
+        <BarChart width={100} height={100}>
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: undefined,
+        bar: undefined,
+      });
+    });
   });
 });

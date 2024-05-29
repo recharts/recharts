@@ -9,7 +9,7 @@ import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppDispatch } from '../state/hooks';
-import { addXAxis, XAxisSettings } from '../state/axisMapSlice';
+import { addXAxis, removeXAxis, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
 
 interface XAxisProps extends BaseAxisProps {
@@ -47,12 +47,9 @@ function SetXAxisSettings({ id, scale, type }: XAxisSettings): null {
       id,
     };
     dispatch(addXAxis(settings));
-    // TODO the cleanup function is causing trouble with Redux dev extension. Figure out what it is and fix it.
-    // While it's commented, switching axes is not working
-    // return () => {
-    // console.log('dispatch removeXAxis', settings);
-    // dispatch(removeXAxis(settings));
-    // };
+    return () => {
+      dispatch(removeXAxis(settings));
+    };
   }, [id, scale, type, dispatch]);
   return null;
 }
