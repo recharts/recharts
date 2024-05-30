@@ -1,19 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RechartsRootState } from './store';
-import { AxisDomain, AxisType, CategoricalDomain, ChartOffset, LayoutType, NumberDomain } from '../util/types';
-import {
-  ParsedScaleReturn,
-  getDomainOfDataByKey,
-  getValueByDataKey,
-  isCategoricalAxis,
-  parseScale,
-  parseSpecifiedDomain,
-} from '../util/ChartUtils';
-import { AxisId, AxisSettings } from './axisMapSlice';
-import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
-import { selectAllGraphicalItemsData, selectChartDataWithIndexes, selectChartName } from './selectors';
-import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import isNil from 'lodash/isNil';
+import { selectChartLayout } from '../context/chartLayoutContext';
+import { ParsedScaleReturn, getValueByDataKey, parseScale } from '../util/ChartUtils';
+import { AxisType, CategoricalDomain, LayoutType, NumberDomain } from '../util/types';
+import { AxisId, AxisSettings } from './axisMapSlice';
+import { selectAllGraphicalItemsData, selectChartDataWithIndexes, selectChartName } from './selectors';
+import { RechartsRootState } from './store';
 
 export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: string): AxisSettings =>
   state.axisMap[axisType][axisId];
@@ -27,56 +19,6 @@ const unknownScale: ParsedScaleReturn = {
 
 export function getDefaultDomainByAxisType(axisType: 'number' | string) {
   return axisType === 'number' ? [0, 'auto'] : undefined;
-}
-
-type AllDomains = {
-  domain: AxisDomain;
-  categoricalDomain: AxisDomain;
-  duplicateDomain: AxisDomain;
-  originalDomain: AxisDomain;
-};
-
-const noDomains: AllDomains = {
-  domain: undefined,
-  originalDomain: undefined,
-  categoricalDomain: undefined,
-  duplicateDomain: undefined,
-};
-
-export function combineAxisDomains(
-  axisSettings: AxisSettings,
-  axisType: AxisType,
-  chartLayout: LayoutType,
-): AllDomains {
-  if (axisSettings == null) {
-    return noDomains;
-  }
-
-  let domain: AxisDomain, categoricalDomain: AxisDomain;
-  const defaultDomain = getDefaultDomainByAxisType(axisType);
-  const isCategorical = isCategoricalAxis(chartLayout, axisType);
-  /*
-   * This is a hack to short-circuit the domain creation here to enhance performance.
-   * Usually, the data is used to determine the domain, but when the user specifies
-   * a domain upfront (via props), there is no need to calculate the domain start and end,
-   * which is very expensive for a larger amount of data.
-   * The only thing that would prohibit short-circuiting is when the user doesn't allow data overflow,
-   * because the axis is supposed to ignore the specified domain that way.
-   */
-  if (isDomainSpecifiedByUser(axisSettings.domain, axisSettings.allowDataOverflow, axisSettings.type)) {
-    domain = parseSpecifiedDomain(axisSettings.domain, null, axisSettings.allowDataOverflow);
-    /* The chart can be categorical and have the domain specified in numbers
-     * we still need to calculate the categorical domain
-     */
-    if (isCategorical && (axisSettings.type === 'number' || axisSettings.scale !== 'auto')) {
-      categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
-    }
-    return {
-      domain,
-      categoricalDomain,
-      originalDomain: axisSettings.domain || defaultDomain,
-    };
-  }
 }
 
 function nilPredicate(filterNil: boolean) {
@@ -130,33 +72,6 @@ export const selectDomainOfDataByKey: (
     );
   },
 );
-
-// const selectAxisDomains: (state: RechartsRootState, axisType: AxisType, axisId: string) => AllDomains = createSelector(, combineAxisDomains);
-
-// const selectCalculatedPadding: (state: RechartsRootState, axisType: AxisType, axisId: string) => number =
-//   createSelector(
-//     selectAxisSettings,
-//     selectChartOffset,
-//     selectChartLayout,
-//     (axisSettings: AxisSettings, offset: ChartOffset, chartLayout: LayoutType) => {
-//       const diff = domain[1] - domain[0];
-//       let smallestDistanceBetweenValues = Infinity;
-//       const sortedValues = axis.categoricalDomain.sort();
-//       sortedValues.forEach((value: number, index: number) => {
-//         if (index > 0) {
-//           smallestDistanceBetweenValues = Math.min(
-//             (value || 0) - (sortedValues[index - 1] || 0),
-//             smallestDistanceBetweenValues,
-//           );
-//         }
-//       });
-//       const smallestDistanceInPercent = smallestDistanceBetweenValues / diff;
-//       const rangeWidth = chartLayout === 'vertical' ? offset.height : offset.width;
-//       if (axisSettings.padding === 'gap') {
-//         return (smallestDistanceInPercent * rangeWidth) / 2;
-//       }
-//     },
-//   );
 
 export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: string) => ParsedScaleReturn =
   createSelector(

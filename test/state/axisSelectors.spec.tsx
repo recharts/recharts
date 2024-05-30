@@ -2,11 +2,10 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
-import { combineAxisDomains, selectAxisScale, selectDomainOfDataByKey } from '../../src/state/axisSelectors';
+import { selectAxisScale, selectDomainOfDataByKey } from '../../src/state/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { Bar, BarChart, XAxis, Customized, ComposedChart, Area, Line, Scatter, YAxis } from '../../src';
 import { PageData } from '../_data';
-import { AxisSettings } from '../../src/state/axisMapSlice';
 
 describe('selectAxisScale', () => {
   it('should return undefined when called outside of Redux context', () => {
@@ -62,41 +61,6 @@ describe('selectAxisScale', () => {
     expect(spy).toHaveBeenLastCalledWith({
       scale: expect.any(Function),
       realScaleType: 'band',
-    });
-  });
-});
-
-describe('combineAxisDomains', () => {
-  it('should return object with undefineds if the axis settings is undefined', () => {
-    const result = combineAxisDomains(undefined, 'xAxis', 'horizontal');
-    expect(result).toEqual({
-      domain: undefined,
-      originalDomain: undefined,
-      categoricalDomain: undefined,
-      duplicateDomain: undefined,
-    });
-  });
-
-  it('should return domain specified by external props', () => {
-    const axis: AxisSettings = {
-      domain: [3, 10],
-      id: '',
-      scale: 'sequential',
-      type: 'number',
-      padding: {
-        left: 0,
-        right: 0,
-      },
-      allowDataOverflow: true,
-      dataKey: undefined,
-      allowDuplicatedCategory: false,
-    };
-    const result = combineAxisDomains(axis, 'xAxis', 'vertical');
-    expect(result).toEqual({
-      domain: [3, 10],
-      originalDomain: [3, 10],
-      categoricalDomain: undefined,
-      duplicateDomain: undefined,
     });
   });
 });

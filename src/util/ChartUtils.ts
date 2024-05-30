@@ -49,7 +49,6 @@ import {
   LayoutType,
   Margin,
   NumberDomain,
-  PolarLayoutType,
   RangeObj,
   ScaleType,
   StackOffsetType,
