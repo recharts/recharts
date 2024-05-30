@@ -5,6 +5,7 @@ import { ScatterChart, Scatter, LineChart, Line, XAxis, YAxis, BarChart, Bar, Cu
 import { selectAxisSettings } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
+import { XAxisSettings } from '../../src/state/axisMapSlice';
 
 describe('<XAxis />', () => {
   const data = [
@@ -256,7 +257,8 @@ describe('<XAxis />', () => {
       );
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
-      expect(spy).toHaveBeenLastCalledWith({
+      const expectedSettings: XAxisSettings = {
+        allowDecimals: true,
         id: 'foo',
         scale: 'log',
         type: 'number',
@@ -268,7 +270,8 @@ describe('<XAxis />', () => {
           left: 0,
           right: 0,
         },
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedSettings);
     });
 
     it('should remove the configuration from store when DOM element is removed', () => {
@@ -285,20 +288,22 @@ describe('<XAxis />', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith({
-        foo: {
-          id: 'foo',
-          scale: 'log',
-          type: 'number',
-          allowDataOverflow: false,
-          allowDuplicatedCategory: true,
-          dataKey: undefined,
-          domain: undefined,
-          padding: {
-            left: 0,
-            right: 0,
-          },
+      const expectedSettings1: XAxisSettings = {
+        allowDecimals: true,
+        id: 'foo',
+        scale: 'log',
+        type: 'number',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          left: 0,
+          right: 0,
         },
+      };
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: expectedSettings1,
         bar: undefined,
       });
       rerender(
@@ -308,7 +313,10 @@ describe('<XAxis />', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith({
+      const expectedSettings2: {
+        bar: XAxisSettings;
+        foo: XAxisSettings;
+      } = {
         foo: {
           id: 'foo',
           scale: 'log',
@@ -321,6 +329,7 @@ describe('<XAxis />', () => {
             left: 0,
             right: 0,
           },
+          allowDecimals: true,
         },
         bar: {
           id: 'bar',
@@ -334,8 +343,10 @@ describe('<XAxis />', () => {
             left: 0,
             right: 0,
           },
+          allowDecimals: true,
         },
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
       rerender(
         <BarChart width={100} height={100}>
           <XAxis xAxisId="bar" scale="utc" type="category" />
@@ -343,21 +354,23 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
 
+      const expectedSettings3: XAxisSettings = {
+        id: 'bar',
+        scale: 'utc',
+        type: 'category',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          left: 0,
+          right: 0,
+        },
+        allowDecimals: true,
+      };
       expect(spy).toHaveBeenLastCalledWith({
         foo: undefined,
-        bar: {
-          id: 'bar',
-          scale: 'utc',
-          type: 'category',
-          allowDataOverflow: false,
-          allowDuplicatedCategory: true,
-          dataKey: undefined,
-          domain: undefined,
-          padding: {
-            left: 0,
-            right: 0,
-          },
-        },
+        bar: expectedSettings3,
       });
       rerender(
         <BarChart width={100} height={100}>
