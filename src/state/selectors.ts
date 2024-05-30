@@ -69,8 +69,8 @@ function getSliced<T>(
   return arr;
 }
 
-const selectTooltipState = (state: RechartsRootState) => state.tooltip;
-const selectChartData = (state: RechartsRootState) => state.chartData;
+export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
+export const selectChartData = (state: RechartsRootState) => state.chartData;
 
 const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: AxisPropsNeededForTicksGenerator) =>
   getTicksOfAxis(tooltipAxis, false, true),

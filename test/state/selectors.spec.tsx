@@ -11,6 +11,7 @@ import {
   selectRootContainerDomRect,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
+  selectTooltipState,
   useTooltipEventType,
 } from '../../src/state/selectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
@@ -41,6 +42,8 @@ import { RechartsHTMLContainer, setContainer } from '../../src/state/layoutSlice
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { MousePointer } from '../../src/chart/generateCategoricalChart';
+import { Area, BarChart, ComposedChart, Customized, Line, Scatter } from '../../src';
+import { PageData } from '../_data';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -841,5 +844,119 @@ describe('selectActiveIndexFromMousePointer', () => {
   it('should return undefined for initial state', () => {
     const store = createRechartsStore();
     expect(selectActiveIndexFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
+  });
+});
+
+describe('selectTooltipState.tooltipItemPayloads', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const payload = useAppSelector(selectTooltipState);
+      expect(payload).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return empty array for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectTooltipState(store.getState()).tooltipItemPayloads).toEqual([]);
+  });
+
+  it('should return empty array in an empty chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const tooltipData = useAppSelector(selectTooltipState).tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
+      spy(tooltipData);
+      return null;
+    };
+    render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenLastCalledWith([]);
+  });
+
+  it('should return all tooltip payloads defined on graphical items', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const tooltipData = useAppSelector(selectTooltipState).tooltipItemPayloads.map(tp => tp.dataDefinedOnItem);
+      spy(tooltipData);
+      return null;
+    };
+    render(
+      <ComposedChart data={PageData} width={100} height={100}>
+        <Area dataKey="" data={[1, 2, 3]} />
+        <Line data={[4, 5, 6]} />
+        <Scatter data={[7, 8, 9]} />
+        <Customized component={Comp} />
+      </ComposedChart>,
+    );
+    expect(spy).toHaveBeenCalledTimes(3);
+    // two of these elements will send the data as defined; Scatter decides to pre-chew it
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.arrayContaining([
+        [1, 2, 3],
+        [4, 5, 6],
+        [
+          [
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 7,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 7,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+          ],
+          [
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 8,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 8,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+          ],
+          [
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 9,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+            {
+              dataKey: undefined,
+              name: undefined,
+              payload: 9,
+              type: undefined,
+              unit: '',
+              value: undefined,
+            },
+          ],
+        ],
+      ]),
+    );
   });
 });
