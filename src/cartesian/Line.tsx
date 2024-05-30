@@ -37,6 +37,7 @@ import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { SetGraphicalItemData } from '../state/SetGraphicalItemData';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -535,6 +536,7 @@ export class Line extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
+          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -555,6 +557,7 @@ export class Line extends PureComponent<Props, State> {
     return (
       <>
         <Layer className={layerClass}>
+          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (

@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { ChartData } from './chartDataSlice';
 
 export type GraphicalItemsState = {
   /**
@@ -8,10 +9,19 @@ export type GraphicalItemsState = {
    * and then report if there is at least one.
    */
   countOfBars: number;
+  /**
+   * An array of arrays; the top array is for graphical items,
+   * one graphical item, one record in the array.
+   * The second level is because every data={x} on every item is expected to be an array itself.
+   *
+   * The order is arbitrary; do not expect that indexes here will be the same as indexes elsewhere.
+   */
+  graphicalItemData: ReadonlyArray<ChartData>;
 };
 
 const initialState: GraphicalItemsState = {
   countOfBars: 0,
+  graphicalItemData: [],
 };
 
 const graphicalItemsSlice = createSlice({
@@ -24,9 +34,15 @@ const graphicalItemsSlice = createSlice({
     removeBar(state) {
       state.countOfBars -= 1;
     },
+    addGraphicalItemData(state, action: PayloadAction<ChartData>) {
+      state.graphicalItemData.push(action.payload);
+    },
+    removeGraphicalItemData(state, action: PayloadAction<ChartData>) {
+      state.graphicalItemData = state.graphicalItemData.filter(item => item !== action.payload);
+    },
   },
 });
 
-export const { addBar, removeBar } = graphicalItemsSlice.actions;
+export const { addBar, removeBar, addGraphicalItemData, removeGraphicalItemData } = graphicalItemsSlice.actions;
 
 export const graphicalItemsReducer = graphicalItemsSlice.reducer;

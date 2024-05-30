@@ -20,7 +20,7 @@ import {
   getValueByDataKey,
   inRange,
 } from '../util/ChartUtils';
-import { ChartDataState } from './chartDataSlice';
+import { ChartData, ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
 import { BaseAxisProps, ChartOffset, DataKey, LayoutType, TickItem, TooltipEventType } from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
@@ -330,3 +330,9 @@ export const selectActiveIndexFromMousePointer: (state: RechartsRootState, mouse
     selectChartOffset,
     combineActiveIndex,
   );
+
+export const selectAllGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = (
+  state: RechartsRootState,
+) => state.graphicalItems.graphicalItemData;
+
+// TODO export const selectDisplayedData = createSelector(selectChartData, selectAllGraphicalItemsData);
