@@ -193,7 +193,7 @@ function ReferenceLineImpl(props: Props) {
 }
 
 // eslint-disable-next-line react/prefer-stateless-function -- requires static defaultProps
-export class ReferenceLine extends React.Component {
+export class ReferenceLine extends React.Component<Props> {
   static displayName = 'ReferenceLine';
 
   static defaultProps = {
