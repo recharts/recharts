@@ -1,5 +1,5 @@
 import { isNumber } from './DataUtils';
-import { AxisDomain, BaseAxisProps } from './types';
+import { AxisDomain, AxisDomainType } from './types';
 
 /**
  * Takes a domain and user props to determine whether he provided the domain via props or if we need to calculate it.
@@ -11,7 +11,7 @@ import { AxisDomain, BaseAxisProps } from './types';
 export function isDomainSpecifiedByUser(
   domain: AxisDomain,
   allowDataOverflow: boolean,
-  axisType: BaseAxisProps['type'],
+  axisType: AxisDomainType,
 ): boolean {
   if (axisType === 'number' && allowDataOverflow === true && Array.isArray(domain)) {
     const domainStart: unknown | null | undefined = domain?.[0];

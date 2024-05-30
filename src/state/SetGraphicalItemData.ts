@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from './hooks';
 import { ChartData } from './chartDataSlice';
 import { addGraphicalItemData, removeGraphicalItemData } from './graphicalItemsSlice';
 
 export function SetGraphicalItemData({ dataDefinedOnItem }: { dataDefinedOnItem: ChartData }): null {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(addGraphicalItemData(dataDefinedOnItem));
     return () => {

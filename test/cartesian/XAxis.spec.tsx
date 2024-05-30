@@ -257,6 +257,14 @@ describe('<XAxis />', () => {
         id: 'foo',
         scale: 'log',
         type: 'number',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          left: 0,
+          right: 0,
+        },
       });
     });
 
@@ -279,6 +287,14 @@ describe('<XAxis />', () => {
           id: 'foo',
           scale: 'log',
           type: 'number',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            left: 0,
+            right: 0,
+          },
         },
         bar: undefined,
       });
@@ -294,11 +310,27 @@ describe('<XAxis />', () => {
           id: 'foo',
           scale: 'log',
           type: 'number',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            left: 0,
+            right: 0,
+          },
         },
         bar: {
           id: 'bar',
           scale: 'utc',
           type: 'category',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            left: 0,
+            right: 0,
+          },
         },
       });
       rerender(
@@ -314,6 +346,14 @@ describe('<XAxis />', () => {
           id: 'bar',
           scale: 'utc',
           type: 'category',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            left: 0,
+            right: 0,
+          },
         },
       });
       rerender(

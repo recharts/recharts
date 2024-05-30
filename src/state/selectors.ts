@@ -70,7 +70,7 @@ function getSliced<T>(
 }
 
 export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
-export const selectChartData = (state: RechartsRootState) => state.chartData;
+export const selectChartDataWithIndexes = (state: RechartsRootState) => state.chartData;
 
 const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: AxisPropsNeededForTicksGenerator) =>
   getTicksOfAxis(tooltipAxis, false, true),
@@ -230,7 +230,7 @@ export const selectTooltipPayload: (
 ) => TooltipPayload | undefined = createSelector(
   selectTooltipPayloadConfigurations,
   selectActiveIndex,
-  selectChartData,
+  selectChartDataWithIndexes,
   selectTooltipAxis,
   selectActiveLabel,
   selectTooltipPayloadSearcher,
@@ -334,5 +334,3 @@ export const selectActiveIndexFromMousePointer: (state: RechartsRootState, mouse
 export const selectAllGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = (
   state: RechartsRootState,
 ) => state.graphicalItems.graphicalItemData;
-
-// TODO export const selectDisplayedData = createSelector(selectChartData, selectAllGraphicalItemsData);

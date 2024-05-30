@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AxisDomain, AxisType, ScaleType } from '../util/types';
+import { AxisDomain, AxisDomainType, AxisType, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 
 export type AxisId = string | number;
@@ -13,10 +13,18 @@ export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
 export type AxisSettings = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
-  type: 'number' | 'category';
+  type: AxisDomainType;
   padding: XAxisPadding;
   domain: AxisDomain | undefined;
   allowDataOverflow: boolean;
+  /**
+   * The axis functionality is severely restricted without a dataKey
+   * - but there is still something left, and the prop is optional
+   * so this can also be undefined even in real charts.
+   * There are no defaults.
+   */
+  dataKey: DataKey<any> | undefined;
+  allowDuplicatedCategory: boolean;
 };
 
 // TODO add the remaining properties here

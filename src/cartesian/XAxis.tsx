@@ -102,6 +102,8 @@ const XAxisSettingsDispatcher = (props: Props) => {
         padding={props.padding}
         allowDataOverflow={props.allowDataOverflow}
         domain={props.domain}
+        dataKey={props.dataKey}
+        allowDuplicatedCategory={props.allowDuplicatedCategory}
       />
       <XAxisImpl {...props} />
     </>
