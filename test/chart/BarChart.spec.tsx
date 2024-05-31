@@ -100,6 +100,17 @@ describe('<BarChart />', () => {
       </BarChart>,
     );
 
+    const yAxis = container.querySelector('.recharts-yAxis');
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const tickValues = yAxis!.querySelectorAll('.recharts-cartesian-axis-tick-value');
+
+    const firstTick = tickValues[0].textContent;
+    const lastTick = tickValues[tickValues.length - 1].textContent;
+
+    expect(firstTick).toEqual('0');
+    expect(lastTick).toEqual('12000');
+
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(8);
   });
 
