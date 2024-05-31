@@ -63,7 +63,10 @@ export const selectDomainOfDataByKey: (
       .map(entry => getValueByDataKey(entry, axisSettings.dataKey));
 
     if (axisSettings.type === 'number') {
-      const onlyNumbers = allDataSquished.map(Number).filter(n => Number.isNaN(n) === false);
+      const onlyNumbers = allDataSquished
+        .filter(v => typeof v === 'number' || typeof v === 'string')
+        .map(Number)
+        .filter(n => Number.isNaN(n) === false);
       return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
     }
 

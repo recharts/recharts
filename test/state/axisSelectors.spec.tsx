@@ -132,6 +132,53 @@ describe('selectDomainOfDataByKey', () => {
       expect(spy).toHaveBeenLastCalledWith([Infinity, -Infinity]);
     });
 
+    // this test fails because the generateCategoricalChart code path throws
+    it.fails('should not throw an error when the data includes a Symbol', () => {
+      const data = [{ x: Symbol.for('unit test') }];
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        spy(result);
+        return null;
+      };
+      render(
+        <BarChart data={data} width={100} height={100}>
+          <XAxis dataKey="x" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenLastCalledWith([100, 9999]);
+    });
+
+    it('should parse strings, and ignore values that are not numbers', () => {
+      const data = [
+        { x: '100' },
+        { x: '9999' },
+        { x: 200 },
+        { x: 300 },
+        { x: null },
+        { x: undefined },
+        { x: NaN },
+        { x: {} },
+        { x: [] as const },
+        { x: () => {} },
+        // { x: Symbol.for('unit test') },
+      ];
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        spy(result);
+        return null;
+      };
+      render(
+        <BarChart data={data} width={100} height={100}>
+          <XAxis dataKey="x" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenLastCalledWith([100, 9999]);
+    });
+
     it('should squish all data defined on all items and chart root and return min, max of the combination', () => {
       const spy = vi.fn();
       const Comp = (): null => {
