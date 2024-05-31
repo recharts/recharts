@@ -65,6 +65,7 @@
   "lib/state/axisSelectors.js",
   "lib/state/axisMapSlice.js",
   "lib/state/SetTooltipEntrySettings.js",
+  "lib/state/SetGraphicalItemData.js",
   "lib/state/ReportBar.js",
   "lib/state/RechartsStoreProvider.js",
   "lib/shape/Trapezoid.js",

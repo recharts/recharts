@@ -9,7 +9,7 @@ import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppDispatch } from '../state/hooks';
-import { addXAxis, removeXAxis, XAxisSettings } from '../state/axisMapSlice';
+import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
 
 interface XAxisProps extends BaseAxisProps {
@@ -27,7 +27,7 @@ interface XAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: ReadonlyArray<AxisTick>;
-  padding?: { left?: number; right?: number } | 'gap' | 'no-gap';
+  padding?: XAxisPadding;
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
@@ -38,19 +38,14 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<SVGProps<SVGLineElement>, 'scale'> & XAxisProps;
 
-function SetXAxisSettings({ id, scale, type }: XAxisSettings): null {
+function SetXAxisSettings(settings: XAxisSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    const settings: XAxisSettings = {
-      scale,
-      type,
-      id,
-    };
     dispatch(addXAxis(settings));
     return () => {
       dispatch(removeXAxis(settings));
     };
-  }, [id, scale, type, dispatch]);
+  }, [settings, dispatch]);
   return null;
 }
 
@@ -100,7 +95,16 @@ const XAxisImpl = (props: Props) => {
 const XAxisSettingsDispatcher = (props: Props) => {
   return (
     <>
-      <SetXAxisSettings id={props.xAxisId} scale={props.scale} type={props.type} />
+      <SetXAxisSettings
+        id={props.xAxisId}
+        scale={props.scale}
+        type={props.type}
+        padding={props.padding}
+        allowDataOverflow={props.allowDataOverflow}
+        domain={props.domain}
+        dataKey={props.dataKey}
+        allowDuplicatedCategory={props.allowDuplicatedCategory}
+      />
       <XAxisImpl {...props} />
     </>
   );

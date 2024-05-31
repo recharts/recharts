@@ -20,7 +20,7 @@ import {
   getValueByDataKey,
   inRange,
 } from '../util/ChartUtils';
-import { ChartDataState } from './chartDataSlice';
+import { ChartData, ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
 import { BaseAxisProps, ChartOffset, DataKey, LayoutType, TickItem, TooltipEventType } from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
@@ -69,8 +69,8 @@ function getSliced<T>(
   return arr;
 }
 
-const selectTooltipState = (state: RechartsRootState) => state.tooltip;
-const selectChartData = (state: RechartsRootState) => state.chartData;
+export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
+export const selectChartDataWithIndexes = (state: RechartsRootState) => state.chartData;
 
 const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: AxisPropsNeededForTicksGenerator) =>
   getTicksOfAxis(tooltipAxis, false, true),
@@ -230,7 +230,7 @@ export const selectTooltipPayload: (
 ) => TooltipPayload | undefined = createSelector(
   selectTooltipPayloadConfigurations,
   selectActiveIndex,
-  selectChartData,
+  selectChartDataWithIndexes,
   selectTooltipAxis,
   selectActiveLabel,
   selectTooltipPayloadSearcher,
@@ -330,3 +330,7 @@ export const selectActiveIndexFromMousePointer: (state: RechartsRootState, mouse
     selectChartOffset,
     combineActiveIndex,
   );
+
+export const selectAllGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = (
+  state: RechartsRootState,
+) => state.graphicalItems.graphicalItemData;

@@ -48,6 +48,7 @@ export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouett
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
 export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
+export type AxisDomainType = 'number' | 'category';
 export type DataKey<T> = string | number | ((obj: T) => any);
 export type PresentationAttributesWithProps<P, T> = AriaAttributes &
   DOMAttributesWithProps<P, T> &
@@ -1115,7 +1116,7 @@ export type CategoricalDomain = (number | string | Date)[];
 /** The props definition of base axis */
 export interface BaseAxisProps {
   /** The type of axis */
-  type?: 'number' | 'category';
+  type?: AxisDomainType;
   /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
   /** Whether display the axis */

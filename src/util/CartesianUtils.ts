@@ -3,7 +3,7 @@ import every from 'lodash/every';
 
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
-import { Coordinate, AxisType, Size } from './types';
+import { Coordinate, AxisType, Size, ChartOffset } from './types';
 import { getPercentValue } from './DataUtils';
 import { Bar } from '../cartesian/Bar';
 
@@ -16,7 +16,7 @@ import { Bar } from '../cartesian/Bar';
  * @param  {String} chartName The name of chart
  * @return {Object} Configuration
  */
-export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: AxisType, chartName: string) => {
+export const formatAxisMap = (props: any, axisMap: any, offset: ChartOffset, axisType: AxisType, chartName: string) => {
   const { width, height, layout, children } = props;
   const ids = Object.keys(axisMap);
   const steps: Record<string, any> = {

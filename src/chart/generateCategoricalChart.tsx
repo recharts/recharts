@@ -105,6 +105,7 @@ import {
   TooltipPayloadType,
 } from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
+import { getDefaultDomainByAxisType } from '../state/axisSelectors';
 
 export interface MousePointer {
   pageX: number;
@@ -209,10 +210,6 @@ const getDisplayedData = (
 
   return [];
 };
-
-function getDefaultDomainByAxisType(axisType: 'number' | string) {
-  return axisType === 'number' ? [0, 'auto'] : undefined;
-}
 
 /**
  * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
