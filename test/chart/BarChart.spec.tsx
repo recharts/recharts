@@ -103,7 +103,14 @@ describe('<BarChart />', () => {
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(8);
   });
 
-  test('Renders 8 bars in a stacked BarChart', () => {
+  const matchingStackConfig = [
+    { name: 'food', firstBarIndex: 0, secondBarIndex: 4 },
+    { name: 'cosmetic', firstBarIndex: 1, secondBarIndex: 5 },
+    { name: 'storage', firstBarIndex: 2, secondBarIndex: 6 },
+    { name: 'digital', firstBarIndex: 3, secondBarIndex: 7 },
+  ];
+
+  test('Renders 8 bars in a stacked BarChart, Bars of the same category are offset from each other', () => {
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
@@ -112,7 +119,19 @@ describe('<BarChart />', () => {
       </BarChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(8);
+    const rects = container.querySelectorAll('.recharts-rectangle');
+    expect(rects).toHaveLength(8);
+
+    matchingStackConfig.forEach(({ name, firstBarIndex, secondBarIndex }) => {
+      // bar one and bar two should be stacked
+      const foodBarOne = rects[firstBarIndex];
+      const foodBarTwo = rects[secondBarIndex];
+      expect(foodBarOne.getAttribute('name')).toEqual(name);
+      expect(foodBarTwo.getAttribute('name')).toEqual(name);
+
+      // these bars should not start at the same y
+      expect(foodBarOne.getAttribute('y')).not.toEqual(foodBarTwo.getAttribute('y'));
+    });
   });
 
   test('Renders 4 bars in a stacked BarChart which only have one Bar', () => {
