@@ -19,41 +19,65 @@ describe('getNiceTickValues', () => {
 
   describe('getFormatStep', () => {
     it('should return 0 when roughStep is less than 0', () => {
-      const rounghStep = new Decimal(-0.5);
-      const formattedStep = getFormatStep(rounghStep, true, 0);
+      const roughStep = new Decimal(-0.5);
+      const formattedStep = getFormatStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0);
     });
 
     it('should return correct step', () => {
-      const rounghStep = new Decimal(0.5);
-      const formattedStep = getFormatStep(rounghStep, true, 0);
+      const roughStep = new Decimal(0.5);
+      const formattedStep = getFormatStep(roughStep, true, 0);
       expect(formattedStep.toNumber()).toBe(0.5);
+    });
+
+    it('should return bigger step for bigger numbers', () => {
+      const roughStep = new Decimal(3.45687e9);
+      const formattedStep = getFormatStep(roughStep, true, 0);
+      expect(formattedStep.toNumber()).toBe(3.5e9);
+    });
+
+    it('should return smaller step for small numbers', () => {
+      const roughStep = new Decimal(9.6341e-9);
+      const formattedStep = getFormatStep(roughStep, true, 0);
+      expect(formattedStep.toNumber()).toBe(1e-8);
+    });
+
+    it('should return correct step without decimals', () => {
+      const roughStep = new Decimal(0.5);
+      const formattedStep = getFormatStep(roughStep, false, 0);
+      expect(formattedStep.toNumber()).toBe(1);
     });
   });
 
   describe('getTickOfSingleValue', () => {
     it('should generate ticks for single value', () => {
       const ticks = getTickOfSingleValue(5, 5, true);
-      expect(ticks).toContain(5);
-      expect(ticks.length).toBe(5);
+      expect(ticks).toEqual([3, 4, 5, 6, 7]);
     });
 
-    it('should generate ticks for single value with decimals', () => {
+    it('should generate ticks for single decimal value', () => {
       const ticks = getTickOfSingleValue(5.5, 5, true);
-      expect(ticks).toContain(5);
-      expect(ticks.length).toBe(5);
+      expect(ticks).toEqual([3, 4, 5, 6, 7]);
     });
 
     it('should generate ticks for single value with decimals and allowDecimals false', () => {
       const ticks = getTickOfSingleValue(5.5, 5, false);
-      expect(ticks).toContain(5);
-      expect(ticks.length).toBe(5);
+      expect(ticks).toEqual([3, 4, 5, 6, 7]);
     });
 
-    it('should generate ticks for single value with decimal between 0 and 1', () => {
+    it('should generate ticks for single value with decimals', () => {
+      const ticks = getTickOfSingleValue(0.5, 5, true);
+      expect(ticks).toEqual([0.3, 0.4, 0.5, 0.6, 0.7]);
+    });
+
+    it('should generate ticks for single value with decimals and allowDecimals false', () => {
+      const ticks = getTickOfSingleValue(0.5, 5, false);
+      expect(ticks).toEqual([-2, -1, +0, 1, 2]);
+    });
+
+    it('should generate 3 ticks for single value with decimal between 0 and 1', () => {
       const ticks = getTickOfSingleValue(0.5, 3, false);
-      expect(ticks).toContain(-1);
-      expect(ticks.length).toBe(3);
+      expect(ticks).toEqual([-1, +0, 1]);
     });
   });
 
