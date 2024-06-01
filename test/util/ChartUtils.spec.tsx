@@ -208,6 +208,11 @@ describe('parseSpecifiedDomain', () => {
     expect(result).toEqual(domain);
   });
 
+  it('DataUtils.parseSpecifiedDomain(["7", "8"], domain) should return domain', () => {
+    const result = parseSpecifiedDomain(['7', '8'], domain);
+    expect(result).toEqual(domain);
+  });
+
   it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return input value ', () => {
     const result = parseSpecifiedDomain([-1, 120], domain);
     expect(result).toEqual([-1, 120]);
