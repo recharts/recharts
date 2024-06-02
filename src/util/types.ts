@@ -1095,8 +1095,8 @@ export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | '
  * - or a combination of the above
  */
 export type AxisDomain =
-  | string[]
-  | number[]
+  | ReadonlyArray<string>
+  | ReadonlyArray<number>
   | [AxisDomainItem, AxisDomainItem]
   | (([dataMin, dataMax]: [number, number], allowDataOverflow: boolean) => [number, number]);
 

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { AxisDomain, AxisDomainType, AxisType, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 
@@ -51,7 +52,7 @@ const axisMapSlice = createSlice({
   initialState,
   reducers: {
     addXAxis(state, action: PayloadAction<XAxisSettings>) {
-      state.xAxis[action.payload.id] = action.payload;
+      state.xAxis[action.payload.id] = castDraft(action.payload);
     },
     removeXAxis(state, action: PayloadAction<XAxisSettings>) {
       delete state.xAxis[action.payload.id];

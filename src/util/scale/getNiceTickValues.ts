@@ -28,7 +28,7 @@ export const getValidInterval = ([min, max]: [number, number]) => {
 /**
  * Calculate the step which is easy to understand between ticks, like 10, 20, 25
  *
- * @param  {Decimal} roughStep        The rough step calculated by deviding the
+ * @param  {Decimal} roughStep        The rough step calculated by dividing the
  * difference by the tickCount
  * @param  {Boolean} allowDecimals    Allow the ticks to be decimals or not
  * @param  {Integer} correctionFactor A correction factor
@@ -58,12 +58,12 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
 /**
  * calculate the ticks when the minimum value equals to the maximum value
  *
- * @param  {Number}  value         The minimum valuue which is also the maximum value
- * @param  {Integer} tickCount     The count of ticks
- * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
- * @return {Array}                 ticks
+ * @param  value         The minimum value which is also the maximum value
+ * @param  tickCount     The count of ticks
+ * @param  allowDecimals Allow the ticks to be decimals or not
+ * @return array of ticks
  */
-export const getTickOfSingleValue = (value: number, tickCount: number, allowDecimals: boolean) => {
+export const getTickOfSingleValue = (value: number, tickCount: number, allowDecimals: boolean): Array<number> => {
   let step: Decimal = new Decimal(1);
   // calculate the middle value of ticks
   let middle = new Decimal(value);
