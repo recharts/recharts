@@ -1,8 +1,12 @@
-import { isDomainSpecifiedByUser } from '../../src/util/isDomainSpecifiedByUser';
-import { AxisDomain } from '../../src/util/types';
+import {
+  isDomainSpecifiedByUser,
+  numericalDomainSpecifiedWithoutRequiringData,
+  parseNumericalUserDomain,
+} from '../../src/util/isDomainSpecifiedByUser';
+import { AxisDomain, NumberDomain } from '../../src/util/types';
 
 // I need to add object wrapper because Jest likes to sometimes auto-flatten arrays of arrays
-type MyTestCases = ReadonlyArray<{ domain: AxisDomain }>;
+type MyTestCases = ReadonlyArray<{ domain: AxisDomain; expected?: NumberDomain }>;
 
 describe('isDomainSpecifiedByUser', () => {
   const allVariousDomainDefinitions: MyTestCases = [
@@ -83,5 +87,186 @@ describe('isDomainSpecifiedByUser', () => {
 
   it('should return false if domain is undefined', () => {
     expect(isDomainSpecifiedByUser(undefined as never, true, 'number')).toBe(false);
+  });
+});
+
+describe('parsing axis domain provided by user', () => {
+  // These are valid domains without any further questions
+  const validCases: MyTestCases = [
+    { domain: [-100, 100], expected: [-100, 100] },
+    { domain: [() => 1, () => 2], expected: [1, 2] },
+    { domain: () => [3, 4], expected: [3, 4] },
+    { domain: [-5, 0], expected: [-5, 0] },
+    { domain: [0, 100], expected: [0, 100] },
+    { domain: [100, 100], expected: [100, 100] },
+    { domain: [() => 1, 9], expected: [1, 9] },
+  ];
+
+  // These are always invalid domains
+  const invalidCases: MyTestCases = [
+    { domain: [] },
+    { domain: [0] },
+    { domain: [100, NaN] },
+    { domain: [2, 1] },
+    { domain: [100, 150, 200] },
+    { domain: [NaN, 100] },
+    { domain: [NaN, NaN] },
+    { domain: [0, Infinity] },
+    { domain: [Infinity, 9] },
+    { domain: [() => '1', 9] },
+    // @ts-expect-error typescript is correct here but I want a test anyway
+    { domain: () => ['1', 9] },
+    // @ts-expect-error typescript is correct here but I want a test anyway
+    { domain: () => [1, 2, 3] },
+    // sorry no string parsing. Although we could allow that, why not? Perhaps an opportunity for an improvement
+    { domain: ['20', '30'] },
+    // no percents in dataMin or dataMax, possible feature request perhaps
+    { domain: ['dataMin - 10%', 'dataMax + 5%'] },
+    // toFixed returns a string and strings are not allowed
+    { domain: [(min: number) => min.toFixed(3), (max: number) => max / 2], expected: [-117, 119] },
+    /*
+     * This is interesting - Recharts allows dataMin to get smaller and dataMax to get bigger,
+     * but doesn't allow dataMin to get bigger and dataMax to get smaller!
+     * Even with allowDataOverflow = true.
+     */
+    { domain: ['dataMin + 11.2', 'dataMax - 7.3'], expected: [-100, 100] },
+  ];
+
+  const numericalDataDomain: NumberDomain = [-100, 100];
+
+  /**
+   * These are valid - but only when the calculated chart data is present.
+   */
+  const casesValidOnlyWhenDataDomainIsGiven: MyTestCases = [
+    { domain: [11, 'auto'], expected: [11, 150] },
+    { domain: ['auto', 1], expected: [-100, 1] },
+    { domain: [0, 'dataMax'], expected: [0, 100] },
+    { domain: ['dataMin', 'dataMax'], expected: [-100, 100] },
+    { domain: ['auto', 'auto'], expected: [-100, 150] },
+    { domain: ['dataMin - 11.2', 'dataMax + 7.3'], expected: [-111.2, 107.3] },
+    { domain: d => [Math.min(...d), 999], expected: [-100, 999] },
+    { domain: [(min: number) => min.valueOf() - 17, (max: number) => max / 2], expected: [-117, 50] },
+  ];
+
+  /**
+   * These are valid - but the prop allowDataOverflow = false means that
+   * recharts should ignore what user returned, and use the data domain instead.
+   */
+  const casesWithDomainSmallerThanData: MyTestCases = [
+    { domain: [11, 200], expected: [-100, 200] },
+    { domain: [11, 'auto'], expected: [-100, 150] },
+    { domain: ['auto', 1], expected: [-100, 100] },
+    { domain: [0, 'dataMax'], expected: [-100, 100] },
+    { domain: d => [Math.min(...d), 0], expected: [-100, 100] },
+    { domain: [(min: number) => min.valueOf() + 17, (max: number) => max / 2], expected: [-100, 100] },
+  ];
+
+  describe('numericalDomainSpecifiedWithoutRequiringData', () => {
+    it.each([true, false])(
+      'should return undefined when user input is undefined and allowDataOverflow = %s',
+      allowDataOverflow => {
+        expect(numericalDomainSpecifiedWithoutRequiringData(undefined, allowDataOverflow)).toBeUndefined();
+        expect(numericalDomainSpecifiedWithoutRequiringData(undefined, allowDataOverflow)).toBeUndefined();
+      },
+    );
+
+    it.each(validCases)(
+      'should return $expected when domain = $domain and allowDataOverflow = true',
+      ({ domain, expected }) => {
+        expect(numericalDomainSpecifiedWithoutRequiringData(domain, true)).toEqual(expected);
+      },
+    );
+
+    it.each(validCases)('should return undefined when domain = $domain and allowDataOverflow = false', ({ domain }) => {
+      expect(numericalDomainSpecifiedWithoutRequiringData(domain, false)).toEqual(undefined);
+    });
+
+    it.each(invalidCases)('should return undefined when domain = $domain', ({ domain }) => {
+      expect(numericalDomainSpecifiedWithoutRequiringData(domain, true)).toEqual(undefined);
+      expect(numericalDomainSpecifiedWithoutRequiringData(domain, false)).toEqual(undefined);
+    });
+
+    it.each(casesValidOnlyWhenDataDomainIsGiven)(
+      'should return undefined when domain = $domain but data domain is undefined',
+      ({ domain }) => {
+        expect(numericalDomainSpecifiedWithoutRequiringData(domain, true)).toBeUndefined();
+        expect(numericalDomainSpecifiedWithoutRequiringData(domain, false)).toBeUndefined();
+      },
+    );
+  });
+
+  describe.each([true, false])('parseNumericalUserDomain with allowDecimals = %s', allowDecimals => {
+    it.each([true, false])(
+      'should return undefined when user input is undefined and allowDataOverflow = %s',
+      allowDataOverflow => {
+        expect(
+          parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow, allowDecimals),
+        ).toBeUndefined();
+        expect(
+          parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow, allowDecimals),
+        ).toBeUndefined();
+      },
+    );
+
+    it.each(validCases)(
+      'should return $expected when domain = $domain and allowDataOverflow = true',
+      ({ domain, expected }) => {
+        expect(parseNumericalUserDomain(domain, undefined, true, allowDecimals)).toEqual(expected);
+      },
+    );
+
+    it.each(casesValidOnlyWhenDataDomainIsGiven)(
+      'should return $expected when domain = $domain',
+      ({ domain, expected }) => {
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true)).toEqual(expected);
+      },
+    );
+
+    it.each(casesValidOnlyWhenDataDomainIsGiven)(
+      'should return undefined when domain = $domain and data is undefined',
+      ({ domain }) => {
+        expect(parseNumericalUserDomain(domain, undefined, true, true)).toEqual(undefined);
+        expect(parseNumericalUserDomain(domain, undefined, false, true)).toEqual(undefined);
+      },
+    );
+
+    it.each(casesWithDomainSmallerThanData)(
+      'should extend the domain to $expected when domain = $domain and allowDataOverflow = false',
+      ({ domain, expected }) => {
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true)).toEqual(expected);
+      },
+    );
+
+    it.each(invalidCases)('should return undefined when domain = $domain', ({ domain }) => {
+      expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true)).toBeUndefined();
+    });
+
+    describe('allowDecimals', () => {
+      const domainSmallerThan1: NumberDomain = [0.3, 0.5];
+      const domainWithDecimalNumbers: NumberDomain = [4.1, 7.9];
+
+      it('should auto-generate domain with decimals with allowDecimals: true', () => {
+        expect(parseNumericalUserDomain(['auto', 'auto'], domainSmallerThan1, false, true)).toEqual([0.3, 0.55]);
+      });
+
+      it('should use integers with allowDecimals: false', () => {
+        expect(parseNumericalUserDomain(['auto', 'auto'], domainSmallerThan1, false, false)).toEqual([0, 5]);
+      });
+
+      it('should extend the domain a little for numbers larger than 1! This is very unexpected to me but okay', () => {
+        expect(parseNumericalUserDomain(['auto', 'auto'], domainWithDecimalNumbers, false, true)).toEqual([4, 8]);
+        expect(parseNumericalUserDomain(['auto', 'auto'], domainWithDecimalNumbers, false, false)).toEqual([4, 9]);
+      });
+
+      it('should have no affect for domain settings other than "auto"', () => {
+        expect(parseNumericalUserDomain(domainSmallerThan1, domainSmallerThan1, false, true)).toEqual(
+          domainSmallerThan1,
+        );
+        expect(parseNumericalUserDomain(domainSmallerThan1, domainSmallerThan1, false, false)).toEqual(
+          domainSmallerThan1,
+        );
+      });
+    });
   });
 });

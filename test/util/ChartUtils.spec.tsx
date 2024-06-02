@@ -223,6 +223,21 @@ describe('parseSpecifiedDomain', () => {
     expect(result).toEqual([10, 110]);
   });
 
+  it('returns the original domain with ["dataMax - 10", "dataMin + 10"], domain)', () => {
+    const result = parseSpecifiedDomain(['dataMax - 10', 'dataMin + 10'], domain);
+    expect(result).toEqual(domain);
+  });
+
+  it('returns the original domain when given ["dataMin", "dataMax"])', () => {
+    const result = parseSpecifiedDomain(['dataMin', 'dataMax'], domain);
+    expect(result).toEqual(domain);
+  });
+
+  it('also returns the original domain when given ["dataMax", "dataMin"])', () => {
+    const result = parseSpecifiedDomain(['dataMax', 'dataMin'], domain);
+    expect(result).toEqual(domain);
+  });
+
   it('works with functions ', () => {
     const result = parseSpecifiedDomain(
       [(dataMin: number) => 0 - Math.abs(dataMin), (dataMax: number) => dataMax * 2],
