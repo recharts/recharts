@@ -180,7 +180,10 @@ export const getMainColorOfGraphicItem = (item: ReactElement) => {
   const {
     type: { displayName },
   } = item as any; // TODO: check if displayName is valid.
-  const { stroke, fill } = item.props;
+  const defaultedProps = (item.type as any)?.defaultProps
+    ? { ...(item.type as any).defaultProps, ...item.props }
+    : item.props;
+  const { stroke, fill } = defaultedProps;
   let result;
 
   switch (displayName) {
@@ -996,13 +999,16 @@ export const getStackGroupsByAxisId = (
   const parentStackGroupsInitialValue: Record<AxisId, ParentStackGroup> = {};
 
   const stackGroups: Record<AxisId, ParentStackGroup> = items.reduce((result, item) => {
-    const { stackId, hide } = item.props;
+    const defaultedProps = (item.type as any)?.defaultProps
+      ? { ...(item.type as any).defaultProps, ...item.props }
+      : item.props;
+    const { stackId, hide } = defaultedProps;
 
     if (hide) {
       return result;
     }
 
-    const axisId: AxisId = item.props[numericAxisId];
+    const axisId: AxisId = defaultedProps[numericAxisId];
     const parentGroup: ParentStackGroup = result[axisId] || { hasStack: false, stackGroups: {} };
 
     if (isNumOrStr(stackId)) {
@@ -1186,7 +1192,10 @@ export const getStackedDataOfItem = <StackedData>(
   item: ReactElement,
   stackGroups: Record<StackId, GenericChildStackGroup<StackedData>>,
 ): StackedData | null => {
-  const { stackId } = item.props;
+  const defaultedProps = (item.type as any)?.defaultProps
+    ? { ...(item.type as any).defaultProps, ...item.props }
+    : item.props;
+  const { stackId } = defaultedProps;
 
   if (isNumOrStr(stackId)) {
     const group = stackGroups[stackId];
@@ -1338,7 +1347,10 @@ export const parseDomainOfCategoryAxis = <T>(
 };
 
 export const getTooltipItem = (graphicalItem: ReactElement, payload: any) => {
-  const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
+  const defaultedProps = (graphicalItem.type as any).defaultProps
+    ? { ...(graphicalItem.type as any).defaultProps, ...graphicalItem.props }
+    : graphicalItem.props;
+  const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = defaultedProps;
 
   return {
     ...filterProps(graphicalItem, false),
