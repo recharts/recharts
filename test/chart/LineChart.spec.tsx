@@ -7,20 +7,14 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
-
-const data = [
-  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
-  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-];
+import { PageData } from '../_data';
+import { expectXAxisTicks } from '../helper/expectAxisTicks';
+import { generateMockData } from '../helper/generateMockData';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -53,7 +47,7 @@ describe('<LineChart />', () => {
 
   test('Renders the same 1 line but smaller when LineChart has <XAxis /> and <YAxis />', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis />
         <YAxis type="category" />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -89,7 +83,7 @@ describe('<LineChart />', () => {
 
   test('Sets title and description correctly', () => {
     const { container } = render(
-      <LineChart title="Chart title" desc="Chart description" width={400} height={400} data={data}>
+      <LineChart title="Chart title" desc="Chart description" width={400} height={400} data={PageData}>
         <Line type="monotone" dataKey="uv" />
       </LineChart>,
     );
@@ -171,7 +165,7 @@ describe('<LineChart />', () => {
 
     it.each(allCurves)('should render d=$expectedD when curve type=$curve', ({ curve, expectedD }) => {
       const { container } = render(
-        <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+        <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
           <XAxis />
           <YAxis type="category" />
           <Line type={curve} dataKey="uv" stroke="#ff7300" />
@@ -185,7 +179,7 @@ describe('<LineChart />', () => {
 
   test('Render smooth curve when type of Line is monotone', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis />
         <YAxis type="category" />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -254,7 +248,7 @@ describe('<LineChart />', () => {
     );
 
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
       </LineChart>,
@@ -271,7 +265,12 @@ describe('<LineChart />', () => {
 
   test('Renders 1 dot no line when the length of data is 1', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data.slice(0, 1)} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart
+        width={400}
+        height={400}
+        data={PageData.slice(0, 1)}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      >
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -281,7 +280,7 @@ describe('<LineChart />', () => {
 
   test('Renders 6 labels when label = true', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -332,7 +331,7 @@ describe('<LineChart />', () => {
     };
 
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label={renderLabel} dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -351,7 +350,7 @@ describe('<LineChart />', () => {
       );
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label={<CustomizedLabel />} dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -362,7 +361,7 @@ describe('<LineChart />', () => {
 
   test('Renders 6 dots when dot = true', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -376,7 +375,7 @@ describe('<LineChart />', () => {
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot={renderDot} type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -390,7 +389,7 @@ describe('<LineChart />', () => {
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot={<Dot />} type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -402,7 +401,7 @@ describe('<LineChart />', () => {
     const onMouseDown = vi.fn();
     const onMouseUp = vi.fn();
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line
           onClick={onClick}
           onMouseDown={onMouseDown}
@@ -500,7 +499,7 @@ describe('<LineChart />', () => {
     const height = 400;
     const width = 400;
     const { container } = render(
-      <LineChart width={width} height={height} data={data} margin={margin} throttleDelay={0}>
+      <LineChart width={width} height={height} data={PageData} margin={margin} throttleDelay={0}>
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
@@ -508,7 +507,7 @@ describe('<LineChart />', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     // simulate entering just past Page A to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
@@ -534,7 +533,7 @@ describe('<LineChart />', () => {
 
     // simulate moving 10 pixels past the PageC Dot
     const allDots = container.querySelectorAll('.recharts-line-dot');
-    expect(allDots).toHaveLength(data.length);
+    expect(allDots).toHaveLength(PageData.length);
 
     const dotC = allDots[2];
     assertNotNull(dotC);
@@ -571,7 +570,7 @@ describe('<LineChart />', () => {
     const height = 400;
     const width = 400;
     const { container } = render(
-      <LineChart width={width} height={height} data={data} margin={margin}>
+      <LineChart width={width} height={height} data={PageData} margin={margin}>
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
@@ -617,6 +616,126 @@ describe('<LineChart />', () => {
   });
 });
 
+describe('<LineChart /> and various data sources', () => {
+  const randData = generateMockData(10, 38405);
+  const data1 = randData.slice(0, 5);
+  const data2 = randData.slice(5);
+
+  function expectLabels(container: HTMLElement, expectedTextContents: ReadonlyArray<string>): void {
+    const labels = container.querySelectorAll('.recharts-label');
+    const actualTextContents = Array.from(labels).map(el => el.textContent);
+    expect(actualTextContents).toEqual(expectedTextContents);
+  }
+
+  it('should render chart with one line and data on root chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data1}>
+        <Line isAnimationActive={false} label dataKey="x" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117']);
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+
+  it('should render chart with three lines and data on root chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data1}>
+        <Line isAnimationActive={false} label dataKey="x" />
+        <Line isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+
+  it('should render the chart when the same data are defined on Line elements and not on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    // sic! the XAxis renders all ticks twice!
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+    ]);
+  });
+
+  it('should render the chart when the same data are defined on Line elements and not on the chart - with a custom domain perhaps?', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" domain={['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']} />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    // sic! the XAxis renders all ticks twice -anyway- and ignores my attempt at setting a domain
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+    ]);
+  });
+
+  it('should render the same chart when the different data are defined on Line elements and not on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data2} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
+    // okay this is reasonable
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 5',
+      'Iter: 6',
+      'Iter: 7',
+      'Iter: 8',
+      'Iter: 9',
+    ]);
+  });
+
+  it('should render chart where some data are defined on the line and some on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data2}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
+    // this is bad - XAxis ignores ticks from the Chart root
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+});
+
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
@@ -632,7 +751,7 @@ describe('<LineChart /> - Pure Rendering', () => {
   });
 
   const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
       <Tooltip />
       <XAxis />
@@ -691,7 +810,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   });
 
   const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
       <Tooltip />
       <XAxis />
@@ -762,7 +881,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
   test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
     const { container, getByText } = render(
       <div>
-        <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
+        <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test">
           <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
@@ -776,7 +895,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
@@ -822,7 +941,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   test("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
     const chart1 = (
-      <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod="value">
+      <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test" syncMethod="value">
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <XAxis dataKey="name" />
@@ -843,7 +962,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
@@ -889,7 +1008,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         <LineChart
           width={width}
           height={height}
-          data={data}
+          data={PageData}
           margin={margin}
           syncId="test"
           syncMethod={syncMethodFunction}
@@ -921,7 +1040,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       );
 
       const chartWidth = width - margin.left - margin.right;
-      const dotSpacing = chartWidth / (data.length - 1);
+      const dotSpacing = chartWidth / (PageData.length - 1);
 
       // simulate entering just past Page A of Chart1 to test snapping of the cursor line
       expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
