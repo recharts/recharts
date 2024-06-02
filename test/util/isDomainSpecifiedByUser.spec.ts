@@ -123,7 +123,7 @@ describe('parsing axis domain provided by user', () => {
     // no percents in dataMin or dataMax, possible feature request perhaps
     { domain: ['dataMin - 10%', 'dataMax + 5%'] },
     // toFixed returns a string and strings are not allowed
-    { domain: [(min: number) => min.toFixed(3), (max: number) => max / 2], expected: [-117, 119] },
+    { domain: [(min: number) => min.toFixed(3), (max: number) => max.toFixed(3)] },
     /*
      * This is interesting - Recharts allows dataMin to get smaller and dataMax to get bigger,
      * but doesn't allow dataMin to get bigger and dataMax to get smaller!
