@@ -145,6 +145,7 @@ describe('parsing axis domain provided by user', () => {
     { domain: ['auto', 'auto'], expected: [-100, 150] },
     { domain: ['dataMin - 11.2', 'dataMax + 7.3'], expected: [-111.2, 107.3] },
     { domain: d => [Math.min(...d), 999], expected: [-100, 999] },
+    { domain: d => [d[0] - 21, d[1] + 23], expected: [-121, 123] },
     { domain: [(min: number) => min.valueOf() - 17, (max: number) => max / 2], expected: [-117, 50] },
   ];
 
