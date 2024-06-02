@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 
 import { vi } from 'vitest';
-import { Bar, BarChart, BarProps, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, BarProps, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
@@ -110,7 +110,7 @@ describe('<BarChart />', () => {
     { name: 'digital', firstBarIndex: 3, secondBarIndex: 7 },
   ];
 
-  test('Renders 8 bars in a stacked BarChart, Bars of the same category are offset from each other', () => {
+  test('Renders 8 bars in a stacked BarChart, Bars of the same category have the same name and same x pos', () => {
     const { container } = render(
       <BarChart width={100} height={50} data={data}>
         <YAxis />
@@ -123,15 +123,40 @@ describe('<BarChart />', () => {
     expect(rects).toHaveLength(8);
 
     matchingStackConfig.forEach(({ name, firstBarIndex, secondBarIndex }) => {
-      // bar one and bar two should be stacked
-      const foodBarOne = rects[firstBarIndex];
-      const foodBarTwo = rects[secondBarIndex];
-      expect(foodBarOne.getAttribute('name')).toEqual(name);
-      expect(foodBarTwo.getAttribute('name')).toEqual(name);
+      // bar one and bar two should be the same category
+      const barOne = rects[firstBarIndex];
+      const barTwo = rects[secondBarIndex];
+      expect(barOne.getAttribute('name')).toEqual(name);
+      expect(barTwo.getAttribute('name')).toEqual(name);
 
-      // these bars should not start at the same y
-      expect(foodBarOne.getAttribute('y')).not.toEqual(foodBarTwo.getAttribute('y'));
+      // these bars should have the same x (cannot compare y accurately as Y does not start from 0)
+      expect(barOne.getAttribute('x')).toEqual(barTwo.getAttribute('x'));
     });
+  });
+
+  test('Stacked bars are actually stacked', () => {
+    let seriesOneBarOneValue, seriesTwoBarOneValue;
+    const Spy = (props: { formattedGraphicalItems?: any }) => {
+      const { formattedGraphicalItems } = props;
+      const [seriesOneBarOne, seriesTwoBarOne] = formattedGraphicalItems;
+      // eslint-disable-next-line prefer-destructuring
+      seriesOneBarOneValue = seriesOneBarOne.props.data[0].value;
+      // eslint-disable-next-line prefer-destructuring
+      seriesTwoBarOneValue = seriesTwoBarOne.props.data[0].value;
+      return <></>;
+    };
+    render(
+      <BarChart width={100} height={50} data={data}>
+        <YAxis />
+        <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
+        <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} />
+        <Customized component={Spy} />
+      </BarChart>,
+    );
+
+    // stacked bars should have values which are arrays, if they are not then they are not stacked
+    expect(seriesOneBarOneValue).toEqual([0, 400]);
+    expect(seriesTwoBarOneValue).toEqual([400, 2800]);
   });
 
   test('Renders 4 bars in a stacked BarChart which only have one Bar', () => {
@@ -364,7 +389,7 @@ describe('<BarChart />', () => {
     // expect nothing to render because height and width are 0
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
 
-    const clipPath = container.querySelector('#recharts53-clip');
+    const clipPath = container.querySelector('#recharts56-clip');
     assertNotNull(clipPath);
     expect(clipPath.children[0]).not.toBeNull();
 
