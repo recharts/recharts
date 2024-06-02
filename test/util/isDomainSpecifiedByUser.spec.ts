@@ -240,6 +240,8 @@ describe('parsing axis domain provided by user', () => {
     it.each(invalidCases)('should return undefined when domain = $domain', ({ domain }) => {
       expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true)).toBeUndefined();
       expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, undefined, true, true)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, undefined, false, true)).toBeUndefined();
     });
 
     describe('allowDecimals', () => {
