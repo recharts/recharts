@@ -512,10 +512,6 @@ describe('<LineChart />', () => {
     // simulate entering just past Page A to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
     const tooltipTrigger: Node = container.querySelector(lineChartMouseHoverTooltipSelector);
-    console.log('first move', {
-      clientX: margin.left + 0.1 * dotSpacing,
-      clientY: height / 2,
-    });
     fireEvent.mouseMove(tooltipTrigger, {
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
@@ -674,6 +670,18 @@ describe('<LineChart /> and various data sources', () => {
     ]);
   });
 
+  it('should render the chart when the same data are defined on Line elements and not on the chart with allowDuplicateCategory', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" allowDuplicatedCategory={false} />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+
   it('should render the chart when the same data are defined on Line elements and not on the chart - with a custom domain perhaps?', () => {
     const { container } = render(
       <LineChart width={400} height={400}>
@@ -696,6 +704,25 @@ describe('<LineChart /> and various data sources', () => {
       'Iter: 3',
       'Iter: 4',
     ]);
+  });
+
+  it(`should render the chart when the same data are defined on Line elements and not on the chart
+            - with a custom domain and allowDuplicateCategory=false`, () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis
+          dataKey="label"
+          // here is a duplicate, on purpose
+          domain={['Iter: 0', 'Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']}
+          allowDuplicatedCategory={false}
+        />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    // so XAxis will filter the provided domain for duplicates, too
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
   });
 
   it('should render the same chart when the different data are defined on Line elements and not on the chart', () => {
