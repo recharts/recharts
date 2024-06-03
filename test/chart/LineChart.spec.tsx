@@ -1,44 +1,89 @@
 import React, { FC } from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import { vi, describe, test, MockInstance } from 'vitest';
-import { LineChart, Line, XAxis, YAxis, Tooltip, Brush, CartesianAxis, Legend } from '../../src';
+import { describe, MockInstance, test, vi } from 'vitest';
+import { Brush, CartesianAxis, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
-
-const data = [
-  { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
-  { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
-  { name: 'Page D', uv: 200, pv: 9800, amt: 2400 },
-  { name: 'Page E', uv: 278, pv: 3908, amt: 2400 },
-  { name: 'Page F', uv: 189, pv: 4800, amt: 2400 },
-];
+import { CurveType } from '../../src/shape/Curve';
+import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { PageData } from '../_data';
+import { expectXAxisTicks } from '../helper/expectAxisTicks';
+import { generateMockData } from '../helper/generateMockData';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(container.querySelectorAll('.recharts-line .recharts-line-curve')).toHaveLength(1);
+    const allLines = container.querySelectorAll('.recharts-line .recharts-line-curve');
+    expect(allLines).toHaveLength(1);
+    const line = allLines[0];
+    assertNotNull(line);
+    expect(line.getAttributeNames()).toEqual([
+      'stroke',
+      'stroke-width',
+      'fill',
+      'width',
+      'height',
+      'class',
+      'stroke-dasharray',
+      'd',
+    ]);
+    expect(line).toHaveAttribute('stroke', '#ff7300');
+    expect(line).toHaveAttribute('stroke-width', '1');
+    expect(line).toHaveAttribute('fill', 'none');
+    expect(line).toHaveAttribute('width', '360');
+    expect(line).toHaveAttribute('height', '360');
+    expect(line).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
+    expect(line).toHaveAttribute('stroke-dasharray', '0px 0px');
+    expect(line).toHaveAttribute(
+      'd',
+      'M20,20C44,65,68,110,92,110C116,110,140,110,164,110C188,110,212,200,236,200C260,200,284,129.8,308,129.8C332,129.8,356,169.85,380,209.9',
+    );
   });
 
-  test('Render 1 line when LineChart has <XAxis /> and <YAxis />', () => {
+  test('Renders the same 1 line but smaller when LineChart has <XAxis /> and <YAxis />', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis />
         <YAxis type="category" />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(container.querySelectorAll('.recharts-line .recharts-line-curve')).toHaveLength(1);
+
+    const allLines = container.querySelectorAll('.recharts-line .recharts-line-curve');
+    expect(allLines).toHaveLength(1);
+    const line = allLines[0];
+    assertNotNull(line);
+    expect(line.getAttributeNames()).toEqual([
+      'stroke',
+      'stroke-width',
+      'fill',
+      'width',
+      'height',
+      'class',
+      'stroke-dasharray',
+      'd',
+    ]);
+    expect(line).toHaveAttribute('stroke', '#ff7300');
+    expect(line).toHaveAttribute('stroke-width', '1');
+    expect(line).toHaveAttribute('fill', 'none');
+    expect(line).toHaveAttribute('width', '300');
+    expect(line).toHaveAttribute('height', '330');
+    expect(line).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
+    expect(line).toHaveAttribute('stroke-dasharray', '0px 0px');
+    expect(line).toHaveAttribute(
+      'd',
+      'M80,350C100,308.75,120,267.5,140,267.5C160,267.5,180,267.5,200,267.5C220,267.5,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,380,20',
+    );
   });
 
   test('Sets title and description correctly', () => {
     const { container } = render(
-      <LineChart title="Chart title" desc="Chart description" width={400} height={400} data={data}>
+      <LineChart title="Chart title" desc="Chart description" width={400} height={400} data={PageData}>
         <Line type="monotone" dataKey="uv" />
       </LineChart>,
     );
@@ -46,9 +91,95 @@ describe('<LineChart />', () => {
     expect(container.querySelector('desc')).toHaveTextContent('Chart description');
   });
 
+  describe('curve type', () => {
+    type CurveTestCase = {
+      curve: CurveType;
+      expectedD: string;
+    };
+    const allCurves: ReadonlyArray<CurveTestCase> = [
+      {
+        curve: 'basis',
+        expectedD:
+          'M80,350L90,336.25C100,322.5,120,295,140,281.25C160,267.5,180,267.5,200,253.75C220,240,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,370,33.75L380,20',
+      },
+      {
+        curve: 'basisClosed',
+        expectedD:
+          'M140,281.25C160,267.5,180,267.5,200,253.75C220,240,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,320,88.75C280,130,180,240,140,281.25C100,322.5,120,295,140,281.25',
+      },
+      {
+        curve: 'basisOpen',
+        expectedD: 'M140,281.25C160,267.5,180,267.5,200,253.75C220,240,240,212.5,260,185C280,157.5,300,130,320,102.5',
+      },
+      {
+        curve: 'bumpX',
+        expectedD:
+          'M80,350C110,350,110,267.5,140,267.5C170,267.5,170,267.5,200,267.5C230,267.5,230,185,260,185C290,185,290,102.5,320,102.5C350,102.5,350,20,380,20',
+      },
+      {
+        curve: 'bumpY',
+        expectedD:
+          'M80,350C80,308.75,140,308.75,140,267.5C140,267.5,200,267.5,200,267.5C200,226.25,260,226.25,260,185C260,143.75,320,143.75,320,102.5C320,61.25,380,61.25,380,20',
+      },
+      {
+        curve: 'bump',
+        expectedD:
+          'M80,350C110,350,110,267.5,140,267.5C170,267.5,170,267.5,200,267.5C230,267.5,230,185,260,185C290,185,290,102.5,320,102.5C350,102.5,350,20,380,20',
+      },
+      { curve: 'linear', expectedD: 'M80,350L140,267.5L200,267.5L260,185L320,102.5L380,20' },
+      { curve: 'linearClosed', expectedD: 'M80,350L140,267.5L200,267.5L260,185L320,102.5L380,20Z' },
+      {
+        curve: 'natural',
+        expectedD:
+          'M80,350C100,313.158,120,276.316,140,267.5C160,258.684,180,277.895,200,267.5C220,257.105,240,217.105,260,185C280,152.895,300,128.684,320,102.5C340,76.316,360,48.158,380,20',
+      },
+      {
+        curve: 'monotoneX',
+        expectedD:
+          'M80,350C100,308.75,120,267.5,140,267.5C160,267.5,180,267.5,200,267.5C220,267.5,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,380,20',
+      },
+      {
+        curve: 'monotoneY',
+        expectedD:
+          'M80,350C90,322.5,100,295,140,267.5C140,267.5,200,267.5,200,267.5C240,240,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,380,20',
+      },
+      {
+        curve: 'monotone',
+        expectedD:
+          'M80,350C100,308.75,120,267.5,140,267.5C160,267.5,180,267.5,200,267.5C220,267.5,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,380,20',
+      },
+      {
+        curve: 'step',
+        expectedD:
+          'M80,350L110,350L110,267.5L170,267.5L170,267.5L230,267.5L230,185L290,185L290,102.5L350,102.5L350,20L380,20',
+      },
+      {
+        curve: 'stepBefore',
+        expectedD: 'M80,350L80,267.5L140,267.5L140,267.5L200,267.5L200,185L260,185L260,102.5L320,102.5L320,20L380,20',
+      },
+      {
+        curve: 'stepAfter',
+        expectedD: 'M80,350L140,350L140,267.5L200,267.5L200,267.5L260,267.5L260,185L320,185L320,102.5L380,102.5L380,20',
+      },
+    ];
+
+    it.each(allCurves)('should render d=$expectedD when curve type=$curve', ({ curve, expectedD }) => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+          <XAxis />
+          <YAxis type="category" />
+          <Line type={curve} dataKey="uv" stroke="#ff7300" />
+        </LineChart>,
+      );
+      const curves = container.querySelectorAll('.recharts-line .recharts-line-curve');
+      expect(curves).toHaveLength(1);
+      expect(curves[0]).toHaveAttribute('d', expectedD);
+    });
+  });
+
   test('Render smooth curve when type of Line is monotone', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis />
         <YAxis type="category" />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
@@ -80,15 +211,12 @@ describe('<LineChart />', () => {
     const curves = container.querySelectorAll('.recharts-line .recharts-line-curve');
     expect(curves).toHaveLength(1);
     const path = curves[0].getAttribute('d');
-
-    if (!path) {
-      throw new Error('Path is null');
-    }
+    assertNotNull(path);
 
     expect(path.length - path.split('M').join('').length).toEqual(2);
   });
 
-  test('Render one paths when connectNulls is true', () => {
+  test('Render one path when connectNulls is true', () => {
     const breakData = [
       { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
       { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },
@@ -109,9 +237,7 @@ describe('<LineChart />', () => {
     expect(curves.length).toEqual(1);
     const path = curves[0].getAttribute('d');
 
-    if (!path) {
-      throw new Error('Path is null');
-    }
+    assertNotNull(path);
 
     expect(path.length - path.split('M').join('').length).toEqual(1);
   });
@@ -122,7 +248,7 @@ describe('<LineChart />', () => {
     );
 
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line activeDot={<ActiveDot />} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
       </LineChart>,
@@ -130,26 +256,21 @@ describe('<LineChart />', () => {
 
     const chart = container.querySelector('.recharts-wrapper');
     assertNotNull(chart);
+    expect(container.querySelectorAll('.customized-active-dot')).toHaveLength(0);
 
     fireEvent.mouseOver(chart, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
 
-    const dot = container.querySelectorAll('.customized-active-dot');
-    expect(dot).toHaveLength(1);
-  });
-
-  test('Render 1 line in simple LineChart', () => {
-    const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <Line strokeDasharray="5 5" type="monotone" dataKey="uv" stroke="#ff7300" />
-      </LineChart>,
-    );
-    const curves = container.querySelectorAll('.recharts-line .recharts-line-curve');
-    expect(curves).toHaveLength(1);
+    expect(container.querySelectorAll('.customized-active-dot')).toHaveLength(1);
   });
 
   test('Renders 1 dot no line when the length of data is 1', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data.slice(0, 1)} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart
+        width={400}
+        height={400}
+        data={PageData.slice(0, 1)}
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      >
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -157,16 +278,49 @@ describe('<LineChart />', () => {
     expect(container.querySelectorAll('.recharts-line .recharts-line-dot')).toHaveLength(1);
   });
 
-  test('Renders 6 labels when label is setted to be true', () => {
+  test('Renders 6 labels when label = true', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(6);
+    const labels = container.querySelectorAll('.recharts-label');
+    expect(labels).toHaveLength(6);
+
+    labels.forEach(l => {
+      expect(l.getAttributeNames()).toEqual(['offset', 'x', 'y', 'class', 'text-anchor', 'fill']);
+      expect(l).toHaveAttribute('offset', '5');
+      expect(l).toHaveAttribute('class', 'recharts-text recharts-label');
+      expect(l).toHaveAttribute('text-anchor', 'middle');
+      expect(l).toHaveAttribute('fill', '#808080');
+    });
+
+    expect(labels[0]).toHaveAttribute('x', '20');
+    expect(labels[0]).toHaveAttribute('y', '20');
+    expect(labels[0]).toHaveTextContent('400');
+
+    expect(labels[1]).toHaveAttribute('x', '92');
+    expect(labels[1]).toHaveAttribute('y', '110');
+    expect(labels[1]).toHaveTextContent('300');
+
+    expect(labels[2]).toHaveAttribute('x', '164');
+    expect(labels[2]).toHaveAttribute('y', '110');
+    expect(labels[2]).toHaveTextContent('300');
+
+    expect(labels[3]).toHaveAttribute('x', '236');
+    expect(labels[3]).toHaveAttribute('y', '200');
+    expect(labels[3]).toHaveTextContent('200');
+
+    expect(labels[4]).toHaveAttribute('x', '308');
+    expect(labels[4]).toHaveAttribute('y', '129.8');
+    expect(labels[4]).toHaveTextContent('278');
+
+    expect(labels[5]).toHaveAttribute('x', '380');
+    expect(labels[5]).toHaveAttribute('y', '209.9');
+    expect(labels[5]).toHaveTextContent('189');
   });
 
-  test('Renders 6 labels when label is setted to be a function', () => {
+  test('Renders 6 labels when label is a function', () => {
     const renderLabel = (props: { x: number; y: number; key: string }) => {
       const { x, y, key } = props;
       return (
@@ -177,7 +331,7 @@ describe('<LineChart />', () => {
     };
 
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label={renderLabel} dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -186,7 +340,7 @@ describe('<LineChart />', () => {
     expect(labels).toHaveLength(6);
   });
 
-  test('Renders 6 labels when label is setted to be a react element', () => {
+  test('Renders 6 labels when label is a react element', () => {
     const CustomizedLabel = (props: { x?: number; y?: number; key?: string }) => {
       const { x, y, key } = props;
       return (
@@ -196,7 +350,7 @@ describe('<LineChart />', () => {
       );
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} label={<CustomizedLabel />} dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -205,37 +359,37 @@ describe('<LineChart />', () => {
     expect(labels).toHaveLength(6);
   });
 
-  test('Renders 6 dots when dot is setted to be true', () => {
+  test('Renders 6 dots when dot = true', () => {
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
     expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(6);
   });
 
-  test('Renders 6 dots when dot is setted to be a function', () => {
+  test('Renders 6 dots when dot is a function', () => {
     const renderDot = (props: any) => {
       const { cx, cy, key } = props;
 
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot={renderDot} type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
     expect(container.querySelectorAll('.customized-dot')).toHaveLength(6);
   });
 
-  test('Renders 6 dots when dot is setted to be a react element', () => {
+  test('Renders 6 dots when dot is a react element', () => {
     const Dot = (props: { cx?: number; cy?: number; key?: string }) => {
       const { cx, cy, key } = props;
 
       return <circle className="customized-dot" key={key} cx={cx} cy={cy} r={10} />;
     };
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line isAnimationActive={false} dot={<Dot />} type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -247,7 +401,7 @@ describe('<LineChart />', () => {
     const onMouseDown = vi.fn();
     const onMouseUp = vi.fn();
     const { container } = render(
-      <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+      <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <Line
           onClick={onClick}
           onMouseDown={onMouseDown}
@@ -260,28 +414,92 @@ describe('<LineChart />', () => {
     );
 
     const curve = container.querySelector('.recharts-line-curve');
-    if (!curve) {
-      throw new Error('Curve not found');
-    }
-    fireEvent.click(curve);
-    fireEvent.mouseDown(curve);
-    fireEvent.mouseUp(curve);
+    assertNotNull(curve);
+    expect(onMouseDown).not.toHaveBeenCalled();
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onMouseUp).not.toHaveBeenCalled();
 
-    expect(onClick).toHaveBeenCalled();
-    expect(onMouseDown).toHaveBeenCalled();
-    // TODO: figure out why onMouseUp is not fiering+
-    // expect(onMouseUp).tohaveBeenCalled();
-    // expect(propsOfCallback).to.include.all.keys(['className', 'points', 'connectNulls', 'type']);
-    // expect(eventOfCallback).to.include.all.keys(['currentTarget', 'target']);
+    fireEvent.mouseDown(curve, { clientX: 13, clientY: 17 });
+    expect(onMouseDown).toHaveBeenCalledWith(
+      expect.objectContaining({
+        className: 'recharts-line-curve',
+        clipPath: null,
+        connectNulls: false,
+        fill: 'none',
+        height: 360,
+        layout: 'horizontal',
+        onClick,
+        onMouseDown,
+        onMouseUp,
+        pathRef: expect.any(Function),
+        points: expect.any(Array),
+        stroke: '#ff7300',
+        strokeDasharray: '0px 0px',
+        strokeWidth: 1,
+        type: 'monotone',
+        width: 360,
+      }),
+      expect.objectContaining({ clientX: 13, clientY: 17, type: 'mousedown' }),
+    );
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onMouseUp).not.toHaveBeenCalled();
+
+    fireEvent.mouseUp(curve, { clientX: 29, clientY: 37 });
+
+    expect(onMouseUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        className: 'recharts-line-curve',
+        clipPath: null,
+        connectNulls: false,
+        fill: 'none',
+        height: 360,
+        layout: 'horizontal',
+        onClick,
+        onMouseDown,
+        onMouseUp,
+        pathRef: expect.any(Function),
+        points: expect.any(Array),
+        stroke: '#ff7300',
+        strokeDasharray: '0px 0px',
+        strokeWidth: 1,
+        type: 'monotone',
+        width: 360,
+      }),
+      expect.objectContaining({ clientX: 29, clientY: 37, type: 'mouseup' }),
+    );
+    expect(onClick).not.toHaveBeenCalled();
+
+    fireEvent.click(curve, { clientX: 19, clientY: 23 });
+
+    expect(onClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        className: 'recharts-line-curve',
+        clipPath: null,
+        connectNulls: false,
+        fill: 'none',
+        height: 360,
+        layout: 'horizontal',
+        onClick,
+        onMouseDown,
+        onMouseUp,
+        pathRef: expect.any(Function),
+        points: expect.any(Array),
+        stroke: '#ff7300',
+        strokeDasharray: '0px 0px',
+        strokeWidth: 1,
+        type: 'monotone',
+        width: 360,
+      }),
+      expect.objectContaining({ clientX: 19, clientY: 23, type: 'click' }),
+    );
   });
 
-  /*
   test('should show tooltip cursor on MouseEnter and MouseMove and hide on MouseLeave', () => {
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const height = 400;
     const width = 400;
     const { container } = render(
-      <LineChart width={width} height={height} data={data} margin={margin}>
+      <LineChart width={width} height={height} data={PageData} margin={margin} throttleDelay={0}>
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
@@ -289,41 +507,70 @@ describe('<LineChart />', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     // simulate entering just past Page A to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
-    fireEvent.mouseMove(container, { clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
+    const tooltipTrigger: Node = container.querySelector(lineChartMouseHoverTooltipSelector);
+    console.log('first move', {
+      clientX: margin.left + 0.1 * dotSpacing,
+      clientY: height / 2,
+    });
+    fireEvent.mouseMove(tooltipTrigger, {
+      clientX: margin.left + 0.1 * dotSpacing,
+      clientY: height / 2,
+    });
     // fireEvent.mouseEnter(container, { clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
 
-    const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
-    expect(tooltipCursors).toHaveLength(1);
+    const tooltipCursors1 = container.querySelectorAll('.recharts-tooltip-cursor');
+    expect(tooltipCursors1).toHaveLength(1);
 
     // make sure tooltip is in the right spot.
-    // const chartBottom = height - margin.top - 2 * margin.bottom;
-    // let expectedX = margin.left;
-    // expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
+    const chartBottom = height - margin.top - 2 * margin.bottom;
+    const expectedX1 = margin.left;
+    expect(tooltipCursors1[0]).toHaveAttribute('d', `M${expectedX1},${margin.top}L${expectedX1},${chartBottom}`);
+    expect(tooltipCursors1[0]).toHaveAttribute('d', 'M20,20L20,340');
 
-    // // simulate moving 10 pixels past the PageC Dot
-    // expectedX = margin.left + dotSpacing * 2;
-    // wrapper.simulate('mouseMove', { pageX: expectedX + 0.1 * dotSpacing, pageY: height / 2 });
+    // simulate moving 10 pixels past the PageC Dot
+    const allDots = container.querySelectorAll('.recharts-line-dot');
+    expect(allDots).toHaveLength(PageData.length);
 
-    // tooltipCursors = wrapper.find('.recharts-tooltip-cursor').hostNodes();
-    // expect(tooltipCursors.length).to.equal(1);
+    const dotC = allDots[2];
+    assertNotNull(dotC);
+    expect(dotC.getAttributeNames()).toEqual([
+      'r',
+      'stroke',
+      'stroke-width',
+      'fill',
+      'width',
+      'height',
+      'cx',
+      'cy',
+      'class',
+    ]);
+    expect(dotC).toHaveAttribute('cx', '164');
+    expect(dotC).toHaveAttribute('width', '360');
 
-    // expect(tooltipCursors.at(0).props().d).to.equal(`M${expectedX},${margin.top}L${expectedX},${chartBottom}`);
+    const expectedX2 = margin.left + dotSpacing * 2;
+    expect(expectedX2).toEqual(164);
+    fireEvent.mouseMove(tooltipTrigger, { clientX: expectedX2 + 0.1 * dotSpacing, clientY: height / 2 });
 
-    // // simulate leaving the area
-    // wrapper.simulate('mouseLeave');
-    // expect(wrapper.find('.recharts-tooltip-cursor').hostNodes.length).to.equal(0);
-  }); */
+    const tooltipCursors2 = container.querySelectorAll('.recharts-tooltip-cursor');
+    expect(tooltipCursors2).toHaveLength(1);
+
+    expect(tooltipCursors2[0]).toHaveAttribute('d', `M${expectedX2},${margin.top}L${expectedX2},${chartBottom}`);
+
+    // simulate leaving the area
+    fireEvent.mouseLeave(tooltipTrigger);
+    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
+  });
 
   test('Should update the line chart when the brush changes', () => {
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
     const height = 400;
     const width = 400;
     const { container } = render(
-      <LineChart width={width} height={height} data={data} margin={margin}>
+      <LineChart width={width} height={height} data={PageData} margin={margin}>
         <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <Brush />
@@ -369,6 +616,126 @@ describe('<LineChart />', () => {
   });
 });
 
+describe('<LineChart /> and various data sources', () => {
+  const randData = generateMockData(10, 38405);
+  const data1 = randData.slice(0, 5);
+  const data2 = randData.slice(5);
+
+  function expectLabels(container: HTMLElement, expectedTextContents: ReadonlyArray<string>): void {
+    const labels = container.querySelectorAll('.recharts-label');
+    const actualTextContents = Array.from(labels).map(el => el.textContent);
+    expect(actualTextContents).toEqual(expectedTextContents);
+  }
+
+  it('should render chart with one line and data on root chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data1}>
+        <Line isAnimationActive={false} label dataKey="x" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117']);
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+
+  it('should render chart with three lines and data on root chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data1}>
+        <Line isAnimationActive={false} label dataKey="x" />
+        <Line isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+
+  it('should render the chart when the same data are defined on Line elements and not on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    // sic! the XAxis renders all ticks twice!
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+    ]);
+  });
+
+  it('should render the chart when the same data are defined on Line elements and not on the chart - with a custom domain perhaps?', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data1} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" domain={['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']} />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
+    // sic! the XAxis renders all ticks twice -anyway- and ignores my attempt at setting a domain
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+    ]);
+  });
+
+  it('should render the same chart when the different data are defined on Line elements and not on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line data={data2} isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
+    // okay this is reasonable
+    expectXAxisTicks(container, [
+      'Iter: 0',
+      'Iter: 1',
+      'Iter: 2',
+      'Iter: 3',
+      'Iter: 4',
+      'Iter: 5',
+      'Iter: 6',
+      'Iter: 7',
+      'Iter: 8',
+      'Iter: 9',
+    ]);
+  });
+
+  it('should render chart where some data are defined on the line and some on the chart', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={data2}>
+        <Line data={data1} isAnimationActive={false} label dataKey="x" />
+        <Line isAnimationActive={false} label dataKey="y" />
+        <XAxis dataKey="label" />
+      </LineChart>,
+    );
+    expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
+    // this is bad - XAxis ignores ticks from the Chart root
+    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+  });
+});
+
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
@@ -384,7 +751,7 @@ describe('<LineChart /> - Pure Rendering', () => {
   });
 
   const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
       <Tooltip />
       <XAxis />
@@ -443,7 +810,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
   });
 
   const chart = (
-    <LineChart width={400} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+    <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
       <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
       <Tooltip />
       <XAxis />
@@ -514,7 +881,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
   test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
     const { container, getByText } = render(
       <div>
-        <LineChart width={width} height={height} data={data} margin={margin} syncId="test">
+        <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test">
           <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
@@ -528,7 +895,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
@@ -574,7 +941,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   test("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
     const chart1 = (
-      <LineChart width={width} height={height} data={data} margin={margin} syncId="test" syncMethod="value">
+      <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test" syncMethod="value">
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
         <Tooltip />
         <XAxis dataKey="name" />
@@ -595,7 +962,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     );
 
     const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (data.length - 1);
+    const dotSpacing = chartWidth / (PageData.length - 1);
 
     // simulate entering just past Page A of Chart1 to test snapping of the cursor line
     expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
@@ -641,7 +1008,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
         <LineChart
           width={width}
           height={height}
-          data={data}
+          data={PageData}
           margin={margin}
           syncId="test"
           syncMethod={syncMethodFunction}
@@ -673,7 +1040,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       );
 
       const chartWidth = width - margin.left - margin.right;
-      const dotSpacing = chartWidth / (data.length - 1);
+      const dotSpacing = chartWidth / (PageData.length - 1);
 
       // simulate entering just past Page A of Chart1 to test snapping of the cursor line
       expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
