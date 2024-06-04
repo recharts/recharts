@@ -60,6 +60,7 @@
   "types/state/layoutSlice.d.ts",
   "types/state/hooks.d.ts",
   "types/state/graphicalItemsSlice.d.ts",
+  "types/state/dataSelectors.d.ts",
   "types/state/chartDataSlice.d.ts",
   "types/state/axisSlice.d.ts",
   "types/state/axisSelectors.d.ts",
