@@ -643,6 +643,35 @@ describe('<XAxis />', () => {
         },
       );
     });
+
+    describe('interval', () => {
+      it('should display all ticks with interval = 0', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={0} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+      });
+
+      it('should display every second tick with interval = 1', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={1} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '90', '180']);
+      });
+
+      it('should display every third tick with interval = 2', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '135']);
+      });
+    });
   });
 
   describe('categorical domain', () => {
@@ -752,6 +781,35 @@ describe('<XAxis />', () => {
           expectXAxisTicks(allXAxes[1], ['280', '500', '200']);
         },
       );
+    });
+
+    describe('interval', () => {
+      it('should display all ticks when interval = 0', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={0} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      });
+
+      it('should display every second tick when interval = 1', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={1} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '400', '500']);
+      });
+
+      it('should display every third tick when interval = 2', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '280']);
+      });
     });
   });
 });
