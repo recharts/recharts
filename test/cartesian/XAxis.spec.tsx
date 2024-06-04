@@ -376,9 +376,7 @@ describe('<XAxis />', () => {
     it('should start from 0 and calculate domain max by default', () => {
       const { container } = render(
         <BarChart width={300} height={300} data={data}>
-          <Bar dataKey="y" isAnimationActive={false} />
           <XAxis dataKey="x" type="number" />
-          <YAxis dataKey="y" />
         </BarChart>,
       );
       expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
@@ -397,9 +395,7 @@ describe('<XAxis />', () => {
       it('should render ticks from number, auto', () => {
         const { container } = render(
           <BarChart width={300} height={300} data={data}>
-            <Bar dataKey="y" isAnimationActive={false} />
             <XAxis dataKey="x" type="number" domain={[-55, 'auto']} allowDataOverflow={allowDataOverflow} />
-            <YAxis dataKey="y" />
           </BarChart>,
         );
         expectXAxisTicks(container, ['-60', '0', '60', '120', '180']);
@@ -596,12 +592,45 @@ describe('<XAxis />', () => {
     it('should list items as literals and do not sort', () => {
       const { container } = render(
         <BarChart width={300} height={300} data={data}>
-          <Bar dataKey="y" isAnimationActive={false} />
           <XAxis dataKey="x" type="category" />
-          <YAxis dataKey="y" />
         </BarChart>,
       );
       expectXAxisTicks(container, ['100', '120', '170', '140', '150', '110']);
+    });
+
+    it.each([undefined, true])('should allow duplicates when allowDuplicatedCategory=%s', allowDuplicatedCategory => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" allowDuplicatedCategory={allowDuplicatedCategory} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+    });
+
+    it('should remove duplicates when allowDuplicatedCategory=false', () => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" allowDuplicatedCategory={false} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+    });
+
+    const variousDomains: ReadonlyArray<{ domain: ReadonlyArray<string> | ReadonlyArray<number> | undefined }> = [
+      { domain: undefined },
+      { domain: [0, 100] },
+      { domain: ['Winter', 'Summer'] },
+      { domain: ['200', '400', '500', '200'] },
+      { domain: ['200', '260', '400', '280', '500', '200', '100', '600'] },
+    ];
+
+    it.each(variousDomains)('should ignore user provided domain $domain', ({ domain }) => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" domain={domain} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
     });
 
     describe.each([true, false, undefined])('allowDecimals=%s', () => {
