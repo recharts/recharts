@@ -671,6 +671,15 @@ describe('<XAxis />', () => {
         );
         expectXAxisTicks(container, ['0', '135']);
       });
+
+      it('should add more ticks with tickCount and then reduce them again with interval', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" tickCount={20} interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '27', '54', '81', '108', '135', '162']);
+      });
     });
   });
 
@@ -700,6 +709,15 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+    });
+
+    it.each([undefined, 0, -1, 3, 7, 100, Infinity, NaN])('should ignore tickCount = %s', tickCount => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" tickCount={tickCount} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
     });
 
     const variousDomains: ReadonlyArray<{ domain: ReadonlyArray<string> | ReadonlyArray<number> | undefined }> = [
