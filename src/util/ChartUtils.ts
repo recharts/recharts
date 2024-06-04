@@ -40,6 +40,7 @@ import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice
 import { getLegendProps } from './getLegendProps';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
+  AxisDomainType,
   AxisTick,
   AxisType,
   BaseAxisProps,
@@ -89,7 +90,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
 export function getDomainOfDataByKey<T>(
   data: Array<T>,
   key: DataKey<T>,
-  type: BaseAxisProps['type'],
+  type: AxisDomainType,
   filterNil?: boolean,
 ): NumberDomain | CategoricalDomain {
   const flattenData: unknown[] = flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
@@ -674,6 +675,9 @@ export type AxisPropsNeededForTicksGenerator = {
   isCategorical?: boolean;
   categoricalDomain?: ReadonlyArray<AxisTick>;
   type?: 'number' | 'category';
+  /**
+   * The range appears to be only used in Angle Axis - needs further investigation
+   */
   range?: Array<number>;
   tickCount?: number;
 };
@@ -1295,6 +1299,13 @@ export const getDomainOfStackGroups = (
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
+/**
+ * @deprecated instead use `parseNumericalUserDomain`
+ * @param specifiedDomain do not use
+ * @param dataDomain do not use
+ * @param allowDataOverflow do not use
+ * @returns do not use
+ */
 export const parseSpecifiedDomain = (
   specifiedDomain: /* AxisDomain */ any,
   dataDomain: any,

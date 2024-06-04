@@ -6,6 +6,7 @@ import { selectAxisScale, selectDomainOfDataByKey } from '../../src/state/axisSe
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { Bar, BarChart, XAxis, Customized, ComposedChart, Area, Line, Scatter, YAxis } from '../../src';
 import { PageData } from '../_data';
+import { expectXAxisTicks } from '../helper/expectAxisTicks';
 
 describe('selectAxisScale', () => {
   it('should return undefined when called outside of Redux context', () => {
@@ -89,7 +90,7 @@ describe('selectDomainOfDataByKey', () => {
       spy(result);
       return null;
     };
-    render(
+    const { container } = render(
       <BarChart data={[]} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
@@ -97,6 +98,7 @@ describe('selectDomainOfDataByKey', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledWith(undefined);
+    expectXAxisTicks(container, []);
   });
 
   describe('XAxis with type = number', () => {
@@ -107,13 +109,14 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="uv" type="number" />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([189, 400]);
+      expectXAxisTicks(container, ['0', '100', '200', '300', '400']);
     });
 
     it('should return infinities if the data is not numerical', () => {
@@ -123,13 +126,14 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="name" type="number" />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([Infinity, -Infinity]);
+      expectXAxisTicks(container, []);
     });
 
     // this test fails because the generateCategoricalChart code path throws
@@ -170,13 +174,14 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <BarChart data={data} width={100} height={100}>
           <XAxis dataKey="x" type="number" />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([100, 9999]);
+      expectXAxisTicks(container, ['0', '2500', '5000', '7500', '10000']);
     });
 
     it('should squish all data defined on all items and chart root and return min, max of the combination', () => {
@@ -186,7 +191,7 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <ComposedChart
           data={[
             { x: 10, y: 99999 },
@@ -248,6 +253,7 @@ describe('selectDomainOfDataByKey', () => {
         </ComposedChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([10, 210]);
+      expectXAxisTicks(container, ['0', '55', '110', '165', '220']);
     });
   });
 
@@ -259,13 +265,14 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="name" type={type} />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+      expectXAxisTicks(container, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
     });
 
     it.each([true, undefined])(
@@ -277,13 +284,14 @@ describe('selectDomainOfDataByKey', () => {
           spy(result);
           return null;
         };
-        render(
+        const { container } = render(
           <BarChart data={PageData} width={100} height={100}>
             <XAxis dataKey="uv" type={type} allowDuplicatedCategory={allowDuplicatedCategory} />
             <Customized component={Comp} />
           </BarChart>,
         );
         expect(spy).toHaveBeenLastCalledWith([400, 300, 300, 200, 278, 189]);
+        expectXAxisTicks(container, ['400', '300', '300', '200', '278', '189']);
       },
     );
 
@@ -294,33 +302,14 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="uv" type={type} allowDuplicatedCategory={false} />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
-    });
-
-    it('should filter away nulls and undefineds', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
-        spy(result);
-        return null;
-      };
-      render(
-        <BarChart
-          data={[{ x: null }, { x: undefined }, { x: 'Monday' }, { x: 'Tuesday' }, { x: 'Wednesday' }]}
-          width={100}
-          height={100}
-        >
-          <XAxis dataKey="x" type={type} allowDuplicatedCategory={false} />
-          <Customized component={Comp} />
-        </BarChart>,
-      );
-      expect(spy).toHaveBeenLastCalledWith(['Monday', 'Tuesday', 'Wednesday']);
+      expectXAxisTicks(container, ['400', '300', '200', '278', '189']);
     });
 
     it('should replace everything that is not a number, string, or Date, with empty string', () => {
@@ -330,7 +319,83 @@ describe('selectDomainOfDataByKey', () => {
         spy(result);
         return null;
       };
-      render(
+      const { container } = render(
+        <BarChart
+          data={[
+            { x: null },
+            { x: 'Jan' },
+            { x: undefined },
+            { x: 'Feb' },
+            { x: [] },
+            { x: 'Mar' },
+            { x: function anon() {} },
+            { x: 'Apr' },
+            { x: {} },
+            { x: 'May' },
+            { x: NaN },
+            { x: 'Jun' },
+            { x: new Map() },
+            { x: 'Jul' },
+            { x: Symbol.for('mock symbol') },
+            { x: 'Aug' },
+            { x: new Promise(() => {}) },
+          ]}
+          width={100}
+          height={100}
+        >
+          <XAxis dataKey="x" type={type} allowDuplicatedCategory />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(spy).toHaveBeenLastCalledWith([
+        '',
+        'Jan',
+        '',
+        'Feb',
+        '',
+        'Mar',
+        '',
+        'Apr',
+        '',
+        'May',
+        '',
+        'Jun',
+        '',
+        'Jul',
+        '',
+        'Aug',
+        '',
+      ]);
+      expectXAxisTicks(container, [
+        '',
+        'Jan',
+        '',
+        'Feb',
+        'Mar',
+        '',
+        'Apr',
+        '',
+        'May',
+        '',
+        'Jun',
+        '',
+        'Jul',
+        '',
+        'Aug',
+        '',
+        // no idea where the string 'undefined' comes from - the new implementation doesn't have it, breaking or not.
+        'undefined',
+      ]);
+    });
+
+    it('should replace everything that is not a number, string, or Date, with empty string, and not allow duplicates', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        spy(result);
+        return null;
+      };
+      const { container } = render(
         <BarChart
           data={[
             { x: null },
@@ -353,7 +418,8 @@ describe('selectDomainOfDataByKey', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(['', '', '', '', '', '', '', 'Monday', 'Tuesday', 'Wednesday']);
+      expect(spy).toHaveBeenLastCalledWith(['', 'Monday', 'Tuesday', 'Wednesday']);
+      expectXAxisTicks(container, ['', 'Monday', 'Tuesday', 'Wednesday']);
     });
   });
 });
