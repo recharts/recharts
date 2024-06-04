@@ -582,6 +582,36 @@ describe('<XAxis />', () => {
       });
     });
 
+    describe('when data is defined on multiple graphical elements', () => {
+      const data1 = data.slice(0, 3);
+      const data2 = data.slice(3);
+      it('should merge and display domain of all data', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="x" type="number" />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+      });
+
+      it('should only display domain of data with matching xAxisId', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} xAxisId="xa" />
+            <Line data={data2} xAxisId="xb" />
+            <XAxis dataKey="x" type="number" xAxisId="xa" />
+            <XAxis dataKey="x" type="number" xAxisId="xb" />
+          </LineChart>,
+        );
+        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        expect(allXAxes).toHaveLength(2);
+        expectXAxisTicks(allXAxes[0], ['0', '45', '90', '135', '180']);
+        expectXAxisTicks(allXAxes[1], ['0', '40', '80', '120', '160']);
+      });
+    });
+
     describe('allowDecimals', () => {
       it('should show decimals in small numbers by default', () => {
         const { container } = render(
@@ -678,6 +708,50 @@ describe('<XAxis />', () => {
         );
         expectXAxisTicks(container, ['4.1', '6.3', '12.5', '3.7', '7.9']);
       });
+    });
+
+    describe('when data is defined on multiple graphical elements', () => {
+      const data1 = data.slice(0, 3);
+      const data2 = data.slice(3);
+      it('should merge and display domain of all data', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="z" type="category" />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      });
+
+      it('should merge and display domain of all data, and remove duplicates, even when the duplicates are defined on different elements', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="z" type="category" allowDuplicatedCategory={false} />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+      });
+
+      it.each([true, false, undefined])(
+        'should only display domain of data with matching xAxisId when allowDuplicatedCategory=%s',
+        allowDuplicatedCategory => {
+          const { container } = render(
+            <LineChart width={300} height={300}>
+              <Line data={data1} xAxisId="xa" />
+              <Line data={data2} xAxisId="xb" />
+              <XAxis dataKey="z" type="category" xAxisId="xa" allowDuplicatedCategory={allowDuplicatedCategory} />
+              <XAxis dataKey="z" type="category" xAxisId="xb" allowDuplicatedCategory={allowDuplicatedCategory} />
+            </LineChart>,
+          );
+          const allXAxes = container.querySelectorAll('.recharts-xAxis');
+          expect(allXAxes).toHaveLength(2);
+          expectXAxisTicks(allXAxes[0], ['200', '260', '400']);
+          expectXAxisTicks(allXAxes[1], ['280', '500', '200']);
+        },
+      );
     });
   });
 });
