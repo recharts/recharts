@@ -680,6 +680,42 @@ describe('<XAxis />', () => {
         );
         expectXAxisTicks(container, ['0', '27', '54', '81', '108', '135', '162']);
       });
+
+      it('should attempt to show the ticks start with interval = preserveStart', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval="preserveStart" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135']);
+      });
+
+      it('should attempt to show the ticks end with interval = preserveEnd', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval="preserveEnd" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['36', '81', '126', '171']);
+      });
+
+      it('should attempt to show the ticks start and end with interval = preserveStartEnd', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval="preserveStartEnd" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '171']);
+      });
+
+      it('should do ... same thing as preserveStart? with interval = equidistantPreserveStart', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval="equidistantPreserveStart" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135']);
+      });
     });
   });
 
@@ -827,6 +863,42 @@ describe('<XAxis />', () => {
           </BarChart>,
         );
         expectXAxisTicks(container, ['200', '280']);
+      });
+
+      it('should attempt to show the ticks start with interval = preserveStart', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="category" interval="preserveStart" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['100', '170', '150']);
+      });
+
+      it('should attempt to show the ticks end with interval = preserveEnd', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="category" interval="preserveEnd" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['120', '140', '110']);
+      });
+
+      it('should attempt to show the ticks start and end with interval = preserveStartEnd', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="category" interval="preserveStartEnd" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['100', '170', '110']);
+      });
+
+      it('should do ... same thing as preserveStart? with interval = equidistantPreserveStart', () => {
+        const { container } = render(
+          <BarChart width={30} height={300} data={data}>
+            <XAxis dataKey="x" type="category" interval="equidistantPreserveStart" tickCount={20} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['100', '170', '150']);
       });
     });
   });
