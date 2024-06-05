@@ -69,7 +69,7 @@ describe('<XAxis />', () => {
   it('Render ticks with tickFormatter', () => {
     const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey="name" tickFormatter={(value, i) => `${i}`} />
+        <XAxis dataKey="name" tickFormatter={(_, i) => `${i}`} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
       </LineChart>,
     );
@@ -373,190 +373,243 @@ describe('<XAxis />', () => {
   });
 
   describe('numerical domain', () => {
-    it('should start from 0 and calculate domain max by default', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <Bar dataKey="y" isAnimationActive={false} />
-          <XAxis dataKey="x" type="number" />
-          <YAxis dataKey="y" />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
-    });
+    type XAxisTestCase = {
+      name: string;
+      Component: React.ComponentType<{ children: React.ReactNode }>;
+    };
 
-    describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
-      it('should render ticks from domain auto, auto', () => {
-        const { container } = render(
+    const testCases: XAxisTestCase[] = [
+      {
+        name: 'data defined on chart root',
+        Component: ({ children }) => (
           <BarChart width={300} height={300} data={data}>
-            <XAxis dataKey="x" type="number" domain={['auto', 'auto']} allowDataOverflow={allowDataOverflow} />
-          </BarChart>,
+            {children}
+          </BarChart>
+        ),
+      },
+      {
+        name: 'data defined on graphical element',
+        Component: ({ children }) => (
+          <LineChart width={300} height={300}>
+            <Line data={data} />
+            {children}
+          </LineChart>
+        ),
+      },
+    ];
+
+    describe.each(testCases)('when $name', ({ Component }) => {
+      it('should start from 0 and calculate domain max by default', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" />
+          </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '160', '180']);
+        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
       });
 
-      it('should render ticks from number, auto', () => {
-        const { container } = render(
-          <BarChart width={300} height={300} data={data}>
-            <Bar dataKey="y" isAnimationActive={false} />
-            <XAxis dataKey="x" type="number" domain={[-55, 'auto']} allowDataOverflow={allowDataOverflow} />
-            <YAxis dataKey="y" />
-          </BarChart>,
-        );
-        expectXAxisTicks(container, ['-60', '0', '60', '120', '180']);
+      describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
+        it('should render ticks from domain auto, auto', () => {
+          const { container } = render(
+            <Component>
+              <XAxis dataKey="x" type="number" domain={['auto', 'auto']} allowDataOverflow={allowDataOverflow} />
+            </Component>,
+          );
+          expectXAxisTicks(container, ['100', '120', '140', '160', '180']);
+        });
+
+        it('should render ticks from number, auto', () => {
+          const { container } = render(
+            <Component>
+              <XAxis dataKey="x" type="number" domain={[-55, 'auto']} allowDataOverflow={allowDataOverflow} />
+            </Component>,
+          );
+          expectXAxisTicks(container, ['-60', '0', '60', '120', '180']);
+        });
+
+        it('should render ticks from auto, number', () => {
+          const { container } = render(
+            <Component>
+              <XAxis dataKey="x" type="number" domain={['auto', 555]} allowDataOverflow={allowDataOverflow} />
+            </Component>,
+          );
+          expectXAxisTicks(container, ['0', '150', '300', '450', '600']);
+        });
       });
 
-      it('should render ticks from auto, number', () => {
+      it('should allow to expand the domain', () => {
         const { container } = render(
-          <BarChart width={300} height={300} data={data}>
-            <XAxis dataKey="x" type="number" domain={['auto', 555]} allowDataOverflow={allowDataOverflow} />
-          </BarChart>,
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[-500, 500]} />
+          </Component>,
         );
-        expectXAxisTicks(container, ['0', '150', '300', '450', '600']);
+        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
       });
-    });
 
-    it('should allow to expand the domain', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[-500, 500]} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-    });
+      it('should shrink down, but respect the data domain, if the provided domain is smaller than the data', () => {
+        const { container, rerender } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[-100, 100]} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['-100', '-30', '40', '170']);
 
-    it('should shrink down, but respect the data domain, if the provided domain is smaller than the data', () => {
-      const { container, rerender } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[-100, 100]} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-100', '-30', '40', '170']);
+        rerender(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[130, 175]} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '120', '140', '175']);
 
-      rerender(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[130, 175]} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['100', '120', '140', '175']);
+        rerender(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[130, 150]} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '120', '140', '170']);
+      });
 
-      rerender(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[130, 150]} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
-    });
+      it('should default to dataMin, dataMax for domain where the larger number is first', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[100, 0]} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '120', '140', '170']);
+      });
 
-    it('should default to dataMin, dataMax for domain where the larger number is first', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[100, 0]} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
-    });
+      it('should render one tick for domain that does not have any gap', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[150, 150]} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['150']);
+      });
 
-    it('should render one tick for domain that does not have any gap', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[150, 150]} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['150']);
-    });
+      it('should shrink properly when allowDataOverflow = true', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[0, 100]} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['0', '25', '50', '75', '100']);
+      });
 
-    it('should shrink properly when allowDataOverflow = true', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[0, 100]} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['0', '25', '50', '75', '100']);
-    });
+      it('should allow providing more tickCount', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" tickCount={7} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['0', '30', '60', '90', '120', '150', '180']);
+      });
 
-    it('should allow providing more tickCount', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" tickCount={7} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['0', '30', '60', '90', '120', '150', '180']);
-    });
+      it('should allow providing less tickCount', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" tickCount={3} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['0', '85', '170']);
+      });
 
-    it('should allow providing less tickCount', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" tickCount={3} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['0', '85', '170']);
-    });
+      it('should make ticks from dataMin, dataMax', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '120', '140', '170']);
+      });
 
-    it('should make ticks from dataMin, dataMax', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
-    });
+      it('should default to dataMin, dataMax ANYWAY when domain is provided as strings? I do not understand this behaviour.', () => {
+        const { container } = render(
+          <Component>
+            {/* omg recharts just completely ignores this when it's defined as strings */}
+            <XAxis dataKey="x" type="number" domain={['-500', '500']} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '120', '140', '170']);
+      });
 
-    it('should default to dataMin, dataMax ANYWAY when domain is provided as strings? I do not understand this behaviour.', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          {/* omg recharts just completely ignores this when it's defined as strings */}
-          <XAxis dataKey="x" type="number" domain={['-500', '500']} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
-    });
+      it('should allow a function that returns a domain, and pass inside a computed domain and allowDataOverflow prop', () => {
+        const spy = vi.fn();
+        spy.mockReturnValue([-500, 500]);
+        const { container, rerender } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={spy} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledWith([100, 170], true);
 
-    it('should allow a function that returns a domain, and pass inside a computed domain and allowDataOverflow prop', () => {
-      const spy = vi.fn();
-      spy.mockReturnValue([-500, 500]);
-      const { container, rerender } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={spy} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([100, 170], true);
+        rerender(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={spy} allowDataOverflow={false} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith([100, 170], false);
+      });
 
-      rerender(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={spy} allowDataOverflow={false} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-      expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith([100, 170], false);
-    });
-
-    it(`should allow array of functions,
+      it(`should allow array of functions,
               and give them first and last elements of the data domain
               - but this time, no allowDataOverflow parameter!`, () => {
-      const spyMin = vi.fn().mockReturnValue(-500);
-      const spyMax = vi.fn().mockReturnValue(500);
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[spyMin, spyMax]} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-      expect(spyMin).toHaveBeenCalledTimes(1);
-      expect(spyMax).toHaveBeenCalledTimes(1);
-      expect(spyMin).toHaveBeenCalledWith(100);
-      expect(spyMax).toHaveBeenCalledWith(170);
+        const spyMin = vi.fn().mockReturnValue(-500);
+        const spyMax = vi.fn().mockReturnValue(500);
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[spyMin, spyMax]} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expect(spyMin).toHaveBeenCalledTimes(1);
+        expect(spyMax).toHaveBeenCalledTimes(1);
+        expect(spyMin).toHaveBeenCalledWith(100);
+        expect(spyMax).toHaveBeenCalledWith(170);
+      });
+
+      it('should allow mixing numbers and functions', () => {
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[-500, () => 500]} allowDataOverflow />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+      });
     });
 
-    it('should allow mixing numbers and functions', () => {
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="x" type="number" domain={[-500, () => 500]} allowDataOverflow />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+    describe('when data is defined on multiple graphical elements', () => {
+      const data1 = data.slice(0, 3);
+      const data2 = data.slice(3);
+      it('should merge and display domain of all data', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="x" type="number" />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+      });
+
+      it('should only display domain of data with matching xAxisId', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} xAxisId="xa" />
+            <Line data={data2} xAxisId="xb" />
+            <XAxis dataKey="x" type="number" xAxisId="xa" />
+            <XAxis dataKey="x" type="number" xAxisId="xb" />
+          </LineChart>,
+        );
+        const allXAxes = container.querySelectorAll('.recharts-xAxis');
+        expect(allXAxes).toHaveLength(2);
+        expectXAxisTicks(allXAxes[0], ['0', '45', '90', '135', '180']);
+        expectXAxisTicks(allXAxes[1], ['0', '40', '80', '120', '160']);
+      });
     });
 
     describe('allowDecimals', () => {
@@ -590,18 +643,98 @@ describe('<XAxis />', () => {
         },
       );
     });
+
+    describe('interval', () => {
+      it('should display all ticks with interval = 0', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={0} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+      });
+
+      it('should display every second tick with interval = 1', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={1} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '90', '180']);
+      });
+
+      it('should display every third tick with interval = 2', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '135']);
+      });
+
+      it('should add more ticks with tickCount and then reduce them again with interval', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="x" type="number" tickCount={20} interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['0', '27', '54', '81', '108', '135', '162']);
+      });
+    });
   });
 
   describe('categorical domain', () => {
     it('should list items as literals and do not sort', () => {
       const { container } = render(
         <BarChart width={300} height={300} data={data}>
-          <Bar dataKey="y" isAnimationActive={false} />
           <XAxis dataKey="x" type="category" />
-          <YAxis dataKey="y" />
         </BarChart>,
       );
       expectXAxisTicks(container, ['100', '120', '170', '140', '150', '110']);
+    });
+
+    it.each([undefined, true])('should allow duplicates when allowDuplicatedCategory=%s', allowDuplicatedCategory => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" allowDuplicatedCategory={allowDuplicatedCategory} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+    });
+
+    it('should remove duplicates when allowDuplicatedCategory=false', () => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" allowDuplicatedCategory={false} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+    });
+
+    it.each([undefined, 0, -1, 3, 7, 100, Infinity, NaN])('should ignore tickCount = %s', tickCount => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" tickCount={tickCount} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+    });
+
+    const variousDomains: ReadonlyArray<{ domain: ReadonlyArray<string> | ReadonlyArray<number> | undefined }> = [
+      { domain: undefined },
+      { domain: [0, 100] },
+      { domain: ['Winter', 'Summer'] },
+      { domain: ['200', '400', '500', '200'] },
+      { domain: ['200', '260', '400', '280', '500', '200', '100', '600'] },
+    ];
+
+    it.each(variousDomains)('should ignore user provided domain $domain', ({ domain }) => {
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="z" type="category" domain={domain} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
     });
 
     describe.each([true, false, undefined])('allowDecimals=%s', () => {
@@ -621,6 +754,79 @@ describe('<XAxis />', () => {
           </BarChart>,
         );
         expectXAxisTicks(container, ['4.1', '6.3', '12.5', '3.7', '7.9']);
+      });
+    });
+
+    describe('when data is defined on multiple graphical elements', () => {
+      const data1 = data.slice(0, 3);
+      const data2 = data.slice(3);
+      it('should merge and display domain of all data', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="z" type="category" />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      });
+
+      it('should merge and display domain of all data, and remove duplicates, even when the duplicates are defined on different elements', () => {
+        const { container } = render(
+          <LineChart width={300} height={300}>
+            <Line data={data1} />
+            <Line data={data2} />
+            <XAxis dataKey="z" type="category" allowDuplicatedCategory={false} />
+          </LineChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+      });
+
+      it.each([true, false, undefined])(
+        'should only display domain of data with matching xAxisId when allowDuplicatedCategory=%s',
+        allowDuplicatedCategory => {
+          const { container } = render(
+            <LineChart width={300} height={300}>
+              <Line data={data1} xAxisId="xa" />
+              <Line data={data2} xAxisId="xb" />
+              <XAxis dataKey="z" type="category" xAxisId="xa" allowDuplicatedCategory={allowDuplicatedCategory} />
+              <XAxis dataKey="z" type="category" xAxisId="xb" allowDuplicatedCategory={allowDuplicatedCategory} />
+            </LineChart>,
+          );
+          const allXAxes = container.querySelectorAll('.recharts-xAxis');
+          expect(allXAxes).toHaveLength(2);
+          expectXAxisTicks(allXAxes[0], ['200', '260', '400']);
+          expectXAxisTicks(allXAxes[1], ['280', '500', '200']);
+        },
+      );
+    });
+
+    describe('interval', () => {
+      it('should display all ticks when interval = 0', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={0} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      });
+
+      it('should display every second tick when interval = 1', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={1} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '400', '500']);
+      });
+
+      it('should display every third tick when interval = 2', () => {
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" interval={2} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, ['200', '280']);
       });
     });
   });

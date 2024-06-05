@@ -60,6 +60,7 @@
   "es6/state/layoutSlice.js",
   "es6/state/hooks.js",
   "es6/state/graphicalItemsSlice.js",
+  "es6/state/dataSelectors.js",
   "es6/state/chartDataSlice.js",
   "es6/state/axisSlice.js",
   "es6/state/axisSelectors.js",

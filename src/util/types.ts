@@ -1111,7 +1111,7 @@ export type AxisDomain =
  */
 export type NumberDomain = [min: number, max: number];
 
-export type CategoricalDomain = (number | string | Date)[];
+export type CategoricalDomain = ReadonlyArray<number | string | Date>;
 
 /** The props definition of base axis */
 export interface BaseAxisProps {
