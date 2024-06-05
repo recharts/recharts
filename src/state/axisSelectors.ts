@@ -73,20 +73,12 @@ const selectNumericalDomain = (
   const allDataSquished = selectAllDataSquished(state, axisSettings.dataKey);
   const domainFromData = computeNumericalDomain(allDataSquished);
 
-  if (domainFromData != null) {
-    const userPreferredDomainUsingData = parseNumericalUserDomain(
-      domainDefinition,
-      domainFromData,
-      axisSettings.allowDataOverflow,
-      axisSettings.allowDecimals,
-    );
-    if (userPreferredDomainUsingData != null) {
-      return userPreferredDomainUsingData;
-    }
-  }
-
-  // Cannot decide on a valid domain, so the axis is probably not going to display anything
-  return undefined;
+  return parseNumericalUserDomain(
+    domainDefinition,
+    domainFromData,
+    axisSettings.allowDataOverflow,
+    axisSettings.allowDecimals,
+  );
 };
 
 export const selectAxisDomain = (
