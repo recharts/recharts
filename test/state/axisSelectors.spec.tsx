@@ -2,9 +2,21 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisScale, selectAxisDomain } from '../../src/state/axisSelectors';
+import { selectAxisScale, selectAxisDomain, selectHasBar } from '../../src/state/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
-import { Bar, BarChart, XAxis, Customized, ComposedChart, Area, Line, Scatter, YAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  Customized,
+  ComposedChart,
+  Area,
+  Line,
+  Scatter,
+  YAxis,
+  RadialBarChart,
+  RadialBar,
+} from '../../src';
 import { PageData } from '../_data';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
 
@@ -439,5 +451,133 @@ describe('selectAxisDomain', () => {
       expect(spy).toHaveBeenLastCalledWith(['', 'Monday', 'Tuesday', 'Wednesday']);
       expectXAxisTicks(container, ['', 'Monday', 'Tuesday', 'Wednesday']);
     });
+  });
+});
+
+describe('selectHasBar', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return false when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectHasBar(initialState);
+    expect(result).toBe(false);
+  });
+
+  it('should return true if there is a Bar in the chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeVisible();
+    expect(spy).toHaveBeenLastCalledWith(true);
+
+    // returns false after Bar is removed from DOM
+    rerender(
+      <BarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return false if there is no Bar in the chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Line dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return true if there are two Bars in the chart and then I remove one', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Bar dataKey="pv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-bar')).toHaveLength(2);
+    expect(spy).toHaveBeenLastCalledWith(true);
+    rerender(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-bar')).toHaveLength(1);
+    expect(spy).toHaveBeenLastCalledWith(true);
+  });
+
+  it('should return true if there is RadialBar in RadialChart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <RadialBar dataKey="uv" />
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeVisible();
+    expect(spy).toHaveBeenLastCalledWith(true);
+
+    // returns false after the only RadialBar is removed from DOM
+    rerender(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return false if RadialBarChart has no RadialBar in it', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container } = render(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
   });
 });
