@@ -2,9 +2,21 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisScale, selectDomainOfDataByKey } from '../../src/state/axisSelectors';
+import { selectAxisScale, selectAxisDomain, selectHasBar } from '../../src/state/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
-import { Bar, BarChart, XAxis, Customized, ComposedChart, Area, Line, Scatter, YAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  Customized,
+  ComposedChart,
+  Area,
+  Line,
+  Scatter,
+  YAxis,
+  RadialBarChart,
+  RadialBar,
+} from '../../src';
 import { PageData } from '../_data';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
 
@@ -64,13 +76,31 @@ describe('selectAxisScale', () => {
       realScaleType: 'band',
     });
   });
+
+  it('should set the scale domain and range based on the axis type, and data', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      spy(result.scale?.domain());
+      return null;
+    };
+    const { container } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <XAxis dataKey="name" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expectXAxisTicks(container, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+  });
 });
 
-describe('selectDomainOfDataByKey', () => {
+describe('selectAxisDomain', () => {
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+      const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
       expect(result).toBeUndefined();
       return null;
     };
@@ -79,14 +109,14 @@ describe('selectDomainOfDataByKey', () => {
 
   it('should return undefined when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
-    const result = selectDomainOfDataByKey(initialState, 'xAxis', '0');
+    const result = selectAxisDomain(initialState, 'xAxis', '0');
     expect(result).toBeUndefined();
   });
 
   it('should return undefined if there is no data in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+      const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
       spy(result);
       return null;
     };
@@ -105,7 +135,7 @@ describe('selectDomainOfDataByKey', () => {
     it('should return highest and lowest number of the chart root data based on the axis dataKey', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -115,14 +145,14 @@ describe('selectDomainOfDataByKey', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([189, 400]);
+      expect(spy).toHaveBeenLastCalledWith([0, 405]);
       expectXAxisTicks(container, ['0', '100', '200', '300', '400']);
     });
 
-    it('should return infinities if the data is not numerical', () => {
+    it('should return undefined if the data is not numerical', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -132,7 +162,7 @@ describe('selectDomainOfDataByKey', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([Infinity, -Infinity]);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
       expectXAxisTicks(container, []);
     });
 
@@ -141,7 +171,7 @@ describe('selectDomainOfDataByKey', () => {
       const data = [{ x: Symbol.for('unit test') }];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -170,7 +200,7 @@ describe('selectDomainOfDataByKey', () => {
       ];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -180,14 +210,14 @@ describe('selectDomainOfDataByKey', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([100, 9999]);
+      expect(spy).toHaveBeenLastCalledWith([0, 10000]);
       expectXAxisTicks(container, ['0', '2500', '5000', '7500', '10000']);
     });
 
     it('should squish all data defined on all items and chart root and return min, max of the combination', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -252,7 +282,7 @@ describe('selectDomainOfDataByKey', () => {
           <Customized component={Comp} />
         </ComposedChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([10, 210]);
+      expect(spy).toHaveBeenLastCalledWith([0, 225]);
       expectXAxisTicks(container, ['0', '55', '110', '165', '220']);
     });
   });
@@ -261,7 +291,7 @@ describe('selectDomainOfDataByKey', () => {
     it('should return all strings', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -280,7 +310,7 @@ describe('selectDomainOfDataByKey', () => {
       allowDuplicatedCategory => {
         const spy = vi.fn();
         const Comp = (): null => {
-          const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+          const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
           spy(result);
           return null;
         };
@@ -298,7 +328,7 @@ describe('selectDomainOfDataByKey', () => {
     it('should filter out duplicates when allowDuplicatedCategory = false', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -315,7 +345,7 @@ describe('selectDomainOfDataByKey', () => {
     it('should replace everything that is not a number, string, or Date, with empty string', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -391,7 +421,7 @@ describe('selectDomainOfDataByKey', () => {
     it('should replace everything that is not a number, string, or Date, with empty string, and not allow duplicates', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectDomainOfDataByKey(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
         spy(result);
         return null;
       };
@@ -421,5 +451,133 @@ describe('selectDomainOfDataByKey', () => {
       expect(spy).toHaveBeenLastCalledWith(['', 'Monday', 'Tuesday', 'Wednesday']);
       expectXAxisTicks(container, ['', 'Monday', 'Tuesday', 'Wednesday']);
     });
+  });
+});
+
+describe('selectHasBar', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return false when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectHasBar(initialState);
+    expect(result).toBe(false);
+  });
+
+  it('should return true if there is a Bar in the chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeVisible();
+    expect(spy).toHaveBeenLastCalledWith(true);
+
+    // returns false after Bar is removed from DOM
+    rerender(
+      <BarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return false if there is no Bar in the chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Line dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelector('.recharts-bar')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return true if there are two Bars in the chart and then I remove one', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Bar dataKey="pv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-bar')).toHaveLength(2);
+    expect(spy).toHaveBeenLastCalledWith(true);
+    rerender(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-bar')).toHaveLength(1);
+    expect(spy).toHaveBeenLastCalledWith(true);
+  });
+
+  it('should return true if there is RadialBar in RadialChart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container, rerender } = render(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <RadialBar dataKey="uv" />
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeVisible();
+    expect(spy).toHaveBeenLastCalledWith(true);
+
+    // returns false after the only RadialBar is removed from DOM
+    rerender(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
+  });
+
+  it('should return false if RadialBarChart has no RadialBar in it', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(selectHasBar);
+      spy(result);
+      return null;
+    };
+    const { container } = render(
+      <RadialBarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+      </RadialBarChart>,
+    );
+    expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
+    expect(spy).toHaveBeenLastCalledWith(false);
   });
 });

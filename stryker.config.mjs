@@ -15,6 +15,6 @@ const config = {
     "prioritizePerformanceOverAccuracy": true
   },
   ignoreStatic: true,
-  mutate: ['src/state/selectors.ts']
+  mutate: ['src/state/axisSelectors.ts']
 };
 export default config;

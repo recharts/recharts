@@ -104,6 +104,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
         domain={props.domain}
         dataKey={props.dataKey}
         allowDuplicatedCategory={props.allowDuplicatedCategory}
+        allowDecimals={props.allowDecimals}
       />
       <XAxisImpl {...props} />
     </>
