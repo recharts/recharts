@@ -4,6 +4,8 @@ import { getNiceTickValues } from './scale';
 import { AxisDomain, AxisDomainType, NumberDomain } from './types';
 
 /**
+ * @deprecated instead use `numericalDomainSpecifiedWithoutRequiringData`
+ *
  * Takes a domain and user props to determine whether he provided the domain via props or if we need to calculate it.
  * @param   {AxisDomain}  domain              The potential domain from props
  * @param   {Boolean}     allowDataOverflow   from props
