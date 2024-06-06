@@ -13,7 +13,7 @@ export function expectXAxisTicks(container: Element, ticks: ReadonlyArray<string
 
 export function ExpectAxisDomain({
   axisType,
-  axisId = '0',
+  axisId = 0,
   assert,
 }: {
   axisType: AxisType;

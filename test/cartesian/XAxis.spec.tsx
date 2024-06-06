@@ -767,9 +767,8 @@ describe('<XAxis />', () => {
         expectXAxisTicks(allXAxes[0], ['0', '45', '90', '135', '180']);
         expectXAxisTicks(allXAxes[1], ['0', '40', '80', '120', '160']);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        // TODO this is a regression - these two axes should have different domains.
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 200]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 200]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 153]);
       });
 
       it('should only display domain of data with matching xAxisId, and dataMin dataMax domains', () => {
@@ -792,9 +791,8 @@ describe('<XAxis />', () => {
         expectXAxisTicks(allXAxes[0], ['100', '120', '140', '170']);
         expectXAxisTicks(allXAxes[1], ['110', '120', '130', '140', '150']);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        // TODO this is a regression - these two axes should have different domains.
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([100, 170]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([100, 170]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([110, 150]);
       });
     });
 

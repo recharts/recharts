@@ -1,8 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RechartsRootState } from './store';
 import { ChartData, ChartDataState } from './chartDataSlice';
-import { DataKey } from '../util/types';
+import { AxisType, DataKey } from '../util/types';
 import { getValueByDataKey } from '../util/ChartUtils';
+import { AxisId } from './axisMapSlice';
+import { CartesianGraphicalItemSettings } from './graphicalItemsSlice';
 
 /**
  * This is a "cheap" selector - it returns the data but doesn't iterate them, so it is not sensitive on the array length.
@@ -16,9 +18,24 @@ export const selectChartDataWithIndexes = (state: RechartsRootState): ChartDataS
  * @param state RechartsRootState
  * @returns data defined on the chart graphical items, such as Line or Scatter or Pie
  */
-export const selectCartesianGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = createSelector(
+export const selectCartesianGraphicalItemsData: (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+) => ReadonlyArray<ChartData> = createSelector(
   (state: RechartsRootState) => state.graphicalItems.cartesianItems,
-  cartesianItems => cartesianItems.map(item => item.data),
+  (_state, axisType: AxisType) => axisType,
+  (_state, _axisType, axisId: AxisId) => axisId,
+  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>, axisType: AxisType, axisId: AxisId) =>
+    cartesianItems
+      .filter(item => {
+        if (axisType === 'xAxis') {
+          // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
+          return item.xAxisId === axisId;
+        }
+        return false;
+      })
+      .map(item => item.data),
 );
 
 /**
@@ -31,15 +48,19 @@ export const selectCartesianGraphicalItemsData: (state: RechartsRootState) => Re
  *
  * This is an expensive selector - it will iterate all data and compute their value using the provided dataKey.
  */
-export const selectAllDataSquished: (state: RechartsRootState, dataKey: DataKey<any>) => ChartData | undefined =
-  createSelector(
-    selectCartesianGraphicalItemsData,
-    selectChartDataWithIndexes,
-    (_: RechartsRootState, dataKey: DataKey<any>) => dataKey,
-    (graphicalItemsData, { chartData = [] }, dataKey) => {
-      return graphicalItemsData
-        .flat(1)
-        .concat(chartData)
-        .map(entry => getValueByDataKey(entry, dataKey));
-    },
-  );
+export const selectAllDataSquished: (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+  dataKey: DataKey<any>,
+) => ChartData | undefined = createSelector(
+  selectCartesianGraphicalItemsData,
+  selectChartDataWithIndexes,
+  (_1: RechartsRootState, _2, _3, dataKey: DataKey<any>) => dataKey,
+  (graphicalItemsData: ReadonlyArray<ChartData>, { chartData = [] }, dataKey) => {
+    return graphicalItemsData
+      .flat(1)
+      .concat(chartData)
+      .map(entry => getValueByDataKey(entry, dataKey));
+  },
+);
