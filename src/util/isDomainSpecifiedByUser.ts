@@ -40,7 +40,7 @@ function isWellBehavedNumber(n: unknown): n is number {
 function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
   if (Array.isArray(v) && v.length === 2) {
     const [min, max] = v;
-    if (isWellBehavedNumber(min) && isWellBehavedNumber(max) && min <= max) {
+    if (isWellBehavedNumber(min) && isWellBehavedNumber(max)) {
       return true;
     }
   }

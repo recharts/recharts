@@ -569,8 +569,19 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['100', '120', '140', '170']);
-        // TODO this looks like regression, investigate! this should return 100, 170 like the other cases
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
+      });
+
+      it('should reverse domain where the larger number is first, and allowDataOverflow is true', () => {
+        const spy = vi.fn();
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[100, 0]} allowDataOverflow />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '75', '50', '25', '0']);
+        expect(spy).toHaveBeenLastCalledWith([100, 0]);
       });
 
       it('should render one tick for domain that does not have any gap', () => {
@@ -658,7 +669,7 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
+        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix - this is because all the dispatches inside generateCategoricalChart context
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
         rerender(

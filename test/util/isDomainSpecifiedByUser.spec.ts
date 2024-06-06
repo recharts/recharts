@@ -100,6 +100,11 @@ describe('parsing axis domain provided by user', () => {
     { domain: [0, 100], expected: [0, 100] },
     { domain: [100, 100], expected: [100, 100] },
     { domain: [() => 1, 9], expected: [1, 9] },
+    /*
+     * I am surprised, but in Recharts it is valid to have domain where first element is larger than the second!
+     * This also makes the axis reversed.
+     */
+    { domain: [2, 1], expected: [2, 1] },
   ];
 
   // These are always invalid domains
@@ -107,7 +112,6 @@ describe('parsing axis domain provided by user', () => {
     { domain: [] },
     { domain: [0] },
     { domain: [100, NaN] },
-    { domain: [2, 1] },
     { domain: [100, 150, 200] },
     { domain: [NaN, 100] },
     { domain: [NaN, NaN] },
