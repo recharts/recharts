@@ -1,5 +1,6 @@
 import React, { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
 import clsx from 'clsx';
+import { useAppSelector } from '../state/hooks';
 import { ChartCoordinate, ChartOffset, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
@@ -98,14 +99,17 @@ export function CursorInternal(props: CursorConnectedProps) {
  */
 export function Cursor(props: CursorProps) {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
-  const { coordinate, payload, index } = useTooltipContext();
+  // TODO: move index to redux. Not sure about payload...?
+  const { payload, index, coordinate: coordFromContext } = useTooltipContext();
+  const tooltipPropsFromRedux = useAppSelector(state => state.tooltip);
+  console.log(tooltipPropsFromRedux);
   const offset = useOffset();
   const layout = useChartLayout();
   const chartName = useChartName();
   return (
     <CursorInternal
       {...props}
-      coordinate={coordinate}
+      coordinate={tooltipPropsFromRedux?.activeCoordinate ?? coordFromContext}
       index={index}
       payload={payload}
       offset={offset}

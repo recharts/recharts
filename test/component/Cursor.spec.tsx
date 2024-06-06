@@ -7,6 +7,7 @@ import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
+import { initialState as initialTooltipState } from '../../src/state/tooltipSlice';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -46,6 +47,18 @@ const preloadedRadialState: Partial<RechartsRootState> = {
     layoutType: 'radial',
     offset: undefined,
     container: undefined,
+  },
+  tooltip: {
+    ...initialTooltipState,
+    activeCoordinate: {
+      endAngle: 2,
+      radius: 1,
+      startAngle: 1,
+      x: 0,
+      y: 0,
+    },
+    active: true,
+    activeLabel: '',
   },
 };
 

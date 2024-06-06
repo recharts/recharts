@@ -30,13 +30,13 @@ export const SynchronizedTooltip = {
   render: (args: Args) => {
     return (
       <div>
-        <LineChart {...args}>
-          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+        <LineChart {...args} id="BookOne">
+          <Line isAnimationActive={false} name="BookOne" type="monotone" dataKey="uv" stroke="#111" />
           <XAxis dataKey="name" />
-          <Tooltip />
+          <Tooltip active />
         </LineChart>
-        <LineChart {...args}>
-          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+        <LineChart {...args} id="BookTwo">
+          <Line isAnimationActive={false} name="BookTwo" type="monotone" dataKey="uv" stroke="#ff7300" />
           <XAxis dataKey="name" />
           <Tooltip />
         </LineChart>

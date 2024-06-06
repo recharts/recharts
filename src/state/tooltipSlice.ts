@@ -1,6 +1,6 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { DataKey } from '../util/types';
+import { ChartCoordinate, DataKey } from '../util/types';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -131,9 +131,16 @@ export type TooltipState = {
    * may render multiple tooltip payloads.
    */
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>;
+  // whether or not the Tooltip is active (from Redux' perspective)
+  active: boolean;
+  // the chart coordinate the tooltip is rendered
+  activeCoordinate: ChartCoordinate;
+  // the label rendered in the Tooltip
+  // TODO: find this the same way we find payload
+  activeLabel?: string;
 };
 
-const initialState: TooltipState = {
+export const initialState: TooltipState = {
   itemInteraction: {
     activeClick: false,
     activeHover: false,
@@ -151,6 +158,9 @@ const initialState: TooltipState = {
     activeClickAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
+  activeCoordinate: { x: 0, y: 0 },
+  active: false,
+  activeLabel: '',
 };
 
 const tooltipSlice = createSlice({
@@ -201,6 +211,17 @@ const tooltipSlice = createSlice({
       state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
       state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
     },
+    setActive(state, action: PayloadAction<boolean>) {
+      state.active = action.payload;
+    },
+    setActiveProps(
+      state,
+      action: PayloadAction<{ activeCoordinate: ChartCoordinate; active: boolean; activeLabel: string }>,
+    ) {
+      state.activeCoordinate = action.payload.activeCoordinate;
+      state.active = action.payload.active;
+      state.activeLabel = action.payload.activeLabel;
+    },
   },
 });
 
@@ -212,6 +233,8 @@ export const {
   setActiveClickItemIndex,
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,
+  setActive,
+  setActiveProps,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;

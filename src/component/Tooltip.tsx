@@ -123,7 +123,14 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const tooltipEventType = useTooltipEventType(shared);
 
   // TODO swap the other properties from generateCategoricalChart context, to redux
-  const { active: activeFromContext, payload: payloadFromContext, coordinate, label } = useTooltipContext();
+  const {
+    active: activeFromContext,
+    payload: payloadFromContext,
+    coordinate: coordFromContext,
+    label: labelFromContext,
+  } = useTooltipContext();
+
+  const activeProps = useAppSelector(state => state.tooltip);
   const payloadFromRedux = useAppSelector(state =>
     selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
   );
@@ -136,7 +143,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? activeFromContext;
+  const finalIsActive = activeFromProps ?? activeProps?.active ?? activeFromContext;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
@@ -157,6 +164,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
+  const finalCoord = activeProps?.activeCoordinate ?? coordFromContext;
+  const finalLabel = activeProps?.activeLabel ?? labelFromContext;
 
   const hasPayload = finalPayload.length > 0;
 
@@ -167,7 +176,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       animationEasing={animationEasing}
       isAnimationActive={isAnimationActive}
       active={finalIsActive}
-      coordinate={coordinate}
+      coordinate={finalCoord}
       hasPayload={hasPayload}
       offset={offset}
       position={position}
@@ -182,9 +191,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
         ...props,
         // @ts-expect-error renderContent method expects the payload to be mutable, TODO make it immutable
         payload: finalPayload,
-        label,
+        label: finalLabel,
         active: finalIsActive,
-        coordinate,
+        coordinate: finalCoord,
         accessibilityLayer,
       })}
     </TooltipBoundingBox>
