@@ -37,7 +37,7 @@ import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetGraphicalItemData } from '../state/SetGraphicalItemData';
+import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -605,7 +605,7 @@ export class Area extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -626,7 +626,7 @@ export class Area extends PureComponent<Props, State> {
     return (
       <>
         <Layer className={layerClass}>
-          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (

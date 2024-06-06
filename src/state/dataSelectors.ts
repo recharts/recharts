@@ -16,9 +16,10 @@ export const selectChartDataWithIndexes = (state: RechartsRootState): ChartDataS
  * @param state RechartsRootState
  * @returns data defined on the chart graphical items, such as Line or Scatter or Pie
  */
-export const selectAllGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = (
-  state: RechartsRootState,
-) => state.graphicalItems.graphicalItemData;
+export const selectCartesianGraphicalItemsData: (state: RechartsRootState) => ReadonlyArray<ChartData> = createSelector(
+  (state: RechartsRootState) => state.graphicalItems.cartesianItems,
+  cartesianItems => cartesianItems.map(item => item.data),
+);
 
 /**
  * This selector will return all data there is in the chart: graphical items, chart root, all together
@@ -32,7 +33,7 @@ export const selectAllGraphicalItemsData: (state: RechartsRootState) => Readonly
  */
 export const selectAllDataSquished: (state: RechartsRootState, dataKey: DataKey<any>) => ChartData | undefined =
   createSelector(
-    selectAllGraphicalItemsData,
+    selectCartesianGraphicalItemsData,
     selectChartDataWithIndexes,
     (_: RechartsRootState, dataKey: DataKey<any>) => dataKey,
     (graphicalItemsData, { chartData = [] }, dataKey) => {

@@ -1,5 +1,17 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice, current } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
+import { AxisId } from './axisMapSlice';
+
+export type CartesianGraphicalItemSettings = {
+  data: ChartData;
+  /**
+   * Each of the graphical items explicitly says which axis it uses;
+   * this property is optional for users but every graphical item must have a default,
+   * and it is required here.
+   */
+  xAxisId: AxisId;
+};
 
 export type GraphicalItemsState = {
   /**
@@ -10,18 +22,18 @@ export type GraphicalItemsState = {
    */
   countOfBars: number;
   /**
-   * An array of arrays; the top array is for graphical items,
-   * one graphical item, one record in the array.
-   * The second level is because every data={x} on every item is expected to be an array itself.
+   * This is an array of all graphical items and their settings.
+   * Graphical item is a visual representation of data on the chart.
+   * Some examples are: Pie, Line, Bar.
    *
    * The order is arbitrary; do not expect that indexes here will be the same as indexes elsewhere.
    */
-  graphicalItemData: ReadonlyArray<ChartData>;
+  cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>;
 };
 
 const initialState: GraphicalItemsState = {
   countOfBars: 0,
-  graphicalItemData: [],
+  cartesianItems: [],
 };
 
 const graphicalItemsSlice = createSlice({
@@ -34,15 +46,19 @@ const graphicalItemsSlice = createSlice({
     removeBar(state) {
       state.countOfBars -= 1;
     },
-    addGraphicalItemData(state, action: PayloadAction<ChartData>) {
-      state.graphicalItemData.push(action.payload);
+    addCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
+      state.cartesianItems.push(castDraft(action.payload));
     },
-    removeGraphicalItemData(state, action: PayloadAction<ChartData>) {
-      state.graphicalItemData = state.graphicalItemData.filter(item => item !== action.payload);
+    removeCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
+      const index = current(state).cartesianItems.indexOf(action.payload);
+      if (index > -1) {
+        state.cartesianItems.splice(index, 1);
+      }
     },
   },
 });
 
-export const { addBar, removeBar, addGraphicalItemData, removeGraphicalItemData } = graphicalItemsSlice.actions;
+export const { addBar, removeBar, addCartesianGraphicalItem, removeCartesianGraphicalItem } =
+  graphicalItemsSlice.actions;
 
 export const graphicalItemsReducer = graphicalItemsSlice.reducer;

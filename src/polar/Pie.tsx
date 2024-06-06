@@ -44,7 +44,6 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetGraphicalItemData } from '../state/SetGraphicalItemData';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -727,7 +726,8 @@ export class Pie extends PureComponent<Props, State> {
        */
       return (
         <>
-          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+          {/* TODO introduce the polar alternative */}
+          {/* <SetCartesianGraphicalItem data={this.props.data} /> */}
           <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -748,7 +748,8 @@ export class Pie extends PureComponent<Props, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
-        <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+        {/* TODO introduce the polar alternative */}
+        {/* <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} /> */}
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>

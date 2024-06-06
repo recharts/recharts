@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { useAppSelector } from '../../src/state/hooks';
 import {
   selectAllDataSquished,
-  selectAllGraphicalItemsData,
+  selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
 } from '../../src/state/dataSelectors';
 import { createRechartsStore } from '../../src/state/store';
@@ -13,6 +13,7 @@ import { PageData } from '../_data';
 import { ChartDataState } from '../../src/state/chartDataSlice';
 import { pageData } from '../../storybook/stories/data';
 import { generateMockData } from '../helper/generateMockData';
+import { addCartesianGraphicalItem } from '../../src/state/graphicalItemsSlice';
 
 describe('selectChartDataWithIndexes', () => {
   it('should return undefined when called outside of Redux context', () => {
@@ -105,11 +106,11 @@ describe('selectChartDataWithIndexes', () => {
   });
 });
 
-describe('selectAllGraphicalItemsData', () => {
+describe('selectCartesianGraphicalItemsData', () => {
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const payload = useAppSelector(selectAllGraphicalItemsData);
+      const payload = useAppSelector(selectCartesianGraphicalItemsData);
       expect(payload).toBe(undefined);
       return null;
     };
@@ -118,13 +119,21 @@ describe('selectAllGraphicalItemsData', () => {
 
   it('should return empty array for initial state', () => {
     const store = createRechartsStore();
-    expect(selectAllGraphicalItemsData(store.getState())).toEqual([]);
+    expect(selectCartesianGraphicalItemsData(store.getState())).toEqual([]);
+  });
+
+  it('should be stable', () => {
+    const store = createRechartsStore();
+    store.dispatch(addCartesianGraphicalItem({ data: PageData, xAxisId: 'x' }));
+    const result1 = selectCartesianGraphicalItemsData(store.getState());
+    const result2 = selectCartesianGraphicalItemsData(store.getState());
+    expect(result1).toBe(result2);
   });
 
   it('should return empty array in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectAllGraphicalItemsData);
+      const tooltipData = useAppSelector(selectCartesianGraphicalItemsData);
       spy(tooltipData);
       return null;
     };
@@ -137,11 +146,11 @@ describe('selectAllGraphicalItemsData', () => {
     expect(spy).toHaveBeenLastCalledWith([]);
   });
 
-  it('should return all tooltip payloads defined on graphical items', () => {
+  it('should return all data defined on graphical items', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectAllGraphicalItemsData);
-      spy(tooltipData);
+      const graphicalItemsData = useAppSelector(selectCartesianGraphicalItemsData);
+      spy(graphicalItemsData);
       return null;
     };
     render(
@@ -172,7 +181,7 @@ describe('selectAllGraphicalItemsData', () => {
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectAllGraphicalItemsData);
+      const tooltipData = useAppSelector(selectCartesianGraphicalItemsData);
       spy(tooltipData);
       return null;
     };
@@ -188,13 +197,16 @@ describe('selectAllGraphicalItemsData', () => {
       </ComposedChart>,
     );
     // Scatter - surprises again - and provides empty array instead of proper undefined like the other elements!
-    expect(spy).toHaveBeenLastCalledWith([undefined, [10, 20, 30], undefined, [40, 50, 60], [], [70, 80, 90]]);
+    expect(spy).toHaveBeenLastCalledWith(
+      // the order is arbitrary
+      expect.arrayContaining([undefined, [10, 20, 30], undefined, [40, 50, 60], [], [70, 80, 90]]),
+    );
   });
 
-  it('should return all data defined on Pies', () => {
+  it('should not return any data defined on Pies - that one will have its own independent selector', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectAllGraphicalItemsData);
+      const tooltipData = useAppSelector(selectCartesianGraphicalItemsData);
       spy(tooltipData);
       return null;
     };
@@ -210,12 +222,7 @@ describe('selectAllGraphicalItemsData', () => {
      * and then it pretends it was there from the start.
      * Well in this test let's pretend that's not happening and assume it provides the original array instead.
      */
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.arrayContaining([
-        [expect.objectContaining({ x: 1 }), expect.objectContaining({ x: 2 }), expect.objectContaining({ x: 3 })],
-        [expect.objectContaining({ y: 10 }), expect.objectContaining({ y: 20 }), expect.objectContaining({ y: 30 })],
-      ]),
-    );
+    expect(spy).toHaveBeenLastCalledWith([]);
   });
 });
 

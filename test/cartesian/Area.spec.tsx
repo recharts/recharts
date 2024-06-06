@@ -1,7 +1,7 @@
 import React, { ComponentType, FC, ReactNode } from 'react';
-import { describe, test, it, expect } from 'vitest';
+import { describe, test, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Area, XAxis, YAxis } from '../../src';
+import { Area, Customized, XAxis, YAxis } from '../../src';
 import type { Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
 import {
@@ -10,6 +10,7 @@ import {
   allCategoricalsChartsExcept,
   includingCompact,
 } from '../helper/parameterizedTestCases';
+import { useAppSelector } from '../../src/state/hooks';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -392,6 +393,40 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           .toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5L495,5L372.5,5L250,5L127.5,5L5,5Z');
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
+    });
+  });
+
+  describe('state integration', () => {
+    it('should report its props to redux state, and remove them when removed from DOM', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        spy(cartesianItems);
+        return null;
+      };
+      const data2 = [1, 2, 3];
+
+      const { rerender } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" data={data2} xAxisId={7} />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            data: data2,
+            xAxisId: 7,
+          }),
+        ]),
+      );
+
+      rerender(
+        <ChartElement data={data}>
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      expect(spy).toHaveBeenLastCalledWith([]);
     });
   });
 
