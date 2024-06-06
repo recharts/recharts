@@ -10,7 +10,6 @@ export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
  * These are the external props, visible for users as they set them using our public API.
  * There is all sorts of internal computed things based on these but they will come through selectors.
  */
-// TODO add the remaining properties here
 export type AxisSettings = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
@@ -26,6 +25,7 @@ export type AxisSettings = {
    */
   dataKey: DataKey<any> | undefined;
   allowDuplicatedCategory: boolean;
+  allowDecimals: boolean;
 };
 
 // TODO add the remaining properties here

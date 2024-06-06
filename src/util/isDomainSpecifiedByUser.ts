@@ -40,7 +40,7 @@ function isWellBehavedNumber(n: unknown): n is number {
 function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
   if (Array.isArray(v) && v.length === 2) {
     const [min, max] = v;
-    if (isWellBehavedNumber(min) && isWellBehavedNumber(max) && min <= max) {
+    if (isWellBehavedNumber(min) && isWellBehavedNumber(max)) {
       return true;
     }
   }
@@ -194,7 +194,7 @@ export function parseNumericalUserDomain(
     } else if (typeof providedMin === 'string' && MIN_VALUE_REG.test(providedMin)) {
       const value = +MIN_VALUE_REG.exec(providedMin)[1];
       finalMin = dataDomain?.[0] - value;
-    } else if (providedMin === 'dataMin') {
+    } else {
       finalMin = dataDomain?.[0];
     }
 
@@ -216,7 +216,7 @@ export function parseNumericalUserDomain(
     } else if (typeof providedMax === 'string' && MAX_VALUE_REG.test(providedMax)) {
       const value = +MAX_VALUE_REG.exec(providedMax)[1];
       finalMax = dataDomain?.[1] + value;
-    } else if (providedMax === 'dataMax') {
+    } else {
       finalMax = dataDomain?.[1];
     }
 
