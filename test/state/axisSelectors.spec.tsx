@@ -217,7 +217,7 @@ describe('selectAxisDomain', () => {
     it('should squish all data defined on all items and chart root and return min, max of the combination', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
+        const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', 0));
         spy(result);
         return null;
       };

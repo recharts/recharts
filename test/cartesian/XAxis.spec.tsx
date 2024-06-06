@@ -110,6 +110,8 @@ describe('<XAxis />', () => {
   });
 
   it('Render ticks of when the scale of XAxis is time', () => {
+    // This test assumes UTC timezone because it renders strings that include timezone
+    expect(new Date().getTimezoneOffset()).toEqual(0);
     const spy = vi.fn();
     const timeData = [
       {
@@ -157,8 +159,15 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
-    // this test doesn't have expectXAxisTicks call because the strings include timezone and that will be different on everyone's laptop
-    // TODO set timezone to a stable value in tests and add the assert
+    expectXAxisTicks(container, [
+      'Thu Jul 04 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Fri Jul 05 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Sat Jul 06 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Sun Jul 07 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Mon Jul 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Tue Jul 09 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Wed Jul 10 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+    ]);
     expect(spy).toHaveBeenLastCalledWith([1562198400000, 1562716800000]);
   });
 
@@ -569,8 +578,19 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['100', '120', '140', '170']);
-        // TODO this looks like regression, investigate! this should return 100, 170 like the other cases
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
+      });
+
+      it('should reverse domain where the larger number is first, and allowDataOverflow is true', () => {
+        const spy = vi.fn();
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" domain={[100, 0]} allowDataOverflow />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </Component>,
+        );
+        expectXAxisTicks(container, ['100', '75', '50', '25', '0']);
+        expect(spy).toHaveBeenLastCalledWith([100, 0]);
       });
 
       it('should render one tick for domain that does not have any gap', () => {
@@ -633,18 +653,21 @@ describe('<XAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
-      it('should default to dataMin, dataMax ANYWAY when domain is provided as strings? I do not understand this behaviour.', () => {
+      it('should default to dataMin, dataMax when domain is provided as an array of invalid values', () => {
         const spy = vi.fn();
         const { container } = render(
           <Component>
-            {/* omg recharts just completely ignores this when it's defined as strings */}
-            <XAxis dataKey="x" type="number" domain={['-500', '500']} allowDataOverflow />
+            <XAxis
+              dataKey="x"
+              type="number"
+              domain={['not a valid number', 'not a valid number either']}
+              allowDataOverflow
+            />
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
         expectXAxisTicks(container, ['100', '120', '140', '170']);
-        // TODO this is regression, this should default to 100, 170. Or, why not default to 0, 'auto'? Investigate
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
       it('should allow a function that returns a domain, and pass inside a computed domain and allowDataOverflow prop', () => {
@@ -658,7 +681,7 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
+        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
         rerender(
@@ -669,7 +692,7 @@ describe('<XAxis />', () => {
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
         // hah that's quite a few calls isn't it. TODO let's see if it improves once we remove the old, generateCategoricalChart code path
-        // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27, not sure why
+        // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27 because of different code paths when data is defined on root vs graphical item
         expect(domainPropSpy).toHaveBeenLastCalledWith([100, 170], false);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
       });
@@ -687,8 +710,8 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-        // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
-        // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
+        // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
+        // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
         expect(spyMin).toHaveBeenCalledWith(100);
         expect(spyMax).toHaveBeenCalledWith(170);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
@@ -744,9 +767,8 @@ describe('<XAxis />', () => {
         expectXAxisTicks(allXAxes[0], ['0', '45', '90', '135', '180']);
         expectXAxisTicks(allXAxes[1], ['0', '40', '80', '120', '160']);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        // TODO this is a regression - these two axes should have different domains.
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 200]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 200]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 153]);
       });
 
       it('should only display domain of data with matching xAxisId, and dataMin dataMax domains', () => {
@@ -769,9 +791,8 @@ describe('<XAxis />', () => {
         expectXAxisTicks(allXAxes[0], ['100', '120', '140', '170']);
         expectXAxisTicks(allXAxes[1], ['110', '120', '130', '140', '150']);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        // TODO this is a regression - these two axes should have different domains.
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([100, 170]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([100, 170]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([110, 150]);
       });
     });
 

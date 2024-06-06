@@ -55,9 +55,8 @@ const computeCategoricalDomain = (allDataSquished: ChartData, axisSettings: Axis
 const selectNumericalDomain = (
   state: RechartsRootState,
   axisSettings: AxisSettings,
-  // TODO I suspect that the data selector needs to accept axis type and axis ID too
-  // axisType: AxisType,
-  // axisId: AxisId,
+  axisType: AxisType,
+  axisId: AxisId,
 ): NumberDomain => {
   const domainDefinition: AxisDomain = axisSettings.domain ?? [0, 'auto'];
 
@@ -70,7 +69,7 @@ const selectNumericalDomain = (
     return domainFromUserPreference;
   }
 
-  const allDataSquished = selectAllDataSquished(state, axisSettings.dataKey);
+  const allDataSquished = selectAllDataSquished(state, axisType, axisId, axisSettings.dataKey);
   const domainFromData = computeNumericalDomain(allDataSquished);
 
   return parseNumericalUserDomain(
@@ -92,10 +91,10 @@ export const selectAxisDomain = (
   }
 
   if (axisSettings.type === 'number') {
-    return selectNumericalDomain(state, axisSettings);
+    return selectNumericalDomain(state, axisSettings, axisType, axisId);
   }
 
-  const allDataSquished = selectAllDataSquished(state, axisSettings.dataKey);
+  const allDataSquished = selectAllDataSquished(state, axisType, axisId, axisSettings.dataKey);
   return computeCategoricalDomain(allDataSquished, axisSettings);
 };
 

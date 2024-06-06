@@ -46,7 +46,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetGraphicalItemData } from '../state/SetGraphicalItemData';
+import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -518,7 +518,7 @@ export class Scatter extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -533,7 +533,7 @@ export class Scatter extends PureComponent<Props, State> {
 
     return (
       <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-        <SetGraphicalItemData dataDefinedOnItem={this.props.data} />
+        <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
         <SetScatterLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {needClipX || needClipY ? (
