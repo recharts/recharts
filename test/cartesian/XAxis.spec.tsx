@@ -110,6 +110,8 @@ describe('<XAxis />', () => {
   });
 
   it('Render ticks of when the scale of XAxis is time', () => {
+    // This test assumes UTC timezone because it renders strings that include timezone
+    expect(new Date().getTimezoneOffset()).toEqual(0);
     const spy = vi.fn();
     const timeData = [
       {
@@ -157,8 +159,15 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
-    // this test doesn't have expectXAxisTicks call because the strings include timezone and that will be different on everyone's laptop
-    // TODO set timezone to a stable value in tests and add the assert
+    expectXAxisTicks(container, [
+      'Thu Jul 04 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Fri Jul 05 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Sat Jul 06 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Sun Jul 07 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Mon Jul 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Tue Jul 09 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      'Wed Jul 10 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+    ]);
     expect(spy).toHaveBeenLastCalledWith([1562198400000, 1562716800000]);
   });
 
