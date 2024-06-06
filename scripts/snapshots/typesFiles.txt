@@ -66,7 +66,7 @@
   "types/state/axisSelectors.d.ts",
   "types/state/axisMapSlice.d.ts",
   "types/state/SetTooltipEntrySettings.d.ts",
-  "types/state/SetGraphicalItemData.d.ts",
+  "types/state/SetCartesianGraphicalItem.d.ts",
   "types/state/ReportBar.d.ts",
   "types/state/RechartsStoreProvider.d.ts",
   "types/shape/Trapezoid.d.ts",

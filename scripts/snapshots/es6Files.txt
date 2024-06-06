@@ -66,7 +66,7 @@
   "es6/state/axisSelectors.js",
   "es6/state/axisMapSlice.js",
   "es6/state/SetTooltipEntrySettings.js",
-  "es6/state/SetGraphicalItemData.js",
+  "es6/state/SetCartesianGraphicalItem.js",
   "es6/state/ReportBar.js",
   "es6/state/RechartsStoreProvider.js",
   "es6/shape/Trapezoid.js",
