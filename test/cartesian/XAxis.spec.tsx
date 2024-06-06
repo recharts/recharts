@@ -681,7 +681,7 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix - this is because all the dispatches inside generateCategoricalChart context
+        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
         rerender(
@@ -692,7 +692,7 @@ describe('<XAxis />', () => {
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
         // hah that's quite a few calls isn't it. TODO let's see if it improves once we remove the old, generateCategoricalChart code path
-        // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27, not sure why
+        // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27 because of different code paths when data is defined on root vs graphical item
         expect(domainPropSpy).toHaveBeenLastCalledWith([100, 170], false);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
       });
@@ -710,8 +710,8 @@ describe('<XAxis />', () => {
           </Component>,
         );
         expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
-        // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
-        // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, investigate and fix
+        // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
+        // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
         expect(spyMin).toHaveBeenCalledWith(100);
         expect(spyMax).toHaveBeenCalledWith(170);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
