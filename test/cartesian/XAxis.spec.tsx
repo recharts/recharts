@@ -644,18 +644,21 @@ describe('<XAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
-      it('should default to dataMin, dataMax ANYWAY when domain is provided as strings? I do not understand this behaviour.', () => {
+      it('should default to dataMin, dataMax when domain is provided as an array of invalid values', () => {
         const spy = vi.fn();
         const { container } = render(
           <Component>
-            {/* omg recharts just completely ignores this when it's defined as strings */}
-            <XAxis dataKey="x" type="number" domain={['-500', '500']} allowDataOverflow />
+            <XAxis
+              dataKey="x"
+              type="number"
+              domain={['not a valid number', 'not a valid number either']}
+              allowDataOverflow
+            />
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
         expectXAxisTicks(container, ['100', '120', '140', '170']);
-        // TODO this is regression, this should default to 100, 170. Or, why not default to 0, 'auto'? Investigate
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
       it('should allow a function that returns a domain, and pass inside a computed domain and allowDataOverflow prop', () => {

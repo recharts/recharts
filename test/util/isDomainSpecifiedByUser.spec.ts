@@ -107,27 +107,13 @@ describe('parsing axis domain provided by user', () => {
     { domain: [2, 1], expected: [2, 1] },
   ];
 
-  // These are always invalid domains
-  const invalidCases: MyTestCases = [
-    { domain: [] },
-    { domain: [0] },
-    { domain: [100, NaN] },
-    { domain: [100, 150, 200] },
-    { domain: [NaN, 100] },
+  const casesThatDefaultToDataMinDataMax: MyTestCases = [
     { domain: [NaN, NaN] },
-    { domain: [0, Infinity] },
-    { domain: [Infinity, 9] },
-    { domain: [() => '1', 9] },
-    // @ts-expect-error typescript is correct here but I want a test anyway
-    { domain: () => ['1', 9] },
-    // @ts-expect-error typescript is correct here but I want a test anyway
-    { domain: () => [1, 2, 3] },
     // sorry no string parsing. Although we could allow that, why not? Perhaps an opportunity for an improvement
     { domain: ['20', '30'] },
+    { domain: ['', ''] },
     // no percents in dataMin or dataMax, possible feature request perhaps
     { domain: ['dataMin - 10%', 'dataMax + 5%'] },
-    // toFixed returns a string and strings are not allowed
-    { domain: [(min: number) => min.toFixed(3), (max: number) => max.toFixed(3)] },
     /*
      * This is interesting - Recharts allows dataMin to get smaller and dataMax to get bigger,
      * but doesn't allow dataMin to get bigger and dataMax to get smaller!
@@ -136,12 +122,30 @@ describe('parsing axis domain provided by user', () => {
     { domain: ['dataMin + 11.2', 'dataMax - 7.3'], expected: [-100, 100] },
   ];
 
+  // These are always invalid domains
+  const invalidCases: MyTestCases = [
+    { domain: [] },
+    { domain: [0] },
+    { domain: [100, 150, 200] },
+    { domain: [0, Infinity] },
+    { domain: [Infinity, 9] },
+    { domain: [() => '1', 9] },
+    // @ts-expect-error typescript is correct here, but I want a test anyway
+    { domain: () => ['1', 9] },
+    // @ts-expect-error typescript is correct here, but I want a test anyway
+    { domain: () => [1, 2, 3] },
+    // toFixed returns a string and strings are not allowed
+    { domain: [(min: number) => min.toFixed(3), (max: number) => max.toFixed(3)] },
+  ];
+
   const numericalDataDomain: NumberDomain = [-100, 100];
 
   /**
    * These are valid - but only when the calculated chart data is present.
    */
   const casesValidOnlyWhenDataDomainIsGiven: MyTestCases = [
+    { domain: [100, NaN], expected: [100, 100] },
+    { domain: [NaN, 200], expected: [-100, 200] },
     { domain: [11, 'auto'], expected: [11, 150] },
     { domain: ['auto', 1], expected: [-100, 1] },
     { domain: [0, 'dataMax'], expected: [0, 100] },
@@ -187,6 +191,11 @@ describe('parsing axis domain provided by user', () => {
     });
 
     it.each(invalidCases)('should return undefined when domain = $domain', ({ domain }) => {
+      expect(numericalDomainSpecifiedWithoutRequiringData(domain, true)).toEqual(undefined);
+      expect(numericalDomainSpecifiedWithoutRequiringData(domain, false)).toEqual(undefined);
+    });
+
+    it.each(casesThatDefaultToDataMinDataMax)('should return undefined when domain = $domain', ({ domain }) => {
       expect(numericalDomainSpecifiedWithoutRequiringData(domain, true)).toEqual(undefined);
       expect(numericalDomainSpecifiedWithoutRequiringData(domain, false)).toEqual(undefined);
     });
@@ -248,6 +257,16 @@ describe('parsing axis domain provided by user', () => {
       expect(parseNumericalUserDomain(domain, undefined, true, true)).toBeUndefined();
       expect(parseNumericalUserDomain(domain, undefined, false, true)).toBeUndefined();
     });
+
+    it.each(casesThatDefaultToDataMinDataMax)(
+      'should return data min, data max when domain = $domain',
+      ({ domain }) => {
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true)).toEqual([-100, 100]);
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true)).toEqual([-100, 100]);
+        expect(parseNumericalUserDomain(domain, undefined, true, true)).toBeUndefined();
+        expect(parseNumericalUserDomain(domain, undefined, false, true)).toBeUndefined();
+      },
+    );
 
     describe('allowDecimals', () => {
       const domainSmallerThan1: NumberDomain = [0.3, 0.5];
