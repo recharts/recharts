@@ -12,6 +12,8 @@ import { initialState as initialTooltipState } from '../../src/state/tooltipSlic
 const defaultProps: CursorProps = {
   cursor: true,
   tooltipEventType: 'axis',
+  coordinate: undefined,
+  payload: [],
 };
 
 const tooltipContext: TooltipContextValue = {
@@ -23,6 +25,11 @@ const tooltipContext: TooltipContextValue = {
   },
   active: true,
   index: 0,
+};
+
+const baseCoord = {
+  x: 0,
+  y: 0,
 };
 
 const connectedProps: CursorConnectedProps = {
@@ -50,15 +57,10 @@ const preloadedRadialState: Partial<RechartsRootState> = {
   },
   tooltip: {
     ...initialTooltipState,
-    activeCoordinate: {
-      endAngle: 2,
-      radius: 1,
-      startAngle: 1,
-      x: 0,
-      y: 0,
+    itemInteraction: {
+      activeHover: true,
+      ...initialTooltipState.itemInteraction,
     },
-    active: true,
-    activeLabel: '',
   },
 };
 
@@ -71,6 +73,7 @@ describe('Cursor', () => {
       const props: CursorConnectedProps = {
         ...connectedProps,
         cursor: <MyCustomCursor />,
+        coordinate: baseCoord,
       };
       const { getByText } = render(
         <TooltipContextProvider value={tooltipContext}>
@@ -89,6 +92,7 @@ describe('Cursor', () => {
         tooltipAxisBandSize: 1,
         chartName: 'BarChart',
         offset: { top: 0, height: 0 },
+        coordinate: baseCoord,
         ...tooltipContext,
       };
       const { container } = render(
@@ -102,8 +106,13 @@ describe('Cursor', () => {
     });
 
     it('should render sector cursor for radial layout charts', () => {
-      const radialTooltipContext: TooltipContextValue = {
-        ...tooltipContext,
+      const coordinate = { endAngle: 2, radius: 1, startAngle: 1, x: 0, y: 0 };
+      const props: CursorConnectedProps = {
+        chartName: '',
+        offset: {},
+        tooltipAxisBandSize: 0,
+        ...defaultProps,
+        layout: 'radial',
         coordinate: {
           endAngle: 2,
           radius: 1,
@@ -111,18 +120,11 @@ describe('Cursor', () => {
           x: 0,
           y: 0,
         },
-      };
-      const props: CursorConnectedProps = {
-        chartName: '',
-        offset: {},
-        tooltipAxisBandSize: 0,
-        ...defaultProps,
-        layout: 'radial',
-        ...radialTooltipContext,
+        ...tooltipContext,
       };
       const { container } = render(
         <svg width={100} height={100}>
-          <CursorInternal {...props} />
+          <CursorInternal {...props} coordinate={coordinate} />
         </svg>,
       );
       const cursor = container.querySelector('.recharts-sector');
@@ -137,7 +139,7 @@ describe('Cursor', () => {
         <RechartsStoreProvider preloadedState={preloadedState}>
           <TooltipContextProvider value={tooltipContext}>
             <svg width={100} height={100}>
-              <Cursor {...defaultProps} />
+              <Cursor {...defaultProps} coordinate={baseCoord} />
             </svg>
           </TooltipContextProvider>
         </RechartsStoreProvider>,
@@ -154,6 +156,7 @@ describe('Cursor', () => {
       const props: CursorProps = {
         ...defaultProps,
         cursor: <MyCustomCursor />,
+        coordinate: baseCoord,
       };
       const { getByText } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>
@@ -174,12 +177,19 @@ describe('Cursor', () => {
           chartName: 'ScatterChart',
           tooltipPayloadSearcher: arrayTooltipSearcher,
         },
+        tooltip: {
+          ...initialTooltipState,
+          itemInteraction: {
+            activeHover: true,
+            ...initialTooltipState.itemInteraction,
+          },
+        },
       };
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedScatterState}>
           <TooltipContextProvider value={tooltipContext}>
             <svg width={100} height={100}>
-              <Cursor {...defaultProps} />
+              <Cursor {...defaultProps} coordinate={baseCoord} />
             </svg>
           </TooltipContextProvider>
         </RechartsStoreProvider>,
@@ -190,21 +200,13 @@ describe('Cursor', () => {
     });
 
     it('should render sector cursor for radial layout charts', () => {
-      const radialTooltipContext: TooltipContextValue = {
-        ...tooltipContext,
-        coordinate: {
-          endAngle: 2,
-          radius: 1,
-          startAngle: 1,
-          x: 0,
-          y: 0,
-        },
-      };
+      const coordinate = { endAngle: 2, radius: 1, startAngle: 1, x: 0, y: 0 };
+      const payload = [{ value: 'test', name: 'test' }];
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedRadialState}>
-          <TooltipContextProvider value={radialTooltipContext}>
+          <TooltipContextProvider value={tooltipContext}>
             <svg width={100} height={100}>
-              <Cursor {...defaultProps} />
+              <Cursor {...defaultProps} coordinate={coordinate} payload={payload} />
             </svg>
           </TooltipContextProvider>
         </RechartsStoreProvider>,

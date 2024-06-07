@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { vi } from 'vitest';
@@ -615,8 +615,9 @@ describe('<BarChart />', () => {
 
       fireEvent.mouseOut(barCharts[0]);
       const tooltips3 = container.querySelectorAll('.recharts-tooltip-wrapper');
-      expect(tooltips3[0]).not.toBeVisible();
-      expect(tooltips3[1]).not.toBeVisible();
+      // TODO: remove these waits. Right now with both Context and Redux there are too many re-renders.
+      waitFor(() => expect(tooltips3[0]).not.toBeVisible());
+      waitFor(() => expect(tooltips3[1]).not.toBeVisible());
 
       fireEvent.mouseOut(barCharts[1]);
       const tooltips4 = container.querySelectorAll('.recharts-tooltip-wrapper');

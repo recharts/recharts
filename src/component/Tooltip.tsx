@@ -143,6 +143,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const isTooltipActiveFromRedux = useAppSelector(state =>
     selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
   );
+
   const coordinateFromRedux = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger));
   // TODO remove the payloadFromContext fallback
   const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
@@ -153,7 +154,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux ?? activeFromContext;
+  const finalIsActive = activeFromProps ?? (isTooltipActiveFromRedux || activeFromContext);
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
@@ -175,7 +176,10 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     );
   }
   const finalCoord = coordinateFromRedux ?? coordinateFromContext;
-  const finalLabel = labelFromRedux ?? labelFromContext;
+  // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
+  // TODO: update when moving synchronization to redux
+  // TODO: where should we put this check for tooltipEventType? Is anything else affected?
+  const finalLabel = tooltipEventType === 'axis' ? labelFromContext ?? labelFromRedux : undefined;
 
   const hasPayload = finalPayload.length > 0;
 

@@ -15,7 +15,13 @@ mouseClickMiddleware.startListening({
     const mousePointer = action.payload;
     const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
     if (activeProps?.activeIndex != null) {
-      listenerApi.dispatch(setMouseClickAxisIndex({ activeIndex: activeProps.activeIndex, activeDataKey: undefined }));
+      listenerApi.dispatch(
+        setMouseClickAxisIndex({
+          activeIndex: activeProps.activeIndex,
+          activeDataKey: undefined,
+          activeClickCoordinate: activeProps.activeCoordinate,
+        }),
+      );
     }
   },
 });
@@ -30,8 +36,15 @@ mouseMoveMiddleware.startListening({
     const mousePointer = action.payload;
     const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
     if (activeProps?.activeIndex != null) {
-      listenerApi.dispatch(setMouseOverAxisIndex({ activeIndex: activeProps.activeIndex, activeDataKey: undefined }));
+      listenerApi.dispatch(
+        setMouseOverAxisIndex({
+          activeIndex: activeProps.activeIndex,
+          activeDataKey: undefined,
+          activeMouseOverCoordinate: activeProps.activeCoordinate,
+        }),
+      );
     } else {
+      // this is needed to clear tooltip state when the mouse moves out of the inRange (svg - offset) function, but not yet out of the svg
       listenerApi.dispatch(mouseLeaveChart());
     }
   },

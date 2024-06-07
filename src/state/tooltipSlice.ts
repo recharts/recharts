@@ -201,12 +201,17 @@ const tooltipSlice = createSlice({
     mouseLeaveChart(state) {
       state.itemInteraction.activeHover = false;
       state.itemInteraction.activeMouseOverCoordinate = null;
+      state.itemInteraction.activeMouseOverIndex = null;
       state.axisInteraction.activeHover = false;
       state.axisInteraction.activeMouseOverCoordinate = null;
+      state.axisInteraction.activeMouseOverAxisDataKey = undefined;
+      state.axisInteraction.activeMouseOverAxisIndex = null;
     },
     mouseLeaveItem(state) {
       state.itemInteraction.activeHover = false;
       state.itemInteraction.activeMouseOverCoordinate = null;
+      state.itemInteraction.activeMouseOverIndex = null;
+      state.itemInteraction.activeMouseOverDataKey = undefined;
     },
     setActiveClickItemIndex(
       state,

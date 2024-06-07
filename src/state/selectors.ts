@@ -141,10 +141,10 @@ export const selectActiveLabel = createSelector(
   selectActiveIndex,
   (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {
     const n = Number(activeIndex);
-    if (Number.isNaN(n)) {
+    if (Number.isNaN(n) || activeIndex == null) {
       return undefined;
     }
-    return tooltipTicks?.[n]?.value;
+    return n >= 0 ? tooltipTicks?.[n]?.value : undefined;
   },
 );
 
@@ -272,8 +272,9 @@ export const selectIsTooltipActive = (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex?: number | undefined,
 ): boolean => {
+  // TODO: move this to be called at the top level. How to do that while preserving required parameters?
   const isTooltipActive = createSelector(selectActiveCoordinate, (coordinate: ChartCoordinate) => {
     // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
     // we can change this later but not sure how else to maintain current functionality
