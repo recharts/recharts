@@ -17,7 +17,13 @@ import { TooltipContextValue, useTooltipContext } from '../context/tooltipContex
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
-import { selectTooltipPayload, useTooltipEventType } from '../state/selectors';
+import {
+  selectActiveLabel,
+  selectIsTooltipActive,
+  selectActiveCoordinate,
+  selectTooltipPayload,
+  useTooltipEventType,
+} from '../state/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppSelector } from '../state/hooks';
@@ -126,14 +132,18 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const {
     active: activeFromContext,
     payload: payloadFromContext,
-    coordinate: coordFromContext,
+    coordinate: coordinateFromContext,
     label: labelFromContext,
   } = useTooltipContext();
 
-  const activeProps = useAppSelector(state => state.tooltip);
   const payloadFromRedux = useAppSelector(state =>
     selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
   );
+  const labelFromRedux = useAppSelector(state => selectActiveLabel(state, tooltipEventType, trigger, defaultIndex));
+  const isTooltipActiveFromRedux = useAppSelector(state =>
+    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
+  );
+  const coordinateFromRedux = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger));
   // TODO remove the payloadFromContext fallback
   const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();
@@ -143,7 +153,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? activeProps?.active ?? activeFromContext;
+  const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux ?? activeFromContext;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
@@ -164,8 +174,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
-  const finalCoord = activeProps?.activeCoordinate ?? coordFromContext;
-  const finalLabel = activeProps?.activeLabel ?? labelFromContext;
+  const finalCoord = coordinateFromRedux ?? coordinateFromContext;
+  const finalLabel = labelFromRedux ?? labelFromContext;
 
   const hasPayload = finalPayload.length > 0;
 
@@ -204,7 +214,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       {/* Tooltip the HTML element renders through a React portal so that it escapes clipping, and it renders on top of everything else */}
       {createPortal(tooltipElement, tooltipPortal)}
       {/* Cursor is an SVG element and renders in another portal, so that it renders _below_ the graphical elements */}
-      {finalIsActive && createPortal(<Cursor cursor={cursor} tooltipEventType={tooltipEventType} />, cursorPortal)}
+      {finalIsActive &&
+        createPortal(
+          <Cursor cursor={cursor} tooltipEventType={tooltipEventType} coordinate={finalCoord} payload={payload} />,
+          cursorPortal,
+        )}
     </>
   );
 }

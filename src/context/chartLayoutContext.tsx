@@ -24,7 +24,6 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setLayout, setOffset } from '../state/layoutSlice';
-import { setActiveProps } from '../state/tooltipSlice';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
@@ -89,13 +88,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   };
 
   const dispatch = useAppDispatch();
-  /**
-   * This throws an error no matter where I put it (here, useEffect here, separate component)
-   * How is this fixed? Eventually we'll get rud of the chart context provider altogether but...
-   *
-   * Warning: Cannot update a component (`TooltipInternal`) while rendering a different component (`ChartLayoutContextProvider`).
-   */
-  dispatch(setActiveProps({ active: isTooltipActive, activeCoordinate, activeLabel }));
+
   dispatch(setXAxisMap(xAxisMap));
   dispatch(setYAxisMap(yAxisMap));
   dispatch(setPolarAngleAxisMap(angleAxisMap));

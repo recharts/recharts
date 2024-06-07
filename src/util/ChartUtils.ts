@@ -45,6 +45,7 @@ import {
   AxisType,
   BaseAxisProps,
   CategoricalDomain,
+  ChartCoordinate,
   ChartOffset,
   DataKey,
   LayoutType,
@@ -58,7 +59,7 @@ import {
 import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
-import { inRangeOfSector } from './PolarUtils';
+import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 
 // Exported for backwards compatibility
 export { getLegendProps };
@@ -1599,6 +1600,47 @@ export function inRange(
 
   return null;
 }
+
+export const getActiveCoordinate = (
+  layout: LayoutType,
+  tooltipTicks: readonly TickItem[],
+  activeIndex: number,
+  rangeObj: RangeObj,
+): ChartCoordinate => {
+  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
+
+  if (entry) {
+    if (layout === 'horizontal') {
+      return { x: entry.coordinate, y: rangeObj.y };
+    }
+    if (layout === 'vertical') {
+      return { x: rangeObj.x, y: entry.coordinate };
+    }
+    if (layout === 'centric') {
+      const angle = entry.coordinate;
+      const { radius } = rangeObj;
+
+      return {
+        ...rangeObj,
+        ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
+        angle,
+        radius,
+      };
+    }
+
+    const radius = entry.coordinate;
+    const { angle } = rangeObj;
+
+    return {
+      ...rangeObj,
+      ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
+      angle,
+      radius,
+    };
+  }
+
+  return { x: 0, y: 0 };
+};
 
 export const calculateTooltipPos = (rangeObj: RangeObj, layout: LayoutType): number | undefined => {
   if (layout === 'horizontal') {

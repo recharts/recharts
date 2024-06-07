@@ -1,20 +1,21 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { selectActiveIndexFromMousePointer } from './selectors';
+import { selectActivePropsFromMousePointer } from './selectors';
 import { MousePointer } from '../chart/generateCategoricalChart';
-import { setMouseClickAxisIndex, setMouseOverAxisIndex, TooltipIndex } from './tooltipSlice';
+import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 
 export const mouseClickMiddleware = createListenerMiddleware();
 
+// TODO: there's a bug here when you click the chart the activeIndex resets to zero
 mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeIndex: TooltipIndex = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
-    if (activeIndex != null) {
-      listenerApi.dispatch(setMouseClickAxisIndex({ activeIndex, activeDataKey: undefined }));
+    const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
+    if (activeProps?.activeIndex != null) {
+      listenerApi.dispatch(setMouseClickAxisIndex({ activeIndex: activeProps.activeIndex, activeDataKey: undefined }));
     }
   },
 });
@@ -27,9 +28,11 @@ mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeIndex: TooltipIndex = selectActiveIndexFromMousePointer(listenerApi.getState(), mousePointer);
-    if (activeIndex != null) {
-      listenerApi.dispatch(setMouseOverAxisIndex({ activeIndex, activeDataKey: undefined }));
+    const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
+    if (activeProps?.activeIndex != null) {
+      listenerApi.dispatch(setMouseOverAxisIndex({ activeIndex: activeProps.activeIndex, activeDataKey: undefined }));
+    } else {
+      listenerApi.dispatch(mouseLeaveChart());
     }
   },
 });

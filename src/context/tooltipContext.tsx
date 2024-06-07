@@ -1,12 +1,7 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { ChartCoordinate, Coordinate, DataKey } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
-import {
-  mouseLeaveItem,
-  setActiveClickItemIndex,
-  setActiveProps,
-  setActiveMouseOverItemIndex,
-} from '../state/tooltipSlice';
+import { mouseLeaveItem, setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
 
 export type TooltipContextValue = {
   label: string;
@@ -44,22 +39,6 @@ export type ActivateTooltipAction<T extends TooltipPayloadType> = (
   index: number,
   event: React.MouseEvent<SVGElement>,
 ) => void;
-
-export const SetTooltipInfo = (props: {
-  active: boolean;
-  activeCoordinate: ChartCoordinate;
-  activeLabel?: string;
-}): null => {
-  const { active, activeCoordinate, activeLabel } = props;
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(setActiveProps({ active, activeCoordinate, activeLabel }));
-    return () => {
-      dispatch(setActiveProps({ active: false, activeCoordinate: { x: 0, y: 0 }, activeLabel: '' }));
-    };
-  }, [active, activeCoordinate, activeLabel, dispatch]);
-  return null;
-};
 
 export const MouseEnterItemDispatchContext = createContext<ActivateTooltipAction<TooltipPayloadType> | null>(null);
 export const MouseLeaveItemDispatchContext = createContext<ActivateTooltipAction<TooltipPayloadType> | null>(null);
