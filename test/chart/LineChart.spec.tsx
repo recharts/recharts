@@ -1271,7 +1271,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   /**
    * Tooltip tries to read payload from Redux but tooltip synchronisation is not in redux yet and so this test fails
-   *  implement tooltip sync in redux and then enable this test again
+   * TODO implement tooltip sync in redux and then enable this test again
    * https://github.com/recharts/recharts/issues/4548
    */
   test.fails(
