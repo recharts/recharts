@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { selectChartLayout } from '../context/chartLayoutContext';
+import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
 import { ParsedScaleReturn, parseScale } from '../util/ChartUtils';
-import { AxisDomain, AxisType, CategoricalDomain, LayoutType, NumberDomain } from '../util/types';
-import { AxisId, AxisSettings } from './axisMapSlice';
+import { AxisDomain, AxisType, CategoricalDomain, ChartOffset, LayoutType, NumberDomain } from '../util/types';
+import { AxisId, AxisSettings, XAxisSettings } from './axisMapSlice';
 import { selectChartName } from './selectors';
 import { RechartsRootState } from './store';
 import { selectAllDataSquished } from './dataSelectors';
@@ -14,6 +14,10 @@ import { ChartData } from './chartDataSlice';
 
 export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: AxisId): AxisSettings =>
   state.axisMap[axisType][axisId];
+
+export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
+  return state.axisMap.xAxis[axisId];
+};
 
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
@@ -97,6 +101,67 @@ export const selectAxisDomain = (
   const allDataSquished = selectAllDataSquished(state, axisType, axisId, axisSettings.dataKey);
   return computeCategoricalDomain(allDataSquished, axisSettings);
 };
+
+// const getSmallestDistanceBetweenValues: (state: RechartsRootState, axisType: AxisType, axisId: AxisId)=> number | undefined = createSelector(
+//   selectAllDataSquished,
+//   selectAxisDomain,
+//   selectAxisSettings,
+//   (_state: RechartsRootState, axisType: AxisType, axisId: AxisId) => axisType,
+//   (allDataSquished: ChartData, axisSettings: AxisSettings, axisType: AxisType): number | undefined => {
+//     if (axisSettings.type !== 'number') {
+//       return undefined;
+//   }
+//     let smallestDistanceBetweenValues = Infinity;
+//     const sortedValues = allDataSquished
+//
+// )
+//
+// const selectCalculatedPadding: (state: RechartsRootState, axisType: AxisType, axisId: string) => number =
+//   createSelector(
+//     selectAxisSettings,
+//     selectChartOffset,
+//     selectChartLayout,
+//     selectAxisDomain,
+//     (
+//       axisSettings: AxisSettings,
+//       offset: ChartOffset,
+//       chartLayout: LayoutType,
+//       domain: NumberDomain | CategoricalDomain,
+//     ) => {
+//       if ((axisSettings.padding !== 'gap' && axisSettings.padding !== 'no-gap') || axisSettings.type !== 'number') {
+//         return 0;
+//       }
+//       const diff = domain[1] - domain[0];
+//       let smallestDistanceBetweenValues = Infinity;
+//       const sortedValues = axis.categoricalDomain.sort();
+//       sortedValues.forEach((value: number, index: number) => {
+//         if (index > 0) {
+//           smallestDistanceBetweenValues = Math.min(
+//             (value || 0) - (sortedValues[index - 1] || 0),
+//             smallestDistanceBetweenValues,
+//           );
+//         }
+//       });
+//       const smallestDistanceInPercent = smallestDistanceBetweenValues / diff;
+//       const rangeWidth = chartLayout === 'vertical' ? offset.height : offset.width;
+//       if (axisSettings.padding === 'gap') {
+//         return (smallestDistanceInPercent * rangeWidth) / 2;
+//       }
+//     },
+//   );
+//
+// export const combineXAxisRange = (
+//   offset: ChartOffset,
+//   layout: LayoutType,
+//   calculatedPadding: number | undefined,
+//   axisSettings: XAxisSettings,
+// ): ReadonlyArray<number> | undefined => {
+//   const { padding = {} } = axisSettings;
+//   return [
+//     offset.left + (padding.left || 0) + (calculatedPadding || 0),
+//     offset.left + offset.width - (padding.right || 0) - (calculatedPadding || 0),
+//   ];
+// };
 
 export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
   createSelector(

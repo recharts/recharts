@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { AxisDomain, AxisDomainType, AxisType, DataKey, ScaleType } from '../util/types';
+import { AxisDomain, AxisDomainType, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 
 export type AxisId = string | number;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
+export type YAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
 
 /**
  * These are the external props, visible for users as they set them using our public API.
@@ -14,7 +15,6 @@ export type AxisSettings = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
   type: AxisDomainType;
-  padding: XAxisPadding;
   domain: AxisDomain | undefined;
   allowDataOverflow: boolean;
   /**
@@ -28,16 +28,23 @@ export type AxisSettings = {
   allowDecimals: boolean;
 };
 
-// TODO add the remaining properties here
-export type XAxisSettings = AxisSettings;
+export type XAxisSettings = AxisSettings & {
+  padding: XAxisPadding;
+};
+
+export type YAxisSettings = AxisSettings & {
+  padding: YAxisPadding;
+};
+
+export type ZAxisSettings = AxisSettings;
 
 type AxisMapState = {
-  [axisType in AxisType]: Record<AxisId, XAxisSettings>;
+  xAxis: Record<AxisId, XAxisSettings>;
+  yAxis: Record<AxisId, YAxisSettings>;
+  zAxis: Record<AxisId, ZAxisSettings>;
 };
 
 const initialState: AxisMapState = {
-  angleAxis: {},
-  radiusAxis: {},
   xAxis: {},
   yAxis: {},
   zAxis: {},
