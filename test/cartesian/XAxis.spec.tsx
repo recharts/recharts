@@ -285,8 +285,30 @@ describe('<XAxis />', () => {
 
     const bar = container.querySelector('.recharts-rectangle');
     assertNotNull(bar);
-    expect(parseInt(bar.getAttribute('x') as string, 10)).toEqual(70);
+    expect(bar.getAttribute('x')).toEqual('70.16326530612245');
     expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '81.42857142857143',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '137.75510204081633',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '194.0816326530612',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '278.57142857142856',
+        y: '273',
+      },
+    ]);
   });
 
   it('Render Bars with no gap', () => {
@@ -302,7 +324,7 @@ describe('<XAxis />', () => {
 
     const bar = container.querySelector('.recharts-rectangle');
     assertNotNull(bar);
-    expect(parseInt(bar.getAttribute('x') as string, 10)).toEqual(66);
+    expect(bar.getAttribute('x')).toEqual('66.2928279883382');
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -322,6 +344,123 @@ describe('<XAxis />', () => {
       {
         textContent: '170',
         x: '282.0448979591837',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with custom gap', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 11, right: 17 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('64.45714285714286');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '76',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '133.71428571428572',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '191.42857142857144',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '278',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with padding on the left', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 19 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('71.94285714285715');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '84',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '144.28571428571428',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '204.57142857142856',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '295',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with padding on the right', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ right: 23 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('53.17142857142858');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '65',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '124.14285714285714',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '183.28571428571428',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '272',
         y: '273',
       },
     ]);
