@@ -5,7 +5,7 @@ import { RechartsScale } from '../util/ChartUtils';
 
 export type AxisId = string | number;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
-export type YAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
+export type YAxisPadding = { top?: number; bottom?: number } | 'gap' | 'no-gap';
 
 /**
  * These are the external props, visible for users as they set them using our public API.
