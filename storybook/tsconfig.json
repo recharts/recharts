@@ -8,7 +8,12 @@
     "noEmit": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "target": "es6"
+    "target": "es6",
+    // ES2023.Array is needed for Array.prototype.toSorted()
+    "lib": [
+      "ES2023.Array",
+      "DOM"
+    ]
   },
   "include": [
     "./**/*",
