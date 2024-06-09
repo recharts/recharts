@@ -40,6 +40,8 @@ import { selectChartDataWithIndexes } from './dataSelectors';
 
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
+export const selectBarCategoryGap = (state: RechartsRootState) => state.options.barCategoryGap;
+
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
 };
