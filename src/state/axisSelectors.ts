@@ -226,6 +226,9 @@ const selectCalculatedPadding: (
     offset: ChartOffset,
     padding: string,
   ) => {
+    if (!Number.isFinite(smallestDistanceInPercent)) {
+      return 0;
+    }
     const rangeWidth = layout === 'vertical' ? offset.height : offset.width;
 
     if (padding === 'gap') {

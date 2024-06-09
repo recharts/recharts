@@ -617,7 +617,7 @@ describe('<XAxis />', () => {
     expect(spy).toHaveBeenLastCalledWith([100, 100]);
   });
 
-  it('Should render the YAxis line without any ticks', () => {
+  it('Should render the axis line without any ticks', () => {
     const spy = vi.fn();
     const barData = [{ day: '05-01' }, { day: '05-02' }];
     const { container } = render(

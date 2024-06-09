@@ -948,6 +948,22 @@ describe('selectCalculatedPadding', () => {
     expect(spy).toHaveBeenLastCalledWith(0.9955652016293147);
   });
 
+  it('should return 0 when padding=no-gap and there is only one data point on the chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectCalculatedXAxisPadding(state, 0));
+      spy(result);
+      return null;
+    };
+    render(
+      <BarChart data={[PageData[0]]} width={100} height={100}>
+        <XAxis dataKey="pv" padding="no-gap" type="number" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith(0);
+  });
+
   it('should return 0 when padding is an object', () => {
     const spy = vi.fn();
     const Comp = (): null => {
