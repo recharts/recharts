@@ -2868,4 +2868,5 @@ describe('<XAxis />', () => {
 
   describe.todo('brush and startIndex + endIndex');
   describe.todo('ErrorBars are interacting with the domain somehow');
+  describe.todo('layout=vertical');
 });
