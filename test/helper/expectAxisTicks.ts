@@ -4,10 +4,20 @@ import { AxisId } from '../../src/state/axisMapSlice';
 import { selectAxisDomain } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 
-export function expectXAxisTicks(container: Element, ticks: ReadonlyArray<string>) {
-  const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick');
+export type ExpectedTick = {
+  textContent: string;
+  x: string;
+  y: string;
+};
+
+export function expectXAxisTicks(container: Element, ticks: ReadonlyArray<ExpectedTick>) {
+  const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
-  const ticksContexts = Array.from(allTicks).map(tick => tick.textContent);
+  const ticksContexts = Array.from(allTicks).map(tick => ({
+    textContent: tick.textContent,
+    x: tick.getAttribute('x'),
+    y: tick.getAttribute('y'),
+  }));
   expect(ticksContexts).toEqual(ticks);
 }
 
