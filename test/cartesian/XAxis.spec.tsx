@@ -60,7 +60,7 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.xAxis .recharts-xAxis')).toHaveLength(0);
-    expect(spy).toHaveBeenLastCalledWith(['', '', '', '', '', '', '']);
+    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('Render ticks of XAxis when specify ticks', () => {
@@ -86,7 +86,7 @@ describe('<XAxis />', () => {
         y: '358',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith(['', '', '', '', '', '', '']);
+    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('Render ticks with tickFormatter', () => {
@@ -132,7 +132,7 @@ describe('<XAxis />', () => {
         y: '358',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith(['', 'Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 
   it('Render duplicated ticks of XAxis', () => {
@@ -179,7 +179,7 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith(['', 'Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 
   it('Render ticks of when the scale of XAxis is time', () => {
@@ -633,7 +633,7 @@ describe('<XAxis />', () => {
     const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
     expect(axisLine).toHaveLength(1);
     expectXAxisTicks(container, []);
-    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expect(spy).toHaveBeenLastCalledWith([0, 0]);
   });
 
   it('Render Bars for a single data point with barSize=50%', () => {
@@ -756,6 +756,7 @@ describe('<XAxis />', () => {
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        tickCount: 5,
         allowDecimals: true,
         id: 'foo',
         scale: 'log',
@@ -787,6 +788,7 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        tickCount: 5,
         allowDecimals: true,
         id: 'foo',
         scale: 'log',
@@ -828,6 +830,7 @@ describe('<XAxis />', () => {
             right: 0,
           },
           allowDecimals: true,
+          tickCount: 5,
         },
         bar: {
           id: 'bar',
@@ -842,6 +845,7 @@ describe('<XAxis />', () => {
             right: 0,
           },
           allowDecimals: true,
+          tickCount: 5,
         },
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
@@ -853,6 +857,7 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        tickCount: 5,
         id: 'bar',
         scale: 'utc',
         type: 'category',
@@ -945,7 +950,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
@@ -984,7 +989,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([100, 200]);
+          expect(spy).toHaveBeenLastCalledWith([100, 180]);
         });
 
         it('should render ticks from number, auto', () => {
@@ -1022,7 +1027,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([-55, 200]);
+          expect(spy).toHaveBeenLastCalledWith([-55, 180]);
         });
 
         it('should render ticks from auto, number', () => {
@@ -1367,7 +1372,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should allow providing less tickCount', () => {
@@ -1395,7 +1400,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should make ticks from dataMin, dataMax', () => {
@@ -1673,7 +1678,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should only display domain of data with matching xAxisId', () => {
@@ -1748,8 +1753,8 @@ describe('<XAxis />', () => {
           },
         ]);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 200]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 153]);
+        expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 180]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 160]);
       });
 
       it('should only display domain of data with matching xAxisId, and dataMin dataMax domains', () => {
@@ -1898,7 +1903,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 5]);
+        expect(spy).toHaveBeenLastCalledWith([0, 4]);
       });
 
       it.each([true, false, undefined])(
@@ -1938,7 +1943,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([0, 18]);
+          expect(spy).toHaveBeenLastCalledWith([0, 16]);
         },
       );
     });
@@ -1979,7 +1984,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should display every second tick with interval = 1', () => {
@@ -2007,7 +2012,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should display every third tick with interval = 2', () => {
@@ -2030,7 +2035,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should add more ticks with tickCount and then reduce them again with interval', () => {
@@ -2078,7 +2083,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 171]);
       });
 
       it('should attempt to show the ticks start with interval = preserveStart', () => {
@@ -2247,48 +2252,51 @@ describe('<XAxis />', () => {
       expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
     });
 
-    it.each([undefined, true])('should allow duplicates when allowDuplicatedCategory=%s', allowDuplicatedCategory => {
-      const spy = vi.fn();
-      const { container } = render(
-        <BarChart width={300} height={300} data={data}>
-          <XAxis dataKey="z" type="category" allowDuplicatedCategory={allowDuplicatedCategory} />
-          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
-        </BarChart>,
-      );
-      expectXAxisTicks(container, [
-        {
-          textContent: '200',
-          x: '29.166666666666668',
-          y: '273',
-        },
-        {
-          textContent: '260',
-          x: '77.5',
-          y: '273',
-        },
-        {
-          textContent: '400',
-          x: '125.83333333333334',
-          y: '273',
-        },
-        {
-          textContent: '280',
-          x: '174.16666666666666',
-          y: '273',
-        },
-        {
-          textContent: '500',
-          x: '222.5',
-          y: '273',
-        },
-        {
-          textContent: '200',
-          x: '270.83333333333337',
-          y: '273',
-        },
-      ]);
-      expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
-    });
+    it.each([undefined, true])(
+      'should replace domain of duplicates with array indexes when allowDuplicatedCategory=%s',
+      allowDuplicatedCategory => {
+        const spy = vi.fn();
+        const { container } = render(
+          <BarChart width={300} height={300} data={data}>
+            <XAxis dataKey="z" type="category" allowDuplicatedCategory={allowDuplicatedCategory} />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '29.166666666666668',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '125.83333333333334',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '174.16666666666666',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '200',
+            x: '270.83333333333337',
+            y: '273',
+          },
+        ]);
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+      },
+    );
 
     it('should remove duplicates from the end when allowDuplicatedCategory=false', () => {
       const spy = vi.fn();
@@ -2368,7 +2376,7 @@ describe('<XAxis />', () => {
           y: '273',
         },
       ]);
-      expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
     });
 
     const variousDomains: ReadonlyArray<{ domain: ReadonlyArray<string> | ReadonlyArray<number> | undefined }> = [
@@ -2419,7 +2427,7 @@ describe('<XAxis />', () => {
           y: '273',
         },
       ]);
-      expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
     });
 
     describe.each([true, false, undefined])('allowDecimals=%s', () => {
@@ -2546,7 +2554,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
       });
 
       it('should merge and display domain of all data, and remove duplicates, even when the duplicates are defined on different elements', () => {
@@ -2651,11 +2659,11 @@ describe('<XAxis />', () => {
 
     describe('interval', () => {
       it('should display all ticks when interval = 0', () => {
-        const spy = vi.fn();
+        const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} data={data}>
             <XAxis dataKey="z" type="category" interval={0} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
           </BarChart>,
         );
         expectXAxisTicks(container, [
@@ -2690,15 +2698,15 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
       });
 
       it('should display every second tick when interval = 1', () => {
-        const spy = vi.fn();
+        const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} data={data}>
             <XAxis dataKey="z" type="category" interval={1} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
           </BarChart>,
         );
         expectXAxisTicks(container, [
@@ -2718,15 +2726,15 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
       });
 
       it('should display every third tick when interval = 2', () => {
-        const spy = vi.fn();
+        const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={300} height={300} data={data}>
             <XAxis dataKey="z" type="category" interval={2} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
           </BarChart>,
         );
         expectXAxisTicks(container, [
@@ -2741,15 +2749,15 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
       });
 
       it('should attempt to show the ticks start with interval = preserveStart', () => {
-        const spy = vi.fn();
+        const axisDomainSpy = vi.fn();
         const { container } = render(
           <BarChart width={30} height={300} data={data}>
             <XAxis dataKey="x" type="category" interval="preserveStart" tickCount={20} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
           </BarChart>,
         );
         expectXAxisTicks(container, [
@@ -2769,7 +2777,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
       });
 
       it('should attempt to show the ticks end with interval = preserveEnd', () => {
@@ -2857,4 +2865,7 @@ describe('<XAxis />', () => {
       });
     });
   });
+
+  describe.todo('brush and startIndex + endIndex');
+  describe.todo('ErrorBars are interacting with the domain somehow');
 });

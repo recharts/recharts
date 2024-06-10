@@ -26,6 +26,7 @@ export type AxisSettings = {
   dataKey: DataKey<any> | undefined;
   allowDuplicatedCategory: boolean;
   allowDecimals: boolean;
+  tickCount: number;
 };
 
 export type XAxisSettings = AxisSettings & {

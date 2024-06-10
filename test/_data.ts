@@ -1,4 +1,5 @@
 import type { SunburstData } from '../src/chart/SunburstChart';
+import { ChartData } from '../src/state/chartDataSlice';
 
 export const PageData = [
   { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
@@ -206,4 +207,24 @@ export const exampleRadarData = [
   { name: 'iPhone 6', value: 650, half: 325 },
   { name: 'iPhone 6s', value: 765, half: 383 },
   { name: 'iPhone 5se', value: 365, half: 183 },
+];
+
+export const misbehavedData: ChartData = [
+  { x: null },
+  { x: 'Jan' },
+  { x: undefined },
+  { x: 'Feb' },
+  { x: [] },
+  { x: 'Mar' },
+  { x: function anon() {} },
+  { x: 'Apr' },
+  { x: {} },
+  { x: 'May' },
+  { x: NaN },
+  { x: 'Jun' },
+  { x: new Map() },
+  { x: 'Jul' },
+  { x: Symbol.for('mock symbol') },
+  { x: 'Aug' },
+  { x: new Promise(() => {}) },
 ];

@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
+import range from 'lodash/range';
 import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
 import { getValueByDataKey, ParsedScaleReturn, parseScale } from '../util/ChartUtils';
 import { AxisDomain, AxisType, CategoricalDomain, ChartOffset, LayoutType, NumberDomain } from '../util/types';
@@ -11,7 +12,7 @@ import {
   parseNumericalUserDomain,
 } from '../util/isDomainSpecifiedByUser';
 import { ChartData } from './chartDataSlice';
-import { getPercentValue } from '../util/DataUtils';
+import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings } from './graphicalItemsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
@@ -57,7 +58,8 @@ export const selectCartesianGraphicalItemsData: (
         }
         return false;
       })
-      .map(item => item.data),
+      .map(item => item.data)
+      .filter(Boolean),
 );
 
 /**
@@ -85,22 +87,16 @@ export const selectAllDataSquished: (
     if (axisSettings == null) {
       return undefined;
     }
-    return graphicalItemsData
-      .flat(1)
-      .concat(chartData)
-      .map(entry => getValueByDataKey(entry, axisSettings.dataKey));
+    const itemsData = graphicalItemsData.flat(1);
+
+    const finalData = itemsData.length > 0 ? itemsData : chartData;
+
+    return finalData.map(entry => getValueByDataKey(entry, axisSettings.dataKey));
   },
 );
 
 export function getDefaultDomainByAxisType(axisType: 'number' | string) {
   return axisType === 'number' ? [0, 'auto'] : undefined;
-}
-
-function makeUniq<T>(arr: ReadonlyArray<T>, allowDuplicates: boolean): ReadonlyArray<T> {
-  if (allowDuplicates) {
-    return arr;
-  }
-  return Array.from(new Set(arr));
 }
 
 function onlyAllowNumbersAndStringsAndDates<T>(item: T): string | number | Date {
@@ -123,7 +119,18 @@ const computeNumericalDomain = (allDataSquished: ChartData): NumberDomain | unde
 };
 
 const computeCategoricalDomain = (allDataSquished: ChartData, axisSettings: AxisSettings): CategoricalDomain => {
-  return makeUniq(allDataSquished.map(onlyAllowNumbersAndStringsAndDates), axisSettings.allowDuplicatedCategory);
+  const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates);
+  if (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain))) {
+    /*
+     * 1. In an absence of dataKey, Recharts will use array indexes as its categorical domain
+     * 2. When category axis has duplicated text, serial numbers are used to generate scale
+     */
+    return range(0, allDataSquished.length);
+  }
+  if (axisSettings.allowDuplicatedCategory) {
+    return categoricalDomain;
+  }
+  return Array.from(new Set(categoricalDomain));
 };
 
 const selectNumericalDomain = (
@@ -134,7 +141,7 @@ const selectNumericalDomain = (
 ): NumberDomain => {
   const domainDefinition: AxisDomain = axisSettings.domain ?? [0, 'auto'];
 
-  const domainFromUserPreference = numericalDomainSpecifiedWithoutRequiringData(
+  const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
     domainDefinition,
     axisSettings.allowDataOverflow,
   );
@@ -151,6 +158,7 @@ const selectNumericalDomain = (
     domainFromData,
     axisSettings.allowDataOverflow,
     axisSettings.allowDecimals,
+    axisSettings.tickCount,
   );
 };
 
