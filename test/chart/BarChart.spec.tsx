@@ -398,6 +398,116 @@ describe('<BarChart />', () => {
     expect(clipPath.children[0]).toHaveAttribute('height', '0');
   });
 
+  describe('bar width', () => {
+    it('renders one bar with a width for each data entry', () => {
+      const data2 = [
+        { x: 10, y: 10 },
+        { x: 20, y: 20 },
+      ];
+      const { container } = render(
+        <BarChart width={100} height={50} data={data2}>
+          <Bar dataKey="y" fill="#ff7300" isAnimationActive={false} />
+          <XAxis dataKey="x" />
+        </BarChart>,
+      );
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      expect(rectangles).toHaveLength(2);
+
+      expect(rectangles[0].getAttributeNames()).toEqual(['x', 'y', 'width', 'height', 'radius', 'fill', 'class', 'd']);
+      expect(rectangles[0].tagName).toEqual('path');
+      expect(rectangles[0]).toHaveAttribute('x', '9.5');
+      expect(rectangles[0]).toHaveAttribute('y', '10');
+      expect(rectangles[0]).toHaveAttribute('width', '36');
+      expect(rectangles[0]).toHaveAttribute('height', '5');
+      expect(rectangles[0]).toHaveAttribute('radius', '0');
+      expect(rectangles[0]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[0]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[0]).toHaveAttribute('d', 'M 9.5,10 h 36 v 5 h -36 Z');
+
+      expect(rectangles[1].tagName).toEqual('path');
+      expect(rectangles[1]).toHaveAttribute('x', '54.5');
+      expect(rectangles[1]).toHaveAttribute('y', '5');
+      expect(rectangles[1]).toHaveAttribute('width', '36');
+      expect(rectangles[1]).toHaveAttribute('height', '10');
+      expect(rectangles[1]).toHaveAttribute('radius', '0');
+      expect(rectangles[1]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[1]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[1]).toHaveAttribute('d', 'M 54.5,5 h 36 v 10 h -36 Z');
+    });
+
+    it('renders one bar with a width for each data entry where two entries have duplicate XAxis coordinate', () => {
+      const data2 = [
+        { x: 10, y: 10 },
+        { x: 10, y: 20 },
+      ];
+      const { container } = render(
+        <BarChart width={100} height={50} data={data2}>
+          <Bar dataKey="y" fill="#ff7300" isAnimationActive={false} />
+          <XAxis dataKey="x" />
+        </BarChart>,
+      );
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      expect(rectangles).toHaveLength(2);
+
+      expect(rectangles[0].getAttributeNames()).toEqual(['x', 'y', 'width', 'height', 'radius', 'fill', 'class', 'd']);
+      expect(rectangles[0].tagName).toEqual('path');
+      expect(rectangles[0]).toHaveAttribute('x', '9.5');
+      expect(rectangles[0]).toHaveAttribute('y', '10');
+      expect(rectangles[0]).toHaveAttribute('width', '36');
+      expect(rectangles[0]).toHaveAttribute('height', '5');
+      expect(rectangles[0]).toHaveAttribute('radius', '0');
+      expect(rectangles[0]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[0]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[0]).toHaveAttribute('d', 'M 9.5,10 h 36 v 5 h -36 Z');
+
+      expect(rectangles[1].tagName).toEqual('path');
+      expect(rectangles[1]).toHaveAttribute('x', '54.5');
+      expect(rectangles[1]).toHaveAttribute('y', '5');
+      expect(rectangles[1]).toHaveAttribute('width', '36');
+      expect(rectangles[1]).toHaveAttribute('height', '10');
+      expect(rectangles[1]).toHaveAttribute('radius', '0');
+      expect(rectangles[1]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[1]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[1]).toHaveAttribute('d', 'M 54.5,5 h 36 v 10 h -36 Z');
+    });
+
+    it('renders bars where two entries right next to each other have duplicate XAxis coordinate and type=number', () => {
+      const data2 = [
+        { x: 10, y: 10 },
+        { x: 10, y: 20 },
+      ];
+      const { container } = render(
+        <BarChart width={100} height={50} data={data2}>
+          <Bar dataKey="y" fill="#ff7300" isAnimationActive={false} />
+          <XAxis dataKey="x" />
+        </BarChart>,
+      );
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      expect(rectangles).toHaveLength(2);
+
+      expect(rectangles[0].getAttributeNames()).toEqual(['x', 'y', 'width', 'height', 'radius', 'fill', 'class', 'd']);
+      expect(rectangles[0].tagName).toEqual('path');
+      expect(rectangles[0]).toHaveAttribute('x', '9.5');
+      expect(rectangles[0]).toHaveAttribute('y', '10');
+      expect(rectangles[0]).toHaveAttribute('width', '36');
+      expect(rectangles[0]).toHaveAttribute('height', '5');
+      expect(rectangles[0]).toHaveAttribute('radius', '0');
+      expect(rectangles[0]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[0]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[0]).toHaveAttribute('d', 'M 9.5,10 h 36 v 5 h -36 Z');
+
+      expect(rectangles[1].tagName).toEqual('path');
+      expect(rectangles[1]).toHaveAttribute('x', '54.5');
+      expect(rectangles[1]).toHaveAttribute('y', '5');
+      expect(rectangles[1]).toHaveAttribute('width', '36');
+      expect(rectangles[1]).toHaveAttribute('height', '10');
+      expect(rectangles[1]).toHaveAttribute('radius', '0');
+      expect(rectangles[1]).toHaveAttribute('fill', '#ff7300');
+      expect(rectangles[1]).toHaveAttribute('class', 'recharts-rectangle');
+      expect(rectangles[1]).toHaveAttribute('d', 'M 54.5,5 h 36 v 10 h -36 Z');
+    });
+  });
+
   describe('BarChart layout context', () => {
     it(
       'should provide viewBox and clipPathId if there are no axes',

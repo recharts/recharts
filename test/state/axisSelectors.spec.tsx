@@ -91,7 +91,38 @@ describe('selectAxisScale', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expectXAxisTicks(container, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Page A',
+        x: '12.5',
+        y: '73',
+      },
+      {
+        textContent: 'Page B',
+        x: '27.5',
+        y: '73',
+      },
+      {
+        textContent: 'Page C',
+        x: '42.5',
+        y: '73',
+      },
+      {
+        textContent: 'Page D',
+        x: '57.5',
+        y: '73',
+      },
+      {
+        textContent: 'Page E',
+        x: '72.5',
+        y: '73',
+      },
+      {
+        textContent: 'Page F',
+        x: '87.5',
+        y: '73',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 });
@@ -146,7 +177,33 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 405]);
-      expectXAxisTicks(container, ['0', '100', '200', '300', '400']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '73',
+        },
+        {
+          textContent: '100',
+          x: '27.5',
+          y: '73',
+        },
+        {
+          textContent: '200',
+          x: '50',
+          y: '73',
+        },
+        {
+          textContent: '300',
+          x: '72.5',
+          y: '73',
+        },
+        {
+          textContent: '400',
+          x: '95',
+          y: '73',
+        },
+      ]);
     });
 
     it('should return undefined if the data is not numerical', () => {
@@ -211,7 +268,33 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 10000]);
-      expectXAxisTicks(container, ['0', '2500', '5000', '7500', '10000']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '73',
+        },
+        {
+          textContent: '2500',
+          x: '27.5',
+          y: '73',
+        },
+        {
+          textContent: '5000',
+          x: '50',
+          y: '73',
+        },
+        {
+          textContent: '7500',
+          x: '72.5',
+          y: '73',
+        },
+        {
+          textContent: '10000',
+          x: '95',
+          y: '73',
+        },
+      ]);
     });
 
     it('should squish all data defined on all items and chart root and return min, max of the combination', () => {
@@ -283,7 +366,33 @@ describe('selectAxisDomain', () => {
         </ComposedChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 225]);
-      expectXAxisTicks(container, ['0', '55', '110', '165', '220']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '65',
+          y: '73',
+        },
+        {
+          textContent: '55',
+          x: '72.5',
+          y: '73',
+        },
+        {
+          textContent: '110',
+          x: '80',
+          y: '73',
+        },
+        {
+          textContent: '165',
+          x: '87.5',
+          y: '73',
+        },
+        {
+          textContent: '220',
+          x: '95',
+          y: '73',
+        },
+      ]);
     });
   });
 
@@ -302,7 +411,38 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
-      expectXAxisTicks(container, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+      expectXAxisTicks(container, [
+        {
+          textContent: 'Page A',
+          x: '12.5',
+          y: '73',
+        },
+        {
+          textContent: 'Page B',
+          x: '27.5',
+          y: '73',
+        },
+        {
+          textContent: 'Page C',
+          x: '42.5',
+          y: '73',
+        },
+        {
+          textContent: 'Page D',
+          x: '57.5',
+          y: '73',
+        },
+        {
+          textContent: 'Page E',
+          x: '72.5',
+          y: '73',
+        },
+        {
+          textContent: 'Page F',
+          x: '87.5',
+          y: '73',
+        },
+      ]);
     });
 
     it.each([true, undefined])(
@@ -321,7 +461,38 @@ describe('selectAxisDomain', () => {
           </BarChart>,
         );
         expect(spy).toHaveBeenLastCalledWith([400, 300, 300, 200, 278, 189]);
-        expectXAxisTicks(container, ['400', '300', '300', '200', '278', '189']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '400',
+            x: '12.5',
+            y: '73',
+          },
+          {
+            textContent: '300',
+            x: '27.5',
+            y: '73',
+          },
+          {
+            textContent: '300',
+            x: '42.5',
+            y: '73',
+          },
+          {
+            textContent: '200',
+            x: '57.5',
+            y: '73',
+          },
+          {
+            textContent: '278',
+            x: '72.5',
+            y: '73',
+          },
+          {
+            textContent: '189',
+            x: '87.5',
+            y: '73',
+          },
+        ]);
       },
     );
 
@@ -339,7 +510,33 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
-      expectXAxisTicks(container, ['400', '300', '200', '278', '189']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '400',
+          x: '14',
+          y: '73',
+        },
+        {
+          textContent: '300',
+          x: '32',
+          y: '73',
+        },
+        {
+          textContent: '200',
+          x: '50',
+          y: '73',
+        },
+        {
+          textContent: '278',
+          x: '68',
+          y: '73',
+        },
+        {
+          textContent: '189',
+          x: '86',
+          y: '73',
+        },
+      ]);
     });
 
     it('should replace everything that is not a number, string, or Date, with empty string', () => {
@@ -397,24 +594,92 @@ describe('selectAxisDomain', () => {
         '',
       ]);
       expectXAxisTicks(container, [
-        '',
-        'Jan',
-        '',
-        'Feb',
-        'Mar',
-        '',
-        'Apr',
-        '',
-        'May',
-        '',
-        'Jun',
-        '',
-        'Jul',
-        '',
-        'Aug',
-        '',
-        // no idea where the string 'undefined' comes from - the new implementation doesn't have it, breaking or not.
-        'undefined',
+        {
+          textContent: '',
+          x: '7.647058823529411',
+          y: '73',
+        },
+        {
+          textContent: 'Jan',
+          x: '12.941176470588234',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '18.235294117647058',
+          y: '73',
+        },
+        {
+          textContent: 'Feb',
+          x: '23.529411764705884',
+          y: '73',
+        },
+        {
+          textContent: 'Mar',
+          x: '28.823529411764707',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '34.11764705882353',
+          y: '73',
+        },
+        {
+          textContent: 'Apr',
+          x: '39.411764705882355',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '44.705882352941174',
+          y: '73',
+        },
+        {
+          textContent: 'May',
+          x: '50',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '55.294117647058826',
+          y: '73',
+        },
+        {
+          textContent: 'Jun',
+          x: '60.588235294117645',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '65.88235294117646',
+          y: '73',
+        },
+        {
+          textContent: 'Jul',
+          x: '71.17647058823529',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '76.47058823529412',
+          y: '73',
+        },
+        {
+          textContent: 'Aug',
+          x: '81.76470588235293',
+          y: '73',
+        },
+        {
+          textContent: '',
+          x: '87.05882352941175',
+          y: '73',
+        },
+        {
+          // no idea where the string 'undefined' comes from - the new implementation doesn't have it, breaking or not.
+          textContent: 'undefined',
+          x: '92.35294117647058',
+          y: '73',
+        },
       ]);
     });
 
@@ -449,7 +714,28 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['', 'Monday', 'Tuesday', 'Wednesday']);
-      expectXAxisTicks(container, ['', 'Monday', 'Tuesday', 'Wednesday']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '',
+          x: '16.25',
+          y: '73',
+        },
+        {
+          textContent: 'Monday',
+          x: '38.75',
+          y: '73',
+        },
+        {
+          textContent: 'Tuesday',
+          x: '61.25',
+          y: '73',
+        },
+        {
+          textContent: 'Wednesday',
+          x: '83.75',
+          y: '73',
+        },
+      ]);
     });
   });
 });

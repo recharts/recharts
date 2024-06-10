@@ -74,7 +74,18 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')).toHaveLength(2);
-    expectXAxisTicks(container, ['0', '4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '20',
+        y: '358',
+      },
+      {
+        textContent: '4',
+        x: '308',
+        y: '358',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith(['', '', '', '', '', '', '']);
   });
 
@@ -89,7 +100,38 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
-    expectXAxisTicks(container, ['0', '1', '2', '3', '4', '5']);
+    expectXAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '20',
+        y: '358',
+      },
+      {
+        textContent: '1',
+        x: '92',
+        y: '358',
+      },
+      {
+        textContent: '2',
+        x: '164',
+        y: '358',
+      },
+      {
+        textContent: '3',
+        x: '236',
+        y: '358',
+      },
+      {
+        textContent: '4',
+        x: '308',
+        y: '358',
+      },
+      {
+        textContent: '5',
+        x: '380',
+        y: '358',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith(['', 'Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 
@@ -105,7 +147,38 @@ describe('<XAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(lineData.length);
-    expectXAxisTicks(container, ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Page A',
+        x: '80',
+        y: '273',
+      },
+      {
+        textContent: 'Page B',
+        x: '178',
+        y: '273',
+      },
+      {
+        textContent: 'Page C',
+        x: '276',
+        y: '273',
+      },
+      {
+        textContent: 'Page D',
+        x: '374',
+        y: '273',
+      },
+      {
+        textContent: 'Page E',
+        x: '472',
+        y: '273',
+      },
+      {
+        textContent: 'Page F',
+        x: '570',
+        y: '273',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith(['', 'Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 
@@ -160,13 +233,41 @@ describe('<XAxis />', () => {
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
     expectXAxisTicks(container, [
-      'Thu Jul 04 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Fri Jul 05 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Sat Jul 06 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Sun Jul 07 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Mon Jul 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Tue Jul 09 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
-      'Wed Jul 10 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+      {
+        textContent: 'Thu Jul 04 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '80',
+        y: '273',
+      },
+      {
+        textContent: 'Fri Jul 05 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '161.66666666666669',
+        y: '273',
+      },
+      {
+        textContent: 'Sat Jul 06 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '243.33333333333334',
+        y: '273',
+      },
+      {
+        textContent: 'Sun Jul 07 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '325',
+        y: '273',
+      },
+      {
+        textContent: 'Mon Jul 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '406.6666666666667',
+        y: '273',
+      },
+      {
+        textContent: 'Tue Jul 09 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '488.3333333333333',
+        y: '273',
+      },
+      {
+        textContent: 'Wed Jul 10 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        x: '570',
+        y: '273',
+      },
     ]);
     expect(spy).toHaveBeenLastCalledWith([1562198400000, 1562716800000]);
   });
@@ -184,8 +285,149 @@ describe('<XAxis />', () => {
 
     const bar = container.querySelector('.recharts-rectangle');
     assertNotNull(bar);
-    expect(parseInt(bar.getAttribute('x') as string, 10)).toEqual(70);
+    expect(bar.getAttribute('x')).toEqual('70.16326530612245');
     expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '81.42857142857143',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '137.75510204081633',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '194.0816326530612',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '278.57142857142856',
+        y: '273',
+      },
+    ]);
+  });
+
+  it('Render Bars with gap in 10000 width chart and somehow is still decides to render 4 ticks instead of the default 5', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={10000} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('287.9183673469387');
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '774.2857142857142',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '3206.1224489795923',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '5637.95918367347',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '9285.714285714286',
+        y: '273',
+      },
+    ]);
+  });
+
+  describe.each(['gap', 'no-gap', { left: 3, right: 5 }] as const)('padding: %s', padding => {
+    /* I am not entirely certain what is the relationship between the tickCount prop, and the actual tick count */
+    it.each([
+      { providedTickCount: 3, expectedTickCount: 3 },
+      { providedTickCount: 5, expectedTickCount: 4 },
+      { providedTickCount: 7, expectedTickCount: 5 },
+      { providedTickCount: 11, expectedTickCount: 11 },
+      { providedTickCount: 13, expectedTickCount: 12 },
+      { providedTickCount: 17, expectedTickCount: 15 },
+      { providedTickCount: 19, expectedTickCount: 18 },
+      { providedTickCount: 29, expectedTickCount: 24 },
+    ])(
+      'renders $expectedTickCount ticks when tickCount=$providedTickCount',
+      ({ providedTickCount, expectedTickCount }) => {
+        const spy = vi.fn();
+        const { container } = render(
+          <BarChart width={100000} height={300} data={data}>
+            <Bar dataKey="y" isAnimationActive={false} />
+            <XAxis
+              dataKey="x"
+              type="number"
+              domain={['dataMin', 'dataMax']}
+              padding={padding}
+              tickCount={providedTickCount}
+            />
+            <YAxis dataKey="y" />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </BarChart>,
+        );
+
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
+        const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
+        expect(allTicks).toHaveLength(expectedTickCount);
+      },
+    );
+  });
+
+  it('Render Bars with gap when there are duplicate values in the data', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="x" isAnimationActive={false} />
+        <XAxis dataKey="y" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <YAxis dataKey="x" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('138.49777777777777');
+    expect(spy).toHaveBeenLastCalledWith([100, 400]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '72.66666666666667',
+        y: '273',
+      },
+      {
+        textContent: '175',
+        x: '126.33333333333333',
+        y: '273',
+      },
+      {
+        textContent: '250',
+        x: '180',
+        y: '273',
+      },
+      {
+        textContent: '325',
+        x: '233.66666666666666',
+        y: '273',
+      },
+      {
+        textContent: '400',
+        x: '287.3333333333333',
+        y: '273',
+      },
+    ]);
   });
 
   it('Render Bars with no gap', () => {
@@ -201,8 +443,146 @@ describe('<XAxis />', () => {
 
     const bar = container.querySelector('.recharts-rectangle');
     assertNotNull(bar);
-    expect(parseInt(bar.getAttribute('x') as string, 10)).toEqual(66);
-    expectXAxisTicks(container, ['100', '120', '140', '170']);
+    expect(bar.getAttribute('x')).toEqual('66.2928279883382');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '77.95510204081633',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '136.266472303207',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '194.57784256559765',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '282.0448979591837',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with custom gap', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 11, right: 17 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('64.45714285714286');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '76',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '133.71428571428572',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '191.42857142857144',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '278',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with padding on the left', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 19 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('71.94285714285715');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '84',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '144.28571428571428',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '204.57142857142856',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '295',
+        y: '273',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+  });
+
+  it('Render Bars with padding on the right', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ right: 23 }} />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('53.17142857142858');
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '65',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '124.14285714285714',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '183.28571428571428',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '272',
+        y: '273',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith([100, 170]);
   });
 
@@ -227,7 +607,13 @@ describe('<XAxis />', () => {
     // This test merely confirms this known limitation.
     const bar = container.querySelector('.recharts-rectangle');
     expect(bar).not.toBeInTheDocument();
-    expectXAxisTicks(container, ['100']);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '180',
+        y: '273',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith([100, 100]);
   });
 
@@ -266,7 +652,33 @@ describe('<XAxis />', () => {
     expect(bar).toBeInTheDocument();
     expect(bar.getAttribute('x')).toEqual('123');
     expect(bar.getAttribute('width')).toEqual('115');
-    expectXAxisTicks(container, ['50', '75', '100', '125', '150']);
+    expectXAxisTicks(container, [
+      {
+        textContent: '50',
+        x: '65',
+        y: '273',
+      },
+      {
+        textContent: '75',
+        x: '122.5',
+        y: '273',
+      },
+      {
+        textContent: '100',
+        x: '180',
+        y: '273',
+      },
+      {
+        textContent: '125',
+        x: '237.5',
+        y: '273',
+      },
+      {
+        textContent: '150',
+        x: '295',
+        y: '273',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith([50, 150]);
   });
 
@@ -286,7 +698,28 @@ describe('<XAxis />', () => {
     expect(bar).toBeInTheDocument();
     expect(bar.getAttribute('x')).toEqual('42');
     expect(bar.getAttribute('width')).toEqual('46');
-    expectXAxisTicks(container, ['100', '115', '130', '150']);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '65',
+        y: '273',
+      },
+      {
+        textContent: '115',
+        x: '134',
+        y: '273',
+      },
+      {
+        textContent: '130',
+        x: '203',
+        y: '273',
+      },
+      {
+        textContent: '150',
+        x: '295',
+        y: '273',
+      },
+    ]);
     expect(spy).toHaveBeenLastCalledWith([100, 150]);
   });
 
@@ -485,7 +918,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -498,7 +957,33 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
             </Component>,
           );
-          expectXAxisTicks(container, ['100', '120', '140', '160', '180']);
+          expectXAxisTicks(container, [
+            {
+              textContent: '100',
+              x: '5',
+              y: '273',
+            },
+            {
+              textContent: '120',
+              x: '77.5',
+              y: '273',
+            },
+            {
+              textContent: '140',
+              x: '150',
+              y: '273',
+            },
+            {
+              textContent: '160',
+              x: '222.5',
+              y: '273',
+            },
+            {
+              textContent: '180',
+              x: '295',
+              y: '273',
+            },
+          ]);
           expect(spy).toHaveBeenLastCalledWith([100, 200]);
         });
 
@@ -510,7 +995,33 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
             </Component>,
           );
-          expectXAxisTicks(container, ['-60', '0', '60', '120', '180']);
+          expectXAxisTicks(container, [
+            {
+              textContent: '-60',
+              x: '5',
+              y: '273',
+            },
+            {
+              textContent: '0',
+              x: '77.5',
+              y: '273',
+            },
+            {
+              textContent: '60',
+              x: '150',
+              y: '273',
+            },
+            {
+              textContent: '120',
+              x: '222.5',
+              y: '273',
+            },
+            {
+              textContent: '180',
+              x: '295',
+              y: '273',
+            },
+          ]);
           expect(spy).toHaveBeenLastCalledWith([-55, 200]);
         });
 
@@ -522,7 +1033,33 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
             </Component>,
           );
-          expectXAxisTicks(container, ['0', '150', '300', '450', '600']);
+          expectXAxisTicks(container, [
+            {
+              textContent: '0',
+              x: '5',
+              y: '273',
+            },
+            {
+              textContent: '150',
+              x: '77.5',
+              y: '273',
+            },
+            {
+              textContent: '300',
+              x: '150',
+              y: '273',
+            },
+            {
+              textContent: '450',
+              x: '222.5',
+              y: '273',
+            },
+            {
+              textContent: '600',
+              x: '295',
+              y: '273',
+            },
+          ]);
           expect(spy).toHaveBeenLastCalledWith([100, 555]);
         });
       });
@@ -535,7 +1072,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-500',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-250',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '250',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([-500, 500]);
       });
 
@@ -547,7 +1110,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-100', '-30', '40', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-30',
+            x: '80.18518518518519',
+            y: '273',
+          },
+          {
+            textContent: '40',
+            x: '155.37037037037038',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([-100, 170]);
 
         rerender(
@@ -556,7 +1140,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '175']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '82.33333333333334',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '159.66666666666669',
+            y: '273',
+          },
+          {
+            textContent: '175',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 175]);
 
         rerender(
@@ -565,7 +1170,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '87.85714285714285',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '170.7142857142857',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
@@ -577,7 +1203,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '87.85714285714285',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '170.7142857142857',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
@@ -589,7 +1236,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '75', '50', '25', '0']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '75',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '50',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '25',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 0]);
       });
 
@@ -601,7 +1274,13 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['150']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '150',
+            x: '150',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([150, 150]);
       });
 
@@ -613,7 +1292,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['0', '25', '50', '75', '100']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '25',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '50',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '75',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '100',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 100]);
       });
 
@@ -625,7 +1330,43 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['0', '30', '60', '90', '120', '150', '180']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '30',
+            x: '53.33333333333333',
+            y: '273',
+          },
+          {
+            textContent: '60',
+            x: '101.66666666666666',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '198.33333333333331',
+            y: '273',
+          },
+          {
+            textContent: '150',
+            x: '246.66666666666669',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -637,7 +1378,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['0', '85', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '85',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -649,7 +1406,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '87.85714285714285',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '170.7142857142857',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
@@ -666,7 +1444,28 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '170']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '87.85714285714285',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '170.7142857142857',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 170]);
       });
 
@@ -680,7 +1479,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-500',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-250',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '250',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         // expect(domainPropSpy).toHaveBeenCalledTimes(12); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
@@ -690,7 +1515,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-500',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-250',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '250',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         // hah that's quite a few calls isn't it. TODO let's see if it improves once we remove the old, generateCategoricalChart code path
         // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27 because of different code paths when data is defined on root vs graphical item
         expect(domainPropSpy).toHaveBeenLastCalledWith([100, 170], false);
@@ -709,7 +1560,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-500',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-250',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '250',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
         // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
         expect(spyMin).toHaveBeenCalledWith(100);
@@ -725,7 +1602,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </Component>,
         );
-        expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '-500',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '-250',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '250',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([-500, 500]);
       });
     });
@@ -743,7 +1646,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </LineChart>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -764,8 +1693,60 @@ describe('<XAxis />', () => {
         );
         const allXAxes = container.querySelectorAll('.recharts-xAxis');
         expect(allXAxes).toHaveLength(2);
-        expectXAxisTicks(allXAxes[0], ['0', '45', '90', '135', '180']);
-        expectXAxisTicks(allXAxes[1], ['0', '40', '80', '120', '160']);
+        expectXAxisTicks(allXAxes[0], [
+          {
+            textContent: '0',
+            x: '5',
+            y: '243',
+          },
+          {
+            textContent: '45',
+            x: '77.5',
+            y: '243',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '243',
+          },
+          {
+            textContent: '135',
+            x: '222.5',
+            y: '243',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '243',
+          },
+        ]);
+        expectXAxisTicks(allXAxes[1], [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '40',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '80',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '160',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 200]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 153]);
@@ -788,8 +1769,55 @@ describe('<XAxis />', () => {
         );
         const allXAxes = container.querySelectorAll('.recharts-xAxis');
         expect(allXAxes).toHaveLength(2);
-        expectXAxisTicks(allXAxes[0], ['100', '120', '140', '170']);
-        expectXAxisTicks(allXAxes[1], ['110', '120', '130', '140', '150']);
+        expectXAxisTicks(allXAxes[0], [
+          {
+            textContent: '100',
+            x: '5',
+            y: '243',
+          },
+          {
+            textContent: '120',
+            x: '87.85714285714285',
+            y: '243',
+          },
+          {
+            textContent: '140',
+            x: '170.7142857142857',
+            y: '243',
+          },
+          {
+            textContent: '170',
+            x: '295',
+            y: '243',
+          },
+        ]);
+        expectXAxisTicks(allXAxes[1], [
+          {
+            textContent: '110',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '120',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '130',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '150',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([100, 170]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([110, 150]);
@@ -805,7 +1833,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '0.25', '0.5', '0.75', '1']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '0.25',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '0.5',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '0.75',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '1',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 1]);
       });
 
@@ -817,7 +1871,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '1', '2', '3', '4']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '1',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '2',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '3',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '4',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 5]);
       });
 
@@ -831,7 +1911,33 @@ describe('<XAxis />', () => {
               <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
             </BarChart>,
           );
-          expectXAxisTicks(container, ['0', '4', '8', '12', '16']);
+          expectXAxisTicks(container, [
+            {
+              textContent: '0',
+              x: '5',
+              y: '273',
+            },
+            {
+              textContent: '4',
+              x: '77.5',
+              y: '273',
+            },
+            {
+              textContent: '8',
+              x: '150',
+              y: '273',
+            },
+            {
+              textContent: '12',
+              x: '222.5',
+              y: '273',
+            },
+            {
+              textContent: '16',
+              x: '295',
+              y: '273',
+            },
+          ]);
           expect(spy).toHaveBeenLastCalledWith([0, 18]);
         },
       );
@@ -846,7 +1952,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '135', '180']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -858,7 +1990,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '90', '180']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -870,7 +2018,18 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '135']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '222.5',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -882,7 +2041,43 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '27', '54', '81', '108', '135', '162']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '27',
+            x: '50.78947368421052',
+            y: '273',
+          },
+          {
+            textContent: '54',
+            x: '96.57894736842104',
+            y: '273',
+          },
+          {
+            textContent: '81',
+            x: '142.36842105263156',
+            y: '273',
+          },
+          {
+            textContent: '108',
+            x: '188.15789473684208',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '233.94736842105263',
+            y: '273',
+          },
+          {
+            textContent: '162',
+            x: '279.7368421052631',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0, 200]);
       });
 
@@ -892,7 +2087,28 @@ describe('<XAxis />', () => {
             <XAxis dataKey="x" type="number" interval="preserveStart" tickCount={20} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '135']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '10.263157894736842',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '15.526315789473683',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '20.789473684210527',
+            y: '273',
+          },
+        ]);
       });
 
       it('should attempt to show the ticks end with interval = preserveEnd', () => {
@@ -901,7 +2117,28 @@ describe('<XAxis />', () => {
             <XAxis dataKey="x" type="number" interval="preserveEnd" tickCount={20} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['36', '81', '126', '171']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '36',
+            x: '9.210526315789473',
+            y: '273',
+          },
+          {
+            textContent: '81',
+            x: '14.473684210526315',
+            y: '273',
+          },
+          {
+            textContent: '126',
+            x: '19.736842105263158',
+            y: '273',
+          },
+          {
+            textContent: '171',
+            x: '25',
+            y: '273',
+          },
+        ]);
       });
 
       it('should attempt to show the ticks start and end with interval = preserveStartEnd', () => {
@@ -910,7 +2147,28 @@ describe('<XAxis />', () => {
             <XAxis dataKey="x" type="number" interval="preserveStartEnd" tickCount={20} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '171']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '10.263157894736842',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '15.526315789473683',
+            y: '273',
+          },
+          {
+            textContent: '171',
+            x: '25',
+            y: '273',
+          },
+        ]);
       });
 
       it('should do ... same thing as preserveStart? with interval = equidistantPreserveStart', () => {
@@ -919,7 +2177,28 @@ describe('<XAxis />', () => {
             <XAxis dataKey="x" type="number" interval="equidistantPreserveStart" tickCount={20} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0', '45', '90', '135']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '10.263157894736842',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '15.526315789473683',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '20.789473684210527',
+            y: '273',
+          },
+        ]);
       });
     });
   });
@@ -933,7 +2212,38 @@ describe('<XAxis />', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '170', '140', '150', '110']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '100',
+          x: '29.166666666666668',
+          y: '273',
+        },
+        {
+          textContent: '120',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '170',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '140',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '150',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '110',
+          x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
       expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
     });
 
@@ -945,7 +2255,38 @@ describe('<XAxis />', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '200',
+          x: '29.166666666666668',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '280',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '500',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '200',
+          x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
       expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
     });
 
@@ -957,7 +2298,33 @@ describe('<XAxis />', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '200',
+          x: '34',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '92',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '150',
+          y: '273',
+        },
+        {
+          textContent: '280',
+          x: '208',
+          y: '273',
+        },
+        {
+          textContent: '500',
+          x: '266',
+          y: '273',
+        },
+      ]);
       expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500]);
     });
 
@@ -969,7 +2336,38 @@ describe('<XAxis />', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '200',
+          x: '29.166666666666668',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '280',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '500',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '200',
+          x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
       expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
     });
 
@@ -989,7 +2387,38 @@ describe('<XAxis />', () => {
           <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+      expectXAxisTicks(container, [
+        {
+          textContent: '200',
+          x: '29.166666666666668',
+          y: '273',
+        },
+        {
+          textContent: '260',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '400',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '280',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '500',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '200',
+          x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
       expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
     });
 
@@ -1002,7 +2431,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['0.1', '0.3', '0.5', '0.7', '0.9']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '0.1',
+            x: '34',
+            y: '273',
+          },
+          {
+            textContent: '0.3',
+            x: '92',
+            y: '273',
+          },
+          {
+            textContent: '0.5',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '0.7',
+            x: '208',
+            y: '273',
+          },
+          {
+            textContent: '0.9',
+            x: '266',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([0.1, 0.3, 0.5, 0.7, 0.9]);
       });
 
@@ -1014,7 +2469,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={reduxDomainSpy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['4.1', '6.3', '12.5', '3.7', '7.9']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '4.1',
+            x: '34',
+            y: '273',
+          },
+          {
+            textContent: '6.3',
+            x: '92',
+            y: '273',
+          },
+          {
+            textContent: '12.5',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '3.7',
+            x: '208',
+            y: '273',
+          },
+          {
+            textContent: '7.9',
+            x: '266',
+            y: '273',
+          },
+        ]);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([4.1, 6.3, 12.5, 3.7, 7.9]);
       });
     });
@@ -1033,7 +2514,38 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </LineChart>,
         );
-        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '63',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '121',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '179',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '237',
+            y: '273',
+          },
+          {
+            textContent: '200',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
       });
 
@@ -1047,7 +2559,33 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </LineChart>,
         );
-        expectXAxisTicks(container, ['200', '260', '400', '280', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '295',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500]);
       });
 
@@ -1070,12 +2608,43 @@ describe('<XAxis />', () => {
           );
           const allXAxes = container.querySelectorAll('.recharts-xAxis');
           expect(allXAxes).toHaveLength(2);
-          expectXAxisTicks(allXAxes[0], ['200', '260', '400']);
-          expectXAxisTicks(allXAxes[1], ['280', '500', '200']);
+          expectXAxisTicks(allXAxes[0], [
+            {
+              textContent: '200',
+              x: '5',
+              y: '243',
+            },
+            {
+              textContent: '260',
+              x: '150',
+              y: '243',
+            },
+            {
+              textContent: '400',
+              x: '295',
+              y: '243',
+            },
+          ]);
+          expectXAxisTicks(allXAxes[1], [
+            {
+              textContent: '280',
+              x: '5',
+              y: '273',
+            },
+            {
+              textContent: '500',
+              x: '150',
+              y: '273',
+            },
+            {
+              textContent: '200',
+              x: '295',
+              y: '273',
+            },
+          ]);
           expect(defaultReduxDomainSpy).toHaveBeenLastCalledWith(undefined);
-          // TODO regression - these two axes should have different domains
-          // expect(reduxDomainSpyA).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]); // TODO this is unstable - sometimes it returns the duplicates and sometimes it does not.
-          // expect(reduxDomainSpyB).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]); // TODO this is unstable - sometimes it returns the duplicates and sometimes it does not.
+          expect(reduxDomainSpyA).toHaveBeenLastCalledWith([200, 260, 400]);
+          expect(reduxDomainSpyB).toHaveBeenLastCalledWith([280, 500, 200]);
         },
       );
     });
@@ -1089,7 +2658,38 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['200', '260', '400', '280', '500', '200']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '29.166666666666668',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '125.83333333333334',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '174.16666666666666',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '200',
+            x: '270.83333333333337',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
       });
 
@@ -1101,7 +2701,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['200', '400', '500']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '29.166666666666668',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '125.83333333333334',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '222.5',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
       });
 
@@ -1113,7 +2729,18 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['200', '280']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '29.166666666666668',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '174.16666666666666',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([200, 260, 400, 280, 500, 200]);
       });
 
@@ -1125,7 +2752,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['100', '170', '150']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '6.666666666666667',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '13.333333333333334',
+            y: '273',
+          },
+          {
+            textContent: '150',
+            x: '20.000000000000004',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
       });
 
@@ -1137,7 +2780,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['120', '140', '110']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '120',
+            x: '10',
+            y: '273',
+          },
+          {
+            textContent: '140',
+            x: '16.666666666666668',
+            y: '273',
+          },
+          {
+            textContent: '110',
+            x: '23.333333333333336',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
       });
 
@@ -1149,7 +2808,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['100', '170', '110']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '6.666666666666667',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '13.333333333333334',
+            y: '273',
+          },
+          {
+            textContent: '110',
+            x: '23.333333333333336',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
       });
 
@@ -1161,7 +2836,23 @@ describe('<XAxis />', () => {
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['100', '170', '150']);
+        expectXAxisTicks(container, [
+          {
+            textContent: '100',
+            x: '6.666666666666667',
+            y: '273',
+          },
+          {
+            textContent: '170',
+            x: '13.333333333333334',
+            y: '273',
+          },
+          {
+            textContent: '150',
+            x: '20.000000000000004',
+            y: '273',
+          },
+        ]);
         expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
       });
     });

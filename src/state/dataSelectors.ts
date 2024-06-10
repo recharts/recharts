@@ -56,7 +56,7 @@ export const selectAllDataSquished: (
 ) => ChartData | undefined = createSelector(
   selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
-  (_1: RechartsRootState, _2, _3, dataKey: DataKey<any>) => dataKey,
+  (_1: RechartsRootState, _2: AxisType, _3: AxisId, dataKey: DataKey<any>) => dataKey,
   (graphicalItemsData: ReadonlyArray<ChartData>, { chartData = [] }, dataKey) => {
     return graphicalItemsData
       .flat(1)

@@ -631,7 +631,33 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117']);
-    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '102.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '200',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '297.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
+    ]);
   });
 
   it('should render chart with three lines and data on root chart', () => {
@@ -643,7 +669,33 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
-    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '102.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '200',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '297.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
+    ]);
   });
 
   it('should render the chart when the same data are defined on Line elements and not on the chart', () => {
@@ -657,16 +709,56 @@ describe('<LineChart /> and various data sources', () => {
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
     // sic! the XAxis renders all ticks twice!
     expectXAxisTicks(container, [
-      'Iter: 0',
-      'Iter: 1',
-      'Iter: 2',
-      'Iter: 3',
-      'Iter: 4',
-      'Iter: 0',
-      'Iter: 1',
-      'Iter: 2',
-      'Iter: 3',
-      'Iter: 4',
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '48.333333333333336',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '91.66666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '135',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '178.33333333333334',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 0',
+        x: '221.66666666666669',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '265',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '308.33333333333337',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '351.6666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
     ]);
   });
 
@@ -679,7 +771,33 @@ describe('<LineChart /> and various data sources', () => {
       </LineChart>,
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
-    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '102.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '200',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '297.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
+    ]);
   });
 
   it('should render the chart when the same data are defined on Line elements and not on the chart - with a custom domain perhaps?', () => {
@@ -693,16 +811,56 @@ describe('<LineChart /> and various data sources', () => {
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
     // sic! the XAxis renders all ticks twice -anyway- and ignores my attempt at setting a domain
     expectXAxisTicks(container, [
-      'Iter: 0',
-      'Iter: 1',
-      'Iter: 2',
-      'Iter: 3',
-      'Iter: 4',
-      'Iter: 0',
-      'Iter: 1',
-      'Iter: 2',
-      'Iter: 3',
-      'Iter: 4',
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '48.333333333333336',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '91.66666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '135',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '178.33333333333334',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 0',
+        x: '221.66666666666669',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '265',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '308.33333333333337',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '351.6666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
     ]);
   });
 
@@ -722,7 +880,33 @@ describe('<LineChart /> and various data sources', () => {
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '597', '745', '657', '538', '762']);
     // so XAxis will filter the provided domain for duplicates, too
-    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '102.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '200',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '297.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
+    ]);
   });
 
   it('should render the same chart when the different data are defined on Line elements and not on the chart', () => {
@@ -736,16 +920,56 @@ describe('<LineChart /> and various data sources', () => {
     expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
     // okay this is reasonable
     expectXAxisTicks(container, [
-      'Iter: 0',
-      'Iter: 1',
-      'Iter: 2',
-      'Iter: 3',
-      'Iter: 4',
-      'Iter: 5',
-      'Iter: 6',
-      'Iter: 7',
-      'Iter: 8',
-      'Iter: 9',
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '48.333333333333336',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '91.66666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '135',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '178.33333333333334',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 5',
+        x: '221.66666666666669',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 6',
+        x: '265',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 7',
+        x: '308.33333333333337',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 8',
+        x: '351.6666666666667',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 9',
+        x: '395',
+        y: '373',
+      },
     ]);
   });
 
@@ -759,7 +983,33 @@ describe('<LineChart /> and various data sources', () => {
     );
     expectLabels(container, ['258', '295', '193', '168', '117', '770', '622', '670', '495', '603']);
     // this is bad - XAxis ignores ticks from the Chart root
-    expectXAxisTicks(container, ['Iter: 0', 'Iter: 1', 'Iter: 2', 'Iter: 3', 'Iter: 4']);
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Iter: 0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 1',
+        x: '102.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 2',
+        x: '200',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 3',
+        x: '297.5',
+        y: '373',
+      },
+      {
+        textContent: 'Iter: 4',
+        x: '395',
+        y: '373',
+      },
+    ]);
   });
 });
 

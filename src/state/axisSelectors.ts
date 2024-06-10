@@ -98,14 +98,14 @@ export const selectAxisDomain = (
   return computeCategoricalDomain(allDataSquished, axisSettings);
 };
 
-export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: string) => ParsedScaleReturn =
+export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
   createSelector(
     selectAxisSettings,
     selectChartLayout,
     selectHasBar,
     selectChartName,
     selectAxisDomain,
-    (_, axisType) => axisType,
+    (_: RechartsRootState, axisType: AxisType) => axisType,
     (
       axisConfig: AxisSettings,
       chartLayout: LayoutType,
@@ -114,7 +114,7 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
       axisDomain,
       axisType: AxisType,
     ) => {
-      if (axisConfig == null) {
+      if (axisConfig == null || axisDomain == null) {
         return unknownScale;
       }
       const parsedScaleReturn: ParsedScaleReturn = parseScale(
