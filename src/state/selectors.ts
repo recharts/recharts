@@ -268,14 +268,24 @@ export const selectTooltipPayload: (
   combineTooltipPayload,
 );
 
-export const selectIsTooltipActive = (
+export const selectIsTooltipActive: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex?: number | undefined,
-): boolean => {
-  // TODO: move this to be called at the top level. How to do that while preserving required parameters?
-  const isTooltipActive = createSelector(selectActiveCoordinate, (coordinate: ChartCoordinate) => {
+) => boolean = createSelector(
+  (state: RechartsRootState) => state,
+  (_state, tooltipEventType: TooltipEventType) => tooltipEventType,
+  (_state, _tooltipEventType, trigger: TooltipTrigger) => trigger,
+  (_state, _tooltipEventType, _trigger, defaultIndex?: number | undefined) => defaultIndex,
+  selectActiveCoordinate,
+  (
+    state: RechartsRootState,
+    tooltipEventType: TooltipEventType,
+    trigger: TooltipTrigger,
+    defaultIndex: number | undefined,
+    coordinate: ChartCoordinate,
+  ) => {
     // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
     // we can change this later but not sure how else to maintain current functionality
     if (coordinate === undefined && defaultIndex != null) {
@@ -287,15 +297,12 @@ export const selectIsTooltipActive = (
       }
       return state.tooltip.axisInteraction.activeClick;
     }
-
     if (trigger === 'hover') {
       return state.tooltip.itemInteraction.activeHover;
     }
     return state.tooltip.itemInteraction.activeClick;
-  })(state, tooltipEventType, trigger);
-
-  return isTooltipActive;
-};
+  },
+);
 
 const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined => state.layout.container;
 
