@@ -311,6 +311,125 @@ describe('<XAxis />', () => {
     ]);
   });
 
+  it('Render Bars with gap in 10000 width chart and somehow is still decides to render 4 ticks instead of the default 5', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={10000} height={300} data={data}>
+        <Bar dataKey="y" isAnimationActive={false} />
+        <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <YAxis dataKey="y" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('287.9183673469387');
+    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '774.2857142857142',
+        y: '273',
+      },
+      {
+        textContent: '120',
+        x: '3206.1224489795923',
+        y: '273',
+      },
+      {
+        textContent: '140',
+        x: '5637.95918367347',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '9285.714285714286',
+        y: '273',
+      },
+    ]);
+  });
+
+  describe.each(['gap', 'no-gap', { left: 3, right: 5 }] as const)('padding: %s', padding => {
+    /* I am not entirely certain what is the relationship between the tickCount prop, and the actual tick count */
+    it.each([
+      { providedTickCount: 3, expectedTickCount: 3 },
+      { providedTickCount: 5, expectedTickCount: 4 },
+      { providedTickCount: 7, expectedTickCount: 5 },
+      { providedTickCount: 11, expectedTickCount: 11 },
+      { providedTickCount: 13, expectedTickCount: 12 },
+      { providedTickCount: 17, expectedTickCount: 15 },
+      { providedTickCount: 19, expectedTickCount: 18 },
+      { providedTickCount: 29, expectedTickCount: 24 },
+    ])(
+      'renders $expectedTickCount ticks when tickCount=$providedTickCount',
+      ({ providedTickCount, expectedTickCount }) => {
+        const spy = vi.fn();
+        const { container } = render(
+          <BarChart width={100000} height={300} data={data}>
+            <Bar dataKey="y" isAnimationActive={false} />
+            <XAxis
+              dataKey="x"
+              type="number"
+              domain={['dataMin', 'dataMax']}
+              padding={padding}
+              tickCount={providedTickCount}
+            />
+            <YAxis dataKey="y" />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </BarChart>,
+        );
+
+        expect(spy).toHaveBeenLastCalledWith([100, 170]);
+        const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
+        expect(allTicks).toHaveLength(expectedTickCount);
+      },
+    );
+  });
+
+  it('Render Bars with gap when there are duplicate values in the data', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <BarChart width={300} height={300} data={data}>
+        <Bar dataKey="x" isAnimationActive={false} />
+        <XAxis dataKey="y" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
+        <YAxis dataKey="x" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </BarChart>,
+    );
+    const bar = container.querySelector('.recharts-rectangle');
+    assertNotNull(bar);
+    expect(bar.getAttribute('x')).toEqual('138.49777777777777');
+    expect(spy).toHaveBeenLastCalledWith([100, 400]);
+    expectXAxisTicks(container, [
+      {
+        textContent: '100',
+        x: '72.66666666666667',
+        y: '273',
+      },
+      {
+        textContent: '175',
+        x: '126.33333333333333',
+        y: '273',
+      },
+      {
+        textContent: '250',
+        x: '180',
+        y: '273',
+      },
+      {
+        textContent: '325',
+        x: '233.66666666666666',
+        y: '273',
+      },
+      {
+        textContent: '400',
+        x: '287.3333333333333',
+        y: '273',
+      },
+    ]);
+  });
+
   it('Render Bars with no gap', () => {
     const spy = vi.fn();
     const { container } = render(
