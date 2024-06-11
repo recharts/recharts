@@ -5,7 +5,7 @@ import { Store } from '@reduxjs/toolkit';
 import {
   combineTooltipPayload,
   selectActiveIndex,
-  selectActiveIndexFromMousePointer,
+  selectActivePropsFromMousePointer,
   selectContainerScale,
   selectIsTooltipActive,
   selectRootContainerDomRect,
@@ -570,6 +570,11 @@ describe('selectIsTooltipActive', () => {
         const store = createRechartsStore();
         expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toBe(false);
       });
+
+      it('should return true if a defaultIndex has been set', () => {
+        const store = createRechartsStore();
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, 1)).toBe(true);
+      });
     },
   );
 
@@ -836,7 +841,7 @@ describe('selectActiveIndexFromMousePointer', () => {
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const coordinates = useAppSelector(state => selectActiveIndexFromMousePointer(state, exampleMousePointer));
+      const coordinates = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
       expect(coordinates).toBe(undefined);
       return null;
     };
@@ -845,7 +850,7 @@ describe('selectActiveIndexFromMousePointer', () => {
 
   it('should return undefined for initial state', () => {
     const store = createRechartsStore();
-    expect(selectActiveIndexFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
+    expect(selectActivePropsFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
   });
 });
 

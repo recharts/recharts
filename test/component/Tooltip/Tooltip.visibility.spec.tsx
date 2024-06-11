@@ -723,12 +723,12 @@ describe('Tooltip visibility', () => {
     expect(container.querySelector('.recharts-tooltip-cursor')).toBeVisible();
 
     // Data should be displayed in the Tooltip payload
-    expect(tooltip.textContent).toBe('100stature : 100cmweight : 200kg');
+    expect(tooltip.textContent).toBe('stature : 100cmweight : 200kg');
 
     fireEvent.click(container.querySelector('#goRight') as HTMLButtonElement);
 
     // Data should be displayed in the Tooltip payload
-    expect(tooltip.textContent).toBe('120stature : 120cmweight : 100kg');
+    expect(tooltip.textContent).toBe('stature : 120cmweight : 100kg');
   });
 });
 

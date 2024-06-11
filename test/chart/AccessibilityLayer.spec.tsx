@@ -146,15 +146,24 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
       expect(mockMouseMovements.mock.instances).toHaveLength(1);
 
+      // TODO: move accessibility layer handling to redux. This passes now but is actually broken.
+      // Once a coordinate is set in redux it does not become falsy and prefer the one in context so it does not move on update.
+      const cursor = container.querySelector('.recharts-tooltip-cursor');
+      expect(cursor).not.toBeNull();
+
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page A');
       expect(mockMouseMovements.mock.instances).toHaveLength(2);
+      const cursorPathA = cursor.getAttribute('d');
 
       // Respect right arrow when there's something to the right
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
       expect(mockMouseMovements.mock.instances).toHaveLength(3);
+      const cursorPathB = cursor.getAttribute('d');
+
+      expect(cursorPathA).not.toEqual(cursorPathB);
 
       // Page C
       arrowRight(svg);

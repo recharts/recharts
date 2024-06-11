@@ -1,6 +1,6 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { DataKey } from '../util/types';
+import { ChartCoordinate, DataKey } from '../util/types';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -52,6 +52,11 @@ export type TooltipPayloadConfiguration = {
   dataDefinedOnItem: unknown;
 };
 
+export type ActiveTooltipProps = {
+  activeIndex: TooltipIndex;
+  activeCoordinate: ChartCoordinate | undefined;
+};
+
 /**
  * The tooltip interaction state stores:
  *
@@ -77,11 +82,19 @@ export type TooltipState = {
      */
     activeClick: boolean;
     /**
+     * The ChartCoordinate last clicked by the user. This needs saved so we can continue to render the tooltip at that point.
+     */
+    activeClickCoordinate: ChartCoordinate | undefined;
+    /**
      * Why is hover activation separate from click activation? Because they are independent:
      * If a click is set, then mouseLeave should not clear it.
      * - the opposite is technically true too - but it's difficult to click on things without also hovering.
      */
     activeHover: boolean;
+    /**
+     * The ChartCoordinate last hovered by the user. Render the Tooltip at this coordinate as it updates on mouse movement.
+     */
+    activeMouseOverCoordinate: ChartCoordinate;
     /**
      * This is the current data index that is set for the chart.
      * This can come from mouse events, keyboard events, or hardcoded in props
@@ -119,7 +132,9 @@ export type TooltipState = {
    */
   axisInteraction: {
     activeClick: boolean;
+    activeClickCoordinate: ChartCoordinate | undefined;
     activeHover: boolean;
+    activeMouseOverCoordinate: ChartCoordinate;
     activeMouseOverAxisIndex: TooltipIndex;
     activeMouseOverAxisDataKey: DataKey<any> | undefined;
     activeClickAxisIndex: TooltipIndex;
@@ -133,10 +148,12 @@ export type TooltipState = {
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>;
 };
 
-const initialState: TooltipState = {
+export const initialState: TooltipState = {
   itemInteraction: {
     activeClick: false,
+    activeClickCoordinate: undefined,
     activeHover: false,
+    activeMouseOverCoordinate: undefined,
     activeMouseOverIndex: null,
     activeMouseOverDataKey: undefined,
     activeClickIndex: null,
@@ -144,7 +161,9 @@ const initialState: TooltipState = {
   },
   axisInteraction: {
     activeClick: false,
+    activeClickCoordinate: undefined,
     activeHover: false,
+    activeMouseOverCoordinate: undefined,
     activeMouseOverAxisIndex: null,
     activeMouseOverAxisDataKey: undefined,
     activeClickAxisIndex: null,
@@ -168,38 +187,70 @@ const tooltipSlice = createSlice({
     },
     setActiveMouseOverItemIndex(
       state,
-      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{
+        activeIndex: TooltipIndex;
+        activeDataKey: DataKey<any> | undefined;
+        activeMouseOverCoordinate?: ChartCoordinate;
+      }>,
     ) {
       state.itemInteraction.activeHover = true;
       state.itemInteraction.activeMouseOverIndex = action.payload.activeIndex;
       state.itemInteraction.activeMouseOverDataKey = action.payload.activeDataKey;
+      state.itemInteraction.activeMouseOverCoordinate = action.payload.activeMouseOverCoordinate;
+    },
+    mouseLeaveChart(state) {
+      state.itemInteraction.activeHover = false;
+      state.itemInteraction.activeMouseOverCoordinate = null;
+      state.itemInteraction.activeMouseOverIndex = null;
+      state.axisInteraction.activeHover = false;
+      state.axisInteraction.activeMouseOverCoordinate = null;
+      state.axisInteraction.activeMouseOverAxisDataKey = undefined;
+      state.axisInteraction.activeMouseOverAxisIndex = null;
     },
     mouseLeaveItem(state) {
       state.itemInteraction.activeHover = false;
+      state.itemInteraction.activeMouseOverCoordinate = null;
+      state.itemInteraction.activeMouseOverIndex = null;
+      state.itemInteraction.activeMouseOverDataKey = undefined;
     },
     setActiveClickItemIndex(
       state,
-      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{
+        activeIndex: TooltipIndex;
+        activeDataKey: DataKey<any> | undefined;
+        activeClickCoordinate?: ChartCoordinate;
+      }>,
     ) {
       state.itemInteraction.activeClick = true;
       state.itemInteraction.activeClickIndex = action.payload.activeIndex;
       state.itemInteraction.activeClickDataKey = action.payload.activeDataKey;
+      state.itemInteraction.activeClickCoordinate = action.payload.activeClickCoordinate;
     },
     setMouseOverAxisIndex(
       state,
-      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{
+        activeIndex: TooltipIndex;
+        activeDataKey: DataKey<any> | undefined;
+        activeMouseOverCoordinate?: ChartCoordinate;
+      }>,
     ) {
       state.axisInteraction.activeHover = true;
       state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
       state.axisInteraction.activeMouseOverAxisDataKey = action.payload.activeDataKey;
+      state.axisInteraction.activeMouseOverCoordinate = action.payload.activeMouseOverCoordinate;
     },
     setMouseClickAxisIndex(
       state,
-      action: PayloadAction<{ activeIndex: TooltipIndex; activeDataKey: DataKey<any> | undefined }>,
+      action: PayloadAction<{
+        activeIndex: TooltipIndex;
+        activeDataKey: DataKey<any> | undefined;
+        activeClickCoordinate?: ChartCoordinate;
+      }>,
     ) {
       state.axisInteraction.activeClick = true;
       state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
       state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
+      state.axisInteraction.activeClickCoordinate = action.payload.activeClickCoordinate;
     },
   },
 });
@@ -209,6 +260,7 @@ export const {
   removeTooltipEntrySettings,
   setActiveMouseOverItemIndex,
   mouseLeaveItem,
+  mouseLeaveChart,
   setActiveClickItemIndex,
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,

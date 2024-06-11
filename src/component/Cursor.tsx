@@ -13,6 +13,7 @@ import { useTooltipContext } from '../context/tooltipContext';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors';
+import { TooltipPayload } from '../state/tooltipSlice';
 
 /**
  * If set false, no cursor will be drawn when tooltip is active.
@@ -24,6 +25,8 @@ export type CursorDefinition = boolean | ReactElement | SVGProps<SVGElement>;
 export type CursorProps = {
   cursor: CursorDefinition;
   tooltipEventType: TooltipEventType;
+  coordinate: ChartCoordinate;
+  payload: TooltipPayload;
 };
 
 export type CursorConnectedProps = CursorProps & {
@@ -31,7 +34,7 @@ export type CursorConnectedProps = CursorProps & {
   layout: LayoutType;
   offset: ChartOffset;
   coordinate: ChartCoordinate;
-  payload: any[];
+  payload: TooltipPayload;
   index: number;
   chartName: string;
 };
@@ -98,16 +101,17 @@ export function CursorInternal(props: CursorConnectedProps) {
  */
 export function Cursor(props: CursorProps) {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
-  const { coordinate, payload, index } = useTooltipContext();
+  // TODO: select from redux
+  const { index } = useTooltipContext();
   const offset = useOffset();
   const layout = useChartLayout();
   const chartName = useChartName();
   return (
     <CursorInternal
       {...props}
-      coordinate={coordinate}
+      coordinate={props.coordinate}
       index={index}
-      payload={payload}
+      payload={props.payload}
       offset={offset}
       layout={layout}
       tooltipAxisBandSize={tooltipAxisBandSize}

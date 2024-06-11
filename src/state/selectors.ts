@@ -3,6 +3,7 @@ import sortBy from 'lodash/sortBy';
 import { useAppSelector } from './hooks';
 import { RechartsRootState } from './store';
 import {
+  ActiveTooltipProps,
   TooltipEntrySettings,
   TooltipIndex,
   TooltipPayload,
@@ -15,6 +16,7 @@ import {
   AxisPropsNeededForTicksGenerator,
   calculateActiveTickIndex,
   calculateTooltipPos,
+  getActiveCoordinate,
   getTicksOfAxis,
   getTooltipEntry,
   getValueByDataKey,
@@ -22,7 +24,15 @@ import {
 } from '../util/ChartUtils';
 import { ChartDataState } from './chartDataSlice';
 import { selectTooltipAxis } from '../context/useTooltipAxis';
-import { BaseAxisProps, ChartOffset, DataKey, LayoutType, TickItem, TooltipEventType } from '../util/types';
+import {
+  BaseAxisProps,
+  ChartCoordinate,
+  ChartOffset,
+  DataKey,
+  LayoutType,
+  TickItem,
+  TooltipEventType,
+} from '../util/types';
 import { findEntryInArray } from '../util/DataUtils';
 import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../chart/types';
 import { ContainerOffset, getOffset } from '../util/DOMUtils';
@@ -107,15 +117,36 @@ export function selectActiveIndex(
   return activeIndex;
 }
 
-const selectActiveLabel = createSelector(
+export function selectActiveCoordinate(
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): ChartCoordinate | undefined {
+  const tooltipState: TooltipState = selectTooltipState(state);
+  let activeCoordinate: ChartCoordinate;
+  if (tooltipEventType === 'item') {
+    if (trigger === 'hover') {
+      activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
+    } else {
+      activeCoordinate = tooltipState.itemInteraction.activeClickCoordinate;
+    }
+  } else if (trigger === 'hover') {
+    activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
+  } else {
+    activeCoordinate = tooltipState.axisInteraction.activeClickCoordinate;
+  }
+  return activeCoordinate;
+}
+
+export const selectActiveLabel = createSelector(
   selectTooltipTicks,
   selectActiveIndex,
   (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {
     const n = Number(activeIndex);
-    if (Number.isNaN(n)) {
+    if (Number.isNaN(n) || activeIndex == null) {
       return undefined;
     }
-    return tooltipTicks?.[n]?.value;
+    return n >= 0 ? tooltipTicks?.[n]?.value : undefined;
   },
 );
 
@@ -239,23 +270,41 @@ export const selectTooltipPayload: (
   combineTooltipPayload,
 );
 
-export const selectIsTooltipActive = (
+export const selectIsTooltipActive: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-): boolean => {
-  if (tooltipEventType === 'axis') {
-    if (trigger === 'hover') {
-      return state.tooltip.axisInteraction.activeHover;
+  defaultIndex?: number | undefined,
+) => boolean = createSelector(
+  (state: RechartsRootState) => state,
+  (_state, tooltipEventType: TooltipEventType) => tooltipEventType,
+  (_state, _tooltipEventType, trigger: TooltipTrigger) => trigger,
+  (_state, _tooltipEventType, _trigger, defaultIndex?: number | undefined) => defaultIndex,
+  selectActiveCoordinate,
+  (
+    state: RechartsRootState,
+    tooltipEventType: TooltipEventType,
+    trigger: TooltipTrigger,
+    defaultIndex: number | undefined,
+    coordinate: ChartCoordinate,
+  ) => {
+    // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
+    // we can change this later but not sure how else to maintain current functionality
+    if (coordinate === undefined && defaultIndex != null) {
+      return true;
     }
-    return state.tooltip.axisInteraction.activeClick;
-  }
-
-  if (trigger === 'hover') {
-    return state.tooltip.itemInteraction.activeHover;
-  }
-  return state.tooltip.itemInteraction.activeClick;
-};
+    if (tooltipEventType === 'axis') {
+      if (trigger === 'hover') {
+        return state.tooltip.axisInteraction.activeHover;
+      }
+      return state.tooltip.axisInteraction.activeClick;
+    }
+    if (trigger === 'hover') {
+      return state.tooltip.itemInteraction.activeHover;
+    }
+    return state.tooltip.itemInteraction.activeClick;
+  },
+);
 
 const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined => state.layout.container;
 
@@ -290,7 +339,7 @@ export const selectContainerScale: (state: RechartsRootState) => number | undefi
     rect?.width / container?.offsetWidth || 1,
 );
 
-export const combineActiveIndex = (
+export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
   scale: number | undefined,
   layout: LayoutType | undefined,
@@ -302,7 +351,7 @@ export const combineActiveIndex = (
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,
-): TooltipIndex => {
+): ActiveTooltipProps => {
   if (!chartEvent || !scale || !layout || !tooltipAxis || !tooltipTicks) {
     return undefined;
   }
@@ -314,21 +363,25 @@ export const combineActiveIndex = (
 
   const activeIndex = calculateActiveTickIndex(pos, orderedTooltipTicks, tooltipTicks, tooltipAxis);
 
-  return String(activeIndex);
+  const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
+
+  return { activeIndex: String(activeIndex), activeCoordinate };
 };
 
-export const selectActiveIndexFromMousePointer: (state: RechartsRootState, mousePointer: MousePointer) => TooltipIndex =
-  createSelector(
-    selectChartCoordinates,
-    selectContainerScale,
-    selectChartLayout,
-    selectXAxisMap,
-    selectYAxisMap,
-    selectPolarAngleAxisMap,
-    selectPolarRadiusAxisMap,
-    selectTooltipAxis,
-    selectTooltipTicks,
-    selectOrderedTooltipTicks,
-    selectChartOffset,
-    combineActiveIndex,
-  );
+export const selectActivePropsFromMousePointer: (
+  state: RechartsRootState,
+  mousePointer: MousePointer,
+) => ActiveTooltipProps = createSelector(
+  selectChartCoordinates,
+  selectContainerScale,
+  selectChartLayout,
+  selectXAxisMap,
+  selectYAxisMap,
+  selectPolarAngleAxisMap,
+  selectPolarRadiusAxisMap,
+  selectTooltipAxis,
+  selectTooltipTicks,
+  selectOrderedTooltipTicks,
+  selectChartOffset,
+  combineActiveProps,
+);

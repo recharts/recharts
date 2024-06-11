@@ -1,5 +1,6 @@
 import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
+import { mouseLeaveChart } from '../state/tooltipSlice';
 import { setContainer } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
@@ -31,6 +32,11 @@ export const RechartsWrapper = forwardRef(
       dispatch(mouseMoveAction(e));
       wrapperEvents?.onMouseEnter?.(e);
     };
+    const myOnMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+      // clear tooltip state if things happen to still be visible onMouseLeave of the wrapper
+      dispatch(mouseLeaveChart());
+      wrapperEvents?.onMouseLeave?.(e);
+    };
     const myOnMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseMoveAction(e));
       wrapperEvents?.onMouseMove?.(e);
@@ -46,6 +52,7 @@ export const RechartsWrapper = forwardRef(
         onClick={myOnClick}
         onMouseMove={myOnMouseMove}
         onMouseEnter={myOnMouseEnter}
+        onMouseLeave={myOnMouseLeave}
         ref={innerRef}
       >
         {children}

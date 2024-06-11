@@ -548,7 +548,6 @@ describe('Tooltip payload', () => {
         );
 
         showTooltip(container, radialBarMouseHoverTooltipSelector, debug);
-
         const expectedTooltipTitle = '';
         const expectedTooltipContent = ['uv : 400'];
         expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);

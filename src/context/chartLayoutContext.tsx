@@ -88,6 +88,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   };
 
   const dispatch = useAppDispatch();
+
   dispatch(setXAxisMap(xAxisMap));
   dispatch(setYAxisMap(yAxisMap));
   dispatch(setPolarAngleAxisMap(angleAxisMap));

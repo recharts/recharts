@@ -35,6 +35,7 @@ import {
   BarPosition,
   calculateActiveTickIndex,
   calculateTooltipPos,
+  getActiveCoordinate,
   getBandSizeOfAxis,
   getBarPositions,
   getDomainOfDataByKey,
@@ -52,7 +53,6 @@ import {
   parseSpecifiedDomain,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
-import { polarToCartesian } from '../util/PolarUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, SYNC_EVENT } from '../util/Events';
 import {
@@ -62,7 +62,6 @@ import {
   BaseAxisProps,
   CartesianViewBox,
   CategoricalChartOptions,
-  ChartCoordinate,
   ChartOffset,
   Coordinate,
   DataKey,
@@ -141,47 +140,6 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 function renderAsIs(element: React.ReactElement): React.ReactElement {
   return element;
 }
-
-const getActiveCoordinate = (
-  layout: LayoutType,
-  tooltipTicks: TickItem[],
-  activeIndex: number,
-  rangeObj: RangeObj,
-): ChartCoordinate => {
-  const entry = tooltipTicks.find(tick => tick && tick.index === activeIndex);
-
-  if (entry) {
-    if (layout === 'horizontal') {
-      return { x: entry.coordinate, y: rangeObj.y };
-    }
-    if (layout === 'vertical') {
-      return { x: rangeObj.x, y: entry.coordinate };
-    }
-    if (layout === 'centric') {
-      const angle = entry.coordinate;
-      const { radius } = rangeObj;
-
-      return {
-        ...rangeObj,
-        ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
-        angle,
-        radius,
-      };
-    }
-
-    const radius = entry.coordinate;
-    const { angle } = rangeObj;
-
-    return {
-      ...rangeObj,
-      ...polarToCartesian(rangeObj.cx, rangeObj.cy, radius, angle),
-      angle,
-      radius,
-    };
-  }
-
-  return originCoordinate;
-};
 
 const getDisplayedData = (
   data: any[],
