@@ -16,11 +16,6 @@
     "target": "es6",
     "types": [
       "vitest/globals"
-    ],
-    // ES2023.Array is needed for Array.prototype.toSorted()
-    "lib": [
-      "ES2023.Array",
-      "DOM"
     ]
   },
   "include": [

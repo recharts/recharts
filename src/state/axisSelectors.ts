@@ -198,7 +198,7 @@ export const selectSmallestDistanceBetweenValues: (
       return undefined;
     }
     let smallestDistanceBetweenValues = Infinity;
-    const sortedValues = onlyAllowNumbers(allDataSquished).toSorted();
+    const sortedValues = Array.from(onlyAllowNumbers(allDataSquished)).sort();
     if (sortedValues.length < 2) {
       return Infinity;
     }
