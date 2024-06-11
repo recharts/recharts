@@ -147,10 +147,14 @@ export function numericalDomainSpecifiedWithoutRequiringData(
  *
  * This function is for parsing the numerical domain only.
  *
+ * You are probably thinking, why does domain need tick count?
+ * Well it adjusts the domain based on where the "nice ticks" land, and nice ticks depend on the tick count.
+ *
  * @param userDomain external prop, user provided, before validation. Can have various shapes: array, function, special magical strings inside too.
  * @param dataDomain calculated from data. Can be undefined, as an option for performance optimization
  * @param allowDataOverflow provided by users. If true then the data domain wins
  * @param allowDecimals if true then recharts is allowed to generate domain with decimal numbers; if false the numbers are always integers
+ * @param tickCount if the automatic "nice" ticks land outside of domain, the domain will be extended
  *
  * @return [min, max] domain if it's well-formed; undefined if the domain is invalid
  */
@@ -159,6 +163,7 @@ export function parseNumericalUserDomain(
   dataDomain: NumberDomain | undefined,
   allowDataOverflow: boolean,
   allowDecimals: boolean,
+  tickCount: number,
 ): NumberDomain | undefined {
   if (!allowDataOverflow && dataDomain == null) {
     // Cannot compute data overflow if the data is not provided
@@ -180,7 +185,7 @@ export function parseNumericalUserDomain(
 
     if (providedMin === 'auto') {
       if (dataDomain != null) {
-        niceTicks = getNiceTickValues(dataDomain, undefined, allowDecimals);
+        niceTicks = getNiceTickValues(dataDomain, tickCount, allowDecimals);
         finalMin = Math.min(...niceTicks);
       }
     } else if (typeof providedMin === 'number' && !Number.isNaN(providedMin)) {
@@ -201,7 +206,7 @@ export function parseNumericalUserDomain(
     if (providedMax === 'auto') {
       if (dataDomain != null) {
         if (niceTicks == null) {
-          niceTicks = getNiceTickValues(dataDomain, undefined, allowDecimals);
+          niceTicks = getNiceTickValues([finalMin, dataDomain[1]], tickCount, allowDecimals);
         }
         finalMax = Math.max(...niceTicks);
       }

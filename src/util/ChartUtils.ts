@@ -668,7 +668,7 @@ export interface RechartsScale {
 
 export type AxisPropsNeededForTicksGenerator = {
   duplicateDomain?: ReadonlyArray<AxisTick>;
-  realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
+  realScaleType?: 'scaleBand' | string;
   scale: RechartsScale;
   axisType?: AxisType;
   ticks?: ReadonlyArray<AxisTick>;
