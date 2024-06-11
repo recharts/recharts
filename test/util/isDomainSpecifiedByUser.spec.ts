@@ -146,7 +146,7 @@ describe('parsing axis domain provided by user', () => {
   const casesValidOnlyWhenDataDomainIsGiven: MyTestCases = [
     { domain: [100, NaN], expected: [100, 100] },
     { domain: [NaN, 200], expected: [-100, 200] },
-    { domain: [11, 'auto'], expected: [11, 150] },
+    { domain: [11, 'auto'], expected: [11, 100] },
     { domain: ['auto', 1], expected: [-100, 1] },
     { domain: [0, 'dataMax'], expected: [0, 100] },
     { domain: ['dataMin', 'dataMax'], expected: [-100, 100] },
@@ -163,7 +163,7 @@ describe('parsing axis domain provided by user', () => {
    */
   const casesWithDomainSmallerThanData: MyTestCases = [
     { domain: [11, 200], expected: [-100, 200] },
-    { domain: [11, 'auto'], expected: [-100, 150] },
+    { domain: [11, 'auto'], expected: [-100, 100] },
     { domain: ['auto', 1], expected: [-100, 100] },
     { domain: [0, 'dataMax'], expected: [-100, 100] },
     { domain: d => [Math.min(...d), 0], expected: [-100, 100] },
@@ -307,8 +307,8 @@ describe('parsing axis domain provided by user', () => {
     it('should extend the domain to whatever getNiceTickValues decides', () => {
       const userDomain: AxisDomain = [0, 'auto'];
       expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 3)).toEqual([-100, 100]);
-      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 6)).toEqual([-100, 150]);
-      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 12)).toEqual([-100, 120]);
+      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 6)).toEqual([-100, 100]);
+      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 12)).toEqual([-100, 110]);
     });
   });
 });
