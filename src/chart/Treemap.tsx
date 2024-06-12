@@ -504,6 +504,7 @@ export class Treemap extends PureComponent<Props, State> {
   static defaultProps = {
     aspectRatio: 0.5 * (1 + Math.sqrt(5)),
     dataKey: 'value',
+    nameKey: 'name',
     type: 'flat',
     isAnimationActive: !Global.isSsr,
     isUpdateAnimationActive: !Global.isSsr,
