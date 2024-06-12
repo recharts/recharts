@@ -7,9 +7,7 @@ import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-  },
+  argTypes: CategoricalChartProps,
   component: AreaChart,
 };
 

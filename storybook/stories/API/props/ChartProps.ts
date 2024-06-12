@@ -205,6 +205,7 @@ toggling between multiple dataKey.`,
       type: {
         summary: 'boolean',
       },
+      defaultValue: false,
       category: 'General',
     },
   },
@@ -230,11 +231,15 @@ toggling between multiple dataKey.`,
   },
   layout: {
     description: 'The layout of areas, bars, lines in the chart.',
+    options: ['horizontal', 'vertical'],
+    control: {
+      type: 'radio',
+    },
     table: {
       type: {
-        summary: "'horizontal' | 'vertical'",
+        summary: 'horizontal | vertical',
       },
-      defaultValue: "'horizontal'",
+      defaultValue: 'horizontal',
       category: 'General',
     },
   },
@@ -263,7 +268,7 @@ toggling between multiple dataKey.`,
     },
   },
   reverseStackOrder: {
-    description: `If false set, stacked items will be rendered left to right. If true set, stacked items
+    description: `If \`false\`, stacked items will be rendered left to right. If \`true\`, stacked items
       will be rendered right to left. (Render direction affects SVG layering, not x position.)`,
     table: {
       type: {
@@ -285,11 +290,15 @@ toggling between multiple dataKey.`,
 Also see https://d3js.org/d3-shape/stack#stack-offsets
 (note that the \`diverging\` offset in d3 is named \`sign\` in recharts)
 `,
+    options: ['sign', 'expand', 'none', 'wiggle', 'silhouette', 'positive'],
+    control: {
+      type: 'radio',
+    },
     table: {
       type: {
-        summary: "'expand' | 'none' | 'wiggle' | 'silhouette' | 'sign' | 'positive'",
+        summary: 'expand | none | wiggle | silhouette | sign | positive',
       },
-      defaultValue: "'none'",
+      defaultValue: 'none',
       category: 'General',
     },
   },
