@@ -2,6 +2,8 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis } from '../../src';
 import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
+import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
+import { AxisDomainType } from '../../src/util/types';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -213,6 +215,172 @@ describe('<ErrorBar />', () => {
     assertAnimationStyles(container, true, {
       transition: 'transform 400ms linear,transform-origin 400ms linear',
       transform: 'scaleY(1)',
+    });
+  });
+
+  test.each(['category', undefined])('throws when direction=x and XAxis id type=%s', (domainType: AxisDomainType) => {
+    expect(() => {
+      render(
+        <BarChart data={barData} width={500} height={500}>
+          <XAxis dataKey="name" type={domainType} />
+          <Bar isAnimationActive={false} dataKey="uv">
+            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" direction="x" />
+          </Bar>
+        </BarChart>,
+      );
+    }).toThrow('Invariant failed: ErrorBar requires Axis type property to be "number".');
+  });
+
+  describe('ErrorBar and axis domain interaction', () => {
+    test('ErrorBar should extend YAxis domain', () => {
+      const { container, rerender } = render(
+        <BarChart data={barData} width={500} height={500}>
+          <YAxis dataKey="uv" />
+          <Bar isAnimationActive={false} dataKey="uv" />
+        </BarChart>,
+      );
+
+      assertErrorBars(container, 0);
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '495',
+        },
+        {
+          textContent: '850',
+          x: '57',
+          y: '372.5',
+        },
+        {
+          textContent: '1700',
+          x: '57',
+          y: '250',
+        },
+        {
+          textContent: '2550',
+          x: '57',
+          y: '127.5',
+        },
+        {
+          textContent: '3400',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      rerender(
+        <BarChart data={barData} width={500} height={500}>
+          <YAxis dataKey="uv" />
+          <Bar isAnimationActive={false} dataKey="uv">
+            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
+          </Bar>
+        </BarChart>,
+      );
+      assertErrorBars(container, 4);
+      // these ticks are in the same position but going higher because the ErrorBar pushed YAxis domain
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '495',
+        },
+        {
+          textContent: '900',
+          x: '57',
+          y: '372.5',
+        },
+        {
+          textContent: '1800',
+          x: '57',
+          y: '250',
+        },
+        {
+          textContent: '2700',
+          x: '57',
+          y: '127.5',
+        },
+        {
+          textContent: '3600',
+          x: '57',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('ErrorBar not extend XAxis domain - this looks like a bug to me!', () => {
+      const { container, rerender } = render(
+        <BarChart data={barData} width={500} height={500}>
+          <XAxis dataKey="uv" type="number" />
+          <Bar isAnimationActive={false} dataKey="uv" />
+        </BarChart>,
+      );
+
+      assertErrorBars(container, 0);
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '473',
+        },
+        {
+          textContent: '850',
+          x: '127.5',
+          y: '473',
+        },
+        {
+          textContent: '1700',
+          x: '250',
+          y: '473',
+        },
+        {
+          textContent: '2550',
+          x: '372.5',
+          y: '473',
+        },
+        {
+          textContent: '3400',
+          x: '495',
+          y: '473',
+        },
+      ]);
+      rerender(
+        <BarChart data={barData} width={500} height={500}>
+          <XAxis dataKey="uv" type="number" />
+          <Bar isAnimationActive={false} dataKey="uv">
+            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" direction="x" />
+          </Bar>
+        </BarChart>,
+      );
+      assertErrorBars(container, 4);
+      // IMHO the same extension should happen here, but it does not. The ticks are the exact same.
+      // Perhaps the Redux refactor can fix it?
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '473',
+        },
+        {
+          textContent: '850',
+          x: '127.5',
+          y: '473',
+        },
+        {
+          textContent: '1700',
+          x: '250',
+          y: '473',
+        },
+        {
+          textContent: '2550',
+          x: '372.5',
+          y: '473',
+        },
+        {
+          textContent: '3400',
+          x: '495',
+          y: '473',
+        },
+      ]);
     });
   });
 });

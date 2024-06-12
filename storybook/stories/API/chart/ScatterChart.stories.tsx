@@ -2,20 +2,19 @@ import React from 'react';
 import { coordinateData } from '../../data';
 import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-  },
+  argTypes: CategoricalChartProps,
   component: ScatterChart,
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const { data } = args;
+    const { data, ...rest } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <ScatterChart>
+        <ScatterChart {...rest}>
           <XAxis dataKey="x" />
           <YAxis dataKey="y" />
           <Scatter data={data} />
@@ -24,6 +23,7 @@ export const Simple = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: coordinateData,
   },
 };
