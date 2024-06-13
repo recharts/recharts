@@ -2,6 +2,7 @@ import { PayloadAction, createSlice, current } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './axisMapSlice';
+import { DataKey } from '../util/types';
 
 export type CartesianGraphicalItemSettings = {
   data: ChartData;
@@ -11,6 +12,7 @@ export type CartesianGraphicalItemSettings = {
    * and it is required here.
    */
   xAxisId: AxisId;
+  dataKey: DataKey<any> | undefined;
 };
 
 export type GraphicalItemsState = {

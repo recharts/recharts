@@ -27,6 +27,7 @@ import {
   PieChart,
   Pie,
   LineChart,
+  Brush,
 } from '../../src';
 import { misbehavedData, PageData } from '../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -1184,7 +1185,7 @@ describe('selectCartesianGraphicalItemsData', () => {
 
   it('should be stable', () => {
     const store = createRechartsStore();
-    store.dispatch(addCartesianGraphicalItem({ data: PageData, xAxisId: 'x' }));
+    store.dispatch(addCartesianGraphicalItem({ dataKey: undefined, data: PageData, xAxisId: 'x' }));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     const result2 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     expect(result1).toBe(result2);
@@ -1505,5 +1506,24 @@ describe('selectAllDataSquished', () => {
     expect(dataSpy).toHaveBeenLastCalledWith([undefined, undefined, undefined, undefined, undefined]);
     expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4]);
     expect(dataSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should slice chart root data by dataStartIndex and dataEndIndex', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart data={mockData} width={100} height={100}>
+        <Line />
+        <Brush startIndex={1} endIndex={4} />
+        <XAxis dataKey="x" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([245, 266, 140, 131]);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 });

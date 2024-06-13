@@ -605,7 +605,7 @@ export class Area extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
+          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -626,7 +626,7 @@ export class Area extends PureComponent<Props, State> {
     return (
       <>
         <Layer className={layerClass}>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} />
+          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (

@@ -1,12 +1,28 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { Bar, BarChart, Customized, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { describe, expect, it, test, vi } from 'vitest';
+import {
+  Bar,
+  BarChart,
+  Brush,
+  CartesianGrid,
+  Customized,
+  Legend,
+  Line,
+  LineChart,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { selectAxisSettings } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
 import { XAxisSettings } from '../../src/state/axisMapSlice';
 import { assertNotNull } from '../helper/assertNotNull';
+import { AxisDomainType } from '../../src/util/types';
+import { pageData } from '../../storybook/stories/data';
 
 describe('<XAxis />', () => {
   const data = [
@@ -29,18 +45,18 @@ describe('<XAxis />', () => {
   const dataWithDecimalNumbers = [{ x: 4.1 }, { x: 6.3 }, { x: 12.5 }, { x: 3.7 }, { x: 7.9 }];
 
   it('Render 1 x-CartesianAxis and 1 y-CartesianAxis ticks in ScatterChart', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
         <YAxis dataKey="y" name="weight" unit="kg" />
         <Scatter name="A school" data={data} fill="#ff7300" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </ScatterChart>,
     );
 
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(2);
-    expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
   });
 
   it('should throw when attempting to render outside of Chart', () => {
@@ -50,26 +66,26 @@ describe('<XAxis />', () => {
   });
 
   it("Don't render x-axis when hide is set to be true", () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis hide />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </LineChart>,
     );
 
     expect(container.querySelectorAll('.xAxis .recharts-xAxis')).toHaveLength(0);
-    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('Render ticks of XAxis when specify ticks', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis ticks={[0, 4]} />
         <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </LineChart>,
     );
 
@@ -86,7 +102,7 @@ describe('<XAxis />', () => {
         y: '358',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('Render ticks with tickFormatter', () => {
@@ -133,6 +149,96 @@ describe('<XAxis />', () => {
       },
     ]);
     expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+  });
+
+  it('should render array indexes when dataKey is not specified', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={400} data={lineData}>
+        <XAxis />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </LineChart>,
+    );
+
+    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
+    expectXAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: '1',
+        x: '83',
+        y: '373',
+      },
+      {
+        textContent: '2',
+        x: '161',
+        y: '373',
+      },
+      {
+        textContent: '3',
+        x: '239',
+        y: '373',
+      },
+      {
+        textContent: '4',
+        x: '317',
+        y: '373',
+      },
+      {
+        textContent: '5',
+        x: '395',
+        y: '373',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+  });
+
+  it('should return empty strings when dataKey is specified but does not match the data', () => {
+    const spy = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={400} data={lineData}>
+        <XAxis dataKey="foo" />
+        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+      </LineChart>,
+    );
+
+    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('');
+    expectXAxisTicks(container, [
+      {
+        textContent: '',
+        x: '5',
+        y: '373',
+      },
+      {
+        textContent: '',
+        x: '83',
+        y: '373',
+      },
+      {
+        textContent: '',
+        x: '161',
+        y: '373',
+      },
+      {
+        textContent: '',
+        x: '239',
+        y: '373',
+      },
+      {
+        textContent: '',
+        x: '317',
+        y: '373',
+      },
+      {
+        textContent: '',
+        x: '395',
+        y: '373',
+      },
+    ]);
+    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('Render duplicated ticks of XAxis', () => {
@@ -2866,6 +2972,274 @@ describe('<XAxis />', () => {
     });
   });
 
-  describe.todo('brush and startIndex + endIndex');
-  describe.todo('layout=vertical');
+  describe('brush and startIndex + endIndex', () => {
+    it('should hide ticks when Brush travellers move', () => {
+      const axisDomainSpy = vi.fn();
+      const { container, rerender } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" />
+          <Brush />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '100',
+          x: '29.166666666666668',
+          y: '233',
+        },
+        {
+          textContent: '120',
+          x: '77.5',
+          y: '233',
+        },
+        {
+          textContent: '170',
+          x: '125.83333333333334',
+          y: '233',
+        },
+        {
+          textContent: '140',
+          x: '174.16666666666666',
+          y: '233',
+        },
+        {
+          textContent: '150',
+          x: '222.5',
+          y: '233',
+        },
+        {
+          textContent: '110',
+          x: '270.83333333333337',
+          y: '233',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+
+      rerender(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" />
+          <Brush startIndex={1} endIndex={4} />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+
+      expectXAxisTicks(container, [
+        {
+          textContent: '120',
+          x: '41.25',
+          y: '233',
+        },
+        {
+          textContent: '170',
+          x: '113.75',
+          y: '233',
+        },
+        {
+          textContent: '140',
+          x: '186.25',
+          y: '233',
+        },
+        {
+          textContent: '150',
+          x: '258.75',
+          y: '233',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([120, 170, 140, 150]);
+    });
+  });
+
+  describe('layout=vertical', () => {
+    it.each(['category', undefined])(
+      'should render categorical XAxis when type=%s',
+      (axisDomainType: AxisDomainType) => {
+        const axisDomainSpy = vi.fn();
+        const { container } = render(
+          <BarChart width={300} height={300} layout="vertical" data={data}>
+            <XAxis dataKey="z" type={axisDomainType} />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '34',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '92',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '208',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '266',
+            y: '273',
+          },
+        ]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+      },
+    );
+
+    it.each(['category', undefined])(
+      'should render categorical XAxis, but ignore allowDuplicatedCategory when type=%s',
+      (axisDomainType: AxisDomainType) => {
+        const axisDomainSpy = vi.fn();
+        const { container } = render(
+          <BarChart width={300} height={300} layout="vertical" data={data}>
+            <XAxis dataKey="z" type={axisDomainType} allowDuplicatedCategory />
+            <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+          </BarChart>,
+        );
+        expectXAxisTicks(container, [
+          {
+            textContent: '200',
+            x: '34',
+            y: '273',
+          },
+          {
+            textContent: '260',
+            x: '92',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '280',
+            x: '208',
+            y: '273',
+          },
+          {
+            textContent: '500',
+            x: '266',
+            y: '273',
+          },
+        ]);
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+      },
+    );
+
+    it('should allow switching to number', () => {
+      const axisDomainSpy = vi.fn();
+      const { container } = render(
+        <BarChart width={300} height={300} layout="vertical" data={data}>
+          <XAxis dataKey="z" type="number" />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '273',
+        },
+        {
+          textContent: '150',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '300',
+          x: '150',
+          y: '273',
+        },
+        {
+          textContent: '450',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '600',
+          x: '295',
+          y: '273',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 600]);
+    });
+
+    it('should render with in LineChart VerticalWithSpecifiedDomain', () => {
+      // const axisDomainSpy = vi.fn();
+      const axisSettingsSpy = vi.fn();
+      const Comp = (): null => {
+        axisSettingsSpy(useAppSelector(state => selectAxisSettings(state, 'xAxis', 0)));
+        return null;
+      };
+      const { container } = render(
+        <LineChart
+          layout="vertical"
+          width={500}
+          height={300}
+          data={pageData}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" domain={[0, 'dataMax + 1000']} />
+          <YAxis dataKey="name" type="category" />
+          <Legend />
+          <Line dataKey="pv" stroke="#8884d8" />
+          <Line dataKey="uv" stroke="#82ca9d" />
+          <Tooltip />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '80',
+          y: '273',
+        },
+        {
+          textContent: '650',
+          x: '180.59523809523813',
+          y: '273',
+        },
+        {
+          textContent: '1300',
+          x: '281.1904761904762',
+          y: '273',
+        },
+        {
+          textContent: '2520',
+          x: '470',
+          y: '273',
+        },
+      ]);
+      expect(axisSettingsSpy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: true,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: [0, 'dataMax + 1000'],
+        id: 0,
+        padding: {
+          left: 0,
+          right: 0,
+        },
+        scale: 'auto',
+        tickCount: 5,
+        type: 'number',
+      });
+      // TODO this fails because the redux selectors do not yet implement what `getDomainOfItemsWithSameAxis` does.
+      // expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
+    });
+  });
 });

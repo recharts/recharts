@@ -83,14 +83,33 @@ export const selectAllDataSquished: (
   selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
   selectAxisSettings,
-  (graphicalItemsData: ReadonlyArray<ChartData>, { chartData = [] }, axisSettings: AxisSettings) => {
+  (
+    graphicalItemsData: ReadonlyArray<ChartData>,
+    { chartData = [], dataStartIndex, dataEndIndex },
+    axisSettings: AxisSettings,
+  ) => {
     if (axisSettings == null) {
       return undefined;
     }
     const itemsData = graphicalItemsData.flat(1);
 
-    const finalData = itemsData.length > 0 ? itemsData : chartData;
-
+    let finalData: ChartData;
+    if (itemsData.length > 0) {
+      /*
+       * There is no slicing when data is defined on graphical items. Why?
+       * Because Brush ignores data defined on graphical items,
+       * and does not render.
+       * So Brush will never show up in a Scatter chart for example.
+       * This is something we will need to fix.
+       *
+       * Now, when the root chart data is not defined, the dataEndIndex is 0,
+       * which means the itemsData will be sliced to an empty array anyway.
+       * But that's an implementation detail, and we can fix that too.
+       */
+      finalData = itemsData;
+    } else {
+      finalData = chartData.slice(dataStartIndex, dataEndIndex + 1);
+    }
     return finalData.map(entry => getValueByDataKey(entry, axisSettings.dataKey));
   },
 );
