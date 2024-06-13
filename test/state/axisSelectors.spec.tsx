@@ -1185,7 +1185,7 @@ describe('selectCartesianGraphicalItemsData', () => {
 
   it('should be stable', () => {
     const store = createRechartsStore();
-    store.dispatch(addCartesianGraphicalItem({ data: PageData, xAxisId: 'x' }));
+    store.dispatch(addCartesianGraphicalItem({ dataKey: undefined, data: PageData, xAxisId: 'x' }));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     const result2 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     expect(result1).toBe(result2);

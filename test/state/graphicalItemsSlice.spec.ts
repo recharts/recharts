@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createRechartsStore } from '../../src/state/store';
-import { addCartesianGraphicalItem, removeCartesianGraphicalItem } from '../../src/state/graphicalItemsSlice';
+import {
+  addCartesianGraphicalItem,
+  CartesianGraphicalItemSettings,
+  removeCartesianGraphicalItem,
+} from '../../src/state/graphicalItemsSlice';
 import { PageData } from '../_data';
 
 describe('graphicalItemsSlice', () => {
@@ -8,7 +12,7 @@ describe('graphicalItemsSlice', () => {
     const store = createRechartsStore();
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(0);
 
-    const item: { data: any[]; xAxisId: string } = { data: PageData, xAxisId: 'x' };
+    const item: CartesianGraphicalItemSettings = { dataKey: undefined, data: PageData, xAxisId: 'x' };
     store.dispatch(addCartesianGraphicalItem(item));
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(1);
 
