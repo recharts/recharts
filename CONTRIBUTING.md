@@ -55,7 +55,7 @@ Also be aware that the performance tests might take a long time to run; up to se
 
 ### Mutation tests
 
-We have (https://stryker-mutator.io/docs/)[stryker] installed and ready to use for mutation testing.
+We have [stryker](https://stryker-mutator.io/docs/) installed and ready to use for mutation testing.
 
 If you want to run mutation test be aware that these may take hours! A single file will take 15 minutes or more.
 
