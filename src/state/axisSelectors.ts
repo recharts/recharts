@@ -83,14 +83,22 @@ export const selectAllDataSquished: (
   selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
   selectAxisSettings,
-  (graphicalItemsData: ReadonlyArray<ChartData>, { chartData = [] }, axisSettings: AxisSettings) => {
+  (
+    graphicalItemsData: ReadonlyArray<ChartData>,
+    { chartData = [], dataStartIndex, dataEndIndex },
+    axisSettings: AxisSettings,
+  ) => {
     if (axisSettings == null) {
       return undefined;
     }
     const itemsData = graphicalItemsData.flat(1);
 
-    const finalData = itemsData.length > 0 ? itemsData : chartData;
-
+    let finalData: ChartData;
+    if (itemsData.length > 0) {
+      finalData = itemsData;
+    } else {
+      finalData = chartData.slice(dataStartIndex, dataEndIndex + 1);
+    }
     return finalData.map(entry => getValueByDataKey(entry, axisSettings.dataKey));
   },
 );

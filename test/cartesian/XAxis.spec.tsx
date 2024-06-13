@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Bar, BarChart, Customized, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Brush, Customized, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { selectAxisSettings } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -2866,6 +2866,83 @@ describe('<XAxis />', () => {
     });
   });
 
-  describe.todo('brush and startIndex + endIndex');
+  describe('brush and startIndex + endIndex', () => {
+    it('should hide ticks when Brush travellers move', () => {
+      const axisDomainSpy = vi.fn();
+      const { container, rerender } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" />
+          <Brush />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '100',
+          x: '29.166666666666668',
+          y: '233',
+        },
+        {
+          textContent: '120',
+          x: '77.5',
+          y: '233',
+        },
+        {
+          textContent: '170',
+          x: '125.83333333333334',
+          y: '233',
+        },
+        {
+          textContent: '140',
+          x: '174.16666666666666',
+          y: '233',
+        },
+        {
+          textContent: '150',
+          x: '222.5',
+          y: '233',
+        },
+        {
+          textContent: '110',
+          x: '270.83333333333337',
+          y: '233',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+
+      rerender(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" />
+          <Brush startIndex={1} endIndex={4} />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+
+      expectXAxisTicks(container, [
+        {
+          textContent: '120',
+          x: '41.25',
+          y: '233',
+        },
+        {
+          textContent: '170',
+          x: '113.75',
+          y: '233',
+        },
+        {
+          textContent: '140',
+          x: '186.25',
+          y: '233',
+        },
+        {
+          textContent: '150',
+          x: '258.75',
+          y: '233',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([120, 170, 140, 150]);
+    });
+  });
+
   describe.todo('layout=vertical');
 });
