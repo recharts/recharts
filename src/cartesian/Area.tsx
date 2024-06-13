@@ -186,6 +186,7 @@ export class Area extends PureComponent<Props, State> {
     dataKey: Props['dataKey'];
   }) => {
     const { layout } = props;
+    const { connectNulls } = item.props;
     const hasStack = stackedData && stackedData.length;
     const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
     const isHorizontalLayout = layout === 'horizontal';
@@ -206,7 +207,7 @@ export class Area extends PureComponent<Props, State> {
         }
       }
 
-      const isBreakPoint = value[1] == null || (hasStack && getValueByDataKey(entry, dataKey) == null);
+      const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
 
       if (isHorizontalLayout) {
         return {
