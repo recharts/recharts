@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, Brush, Customized, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { selectAxisSettings } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
