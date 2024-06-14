@@ -376,4 +376,31 @@ describe('AreaChart', () => {
       ),
     );
   });
+
+  test('Renders null points as 0 if stacked and connectNulls is true', () => {
+    const dataWithNullPV = [
+      { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
+      { name: 'Page B', uv: 300, amt: 2400 },
+      { name: 'Page C', uv: 300, pv: 1398, amt: 2400 },
+    ];
+    const { container } = render(
+      <AreaChart width={100} height={50} data={dataWithNullPV}>
+        <Area stackId="1" connectNulls type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" connectNulls type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" />
+        <Area stackId="1" connectNulls type="monotone" dataKey="amt" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+
+    const [uv, pv] = container.querySelectorAll('.recharts-area-curve');
+    [uv, pv].forEach(path => {
+      const commands = [...path.getAttribute('d').matchAll(/[a-zA-Z][\d ,.]+/g)];
+      expect(commands).toHaveLength(3);
+      const [pageB] = commands[1];
+      expect(pageB[0]).toBe('C');
+      const [x, y] = pageB.slice(1).split(',').slice(4);
+      // Page B is missing pv, so it should be treated as 0.
+      // Since areas are stacked, pv should go to same point as uv.
+      expect([x, y]).toEqual(['50', '43']);
+    });
+  });
 });
