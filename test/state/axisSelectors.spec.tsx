@@ -95,10 +95,10 @@ describe('selectAxisScale', () => {
   });
 
   it('should set the scale domain and range based on the axis type, and data', () => {
-    const spy = vi.fn();
+    const scaleDomainSpy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
-      spy(result.scale?.domain());
+      scaleDomainSpy(result.scale?.domain());
       return null;
     };
     const { container } = render(
@@ -140,7 +140,7 @@ describe('selectAxisScale', () => {
         y: '73',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(scaleDomainSpy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 });
 
@@ -1409,7 +1409,18 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([211, 245, 266, 140, 131, 280, 294, 239, 293, 244]);
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 211 },
+      { value: 245 },
+      { value: 266 },
+      { value: 140 },
+      { value: 131 },
+      { value: 280 },
+      { value: 294 },
+      { value: 239 },
+      { value: 293 },
+      { value: 244 },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
@@ -1429,7 +1440,13 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([280, 294, 239, 293, 244]);
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 280 },
+      { value: 294 },
+      { value: 239 },
+      { value: 293 },
+      { value: 244 },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
@@ -1448,7 +1465,18 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 481 },
+      { value: 672 },
+      { value: 721 },
+      { value: 446 },
+      { value: 598 },
+      { value: 774 },
+      { value: 687 },
+      { value: 762 },
+      { value: 439 },
+      { value: 569 },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
@@ -1466,7 +1494,13 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([211, 245, 266, 140, 131]);
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 211 },
+      { value: 245 },
+      { value: 266 },
+      { value: 140 },
+      { value: 131 },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
@@ -1503,7 +1537,13 @@ describe('selectAllDataSquished', () => {
         <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
       </LineChart>,
     );
-    expect(dataSpy).toHaveBeenLastCalledWith([undefined, undefined, undefined, undefined, undefined]);
+    expect(dataSpy).toHaveBeenLastCalledWith([
+      { value: undefined },
+      { value: undefined },
+      { value: undefined },
+      { value: undefined },
+      { value: undefined },
+    ]);
     expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4]);
     expect(dataSpy).toHaveBeenCalledTimes(3);
   });
@@ -1523,7 +1563,7 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([245, 266, 140, 131]);
+    expect(spy).toHaveBeenLastCalledWith([{ value: 245 }, { value: 266 }, { value: 140 }, { value: 131 }]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 });

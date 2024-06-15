@@ -11,7 +11,7 @@ import {
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
 } from '../util/isDomainSpecifiedByUser';
-import { ChartData } from './chartDataSlice';
+import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings } from './graphicalItemsSlice';
 
@@ -79,7 +79,7 @@ export const selectAllDataSquished: (
   state: RechartsRootState,
   axisType: AxisType,
   axisId: AxisId,
-) => ChartData | undefined = createSelector(
+) => AppliedChartData | undefined = createSelector(
   selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
   selectAxisSettings,
@@ -87,7 +87,7 @@ export const selectAllDataSquished: (
     graphicalItemsData: ReadonlyArray<ChartData>,
     { chartData = [], dataStartIndex, dataEndIndex },
     axisSettings: AxisSettings,
-  ) => {
+  ): AppliedChartData | undefined => {
     if (axisSettings == null) {
       return undefined;
     }
@@ -110,7 +110,7 @@ export const selectAllDataSquished: (
     } else {
       finalData = chartData.slice(dataStartIndex, dataEndIndex + 1);
     }
-    return finalData.map(entry => getValueByDataKey(entry, axisSettings.dataKey));
+    return finalData.map(entry => ({ value: getValueByDataKey(entry, axisSettings.dataKey) }));
   },
 );
 
@@ -118,26 +118,28 @@ export function getDefaultDomainByAxisType(axisType: 'number' | string) {
   return axisType === 'number' ? [0, 'auto'] : undefined;
 }
 
-function onlyAllowNumbersAndStringsAndDates<T>(item: T): string | number | Date {
-  if ((typeof item === 'number' && !Number.isNaN(item)) || typeof item === 'string' || item instanceof Date) {
-    return item;
+function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date {
+  const { value } = item;
+  if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'string' || value instanceof Date) {
+    return value;
   }
   return '';
 }
 
-function onlyAllowNumbers(data: ChartData): ReadonlyArray<number> {
+function onlyAllowNumbers(data: AppliedChartData): ReadonlyArray<number> {
   return data
+    .map(entry => entry.value)
     .filter(v => typeof v === 'number' || typeof v === 'string')
     .map(Number)
     .filter(n => Number.isNaN(n) === false);
 }
 
-const computeNumericalDomain = (allDataSquished: ChartData): NumberDomain | undefined => {
+const computeNumericalDomain = (allDataSquished: AppliedChartData): NumberDomain | undefined => {
   const onlyNumbers = onlyAllowNumbers(allDataSquished);
   return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
 };
 
-const computeCategoricalDomain = (allDataSquished: ChartData, axisSettings: AxisSettings): CategoricalDomain => {
+const computeCategoricalDomain = (allDataSquished: AppliedChartData, axisSettings: AxisSettings): CategoricalDomain => {
   const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates);
   if (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain))) {
     /*
@@ -212,7 +214,7 @@ export const selectSmallestDistanceBetweenValues: (
 ) => number | undefined = createSelector(
   selectAllDataSquished,
   selectAxisSettings,
-  (allDataSquished: ChartData, axisSettings: AxisSettings): number | undefined => {
+  (allDataSquished: AppliedChartData, axisSettings: AxisSettings): number | undefined => {
     if (!axisSettings || axisSettings.type !== 'number') {
       return undefined;
     }
