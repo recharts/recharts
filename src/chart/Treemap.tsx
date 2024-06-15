@@ -127,6 +127,7 @@ export const computeNode = ({
   return {
     ...node,
     children: computedChildren,
+    // @ts-expect-error getValueByDataKey does not validate the output type
     name: getValueByDataKey(node, nameKey, ''),
     [NODE_VALUE_KEY]: nodeValue,
     depth,

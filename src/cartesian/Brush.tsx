@@ -182,6 +182,7 @@ function getTextOfTick(props: TextOfTickProps): ReactText {
   const { index, data, tickFormatter, dataKey } = props;
   const text = getValueByDataKey(data[index], dataKey, index);
 
+  // @ts-expect-error getValueByDataKey does not validate the output type
   return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
 }
 

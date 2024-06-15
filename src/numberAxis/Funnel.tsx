@@ -256,8 +256,10 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         nextVal = 0;
       }
 
+      // @ts-expect-error getValueByDataKey does not validate the output type
       const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
       const y = rowHeight * i + left + offsetY;
+      // @ts-expect-error getValueByDataKey does not validate the output type
       const upperWidth = (val / maxValue) * realWidth;
       const lowerWidth = (nextVal / maxValue) * realWidth;
 
@@ -274,13 +276,13 @@ export class Funnel extends PureComponent<FunnelProps, State> {
         upperWidth,
         lowerWidth,
         height: rowHeight,
+        // @ts-expect-error getValueByDataKey does not validate the output type
         name,
         val,
         tooltipPayload,
         tooltipPosition,
         ...omit(entry, 'width'),
         payload: entry,
-        // @ts-expect-error parentViewBox property does not exist on type FunnelTrapezoidItem
         parentViewBox,
         labelViewBox: {
           x: x + (upperWidth - lowerWidth) / 4,

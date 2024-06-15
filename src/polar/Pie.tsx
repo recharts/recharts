@@ -388,7 +388,9 @@ export class Pie extends PureComponent<Props, State> {
         const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
         const tooltipPayload: TooltipPayload = [
           {
+            // @ts-expect-error getValueByDataKey does not validate the output type
             name,
+            // @ts-expect-error getValueByDataKey does not validate the output type
             value: val,
             payload: entry,
             dataKey,

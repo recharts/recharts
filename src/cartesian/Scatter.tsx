@@ -281,6 +281,7 @@ export class Scatter extends PureComponent<Props, State> {
           // @ts-expect-error name prop should not have dataKey in it
           name: isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
           unit: xAxis.unit || '',
+          // @ts-expect-error getValueByDataKey does not validate the output type
           value: x,
           payload: entry,
           dataKey: xAxisDataKey,
@@ -290,6 +291,7 @@ export class Scatter extends PureComponent<Props, State> {
           // @ts-expect-error name prop should not have dataKey in it
           name: isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
           unit: yAxis.unit || '',
+          // @ts-expect-error getValueByDataKey does not validate the output type
           value: y,
           payload: entry,
           dataKey: yAxisDataKey,
@@ -302,6 +304,7 @@ export class Scatter extends PureComponent<Props, State> {
           // @ts-expect-error name prop should not have dataKey in it
           name: zAxis.name || zAxis.dataKey,
           unit: zAxis.unit || '',
+          // @ts-expect-error getValueByDataKey does not validate the output type
           value: z,
           payload: entry,
           dataKey: zAxisDataKey,
@@ -324,6 +327,7 @@ export class Scatter extends PureComponent<Props, State> {
         index,
         dataKey: yAxisDataKey,
       });
+      // @ts-expect-error getValueByDataKey does not validate the output type
       const size = z !== '-' ? zAxis.scale(z) : defaultZ;
       const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
 
@@ -462,6 +466,7 @@ export class Scatter extends PureComponent<Props, State> {
         xAxis,
         yAxis,
         layout: direction === 'x' ? 'vertical' : 'horizontal',
+        // @ts-expect-error getValueByDataKey does not validate the output type
         dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
           return {
             x: dataPoint.cx,

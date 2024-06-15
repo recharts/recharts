@@ -181,7 +181,9 @@ export class Radar extends PureComponent<Props, State> {
 
       points.push({
         ...polarToCartesian(cx, cy, radius, angle),
+        // @ts-expect-error getValueByDataKey does not validate the output type
         name,
+        // @ts-expect-error getValueByDataKey does not validate the output type
         value,
         cx,
         cy,
