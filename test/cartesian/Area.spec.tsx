@@ -414,10 +414,11 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       expect(spy).toHaveBeenLastCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({
+          {
             data: data2,
+            dataKey: 'value',
             xAxisId: 7,
-          }),
+          },
         ]),
       );
 
@@ -427,6 +428,32 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         </ChartElement>,
       );
       expect(spy).toHaveBeenLastCalledWith([]);
+    });
+
+    it('should report default props to redux state', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        spy(cartesianItems);
+        return null;
+      };
+      const data2 = [1, 2, 3];
+
+      render(
+        <ChartElement data={data}>
+          <Area dataKey="value" data={data2} />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.arrayContaining([
+          {
+            data: data2,
+            dataKey: 'value',
+            xAxisId: 0,
+          },
+        ]),
+      );
     });
   });
 
