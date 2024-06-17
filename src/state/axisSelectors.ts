@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
-import { getValueByDataKey, ParsedScaleReturn, parseScale } from '../util/ChartUtils';
+import { getValueByDataKey, isCategoricalAxis, ParsedScaleReturn, parseScale } from '../util/ChartUtils';
 import { AxisDomain, AxisType, CategoricalDomain, ChartOffset, LayoutType, NumberDomain } from '../util/types';
 import { AxisId, AxisSettings, XAxisSettings, YAxisSettings } from './axisMapSlice';
 import { selectBarCategoryGap, selectChartName } from './selectors';
@@ -36,30 +36,54 @@ export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType,
 
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
+const pickAxisType = (_state: RechartsRootState, axisType: AxisType): AxisType => axisType;
+
+// const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: AxisId): AxisId => axisId;
+
+/**
+ * Filters CartesianGraphicalItemSettings by the relevant axis ID
+ * @param axisType 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis'
+ * @param axisId from props, defaults to 0
+ *
+ * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
+ */
+function itemAxisPredicate(axisType: AxisType, axisId: AxisId) {
+  return (item: CartesianGraphicalItemSettings) => {
+    switch (axisType) {
+      case 'xAxis':
+        // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
+        return item.xAxisId === axisId;
+      default:
+        // TODO Y and Z axis
+        return false;
+    }
+  };
+}
+
+const selectCartesianItemsSettings: (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+) => ReadonlyArray<CartesianGraphicalItemSettings> = (state: RechartsRootState, axisType: AxisType, axisId: AxisId) =>
+  state.graphicalItems.cartesianItems.filter(itemAxisPredicate(axisType, axisId));
+
 /**
  * This is a "cheap" selector - it returns the data but doesn't iterate them, so it is not sensitive on the array length.
+ * Also does not apply dataKey yet.
  * @param state RechartsRootState
- * @returns data defined on the chart graphical items, such as Line or Scatter or Pie
+ * @returns data defined on the chart graphical items, such as Line or Scatter or Pie, and filtered with appropriate dataKey
  */
 export const selectCartesianGraphicalItemsData: (
   state: RechartsRootState,
   axisType: AxisType,
   axisId: AxisId,
-) => ReadonlyArray<ChartData> = createSelector(
-  (state: RechartsRootState) => state.graphicalItems.cartesianItems,
-  (_state, axisType: AxisType) => axisType,
-  (_state, _axisType, axisId: AxisId) => axisId,
-  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>, axisType: AxisType, axisId: AxisId) =>
+) => ChartData = createSelector(
+  selectCartesianItemsSettings,
+  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>) =>
     cartesianItems
-      .filter(item => {
-        if (axisType === 'xAxis') {
-          // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
-          return item.xAxisId === axisId;
-        }
-        return false;
-      })
       .map(item => item.data)
-      .filter(Boolean),
+      .filter(Boolean)
+      .flat(1),
 );
 
 /**
@@ -75,26 +99,15 @@ export const selectCartesianGraphicalItemsData: (
  *
  * This is an expensive selector - it will iterate all data and compute their value using the provided dataKey.
  */
-export const selectAllDataSquished: (
+export const selectDisplayedData: (
   state: RechartsRootState,
   axisType: AxisType,
   axisId: AxisId,
-) => AppliedChartData | undefined = createSelector(
+) => ChartData | undefined = createSelector(
   selectCartesianGraphicalItemsData,
   selectChartDataWithIndexes,
-  selectAxisSettings,
-  (
-    graphicalItemsData: ReadonlyArray<ChartData>,
-    { chartData = [], dataStartIndex, dataEndIndex },
-    axisSettings: AxisSettings,
-  ): AppliedChartData | undefined => {
-    if (axisSettings == null) {
-      return undefined;
-    }
-    const itemsData = graphicalItemsData.flat(1);
-
-    let finalData: ChartData;
-    if (itemsData.length > 0) {
+  (graphicalItemsData: ChartData, { chartData = [], dataStartIndex, dataEndIndex }): ChartData | undefined => {
+    if (graphicalItemsData.length > 0) {
       /*
        * There is no slicing when data is defined on graphical items. Why?
        * Because Brush ignores data defined on graphical items,
@@ -105,12 +118,35 @@ export const selectAllDataSquished: (
        * Now, when the root chart data is not defined, the dataEndIndex is 0,
        * which means the itemsData will be sliced to an empty array anyway.
        * But that's an implementation detail, and we can fix that too.
+       *
+       * Also, in absence of Axis dataKey, we use the dataKey from each item, respectively.
+       * This is the usual pattern for numerical axis, that is the one where bars go up:
+       * users don't specify any dataKey by default and expect the axis to "just match the data".
        */
-      finalData = itemsData;
-    } else {
-      finalData = chartData.slice(dataStartIndex, dataEndIndex + 1);
+      return graphicalItemsData;
     }
-    return finalData.map(entry => ({ value: getValueByDataKey(entry, axisSettings.dataKey) }));
+    return chartData.slice(dataStartIndex, dataEndIndex + 1);
+  },
+);
+
+export const selectAllAppliedValues = createSelector(
+  selectDisplayedData,
+  selectAxisSettings,
+  selectCartesianItemsSettings,
+  (
+    data: ChartData,
+    axisSettings: AxisSettings,
+    items: ReadonlyArray<CartesianGraphicalItemSettings>,
+  ): AppliedChartData => {
+    if (axisSettings?.dataKey != null) {
+      return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
+    }
+    if (items.length > 0) {
+      return items
+        .map(item => item.dataKey)
+        .flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
+    }
+    return data.map(entry => ({ value: entry }));
   },
 );
 
@@ -171,7 +207,7 @@ const selectNumericalDomain = (
     return domainFromUserPreference;
   }
 
-  const allDataSquished = selectAllDataSquished(state, axisType, axisId);
+  const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
   const domainFromData = computeNumericalDomain(allDataSquished);
 
   return parseNumericalUserDomain(
@@ -193,12 +229,23 @@ export const selectAxisDomain = (
     return undefined;
   }
 
-  if (axisSettings.type === 'number') {
-    return selectNumericalDomain(state, axisSettings, axisType, axisId);
+  const { dataKey, type } = axisSettings;
+  const layout = selectChartLayout(state);
+  const isCategorical = isCategoricalAxis(layout, axisType);
+
+  if (isCategorical && dataKey == null) {
+    const allDataSquished = selectDisplayedData(state, axisType, axisId);
+    return range(0, allDataSquished.length);
   }
 
-  const allDataSquished = selectAllDataSquished(state, axisType, axisId);
-  return computeCategoricalDomain(allDataSquished, axisSettings);
+  if (type === 'category') {
+    const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
+    return computeCategoricalDomain(allDataSquished, axisSettings);
+  }
+
+  // TODO getDomainOfStackGroups here
+
+  return selectNumericalDomain(state, axisSettings, axisType, axisId);
 };
 
 /**
@@ -212,7 +259,7 @@ export const selectSmallestDistanceBetweenValues: (
   axisType: AxisType,
   axisId: AxisId,
 ) => number | undefined = createSelector(
-  selectAllDataSquished,
+  selectAllAppliedValues,
   selectAxisSettings,
   (allDataSquished: AppliedChartData, axisSettings: AxisSettings): number | undefined => {
     if (!axisSettings || axisSettings.type !== 'number') {
@@ -372,7 +419,7 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
     selectChartName,
     selectAxisDomain,
     selectAxisRange,
-    (_: RechartsRootState, axisType: AxisType) => axisType,
+    pickAxisType,
     (
       axisConfig: AxisSettings,
       chartLayout: LayoutType,
