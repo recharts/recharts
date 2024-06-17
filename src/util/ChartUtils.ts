@@ -64,7 +64,7 @@ import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 // Exported for backwards compatibility
 export { getLegendProps };
 
-export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any) {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNil(obj) || isNil(dataKey)) {
     return defaultValue;
   }
@@ -1195,6 +1195,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
 
   const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
 
+  // @ts-expect-error getValueByDataKey does not validate the output type
   return !isNil(value) ? axis.scale(value) : null;
 }
 

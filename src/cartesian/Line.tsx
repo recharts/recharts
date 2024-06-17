@@ -198,6 +198,7 @@ export class Line extends PureComponent<Props, State> {
       if (layout === 'horizontal') {
         return {
           x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+          // @ts-expect-error getValueByDataKey does not validate the output type
           y: isNil(value) ? null : yAxis.scale(value),
           value,
           payload: entry,
@@ -205,6 +206,7 @@ export class Line extends PureComponent<Props, State> {
       }
 
       return {
+        // @ts-expect-error getValueByDataKey does not validate the output type
         x: isNil(value) ? null : xAxis.scale(value),
         y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
         value,
@@ -212,6 +214,7 @@ export class Line extends PureComponent<Props, State> {
       };
     });
 
+    // @ts-expect-error getValueByDataKey does not validate the output type
     return { points, layout, ...offset };
   };
 
@@ -343,6 +346,7 @@ export class Line extends PureComponent<Props, State> {
       return null;
     }
 
+    // @ts-expect-error getValueByDataKey does not validate the output type
     const dataPointFormatter: ErrorBarDataPointFormatter = (dataPoint: LinePointItem, dataKey) => {
       return {
         x: dataPoint.x,

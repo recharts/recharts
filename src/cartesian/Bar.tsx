@@ -588,6 +588,7 @@ export class Bar extends PureComponent<Props, State> {
 
     const offset = layout === 'vertical' ? data[0].height / 2 : data[0].width / 2;
 
+    // @ts-expect-error getValueByDataKey does not validate the output type
     const dataPointFormatter: ErrorBarDataPointFormatter = (dataPoint: BarRectangleItem, dataKey) => {
       /**
        * if the value coming from `getComposedData` is an array then this is a stacked bar chart.

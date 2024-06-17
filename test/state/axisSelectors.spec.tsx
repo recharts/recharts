@@ -1,33 +1,34 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
 import {
-  selectAxisScale,
+  selectAllAppliedValues,
   selectAxisDomain,
-  selectHasBar,
+  selectAxisScale,
   selectCalculatedXAxisPadding,
-  selectSmallestDistanceBetweenValues,
   selectCartesianGraphicalItemsData,
-  selectAllDataSquished,
+  selectDisplayedData,
+  selectHasBar,
+  selectSmallestDistanceBetweenValues,
 } from '../../src/state/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import {
+  Area,
   Bar,
   BarChart,
-  XAxis,
-  Customized,
-  ComposedChart,
-  Area,
-  Line,
-  Scatter,
-  YAxis,
-  RadialBarChart,
-  RadialBar,
-  PieChart,
-  Pie,
-  LineChart,
   Brush,
+  ComposedChart,
+  Customized,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  Scatter,
+  XAxis,
+  YAxis,
 } from '../../src';
 import { misbehavedData, PageData } from '../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -36,6 +37,10 @@ import { generateMockData } from '../helper/generateMockData';
 import { AxisId } from '../../src/state/axisMapSlice';
 
 const defaultAxisId: AxisId = 0;
+
+const mockData = generateMockData(10, 982347);
+const data1 = mockData.slice(0, 5);
+const data2 = mockData.slice(5);
 
 describe('selectAxisScale', () => {
   it('should return undefined when called outside of Redux context', () => {
@@ -95,10 +100,10 @@ describe('selectAxisScale', () => {
   });
 
   it('should set the scale domain and range based on the axis type, and data', () => {
-    const spy = vi.fn();
+    const scaleDomainSpy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
-      spy(result.scale?.domain());
+      scaleDomainSpy(result.scale?.domain());
       return null;
     };
     const { container } = render(
@@ -140,7 +145,7 @@ describe('selectAxisScale', () => {
         y: '73',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(scaleDomainSpy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
   });
 });
 
@@ -177,6 +182,156 @@ describe('selectAxisDomain', () => {
     );
     expect(spy).toHaveBeenCalledWith(undefined);
     expectXAxisTicks(container, []);
+  });
+
+  it('should gather data from all graphical items that match the axis ID', () => {
+    const axisDomainSpy = vi.fn();
+    const Comp = (): null => {
+      axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={data1} />
+        <Line data={data2} />
+        <XAxis dataKey="y" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
+    expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
+    const domainSpy = vi.fn();
+    const { container } = render(
+      <ComposedChart data={PageData} width={100} height={100}>
+        <Area dataKey="" />
+        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <Line />
+        <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
+        <Scatter />
+        <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
+        <XAxis dataKey="x" />
+        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
+      </ComposedChart>,
+    );
+    expectXAxisTicks(container, [
+      {
+        textContent: '10',
+        x: '5',
+        y: '73',
+      },
+      {
+        textContent: '20',
+        x: '16.25',
+        y: '73',
+      },
+      {
+        textContent: '30',
+        x: '27.5',
+        y: '73',
+      },
+      {
+        textContent: '40',
+        x: '38.75',
+        y: '73',
+      },
+      {
+        textContent: '50',
+        x: '50',
+        y: '73',
+      },
+      {
+        textContent: '60',
+        x: '61.25',
+        y: '73',
+      },
+      {
+        textContent: '70',
+        x: '72.5',
+        y: '73',
+      },
+      {
+        textContent: '80',
+        x: '83.75',
+        y: '73',
+      },
+      {
+        textContent: '90',
+        x: '95',
+        y: '73',
+      },
+    ]);
+    expect(domainSpy).toHaveBeenLastCalledWith([70, 80, 90, 10, 20, 30, 40, 50, 60]);
+    // big oof
+    expect(domainSpy).toHaveBeenCalledTimes(28);
+  });
+
+  it('should return array indexes if there are multiple graphical items, and no explicit dataKey on the matching XAxis', () => {
+    const domainSpy = vi.fn();
+    const { container } = render(
+      <ComposedChart data={PageData} width={100} height={100}>
+        <Area dataKey="" />
+        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <Line />
+        <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
+        <Scatter />
+        <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
+        <XAxis />
+        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
+      </ComposedChart>,
+    );
+    expectXAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '5',
+        y: '73',
+      },
+      {
+        textContent: '1',
+        x: '16.25',
+        y: '73',
+      },
+      {
+        textContent: '2',
+        x: '27.5',
+        y: '73',
+      },
+      {
+        textContent: '3',
+        x: '38.75',
+        y: '73',
+      },
+      {
+        textContent: '4',
+        x: '50',
+        y: '73',
+      },
+      {
+        textContent: '5',
+        x: '61.25',
+        y: '73',
+      },
+      {
+        textContent: '6',
+        x: '72.5',
+        y: '73',
+      },
+      {
+        textContent: '7',
+        x: '83.75',
+        y: '73',
+      },
+      {
+        textContent: '8',
+        x: '95',
+        y: '73',
+      },
+    ]);
+    expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+    // big oof
+    expect(domainSpy).toHaveBeenCalledTimes(28);
   });
 
   describe('XAxis with type = number', () => {
@@ -314,7 +469,8 @@ describe('selectAxisDomain', () => {
       ]);
     });
 
-    it('should squish all data defined on all items, ignore chart root data, compute min, max of the combination, and then readjust it based on nice ticks', () => {
+    it(`should squish all data defined on all items, ignore chart root data,
+        compute min, max of the combination, and then readjust it based on nice ticks`, () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
         const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', 0));
@@ -1203,8 +1359,26 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return empty array in a chart with root data', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const tooltipData = useAppSelector(state => selectCartesianGraphicalItemsData(state, 'xAxis', defaultAxisId));
+      spy(tooltipData);
+      return null;
+    };
+    render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Customized component={Comp} />
+        <Bar dataKey="pv" />
+        <Bar dataKey="uv" />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return all data defined on graphical items', () => {
@@ -1229,45 +1403,48 @@ describe('selectCartesianGraphicalItemsData', () => {
     );
     // as opposed to the tooltip data selector - this one stores all original data without transformation.
     expect(spy).toHaveBeenLastCalledWith(
-      expect.arrayContaining([
-        [1, 2, 3],
-        [10, 20, 30],
-        [4, 5, 6],
-        [40, 50, 60],
-        [7, 8, 9],
-        [70, 80, 90],
-      ]),
+      // the arrayContaining is there because it ignores elements order.
+      expect.arrayContaining([7, 8, 9, 70, 80, 90, 1, 2, 3, 10, 20, 30, 4, 5, 6, 40, 50, 60]),
     );
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
-    const spy = vi.fn();
+    const graphicalItemsDataSpy = vi.fn();
     const domainSpy = vi.fn();
     const Comp = (): null => {
       const tooltipData = useAppSelector(state => selectCartesianGraphicalItemsData(state, 'xAxis', defaultAxisId));
-      spy(tooltipData);
+      graphicalItemsDataSpy(tooltipData);
       return null;
     };
     const { container } = render(
       <ComposedChart data={PageData} width={100} height={100}>
         <Area dataKey="" />
-        <Area dataKey="" data={[10, 20, 30]} />
+        <Area dataKey="" data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
         <Line />
-        <Line data={[40, 50, 60]} />
+        <Line data={[{ x: 40 }, { x: 50 }, { x: 60 }]} />
         <Scatter />
-        <Scatter data={[70, 80, 90]} />
+        <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
         <XAxis />
         <Customized component={Comp} />
         <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
       </ComposedChart>,
     );
     // Scatter - surprises again - and provides empty array instead of proper undefined like the other elements! Coincidentally that makes no difference
-    expect(spy).toHaveBeenLastCalledWith(
+    expect(graphicalItemsDataSpy).toHaveBeenLastCalledWith(
       // the order is arbitrary
-      expect.arrayContaining([[10, 20, 30], [40, 50, 60], [], [70, 80, 90]]),
+      expect.arrayContaining([
+        { x: 70 },
+        { x: 80 },
+        { x: 90 },
+        { x: 10 },
+        { x: 20 },
+        { x: 30 },
+        { x: 40 },
+        { x: 50 },
+        { x: 60 },
+      ]),
     );
-    expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     expectXAxisTicks(container, [
       {
         textContent: '0',
@@ -1315,6 +1492,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         y: '73',
       },
     ]);
+    expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   });
 
   it('should not return any data defined on Pies - that one will have its own independent selector', () => {
@@ -1340,30 +1518,26 @@ describe('selectCartesianGraphicalItemsData', () => {
   });
 });
 
-describe('selectAllDataSquished', () => {
-  const mockData = generateMockData(10, 982347);
-  const data1 = mockData.slice(0, 5);
-  const data2 = mockData.slice(5);
-
+describe('selectDisplayedData', () => {
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
       expect(result).toBe(undefined);
       return null;
     };
     render(<Comp />);
   });
 
-  it('should return undefined for initial state', () => {
+  it('should return empty array for initial state', () => {
     const store = createRechartsStore();
-    expect(selectAllDataSquished(store.getState(), 'xAxis', defaultAxisId)).toEqual(undefined);
+    expect(selectDisplayedData(store.getState(), 'xAxis', defaultAxisId)).toEqual([]);
   });
 
-  it('should return undefined in an empty chart', () => {
+  it('should return empty in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
       spy(result);
       return null;
     };
@@ -1372,14 +1546,14 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
-  it('should return undefined if there is no axis with matching ID', () => {
+  it('should return the original data if there is no axis with matching ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
       spy(result);
       return null;
     };
@@ -1390,14 +1564,154 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        label: 'Iter: 0',
+        x: 211,
+        y: 481,
+        z: 1798,
+      },
+      {
+        label: 'Iter: 1',
+        x: 245,
+        y: 672,
+        z: 1087,
+      },
+      {
+        label: 'Iter: 2',
+        x: 266,
+        y: 721,
+        z: 1631,
+      },
+      {
+        label: 'Iter: 3',
+        x: 140,
+        y: 446,
+        z: 1932,
+      },
+      {
+        label: 'Iter: 4',
+        x: 131,
+        y: 598,
+        z: 1184,
+      },
+      {
+        label: 'Iter: 5',
+        x: 280,
+        y: 774,
+        z: 1811,
+      },
+      {
+        label: 'Iter: 6',
+        x: 294,
+        y: 687,
+        z: 1229,
+      },
+      {
+        label: 'Iter: 7',
+        x: 239,
+        y: 762,
+        z: 1410,
+      },
+      {
+        label: 'Iter: 8',
+        x: 293,
+        y: 439,
+        z: 1557,
+      },
+      {
+        label: 'Iter: 9',
+        x: 244,
+        y: 569,
+        z: 1305,
+      },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return the original data if there is no axis with matching ID but graphical items have dataKeys', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line dataKey="x" data={data1} />
+        <Line dataKey="y" data={data2} />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        label: 'Iter: 0',
+        x: 211,
+        y: 481,
+        z: 1798,
+      },
+      {
+        label: 'Iter: 1',
+        x: 245,
+        y: 672,
+        z: 1087,
+      },
+      {
+        label: 'Iter: 2',
+        x: 266,
+        y: 721,
+        z: 1631,
+      },
+      {
+        label: 'Iter: 3',
+        x: 140,
+        y: 446,
+        z: 1932,
+      },
+      {
+        label: 'Iter: 4',
+        x: 131,
+        y: 598,
+        z: 1184,
+      },
+      {
+        label: 'Iter: 5',
+        x: 280,
+        y: 774,
+        z: 1811,
+      },
+      {
+        label: 'Iter: 6',
+        x: 294,
+        y: 687,
+        z: 1229,
+      },
+      {
+        label: 'Iter: 7',
+        x: 239,
+        y: 762,
+        z: 1410,
+      },
+      {
+        label: 'Iter: 8',
+        x: 293,
+        y: 439,
+        z: 1557,
+      },
+      {
+        label: 'Iter: 9',
+        x: 244,
+        y: 569,
+        z: 1305,
+      },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in all graphical items based on the input dataKey, and default axis ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
       spy(result);
       return null;
     };
@@ -1409,18 +1723,34 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([211, 245, 266, 140, 131, 280, 294, 239, 293, 244]);
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 211 },
+      { value: 245 },
+      { value: 266 },
+      { value: 140 },
+      { value: 131 },
+      { value: 280 },
+      { value: 294 },
+      { value: 239 },
+      { value: 293 },
+      { value: 244 },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in graphical items with matching axis ID', () => {
-    const spy = vi.fn();
+    const displayedDataSpy1 = vi.fn();
+    const displayedDataSpy2 = vi.fn();
+    const axisDomainSpy1 = vi.fn();
+    const axisDomainSpy2 = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', 'my axis id'));
-      spy(result);
+      displayedDataSpy1(useAppSelector(state => selectDisplayedData(state, 'xAxis', 'my axis id')));
+      displayedDataSpy2(useAppSelector(state => selectDisplayedData(state, 'xAxis', 'some other ID')));
+      axisDomainSpy1(useAppSelector(state => selectAxisDomain(state, 'xAxis', 'my axis id')));
+      axisDomainSpy2(useAppSelector(state => selectAxisDomain(state, 'xAxis', 'some other ID')));
       return null;
     };
-    render(
+    const { container } = render(
       <LineChart width={100} height={100}>
         <Line data={data2} xAxisId="my axis id" />
         <XAxis dataKey="x" xAxisId="my axis id" />
@@ -1429,15 +1759,76 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([280, 294, 239, 293, 244]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    const allAxes = container.querySelectorAll('.recharts-xAxis');
+    expect(allAxes).toHaveLength(2);
+    expectXAxisTicks(allAxes[0], [
+      {
+        textContent: '280',
+        x: '5',
+        y: '43',
+      },
+      {
+        textContent: '294',
+        x: '27.5',
+        y: '43',
+      },
+      {
+        textContent: '239',
+        x: '50',
+        y: '43',
+      },
+      {
+        textContent: '293',
+        x: '72.5',
+        y: '43',
+      },
+      {
+        textContent: '244',
+        x: '95',
+        y: '43',
+      },
+    ]);
+    expectXAxisTicks(allAxes[1], [
+      {
+        textContent: '481',
+        x: '5',
+        y: '73',
+      },
+      {
+        textContent: '672',
+        x: '27.5',
+        y: '73',
+      },
+      {
+        textContent: '721',
+        x: '50',
+        y: '73',
+      },
+      {
+        textContent: '446',
+        x: '72.5',
+        y: '73',
+      },
+      {
+        textContent: '598',
+        x: '95',
+        y: '73',
+      },
+    ]);
+    expect(axisDomainSpy1).toHaveBeenLastCalledWith([280, 294, 239, 293, 244]);
+    expect(axisDomainSpy2).toHaveBeenLastCalledWith([481, 672, 721, 446, 598]);
+    expect(axisDomainSpy1).toHaveBeenCalledTimes(3);
+    expect(axisDomainSpy2).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy1).toHaveBeenLastCalledWith(data2);
+    expect(displayedDataSpy2).toHaveBeenLastCalledWith(data1);
+    expect(displayedDataSpy1).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy2).toHaveBeenCalledTimes(3);
   });
 
-  it('should return different data with different dataKey', () => {
-    const spy = vi.fn();
+  it('should gather data from all graphical items that match the axis ID', () => {
+    const displayedDataSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
-      spy(result);
+      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId)));
       return null;
     };
     render(
@@ -1448,14 +1839,14 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy).toHaveBeenLastCalledWith(mockData);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return data defined in the chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
       spy(result);
       return null;
     };
@@ -1466,15 +1857,46 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([211, 245, 266, 140, 131]);
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        label: 'Iter: 0',
+        x: 211,
+        y: 481,
+        z: 1798,
+      },
+      {
+        label: 'Iter: 1',
+        x: 245,
+        y: 672,
+        z: 1087,
+      },
+      {
+        label: 'Iter: 2',
+        x: 266,
+        y: 721,
+        z: 1631,
+      },
+      {
+        label: 'Iter: 3',
+        x: 140,
+        y: 446,
+        z: 1932,
+      },
+      {
+        label: 'Iter: 4',
+        x: 131,
+        y: 598,
+        z: 1184,
+      },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
-  it('should not return data defined in the chart root if the axis ID does not match', () => {
-    const spy = vi.fn();
+  it('should return data defined in the chart root regardless of the axis ID match', () => {
+    const displayedDataSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', 'axis with this ID is not present'));
-      spy(result);
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', 'axis with this ID is not present'));
+      displayedDataSpy(result);
       return null;
     };
     render(
@@ -1483,35 +1905,45 @@ describe('selectAllDataSquished', () => {
         <XAxis dataKey="x" />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith(undefined);
-    expect(spy).toHaveBeenCalledTimes(2);
-  });
-
-  it('should return array full of undefined when the dataKey does not match anything in the data', () => {
-    const dataSpy = vi.fn();
-    const domainSpy = vi.fn();
-    const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
-      dataSpy(result);
-      return null;
-    };
-    render(
-      <LineChart data={data1} width={100} height={100}>
-        <Line />
-        <XAxis dataKey="invalid dataKey" />
-        <Customized component={Comp} />
-        <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
-      </LineChart>,
-    );
-    expect(dataSpy).toHaveBeenLastCalledWith([undefined, undefined, undefined, undefined, undefined]);
-    expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4]);
-    expect(dataSpy).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy).toHaveBeenLastCalledWith([
+      {
+        label: 'Iter: 0',
+        x: 211,
+        y: 481,
+        z: 1798,
+      },
+      {
+        label: 'Iter: 1',
+        x: 245,
+        y: 672,
+        z: 1087,
+      },
+      {
+        label: 'Iter: 2',
+        x: 266,
+        y: 721,
+        z: 1631,
+      },
+      {
+        label: 'Iter: 3',
+        x: 140,
+        y: 446,
+        z: 1932,
+      },
+      {
+        label: 'Iter: 4',
+        x: 131,
+        y: 598,
+        z: 1184,
+      },
+    ]);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should slice chart root data by dataStartIndex and dataEndIndex', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAllDataSquished(state, 'xAxis', defaultAxisId));
+      const result = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
       spy(result);
       return null;
     };
@@ -1523,7 +1955,192 @@ describe('selectAllDataSquished', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([245, 266, 140, 131]);
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        label: 'Iter: 1',
+        x: 245,
+        y: 672,
+        z: 1087,
+      },
+      {
+        label: 'Iter: 2',
+        x: 266,
+        y: 721,
+        z: 1631,
+      },
+      {
+        label: 'Iter: 3',
+        x: 140,
+        y: 446,
+        z: 1932,
+      },
+      {
+        label: 'Iter: 4',
+        x: 131,
+        y: 598,
+        z: 1184,
+      },
+    ]);
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('selectAllAppliedValues', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return empty array for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectAllAppliedValues(store.getState(), 'xAxis', defaultAxisId)).toEqual([]);
+  });
+
+  it('should return empty array in an empty chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return empty array if there is no axis with matching ID', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return all data defined in all graphical items based on the input dataKey, and default axis ID', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
+        <XAxis dataKey="x" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 1 },
+      { value: 2 },
+      { value: 3 },
+      { value: 10 },
+      { value: 20 },
+      { value: 30 },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return data defined in the chart root', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart data={data1} width={100} height={100}>
+        <Line />
+        <XAxis dataKey="x" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      { value: 211 },
+      { value: 245 },
+      { value: 266 },
+      { value: 140 },
+      { value: 131 },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return values as full input objects if the axis ID does not match anything in the data', () => {
+    const displayedDataSpy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state =>
+        selectAllAppliedValues(state, 'xAxis', 'axis with this ID is not present'),
+      );
+      displayedDataSpy(result);
+      return null;
+    };
+    render(
+      <LineChart data={data1} width={100} height={100}>
+        <Customized component={Comp} />
+        <XAxis dataKey="this dataKey is not present in the input data" />
+      </LineChart>,
+    );
+    expect(displayedDataSpy).toHaveBeenLastCalledWith([
+      {
+        value: {
+          label: 'Iter: 0',
+          x: 211,
+          y: 481,
+          z: 1798,
+        },
+      },
+      {
+        value: {
+          label: 'Iter: 1',
+          x: 245,
+          y: 672,
+          z: 1087,
+        },
+      },
+      {
+        value: {
+          label: 'Iter: 2',
+          x: 266,
+          y: 721,
+          z: 1631,
+        },
+      },
+      {
+        value: {
+          label: 'Iter: 3',
+          x: 140,
+          y: 446,
+          z: 1932,
+        },
+      },
+      {
+        value: {
+          label: 'Iter: 4',
+          x: 131,
+          y: 598,
+          z: 1184,
+        },
+      },
+    ]);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
   });
 });

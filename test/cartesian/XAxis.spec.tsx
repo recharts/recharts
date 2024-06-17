@@ -16,7 +16,11 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
-import { selectAxisSettings } from '../../src/state/axisSelectors';
+import {
+  selectAxisSettings,
+  selectCartesianGraphicalItemsData,
+  selectDisplayedData,
+} from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
 import { XAxisSettings } from '../../src/state/axisMapSlice';
@@ -152,11 +156,11 @@ describe('<XAxis />', () => {
   });
 
   it('should render array indexes when dataKey is not specified', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData}>
         <XAxis />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </LineChart>,
     );
 
@@ -193,7 +197,7 @@ describe('<XAxis />', () => {
         y: '373',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
   it('should return empty strings when dataKey is specified but does not match the data', () => {
@@ -3172,10 +3176,14 @@ describe('<XAxis />', () => {
     });
 
     it('should render with in LineChart VerticalWithSpecifiedDomain', () => {
-      // const axisDomainSpy = vi.fn();
+      const axisDomainSpy = vi.fn();
       const axisSettingsSpy = vi.fn();
+      const displayedDataSpy = vi.fn();
+      const itemDataSpy = vi.fn();
       const Comp = (): null => {
         axisSettingsSpy(useAppSelector(state => selectAxisSettings(state, 'xAxis', 0)));
+        displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0)));
+        itemDataSpy(useAppSelector(state => selectCartesianGraphicalItemsData(state, 'xAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -3199,6 +3207,7 @@ describe('<XAxis />', () => {
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
           <Customized component={<Comp />} />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
         </LineChart>,
       );
       expectXAxisTicks(container, [
@@ -3238,8 +3247,15 @@ describe('<XAxis />', () => {
         tickCount: 5,
         type: 'number',
       });
-      // TODO this fails because the redux selectors do not yet implement what `getDomainOfItemsWithSameAxis` does.
-      // expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
+      expect(itemDataSpy).toHaveBeenLastCalledWith([]);
+      expect(itemDataSpy).toHaveBeenCalledTimes(3);
+      expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);
+      // oof
+      expect(axisDomainSpy).toHaveBeenCalledTimes(20);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
     });
   });
+
+  describe.todo('in vertical stacked BarChart');
+  describe.todo('with custom tickFormatter');
 });
