@@ -38,8 +38,6 @@ export const selectHasBar = (state: RechartsRootState): boolean => state.graphic
 
 const pickAxisType = (_state: RechartsRootState, axisType: AxisType): AxisType => axisType;
 
-// const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: AxisId): AxisId => axisId;
-
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
  * @param axisType 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis'
