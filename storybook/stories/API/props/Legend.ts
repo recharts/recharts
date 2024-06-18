@@ -4,9 +4,7 @@ export const legendType: StorybookArg = {
   description: "The type of icon in legend. If set to 'none', no legend item will be rendered.",
   table: {
     type: {
-      summary:
-        "'line' | 'plainline' | 'square' | 'rect'| 'circle' | 'cross' | 'diamond'" +
-        " | 'square' | 'star' | 'triangle' | 'wye' | 'none'",
+      summary: 'line | plainline | square | rect| circle | cross | diamond | square | star | triangle | wye | none',
     },
     defaultValue: 'line',
     category: 'Style',
@@ -63,7 +61,7 @@ The exact behavior changes depending on \`verticalAlign\` prop.`,
   },
   verticalAlign: {
     description: `Sets vertical position of the Legend relative to the chart:
-    
+
 - \`bottom\` shows the Legend below chart, and chart height reduces automatically to make space for it.
 - \`top\` shows the Legend above chart, and chart height reduces automatically.
 - \`middle\` shows the Legend in the middle of chart, covering other content, and chart height remains unchanged.

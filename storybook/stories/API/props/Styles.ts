@@ -5,6 +5,7 @@ import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 export const hide: StorybookArg = {
   description: 'Hides the component when true, useful when toggling visibility state via legend',
   type: { name: 'boolean' },
+  control: { type: 'boolean' },
   defaultValue: false,
   table: { category: 'Style' },
 };
@@ -165,9 +166,9 @@ export const RadialBarStyle: Args = {
   // Object example is not included as the only props which seem to be supported
   // are cx and cy which not seem to provide much value.
   background: {
-    description: `If false set, background of bars will not be drawn. If true set, background of bars will be 
-    drawn which have the props calculated internally. If object set, background of bars will be drawn which 
-    have the props merged by the internal calculated props and the option. If ReactElement set, the option 
+    description: `If false set, background of bars will not be drawn. If true set, background of bars will be
+    drawn which have the props calculated internally. If object set, background of bars will be drawn which
+    have the props merged by the internal calculated props and the option. If ReactElement set, the option
     can be the custom background element. If set a function, the function will be called to render customized
     background.`,
     table: {
@@ -203,7 +204,7 @@ export const RadialBarStyle: Args = {
     },
   },
   cornerIsExternal: {
-    description: `If true the rounded corner will lie outside the RadialBar, by default the rounded 
+    description: `If true the rounded corner will lie outside the RadialBar, by default the rounded
         corner inside the length of the RadialBar`,
     table: {
       type: {

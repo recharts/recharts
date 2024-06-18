@@ -365,23 +365,41 @@ const StyleProps: StorybookArgs = {
     },
   },
   lineJointType: {
+    options: [
+      'basis',
+      'basisClosed',
+      'basisOpen',
+      'bumpX',
+      'bumpY',
+      'bump',
+      'linear',
+      'linearClosed',
+      'natural',
+      'monotoneX',
+      'monotoneY',
+      'monotone',
+      'step',
+      'stepBefore',
+      'stepAfter',
+    ],
     table: {
       type: {
-        summary: `| 'basis'
-        | 'basisClosed'
-        | 'basisOpen'
-        | 'linear'
-        | 'linearClosed'
-        | 'natural'
-        | 'monotoneX'
-        | 'monotoneY'
-        | 'monotone'
-        | 'step'
-        | 'stepBefore'
-        | 'stepAfter'
-          "  | CurveFactory"`,
+        summary: `basis
+        | basisClosed
+        | basisOpen
+        | linear
+        | linearClosed
+        | natural
+        | monotoneX
+        | monotoneY
+        | monotone
+        | step
+        | stepBefore
+        | stepAfter
+        | CurveFactory`,
       },
       category: 'Style',
+      defaultValue: 'linear',
     },
   },
   lineType: {
@@ -410,9 +428,10 @@ const StyleProps: StorybookArgs = {
     description: `If a string set, specified symbol will be used to show scatter item.
     If ReactElement set, the option can be the custom scatter item element.
     If set a function, the function will be called to render customized scatter item.`,
+    options: ['circle', 'cross', 'diamond', 'square', 'star', 'triangle', 'wye'],
     table: {
       type: {
-        summary: "'circle' | 'cross' | 'diamond' | 'square' | 'star' | 'triangle' | 'wye' | ReactElement | Function",
+        summary: 'circle | cross | diamond | square | star | triangle | wye | ReactElement | Function',
       },
       category: 'Style',
       defaultValue: 'circle',

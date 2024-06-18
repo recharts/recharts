@@ -38,8 +38,6 @@ export const selectHasBar = (state: RechartsRootState): boolean => state.graphic
 
 const pickAxisType = (_state: RechartsRootState, axisType: AxisType): AxisType => axisType;
 
-// const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: AxisId): AxisId => axisId;
-
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
  * @param axisType 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis'
@@ -87,17 +85,11 @@ export const selectCartesianGraphicalItemsData: (
 );
 
 /**
- * This selector will return all data there is in the chart: graphical items, chart root, all together
- * and all processed by a single DataKey.
+ * This selector will return all data there is in the chart: graphical items, chart root, all together.
  * Useful for figuring out an axis domain (because that needs to know of everything),
  * not useful for rendering individual graphical elements (because they need to know which data is theirs and which is not).
  *
- * Will read the dataKey from axis settings, which means a matching axis has to be present.
- * Without an axis this will return undefined.
- *
  * This function will discard the original indexes, so it is also not useful for anything that depends on ordering.
- *
- * This is an expensive selector - it will iterate all data and compute their value using the provided dataKey.
  */
 export const selectDisplayedData: (
   state: RechartsRootState,
@@ -129,6 +121,12 @@ export const selectDisplayedData: (
   },
 );
 
+/**
+ * This selector will return all values with the appropriate dataKey applied on them.
+ * Which dataKey is appropriate depends on where it is defined.
+ *
+ * This is an expensive selector - it will iterate all data and compute their value using the provided dataKey.
+ */
 export const selectAllAppliedValues = createSelector(
   selectDisplayedData,
   selectAxisSettings,
