@@ -47,6 +47,17 @@ describe('<Line />', () => {
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
   });
 
+  it('Does not clip dot when clipDot false', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <Line isAnimationActive={false} points={data} dot={{ clipDot: false }} />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+  });
+
   it("Don't render any path when data is empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>

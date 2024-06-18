@@ -163,6 +163,18 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
     });
+
+    test('Does not clip dot when clipDot false', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" dot={{ clipDot: false }} />
+        </ChartElement>,
+      );
+
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    });
   });
 
   describe('baseValue', () => {
