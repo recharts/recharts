@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { expect } from 'vitest';
 import { Surface, Line } from '../../src';
 
 describe('<Line />', () => {
@@ -45,9 +46,10 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(0);
   });
 
-  it('Does not clip dot when clipDot false', () => {
+  it('Does not render clip dot when clipDot is false', () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <Line isAnimationActive={false} points={data} dot={{ clipDot: false }} />
@@ -55,7 +57,23 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
-    expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    const dots = container.querySelectorAll('.recharts-line-dot');
+    expect(dots).toHaveLength(5);
+    expect(dots[0].getAttribute('clip-path')).toBeNull();
+  });
+
+  it('Does render clip dot when clipDot is true', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <Line isAnimationActive={false} points={data} dot={{ clipDot: true }} />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+
+    const dots = container.querySelectorAll('.recharts-line-dot');
+    expect(dots).toHaveLength(5);
+    expect(dots[0].getAttribute('clip-path')).toBeDefined();
   });
 
   it("Don't render any path when data is empty", () => {
