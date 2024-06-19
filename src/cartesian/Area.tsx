@@ -29,7 +29,7 @@ import {
   TickItem,
   AnimationDuration,
 } from '../util/types';
-import { filterProps, isDotProps } from '../util/ReactUtils';
+import { filterProps, hasClipDot } from '../util/ReactUtils';
 
 export type AreaDot = ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | DotProps | boolean;
 interface AreaPointItem extends CurvePoint {
@@ -558,7 +558,7 @@ export class Area extends PureComponent<Props, State> {
     const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = isDotProps(dot) ? dot : {};
+    const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 
     return (

@@ -155,13 +155,41 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         <ChartElement width={500} height={500} data={data}>
           {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
           {/* @ts-expect-error TypeScript correctly flags this as an error, but we want to have a test for it regardless */}
-          <Area dataKey="value" dot={null} />
+          <Area dataKey="value" dot={null} isAnimationActive={false} />
         </ChartElement>,
       );
 
       expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    });
+
+    test('Does not render clip dot when clipDot is false', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" dot={{ clipDot: false }} isAnimationActive={false} />
+        </ChartElement>,
+      );
+
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      const dots = container.querySelectorAll('.recharts-area-dot');
+      expect(dots).toHaveLength(5);
+      expect(dots[0].getAttribute('clip-path')).toBeNull();
+    });
+
+    test('Does render clip dot when clipDot is true', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" dot={{ clipDot: true }} isAnimationActive={false} />
+        </ChartElement>,
+      );
+
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      const dots = container.querySelectorAll('.recharts-area-dot');
+      expect(dots).toHaveLength(5);
+      expect(dots[0].getAttribute('clip-path')).toBeDefined();
     });
   });
 

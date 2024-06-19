@@ -268,8 +268,8 @@ const SVG_TAGS: string[] = [
 
 const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
 
-export const isDotProps = (dot: LineDot | AreaDot): dot is DotProps =>
-  dot && typeof dot === 'object' && 'cx' in dot && 'cy' in dot && 'r' in dot;
+export const hasClipDot = (dot: LineDot | AreaDot): dot is DotProps =>
+  dot && typeof dot === 'object' && 'clipDot' in dot;
 
 /**
  * Checks if the property is valid to spread onto an SVG element or onto a specific component

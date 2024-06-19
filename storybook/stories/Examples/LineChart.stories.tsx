@@ -366,7 +366,7 @@ export const ClipDot: StoryObj = {
             bottom: 20,
             left: 20,
           }}
-          data={pageData}
+          data={[...pageData, { name: 'Page H', pv: 0 }, { name: 'Page I', uv: 0 }]}
         >
           <Line
             isAnimationActive={false}
@@ -374,10 +374,10 @@ export const ClipDot: StoryObj = {
             {...args}
             dot={{ clipDot: args.clipDot, r: 4, strokeWidth: 2, fill: '#ffffff', fillOpacity: 1 }}
           />
-          <Line isAnimationActive={false} dataKey="pv" {...args} dot={{ clipDot: args.clipDot }} />
+          <Line isAnimationActive={false} dataKey="pv" {...args} dot={{ clipDot: args.clipDot, r: 10 }} />
           <Tooltip />
           <XAxis dataKey="name" allowDataOverflow />
-          <YAxis />
+          <YAxis allowDataOverflow />
         </LineChart>
       </ResponsiveContainer>
     );
