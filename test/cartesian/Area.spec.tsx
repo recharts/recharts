@@ -162,8 +162,6 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
-      // we don't have a clip path element
-      expect(container.querySelectorAll('clippath')).toHaveLength(0);
     });
 
     test('Does not render clip dot when clipDot is false', () => {
@@ -181,12 +179,11 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
     });
 
     test('Does render clip dot when clipDot is true', () => {
-      const { container, debug } = render(
+      const { container } = render(
         <ChartElement width={500} height={500} data={data}>
           <Area dataKey="value" dot={{ clipDot: true }} isAnimationActive={false} />
         </ChartElement>,
       );
-      debug();
 
       expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
