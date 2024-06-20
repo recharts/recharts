@@ -137,13 +137,49 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         <ChartElement data={data}>
           {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
           {/* TypeScript should flag this as an error, but we have strict null checks disabled in config */}
-          <Area dataKey="value" dot={null} />
+          <Area dataKey="value" dot={null} isAnimationActive={false} />
+          <XAxis dataKey="x" allowDataOverflow />
         </ChartElement>,
       );
 
       expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
       expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(0);
+    });
+
+    test('Does not clip dots when clipDot is false', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" dot={{ clipDot: false }} isAnimationActive={false} />
+          <XAxis dataKey="x" allowDataOverflow />
+        </ChartElement>,
+      );
+
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      const dots = container.querySelectorAll('.recharts-area-dot');
+      expect(dots).toHaveLength(5);
+      const dotsWrapper = container.querySelector('.recharts-area-dots');
+      // Well this is confusing. When clipDot is false the className contains 'dots'. AKA clip path name includes what is showing, rather than what is clipped.
+      expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-dots-recharts-area');
+    });
+
+    test('Does clip dots when clipDot is true', () => {
+      const { container } = render(
+        <ChartElement width={500} height={500} data={data}>
+          <Area dataKey="value" dot={{ clipDot: true }} isAnimationActive={false} />
+          <XAxis dataKey="x" allowDataOverflow />
+        </ChartElement>,
+      );
+
+      expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
+      expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+      const dots = container.querySelectorAll('.recharts-area-dot');
+      expect(dots).toHaveLength(5);
+
+      const dotsWrapper = container.querySelector('.recharts-area-dots');
+      // When clipDot is true the className does not contain 'dots'
+      expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-area');
     });
   });
 

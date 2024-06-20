@@ -15,7 +15,7 @@ import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
-import { filterProps, findAllByType, isDotProps } from '../util/ReactUtils';
+import { filterProps, findAllByType, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -555,7 +555,7 @@ export class Line extends PureComponent<Props, State> {
     const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = isDotProps(dot) ? dot : {};
+    const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 
     return (
