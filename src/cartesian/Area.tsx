@@ -31,7 +31,7 @@ import {
   TickItem,
   TooltipType,
 } from '../util/types';
-import { filterProps, isDotProps } from '../util/ReactUtils';
+import { filterProps, hasClipDot } from '../util/ReactUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
@@ -621,7 +621,7 @@ export class Area extends PureComponent<Props, State> {
     const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = isDotProps(dot) ? dot : {};
+    const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
 
     return (

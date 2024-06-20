@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, Line } from '../../src';
 
 describe('<Line />', () => {
@@ -45,6 +46,50 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(0);
+  });
+
+  it('Does not render clip dot when clipDot is false', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <Line
+          isAnimationActive={false}
+          points={data}
+          dot={{ clipDot: false }} // Line must have an XAxis or YAxis in order for clips to render
+          xAxis={{ allowDataOverflow: true, scale: scaleLinear() }}
+        />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    const dots = container.querySelectorAll('.recharts-line-dot');
+    expect(dots).toHaveLength(5);
+
+    const dotsWrapper = container.querySelector('.recharts-line-dots');
+    // Well this is confusing. When clipDot is false the className contains 'dots'. AKA clip path name includes what is showing, rather than what is clipped.
+    expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-dots-recharts-line');
+  });
+
+  it('Does render clip dot when clipDot is true', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <Line
+          isAnimationActive={false}
+          points={data}
+          dot={{ clipDot: true }}
+          // Line must have an XAxis or YAxis in order for clips to render
+          xAxis={{ allowDataOverflow: true, scale: scaleLinear() }}
+        />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+
+    const dots = container.querySelectorAll('.recharts-line-dot');
+    expect(dots).toHaveLength(5);
+
+    const dotsWrapper = container.querySelector('.recharts-line-dots');
+    expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-line');
   });
 
   it("Don't render any path when data is empty", () => {
