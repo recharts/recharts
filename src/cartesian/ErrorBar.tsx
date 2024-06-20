@@ -12,6 +12,7 @@ import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
+import { ReportErrorBarSettings } from '../context/CartesianGraphicalItemContext';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -24,6 +25,17 @@ export type ErrorBarDataPointFormatter = (
   entry: BarRectangleItem | LinePointItem | ScatterPointItem,
   dataKey: DataKey<any>,
 ) => ErrorBarDataItem;
+
+/**
+ * So usually the direction is decided by the chart layout.
+ * Horizontal layout means error bars are vertical means direction=y
+ * Vertical layout means error bars are horizontal means direction=x
+ *
+ * Except! In Scatter chart, error bars can go both ways.
+ *
+ * So this property is only ever used in Scatter chart, and ignored elsewhere.
+ */
+export type ErrorBarDirection = 'x' | 'y';
 
 interface InternalErrorBarProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
@@ -43,7 +55,7 @@ interface ErrorBarProps extends InternalErrorBarProps {
    * Only used for ScatterChart with error bars in two directions.
    * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
    */
-  direction?: 'x' | 'y';
+  direction?: ErrorBarDirection;
   isAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: number;
@@ -158,7 +170,12 @@ export function ErrorBar(props: Props) {
     );
   });
 
-  return <Layer className="recharts-errorBars">{errorBars}</Layer>;
+  return (
+    <Layer className="recharts-errorBars">
+      <ReportErrorBarSettings dataKey={props.dataKey} direction={props.direction} />
+      {errorBars}
+    </Layer>
+  );
 }
 
 ErrorBar.defaultProps = {

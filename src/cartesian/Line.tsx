@@ -38,6 +38,7 @@ import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
+import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -137,6 +138,8 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
     },
   };
 }
+
+const noErrorBars: never[] = [];
 
 export class Line extends PureComponent<Props, State> {
   static displayName = 'Line';
@@ -540,7 +543,12 @@ export class Line extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
+          <SetCartesianGraphicalItem
+            data={this.props.data}
+            xAxisId={this.props.xAxisId}
+            dataKey={this.props.dataKey}
+            errorBars={noErrorBars}
+          />
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -559,9 +567,8 @@ export class Line extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <>
+      <CartesianGraphicalItemContext data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey}>
         <Layer className={layerClass}>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (
@@ -597,7 +604,7 @@ export class Line extends PureComponent<Props, State> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
         />
-      </>
+      </CartesianGraphicalItemContext>
     );
   }
 }

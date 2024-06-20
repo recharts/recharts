@@ -9,6 +9,7 @@ import {
   selectCalculatedXAxisPadding,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
+  selectErrorBarsSettings,
   selectHasBar,
   selectSmallestDistanceBetweenValues,
 } from '../../src/state/axisSelectors';
@@ -20,6 +21,7 @@ import {
   Brush,
   ComposedChart,
   Customized,
+  ErrorBar,
   Line,
   LineChart,
   Pie,
@@ -27,12 +29,13 @@ import {
   RadialBar,
   RadialBarChart,
   Scatter,
+  ScatterChart,
   XAxis,
   YAxis,
 } from '../../src';
 import { misbehavedData, PageData } from '../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
-import { addCartesianGraphicalItem } from '../../src/state/graphicalItemsSlice';
+import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { generateMockData } from '../helper/generateMockData';
 import { AxisId } from '../../src/state/axisMapSlice';
 
@@ -1341,7 +1344,13 @@ describe('selectCartesianGraphicalItemsData', () => {
 
   it('should be stable', () => {
     const store = createRechartsStore();
-    store.dispatch(addCartesianGraphicalItem({ dataKey: undefined, data: PageData, xAxisId: 'x' }));
+    const settings: CartesianGraphicalItemSettings = {
+      errorBars: undefined,
+      dataKey: undefined,
+      data: PageData,
+      xAxisId: 'x',
+    };
+    store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     const result2 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
     expect(result1).toBe(result2);
@@ -2142,5 +2151,223 @@ describe('selectAllAppliedValues', () => {
       },
     ]);
     expect(displayedDataSpy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('selectErrorBarsSettings', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return empty array for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId)).toEqual([]);
+  });
+
+  it('should return empty array in an empty chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return empty array if there is no axis with matching ID', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return bars settings if present in BarChart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Bar data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="x" direction="x" />
+          <ErrorBar dataKey="y" direction="y" />
+        </Bar>
+        <Customized component={Comp} />
+        <XAxis type="number" />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'x',
+        direction: 'x',
+      },
+      {
+        dataKey: 'y',
+        direction: 'y',
+      },
+    ]);
+  });
+
+  it('should return bars settings if present in LineChart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="x" direction="x" />
+          <ErrorBar dataKey="y" direction="y" />
+        </Line>
+        <Customized component={Comp} />
+        <XAxis type="number" />
+      </LineChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'x',
+        direction: 'x',
+      },
+      {
+        dataKey: 'y',
+        direction: 'y',
+      },
+    ]);
+  });
+
+  it('should return bars settings if present in ScatterChart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <ScatterChart width={100} height={100}>
+        <Scatter data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="x" direction="x" />
+          <ErrorBar dataKey="y" direction="y" />
+        </Scatter>
+        <Customized component={Comp} />
+        <XAxis type="number" />
+      </ScatterChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'x',
+        direction: 'x',
+      },
+      {
+        dataKey: 'y',
+        direction: 'y',
+      },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  it('should report all error bars on Bar, Line, and Scatter', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <ComposedChart width={100} height={100}>
+        <Bar data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="a" direction="x" />
+          <ErrorBar dataKey="b" direction="y" />
+        </Bar>
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="c" direction="x" />
+          <ErrorBar dataKey="d" direction="y" />
+        </Line>
+        <Scatter data={[{ x: 100 }, { x: 200 }, { x: 300 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="e" direction="x" />
+          <ErrorBar dataKey="f" direction="y" />
+        </Scatter>
+        <Customized component={Comp} />
+        <XAxis type="number" />
+      </ComposedChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'a',
+        direction: 'x',
+      },
+      {
+        dataKey: 'b',
+        direction: 'y',
+      },
+      {
+        dataKey: 'c',
+        direction: 'x',
+      },
+      {
+        dataKey: 'd',
+        direction: 'y',
+      },
+      {
+        dataKey: 'e',
+        direction: 'x',
+      },
+      {
+        dataKey: 'f',
+        direction: 'y',
+      },
+    ]);
+  });
+
+  it('should be stable when empty', () => {
+    const store = createRechartsStore();
+    const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
+    const result2 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
+    expect(result1).toBe(result2);
+  });
+
+  it('should be stable with data', () => {
+    const store = createRechartsStore();
+    const settings: CartesianGraphicalItemSettings = {
+      dataKey: 'x',
+      data: [],
+      xAxisId: '',
+      errorBars: [
+        {
+          direction: 'x',
+          dataKey: '',
+        },
+      ],
+    };
+    store.dispatch(addCartesianGraphicalItem(settings));
+    const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
+    const result2 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
+    expect(result1).toBe(result2);
   });
 });

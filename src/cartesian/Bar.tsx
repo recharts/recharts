@@ -54,6 +54,7 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
+import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -310,6 +311,8 @@ function BarRectangles(props: BarRectanglesProps) {
 }
 
 const defaultMinPointSize: number = 0;
+
+const emptyArray: Array<never> = [];
 
 export class Bar extends PureComponent<Props, State> {
   static displayName = 'Bar';
@@ -658,36 +661,38 @@ export class Bar extends PureComponent<Props, State> {
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
-      <Layer className={layerClass}>
-        <ReportBar />
-        <SetBarLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        {needClipX || needClipY ? (
-          <defs>
-            <clipPath id={`clipPath-${clipPathId}`}>
-              <rect
-                x={needClipX ? left : left - width / 2}
-                y={needClipY ? top : top - height / 2}
-                width={needClipX ? width : width * 2}
-                height={needClipY ? height : height * 2}
-              />
-            </clipPath>
-          </defs>
-        ) : null}
-        <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-          <BarBackground
-            data={data}
-            dataKey={dataKey}
-            background={background}
-            onAnimationStart={this.handleAnimationStart}
-            onAnimationEnd={this.handleAnimationEnd}
-            allOtherBarProps={this.props}
-          />
-          {this.renderRectangles()}
+      <CartesianGraphicalItemContext data={emptyArray} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey}>
+        <Layer className={layerClass}>
+          <ReportBar />
+          <SetBarLegend {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+          {needClipX || needClipY ? (
+            <defs>
+              <clipPath id={`clipPath-${clipPathId}`}>
+                <rect
+                  x={needClipX ? left : left - width / 2}
+                  y={needClipY ? top : top - height / 2}
+                  width={needClipX ? width : width * 2}
+                  height={needClipY ? height : height * 2}
+                />
+              </clipPath>
+            </defs>
+          ) : null}
+          <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+            <BarBackground
+              data={data}
+              dataKey={dataKey}
+              background={background}
+              onAnimationStart={this.handleAnimationStart}
+              onAnimationEnd={this.handleAnimationEnd}
+              allOtherBarProps={this.props}
+            />
+            {this.renderRectangles()}
+          </Layer>
+          {this.renderErrorBar(needClip, clipPathId)}
+          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
         </Layer>
-        {this.renderErrorBar(needClip, clipPathId)}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
-      </Layer>
+      </CartesianGraphicalItemContext>
     );
   }
 }

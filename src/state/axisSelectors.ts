@@ -13,7 +13,7 @@ import {
 } from '../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
-import { CartesianGraphicalItemSettings } from './graphicalItemsSlice';
+import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -446,3 +446,12 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
       return parsedScaleReturn;
     },
   );
+
+export const selectErrorBarsSettings = createSelector(
+  selectCartesianItemsSettings,
+  (items: ReadonlyArray<CartesianGraphicalItemSettings>): ReadonlyArray<ErrorBarsSettings> | undefined => {
+    return items.flatMap(item => {
+      return item.errorBars ?? [];
+    });
+  },
+);

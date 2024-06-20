@@ -11,6 +11,7 @@ import {
   includingCompact,
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
+import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -412,15 +413,15 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           <Customized component={<Comp />} />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenLastCalledWith(
-        expect.arrayContaining([
-          {
-            data: data2,
-            dataKey: 'value',
-            xAxisId: 7,
-          },
-        ]),
-      );
+      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+        {
+          data: data2,
+          dataKey: 'value',
+          xAxisId: 7,
+          errorBars: [],
+        },
+      ];
+      expect(spy).toHaveBeenLastCalledWith(expected);
 
       rerender(
         <ChartElement data={data}>
@@ -445,15 +446,15 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           <Customized component={<Comp />} />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenLastCalledWith(
-        expect.arrayContaining([
-          {
-            data: data2,
-            dataKey: 'value',
-            xAxisId: 0,
-          },
-        ]),
-      );
+      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+        {
+          data: data2,
+          dataKey: 'value',
+          xAxisId: 0,
+          errorBars: [],
+        },
+      ];
+      expect(spy).toHaveBeenLastCalledWith(expected);
     });
   });
 

@@ -94,6 +94,7 @@
   "lib/context/chartDataContext.js",
   "lib/context/brushUpdateContext.js",
   "lib/context/accessibilityContext.js",
+  "lib/context/CartesianGraphicalItemContext.js",
   "lib/container/Surface.js",
   "lib/container/Layer.js",
   "lib/container/ClipPath.js",
