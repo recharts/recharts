@@ -157,7 +157,7 @@
     "storybook-addon-performance": "^0.17.3",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.12",
-    "typescript": "5.4.x",
+    "typescript": "5.5.x",
     "update-browserslist-db": "^1.0.10",
     "vitest": "1.6.x",
     "vitest-axe": "^0.1.0",
