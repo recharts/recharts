@@ -33,7 +33,7 @@ import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburs
 const svgTagMustHaveLabelViolation = expect.objectContaining({
   description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
   help: '<svg> elements with an img role must have an alternative text',
-  helpUrl: 'https://dequeuniversity.com/rules/axe/4.7/svg-img-alt?application=axeAPI',
+  helpUrl: 'https://dequeuniversity.com/rules/axe/4.9/svg-img-alt?application=axeAPI',
   id: 'svg-img-alt',
   impact: 'serious',
 });
@@ -153,7 +153,7 @@ describe('Static scanning for accessibility markup issues', () => {
         <RadialBar label={{ orientation: 'outer' }} background dataKey="uv" isAnimationActive={false} />
       </RadialBarChart>,
     );
-    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
@@ -179,16 +179,7 @@ describe('Static scanning for accessibility markup issues', () => {
   test('Sunburst', async () => {
     const { container } = render(<SunburstChart data={exampleSunburstData} />);
 
-    expect((await axe(container)).violations).toEqual([
-      expect.objectContaining({
-        description: "Ensures ARIA attributes are allowed for an element's role",
-        help: 'Elements must only use allowed ARIA attributes',
-        helpUrl: 'https://dequeuniversity.com/rules/axe/4.7/aria-allowed-attr?application=axeAPI',
-        id: 'aria-allowed-attr',
-        impact: 'serious',
-      }),
-      svgTagMustHaveLabelViolation,
-    ]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 

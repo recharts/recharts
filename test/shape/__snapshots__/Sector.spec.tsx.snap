@@ -37,7 +37,6 @@ exports[`<Sector /> > Render 1 sector in simple Sector 1`] = `
             0,1,
             350,300 Z"
       fill="#ff7902"
-      role="img"
     />
   </svg>
 </div>
@@ -66,7 +65,6 @@ exports[`<Sector /> > Render 1 sector when cornerRadius > 0 1`] = `
       A150,150,0,0,1,349.70674458754354,290.625
       A10,10,0,0,0,359.68719422671313,300Z"
       fill="#ff7902"
-      role="img"
     />
   </svg>
 </div>

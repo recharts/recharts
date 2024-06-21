@@ -247,5 +247,5 @@ export const Sector: React.FC<Props> = sectorProps => {
     path = getSectorPath({ cx, cy, innerRadius, outerRadius, startAngle, endAngle });
   }
 
-  return <path {...filterProps(props, true)} className={layerClass} d={path} role="img" />;
+  return <path {...filterProps(props, true)} className={layerClass} d={path} />;
 };

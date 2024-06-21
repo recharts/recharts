@@ -182,7 +182,7 @@ export const SunburstChart = ({
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
-        <g aria-label={d.name} tabIndex={0}>
+        <g>
           <Sector
             onClick={() => handleClick(d)}
             onMouseEnter={e => handleMouseEnter(d, e)}
