@@ -200,7 +200,6 @@ describe('<Pie />', () => {
       'tabindex',
       'class',
       'd',
-      'role',
     ]);
     expect(renderedSectors2[0]).toHaveAttribute('fill', 'green');
     expect(renderedSectors2[1]).toHaveAttribute('fill', 'blue');
