@@ -5,7 +5,8 @@ export const getStoryArgsFromArgsTypesObject = (argsTypes: StorybookArgs): Recor
   const args: Record<string, unknown> = {};
   Object.keys(argsTypes).forEach((key: string) => {
     const defaultValue = argsTypes[key]?.defaultValue ?? argsTypes[key]?.table?.defaultValue;
-    if (defaultValue !== undefined) {
+    // TODO this erases zeroes and `False` values, perhaps it should check for undefined instead?
+    if (defaultValue) {
       args[key] = defaultValue;
     }
   });
