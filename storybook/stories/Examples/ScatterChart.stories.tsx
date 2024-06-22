@@ -13,12 +13,10 @@ import {
   Cell,
   Scatter,
   ZAxis,
-  ErrorBar,
 } from '../../../src';
 import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { coordinateData } from '../data';
 import { StorybookArgs } from '../../StorybookArgs';
 
 export default {
@@ -633,44 +631,6 @@ export const WithCells = {
           {data.map(({ x }, index) => (
             <Cell key={`cell-${x}`} fill={COLORS[index % COLORS.length]} />
           ))}
-        </Scatter>
-        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-      </ScatterChart>
-    );
-  },
-  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
-};
-
-export const WithErrorBars = {
-  render: (args: StorybookArgs) => {
-    const data = [
-      { x: 100, y: 200, errorY: [20, 30], errorX: 30 },
-      { x: 120, y: 100, errorY: 20, errorX: [20, 30] },
-      { x: 170, y: 300, errorY: [10, 20], errorX: 20 },
-      { x: 140, y: 250, errorY: 30, errorX: 20 },
-      { x: 150, y: 400, errorY: [20, 30], errorX: 30 },
-      { x: 110, y: 280, errorY: 40, errorX: 40 },
-    ];
-
-    return (
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20,
-        }}
-        {...args}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-        <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-        <Scatter name="A school" data={data} fill="#8884d8">
-          {/* This ErrorBar does render, but it does not extend the domain of XAxis unfortunately */}
-          <ErrorBar dataKey="errorX" width={2} strokeWidth={1} stroke="blue" direction="x" />
-          <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
         </Scatter>
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
       </ScatterChart>

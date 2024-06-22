@@ -529,6 +529,7 @@ export class Scatter extends PureComponent<Props, State> {
           <SetCartesianGraphicalItem
             data={this.props.data}
             xAxisId={this.props.xAxisId}
+            yAxisId={this.props.yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
           />
@@ -545,7 +546,12 @@ export class Scatter extends PureComponent<Props, State> {
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
-      <CartesianGraphicalItemContext data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey}>
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        dataKey={this.props.dataKey}
+      >
         <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

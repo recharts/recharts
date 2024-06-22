@@ -661,7 +661,12 @@ export class Bar extends PureComponent<Props, State> {
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
-      <CartesianGraphicalItemContext data={emptyArray} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey}>
+      <CartesianGraphicalItemContext
+        data={emptyArray}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        dataKey={this.props.dataKey}
+      >
         <Layer className={layerClass}>
           <ReportBar />
           <SetBarLegend {...this.props} />

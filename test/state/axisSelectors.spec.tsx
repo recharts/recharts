@@ -38,6 +38,7 @@ import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
 import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { generateMockData } from '../helper/generateMockData';
 import { AxisId } from '../../src/state/axisMapSlice';
+import { pageData } from '../../storybook/stories/data';
 
 const defaultAxisId: AxisId = 0;
 
@@ -1349,6 +1350,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       dataKey: undefined,
       data: PageData,
       xAxisId: 'x',
+      yAxisId: 'y',
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
@@ -2170,7 +2172,7 @@ describe('selectErrorBarsSettings', () => {
     expect(selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId)).toEqual([]);
   });
 
-  it('should return empty array in an empty chart', () => {
+  it('should return empty array in a chart with no ErrorBars', () => {
     const spy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
@@ -2179,6 +2181,7 @@ describe('selectErrorBarsSettings', () => {
     };
     render(
       <BarChart width={100} height={100}>
+        <Bar isAnimationActive={false} />
         <Customized component={Comp} />
       </BarChart>,
     );
@@ -2187,27 +2190,36 @@ describe('selectErrorBarsSettings', () => {
   });
 
   it('should return empty array if there is no axis with matching ID', () => {
-    const spy = vi.fn();
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-      spy(result);
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', 'foo')));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', 'bar')));
       return null;
     };
     render(
-      <LineChart width={100} height={100}>
-        <Line />
+      <LineChart width={100} height={100} data={pageData}>
+        <Line isAnimationActive={false}>
+          <ErrorBar dataKey="x" direction="x" />
+          <ErrorBar dataKey="y" direction="y" />
+        </Line>
+        <XAxis type="number" />
         <Customized component={Comp} />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    // There are ErrorBars but they are specified for another XAxis
+    expect(xAxisSpy).toHaveBeenLastCalledWith([]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([]);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should return bars settings if present in BarChart', () => {
-    const spy = vi.fn();
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-      spy(result);
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
       return null;
     };
     render(
@@ -2220,23 +2232,28 @@ describe('selectErrorBarsSettings', () => {
         <XAxis type="number" />
       </BarChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'x',
         direction: 'x',
       },
+    ]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'y',
         direction: 'y',
       },
     ]);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should return bars settings if present in LineChart', () => {
-    const spy = vi.fn();
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-      spy(result);
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
       return null;
     };
     render(
@@ -2250,53 +2267,62 @@ describe('selectErrorBarsSettings', () => {
         <XAxis type="number" />
       </LineChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'x',
         direction: 'x',
       },
+    ]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'y',
         direction: 'y',
       },
     ]);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should return bars settings if present in ScatterChart', () => {
-    const spy = vi.fn();
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-      spy(result);
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
       return null;
     };
     render(
       <ScatterChart width={100} height={100}>
         <Scatter data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
-          <ErrorBar dataKey="x" direction="x" />
-          <ErrorBar dataKey="y" direction="y" />
+          <ErrorBar dataKey="data-x" direction="x" />
+          <ErrorBar dataKey="data-y" direction="y" />
         </Scatter>
         <Customized component={Comp} />
         <XAxis type="number" />
       </ScatterChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'x',
+        dataKey: 'data-x',
         direction: 'x',
       },
+    ]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'y',
+        dataKey: 'data-y',
         direction: 'y',
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
   });
 
-  it('should report all error bars on Bar, Line, and Scatter', () => {
-    const spy = vi.fn();
+  it('should report all relevant error bars on Bar, Line, and Scatter', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId));
-      spy(result);
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
       return null;
     };
     render(
@@ -2317,32 +2343,36 @@ describe('selectErrorBarsSettings', () => {
         <XAxis type="number" />
       </ComposedChart>,
     );
-    expect(spy).toHaveBeenLastCalledWith([
+    expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'a',
         direction: 'x',
-      },
-      {
-        dataKey: 'b',
-        direction: 'y',
       },
       {
         dataKey: 'c',
         direction: 'x',
       },
       {
-        dataKey: 'd',
+        dataKey: 'e',
+        direction: 'x',
+      },
+    ]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'b',
         direction: 'y',
       },
       {
-        dataKey: 'e',
-        direction: 'x',
+        dataKey: 'd',
+        direction: 'y',
       },
       {
         dataKey: 'f',
         direction: 'y',
       },
     ]);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should be stable when empty', () => {
@@ -2358,6 +2388,7 @@ describe('selectErrorBarsSettings', () => {
       dataKey: 'x',
       data: [],
       xAxisId: '',
+      yAxisId: '',
       errorBars: [
         {
           direction: 'x',

@@ -5,7 +5,7 @@ export const getStoryArgsFromArgsTypesObject = (argsTypes: StorybookArgs): Recor
   const args: Record<string, unknown> = {};
   Object.keys(argsTypes).forEach((key: string) => {
     const defaultValue = argsTypes[key]?.defaultValue ?? argsTypes[key]?.table?.defaultValue;
-    if (defaultValue) {
+    if (defaultValue !== undefined) {
       args[key] = defaultValue;
     }
   });

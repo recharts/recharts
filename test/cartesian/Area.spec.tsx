@@ -409,7 +409,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const { rerender } = render(
         <ChartElement data={data}>
-          <Area dataKey="value" data={data2} xAxisId={7} />
+          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} />
           <Customized component={<Comp />} />
         </ChartElement>,
       );
@@ -418,6 +418,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           data: data2,
           dataKey: 'value',
           xAxisId: 7,
+          yAxisId: 9,
           errorBars: [],
         },
       ];
@@ -451,6 +452,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           data: data2,
           dataKey: 'value',
           xAxisId: 0,
+          yAxisId: 0,
           errorBars: [],
         },
       ];

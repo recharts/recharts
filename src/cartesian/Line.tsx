@@ -546,6 +546,7 @@ export class Line extends PureComponent<Props, State> {
           <SetCartesianGraphicalItem
             data={this.props.data}
             xAxisId={this.props.xAxisId}
+            yAxisId={this.props.yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
           />
@@ -567,7 +568,12 @@ export class Line extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <CartesianGraphicalItemContext data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey}>
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        dataKey={this.props.dataKey}
+      >
         <Layer className={layerClass}>
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

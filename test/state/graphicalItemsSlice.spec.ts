@@ -17,6 +17,7 @@ describe('graphicalItemsSlice', () => {
       dataKey: undefined,
       data: PageData,
       xAxisId: 'x',
+      yAxisId: 'y',
     };
     store.dispatch(addCartesianGraphicalItem(item));
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(1);
