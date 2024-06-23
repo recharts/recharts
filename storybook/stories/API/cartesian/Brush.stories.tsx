@@ -88,7 +88,6 @@ export const API = {
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Line dataKey="uv" />
-
         <Brush {...args} />
       </ComposedChart>
     </ResponsiveContainer>

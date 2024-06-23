@@ -38,6 +38,7 @@ import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
+import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -151,6 +152,8 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
     },
   };
 }
+
+const noErrorBars: never[] = [];
 
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
@@ -606,7 +609,13 @@ export class Area extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
+          <SetCartesianGraphicalItem
+            data={this.props.data}
+            xAxisId={this.props.xAxisId}
+            yAxisId={this.props.yAxisId}
+            dataKey={this.props.dataKey}
+            errorBars={noErrorBars}
+          />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -625,9 +634,13 @@ export class Area extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <>
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        dataKey={this.props.dataKey}
+        yAxisId={this.props.yAxisId}
+      >
         <Layer className={layerClass}>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? (
@@ -670,7 +683,7 @@ export class Area extends PureComponent<Props, State> {
             activeDot={this.props.activeDot}
           />
         )}
-      </>
+      </CartesianGraphicalItemContext>
     );
   }
 }

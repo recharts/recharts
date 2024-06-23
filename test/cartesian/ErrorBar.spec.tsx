@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis, ScatterChart, Scatter } from '../../src';
 import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
@@ -216,6 +216,32 @@ describe('<ErrorBar />', () => {
       transition: 'transform 400ms linear,transform-origin 400ms linear',
       transform: 'scaleY(1)',
     });
+  });
+
+  test('renders two ErrorBars in ScatterChart, one for XAxis another for YAxis', () => {
+    const { container } = render(
+      <ScatterChart width={500} height={500}>
+        <Scatter isAnimationActive={false} data={barData} dataKey="uv">
+          <ErrorBar dataKey="uvError" direction="y" />
+          <ErrorBar dataKey="pvError" direction="x" />
+        </Scatter>
+        <XAxis type="number" />
+      </ScatterChart>,
+    );
+    assertErrorBars(container, 8);
+  });
+
+  test('renders two ErrorBars in vertical ScatterChart, one for XAxis another for YAxis', () => {
+    const { container } = render(
+      <ScatterChart width={500} height={500} layout="vertical">
+        <Scatter isAnimationActive={false} data={barData} dataKey="uv">
+          <ErrorBar dataKey="uvError" direction="y" />
+          <ErrorBar dataKey="pvError" direction="x" />
+        </Scatter>
+        <XAxis type="number" />
+      </ScatterChart>,
+    );
+    assertErrorBars(container, 8);
   });
 
   test.each(['category', undefined])('throws when direction=x and XAxis id type=%s', (domainType: AxisDomainType) => {

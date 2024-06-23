@@ -450,7 +450,15 @@ export const appendOffsetOfLegend = (
   return offset;
 };
 
-const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
+/**
+ * This method actually completely ignores the direction!
+ * @deprecated instead use `isErrorBarRelevantForAxisType` through `selectErrorBarsSettings`
+ * @param layout of the chart
+ * @param axisType of the axis
+ * @param direction is ignored!
+ * @return if true then is relevant, if false then irrelevant
+ */
+export const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
   if (isNil(axisType)) {
     return true;
   }

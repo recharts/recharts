@@ -3,7 +3,6 @@ import { Meta } from '@storybook/react';
 import React from 'react';
 import {
   ScatterChart,
-  LineChart,
   ResponsiveContainer,
   CartesianGrid,
   XAxis,
@@ -16,18 +15,19 @@ import {
   ZAxis,
 } from '../../../src';
 import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
+import { CategoricalChartProps } from '../API/props/ChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { StorybookArgs } from '../../StorybookArgs';
 
 export default {
-  component: LineChart,
+  component: ScatterChart,
+  argTypes: CategoricalChartProps,
   docs: {
     autodocs: false,
   },
 };
 
 export const Simple: Meta<ScatterProps> = {
-  args: {
-    activeShape: { fill: 'red' },
-  },
   render: args => {
     const data = [
       { x: 100, y: 200, z: 200 },
@@ -57,6 +57,9 @@ export const Simple: Meta<ScatterProps> = {
         </ScatterChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    activeShape: { fill: 'red' },
   },
 };
 
@@ -104,7 +107,7 @@ export const ThreeDim = {
 };
 
 export const JointLine = {
-  render: () => {
+  render: (args: StorybookArgs) => {
     const data01 = [
       { x: 10, y: 30 },
       { x: 30, y: 200 },
@@ -130,6 +133,7 @@ export const JointLine = {
             bottom: 20,
             left: 20,
           }}
+          {...args}
         >
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
@@ -143,10 +147,11 @@ export const JointLine = {
       </ResponsiveContainer>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
 };
 
 export const BubbleChart = {
-  render: () => {
+  render: (args: StorybookArgs) => {
     const data01 = [
       { hour: '12a', index: 1, value: 170 },
       { hour: '1a', index: 1, value: 180 },
@@ -255,6 +260,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -290,6 +296,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -325,6 +332,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -360,6 +368,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -395,6 +404,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -430,6 +440,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -465,6 +476,7 @@ export const BubbleChart = {
               bottom: 0,
               left: 0,
             }}
+            {...args}
           >
             <XAxis
               type="category"
@@ -491,10 +503,11 @@ export const BubbleChart = {
       </div>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
 };
 
 export const WithLabels = {
-  render: () => {
+  render: (args: StorybookArgs) => {
     const data = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -513,6 +526,7 @@ export const WithLabels = {
             bottom: 20,
             left: 20,
           }}
+          {...args}
         >
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
@@ -525,9 +539,11 @@ export const WithLabels = {
       </ResponsiveContainer>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
 };
+
 export const MultipleYAxes = {
-  render: () => {
+  render: (args: StorybookArgs) => {
     const data01 = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -560,6 +576,7 @@ export const MultipleYAxes = {
             bottom: 20,
             left: 20,
           }}
+          {...args}
         >
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
@@ -580,9 +597,11 @@ export const MultipleYAxes = {
       </ResponsiveContainer>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
 };
+
 export const WithCells = {
-  render: () => {
+  render: (args: StorybookArgs) => {
     const data = [
       { x: 100, y: 200, z: 200 },
       { x: 120, y: 100, z: 260 },
@@ -603,6 +622,7 @@ export const WithCells = {
           bottom: 20,
           left: 20,
         }}
+        {...args}
       >
         <CartesianGrid />
         <XAxis type="number" dataKey="x" name="stature" unit="cm" />
@@ -616,4 +636,5 @@ export const WithCells = {
       </ScatterChart>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(CategoricalChartProps),
 };

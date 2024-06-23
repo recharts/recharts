@@ -3,6 +3,29 @@ import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
 import { AxisId } from './axisMapSlice';
 import { DataKey } from '../util/types';
+import { ErrorBarDirection } from '../cartesian/ErrorBar';
+
+/**
+ * ErrorBars have lot more settings but all the others are scoped to the component itself.
+ * Only some of them required to be reported to the global store because XAxis and YAxis need to know
+ * if the error bar is contributing to extending the axis domain.
+ */
+export type ErrorBarsSettings = {
+  /**
+   * The direction is only used in Scatter chart, and decided based on ChartLayout in other charts.
+   */
+  direction: ErrorBarDirection;
+  /**
+   * The dataKey decides which property from the data will each individual ErrorBar use.
+   * If it so happens that the ErrorBar data are bigger than the axis domain,
+   * the error bar data will stretch the axis domain.
+   */
+  dataKey: DataKey<any>;
+  /*
+   * ErrorBar props say that it has explicit xAxis and yAxis props,
+   * but actually it always inherits the xAxis and yAxis defined on the parent graphical item.
+   */
+};
 
 export type CartesianGraphicalItemSettings = {
   data: ChartData;
@@ -12,7 +35,13 @@ export type CartesianGraphicalItemSettings = {
    * and it is required here.
    */
   xAxisId: AxisId;
+  yAxisId: AxisId;
   dataKey: DataKey<any> | undefined;
+  /**
+   * ErrorBars are only rendered if they are explicitly set in the React tree, otherwise this will be an empty array.
+   * One graphical item can have multiple error bars. This probably only makes sense in Scatter.
+   */
+  errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
 };
 
 export type GraphicalItemsState = {
@@ -52,7 +81,7 @@ const graphicalItemsSlice = createSlice({
       state.cartesianItems.push(castDraft(action.payload));
     },
     removeCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
-      const index = current(state).cartesianItems.indexOf(action.payload);
+      const index = current(state).cartesianItems.indexOf(castDraft(action.payload));
       if (index > -1) {
         state.cartesianItems.splice(index, 1);
       }

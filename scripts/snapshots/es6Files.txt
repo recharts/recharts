@@ -94,6 +94,7 @@
   "es6/context/chartDataContext.js",
   "es6/context/brushUpdateContext.js",
   "es6/context/accessibilityContext.js",
+  "es6/context/CartesianGraphicalItemContext.js",
   "es6/container/Surface.js",
   "es6/container/Layer.js",
   "es6/container/ClipPath.js",

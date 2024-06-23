@@ -47,6 +47,7 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
+import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -214,6 +215,8 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
     },
   };
 }
+
+const noErrorBars: never[] = [];
 
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
@@ -523,7 +526,13 @@ export class Scatter extends PureComponent<Props, State> {
     if (hide || !points || !points.length) {
       return (
         <>
-          <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
+          <SetCartesianGraphicalItem
+            data={this.props.data}
+            xAxisId={this.props.xAxisId}
+            yAxisId={this.props.yAxisId}
+            dataKey={this.props.dataKey}
+            errorBars={noErrorBars}
+          />
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         </>
@@ -537,27 +546,33 @@ export class Scatter extends PureComponent<Props, State> {
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
-      <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-        <SetCartesianGraphicalItem data={this.props.data} xAxisId={this.props.xAxisId} dataKey={this.props.dataKey} />
-        <SetScatterLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        {needClipX || needClipY ? (
-          <defs>
-            <clipPath id={`clipPath-${clipPathId}`}>
-              <rect
-                x={needClipX ? left : left - width / 2}
-                y={needClipY ? top : top - height / 2}
-                width={needClipX ? width : width * 2}
-                height={needClipY ? height : height * 2}
-              />
-            </clipPath>
-          </defs>
-        ) : null}
-        {line && this.renderLine()}
-        {this.renderErrorBar()}
-        <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-      </Layer>
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        dataKey={this.props.dataKey}
+      >
+        <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+          <SetScatterLegend {...this.props} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+          {needClipX || needClipY ? (
+            <defs>
+              <clipPath id={`clipPath-${clipPathId}`}>
+                <rect
+                  x={needClipX ? left : left - width / 2}
+                  y={needClipY ? top : top - height / 2}
+                  width={needClipX ? width : width * 2}
+                  height={needClipY ? height : height * 2}
+                />
+              </clipPath>
+            </defs>
+          ) : null}
+          {line && this.renderLine()}
+          {this.renderErrorBar()}
+          <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
+          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+        </Layer>
+      </CartesianGraphicalItemContext>
     );
   }
 }

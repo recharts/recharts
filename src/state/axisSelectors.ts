@@ -13,7 +13,7 @@ import {
 } from '../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
-import { CartesianGraphicalItemSettings } from './graphicalItemsSlice';
+import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -51,8 +51,10 @@ function itemAxisPredicate(axisType: AxisType, axisId: AxisId) {
       case 'xAxis':
         // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
         return item.xAxisId === axisId;
+      case 'yAxis':
+        return item.yAxisId === axisId;
       default:
-        // TODO Y and Z axis
+        // TODO Z axis
         return false;
     }
   };
@@ -444,3 +446,31 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
       return parsedScaleReturn;
     },
   );
+
+function isErrorBarRelevantForAxisType(axisType: AxisType): (errorBar: ErrorBarsSettings) => boolean {
+  switch (axisType) {
+    case 'xAxis':
+      return (errorBar: ErrorBarsSettings) => errorBar.direction === 'x';
+    case 'yAxis':
+      return (errorBar: ErrorBarsSettings) => errorBar.direction === 'y';
+    default:
+      return () => false;
+  }
+}
+
+export const selectErrorBarsSettings = createSelector(
+  selectCartesianItemsSettings,
+  pickAxisType,
+  (
+    items: ReadonlyArray<CartesianGraphicalItemSettings>,
+    axisType: AxisType,
+  ): ReadonlyArray<ErrorBarsSettings> | undefined => {
+    return items
+      .flatMap(item => {
+        return item.errorBars ?? [];
+      })
+      .filter(e => {
+        return isErrorBarRelevantForAxisType(axisType)(e);
+      });
+  },
+);
