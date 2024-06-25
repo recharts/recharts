@@ -65,9 +65,15 @@ const axisMapSlice = createSlice({
     removeXAxis(state, action: PayloadAction<XAxisSettings>) {
       delete state.xAxis[action.payload.id];
     },
+    addYAxis(state, action: PayloadAction<YAxisSettings>) {
+      state.yAxis[action.payload.id] = castDraft(action.payload);
+    },
+    removeYAxis(state, action: PayloadAction<YAxisSettings>) {
+      delete state.yAxis[action.payload.id];
+    },
   },
 });
 
-export const { addXAxis, removeXAxis } = axisMapSlice.actions;
+export const { addXAxis, removeXAxis, addYAxis, removeYAxis } = axisMapSlice.actions;
 
 export const axisMapReducer = axisMapSlice.reducer;

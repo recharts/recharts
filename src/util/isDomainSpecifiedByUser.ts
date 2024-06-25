@@ -2,6 +2,7 @@ import { MAX_VALUE_REG, MIN_VALUE_REG } from './ChartUtils';
 import { isNumber } from './DataUtils';
 import { getNiceTickValues } from './scale';
 import { AxisDomain, AxisDomainType, NumberDomain } from './types';
+import { isWellBehavedNumber } from './isWellBehavedNumber';
 
 /**
  * @deprecated instead use `numericalDomainSpecifiedWithoutRequiringData`
@@ -31,10 +32,6 @@ export function isDomainSpecifiedByUser(
   }
 
   return false;
-}
-
-function isWellBehavedNumber(n: unknown): n is number {
-  return Number.isFinite(n);
 }
 
 function isWellFormedNumberDomain(v: unknown): v is NumberDomain {

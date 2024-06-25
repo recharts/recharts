@@ -1,7 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, Line } from '../../src';
+import { Surface, Line, ErrorBar, LineChart, Customized } from '../../src';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectErrorBarsSettings } from '../../src/state/axisSelectors';
 
 describe('<Line />', () => {
   const data = [
@@ -100,5 +103,55 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);
+  });
+
+  it('should report its ErrorBars to state', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      spy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', 0)));
+      return null;
+    };
+    render(
+      <LineChart width={500} height={500}>
+        <Line data={data} isAnimationActive={false} dataKey="y">
+          <ErrorBar dataKey="x" />
+        </Line>
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'x',
+        // this defaults to y even in an absence of explicit prop
+        direction: 'y',
+      },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  it('should report its ErrorBars to state in vertical chart', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      spy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', 0)));
+      return null;
+    };
+    render(
+      <LineChart width={500} height={500} layout="vertical">
+        <Line data={data} isAnimationActive={false} dataKey="y">
+          <ErrorBar dataKey="x" />
+        </Line>
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'x',
+        // in horizontal chart the default direction is y, in vertical it's x
+        direction: 'x',
+      },
+    ]);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });

@@ -15,6 +15,7 @@
   "types/util/tooltip",
   "types/util/scale",
   "types/util/payload",
+  "types/util/isWellBehavedNumber.d.ts",
   "types/util/isDomainSpecifiedByUser.d.ts",
   "types/util/getLegendProps.d.ts",
   "types/util/getEveryNthWithCondition.d.ts",

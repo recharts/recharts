@@ -1,9 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis, ScatterChart, Scatter } from '../../src';
+import { describe, test, expect, vi } from 'vitest';
+import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis, ScatterChart, Scatter, Customized } from '../../src';
 import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectAxisDomain } from '../../src/state/axisSelectors';
+import { getRealDirection } from '../../src/cartesian/ErrorBar';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -44,8 +48,25 @@ function assertAnimationStyles(
   });
 }
 
+describe('getRealDirection', () => {
+  it('should return direction from props if it is provided', () => {
+    expect(getRealDirection('x', 'horizontal')).toBe('x');
+    expect(getRealDirection('y', 'horizontal')).toBe('y');
+    expect(getRealDirection('x', 'vertical')).toBe('x');
+    expect(getRealDirection('y', 'vertical')).toBe('y');
+  });
+
+  it('should return "y" for horizontal layout', () => {
+    expect(getRealDirection(undefined, 'horizontal')).toBe('y');
+  });
+
+  it('should return "x" for vertical layout', () => {
+    expect(getRealDirection(undefined, 'vertical')).toBe('x');
+  });
+});
+
 describe('<ErrorBar />', () => {
-  const barData = [
+  const dataWithError = [
     { name: 'food', uv: 2000, pv: 2013, time: 1, uvError: [100, 50], pvError: [110, 20] },
     { name: 'cosmetic', uv: 3300, pv: 2000, time: 2, uvError: [120, 140], pvError: 50 },
     { name: 'storage', uv: 3200, pv: 1398, time: 3, uvError: [120, 80], pvError: [200, 100] },
@@ -62,7 +83,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars in Bar', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" />
         </Bar>
@@ -74,7 +95,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Multiple Error Bars in Bar', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500} layout="vertical">
+      <BarChart data={dataWithError} width={500} height={500} layout="vertical">
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="x" />
           <ErrorBar dataKey="pvError" direction="x" />
@@ -90,7 +111,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars in stacked Bar', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv" stackId="1">
           <ErrorBar dataKey="uvError" />
         </Bar>
@@ -138,7 +159,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars with animation', async () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive dataKey="uvError" />
         </Bar>
@@ -154,7 +175,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars without animation', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive={false} dataKey="uvError" />
         </Bar>
@@ -167,7 +188,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars with animation delay', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive begin={200} dataKey="uvError" />
         </Bar>
@@ -188,7 +209,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars with animation duration', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive animationDuration={400} dataKey="uvError" />
         </Bar>
@@ -204,7 +225,7 @@ describe('<ErrorBar />', () => {
 
   test('Renders Error Bars with animation easing', () => {
     const { container } = render(
-      <BarChart data={barData} width={500} height={500}>
+      <BarChart data={dataWithError} width={500} height={500}>
         <Bar isAnimationActive={false} dataKey="uv">
           <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
         </Bar>
@@ -221,7 +242,7 @@ describe('<ErrorBar />', () => {
   test('renders two ErrorBars in ScatterChart, one for XAxis another for YAxis', () => {
     const { container } = render(
       <ScatterChart width={500} height={500}>
-        <Scatter isAnimationActive={false} data={barData} dataKey="uv">
+        <Scatter isAnimationActive={false} data={dataWithError} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="y" />
           <ErrorBar dataKey="pvError" direction="x" />
         </Scatter>
@@ -234,7 +255,7 @@ describe('<ErrorBar />', () => {
   test('renders two ErrorBars in vertical ScatterChart, one for XAxis another for YAxis', () => {
     const { container } = render(
       <ScatterChart width={500} height={500} layout="vertical">
-        <Scatter isAnimationActive={false} data={barData} dataKey="uv">
+        <Scatter isAnimationActive={false} data={dataWithError} dataKey="uv">
           <ErrorBar dataKey="uvError" direction="y" />
           <ErrorBar dataKey="pvError" direction="x" />
         </Scatter>
@@ -247,7 +268,7 @@ describe('<ErrorBar />', () => {
   test.each(['category', undefined])('throws when direction=x and XAxis id type=%s', (domainType: AxisDomainType) => {
     expect(() => {
       render(
-        <BarChart data={barData} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="name" type={domainType} />
           <Bar isAnimationActive={false} dataKey="uv">
             <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" direction="x" />
@@ -259,10 +280,16 @@ describe('<ErrorBar />', () => {
 
   describe('ErrorBar and axis domain interaction', () => {
     test('ErrorBar should extend YAxis domain', () => {
+      const axisDomainSpy = vi.fn();
+      const Comp = (): null => {
+        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
+        return null;
+      };
       const { container, rerender } = render(
-        <BarChart data={barData} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
           <Bar isAnimationActive={false} dataKey="uv" />
+          <Customized component={<Comp />} />
         </BarChart>,
       );
 
@@ -294,12 +321,15 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
       rerender(
-        <BarChart data={barData} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
           <Bar isAnimationActive={false} dataKey="uv">
-            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
+            <ErrorBar dataKey="uvError" />
           </Bar>
+          <Customized component={<Comp />} />
         </BarChart>,
       );
       assertErrorBars(container, 4);
@@ -331,13 +361,108 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(6);
+    });
+
+    test('ErrorBar should extend YAxis domain when data is defined on the graphical item', () => {
+      const axisDomainSpy = vi.fn();
+      const Comp = (): null => {
+        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
+        return null;
+      };
+      const { container, rerender } = render(
+        <LineChart width={500} height={500}>
+          <YAxis dataKey="uv" />
+          <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+
+      assertErrorBars(container, 0);
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '495',
+        },
+        {
+          textContent: '850',
+          x: '57',
+          y: '372.5',
+        },
+        {
+          textContent: '1700',
+          x: '57',
+          y: '250',
+        },
+        {
+          textContent: '2550',
+          x: '57',
+          y: '127.5',
+        },
+        {
+          textContent: '3400',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <LineChart width={500} height={500}>
+          <YAxis dataKey="uv" />
+          <Line isAnimationActive={false} dataKey="uv" data={dataWithError}>
+            <ErrorBar dataKey="uvError" />
+          </Line>
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+
+      assertErrorBars(container, 4);
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '495',
+        },
+        {
+          textContent: '900',
+          x: '57',
+          y: '372.5',
+        },
+        {
+          textContent: '1800',
+          x: '57',
+          y: '250',
+        },
+        {
+          textContent: '2700',
+          x: '57',
+          y: '127.5',
+        },
+        {
+          textContent: '3600',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(6);
     });
 
     test('ErrorBar not extend XAxis domain - this looks like a bug to me!', () => {
+      const xAxisSpy = vi.fn();
+      const Comp = (): null => {
+        xAxisSpy(useAppSelector(state => selectAxisDomain(state, 'xAxis', 0)));
+        return null;
+      };
       const { container, rerender } = render(
-        <BarChart data={barData} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv" />
+          <Customized component={<Comp />} />
         </BarChart>,
       );
 
@@ -369,12 +494,16 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(xAxisSpy).toHaveBeenCalledTimes(3);
+
       rerender(
-        <BarChart data={barData} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv">
             <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" direction="x" />
           </Bar>
+          <Customized component={<Comp />} />
         </BarChart>,
       );
       assertErrorBars(container, 4);
@@ -407,6 +536,10 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
+      // Yep look at this - the selector has fixed this bug and is now extending XAxis domain too.
+      // Once we switch from generateCategoricalChart domain to redux domain, then the axis will be fixed too
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(xAxisSpy).toHaveBeenCalledTimes(6);
     });
   });
 });
