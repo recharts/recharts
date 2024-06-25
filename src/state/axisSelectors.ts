@@ -14,6 +14,7 @@ import {
 import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -150,6 +151,136 @@ export const selectAllAppliedValues = createSelector(
   },
 );
 
+export function isErrorBarRelevantForAxisType(axisType: AxisType, errorBar: ErrorBarsSettings): boolean {
+  switch (axisType) {
+    case 'xAxis':
+      return errorBar.direction === 'x';
+    case 'yAxis':
+      return errorBar.direction === 'y';
+    default:
+      return false;
+  }
+}
+
+type AppliedChartDataWithErrorDomain = {
+  /**
+   * This is the value after the dataKey has been applied. Presumably a number? But no guarantees.
+   */
+  value: unknown;
+  /**
+   * This is the error domain, if any, for the current value.
+   * This may be either x or y direction, whatever is applicable.
+   * Assumption is that we're looking at this data from the point of view of a single axis,
+   * and that axis dictates the relevant direction.
+   */
+  errorDomain: ReadonlyArray<number> | undefined;
+};
+
+/**
+ * This is type of "error" in chart. It is set by using ErrorBar, and it can represent confidence interval,
+ * or ap in the data, or standard deviation, or quartiles in boxplot, or whiskers or whatever.
+ *
+ * We will internally represent it as a tuple of two numbers, where the first number is the lower bound and the second number is the upper bound.
+ *
+ * It is also true that the first number should be lower than or equal to the associated "main value",
+ * and the second number should be higher than or equal to the associated "main value".
+ */
+export type ErrorValue = [number, number];
+
+export function fromMainValueToError(value: unknown): ErrorValue | undefined {
+  if (typeof value === 'number' && !Number.isNaN(value) && Number.isFinite(value)) {
+    return [value, value];
+  }
+
+  if (Array.isArray(value)) {
+    const minError = Math.min(...value);
+    const maxError = Math.max(...value);
+    if (!Number.isNaN(minError) && !Number.isNaN(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
+      return [minError, maxError];
+    }
+  }
+
+  return undefined;
+}
+
+function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
+  return data
+    .filter(v => typeof v === 'number' || typeof v === 'string')
+    .map(Number)
+    .filter(n => Number.isNaN(n) === false);
+}
+
+/**
+ * @param entry One item in the 'data' array. Could be anything really - this is defined externally. This is the raw, before dataKey application
+ * @param appliedValue This is the result of applying the 'main' dataKey on the `entry`.
+ * @param relevantErrorBars Error bars that are relevant for the current axis and layout and all that.
+ * @return either undefined or an array of ErrorValue
+ */
+export function getErrorDomainByDataKey(
+  entry: unknown,
+  appliedValue: unknown,
+  relevantErrorBars: ReadonlyArray<ErrorBarsSettings>,
+): ReadonlyArray<number> {
+  if (!relevantErrorBars || typeof appliedValue !== 'number' || Number.isNaN(appliedValue)) {
+    return [];
+  }
+
+  if (!relevantErrorBars.length) {
+    return [];
+  }
+
+  return onlyAllowNumbers(
+    relevantErrorBars.flatMap(eb => {
+      const errorValue = getValueByDataKey(entry, eb.dataKey);
+      const minError: unknown = Array.isArray(errorValue) ? Math.min(...errorValue) : errorValue;
+      const maxError: unknown = Array.isArray(errorValue) ? Math.max(...errorValue) : errorValue;
+      if (!isWellBehavedNumber(minError) || !isWellBehavedNumber(maxError)) {
+        return undefined;
+      }
+      return [appliedValue - minError, appliedValue + maxError];
+    }),
+  );
+}
+
+export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelector(
+  selectDisplayedData,
+  selectAxisSettings,
+  selectCartesianItemsSettings,
+  pickAxisType,
+  (
+    data: ChartData,
+    axisSettings: AxisSettings,
+    items: ReadonlyArray<CartesianGraphicalItemSettings>,
+    axisType: AxisType,
+  ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
+    if (items.length > 0) {
+      return data
+        .flatMap(entry => {
+          return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
+            const relevantErrorBars = item.errorBars.filter(errorBar =>
+              isErrorBarRelevantForAxisType(axisType, errorBar),
+            );
+            const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+            return {
+              value: valueByDataKey,
+              errorDomain: getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars),
+            };
+          });
+        })
+        .filter(Boolean);
+    }
+    if (axisSettings?.dataKey != null) {
+      return data.map(
+        (item): AppliedChartDataWithErrorDomain => ({
+          value: getValueByDataKey(item, axisSettings.dataKey),
+          errorDomain: [],
+        }),
+      );
+    }
+    return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
+  },
+);
+
 export function getDefaultDomainByAxisType(axisType: 'number' | string) {
   return axisType === 'number' ? [0, 'auto'] : undefined;
 }
@@ -162,15 +293,10 @@ function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | 
   return '';
 }
 
-function onlyAllowNumbers(data: AppliedChartData): ReadonlyArray<number> {
-  return data
-    .map(entry => entry.value)
-    .filter(v => typeof v === 'number' || typeof v === 'string')
-    .map(Number)
-    .filter(n => Number.isNaN(n) === false);
-}
-
-const computeNumericalDomain = (allDataSquished: AppliedChartData): NumberDomain | undefined => {
+const computeNumericalDomain = (
+  dataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
+): NumberDomain | undefined => {
+  const allDataSquished = dataWithErrorDomains.flatMap(d => [d.value, ...d.errorDomain]);
   const onlyNumbers = onlyAllowNumbers(allDataSquished);
   return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
 };
@@ -207,8 +333,9 @@ const selectNumericalDomain = (
     return domainFromUserPreference;
   }
 
-  const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
-  const domainFromData = computeNumericalDomain(allDataSquished);
+  const allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain> =
+    selectAllAppliedNumericalValuesIncludingErrorValues(state, axisType, axisId);
+  const domainFromData = computeNumericalDomain(allDataWithErrorDomains);
 
   return parseNumericalUserDomain(
     domainDefinition,
@@ -266,7 +393,7 @@ export const selectSmallestDistanceBetweenValues: (
       return undefined;
     }
     let smallestDistanceBetweenValues = Infinity;
-    const sortedValues = Array.from(onlyAllowNumbers(allDataSquished)).sort();
+    const sortedValues = Array.from(onlyAllowNumbers(allDataSquished.map(d => d.value))).sort();
     if (sortedValues.length < 2) {
       return Infinity;
     }
@@ -447,17 +574,6 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
     },
   );
 
-function isErrorBarRelevantForAxisType(axisType: AxisType): (errorBar: ErrorBarsSettings) => boolean {
-  switch (axisType) {
-    case 'xAxis':
-      return (errorBar: ErrorBarsSettings) => errorBar.direction === 'x';
-    case 'yAxis':
-      return (errorBar: ErrorBarsSettings) => errorBar.direction === 'y';
-    default:
-      return () => false;
-  }
-}
-
 export const selectErrorBarsSettings = createSelector(
   selectCartesianItemsSettings,
   pickAxisType,
@@ -470,7 +586,7 @@ export const selectErrorBarsSettings = createSelector(
         return item.errorBars ?? [];
       })
       .filter(e => {
-        return isErrorBarRelevantForAxisType(axisType)(e);
+        return isErrorBarRelevantForAxisType(axisType, e);
       });
   },
 );

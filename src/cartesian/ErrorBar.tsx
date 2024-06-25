@@ -7,7 +7,7 @@ import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
-import { AnimationTiming, D3Scale, DataKey } from '../util/types';
+import { AnimationTiming, D3Scale, DataKey, LayoutType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
@@ -63,6 +63,13 @@ interface ErrorBarProps extends InternalErrorBarProps {
 }
 
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
+
+export function getRealDirection(
+  directionFromProps: ErrorBarDirection | undefined,
+  layout: LayoutType,
+): ErrorBarDirection {
+  return directionFromProps ?? (layout === 'horizontal' ? 'y' : 'x');
+}
 
 export function ErrorBar(props: Props) {
   const {
@@ -170,9 +177,11 @@ export function ErrorBar(props: Props) {
     );
   });
 
+  const realDirection: ErrorBarDirection = getRealDirection(props.direction, layout);
+
   return (
     <Layer className="recharts-errorBars">
-      <ReportErrorBarSettings dataKey={props.dataKey} direction={props.direction} />
+      <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
       {errorBars}
     </Layer>
   );

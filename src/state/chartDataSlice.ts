@@ -16,7 +16,7 @@ export type ChartData = unknown[];
  * We still don't know what the type is - that depends on what exactly it was before the dataKey application,
  * and the dataKey can return whatever anyway - but let's keep it separate as a form of documentation.
  *
- * TL;DR: ChartData after dataKey
+ * TL;DR: ChartData after dataKey.
  */
 export type AppliedChartData = ReadonlyArray<{ value: unknown }>;
 

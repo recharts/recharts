@@ -206,6 +206,25 @@ describe('selectAxisDomain', () => {
     expect(axisDomainSpy).toHaveBeenCalledTimes(3);
   });
 
+  it.fails('should be stable', () => {
+    // TODO make selectAxisDomain stable
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
+      const result2 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={data1} />
+        <Line data={data2} />
+        <XAxis dataKey="y" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+  });
+
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
     const domainSpy = vi.fn();
     const { container } = render(
@@ -2200,8 +2219,8 @@ describe('selectErrorBarsSettings', () => {
     render(
       <LineChart width={100} height={100} data={pageData}>
         <Line isAnimationActive={false}>
-          <ErrorBar dataKey="x" direction="x" />
-          <ErrorBar dataKey="y" direction="y" />
+          <ErrorBar dataKey="data-x" direction="x" />
+          <ErrorBar dataKey="data-y" direction="y" />
         </Line>
         <XAxis type="number" />
         <Customized component={Comp} />
@@ -2225,8 +2244,8 @@ describe('selectErrorBarsSettings', () => {
     render(
       <BarChart width={100} height={100}>
         <Bar data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
-          <ErrorBar dataKey="x" direction="x" />
-          <ErrorBar dataKey="y" direction="y" />
+          <ErrorBar dataKey="data-x" direction="x" />
+          <ErrorBar dataKey="data-y" direction="y" />
         </Bar>
         <Customized component={Comp} />
         <XAxis type="number" />
@@ -2234,13 +2253,13 @@ describe('selectErrorBarsSettings', () => {
     );
     expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'x',
+        dataKey: 'data-x',
         direction: 'x',
       },
     ]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'y',
+        dataKey: 'data-y',
         direction: 'y',
       },
     ]);
@@ -2260,8 +2279,8 @@ describe('selectErrorBarsSettings', () => {
       <LineChart width={100} height={100}>
         <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
         <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
-          <ErrorBar dataKey="x" direction="x" />
-          <ErrorBar dataKey="y" direction="y" />
+          <ErrorBar dataKey="data-x" direction="x" />
+          <ErrorBar dataKey="data-y" direction="y" />
         </Line>
         <Customized component={Comp} />
         <XAxis type="number" />
@@ -2269,13 +2288,48 @@ describe('selectErrorBarsSettings', () => {
     );
     expect(xAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'x',
+        dataKey: 'data-x',
         direction: 'x',
       },
     ]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([
       {
-        dataKey: 'y',
+        dataKey: 'data-y',
+        direction: 'y',
+      },
+    ]);
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+  });
+
+  it('should return bars settings if present in vertical LineChart', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const Comp = (): null => {
+      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} layout="vertical">
+        <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
+          <ErrorBar dataKey="data-x" direction="x" />
+          <ErrorBar dataKey="data-y" direction="y" />
+        </Line>
+        <Customized component={Comp} />
+        <XAxis type="number" />
+      </LineChart>,
+    );
+    expect(xAxisSpy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'data-x',
+        direction: 'x',
+      },
+    ]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith([
+      {
+        dataKey: 'data-y',
         direction: 'y',
       },
     ]);

@@ -15,6 +15,7 @@
   "es6/util/tooltip",
   "es6/util/scale",
   "es6/util/payload",
+  "es6/util/isWellBehavedNumber.js",
   "es6/util/isDomainSpecifiedByUser.js",
   "es6/util/getLegendProps.js",
   "es6/util/getEveryNthWithCondition.js",

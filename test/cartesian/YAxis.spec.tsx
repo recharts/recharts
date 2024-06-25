@@ -1,9 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, test, it, expect } from 'vitest';
-import { AreaChart, Area, YAxis, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip } from '../../src';
+import { describe, test, it, expect, vi } from 'vitest';
+import { AreaChart, Area, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip, YAxis, Customized } from '../../src';
 import { AxisDomain } from '../../src/util/types';
-import { pageData } from '../../storybook/stories/data/Page';
+import { pageData } from '../../storybook/stories/data';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectAxisSettings } from '../../src/state/axisSelectors';
+import { YAxisSettings } from '../../src/state/axisMapSlice';
 
 describe('<YAxis />', () => {
   const data = [
@@ -294,5 +297,154 @@ describe('<YAxis />', () => {
     expect(allText).toContain('800');
     expect(allText).toContain('1200');
     expect(allText).toContain('1600');
+  });
+
+  describe('state integration', () => {
+    it('should publish its configuration to redux store', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const settings = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'foo'));
+        spy(settings);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100}>
+          <YAxis yAxisId="foo" scale="log" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(container.querySelector('.yAxis')).toBeVisible();
+      expect(spy).toHaveBeenCalledTimes(3);
+      const expectedSettings: YAxisSettings = {
+        tickCount: 5,
+        allowDecimals: true,
+        id: 'foo',
+        scale: 'log',
+        type: 'number',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          top: 0,
+          bottom: 0,
+        },
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedSettings);
+    });
+
+    it('should remove the configuration from store when DOM element is removed', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const foo = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'foo'));
+        const bar = useAppSelector(state => selectAxisSettings(state, 'yAxis', 'bar'));
+        spy({ foo, bar });
+        return null;
+      };
+      const { rerender } = render(
+        <BarChart width={100} height={100}>
+          <YAxis yAxisId="foo" scale="log" type="number" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      const expectedSettings1: YAxisSettings = {
+        tickCount: 5,
+        allowDecimals: true,
+        id: 'foo',
+        scale: 'log',
+        type: 'number',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          top: 0,
+          bottom: 0,
+        },
+      };
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: expectedSettings1,
+        bar: undefined,
+      });
+      rerender(
+        <BarChart width={100} height={100}>
+          <YAxis yAxisId="foo" scale="log" type="number" />
+          <YAxis yAxisId="bar" scale="utc" type="category" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      const expectedSettings2: {
+        bar: YAxisSettings;
+        foo: YAxisSettings;
+      } = {
+        foo: {
+          id: 'foo',
+          scale: 'log',
+          type: 'number',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            top: 0,
+            bottom: 0,
+          },
+          allowDecimals: true,
+          tickCount: 5,
+        },
+        bar: {
+          id: 'bar',
+          scale: 'utc',
+          type: 'category',
+          allowDataOverflow: false,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          padding: {
+            top: 0,
+            bottom: 0,
+          },
+          allowDecimals: true,
+          tickCount: 5,
+        },
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
+      rerender(
+        <BarChart width={100} height={100}>
+          <YAxis yAxisId="bar" scale="utc" type="category" />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      const expectedSettings3: YAxisSettings = {
+        tickCount: 5,
+        id: 'bar',
+        scale: 'utc',
+        type: 'category',
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        padding: {
+          top: 0,
+          bottom: 0,
+        },
+        allowDecimals: true,
+      };
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: undefined,
+        bar: expectedSettings3,
+      });
+      rerender(
+        <BarChart width={100} height={100}>
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        foo: undefined,
+        bar: undefined,
+      });
+    });
   });
 });
