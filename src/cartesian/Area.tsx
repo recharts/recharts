@@ -666,7 +666,7 @@ export class Area extends PureComponent<Props, State> {
             </defs>
           ) : null}
           {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
-          {(dot || hasSinglePoint) && this.renderDots(needClip, clipDot, clipPathId)}
+          {(dot || (hasSinglePoint && dot !== false)) && this.renderDots(needClip, clipDot, clipPathId)}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
