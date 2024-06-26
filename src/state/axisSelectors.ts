@@ -178,7 +178,7 @@ type AppliedChartDataWithErrorDomain = {
 
 /**
  * This is type of "error" in chart. It is set by using ErrorBar, and it can represent confidence interval,
- * or ap in the data, or standard deviation, or quartiles in boxplot, or whiskers or whatever.
+ * or gap in the data, or standard deviation, or quartiles in boxplot, or whiskers or whatever.
  *
  * We will internally represent it as a tuple of two numbers, where the first number is the lower bound and the second number is the upper bound.
  *
