@@ -23,6 +23,12 @@ export const Simple = {
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
+    margin: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
   },
 };
 
@@ -43,6 +49,12 @@ export const BarInBar = {
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
+    margin: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
   },
 };
 
@@ -67,5 +79,11 @@ export const Stacked = {
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
     id: 'BarChart-Stacked',
+    margin: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
   },
 };

@@ -38,7 +38,7 @@ export const margin = {
     type: {
       summary: 'Object',
     },
-    defaultValue: { top: 0, right: 0, bottom: 0, left: 0 },
+    defaultValue: { top: 5, right: 5, bottom: 5, left: 5 },
     category: 'General',
   },
 };
