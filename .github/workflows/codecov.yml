@@ -11,8 +11,6 @@ jobs:
   codecov:
     name: Upload code coverage
     runs-on: ubuntu-latest
-    env:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
 
       - uses: actions/checkout@v3
@@ -30,7 +28,8 @@ jobs:
         run: npm run test-coverage
 
       - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4
         with:
           slug: recharts/recharts
           files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
