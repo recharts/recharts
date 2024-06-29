@@ -1014,10 +1014,9 @@ const STACK_OFFSET_MAP: Record<string, OffsetAccessor> = {
 
 export const getStackedData = (
   data: ReadonlyArray<Record<string, unknown>>,
-  stackItems: ReadonlyArray<{ props: { dataKey?: DataKey<any> } }>,
+  dataKeys: ReadonlyArray<DataKey<any>>,
   offsetType: StackOffsetType,
 ): ReadonlyArray<Series<Record<string, unknown>, string>> => {
-  const dataKeys = stackItems.map(item => item.props.dataKey);
   const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType];
   const stack = shapeStack<Record<string, unknown>>()
     // @ts-expect-error stack.keys type wants an array of strings, but we provide array of DataKeys
@@ -1115,7 +1114,11 @@ export const getStackGroupsByAxisId = (
             numericAxisId,
             cateAxisId,
             items: g.items,
-            stackedData: getStackedData(data, g.items, offsetType),
+            stackedData: getStackedData(
+              data,
+              g.items.map(item => item.props.dataKey),
+              offsetType,
+            ),
           },
         };
       }, stackGroupsInitialValue);
