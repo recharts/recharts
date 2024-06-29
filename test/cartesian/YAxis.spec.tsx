@@ -539,6 +539,57 @@ describe('<YAxis />', () => {
       },
     );
 
+    it('should ignore domain of hidden items', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '25',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
+    });
+
     it('should render positive and negative ticks with stackOffset = "sign"', () => {
       const stackedSignedData = [
         {
