@@ -4,10 +4,10 @@ import { StorybookArgs } from '../../../StorybookArgs';
 export const getStoryArgsFromArgsTypesObject = (argsTypes: StorybookArgs): Record<string, unknown> => {
   const args: Record<string, unknown> = {};
   Object.keys(argsTypes).forEach((key: string) => {
-    const defaultValue = argsTypes[key]?.defaultValue ?? argsTypes[key]?.table?.defaultValue;
-    // TODO this erases zeroes and `False` values, perhaps it should check for undefined instead?
-    if (defaultValue) {
-      args[key] = defaultValue;
+    if ('defaultValue' in argsTypes[key]) {
+      args[key] = argsTypes[key].defaultValue;
+    } else if ('table' in argsTypes[key] && 'defaultValue' in argsTypes[key].table) {
+      args[key] = argsTypes[key].table.defaultValue;
     }
   });
   return args;
