@@ -4,6 +4,7 @@ import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/axisMapSlice';
 import { DataKey } from '../util/types';
+import { StackId } from '../util/ChartUtils';
 
 const noop = () => {};
 
@@ -23,6 +24,7 @@ type GraphicalItemContextProps = {
   yAxisId: AxisId;
   dataKey: DataKey<any>;
   children: React.ReactNode;
+  stackId: StackId | undefined;
 };
 
 export const CartesianGraphicalItemContext = ({
@@ -31,6 +33,7 @@ export const CartesianGraphicalItemContext = ({
   yAxisId,
   dataKey,
   data,
+  stackId,
 }: GraphicalItemContextProps) => {
   const [errorBars, updateErrorBars] = React.useState<ReadonlyArray<ErrorBarsSettings>>([]);
   // useCallback is necessary in these two because without it, the new function reference causes an infinite render loop
@@ -54,6 +57,7 @@ export const CartesianGraphicalItemContext = ({
         yAxisId={yAxisId}
         dataKey={dataKey}
         errorBars={errorBars}
+        stackId={stackId}
       />
       {children}
     </ErrorBarDirectionDispatchContext.Provider>

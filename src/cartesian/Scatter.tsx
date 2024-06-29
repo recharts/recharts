@@ -532,6 +532,8 @@ export class Scatter extends PureComponent<Props, State> {
             yAxisId={this.props.yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
+            // scatter doesn't stack
+            stackId={undefined}
           />
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
@@ -551,6 +553,8 @@ export class Scatter extends PureComponent<Props, State> {
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
         dataKey={this.props.dataKey}
+        // scatter doesn't stack
+        stackId={undefined}
       >
         <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <SetScatterLegend {...this.props} />

@@ -4,6 +4,7 @@ import { ChartData } from './chartDataSlice';
 import { AxisId } from './axisMapSlice';
 import { DataKey } from '../util/types';
 import { ErrorBarDirection } from '../cartesian/ErrorBar';
+import { StackId } from '../util/ChartUtils';
 
 /**
  * ErrorBars have lot more settings but all the others are scoped to the component itself.
@@ -42,6 +43,7 @@ export type CartesianGraphicalItemSettings = {
    * One graphical item can have multiple error bars. This probably only makes sense in Scatter.
    */
   errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
+  stackId: StackId | undefined;
 };
 
 export type GraphicalItemsState = {

@@ -1365,8 +1365,9 @@ describe('selectCartesianGraphicalItemsData', () => {
   it('should be stable', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
-      errorBars: undefined,
-      dataKey: undefined,
+      stackId: 's-id',
+      errorBars: [],
+      dataKey: 'dataKey',
       data: PageData,
       xAxisId: 'x',
       yAxisId: 'y',
@@ -2439,6 +2440,7 @@ describe('selectErrorBarsSettings', () => {
   it('should be stable with data', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
+      stackId: 'q',
       dataKey: 'x',
       data: [],
       xAxisId: '',

@@ -253,6 +253,7 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelecto
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
     axisType: AxisType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
+    // TODO add stacks
     if (items.length > 0) {
       return data
         .flatMap(entry => {
@@ -369,8 +370,6 @@ export const selectAxisDomain = (
     const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
     return computeCategoricalDomain(allDataSquished, axisSettings);
   }
-
-  // TODO getDomainOfStackGroups here
 
   return selectNumericalDomain(state, axisSettings, axisType, axisId);
 };

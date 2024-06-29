@@ -5,8 +5,9 @@ import { AreaChart, Area, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip
 import { AxisDomain } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisSettings } from '../../src/state/axisSelectors';
+import { selectAxisDomain, selectAxisSettings } from '../../src/state/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
+import { expectYAxisTicks } from '../helper/expectAxisTicks';
 
 describe('<YAxis />', () => {
   const data = [
@@ -445,6 +446,94 @@ describe('<YAxis />', () => {
         foo: undefined,
         bar: undefined,
       });
+    });
+  });
+
+  describe('in stacked BarChart', () => {
+    it('should render sum of stacked values', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container, rerender } = render(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '25',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
+      rerender(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '150',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '225',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '300',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 300]);
     });
   });
 });

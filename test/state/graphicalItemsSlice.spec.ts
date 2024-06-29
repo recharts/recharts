@@ -13,6 +13,7 @@ describe('graphicalItemsSlice', () => {
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(0);
 
     const item: CartesianGraphicalItemSettings = {
+      stackId: undefined,
       errorBars: undefined,
       dataKey: undefined,
       data: PageData,
