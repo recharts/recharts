@@ -616,6 +616,7 @@ export class Area extends PureComponent<Props, State> {
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             stackId={this.props.stackId}
+            hide={this.props.hide}
           />
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
@@ -641,6 +642,7 @@ export class Area extends PureComponent<Props, State> {
         dataKey={this.props.dataKey}
         yAxisId={this.props.yAxisId}
         stackId={this.props.stackId}
+        hide={this.props.hide}
       >
         <Layer className={layerClass}>
           <SetAreaLegend {...this.props} />

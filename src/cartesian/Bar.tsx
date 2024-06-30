@@ -667,6 +667,7 @@ export class Bar extends PureComponent<Props, State> {
         yAxisId={this.props.yAxisId}
         dataKey={this.props.dataKey}
         stackId={this.props.stackId}
+        hide={this.props.hide}
       >
         <Layer className={layerClass}>
           <ReportBar />

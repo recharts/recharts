@@ -25,6 +25,7 @@ type GraphicalItemContextProps = {
   dataKey: DataKey<any>;
   children: React.ReactNode;
   stackId: StackId | undefined;
+  hide: boolean;
 };
 
 export const CartesianGraphicalItemContext = ({
@@ -34,6 +35,7 @@ export const CartesianGraphicalItemContext = ({
   dataKey,
   data,
   stackId,
+  hide,
 }: GraphicalItemContextProps) => {
   const [errorBars, updateErrorBars] = React.useState<ReadonlyArray<ErrorBarsSettings>>([]);
   // useCallback is necessary in these two because without it, the new function reference causes an infinite render loop
@@ -58,6 +60,7 @@ export const CartesianGraphicalItemContext = ({
         dataKey={dataKey}
         errorBars={errorBars}
         stackId={stackId}
+        hide={hide}
       />
       {children}
     </ErrorBarDirectionDispatchContext.Provider>

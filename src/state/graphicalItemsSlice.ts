@@ -44,6 +44,13 @@ export type CartesianGraphicalItemSettings = {
    */
   errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
   stackId: StackId | undefined;
+  /**
+   * Why not just stop pushing the graphical items to state when they are hidden?
+   * Well some components decide to continue showing them anyway.
+   * Legend for example will keep showing a record for hidden graphical items.
+   * Stacks for example will ignore them.
+   */
+  hide: boolean;
 };
 
 export type GraphicalItemsState = {
