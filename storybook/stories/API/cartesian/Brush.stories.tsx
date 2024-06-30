@@ -17,17 +17,14 @@ const GeneralProps: Args = {
   x: {
     description: 'The x-coordinate of brush.',
     table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 0,
   },
   y: {
     description: 'The y-coordinate of brush.',
     table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 0,
   },
   width: {
     description: 'The width of brush.',
     table: { type: { summary: 'number' }, category: 'General' },
-    defaultValue: 0,
   },
   height: {
     description: 'The height of brush.',
