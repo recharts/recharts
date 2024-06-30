@@ -30,6 +30,7 @@ import {
   ChartOffset,
   DataKey,
   LayoutType,
+  StackOffsetType,
   TickItem,
   TooltipEventType,
 } from '../util/types';
@@ -51,6 +52,8 @@ import { selectChartDataWithIndexes } from './dataSelectors';
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
 export const selectBarCategoryGap = (state: RechartsRootState) => state.options.barCategoryGap;
+
+export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.options.stackOffset;
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);

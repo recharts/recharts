@@ -11,6 +11,7 @@ import {
   selectDisplayedData,
   selectErrorBarsSettings,
   selectHasBar,
+  selectNiceTicks,
   selectSmallestDistanceBetweenValues,
 } from '../../src/state/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
@@ -39,6 +40,7 @@ import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../..
 import { generateMockData } from '../helper/generateMockData';
 import { AxisId } from '../../src/state/axisMapSlice';
 import { pageData } from '../../storybook/stories/data';
+import { AxisDomain } from '../../src/util/types';
 
 const defaultAxisId: AxisId = 0;
 
@@ -401,7 +403,7 @@ describe('selectAxisDomain', () => {
       ]);
     });
 
-    it('should return 0,0 if the data is not numerical', () => {
+    it('should return undefined if the data is not numerical', () => {
       const spy = vi.fn();
       const Comp = (): null => {
         const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
@@ -414,7 +416,7 @@ describe('selectAxisDomain', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 0]);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
       expectXAxisTicks(container, []);
     });
 
@@ -462,7 +464,7 @@ describe('selectAxisDomain', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 10000]);
+      expect(spy).toHaveBeenLastCalledWith([0, 9999]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -562,7 +564,7 @@ describe('selectAxisDomain', () => {
           <Customized component={Comp} />
         </ComposedChart>,
       );
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 220]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 210]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -2458,5 +2460,86 @@ describe('selectErrorBarsSettings', () => {
     const result1 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
     const result2 = selectErrorBarsSettings(store.getState(), 'xAxis', defaultAxisId);
     expect(result1).toBe(result2);
+  });
+});
+
+describe('selectNiceTicks', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectNiceTicks(state, 'xAxis', defaultAxisId));
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return undefined for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectNiceTicks(store.getState(), 'xAxis', defaultAxisId)).toEqual(undefined);
+  });
+
+  it('should return undefined in a chart with no XAxis', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectNiceTicks(state, 'xAxis', defaultAxisId));
+      spy(result);
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Bar isAnimationActive={false} />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith(undefined);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return undefined if there is no axis with matching ID', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const Comp = (): null => {
+      xAxisSpy(useAppSelector(state => selectNiceTicks(state, 'xAxis', 'foo')));
+      yAxisSpy(useAppSelector(state => selectNiceTicks(state, 'yAxis', 'bar')));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={pageData}>
+        <Line isAnimationActive={false} />
+        <XAxis type="number" />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    // There is an XAxis but it has a different ID
+    expect(xAxisSpy).toHaveBeenLastCalledWith(undefined);
+    expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+  });
+
+  const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
+    { domain: undefined, expectedTicks: [0, 400, 800, 1200, 1600] },
+    { domain: ['auto', 'auto'], expectedTicks: [350, 700, 1050, 1400, 1750] },
+    { domain: [-500, 'auto'], expectedTicks: [-550, 0, 550, 1100, 1650] },
+    { domain: ['auto', 3000], expectedTicks: [0, 750, 1500, 2250, 3000] },
+  ];
+
+  it.each(casesThatProduceNiceTicks)('should return nice ticks when domain=%s', ({ domain, expectedTicks }) => {
+    const niceTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectNiceTicks(state, 'xAxis', defaultAxisId));
+      niceTicksSpy(result);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={pageData}>
+        <Line dataKey="pv" isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" domain={domain} />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
+    expect(niceTicksSpy).toHaveBeenCalledTimes(3);
   });
 });

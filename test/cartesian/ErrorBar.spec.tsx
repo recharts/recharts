@@ -321,7 +321,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3300]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(3);
       rerender(
         <BarChart data={dataWithError} width={500} height={500}>
@@ -361,7 +361,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3440]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(6);
     });
 
@@ -407,7 +407,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3300]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(3);
 
       rerender(
@@ -448,7 +448,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3440]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(6);
     });
 
@@ -494,7 +494,7 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3300]);
       expect(xAxisSpy).toHaveBeenCalledTimes(3);
 
       rerender(
@@ -538,7 +538,7 @@ describe('<ErrorBar />', () => {
       ]);
       // Yep look at this - the selector has fixed this bug and is now extending XAxis domain too.
       // Once we switch from generateCategoricalChart domain to redux domain, then the axis will be fixed too
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3440]);
       expect(xAxisSpy).toHaveBeenCalledTimes(6);
     });
   });

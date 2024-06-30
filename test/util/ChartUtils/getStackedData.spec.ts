@@ -297,4 +297,30 @@ describe('getStackedData', () => {
     offsetSign(data, []);
     expect(data).toEqual(expected);
   });
+
+  test('stacking numbers encoded as strings produces numbers', () => {
+    const data = [
+      { name: 'A', uv: '1', pv: '2' },
+      { name: 'B', uv: '3', pv: '4' },
+    ];
+    const result = getStackedData(data, ['uv', 'pv'], 'none');
+    const expected = [
+      createSeries('uv', 0, [createSeriesPoint(0, 1, data[0]), createSeriesPoint(0, 3, data[1])]),
+      createSeries('pv', 1, [createSeriesPoint(1, 3, data[0]), createSeriesPoint(3, 7, data[1])]),
+    ];
+    expect(result).toEqual(expected);
+  });
+
+  test('stacking strings that are not numbers produces NaN - this is a bug if you ask me, we should reject non-numerical data', () => {
+    const data = [
+      { name: 'A', uv: 'a', pv: 'b' },
+      { name: 'B', uv: 'c', pv: 'd' },
+    ];
+    const result = getStackedData(data, ['uv', 'pv'], 'none');
+    const expected = [
+      createSeries('uv', 0, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
+      createSeries('pv', 1, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
+    ];
+    expect(result).toEqual(expected);
+  });
 });

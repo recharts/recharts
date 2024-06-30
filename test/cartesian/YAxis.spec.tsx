@@ -238,7 +238,7 @@ describe('<YAxis />', () => {
           y: '5',
         },
       ]);
-      expect(domainSpy).toHaveBeenLastCalledWith([0, 10000]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 9800]);
     });
 
     it.each([false, undefined])('should exclude hidden items domain when includeHidden=%s', includeHidden => {
@@ -328,7 +328,7 @@ describe('<YAxis />', () => {
           y: '5',
         },
       ]);
-      expect(domainSpy).toHaveBeenLastCalledWith([0, 10000]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 9800]);
     });
   });
 
@@ -732,7 +732,7 @@ describe('<YAxis />', () => {
           y: '5',
         },
       ]);
-      expect(domainSpy).toHaveBeenLastCalledWith([0, 200]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 210]);
 
       // the same data, when not stacked, are included when includeHidden is true.
       rerender(
@@ -822,6 +822,7 @@ describe('<YAxis />', () => {
           y: '5',
         },
       ]);
+      // -2000, 100 is the correct domain - the tick generator decides to extend it beyond, to 700. But the domain ends at 100.
       expect(domainSpy).toHaveBeenLastCalledWith([-2000, 100]);
     });
 
@@ -1029,4 +1030,6 @@ describe('<YAxis />', () => {
       expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
     });
   });
+
+  describe.todo('Reference elements should expand domain');
 });

@@ -1,10 +1,28 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
+import { Series } from 'victory-vendor/d3-shape';
 import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
-import { getValueByDataKey, isCategoricalAxis, ParsedScaleReturn, parseScale } from '../util/ChartUtils';
-import { AxisDomain, AxisType, CategoricalDomain, ChartOffset, LayoutType, NumberDomain } from '../util/types';
+import {
+  getDomainOfStackGroups,
+  getStackedData,
+  getValueByDataKey,
+  isCategoricalAxis,
+  ParsedScaleReturn,
+  parseScale,
+  StackId,
+} from '../util/ChartUtils';
+import {
+  AxisDomain,
+  AxisType,
+  CategoricalDomain,
+  ChartOffset,
+  DataKey,
+  LayoutType,
+  NumberDomain,
+  StackOffsetType,
+} from '../util/types';
 import { AxisId, AxisSettings, XAxisSettings, YAxisSettings } from './axisMapSlice';
-import { selectBarCategoryGap, selectChartName } from './selectors';
+import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from './store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import {
@@ -15,6 +33,7 @@ import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import { getNiceTickValues } from '../util/scale';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -80,6 +99,14 @@ const selectCartesianItemsSettings: (
       }
       return !item.hide;
     }),
+);
+
+const selectCartesianItemsSettingsExceptStacked: (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(selectCartesianItemsSettings, cartesianItems =>
+  cartesianItems.filter(item => item.stackId === undefined),
 );
 
 /**
@@ -256,10 +283,58 @@ export function getErrorDomainByDataKey(
   );
 }
 
+export type StackGroup = { readonly stackedData: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> };
+
+export const selectStackGroups: (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+) => Record<StackId, StackGroup> = createSelector(
+  selectDisplayedData,
+  selectCartesianItemsSettings,
+  selectStackOffsetType,
+  (
+    displayedData,
+    items: ReadonlyArray<CartesianGraphicalItemSettings>,
+    stackOffsetType: StackOffsetType,
+  ): Record<StackId, StackGroup> => {
+    const initialItemsGroups: Record<StackId, Array<DataKey<any>>> = {};
+    const itemsGroup: Record<StackId, ReadonlyArray<DataKey<any>>> = items.reduce(
+      (acc: Record<StackId, Array<DataKey<any>>>, item: CartesianGraphicalItemSettings) => {
+        if (item.stackId == null) {
+          return acc;
+        }
+        if (acc[item.stackId] == null) {
+          acc[item.stackId] = [];
+        }
+        acc[item.stackId].push(item.dataKey);
+        return acc;
+      },
+      initialItemsGroups,
+    );
+
+    return Object.fromEntries(
+      Object.entries(itemsGroup).map(([stackId, dataKeys]) => {
+        // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
+        return [stackId, { stackedData: getStackedData(displayedData, dataKeys, stackOffsetType) }];
+      }),
+    );
+  },
+);
+
+export const selectDomainOfStackGroups = createSelector(
+  selectStackGroups,
+  selectChartDataWithIndexes,
+  (stackGroups, { dataStartIndex, dataEndIndex }): NumberDomain => {
+    // @ts-expect-error typescript is unhappy with the two different types of StackGroups
+    return getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
+  },
+);
+
 export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelector(
   selectDisplayedData,
   selectAxisSettings,
-  selectCartesianItemsSettings,
+  selectCartesianItemsSettingsExceptStacked,
   pickAxisType,
   (
     data: ChartData,
@@ -267,7 +342,6 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelecto
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
     axisType: AxisType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
-    // TODO add stacks
     if (items.length > 0) {
       return data
         .flatMap(entry => {
@@ -331,13 +405,17 @@ const computeCategoricalDomain = (allDataSquished: AppliedChartData, axisSetting
   return Array.from(new Set(categoricalDomain));
 };
 
+const defaultNumericDomain: AxisDomain = [0, 'auto'];
+
+const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => axisSettings?.domain ?? defaultNumericDomain;
+
 const selectNumericalDomain = (
   state: RechartsRootState,
   axisSettings: AxisSettings,
   axisType: AxisType,
   axisId: AxisId,
 ): NumberDomain => {
-  const domainDefinition: AxisDomain = axisSettings.domain ?? [0, 'auto'];
+  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
 
   const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
     domainDefinition,
@@ -348,18 +426,25 @@ const selectNumericalDomain = (
     return domainFromUserPreference;
   }
 
-  const allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain> =
-    selectAllAppliedNumericalValuesIncludingErrorValues(state, axisType, axisId);
-  const domainFromData = computeNumericalDomain(allDataWithErrorDomains);
+  let domainFromData: NumberDomain;
+  const domainOfStackGroups = selectDomainOfStackGroups(state, axisType, axisId);
+  if (domainOfStackGroups[0] !== 0 || domainOfStackGroups[1] !== 0) {
+    domainFromData = domainOfStackGroups;
+  } else {
+    const allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain> =
+      selectAllAppliedNumericalValuesIncludingErrorValues(state, axisType, axisId);
+    domainFromData = computeNumericalDomain(allDataWithErrorDomains);
+  }
 
-  return parseNumericalUserDomain(
-    domainDefinition,
-    domainFromData,
-    axisSettings.allowDataOverflow,
-    axisSettings.allowDecimals,
-    axisSettings.tickCount,
-  );
+  return parseNumericalUserDomain(domainDefinition, domainFromData, axisSettings.allowDataOverflow);
 };
+
+/**
+ * Expand by design maps everything between 0 and 1,
+ * there is nothing to compute.
+ * See https://d3js.org/d3-shape/stack#stack-offsets
+ */
+const expandDomain: NumberDomain = [0, 1];
 
 export const selectAxisDomain = (
   state: RechartsRootState,
@@ -385,8 +470,28 @@ export const selectAxisDomain = (
     return computeCategoricalDomain(allDataSquished, axisSettings);
   }
 
+  if (selectStackOffsetType(state) === 'expand') {
+    return expandDomain;
+  }
+
   return selectNumericalDomain(state, axisSettings, axisType, axisId);
 };
+
+export const selectNiceTicks = createSelector(
+  selectAxisDomain,
+  selectAxisSettings,
+  (axisDomain, axisSettings): ReadonlyArray<number> | undefined => {
+    const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+    if (
+      axisSettings != null &&
+      Array.isArray(domainDefinition) &&
+      (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto')
+    ) {
+      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
+    }
+    return undefined;
+  },
+);
 
 /**
  * Returns the smallest gap, between two numbers in the data, as a ratio of the whole range (max - min).

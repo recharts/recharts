@@ -1016,10 +1016,9 @@ export const getStackedData = (
   data: ReadonlyArray<Record<string, unknown>>,
   dataKeys: ReadonlyArray<DataKey<any>>,
   offsetType: StackOffsetType,
-): ReadonlyArray<Series<Record<string, unknown>, string>> => {
+): ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> => {
   const offsetAccessor: OffsetAccessor = STACK_OFFSET_MAP[offsetType];
-  const stack = shapeStack<Record<string, unknown>>()
-    // @ts-expect-error stack.keys type wants an array of strings, but we provide array of DataKeys
+  const stack = shapeStack<Record<string, unknown>, DataKey<any>>()
     .keys(dataKeys)
     .value((d, key) => +getValueByDataKey(d, key, 0))
     .order(stackOrderNone)
@@ -1044,7 +1043,7 @@ export type GenericChildStackGroup<T> = {
   stackedData?: ReadonlyArray<T>;
 };
 
-export type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, string>>;
+export type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
 
 export type AxisStackGroups = Record<AxisId, ParentStackGroup>;
 
@@ -1257,6 +1256,12 @@ export const getBaseValueOfBar = ({
   return domain[0];
 };
 
+/**
+ * @deprecated do not use - relies on direct DOM access
+ * @param item do not use
+ * @param stackGroups do not use
+ * @return deprecated, do not use
+ */
 export const getStackedDataOfItem = <StackedData>(
   item: ReactElement,
   stackGroups: Record<StackId, GenericChildStackGroup<StackedData>>,
@@ -1275,23 +1280,23 @@ export const getStackedDataOfItem = <StackedData>(
   return null;
 };
 
-const getDomainOfSingle = (data: Array<Array<any>>): number[] =>
-  data.reduce(
-    (result: number[], entry: Array<any>): number[] => [
-      min(entry.concat([result[0]]).filter(isNumber)),
-      max(entry.concat([result[1]]).filter(isNumber)),
-    ],
-    [Infinity, -Infinity],
-  );
+const getDomainOfSingle = (data: Array<Array<any>>): number[] => {
+  const flat = data.flat(2).filter(isNumber);
+  return [Math.min(...flat), Math.max(...flat)];
+};
+
+const makeDomainFinite = (domain: NumberDomain): NumberDomain => {
+  return [domain[0] === Infinity ? 0 : domain[0], domain[1] === -Infinity ? 0 : domain[1]];
+};
 
 export const getDomainOfStackGroups = (
   stackGroups: Record<StackId, ChildStackGroup>,
   startIndex: number,
   endIndex: number,
-) =>
-  Object.keys(stackGroups)
-    .reduce(
-      (result, stackId) => {
+): NumberDomain =>
+  makeDomainFinite(
+    Object.keys(stackGroups).reduce(
+      (result, stackId): NumberDomain => {
         const group = stackGroups[stackId];
         const { stackedData } = group;
         const domain = stackedData.reduce(
@@ -1306,8 +1311,8 @@ export const getDomainOfStackGroups = (
         return [Math.min(domain[0], result[0]), Math.max(domain[1], result[1])];
       },
       [Infinity, -Infinity],
-    )
-    .map(result => (result === Infinity || result === -Infinity ? 0 : result));
+    ),
+  );
 
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
