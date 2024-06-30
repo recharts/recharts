@@ -399,7 +399,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
-          data: [],
+          data: null,
           dataKey: 'value',
           xAxisId: 0,
           yAxisId: 0,

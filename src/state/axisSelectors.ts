@@ -38,6 +38,7 @@ export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType,
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
 const pickAxisType = (_state: RechartsRootState, axisType: AxisType): AxisType => axisType;
+const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: AxisId): AxisId => axisId;
 
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
@@ -61,12 +62,25 @@ function itemAxisPredicate(axisType: AxisType, axisId: AxisId) {
   };
 }
 
+const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
+
 const selectCartesianItemsSettings: (
   state: RechartsRootState,
   axisType: AxisType,
   axisId: AxisId,
-) => ReadonlyArray<CartesianGraphicalItemSettings> = (state: RechartsRootState, axisType: AxisType, axisId: AxisId) =>
-  state.graphicalItems.cartesianItems.filter(itemAxisPredicate(axisType, axisId));
+) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
+  selectUnfilteredCartesianItems,
+  selectAxisSettings,
+  pickAxisType,
+  pickAxisId,
+  (cartesianItems, axisSettings, axisType: AxisType, axisId: AxisId) =>
+    cartesianItems.filter(itemAxisPredicate(axisType, axisId)).filter(item => {
+      if (axisSettings?.includeHidden === true) {
+        return true;
+      }
+      return !item.hide;
+    }),
+);
 
 /**
  * This is a "cheap" selector - it returns the data but doesn't iterate them, so it is not sensitive on the array length.

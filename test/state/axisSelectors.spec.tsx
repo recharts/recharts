@@ -1392,7 +1392,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty array in a chart with root data', () => {
@@ -1579,7 +1579,7 @@ describe('selectDisplayedData', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return the original data if there is no axis with matching ID', () => {
@@ -2046,7 +2046,7 @@ describe('selectAllAppliedValues', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty array if there is no axis with matching ID', () => {
