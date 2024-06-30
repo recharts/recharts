@@ -539,7 +539,7 @@ describe('<YAxis />', () => {
       },
     );
 
-    it('should ignore domain of hidden items', () => {
+    it.each([undefined, false])('should ignore domain of hidden items when includeHidden=%s', includeHidden => {
       const stackedData = [
         {
           x: 100,
@@ -554,7 +554,7 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100} data={stackedData}>
-          <YAxis />
+          <YAxis includeHidden={includeHidden} />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" hide />
           <Customized component={<Comp />} />
@@ -603,7 +603,6 @@ describe('<YAxis />', () => {
         domainSpy(domain);
         return null;
       };
-      // includeHidden does not work with stacked data, why?
       const { container, rerender } = render(
         <BarChart width={100} height={100} data={stackedData}>
           <YAxis includeHidden />
@@ -612,6 +611,7 @@ describe('<YAxis />', () => {
           <Customized component={<Comp />} />
         </BarChart>,
       );
+      // includeHidden does not work with stacked data, why?
       expectYAxisTicks(container, [
         {
           textContent: '0',
@@ -639,7 +639,7 @@ describe('<YAxis />', () => {
           y: '5',
         },
       ]);
-      expect(domainSpy).toHaveBeenLastCalledWith([0, 12]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 200]);
 
       // the same data, when not stacked, are included when includeHidden is true.
       rerender(

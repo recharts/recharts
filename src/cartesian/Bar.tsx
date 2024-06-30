@@ -55,6 +55,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -646,6 +647,16 @@ export class Bar extends PureComponent<Props, State> {
     if (hide || !data || !data.length) {
       return (
         <>
+          <SetCartesianGraphicalItem
+            // Bar does not allow setting data directly on the graphical item (why?)
+            data={null}
+            xAxisId={this.props.xAxisId}
+            yAxisId={this.props.yAxisId}
+            dataKey={this.props.dataKey}
+            errorBars={emptyArray}
+            stackId={this.props.stackId}
+            hide={this.props.hide}
+          />
           <ReportBar />
           <SetBarLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
@@ -662,7 +673,8 @@ export class Bar extends PureComponent<Props, State> {
 
     return (
       <CartesianGraphicalItemContext
-        data={emptyArray}
+        // Bar does not allow setting data directly on the graphical item (why?)
+        data={null}
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
         dataKey={this.props.dataKey}
