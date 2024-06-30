@@ -9,7 +9,7 @@ export type YAxisPadding = { top?: number; bottom?: number } | 'gap' | 'no-gap';
 
 /**
  * These are the external props, visible for users as they set them using our public API.
- * There is all sorts of internal computed things based on these but they will come through selectors.
+ * There is all sorts of internal computed things based on these, but they will come through selectors.
  */
 export type AxisSettings = {
   id: AxisId;
@@ -27,6 +27,7 @@ export type AxisSettings = {
   allowDuplicatedCategory: boolean;
   allowDecimals: boolean;
   tickCount: number;
+  includeHidden: boolean;
 };
 
 export type XAxisSettings = AxisSettings & {

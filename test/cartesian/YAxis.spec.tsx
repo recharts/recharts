@@ -310,13 +310,14 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" />
+          <YAxis yAxisId="foo" scale="log" type="number" includeHidden />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -349,6 +350,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -379,6 +381,7 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          includeHidden: false,
           id: 'foo',
           scale: 'log',
           type: 'number',
@@ -394,6 +397,7 @@ describe('<YAxis />', () => {
           tickCount: 5,
         },
         bar: {
+          includeHidden: false,
           id: 'bar',
           scale: 'utc',
           type: 'category',
@@ -418,6 +422,7 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         id: 'bar',
         scale: 'utc',
