@@ -195,53 +195,141 @@ describe('<YAxis />', () => {
     );
   });
 
-  it('Render identical ticks when data is hidden and includeHidden is true', () => {
-    const wrapperBothShowing = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-      </BarChart>,
-    );
+  describe('includeHidden', () => {
+    it.each([undefined, true, false])('should show ticks for visibleData when includeHidden=%s', includeHidden => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden={includeHidden} />
+          <Bar dataKey="pv" />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '2500',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '5000',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '7500',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '10000',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 10000]);
+    });
 
-    const wrapperFirstHidden = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-      </BarChart>,
-    );
+    it.each([false, undefined])('should exclude hidden items domain when includeHidden=%s', includeHidden => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden={includeHidden} />
+          <Bar dataKey="pv" hide />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '200',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '300',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '400',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 400]);
+    });
 
-    const wrapperSecondHidden = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
-      </BarChart>,
-    );
-
-    const ticksBothShowing = wrapperBothShowing.container.querySelectorAll('text');
-    const ticksFirstHidden = wrapperFirstHidden.container.querySelectorAll('text');
-    const ticksSecondHidden = wrapperSecondHidden.container.querySelectorAll('text');
-
-    expect(ticksFirstHidden.length).toBe(ticksBothShowing.length);
-    expect(ticksFirstHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
-    expect(ticksFirstHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
-
-    expect(ticksSecondHidden.length).toBe(ticksBothShowing.length);
-    expect(ticksSecondHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
-    expect(ticksSecondHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
-
-    const barsBothShowing = wrapperBothShowing.container.querySelectorAll('recharts-bar-rectangle > path');
-    const barsFirstHidden = wrapperFirstHidden.container.querySelectorAll('recharts-bar-rectangle > path');
-    const barsSecondHidden = wrapperSecondHidden.container.querySelectorAll('recharts-bar-rectangle > path');
-
-    // spreading to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
-    expect(
-      [...Array.from(barsSecondHidden), ...Array.from(barsFirstHidden)].every((bar, i) => {
-        return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height');
-      }),
-    ).toBe(true);
+    it('should include hidden data domain when includeHidden=true', () => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden />
+          <Bar dataKey="pv" hide />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '2500',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '5000',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '7500',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '10000',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 10000]);
+    });
   });
 
   it('should render all labels in an example', () => {
