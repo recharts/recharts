@@ -590,6 +590,97 @@ describe('<YAxis />', () => {
       expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
     });
 
+    it('should ignore domain of hidden items with includeHidden! this feels like a bug to me - why does this not work for stacked data?', () => {
+      const stackedData = [
+        {
+          x: 10,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      // includeHidden does not work with stacked data, why?
+      const { container, rerender } = render(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis includeHidden />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '3',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '6',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '9',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '12',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 12]);
+
+      // the same data, when not stacked, are included when includeHidden is true.
+      rerender(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis includeHidden />
+          <Bar dataKey="x" />
+          <Bar dataKey="y" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '150',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '200',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 200]);
+    });
+
     it('should render positive and negative ticks with stackOffset = "sign"', () => {
       const stackedSignedData = [
         {
