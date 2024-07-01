@@ -445,7 +445,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const { rerender } = render(
         <ChartElement data={data}>
-          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} />
+          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} stackId="q" hide />
           <Customized component={<Comp />} />
         </ChartElement>,
       );
@@ -456,6 +456,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           xAxisId: 7,
           yAxisId: 9,
           errorBars: [],
+          stackId: 'q',
+          hide: true,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
@@ -490,6 +492,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           xAxisId: 0,
           yAxisId: 0,
           errorBars: [],
+          stackId: undefined,
+          hide: false,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);

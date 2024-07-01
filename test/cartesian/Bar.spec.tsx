@@ -2,13 +2,15 @@ import React, { ComponentType, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import uniqueId from 'lodash/uniqueId';
-import { Bar, Legend, LegendType, XAxis, YAxis } from '../../src';
+import { Bar, Customized, Legend, LegendType, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,
   BarChartCase,
   ComposedChartCase,
   includingCompact,
 } from '../helper/parameterizedTestCases';
+import { useAppSelector } from '../../src/state/hooks';
+import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 type TestCase = {
   ChartElement: ComponentType<{ children?: ReactNode; width?: number; height?: number; data?: any[] }>;
@@ -342,6 +344,71 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           expect.soft(l).not.toHaveAttribute('fill', '#808080');
         });
       });
+    });
+  });
+
+  describe('state integration', () => {
+    it('should report its props to redux state, and remove them when removed from DOM', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        spy(cartesianItems);
+        return null;
+      };
+
+      const { rerender } = render(
+        <ChartElement data={data}>
+          <Bar dataKey="value" xAxisId={7} yAxisId={9} stackId="q" hide />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+        {
+          data: null,
+          dataKey: 'value',
+          xAxisId: 7,
+          yAxisId: 9,
+          errorBars: [],
+          stackId: 'q',
+          hide: true,
+        },
+      ];
+      expect(spy).toHaveBeenLastCalledWith(expected);
+
+      rerender(
+        <ChartElement data={data}>
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      expect(spy).toHaveBeenLastCalledWith([]);
+    });
+
+    it('should report default props to redux state', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        spy(cartesianItems);
+        return null;
+      };
+
+      render(
+        <ChartElement data={data}>
+          <Bar dataKey="value" />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+      const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
+        {
+          data: null,
+          dataKey: 'value',
+          xAxisId: 0,
+          yAxisId: 0,
+          errorBars: [],
+          stackId: undefined,
+          hide: false,
+        },
+      ];
+      expect(spy).toHaveBeenLastCalledWith(expected);
     });
   });
 });

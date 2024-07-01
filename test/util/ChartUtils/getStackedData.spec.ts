@@ -1,10 +1,6 @@
 import { Series, SeriesPoint } from 'victory-vendor/d3-shape';
 import { getStackedData, offsetSign } from '../../../src/util/ChartUtils';
-import { DataKey, StackOffsetType } from '../../../src/util/types';
-
-function createDataKeyProps(dataKey: DataKey<any>) {
-  return { props: { dataKey } };
-}
+import { StackOffsetType } from '../../../src/util/types';
 
 export function createSeries(
   key: string,
@@ -84,12 +80,12 @@ const dataWithNegativeNumbers = [
 
 /**
  * If you see one of these tests failing with a message "serializes to the same string",
- * that is because the d3-shape library assigns abitrary property keys to an array.
+ * that is because the d3-shape library assigns arbitrary property keys to an array.
  *
  * Jest doesn't like that. When it compares the two arrays it can see that it has extra property,
  * and if that extra property is different then it fails.
  * But when printing the array, it only prints the usual array elements, and ignores the extra properties.
- * Therefore the "serializes to the same string" problem.
+ * Therefore, the "serializes to the same string" problem.
  *
  * So when you see that error, try to compare the other properties, like `Series.key` and `SeriesPoint.data`.
  * Or print them with console.log, that will show the difference.
@@ -104,21 +100,13 @@ describe('getStackedData', () => {
   });
 
   it('should return one empty array for each dataKey even if it is not part of the data', () => {
-    const result = getStackedData(
-      [],
-      [createDataKeyProps('x'), createDataKeyProps('y'), createDataKeyProps('z')],
-      'none',
-    );
+    const result = getStackedData([], ['x', 'y', 'z'], 'none');
     const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
 
   it('should return one empty array for each data key even if it is not part of the data', () => {
-    const result = getStackedData(
-      [],
-      [createDataKeyProps('x'), createDataKeyProps('y'), createDataKeyProps('z')],
-      'none',
-    );
+    const result = getStackedData([], ['x', 'y', 'z'], 'none');
     const expected = [createSeries('x', 0), createSeries('y', 1), createSeries('z', 2)];
     expect(result).toEqual(expected);
   });
@@ -126,7 +114,7 @@ describe('getStackedData', () => {
   const allOffsets: StackOffsetType[] = ['expand', 'none', 'positive', 'sign', 'silhouette', 'wiggle'];
   describe.each(allOffsets)('with offset %s', offset => {
     it('should stack numerical data', () => {
-      const dataKeys = [createDataKeyProps('uv'), createDataKeyProps('pv')];
+      const dataKeys = ['uv', 'pv'];
       const result = getStackedData(mockData, dataKeys, offset);
       expect(result).toHaveLength(dataKeys.length);
       result.forEach(series => {
@@ -141,7 +129,7 @@ describe('getStackedData', () => {
     });
 
     it('should stack data when dataKey is a function', () => {
-      const dataKeys = [createDataKeyProps(o => o.uv + 100), createDataKeyProps(o => o.pv - 100)];
+      const dataKeys = [(o: any) => o.uv + 100, (o: any) => o.pv - 100];
       const result = getStackedData(mockData, dataKeys, offset);
       expect(result).toHaveLength(dataKeys.length);
       result.forEach(series => {
@@ -157,7 +145,7 @@ describe('getStackedData', () => {
   });
 
   it('should stack numerical data with offset: none', () => {
-    const result = getStackedData(mockData, [createDataKeyProps('uv'), createDataKeyProps('pv')], 'none');
+    const result = getStackedData(mockData, ['uv', 'pv'], 'none');
     const firstSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 590, mockData[0]),
       createSeriesPoint(0, 868, mockData[1]),
@@ -171,11 +159,7 @@ describe('getStackedData', () => {
   });
 
   it('should stack numerical data with offset: sign', () => {
-    const result = getStackedData(
-      dataWithNegativeNumbers,
-      [createDataKeyProps('uv'), createDataKeyProps('pv')],
-      'sign',
-    );
+    const result = getStackedData(dataWithNegativeNumbers, ['uv', 'pv'], 'sign');
     const uvSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
       createSeriesPoint(0, -3000, dataWithNegativeNumbers[1]),
@@ -199,7 +183,7 @@ describe('getStackedData', () => {
   });
 
   it('with offset: positive should ignore all negative data points', () => {
-    const dataKeys = [createDataKeyProps('uv'), createDataKeyProps('pv')];
+    const dataKeys = ['uv', 'pv'];
     const result = getStackedData(dataWithNegativeNumbers, dataKeys, 'positive');
     const uvSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 4000, dataWithNegativeNumbers[0]),
@@ -224,11 +208,7 @@ describe('getStackedData', () => {
   });
 
   it('should stack data when dataKey is a function with offset: none', () => {
-    const result = getStackedData(
-      mockData,
-      [createDataKeyProps(o => o.uv + 100), createDataKeyProps(o => o.pv - 100)],
-      'none',
-    );
+    const result = getStackedData(mockData, [o => o.uv + 100, o => o.pv - 100], 'none');
     const firstSeries = createSeries('uv', 0, [
       createSeriesPoint(0, 690, mockData[0]),
       createSeriesPoint(0, 968, mockData[1]),
@@ -265,7 +245,7 @@ describe('getStackedData', () => {
         name: 'z',
       },
     ];
-    const result = getStackedData(mockCategoryData, [createDataKeyProps('x')], 'positive');
+    const result = getStackedData(mockCategoryData, ['x'], 'positive');
     const expected = [
       createSeries('x', 0, [
         createSeriesPoint(0, 0, mockCategoryData[0]),
@@ -293,7 +273,7 @@ describe('getStackedData', () => {
         },
       },
     ];
-    const result = getStackedData(mockCategoryData, [createDataKeyProps('x')], 'sign');
+    const result = getStackedData(mockCategoryData, ['x'], 'sign');
     const expected = [
       createSeries('x', 0, [
         createSeriesPoint(0, 0, mockCategoryData[0]),
@@ -316,5 +296,31 @@ describe('getStackedData', () => {
     ];
     offsetSign(data, []);
     expect(data).toEqual(expected);
+  });
+
+  test('stacking numbers encoded as strings produces numbers', () => {
+    const data = [
+      { name: 'A', uv: '1', pv: '2' },
+      { name: 'B', uv: '3', pv: '4' },
+    ];
+    const result = getStackedData(data, ['uv', 'pv'], 'none');
+    const expected = [
+      createSeries('uv', 0, [createSeriesPoint(0, 1, data[0]), createSeriesPoint(0, 3, data[1])]),
+      createSeries('pv', 1, [createSeriesPoint(1, 3, data[0]), createSeriesPoint(3, 7, data[1])]),
+    ];
+    expect(result).toEqual(expected);
+  });
+
+  test('stacking strings that are not numbers produces NaN - this is a bug if you ask me, we should reject non-numerical data', () => {
+    const data = [
+      { name: 'A', uv: 'a', pv: 'b' },
+      { name: 'B', uv: 'c', pv: 'd' },
+    ];
+    const result = getStackedData(data, ['uv', 'pv'], 'none');
+    const expected = [
+      createSeries('uv', 0, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
+      createSeries('pv', 1, [createSeriesPoint(0, NaN, data[0]), createSeriesPoint(0, NaN, data[1])]),
+    ];
+    expect(result).toEqual(expected);
   });
 });

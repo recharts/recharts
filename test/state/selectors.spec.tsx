@@ -131,6 +131,7 @@ const preloadedState: Partial<RechartsRootState> = {
     tooltipPayloadSearcher: arrayTooltipSearcher,
     chartName: '',
     barCategoryGap: '',
+    stackOffset: 'none',
   },
 };
 
@@ -207,6 +208,7 @@ describe('useTooltipEventType', () => {
           tooltipPayloadSearcher: arrayTooltipSearcher,
           chartName: '',
           barCategoryGap: '',
+          stackOffset: 'none',
         },
       };
       render(

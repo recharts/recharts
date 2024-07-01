@@ -13,11 +13,13 @@ describe('graphicalItemsSlice', () => {
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(0);
 
     const item: CartesianGraphicalItemSettings = {
+      stackId: undefined,
       errorBars: undefined,
       dataKey: undefined,
       data: PageData,
       xAxisId: 'x',
       yAxisId: 'y',
+      hide: false,
     };
     store.dispatch(addCartesianGraphicalItem(item));
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(1);

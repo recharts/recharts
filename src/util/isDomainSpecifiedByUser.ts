@@ -1,6 +1,5 @@
 import { MAX_VALUE_REG, MIN_VALUE_REG } from './ChartUtils';
 import { isNumber } from './DataUtils';
-import { getNiceTickValues } from './scale';
 import { AxisDomain, AxisDomainType, NumberDomain } from './types';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
 
@@ -44,7 +43,7 @@ function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
   return false;
 }
 
-function extendDomain(
+export function extendDomain(
   providedDomain: NumberDomain,
   boundaryDomain: NumberDomain,
   allowDataOverflow: boolean,
@@ -150,8 +149,6 @@ export function numericalDomainSpecifiedWithoutRequiringData(
  * @param userDomain external prop, user provided, before validation. Can have various shapes: array, function, special magical strings inside too.
  * @param dataDomain calculated from data. Can be undefined, as an option for performance optimization
  * @param allowDataOverflow provided by users. If true then the data domain wins
- * @param allowDecimals if true then recharts is allowed to generate domain with decimal numbers; if false the numbers are always integers
- * @param tickCount if the automatic "nice" ticks land outside of domain, the domain will be extended
  *
  * @return [min, max] domain if it's well-formed; undefined if the domain is invalid
  */
@@ -159,8 +156,6 @@ export function parseNumericalUserDomain(
   userDomain: AxisDomain | undefined,
   dataDomain: NumberDomain | undefined,
   allowDataOverflow: boolean,
-  allowDecimals: boolean,
-  tickCount: number,
 ): NumberDomain | undefined {
   if (!allowDataOverflow && dataDomain == null) {
     // Cannot compute data overflow if the data is not provided
@@ -178,12 +173,11 @@ export function parseNumericalUserDomain(
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
-    let finalMin, finalMax: number, niceTicks: ReadonlyArray<number>;
+    let finalMin, finalMax: number;
 
     if (providedMin === 'auto') {
       if (dataDomain != null) {
-        niceTicks = getNiceTickValues(dataDomain, tickCount, allowDecimals);
-        finalMin = Math.min(...niceTicks);
+        finalMin = Math.min(...dataDomain);
       }
     } else if (typeof providedMin === 'number' && !Number.isNaN(providedMin)) {
       finalMin = providedMin;
@@ -202,10 +196,7 @@ export function parseNumericalUserDomain(
 
     if (providedMax === 'auto') {
       if (dataDomain != null) {
-        if (niceTicks == null) {
-          niceTicks = getNiceTickValues([finalMin, dataDomain[1]], tickCount, allowDecimals);
-        }
-        finalMax = Math.max(...niceTicks);
+        finalMax = Math.max(...dataDomain);
       }
     } else if (typeof providedMax === 'number' && !Number.isNaN(providedMax)) {
       finalMax = providedMax;

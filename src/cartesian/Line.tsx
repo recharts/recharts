@@ -549,6 +549,9 @@ export class Line extends PureComponent<Props, State> {
             yAxisId={this.props.yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
+            // line doesn't stack
+            stackId={undefined}
+            hide={this.props.hide}
           />
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
@@ -573,6 +576,9 @@ export class Line extends PureComponent<Props, State> {
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
         dataKey={this.props.dataKey}
+        // line doesn't stack
+        stackId={undefined}
+        hide={this.props.hide}
       >
         <Layer className={layerClass}>
           <SetLineLegend {...this.props} />

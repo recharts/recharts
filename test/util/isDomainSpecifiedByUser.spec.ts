@@ -150,7 +150,7 @@ describe('parsing axis domain provided by user', () => {
     { domain: ['auto', 1], expected: [-100, 1] },
     { domain: [0, 'dataMax'], expected: [0, 100] },
     { domain: ['dataMin', 'dataMax'], expected: [-100, 100] },
-    { domain: ['auto', 'auto'], expected: [-100, 150] },
+    { domain: ['auto', 'auto'], expected: [-100, 100] },
     { domain: ['dataMin - 11.2', 'dataMax + 7.3'], expected: [-111.2, 107.3] },
     { domain: d => [Math.min(...d), 999], expected: [-100, 999] },
     { domain: d => [d[0] - 21, d[1] + 23], expected: [-121, 123] },
@@ -209,106 +209,59 @@ describe('parsing axis domain provided by user', () => {
     );
   });
 
-  describe.each([true, false])('parseNumericalUserDomain with allowDecimals = %s', allowDecimals => {
-    const tickCount = 6;
+  describe('parseNumericalUserDomain', () => {
     it.each([true, false])(
       'should return undefined when user input is undefined and allowDataOverflow = %s',
       allowDataOverflow => {
-        expect(
-          parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow, allowDecimals, tickCount),
-        ).toBeUndefined();
-        expect(
-          parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow, allowDecimals, tickCount),
-        ).toBeUndefined();
+        expect(parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow)).toBeUndefined();
+        expect(parseNumericalUserDomain(undefined, numericalDataDomain, allowDataOverflow)).toBeUndefined();
       },
     );
 
     it.each(validCases)(
       'should return $expected when domain = $domain and allowDataOverflow = true',
       ({ domain, expected }) => {
-        expect(parseNumericalUserDomain(domain, undefined, true, allowDecimals, tickCount)).toEqual(expected);
+        expect(parseNumericalUserDomain(domain, undefined, true)).toEqual(expected);
       },
     );
 
     it.each(casesValidOnlyWhenDataDomainIsGiven)(
       'should return $expected when domain = $domain',
       ({ domain, expected }) => {
-        expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true, tickCount)).toEqual(expected);
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, true)).toEqual(expected);
       },
     );
 
     it.each(casesValidOnlyWhenDataDomainIsGiven)(
       'should return undefined when domain = $domain and data is undefined',
       ({ domain }) => {
-        expect(parseNumericalUserDomain(domain, undefined, true, true, tickCount)).toEqual(undefined);
-        expect(parseNumericalUserDomain(domain, undefined, false, true, tickCount)).toEqual(undefined);
+        expect(parseNumericalUserDomain(domain, undefined, true)).toEqual(undefined);
+        expect(parseNumericalUserDomain(domain, undefined, false)).toEqual(undefined);
       },
     );
 
     it.each(casesWithDomainSmallerThanData)(
       'should extend the domain to $expected when domain = $domain and allowDataOverflow = false',
       ({ domain, expected }) => {
-        expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true, tickCount)).toEqual(expected);
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, false)).toEqual(expected);
       },
     );
 
     it.each(invalidCases)('should return undefined when domain = $domain', ({ domain }) => {
-      expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true, tickCount)).toBeUndefined();
-      expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true, tickCount)).toBeUndefined();
-      expect(parseNumericalUserDomain(domain, undefined, true, true, tickCount)).toBeUndefined();
-      expect(parseNumericalUserDomain(domain, undefined, false, true, tickCount)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, numericalDataDomain, true)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, numericalDataDomain, false)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, undefined, true)).toBeUndefined();
+      expect(parseNumericalUserDomain(domain, undefined, false)).toBeUndefined();
     });
 
     it.each(casesThatDefaultToDataMinDataMax)(
       'should return data min, data max when domain = $domain',
       ({ domain }) => {
-        expect(parseNumericalUserDomain(domain, numericalDataDomain, true, true, tickCount)).toEqual([-100, 100]);
-        expect(parseNumericalUserDomain(domain, numericalDataDomain, false, true, tickCount)).toEqual([-100, 100]);
-        expect(parseNumericalUserDomain(domain, undefined, true, true, tickCount)).toBeUndefined();
-        expect(parseNumericalUserDomain(domain, undefined, false, true, tickCount)).toBeUndefined();
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, true)).toEqual([-100, 100]);
+        expect(parseNumericalUserDomain(domain, numericalDataDomain, false)).toEqual([-100, 100]);
+        expect(parseNumericalUserDomain(domain, undefined, true)).toBeUndefined();
+        expect(parseNumericalUserDomain(domain, undefined, false)).toBeUndefined();
       },
     );
-
-    describe('allowDecimals', () => {
-      const domainSmallerThan1: NumberDomain = [0.3, 0.5];
-      const domainWithDecimalNumbers: NumberDomain = [4.1, 7.9];
-
-      it('should auto-generate domain with decimals with allowDecimals: true', () => {
-        expect(parseNumericalUserDomain(['auto', 'auto'], domainSmallerThan1, false, true, tickCount)).toEqual([
-          0.3, 0.55,
-        ]);
-      });
-
-      it('should use integers with allowDecimals: false', () => {
-        expect(parseNumericalUserDomain(['auto', 'auto'], domainSmallerThan1, false, false, tickCount)).toEqual([0, 5]);
-      });
-
-      it('should extend the domain a little for numbers larger than 1! This is very unexpected to me but okay', () => {
-        expect(parseNumericalUserDomain(['auto', 'auto'], domainWithDecimalNumbers, false, true, tickCount)).toEqual([
-          4, 8,
-        ]);
-        expect(parseNumericalUserDomain(['auto', 'auto'], domainWithDecimalNumbers, false, false, tickCount)).toEqual([
-          4, 9,
-        ]);
-      });
-
-      it('should have no affect for domain settings other than "auto"', () => {
-        expect(parseNumericalUserDomain(domainSmallerThan1, domainSmallerThan1, false, true, tickCount)).toEqual(
-          domainSmallerThan1,
-        );
-        expect(parseNumericalUserDomain(domainSmallerThan1, domainSmallerThan1, false, false, tickCount)).toEqual(
-          domainSmallerThan1,
-        );
-      });
-    });
-  });
-
-  describe('parseNumericalUserDomain with tickCount', () => {
-    it('should extend the domain to whatever getNiceTickValues decides', () => {
-      const userDomain: AxisDomain = [0, 'auto'];
-      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 3)).toEqual([-100, 100]);
-      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 6)).toEqual([-100, 100]);
-      expect(parseNumericalUserDomain(userDomain, numericalDataDomain, false, true, 12)).toEqual([-100, 110]);
-    });
   });
 });

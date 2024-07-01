@@ -102,6 +102,7 @@ const YAxisSettingsDispatcher = (props: Props) => {
         allowDecimals={props.allowDecimals}
         tickCount={props.tickCount}
         padding={props.padding}
+        includeHidden={props.includeHidden ?? false}
       />
       <YAxisImpl {...props} />
     </>

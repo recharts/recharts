@@ -743,7 +743,7 @@ describe('<XAxis />', () => {
     const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
     expect(axisLine).toHaveLength(1);
     expectXAxisTicks(container, []);
-    expect(spy).toHaveBeenLastCalledWith([0, 0]);
+    expect(spy).toHaveBeenLastCalledWith(undefined);
   });
 
   it('Render Bars for a single data point with barSize=50%', () => {
@@ -859,13 +859,14 @@ describe('<XAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <XAxis xAxisId="foo" scale="log" type="number" />
+          <XAxis xAxisId="foo" scale="log" type="number" includeHidden />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -898,6 +899,7 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -928,6 +930,7 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          includeHidden: false,
           id: 'foo',
           scale: 'log',
           type: 'number',
@@ -943,6 +946,7 @@ describe('<XAxis />', () => {
           tickCount: 5,
         },
         bar: {
+          includeHidden: false,
           id: 'bar',
           scale: 'utc',
           type: 'category',
@@ -967,6 +971,7 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         id: 'bar',
         scale: 'utc',
@@ -1060,7 +1065,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
@@ -1099,7 +1104,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([100, 180]);
+          expect(spy).toHaveBeenLastCalledWith([100, 170]);
         });
 
         it('should render ticks from number, auto', () => {
@@ -1137,7 +1142,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([-55, 180]);
+          expect(spy).toHaveBeenLastCalledWith([-55, 170]);
         });
 
         it('should render ticks from auto, number', () => {
@@ -1482,7 +1487,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should allow providing less tickCount', () => {
@@ -1788,7 +1793,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should only display domain of data with matching xAxisId', () => {
@@ -1863,8 +1868,8 @@ describe('<XAxis />', () => {
           },
         ]);
         expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
-        expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 180]);
-        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 160]);
+        expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 170]);
+        expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 150]);
       });
 
       it('should only display domain of data with matching xAxisId, and dataMin dataMax domains', () => {
@@ -1975,7 +1980,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 1]);
+        expect(spy).toHaveBeenLastCalledWith([0, 0.9]);
       });
 
       it('should not allow decimals in small numbers if allowDecimals is false', () => {
@@ -2013,7 +2018,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 4]);
+        expect(spy).toHaveBeenLastCalledWith([0, 0.9]);
       });
 
       it.each([true, false, undefined])(
@@ -2053,7 +2058,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(spy).toHaveBeenLastCalledWith([0, 16]);
+          expect(spy).toHaveBeenLastCalledWith([0, 12.5]);
         },
       );
     });
@@ -2094,7 +2099,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should display every second tick with interval = 1', () => {
@@ -2122,7 +2127,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should display every third tick with interval = 2', () => {
@@ -2145,7 +2150,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 180]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should add more ticks with tickCount and then reduce them again with interval', () => {
@@ -2193,7 +2198,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 171]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
       it('should attempt to show the ticks start with interval = preserveStart', () => {
@@ -3172,7 +3177,7 @@ describe('<XAxis />', () => {
           y: '273',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 600]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 500]);
     });
 
     it('should render with in LineChart VerticalWithSpecifiedDomain', () => {
@@ -3232,7 +3237,8 @@ describe('<XAxis />', () => {
           y: '273',
         },
       ]);
-      expect(axisSettingsSpy).toHaveBeenLastCalledWith({
+      const expectedSettings: XAxisSettings = {
+        includeHidden: false,
         allowDataOverflow: false,
         allowDecimals: true,
         allowDuplicatedCategory: true,
@@ -3246,7 +3252,8 @@ describe('<XAxis />', () => {
         scale: 'auto',
         tickCount: 5,
         type: 'number',
-      });
+      };
+      expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
       expect(itemDataSpy).toHaveBeenLastCalledWith([]);
       expect(itemDataSpy).toHaveBeenCalledTimes(3);
       expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);

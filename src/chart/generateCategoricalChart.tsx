@@ -1940,6 +1940,7 @@ export const generateCategoricalChart = ({
       validateTooltipEventTypes,
       tooltipPayloadSearcher,
       barCategoryGap: props.barCategoryGap ?? '10%',
+      stackOffset: props.stackOffset ?? 'none',
     };
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.id ?? chartName}>

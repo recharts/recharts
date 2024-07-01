@@ -77,6 +77,7 @@ export const addToTreemapNodeIndex = (
 };
 
 const options: ChartOptions = {
+  stackOffset: 'none',
   barCategoryGap: '10%',
   chartName: 'Treemap',
   defaultTooltipEventType: 'item',

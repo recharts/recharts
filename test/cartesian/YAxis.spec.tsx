@@ -2,11 +2,12 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip, YAxis, Customized } from '../../src';
-import { AxisDomain } from '../../src/util/types';
+import { AxisDomain, StackOffsetType } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisSettings } from '../../src/state/axisSelectors';
+import { selectAxisDomain, selectAxisSettings } from '../../src/state/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
+import { expectYAxisTicks } from '../helper/expectAxisTicks';
 
 describe('<YAxis />', () => {
   const data = [
@@ -194,53 +195,141 @@ describe('<YAxis />', () => {
     );
   });
 
-  it('Render identical ticks when data is hidden and includeHidden is true', () => {
-    const wrapperBothShowing = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-      </BarChart>,
-    );
+  describe('includeHidden', () => {
+    it.each([undefined, true, false])('should show ticks for visibleData when includeHidden=%s', includeHidden => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden={includeHidden} />
+          <Bar dataKey="pv" />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '2500',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '5000',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '7500',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '10000',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 9800]);
+    });
 
-    const wrapperFirstHidden = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-      </BarChart>,
-    );
+    it.each([false, undefined])('should exclude hidden items domain when includeHidden=%s', includeHidden => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden={includeHidden} />
+          <Bar dataKey="pv" hide />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '200',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '300',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '400',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 400]);
+    });
 
-    const wrapperSecondHidden = render(
-      <BarChart width={600} height={400} data={data}>
-        <YAxis type="number" stroke="#ff7300" includeHidden />
-        <Bar dataKey="pv" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} />
-        <Bar dataKey="amt" stroke="#ff7300" fill="#ff7300" isAnimationActive={false} hide />
-      </BarChart>,
-    );
-
-    const ticksBothShowing = wrapperBothShowing.container.querySelectorAll('text');
-    const ticksFirstHidden = wrapperFirstHidden.container.querySelectorAll('text');
-    const ticksSecondHidden = wrapperSecondHidden.container.querySelectorAll('text');
-
-    expect(ticksFirstHidden.length).toBe(ticksBothShowing.length);
-    expect(ticksFirstHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
-    expect(ticksFirstHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
-
-    expect(ticksSecondHidden.length).toBe(ticksBothShowing.length);
-    expect(ticksSecondHidden[0].getAttribute('y')).toBe(ticksBothShowing[0].getAttribute('y'));
-    expect(ticksSecondHidden[3].getAttribute('y')).toBe(ticksBothShowing[3].getAttribute('y'));
-
-    const barsBothShowing = wrapperBothShowing.container.querySelectorAll('recharts-bar-rectangle > path');
-    const barsFirstHidden = wrapperFirstHidden.container.querySelectorAll('recharts-bar-rectangle > path');
-    const barsSecondHidden = wrapperSecondHidden.container.querySelectorAll('recharts-bar-rectangle > path');
-
-    // spreading to match indices, as barsBothShowing will get Rectangles from the first Bar, then the second
-    expect(
-      [...Array.from(barsSecondHidden), ...Array.from(barsFirstHidden)].every((bar, i) => {
-        return bar.getAttribute('height') === barsBothShowing[i].getAttribute('height');
-      }),
-    ).toBe(true);
+    it('should include hidden data domain when includeHidden=true', () => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={600} height={400} data={data}>
+          <YAxis includeHidden />
+          <Bar dataKey="pv" hide />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '395',
+        },
+        {
+          textContent: '2500',
+          x: '57',
+          y: '297.5',
+        },
+        {
+          textContent: '5000',
+          x: '57',
+          y: '200',
+        },
+        {
+          textContent: '7500',
+          x: '57',
+          y: '102.5',
+        },
+        {
+          textContent: '10000',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 9800]);
+    });
   });
 
   it('should render all labels in an example', () => {
@@ -309,13 +398,14 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" />
+          <YAxis yAxisId="foo" scale="log" type="number" includeHidden />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -348,6 +438,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
         id: 'foo',
@@ -378,6 +469,7 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          includeHidden: false,
           id: 'foo',
           scale: 'log',
           type: 'number',
@@ -393,6 +485,7 @@ describe('<YAxis />', () => {
           tickCount: 5,
         },
         bar: {
+          includeHidden: false,
           id: 'bar',
           scale: 'utc',
           type: 'category',
@@ -417,6 +510,7 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        includeHidden: false,
         tickCount: 5,
         id: 'bar',
         scale: 'utc',
@@ -447,4 +541,495 @@ describe('<YAxis />', () => {
       });
     });
   });
+
+  describe('in stacked BarChart', () => {
+    it.each([undefined, 'none'])(
+      'should render sum of stacked values with stackOffset = %s',
+      (stackOffset: StackOffsetType | undefined) => {
+        const stackedData = [
+          {
+            x: 100,
+            y: 200,
+          },
+        ];
+        const domainSpy = vi.fn();
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          domainSpy(domain);
+          return null;
+        };
+        const { container, rerender } = render(
+          <BarChart width={100} height={100} data={stackedData} stackOffset={stackOffset}>
+            <YAxis />
+            <Bar dataKey="x" stackId="a" />
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '25',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '50',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '75',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '100',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
+        rerender(
+          <BarChart width={100} height={100} data={stackedData}>
+            <YAxis />
+            <Bar dataKey="x" stackId="a" />
+            <Bar dataKey="y" stackId="a" />
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '75',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '150',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '225',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 300]);
+      },
+    );
+
+    it.each([undefined, false])('should ignore domain of hidden items when includeHidden=%s', includeHidden => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis includeHidden={includeHidden} />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '25',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
+    });
+
+    it('should ignore domain of hidden items with includeHidden! this feels like a bug to me - why does this not work for stacked data?', () => {
+      const stackedData = [
+        {
+          x: 10,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container, rerender } = render(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis includeHidden />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      // includeHidden does not work with stacked data, why?
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '3',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '6',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '9',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '12',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 210]);
+
+      // the same data, when not stacked, are included when includeHidden is true.
+      rerender(
+        <BarChart width={100} height={100} data={stackedData}>
+          <YAxis includeHidden />
+          <Bar dataKey="x" />
+          <Bar dataKey="y" hide />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '150',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '200',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 200]);
+    });
+
+    it('should render positive and negative ticks with stackOffset = "sign"', () => {
+      const stackedSignedData = [
+        {
+          x: 100,
+          y: -2000,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedSignedData} stackOffset="sign">
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '-2100',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '-1400',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '-700',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '0',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '700',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      // -2000, 100 is the correct domain - the tick generator decides to extend it beyond, to 700. But the domain ends at 100.
+      expect(domainSpy).toHaveBeenLastCalledWith([-2000, 100]);
+    });
+
+    it('should render ticks between 0 and 1 with stackOffset = "expand"', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData} stackOffset="expand">
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '0.25',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '0.5',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '0.75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '1',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 1]);
+    });
+
+    it('should render ticks with stackOffset = "wiggle"', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData} stackOffset="wiggle">
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '150',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '225',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '300',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 300]);
+    });
+
+    it('should render ticks with stackOffset = "silhouette"', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: 200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData} stackOffset="silhouette">
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '-150',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '-75',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '0',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '150',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([-150, 150]);
+    });
+
+    it('should ignore negative values with stackOffset = "positive"', () => {
+      const stackedData = [
+        {
+          x: 100,
+          y: -200,
+        },
+      ];
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={100} height={100} data={stackedData} stackOffset="positive">
+          <YAxis />
+          <Bar dataKey="x" stackId="a" />
+          <Bar dataKey="y" stackId="a" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '25',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '50',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '75',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '100',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
+    });
+  });
+
+  describe.todo('Reference elements should expand domain');
 });
