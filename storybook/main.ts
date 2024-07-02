@@ -18,6 +18,7 @@ module.exports = {
     '@storybook/addon-mdx-gfm',
     '@storybook/addon-webpack5-compiler-swc',
     '@chromatic-com/storybook',
+    '@codesandbox/storybook-addon',
   ],
   framework: {
     name: '@storybook/react-webpack5',
