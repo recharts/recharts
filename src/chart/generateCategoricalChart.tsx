@@ -240,7 +240,13 @@ const getTooltipContent = (
      */
     let data = child.props.data ?? chartData;
 
-    if (data && state.dataStartIndex + state.dataEndIndex !== 0) {
+    if (
+      data &&
+      state.dataStartIndex + state.dataEndIndex !== 0 &&
+      // https://github.com/recharts/recharts/issues/4717
+      // The data is sliced only when the active index is within the start/end index range.
+      state.dataEndIndex - state.dataStartIndex >= activeIndex
+    ) {
       data = data.slice(state.dataStartIndex, state.dataEndIndex + 1);
     }
 
@@ -681,6 +687,7 @@ export const createDefaultState = (props: CategoricalChartProps): CategoricalCha
   const brushItem = findChildByType(children, Brush);
   let startIndex = 0;
   let endIndex = 0;
+
   if (props.data && props.data.length !== 0) {
     endIndex = props.data.length - 1;
   }
