@@ -144,7 +144,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
   );
 
-  const coordinateFromRedux = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger));
+  const coordinateFromRedux = useAppSelector(state =>
+    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex),
+  );
   // TODO remove the payloadFromContext fallback
   const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();

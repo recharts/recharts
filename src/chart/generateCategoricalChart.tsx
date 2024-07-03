@@ -1056,7 +1056,7 @@ export const generateCategoricalChart = ({
         // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
         ltr: isAxisLTR(this.state.xAxisMap),
       });
-      this.displayDefaultTooltip();
+      // this.displayDefaultTooltip();
     }
 
     displayDefaultTooltip() {
