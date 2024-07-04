@@ -1111,7 +1111,7 @@ describe('<YAxis />', () => {
             <YAxis />
             <Line dataKey="pv" />
             {/* the r prop is ignored from domain extension - perhaps it should expand the domain too? */}
-            <ReferenceDot x={1} y={2000} r={500} ifOverflow={props.ifOverflow} />
+            <ReferenceDot x={9999} y={2000} r={500} ifOverflow={props.ifOverflow} />
             <Customized component={<Comp />} />
           </LineChart>
         );

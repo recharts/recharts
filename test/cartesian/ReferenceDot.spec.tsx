@@ -1,7 +1,9 @@
 import React from 'react';
-import { describe, expect, it, test } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Bar, BarChart, ReferenceDot, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Customized, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectReferenceDotsByAxis } from '../../src/state/axisSelectors';
 
 describe('<ReferenceDot />', () => {
   const data = [
@@ -340,6 +342,47 @@ describe('<ReferenceDot />', () => {
       expect(myCustomDot).toBeInTheDocument();
       expect.soft(myCustomDot.getAttributeNames().sort()).toEqual(['class']);
       expect.soft(myCustomDot.getAttribute('class')).toEqual('custom-dot');
+    });
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux state, and remove it after removing from DOM', () => {
+      const dotSpy = vi.fn();
+      const Comp = (): null => {
+        dotSpy(useAppSelector(state => selectReferenceDotsByAxis(state, 'yAxis', 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <LineChart width={100} height={100}>
+          <YAxis />
+          <XAxis />
+          <ReferenceDot x={1} y={2} r={3} ifOverflow="extendDomain" />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+
+      expect(dotSpy).toHaveBeenLastCalledWith([
+        {
+          x: 1,
+          y: 2,
+          r: 3,
+          xAxisId: 0,
+          yAxisId: 0,
+          ifOverflow: 'extendDomain',
+        },
+      ]);
+      expect(dotSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <LineChart width={100} height={100}>
+          <YAxis />
+          <XAxis />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+
+      expect(dotSpy).toHaveBeenLastCalledWith([]);
+      expect(dotSpy).toHaveBeenCalledTimes(5);
     });
   });
 });

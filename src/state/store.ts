@@ -8,6 +8,7 @@ import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddlewa
 import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
 import { axisMapReducer } from './axisMapSlice';
 import { graphicalItemsReducer } from './graphicalItemsSlice';
+import { referenceElementsReducer } from './referenceElementsSlice';
 
 const rootReducer = combineReducers({
   options: optionsReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   axisMap: axisMapReducer,
   layout: chartLayoutReducer,
   graphicalItems: graphicalItemsReducer,
+  referenceElements: referenceElementsReducer,
 });
 
 export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {

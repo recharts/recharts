@@ -34,6 +34,7 @@ import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { getNiceTickValues } from '../util/scale';
+import { ReferenceDotSettings } from './referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -409,6 +410,58 @@ const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => axisSettings?.domain ?? defaultNumericDomain;
 
+const mergeDomains = (
+  domainA: NumberDomain | undefined,
+  domainB: NumberDomain | undefined,
+): NumberDomain | undefined => {
+  if (domainA == null) {
+    return domainB;
+  }
+
+  if (domainB == null) {
+    return domainA;
+  }
+
+  return [Math.min(domainA[0], domainB[0]), Math.max(domainA[1], domainB[1])];
+};
+
+const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
+  state.referenceElements.dots;
+
+export const selectReferenceDotsByAxis = createSelector(
+  selectReferenceDots,
+  pickAxisType,
+  pickAxisId,
+  (dots, axisType, axisId) => {
+    return dots
+      .filter(dot => dot.ifOverflow === 'extendDomain')
+      .filter(dot => {
+        if (axisType === 'xAxis') {
+          return dot.xAxisId === axisId;
+        }
+        return dot.yAxisId === axisId;
+      });
+  },
+);
+
+const selectReferenceDotsDomain = createSelector(
+  selectReferenceDotsByAxis,
+  pickAxisType,
+  (dots: ReadonlyArray<ReferenceDotSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y));
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceElementsDomain = createSelector(
+  selectReferenceDotsDomain,
+  // selectReferenceLinesDomain,
+  // selectReferenceAreasDomain,
+  (dotsDomain): NumberDomain => {
+    return dotsDomain;
+  },
+);
+
 const selectNumericalDomain = (
   state: RechartsRootState,
   axisSettings: AxisSettings,
@@ -436,7 +489,13 @@ const selectNumericalDomain = (
     domainFromData = computeNumericalDomain(allDataWithErrorDomains);
   }
 
-  return parseNumericalUserDomain(domainDefinition, domainFromData, axisSettings.allowDataOverflow);
+  const referenceElementsDomain = selectReferenceElementsDomain(state, axisType, axisId);
+
+  return parseNumericalUserDomain(
+    domainDefinition,
+    mergeDomains(domainFromData, referenceElementsDomain),
+    axisSettings.allowDataOverflow,
+  );
 };
 
 /**
