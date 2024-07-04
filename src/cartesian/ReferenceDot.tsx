@@ -16,6 +16,11 @@ interface ReferenceDotProps {
   r?: number;
 
   ifOverflow?: IfOverflow;
+  /**
+   * The x-coordinate of the center of the dot.
+   * It should match a value from the XAxis, so if the XAxis is a number axis, this should be a number.
+   * If the XAxis is a category axis, this should be a string.
+   */
   x?: number | string;
   y?: number | string;
 
@@ -90,14 +95,7 @@ export function ReferenceDot(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
-      <ReportReferenceDot
-        y={Number(y)}
-        x={Number(x)}
-        r={r}
-        yAxisId={props.yAxisId}
-        xAxisId={props.xAxisId}
-        ifOverflow={ifOverflow}
-      />
+      <ReportReferenceDot y={y} x={x} r={r} yAxisId={props.yAxisId} xAxisId={props.xAxisId} ifOverflow={ifOverflow} />
       {ReferenceDot.renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,

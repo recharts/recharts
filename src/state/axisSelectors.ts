@@ -34,7 +34,7 @@ import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { getNiceTickValues } from '../util/scale';
-import { ReferenceDotSettings } from './referenceElementsSlice';
+import { ReferenceAreaSettings, ReferenceDotSettings } from './referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -444,11 +444,41 @@ export const selectReferenceDotsByAxis = createSelector(
   },
 );
 
+const selectReferenceAreas = (state: RechartsRootState): ReadonlyArray<ReferenceAreaSettings> =>
+  state.referenceElements.areas;
+
+export const selectReferenceAreasByAxis = createSelector(
+  selectReferenceAreas,
+  pickAxisType,
+  pickAxisId,
+  (areas, axisType, axisId) => {
+    return areas
+      .filter(area => area.ifOverflow === 'extendDomain')
+      .filter(area => {
+        if (axisType === 'xAxis') {
+          return area.xAxisId === axisId;
+        }
+        return area.yAxisId === axisId;
+      });
+  },
+);
+
 const selectReferenceDotsDomain = createSelector(
   selectReferenceDotsByAxis,
   pickAxisType,
   (dots: ReadonlyArray<ReferenceDotSettings>, axisType: AxisType): NumberDomain => {
-    const allCoords = dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y));
+    const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceAreasDomain = createSelector(
+  selectReferenceAreasByAxis,
+  pickAxisType,
+  (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = onlyAllowNumbers(
+      areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
+    );
     return [Math.min(...allCoords), Math.max(...allCoords)];
   },
 );
@@ -456,9 +486,9 @@ const selectReferenceDotsDomain = createSelector(
 const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
   // selectReferenceLinesDomain,
-  // selectReferenceAreasDomain,
-  (dotsDomain): NumberDomain => {
-    return dotsDomain;
+  selectReferenceAreasDomain,
+  (dotsDomain, areasDomain): NumberDomain => {
+    return mergeDomains(dotsDomain, areasDomain);
   },
 );
 

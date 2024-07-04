@@ -356,7 +356,7 @@ describe('<ReferenceDot />', () => {
         <LineChart width={100} height={100}>
           <YAxis />
           <XAxis />
-          <ReferenceDot x={1} y={2} r={3} ifOverflow="extendDomain" />
+          <ReferenceDot x={1} y="categorical data item" r={3} ifOverflow="extendDomain" />
           <Customized component={<Comp />} />
         </LineChart>,
       );
@@ -364,7 +364,7 @@ describe('<ReferenceDot />', () => {
       expect(dotSpy).toHaveBeenLastCalledWith([
         {
           x: 1,
-          y: 2,
+          y: 'categorical data item',
           r: 3,
           xAxisId: 0,
           yAxisId: 0,
