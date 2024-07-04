@@ -21,14 +21,21 @@ export type ReferenceAreaSettings = ReferenceElementSettings & {
   y2: unknown;
 };
 
+export type ReferenceLineSettings = ReferenceElementSettings & {
+  x: unknown;
+  y: unknown;
+};
+
 type ReferenceElementState = {
   dots: ReadonlyArray<ReferenceDotSettings>;
   areas: ReadonlyArray<ReferenceAreaSettings>;
+  lines: ReadonlyArray<ReferenceLineSettings>;
 };
 
 const initialState: ReferenceElementState = {
   dots: [],
   areas: [],
+  lines: [],
 };
 
 export const referenceElementsSlice = createSlice({
@@ -53,9 +60,18 @@ export const referenceElementsSlice = createSlice({
         state.areas.splice(index, 1);
       }
     },
+    addLine: (state, action: PayloadAction<ReferenceLineSettings>) => {
+      state.lines.push(action.payload);
+    },
+    removeLine: (state, action: PayloadAction<ReferenceLineSettings>) => {
+      const index = current(state).lines.findIndex(line => line === action.payload);
+      if (index !== -1) {
+        state.lines.splice(index, 1);
+      }
+    },
   },
 });
 
-export const { addDot, removeDot, addArea, removeArea } = referenceElementsSlice.actions;
+export const { addDot, removeDot, addArea, removeArea, addLine, removeLine } = referenceElementsSlice.actions;
 
 export const referenceElementsReducer = referenceElementsSlice.reducer;

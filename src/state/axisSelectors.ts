@@ -34,7 +34,7 @@ import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { getNiceTickValues } from '../util/scale';
-import { ReferenceAreaSettings, ReferenceDotSettings } from './referenceElementsSlice';
+import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from './referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -410,19 +410,15 @@ const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => axisSettings?.domain ?? defaultNumericDomain;
 
-const mergeDomains = (
-  domainA: NumberDomain | undefined,
-  domainB: NumberDomain | undefined,
-): NumberDomain | undefined => {
-  if (domainA == null) {
-    return domainB;
+export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>): NumberDomain | undefined => {
+  const allDomains = domains.filter(Boolean);
+  if (allDomains.length === 0) {
+    return undefined;
   }
-
-  if (domainB == null) {
-    return domainA;
-  }
-
-  return [Math.min(domainA[0], domainB[0]), Math.max(domainA[1], domainB[1])];
+  const allValues = allDomains.flat();
+  const min = Math.min(...allValues);
+  const max = Math.max(...allValues);
+  return [min, max];
 };
 
 const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
@@ -463,11 +459,33 @@ export const selectReferenceAreasByAxis = createSelector(
   },
 );
 
+const selectReferenceLines = (state: RechartsRootState): ReadonlyArray<ReferenceLineSettings> =>
+  state.referenceElements.lines;
+
+export const selectReferenceLinesByAxis = createSelector(
+  selectReferenceLines,
+  pickAxisType,
+  pickAxisId,
+  (lines, axisType, axisId) => {
+    return lines
+      .filter(line => line.ifOverflow === 'extendDomain')
+      .filter(line => {
+        if (axisType === 'xAxis') {
+          return line.xAxisId === axisId;
+        }
+        return line.yAxisId === axisId;
+      });
+  },
+);
+
 const selectReferenceDotsDomain = createSelector(
   selectReferenceDotsByAxis,
   pickAxisType,
   (dots: ReadonlyArray<ReferenceDotSettings>, axisType: AxisType): NumberDomain => {
     const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
+    if (allCoords.length === 0) {
+      return undefined;
+    }
     return [Math.min(...allCoords), Math.max(...allCoords)];
   },
 );
@@ -479,16 +497,31 @@ const selectReferenceAreasDomain = createSelector(
     const allCoords = onlyAllowNumbers(
       areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
     );
+    if (allCoords.length === 0) {
+      return undefined;
+    }
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceLinesDomain = createSelector(
+  selectReferenceLinesByAxis,
+  pickAxisType,
+  (lines: ReadonlyArray<ReferenceLineSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
+    if (allCoords.length === 0) {
+      return undefined;
+    }
     return [Math.min(...allCoords), Math.max(...allCoords)];
   },
 );
 
 const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
-  // selectReferenceLinesDomain,
+  selectReferenceLinesDomain,
   selectReferenceAreasDomain,
-  (dotsDomain, areasDomain): NumberDomain => {
-    return mergeDomains(dotsDomain, areasDomain);
+  (dotsDomain, linesDomain, areasDomain): NumberDomain => {
+    return mergeDomains(dotsDomain, areasDomain, linesDomain);
   },
 );
 

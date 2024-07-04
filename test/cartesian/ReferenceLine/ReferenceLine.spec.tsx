@@ -1,8 +1,10 @@
 import React from 'react';
-import { MockInstance, vi, beforeEach } from 'vitest';
+import { MockInstance, vi, beforeEach, it } from 'vitest';
 import { screen, render } from '@testing-library/react';
-import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line } from '../../../src';
+import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line, Customized } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
+import { useAppSelector } from '../../../src/state/hooks';
+import { selectReferenceLinesByAxis } from '../../../src/state/axisSelectors';
 
 describe('<ReferenceLine />', () => {
   let consoleSpy: MockInstance<any[], void>;
@@ -389,5 +391,45 @@ describe('<ReferenceLine />', () => {
 
     expect(refLine[0]).toHaveAttribute('y', '104.3');
     expect(topTick.textContent).toEqual('105');
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux state, and remove it after removing from DOM', () => {
+      const lineSpy = vi.fn();
+      const Comp = (): null => {
+        lineSpy(useAppSelector(state => selectReferenceLinesByAxis(state, 'yAxis', 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <BarChart width={1100} height={250}>
+          <XAxis />
+          <YAxis />
+          <ReferenceLine y={20} ifOverflow="extendDomain" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expect(lineSpy).toHaveBeenLastCalledWith([
+        {
+          ifOverflow: 'extendDomain',
+          x: undefined,
+          xAxisId: 0,
+          y: 20,
+          yAxisId: 0,
+        },
+      ]);
+      expect(lineSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <BarChart width={1100} height={250}>
+          <XAxis />
+          <YAxis />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expect(lineSpy).toHaveBeenLastCalledWith([]);
+      expect(lineSpy).toHaveBeenCalledTimes(5);
+    });
   });
 });

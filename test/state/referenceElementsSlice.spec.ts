@@ -2,10 +2,13 @@ import { describe, it, expect } from 'vitest';
 import {
   addArea,
   addDot,
+  addLine,
   ReferenceAreaSettings,
   ReferenceDotSettings,
+  ReferenceLineSettings,
   removeArea,
   removeDot,
+  removeLine,
 } from '../../src/state/referenceElementsSlice';
 import { createRechartsStore } from '../../src/state/store';
 
@@ -49,5 +52,24 @@ describe('referenceElementsSlice', () => {
 
     store.dispatch(removeArea(area));
     expect(store.getState().referenceElements.areas).toEqual([]);
+  });
+
+  it('should add and remove reference line', () => {
+    const store = createRechartsStore();
+    expect(store.getState().referenceElements.lines).toEqual([]);
+
+    const line: ReferenceLineSettings = {
+      ifOverflow: 'visible',
+      x: 1,
+      xAxisId: 2,
+      y: 'category 3',
+      yAxisId: 4,
+    };
+
+    store.dispatch(addLine(line));
+    expect(store.getState().referenceElements.lines).toEqual([line]);
+
+    store.dispatch(removeLine(line));
+    expect(store.getState().referenceElements.lines).toEqual([]);
   });
 });
