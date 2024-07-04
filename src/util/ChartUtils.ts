@@ -20,8 +20,9 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 
+import { Props as LegendProps } from '../component/Legend';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import {
   findEntryInArray,
@@ -32,10 +33,9 @@ import {
   mathSign,
   uniqueId,
 } from './DataUtils';
-import { filterProps, findAllByType, findChildByType, getDisplayName } from './ReactUtils';
+import { filterProps, findAllByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
-import { Legend } from '../component/Legend';
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { getLegendProps } from './getLegendProps';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
@@ -49,7 +49,6 @@ import {
   ChartOffset,
   DataKey,
   LayoutType,
-  Margin,
   NumberDomain,
   RangeObj,
   ScaleType,
@@ -419,16 +418,12 @@ export const getBarPosition = ({
 
 export const appendOffsetOfLegend = (
   offset: ChartOffset,
-  props: { width?: number; margin: Margin; children?: ReactNode[] },
+  legendItem: React.ReactElement<LegendProps>,
   legendBox: BoundingBox | null,
 ): ChartOffset => {
-  const { children, width, margin } = props;
-  const legendItem = findChildByType(children, Legend);
   if (legendItem) {
-    const legendWidth = width - (margin.left || 0) - (margin.right || 0);
-    const legendProps = getLegendProps({ legendItem, legendWidth });
     const { width: boxWidth, height: boxHeight } = legendBox || {};
-    const { align, verticalAlign, layout } = legendProps;
+    const { align, verticalAlign, layout } = legendItem?.props;
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&

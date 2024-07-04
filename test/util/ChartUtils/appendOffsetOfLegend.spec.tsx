@@ -1,25 +1,9 @@
-import { ReactNode } from 'react';
 import { vi } from 'vitest';
 import { appendOffsetOfLegend } from '../../../src/util/ChartUtils';
 import { ChartOffset } from '../../../src/util/types';
-import { getLegendProps } from '../../../src/util/getLegendProps';
 import { BoundingBox } from '../../../src/util/useGetBoundingClientRect';
-import { findChildByType } from '../../../src/util/ReactUtils';
 
 vi.mock('../../../src/util/ReactUtils');
-
-const spy = vi.mocked(findChildByType);
-
-function mockDomElement(item: ReactNode) {
-  // @ts-expect-error I cannot find a way to type DetailedReactHTMLElement properly
-  spy.mockReturnValueOnce(item);
-}
-
-function mockLegendProps(props: ReturnType<typeof getLegendProps>): ReactNode[] {
-  const mockLegendItem: ReactNode = { props } as ReactNode;
-  mockDomElement(mockLegendItem);
-  return [mockLegendItem];
-}
 
 function createMockDomRect(width: number, height: number): BoundingBox {
   return { width, height };
@@ -31,9 +15,8 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children: ReactNode[] = [];
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props: {}, type: '', key: 'keys' }, legendBox);
     expect(result).toBe(offset);
     expect(result).toEqual({
       bottom: 9,
@@ -46,11 +29,11 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children = mockLegendProps({
-      layout: 'vertical',
-      align: 'left',
-    });
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, null);
+    const props = {
+      layout: 'vertical' as const,
+      align: 'left' as const,
+    };
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, null);
     expect(result).toEqual({
       bottom: 9,
       left: 5,
@@ -62,12 +45,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children = mockLegendProps({
-      layout: 'vertical',
-      align: 'left',
-    });
+    const props = {
+      layout: 'vertical' as const,
+      align: 'left' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -76,13 +59,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children = mockLegendProps({
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-      align: 'left',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'middle' as const,
+      align: 'left' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 105 });
   });
 
@@ -91,12 +74,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children = mockLegendProps({
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'middle' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -105,13 +88,14 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       left: 5,
     };
-    const children = mockLegendProps({
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-      align: 'left',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'middle' as const,
+      align: 'left' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
+
     expect(offset).toEqual({ bottom: 9, left: 5 });
   });
 
@@ -120,12 +104,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    const children = mockLegendProps({
-      layout: 'horizontal',
-      verticalAlign: 'bottom',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'bottom' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -134,13 +118,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    const children = mockLegendProps({
-      layout: 'vertical',
-      align: 'center',
-      verticalAlign: 'bottom',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'bottom' as const,
+      align: 'center' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 209, right: 14 });
   });
 
@@ -149,12 +133,12 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    const children = mockLegendProps({
-      layout: 'vertical',
-      align: 'center',
-    });
+    const props = {
+      layout: 'vertical' as const,
+      align: 'center' as const,
+    };
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
   });
 
@@ -163,12 +147,13 @@ describe('appendOffsetOfLegend', () => {
       bottom: 9,
       right: 14,
     };
-    const children = mockLegendProps({
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-    });
+    const props = {
+      layout: 'horizontal' as const,
+      verticalAlign: 'middle' as const,
+    };
+
     const legendBox = createMockDomRect(100, 200);
-    const result = appendOffsetOfLegend(offset, { margin: {}, children }, legendBox);
+    const result = appendOffsetOfLegend(offset, { props, type: '', key: 'keys' }, legendBox);
     expect(result).toEqual({ bottom: 9, right: 14 });
   });
 });
