@@ -946,7 +946,7 @@ export const generateCategoricalChart = ({
     },
     prevState?: CategoricalChartState,
   ): any => {
-    if (!validateWidthHeight({ props })) {
+    if (!validateWidthHeight({ width: props.width, height: props.height })) {
       return null;
     }
 
@@ -1818,7 +1818,7 @@ export const generateCategoricalChart = ({
     };
 
     render() {
-      if (!validateWidthHeight(this)) {
+      if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
         return null;
       }
 

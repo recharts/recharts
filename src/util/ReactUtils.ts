@@ -147,12 +147,7 @@ export function findChildByType<ComponentType extends React.ComponentType>(
  * @param  {Object} el A chart element
  * @return {Boolean}   true If the props width and height are number, and greater than 0
  */
-export const validateWidthHeight = (el: any): boolean => {
-  if (!el || !el.props) {
-    return false;
-  }
-  const { width, height } = el.props;
-
+export const validateWidthHeight = ({ width, height }: { width: number; height: number }): boolean => {
   if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
     return false;
   }

@@ -865,7 +865,7 @@ export class Treemap extends PureComponent<Props, State> {
   }
 
   render() {
-    if (!validateWidthHeight(this)) {
+    if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
       return null;
     }
 

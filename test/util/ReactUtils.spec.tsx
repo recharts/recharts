@@ -149,7 +149,7 @@ describe('ReactUtils untest tests', () => {
   });
 
   describe('validateWidthHeight', () => {
-    test('validateWidthHeight return false when a react element has width or height smaller than 0', () => {
+    test('validateWidthHeight return false when input is not of the correct form', () => {
       const { container } = render(
         <LineChart width={0} height={0}>
           <Line dataKey="a" />
@@ -157,12 +157,15 @@ describe('ReactUtils untest tests', () => {
           <Bar dataKey="c" />
         </LineChart>,
       );
-      expect(validateWidthHeight(container)).toEqual(false);
+      expect(validateWidthHeight(container as any)).toEqual(false);
     });
 
-    test('validateWidthHeight return false when input is not a react element', () => {
-      expect(validateWidthHeight({ a: 1 })).toEqual(false);
-      expect(validateWidthHeight(vi.fn())).toEqual(false);
+    test('validateWidthHeight return false when input is 0s', () => {
+      expect(validateWidthHeight({ width: 0, height: 0 })).toEqual(false);
+    });
+
+    test('validateWidthHeight returns true when height and width are positive numbers', () => {
+      expect(validateWidthHeight({ width: 5, height: 10 })).toEqual(true);
     });
   });
 
