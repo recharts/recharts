@@ -37,7 +37,6 @@ import { filterProps, findAllByType, getDisplayName } from './ReactUtils';
 // TODO: Cause of circular dependency. Needs refactor.
 // import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
-import { getLegendProps } from './getLegendProps';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
   AxisDomainType,
@@ -59,9 +58,6 @@ import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
-
-// Exported for backwards compatibility
-export { getLegendProps };
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNil(obj) || isNil(dataKey)) {

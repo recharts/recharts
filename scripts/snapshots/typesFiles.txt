@@ -17,7 +17,6 @@
   "types/util/payload",
   "types/util/isWellBehavedNumber.d.ts",
   "types/util/isDomainSpecifiedByUser.d.ts",
-  "types/util/getLegendProps.d.ts",
   "types/util/getEveryNthWithCondition.d.ts",
   "types/util/cursor",
   "types/util/calculateViewBox.d.ts",

@@ -17,7 +17,6 @@
   "lib/util/payload",
   "lib/util/isWellBehavedNumber.js",
   "lib/util/isDomainSpecifiedByUser.js",
-  "lib/util/getLegendProps.js",
   "lib/util/getEveryNthWithCondition.js",
   "lib/util/cursor",
   "lib/util/calculateViewBox.js",
