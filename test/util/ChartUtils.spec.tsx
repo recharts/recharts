@@ -14,7 +14,6 @@ import {
   MIN_VALUE_REG,
   parseSpecifiedDomain,
   getTicksOfAxis,
-  getLegendProps,
   isAxisLTR,
   AxisPropsNeededForTicksGenerator,
   isCategoricalAxis,
@@ -701,12 +700,6 @@ describe('getDomainOfErrorBars', () => {
       };
       expect(getDomainOfErrorBars([...data, errorNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
     });
-  });
-});
-
-describe('exports for backwards-compatibility', () => {
-  test('getLegendProps should be exported', () => {
-    expect(getLegendProps).toBeInstanceOf(Function);
   });
 });
 
