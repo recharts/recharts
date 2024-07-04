@@ -352,11 +352,12 @@ export class Pie extends PureComponent<Props, State> {
       return null;
     }
 
-    const { cornerRadius, startAngle, endAngle, paddingAngle, dataKey, nameKey, tooltipType } = item.props;
+    const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = item.props;
     const minAngle = Math.abs(item.props.minAngle);
     const coordinate = Pie.parseCoordinateOfPie(item, offset);
     const deltaAngle = Pie.parseDeltaAngle(startAngle, endAngle);
     const absDeltaAngle = Math.abs(deltaAngle);
+    const paddingAngle = pieData.length <= 1 ? 0 : item.props.paddingAngle ?? 0;
 
     const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
     const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
