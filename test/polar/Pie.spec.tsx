@@ -709,4 +709,14 @@ describe('<Pie />', () => {
       expect(document.activeElement).toBe(document.body);
     });
   });
+
+  test('when data.length <= 1 set force paddingAngle to zero', async () => {
+    const { container } = render(
+      <PieChart width={500} height={500}>
+        <Pie isAnimationActive={false} data={[{ uv: 1 }]} dataKey="uv" paddingAngle={360} />
+      </PieChart>,
+    );
+
+    await waitFor(() => expect(container.querySelector('path')).not.toBeNull());
+  });
 });
