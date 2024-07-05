@@ -688,7 +688,7 @@ const calculateOffset = (
     xAxisMap = {},
     yAxisMap = {},
   }: {
-    props: CategoricalChartProps;
+    props: { width: number; height: number; children: any; margin?: Margin };
     xAxisMap?: XAxisMap;
     yAxisMap?: YAxisMap;
   },
@@ -975,7 +975,21 @@ export const generateCategoricalChart = ({
       };
     }, {});
 
-    const offset: ChartOffset = calculateOffset({ ...axisObj, props }, prevState?.legendBBox);
+    const offset: ChartOffset = calculateOffset(
+      {
+        // @ts-expect-error axisObj only returns type AxisMap, not XAxisMap
+        xAxisMap: axisObj?.xAxisMap,
+        // @ts-expect-error axisObj only returns type AxisMap, not YAxisMap
+        yAxisMap: axisObj?.yAxisMap,
+        props: {
+          width: props.width,
+          height: props.height,
+          margin: props.margin,
+          children: props.children,
+        },
+      },
+      prevState?.legendBBox,
+    );
 
     Object.keys(axisObj).forEach(key => {
       axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
