@@ -1,8 +1,10 @@
 import React from 'react';
 import { describe, vi, it, test, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps } from '../../src';
+import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps, Customized } from '../../src';
 import { IfOverflow } from '../../src/util/IfOverflow';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectReferenceAreasByAxis } from '../../src/state/axisSelectors';
 
 describe('<ReferenceArea />', () => {
   const data = [
@@ -556,5 +558,49 @@ describe('<ReferenceArea />', () => {
         expect(allAreas).toHaveLength(1);
       },
     );
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux state, and remove it after removing from DOM', () => {
+      const areaSpy = vi.fn();
+      const Comp = (): null => {
+        areaSpy(useAppSelector(state => selectReferenceAreasByAxis(state, 'yAxis', 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <ReferenceArea y1={1} y2={2} x1="category 3" x2="category 4" ifOverflow="extendDomain" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expect(areaSpy).toHaveBeenLastCalledWith([
+        {
+          ifOverflow: 'extendDomain',
+          x1: 'category 3',
+          x2: 'category 4',
+          xAxisId: 0,
+          y1: 1,
+          y2: 2,
+          yAxisId: 0,
+        },
+      ]);
+      expect(areaSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <BarChart width={200} height={200} data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar dataKey="uv" />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      expect(areaSpy).toHaveBeenLastCalledWith([]);
+      expect(areaSpy).toHaveBeenCalledTimes(5);
+    });
   });
 });

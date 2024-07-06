@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../src/state/hooks';
 import {
+  mergeDomains,
   selectAllAppliedValues,
   selectAxisDomain,
   selectAxisScale,
@@ -2541,5 +2542,22 @@ describe('selectNiceTicks', () => {
     );
     expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
     expect(niceTicksSpy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('mergeDomains', () => {
+  it('should return undefined when called without domains', () => {
+    expect(mergeDomains()).toEqual(undefined);
+    expect(mergeDomains(undefined)).toEqual(undefined);
+  });
+
+  it('should return the same domain when called with a single domain', () => {
+    expect(mergeDomains([100, 200])).toEqual([100, 200]);
+    expect(mergeDomains(undefined, [100, 200], undefined)).toEqual([100, 200]);
+  });
+
+  it('should find min, max when called with multiple domains', () => {
+    expect(mergeDomains([100, 200], [150, 250])).toEqual([100, 250]);
+    expect(mergeDomains([100, 200], [150, 250], [0, 50])).toEqual([0, 250]);
   });
 });

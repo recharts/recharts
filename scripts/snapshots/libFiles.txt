@@ -54,6 +54,7 @@
   "lib/state/tooltipSlice.js",
   "lib/state/store.js",
   "lib/state/selectors.js",
+  "lib/state/referenceElementsSlice.js",
   "lib/state/reduxDevtoolsJsonStringifyReplacer.js",
   "lib/state/optionsSlice.js",
   "lib/state/mouseEventsMiddleware.js",

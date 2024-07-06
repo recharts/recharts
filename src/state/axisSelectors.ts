@@ -34,6 +34,7 @@ import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { getNiceTickValues } from '../util/scale';
+import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from './referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
@@ -246,7 +247,7 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
 
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data
-    .filter(v => typeof v === 'number' || typeof v === 'string')
+    .filter(v => typeof v === 'number' || typeof v === 'string' || v instanceof Date)
     .map(Number)
     .filter(n => Number.isNaN(n) === false);
 }
@@ -409,6 +410,121 @@ const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => axisSettings?.domain ?? defaultNumericDomain;
 
+export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>): NumberDomain | undefined => {
+  const allDomains = domains.filter(Boolean);
+  if (allDomains.length === 0) {
+    return undefined;
+  }
+  const allValues = allDomains.flat();
+  const min = Math.min(...allValues);
+  const max = Math.max(...allValues);
+  return [min, max];
+};
+
+const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
+  state.referenceElements.dots;
+
+export const selectReferenceDotsByAxis = createSelector(
+  selectReferenceDots,
+  pickAxisType,
+  pickAxisId,
+  (dots, axisType, axisId) => {
+    return dots
+      .filter(dot => dot.ifOverflow === 'extendDomain')
+      .filter(dot => {
+        if (axisType === 'xAxis') {
+          return dot.xAxisId === axisId;
+        }
+        return dot.yAxisId === axisId;
+      });
+  },
+);
+
+const selectReferenceAreas = (state: RechartsRootState): ReadonlyArray<ReferenceAreaSettings> =>
+  state.referenceElements.areas;
+
+export const selectReferenceAreasByAxis = createSelector(
+  selectReferenceAreas,
+  pickAxisType,
+  pickAxisId,
+  (areas, axisType, axisId) => {
+    return areas
+      .filter(area => area.ifOverflow === 'extendDomain')
+      .filter(area => {
+        if (axisType === 'xAxis') {
+          return area.xAxisId === axisId;
+        }
+        return area.yAxisId === axisId;
+      });
+  },
+);
+
+const selectReferenceLines = (state: RechartsRootState): ReadonlyArray<ReferenceLineSettings> =>
+  state.referenceElements.lines;
+
+export const selectReferenceLinesByAxis = createSelector(
+  selectReferenceLines,
+  pickAxisType,
+  pickAxisId,
+  (lines, axisType, axisId) => {
+    return lines
+      .filter(line => line.ifOverflow === 'extendDomain')
+      .filter(line => {
+        if (axisType === 'xAxis') {
+          return line.xAxisId === axisId;
+        }
+        return line.yAxisId === axisId;
+      });
+  },
+);
+
+const selectReferenceDotsDomain = createSelector(
+  selectReferenceDotsByAxis,
+  pickAxisType,
+  (dots: ReadonlyArray<ReferenceDotSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
+    if (allCoords.length === 0) {
+      return undefined;
+    }
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceAreasDomain = createSelector(
+  selectReferenceAreasByAxis,
+  pickAxisType,
+  (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = onlyAllowNumbers(
+      areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
+    );
+    if (allCoords.length === 0) {
+      return undefined;
+    }
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceLinesDomain = createSelector(
+  selectReferenceLinesByAxis,
+  pickAxisType,
+  (lines: ReadonlyArray<ReferenceLineSettings>, axisType: AxisType): NumberDomain => {
+    const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
+    if (allCoords.length === 0) {
+      return undefined;
+    }
+    return [Math.min(...allCoords), Math.max(...allCoords)];
+  },
+);
+
+const selectReferenceElementsDomain = createSelector(
+  selectReferenceDotsDomain,
+  selectReferenceLinesDomain,
+  selectReferenceAreasDomain,
+  (dotsDomain, linesDomain, areasDomain): NumberDomain => {
+    return mergeDomains(dotsDomain, areasDomain, linesDomain);
+  },
+);
+
 const selectNumericalDomain = (
   state: RechartsRootState,
   axisSettings: AxisSettings,
@@ -436,7 +552,13 @@ const selectNumericalDomain = (
     domainFromData = computeNumericalDomain(allDataWithErrorDomains);
   }
 
-  return parseNumericalUserDomain(domainDefinition, domainFromData, axisSettings.allowDataOverflow);
+  const referenceElementsDomain = selectReferenceElementsDomain(state, axisType, axisId);
+
+  return parseNumericalUserDomain(
+    domainDefinition,
+    mergeDomains(domainFromData, referenceElementsDomain),
+    axisSettings.allowDataOverflow,
+  );
 };
 
 /**

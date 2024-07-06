@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, SVGProps } from 'react';
+import React, { ReactElement, SVGProps, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
@@ -15,6 +15,8 @@ import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
 import { useClipPathId, useViewBox, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
+import { useAppDispatch } from '../state/hooks';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -136,6 +138,17 @@ export const getEndPoints = (
   return null;
 };
 
+function ReportReferenceLine(props: ReferenceLineSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(addLine(props));
+    return () => {
+      dispatch(removeLine(props));
+    };
+  });
+  return null;
+}
+
 export function ReferenceLine(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
@@ -183,6 +196,13 @@ export function ReferenceLine(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-line', className)}>
+      <ReportReferenceLine
+        yAxisId={props.yAxisId}
+        xAxisId={props.xAxisId}
+        ifOverflow={props.ifOverflow}
+        x={props.x}
+        y={props.y}
+      />
       {renderLine(shape, lineProps)}
       {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
     </Layer>

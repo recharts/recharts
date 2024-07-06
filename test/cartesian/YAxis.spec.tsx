@@ -1,13 +1,28 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, test, it, expect, vi } from 'vitest';
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, CartesianGrid, Tooltip, YAxis, Customized } from '../../src';
-import { AxisDomain, StackOffsetType } from '../../src/util/types';
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  CartesianGrid,
+  Tooltip,
+  YAxis,
+  Customized,
+  ReferenceDot,
+  ReferenceArea,
+  ReferenceLine,
+} from '../../src';
+import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisDomain, selectAxisSettings } from '../../src/state/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
+import { IfOverflow } from '../../src/util/IfOverflow';
 
 describe('<YAxis />', () => {
   const data = [
@@ -1031,5 +1046,415 @@ describe('<YAxis />', () => {
     });
   });
 
-  describe.todo('Reference elements should expand domain');
+  describe('with reference elements', () => {
+    const casesThatDoNotExtendDomain: ReadonlyArray<IfOverflow | undefined> = [
+      'discard',
+      'hidden',
+      'visible',
+      undefined,
+    ];
+
+    it('should render usual domain when without reference elements', () => {
+      const domainSpy = vi.fn();
+      const Comp = (): null => {
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        domainSpy(domain);
+        return null;
+      };
+      const { container } = render(
+        <LineChart width={100} height={100} data={pageData}>
+          <YAxis />
+          <Line dataKey="pv" />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+      expectYAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '57',
+          y: '95',
+        },
+        {
+          textContent: '300',
+          x: '57',
+          y: '72.5',
+        },
+        {
+          textContent: '600',
+          x: '57',
+          y: '50',
+        },
+        {
+          textContent: '900',
+          x: '57',
+          y: '27.5',
+        },
+        {
+          textContent: '1200',
+          x: '57',
+          y: '5',
+        },
+      ]);
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+    });
+
+    describe('ReferenceDot', () => {
+      const ChartWithReferenceDot = (props: {
+        ifOverflow: IfOverflow | undefined;
+        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+      }) => {
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          props.domainSpy(domain);
+          return null;
+        };
+        return (
+          <LineChart width={100} height={100} data={pageData}>
+            <YAxis />
+            <Line dataKey="pv" />
+            {/* the r prop is ignored from domain extension - perhaps it should expand the domain too? */}
+            <ReferenceDot x={9999} y={2000} r={500} ifOverflow={props.ifOverflow} />
+            <Customized component={<Comp />} />
+          </LineChart>
+        );
+      };
+
+      it.each(casesThatDoNotExtendDomain)('should not extend domain when ifOverflow=%s', ifOverflow => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceDot ifOverflow={ifOverflow} domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '600',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '900',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '1200',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+      });
+
+      it('should extend domain when ifOverflow=extendDomain', () => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceDot ifOverflow="extendDomain" domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '500',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '1000',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '1500',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '2000',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
+      });
+    });
+
+    describe('ReferenceArea', () => {
+      const ChartWithReferenceArea = (props: {
+        ifOverflow: IfOverflow | undefined;
+        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+      }) => {
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          props.domainSpy(domain);
+          return null;
+        };
+        return (
+          <LineChart width={100} height={100} data={pageData}>
+            <YAxis />
+            <Line dataKey="pv" />
+            <ReferenceArea x1={-10} x2={3000} y1={-100} y2={5000} ifOverflow={props.ifOverflow} />
+            <Customized component={<Comp />} />
+          </LineChart>
+        );
+      };
+
+      it.each(casesThatDoNotExtendDomain)('should not extend domain when ifOverflow=%s', ifOverflow => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceArea ifOverflow={ifOverflow} domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '600',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '900',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '1200',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+      });
+
+      it('should extend domain when ifOverflow=extendDomain', () => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceArea ifOverflow="extendDomain" domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '-2000',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '0',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '2000',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '4000',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '6000',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([-100, 5000]);
+      });
+    });
+
+    describe('ReferenceLine with one dimension', () => {
+      const ChartWithReferenceLine = (props: {
+        ifOverflow: IfOverflow | undefined;
+        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+      }) => {
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          props.domainSpy(domain);
+          return null;
+        };
+        return (
+          <LineChart width={100} height={100} data={pageData}>
+            <YAxis />
+            <Line dataKey="pv" />
+            <ReferenceLine y={2000} ifOverflow={props.ifOverflow} />
+            <Customized component={<Comp />} />
+          </LineChart>
+        );
+      };
+
+      it.each(casesThatDoNotExtendDomain)('should not extend domain when ifOverflow=%s', ifOverflow => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceLine ifOverflow={ifOverflow} domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '600',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '900',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '1200',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+      });
+
+      it('should extend domain when ifOverflow=extendDomain', () => {
+        const domainSpy = vi.fn();
+        const { container } = render(<ChartWithReferenceLine ifOverflow="extendDomain" domainSpy={domainSpy} />);
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '500',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '1000',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '1500',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '2000',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 2000]);
+      });
+    });
+
+    describe('ReferenceLine with segment', () => {
+      const ChartWithReferenceLineWithSegment = (props: {
+        ifOverflow: IfOverflow | undefined;
+        domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
+      }) => {
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          props.domainSpy(domain);
+          return null;
+        };
+        return (
+          <LineChart width={100} height={100} data={pageData}>
+            <YAxis />
+            <Line dataKey="pv" />
+            <ReferenceLine
+              segment={[
+                { x: 'Page A', y: 100 },
+                { x: 'Page B', y: 2000 },
+              ]}
+              ifOverflow={props.ifOverflow}
+            />
+            <Customized component={<Comp />} />
+          </LineChart>
+        );
+      };
+
+      it.each(casesThatDoNotExtendDomain)('should not extend domain when ifOverflow=%s', ifOverflow => {
+        const domainSpy = vi.fn();
+        const { container } = render(
+          <ChartWithReferenceLineWithSegment ifOverflow={ifOverflow} domainSpy={domainSpy} />,
+        );
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '600',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '900',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '1200',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+      });
+
+      it(`should NOT extend domain even when ifOverflow=extendDomain ! No clue why, this looks to me like a bug`, () => {
+        const domainSpy = vi.fn();
+        const { container } = render(
+          <ChartWithReferenceLineWithSegment ifOverflow="extendDomain" domainSpy={domainSpy} />,
+        );
+        expectYAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '57',
+            y: '95',
+          },
+          {
+            textContent: '300',
+            x: '57',
+            y: '72.5',
+          },
+          {
+            textContent: '600',
+            x: '57',
+            y: '50',
+          },
+          {
+            textContent: '900',
+            x: '57',
+            y: '27.5',
+          },
+          {
+            textContent: '1200',
+            x: '57',
+            y: '5',
+          },
+        ]);
+        expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
+      });
+    });
+  });
 });

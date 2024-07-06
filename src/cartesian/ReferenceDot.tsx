@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -9,11 +9,18 @@ import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { filterProps } from '../util/ReactUtils';
 import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
+import { useAppDispatch } from '../state/hooks';
 
 interface ReferenceDotProps {
   r?: number;
 
   ifOverflow?: IfOverflow;
+  /**
+   * The x-coordinate of the center of the dot.
+   * It should match a value from the XAxis, so if the XAxis is a number axis, this should be a number.
+   * If the XAxis is a category axis, this should be a string.
+   */
   x?: number | string;
   y?: number | string;
 
@@ -52,6 +59,17 @@ const useCoordinate = (
   return result;
 };
 
+function ReportReferenceDot(props: ReferenceDotSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(addDot(props));
+    return () => {
+      dispatch(removeDot(props));
+    };
+  });
+  return null;
+}
+
 export function ReferenceDot(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
@@ -77,6 +95,7 @@ export function ReferenceDot(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
+      <ReportReferenceDot y={y} x={x} r={r} yAxisId={props.yAxisId} xAxisId={props.xAxisId} ifOverflow={ifOverflow} />
       {ReferenceDot.renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,

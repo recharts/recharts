@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -14,6 +14,8 @@ import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
+import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
+import { useAppDispatch } from '../state/hooks';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -77,6 +79,17 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
   return rect;
 };
 
+function ReportReferenceArea(props: ReferenceAreaSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(addArea(props));
+    return () => {
+      dispatch(removeArea(props));
+    };
+  });
+  return null;
+}
+
 export function ReferenceArea(props: Props) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
@@ -106,6 +119,15 @@ export function ReferenceArea(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
+      <ReportReferenceArea
+        yAxisId={props.yAxisId}
+        xAxisId={props.xAxisId}
+        ifOverflow={props.ifOverflow}
+        x1={props.x1}
+        x2={props.x2}
+        y1={props.y1}
+        y2={props.y2}
+      />
       {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
       {Label.renderCallByParent(props, rect)}
     </Layer>

@@ -54,6 +54,7 @@
   "types/state/tooltipSlice.d.ts",
   "types/state/store.d.ts",
   "types/state/selectors.d.ts",
+  "types/state/referenceElementsSlice.d.ts",
   "types/state/reduxDevtoolsJsonStringifyReplacer.d.ts",
   "types/state/optionsSlice.d.ts",
   "types/state/mouseEventsMiddleware.d.ts",
