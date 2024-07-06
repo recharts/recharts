@@ -247,7 +247,7 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
 
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data
-    .filter(v => typeof v === 'number' || typeof v === 'string')
+    .filter(v => typeof v === 'number' || typeof v === 'string' || v instanceof Date)
     .map(Number)
     .filter(n => Number.isNaN(n) === false);
 }
