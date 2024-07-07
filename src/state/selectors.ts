@@ -124,9 +124,11 @@ export function selectActiveCoordinate(
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
 ): ChartCoordinate | undefined {
   const tooltipState: TooltipState = selectTooltipState(state);
   let activeCoordinate: ChartCoordinate;
+
   if (tooltipEventType === 'item') {
     if (trigger === 'hover') {
       activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
@@ -138,6 +140,35 @@ export function selectActiveCoordinate(
   } else {
     activeCoordinate = tooltipState.axisInteraction.activeClickCoordinate;
   }
+
+  // the following works for bar, area, line, but does not work for polar or scatter charts :(
+  // how do we determine y values when y values need to be exact?
+
+  // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
+  // we can change this later but not sure how else to maintain current functionality
+  if (defaultIndex != null && activeCoordinate === undefined) {
+    // compute defaultIndex positioning
+    const tooltipTicks = selectTooltipTicks(state);
+
+    const layout = selectChartLayout(state);
+    const offset = selectChartOffset(state);
+    const { height } = offset;
+
+    const independentAxisCoord = tooltipTicks[defaultIndex].coordinate;
+    const dependentAxisCoord = (offset.top + height) / 2;
+
+    const isHorizontal = layout === 'horizontal';
+    return isHorizontal
+      ? {
+          x: independentAxisCoord,
+          y: dependentAxisCoord,
+        }
+      : {
+          y: independentAxisCoord,
+          x: dependentAxisCoord,
+        };
+  }
+
   return activeCoordinate;
 }
 
