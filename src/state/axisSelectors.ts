@@ -26,6 +26,7 @@ import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './
 import { RechartsRootState } from './store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import {
+  isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
 } from '../util/isDomainSpecifiedByUser';
@@ -391,9 +392,16 @@ const computeNumericalDomain = (
   return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
 };
 
-const computeCategoricalDomain = (allDataSquished: AppliedChartData, axisSettings: AxisSettings): CategoricalDomain => {
+const computeCategoricalDomain = (
+  allDataSquished: AppliedChartData,
+  axisSettings: AxisSettings,
+  isCategorical: boolean,
+): CategoricalDomain => {
   const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates);
-  if (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain))) {
+  if (
+    axisSettings.dataKey == null ||
+    (isCategorical && axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain))
+  ) {
     /*
      * 1. In an absence of dataKey, Recharts will use array indexes as its categorical domain
      * 2. When category axis has duplicated text, serial numbers are used to generate scale
@@ -589,7 +597,7 @@ export const selectAxisDomain = (
 
   if (type === 'category') {
     const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
-    return computeCategoricalDomain(allDataSquished, axisSettings);
+    return computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
   }
 
   if (selectStackOffsetType(state) === 'expand') {
@@ -607,11 +615,33 @@ export const selectNiceTicks = createSelector(
     if (
       axisSettings != null &&
       Array.isArray(domainDefinition) &&
-      (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto')
+      (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
+      isWellFormedNumberDomain(axisDomain)
     ) {
       return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
     }
     return undefined;
+  },
+);
+
+export const selectAxisDomainIncludingNiceTicks = createSelector(
+  selectAxisSettings,
+  selectAxisDomain,
+  selectNiceTicks,
+  (axisSettings, domain, niceTicks) => {
+    if (
+      axisSettings?.type === 'number' &&
+      isWellFormedNumberDomain(domain) &&
+      Array.isArray(niceTicks) &&
+      niceTicks.length > 0
+    ) {
+      const minFromDomain = domain[0];
+      const minFromTicks = niceTicks[0];
+      const maxFromDomain = domain[1];
+      const maxFromTicks = niceTicks[niceTicks.length - 1];
+      return [Math.min(minFromDomain, minFromTicks), Math.max(maxFromDomain, maxFromTicks)];
+    }
+    return domain;
   },
 );
 
@@ -784,7 +814,7 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
     selectChartLayout,
     selectHasBar,
     selectChartName,
-    selectAxisDomain,
+    selectAxisDomainIncludingNiceTicks,
     selectAxisRange,
     pickAxisType,
     (
@@ -809,6 +839,11 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
         chartName,
         hasBar,
       );
+      /*
+       * This setter will also modify the domain internally!
+       * so the domain returned from selectAxisDomain, and domain from scale.domain(),
+       * may or may not be the same.
+       */
       parsedScaleReturn.scale.domain(axisDomain).range(axisRange);
       return parsedScaleReturn;
     },

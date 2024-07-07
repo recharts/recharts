@@ -244,47 +244,47 @@ describe('selectAxisDomain', () => {
     );
     expectXAxisTicks(container, [
       {
-        textContent: '10',
+        textContent: '70',
         x: '5',
         y: '73',
       },
       {
-        textContent: '20',
+        textContent: '80',
         x: '16.25',
         y: '73',
       },
       {
-        textContent: '30',
+        textContent: '90',
         x: '27.5',
         y: '73',
       },
       {
-        textContent: '40',
+        textContent: '10',
         x: '38.75',
         y: '73',
       },
       {
-        textContent: '50',
+        textContent: '20',
         x: '50',
         y: '73',
       },
       {
-        textContent: '60',
+        textContent: '30',
         x: '61.25',
         y: '73',
       },
       {
-        textContent: '70',
+        textContent: '40',
         x: '72.5',
         y: '73',
       },
       {
-        textContent: '80',
+        textContent: '50',
         x: '83.75',
         y: '73',
       },
       {
-        textContent: '90',
+        textContent: '60',
         x: '95',
         y: '73',
       },

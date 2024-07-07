@@ -33,7 +33,7 @@ export function isDomainSpecifiedByUser(
   return false;
 }
 
-function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
+export function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
   if (Array.isArray(v) && v.length === 2) {
     const [min, max] = v;
     if (isWellBehavedNumber(min) && isWellBehavedNumber(max)) {
