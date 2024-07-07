@@ -82,17 +82,40 @@ describe('<YAxis />', () => {
     expect(ticks[ticks.length - 1]).toHaveTextContent(textContent);
   });
 
-  it('Render 1 ticks when domain={[0, 1000]} and dataKey is "noExist"', () => {
-    render(
+  it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist"', () => {
+    const { container } = render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis stroke="#ff7300" domain={[0, 1000]} />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(5);
-    expect(ticks[1].getAttribute('y')).toBe('297.5');
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: '250',
+        x: '57',
+        y: '297.5',
+      },
+      {
+        textContent: '500',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: '750',
+        x: '57',
+        y: '102.5',
+      },
+      {
+        textContent: '1000',
+        x: '57',
+        y: '5',
+      },
+    ]);
   });
 
   const casesThatDoNotShowTicks: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
@@ -110,18 +133,34 @@ describe('<YAxis />', () => {
   });
 
   it('Render 4 ticks', () => {
-    render(
+    const { container } = render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis type="number" stroke="#ff7300" ticks={[0, 400, 800, 1200]} />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks[0]).toHaveTextContent('0');
-    expect(ticks[1]).toHaveTextContent('400');
-    expect(ticks[2]).toHaveTextContent('800');
-    expect(ticks[3]).toHaveTextContent('1200');
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: '400',
+        x: '57',
+        y: '265.00000000000006',
+      },
+      {
+        textContent: '800',
+        x: '57',
+        y: '135.00000000000003',
+      },
+      {
+        textContent: '1200',
+        x: '57',
+        y: '5',
+      },
+    ]);
   });
 
   it('Renders axis based on specified domain when data overflow is allowed', () => {
@@ -159,16 +198,39 @@ describe('<YAxis />', () => {
   });
 
   it('Render ticks reversed', () => {
-    render(
+    const { container } = render(
       <AreaChart width={600} height={400} data={data}>
         <YAxis reversed type="number" stroke="#ff7300" />
         <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(5);
-    expect(ticks[1].getAttribute('y')).toBe('102.5');
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '57',
+        y: '5',
+      },
+      {
+        textContent: '100',
+        x: '57',
+        y: '102.5',
+      },
+      {
+        textContent: '200',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: '300',
+        x: '57',
+        y: '297.5',
+      },
+      {
+        textContent: '400',
+        x: '57',
+        y: '395',
+      },
+    ]);
   });
 
   it('Should skip rendering ticks with empty text', () => {
@@ -178,15 +240,29 @@ describe('<YAxis />', () => {
       { day: '05-03', weather: 'cloudy' },
       { day: '05-04', weather: 'rain' },
     ];
-    render(
+    const { container } = render(
       <AreaChart width={400} height={400} data={areaData}>
         <YAxis type="category" />
         <Area type="stepAfter" dataKey="weather" stroke="#0088FE" />
       </AreaChart>,
     );
-    const ticks = document.querySelectorAll('text');
-
-    expect(ticks).toHaveLength(3);
+    expectYAxisTicks(container, [
+      {
+        textContent: 'sunny',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: 'cloudy',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: 'rain',
+        x: '57',
+        y: '5',
+      },
+    ]);
   });
 
   it('Should render the YAxis line without any ticks', () => {
@@ -202,6 +278,8 @@ describe('<YAxis />', () => {
 
     const axisLine = container.getElementsByClassName('recharts-cartesian-axis-line');
     expect(axisLine).toHaveLength(1);
+
+    expectYAxisTicks(container, []);
   });
 
   it('should throw when attempting to render outside of Chart', () => {
