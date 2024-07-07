@@ -491,7 +491,7 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" includeHidden />
+          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed />
           <Customized component={Comp} />
         </BarChart>,
       );
@@ -512,6 +512,7 @@ describe('<YAxis />', () => {
           top: 0,
           bottom: 0,
         },
+        reversed: true,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings);
     });
@@ -545,6 +546,7 @@ describe('<YAxis />', () => {
           top: 0,
           bottom: 0,
         },
+        reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: expectedSettings1,
@@ -576,6 +578,7 @@ describe('<YAxis />', () => {
           },
           allowDecimals: true,
           tickCount: 5,
+          reversed: false,
         },
         bar: {
           includeHidden: false,
@@ -592,6 +595,7 @@ describe('<YAxis />', () => {
           },
           allowDecimals: true,
           tickCount: 5,
+          reversed: false,
         },
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
@@ -617,6 +621,7 @@ describe('<YAxis />', () => {
           bottom: 0,
         },
         allowDecimals: true,
+        reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: undefined,

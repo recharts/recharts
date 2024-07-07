@@ -694,7 +694,9 @@ export const getTicksOfAxis = (
   isGrid?: boolean,
   isAll?: boolean,
 ): ReadonlyArray<TickItem> | null => {
-  if (!axis) return null;
+  if (!axis) {
+    return null;
+  }
   const {
     duplicateDomain,
     type,
@@ -708,6 +710,10 @@ export const getTicksOfAxis = (
     niceTicks,
     axisType,
   } = axis;
+
+  if (!scale) {
+    return null;
+  }
 
   const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;

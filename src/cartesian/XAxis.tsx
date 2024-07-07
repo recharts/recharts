@@ -8,9 +8,10 @@ import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chart
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
+import { selectAxisScale } from '../state/axisSelectors';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -55,8 +56,9 @@ const XAxisImpl = (props: Props) => {
   const height = useChartHeight();
   const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
+  const scaleObj = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
 
-  if (axisOptions == null) {
+  if (axisOptions == null || scaleObj == null) {
     return null;
   }
 
@@ -67,8 +69,8 @@ const XAxisImpl = (props: Props) => {
     isCategorical: axisOptions.isCategorical,
     niceTicks: axisOptions.niceTicks,
     range: axisOptions.range,
-    realScaleType: axisOptions.realScaleType,
-    scale: axisOptions.scale,
+    realScaleType: scaleObj.realScaleType,
+    scale: scaleObj.scale,
     tickCount: props.tickCount,
     ticks: props.ticks,
     type: props.type,
@@ -107,6 +109,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
         allowDecimals={props.allowDecimals}
         tickCount={props.tickCount}
         includeHidden={props.includeHidden ?? false}
+        reversed={props.reversed}
       />
       <XAxisImpl {...props} />
     </>

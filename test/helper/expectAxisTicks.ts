@@ -1,7 +1,7 @@
 import { assertNotNull } from './assertNotNull';
 import { AxisType } from '../../src/util/types';
 import { AxisId } from '../../src/state/axisMapSlice';
-import { selectAxisDomain } from '../../src/state/axisSelectors';
+import { selectAxisScale } from '../../src/state/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 
 export type ExpectedTick = {
@@ -39,11 +39,11 @@ export function ExpectAxisDomain({
 }: {
   axisType: AxisType;
   axisId?: AxisId;
-  assert: (domainFromRedux: ReturnType<typeof selectAxisDomain>) => void;
+  assert: (domainFromRedux: ReadonlyArray<unknown>) => void;
 }): null {
   useAppSelector(state => {
-    const domainFromRedux = selectAxisDomain(state, axisType, axisId);
-    assert(domainFromRedux);
+    const scale = selectAxisScale(state, axisType, axisId);
+    assert(scale.scale?.domain());
   });
   return null;
 }

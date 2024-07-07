@@ -6,7 +6,7 @@ import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-h
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomain } from '../../src/state/axisSelectors';
+import { selectAxisDomain, selectAxisDomainIncludingNiceTicks } from '../../src/state/axisSelectors';
 import { getRealDirection } from '../../src/cartesian/ErrorBar';
 
 // asserts an error bar has both a start and end position
@@ -455,7 +455,7 @@ describe('<ErrorBar />', () => {
     test('ErrorBar not extend XAxis domain - this looks like a bug to me!', () => {
       const xAxisSpy = vi.fn();
       const Comp = (): null => {
-        xAxisSpy(useAppSelector(state => selectAxisDomain(state, 'xAxis', 0)));
+        xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
         return null;
       };
       const { container, rerender } = render(
@@ -494,7 +494,7 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3300]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
       expect(xAxisSpy).toHaveBeenCalledTimes(3);
 
       rerender(
@@ -517,28 +517,28 @@ describe('<ErrorBar />', () => {
         },
         {
           textContent: '850',
-          x: '127.5',
+          x: '120.69444444444444',
           y: '473',
         },
         {
           textContent: '1700',
-          x: '250',
+          x: '236.38888888888889',
           y: '473',
         },
         {
           textContent: '2550',
-          x: '372.5',
+          x: '352.0833333333333',
           y: '473',
         },
         {
           textContent: '3400',
-          x: '495',
+          x: '467.77777777777777',
           y: '473',
         },
       ]);
       // Yep look at this - the selector has fixed this bug and is now extending XAxis domain too.
       // Once we switch from generateCategoricalChart domain to redux domain, then the axis will be fixed too
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3440]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
       expect(xAxisSpy).toHaveBeenCalledTimes(6);
     });
   });

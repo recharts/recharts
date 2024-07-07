@@ -103,6 +103,7 @@ const YAxisSettingsDispatcher = (props: Props) => {
         tickCount={props.tickCount}
         padding={props.padding}
         includeHidden={props.includeHidden ?? false}
+        reversed={props.reversed}
       />
       <YAxisImpl {...props} />
     </>
