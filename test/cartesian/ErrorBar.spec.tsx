@@ -6,7 +6,7 @@ import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-h
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomain, selectAxisDomainIncludingNiceTicks } from '../../src/state/axisSelectors';
+import { selectAxisDomainIncludingNiceTicks } from '../../src/state/axisSelectors';
 import { getRealDirection } from '../../src/cartesian/ErrorBar';
 
 // asserts an error bar has both a start and end position
@@ -279,10 +279,10 @@ describe('<ErrorBar />', () => {
   });
 
   describe('ErrorBar and axis domain interaction', () => {
-    test('ErrorBar should extend YAxis domain', () => {
+    it('should extend YAxis domain', () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
-        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
+        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0)));
         return null;
       };
       const { container, rerender } = render(
@@ -321,7 +321,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3300]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(3);
       rerender(
         <BarChart data={dataWithError} width={500} height={500}>
@@ -361,14 +361,14 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3440]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(6);
     });
 
-    test('ErrorBar should extend YAxis domain when data is defined on the graphical item', () => {
+    it('should extend YAxis domain when data is defined on the graphical item', () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
-        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
+        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0)));
         return null;
       };
       const { container, rerender } = render(
@@ -407,7 +407,7 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3300]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(3);
 
       rerender(
@@ -448,11 +448,11 @@ describe('<ErrorBar />', () => {
           y: '5',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3440]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
       expect(axisDomainSpy).toHaveBeenCalledTimes(6);
     });
 
-    test('ErrorBar not extend XAxis domain - this looks like a bug to me!', () => {
+    it('should extend XAxis domain', () => {
       const xAxisSpy = vi.fn();
       const Comp = (): null => {
         xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
@@ -507,8 +507,52 @@ describe('<ErrorBar />', () => {
         </BarChart>,
       );
       assertErrorBars(container, 4);
-      // IMHO the same extension should happen here, but it does not. The ticks are the exact same.
-      // Perhaps the Redux refactor can fix it?
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '473',
+        },
+        {
+          textContent: '900',
+          x: '127.5',
+          y: '473',
+        },
+        {
+          textContent: '1800',
+          x: '250',
+          y: '473',
+        },
+        {
+          textContent: '2700',
+          x: '372.5',
+          y: '473',
+        },
+        {
+          textContent: '3600',
+          x: '495',
+          y: '473',
+        },
+      ]);
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(xAxisSpy).toHaveBeenCalledTimes(6);
+    });
+
+    it('should extend XAxis domain when data is defined on the graphical item', () => {
+      const xAxisSpy = vi.fn();
+      const Comp = (): null => {
+        xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        return null;
+      };
+      const { container, rerender } = render(
+        <LineChart width={500} height={500}>
+          <XAxis dataKey="uv" type="number" />
+          <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+
+      assertErrorBars(container, 0);
       expectXAxisTicks(container, [
         {
           textContent: '0',
@@ -517,29 +561,66 @@ describe('<ErrorBar />', () => {
         },
         {
           textContent: '850',
-          x: '120.69444444444444',
+          x: '127.5',
           y: '473',
         },
         {
           textContent: '1700',
-          x: '236.38888888888889',
+          x: '250',
           y: '473',
         },
         {
           textContent: '2550',
-          x: '352.0833333333333',
+          x: '372.5',
           y: '473',
         },
         {
           textContent: '3400',
-          x: '467.77777777777777',
+          x: '495',
           y: '473',
         },
       ]);
-      // Yep look at this - the selector has fixed this bug and is now extending XAxis domain too.
-      // Once we switch from generateCategoricalChart domain to redux domain, then the axis will be fixed too
+      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(xAxisSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <LineChart width={500} height={500}>
+          <XAxis dataKey="uv" type="number" />
+          <Line isAnimationActive={false} dataKey="uv" data={dataWithError}>
+            <ErrorBar dataKey="uvError" direction="x" />
+          </Line>
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+      assertErrorBars(container, 4);
+      expectXAxisTicks(container, [
+        {
+          textContent: '0',
+          x: '5',
+          y: '473',
+        },
+        {
+          textContent: '900',
+          x: '127.5',
+          y: '473',
+        },
+        {
+          textContent: '1800',
+          x: '250',
+          y: '473',
+        },
+        {
+          textContent: '2700',
+          x: '372.5',
+          y: '473',
+        },
+        {
+          textContent: '3600',
+          x: '495',
+          y: '473',
+        },
+      ]);
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(6);
     });
   });
 });

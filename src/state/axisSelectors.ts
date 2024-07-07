@@ -34,7 +34,7 @@ import { AppliedChartData, ChartData } from './chartDataSlice';
 import { getPercentValue, hasDuplicate } from '../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { getNiceTickValues } from '../util/scale';
+import { getNiceTickValues, getTickValuesFixedDomain } from '../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from './referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
@@ -620,6 +620,11 @@ export const selectNiceTicks = createSelector(
     ) {
       return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
     }
+
+    if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number') {
+      return getTickValuesFixedDomain(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
+    }
+
     return undefined;
   },
 );

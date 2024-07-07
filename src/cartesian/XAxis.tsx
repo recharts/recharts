@@ -11,7 +11,7 @@ import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartU
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
-import { selectAxisScale } from '../state/axisSelectors';
+import { selectAxisScale, selectNiceTicks } from '../state/axisSelectors';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -57,6 +57,7 @@ const XAxisImpl = (props: Props) => {
   const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const niceTicks = useAppSelector(state => selectNiceTicks(state, 'xAxis', xAxisId));
 
   if (axisOptions == null || scaleObj == null) {
     return null;
@@ -67,7 +68,7 @@ const XAxisImpl = (props: Props) => {
     categoricalDomain: axisOptions.categoricalDomain,
     duplicateDomain: axisOptions.duplicateDomain,
     isCategorical: axisOptions.isCategorical,
-    niceTicks: axisOptions.niceTicks,
+    niceTicks,
     range: axisOptions.range,
     realScaleType: scaleObj.realScaleType,
     scale: scaleObj.scale,
