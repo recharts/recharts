@@ -607,11 +607,59 @@ export const selectAxisDomain = (
   return selectNumericalDomain(state, axisSettings, axisType, axisId);
 };
 
+const unknownScale: ParsedScaleReturn = {
+  scale: undefined,
+  realScaleType: undefined,
+};
+
+/**
+ * This returns an axis scale and type (linear, log, etc.) for the given axis.
+ * This is before applying the correct domain and range!
+ *
+ * That's on one hand silly, yes, but on the other hand also required
+ * because the final domain depends on nice ticks,
+ * and nice ticks depend on the scale type.
+ * With this shared dependency we cannot create the scale and set its domain in one step.
+ *
+ * Usually you would never want to use this selector, ever, outside of this circular dependency problem.
+ *
+ * Prefer to use `selectAxisScale` instead.
+ */
+export const selectEmptyAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
+  createSelector(
+    selectAxisSettings,
+    selectChartLayout,
+    selectHasBar,
+    selectChartName,
+    pickAxisType,
+    (axisConfig: AxisSettings, chartLayout: LayoutType, hasBar: boolean, chartName: string, axisType: AxisType) => {
+      if (axisConfig == null) {
+        return unknownScale;
+      }
+      return parseScale(
+        {
+          scale: axisConfig.scale,
+          type: axisConfig.type,
+          layout: chartLayout,
+          axisType,
+        },
+        chartName,
+        hasBar,
+      );
+    },
+  );
+
 export const selectNiceTicks = createSelector(
   selectAxisDomain,
   selectAxisSettings,
-  (axisDomain, axisSettings): ReadonlyArray<number> | undefined => {
+  selectEmptyAxisScale,
+  (axisDomain, axisSettings, { realScaleType }): ReadonlyArray<number> | undefined => {
     const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+
+    if (realScaleType !== 'auto' && realScaleType !== 'linear') {
+      return undefined;
+    }
+
     if (
       axisSettings != null &&
       Array.isArray(domainDefinition) &&
@@ -819,42 +867,15 @@ const selectAxisRangeWithReverse = createSelector(
   },
 );
 
-const unknownScale: ParsedScaleReturn = {
-  scale: undefined,
-  realScaleType: undefined,
-};
-
 export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
   createSelector(
-    selectAxisSettings,
-    selectChartLayout,
-    selectHasBar,
-    selectChartName,
+    selectEmptyAxisScale,
     selectAxisDomainIncludingNiceTicks,
     selectAxisRangeWithReverse,
-    pickAxisType,
-    (
-      axisConfig: AxisSettings,
-      chartLayout: LayoutType,
-      hasBar: boolean,
-      chartName: string,
-      axisDomain,
-      axisRange,
-      axisType: AxisType,
-    ) => {
-      if (axisConfig == null || axisDomain == null || axisRange == null) {
+    (parsedScaleReturn: ParsedScaleReturn, axisDomain, axisRange) => {
+      if (parsedScaleReturn == null || parsedScaleReturn === unknownScale || axisDomain == null) {
         return unknownScale;
       }
-      const parsedScaleReturn: ParsedScaleReturn = parseScale(
-        {
-          scale: axisConfig.scale,
-          type: axisConfig.type,
-          layout: chartLayout,
-          axisType,
-        },
-        chartName,
-        hasBar,
-      );
       /*
        * This setter will also modify the domain internally!
        * so the domain returned from selectAxisDomain, and domain from scale.domain(),
