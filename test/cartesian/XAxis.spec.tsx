@@ -1145,7 +1145,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 170]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
