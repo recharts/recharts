@@ -1068,6 +1068,44 @@ describe('<XAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith([0, 170]);
       });
 
+      it('should reverse ticks', () => {
+        const spy = vi.fn();
+        const { container } = render(
+          <Component>
+            <XAxis dataKey="x" type="number" reversed />
+            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+          </Component>,
+        );
+        expectXAxisTicks(container, [
+          {
+            textContent: '0',
+            x: '295',
+            y: '273',
+          },
+          {
+            textContent: '45',
+            x: '222.5',
+            y: '273',
+          },
+          {
+            textContent: '90',
+            x: '150',
+            y: '273',
+          },
+          {
+            textContent: '135',
+            x: '77.5',
+            y: '273',
+          },
+          {
+            textContent: '180',
+            x: '5',
+            y: '273',
+          },
+        ]);
+        expect(spy).toHaveBeenLastCalledWith([0, 170]);
+      });
+
       describe.each([true, false, undefined])('auto domain with allowDataOverflow = %s', allowDataOverflow => {
         it('should render ticks from domain auto, auto', () => {
           const spy = vi.fn();
@@ -2361,6 +2399,49 @@ describe('<XAxis />', () => {
         {
           textContent: '110',
           x: '270.83333333333337',
+          y: '273',
+        },
+      ]);
+      expect(spy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+    });
+
+    it('should reverse ticks', () => {
+      const spy = vi.fn();
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" reversed />
+          <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '100',
+          x: '270.83333333333337',
+          y: '273',
+        },
+        {
+          textContent: '120',
+          x: '222.5',
+          y: '273',
+        },
+        {
+          textContent: '170',
+          x: '174.16666666666666',
+          y: '273',
+        },
+        {
+          textContent: '140',
+          x: '125.83333333333334',
+          y: '273',
+        },
+        {
+          textContent: '150',
+          x: '77.5',
+          y: '273',
+        },
+        {
+          textContent: '110',
+          x: '29.166666666666668',
           y: '273',
         },
       ]);
