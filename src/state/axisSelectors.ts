@@ -803,6 +803,17 @@ const selectAxisRange = (
   }
 };
 
+const selectAxisRangeWithReverse = createSelector(
+  selectAxisSettings,
+  selectAxisRange,
+  (axisSettings: AxisSettings, axisRange): ReadonlyArray<number> | undefined => {
+    if (axisSettings?.reversed) {
+      return axisRange?.slice().reverse();
+    }
+    return axisRange;
+  },
+);
+
 const unknownScale: ParsedScaleReturn = {
   scale: undefined,
   realScaleType: undefined,
@@ -815,7 +826,7 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
     selectHasBar,
     selectChartName,
     selectAxisDomainIncludingNiceTicks,
-    selectAxisRange,
+    selectAxisRangeWithReverse,
     pickAxisType,
     (
       axisConfig: AxisSettings,

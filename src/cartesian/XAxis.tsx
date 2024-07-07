@@ -109,6 +109,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
         allowDecimals={props.allowDecimals}
         tickCount={props.tickCount}
         includeHidden={props.includeHidden ?? false}
+        reversed={props.reversed}
       />
       <XAxisImpl {...props} />
     </>

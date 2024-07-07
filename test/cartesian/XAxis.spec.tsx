@@ -879,6 +879,7 @@ describe('<XAxis />', () => {
           left: 0,
           right: 0,
         },
+        reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings);
     });
@@ -912,6 +913,7 @@ describe('<XAxis />', () => {
           left: 0,
           right: 0,
         },
+        reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: expectedSettings1,
@@ -943,6 +945,7 @@ describe('<XAxis />', () => {
           },
           allowDecimals: true,
           tickCount: 5,
+          reversed: false,
         },
         bar: {
           includeHidden: false,
@@ -959,6 +962,7 @@ describe('<XAxis />', () => {
           },
           allowDecimals: true,
           tickCount: 5,
+          reversed: false,
         },
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
@@ -984,6 +988,7 @@ describe('<XAxis />', () => {
           right: 0,
         },
         allowDecimals: true,
+        reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: undefined,
@@ -1102,7 +1107,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spy).toHaveBeenLastCalledWith([0, 170]);
+        expect(spy).toHaveBeenLastCalledWith([0, 180]);
       });
 
       it('should reverse ticks', () => {
@@ -3370,6 +3375,7 @@ describe('<XAxis />', () => {
         scale: 'auto',
         tickCount: 5,
         type: 'number',
+        reversed: false,
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
       expect(itemDataSpy).toHaveBeenLastCalledWith([]);

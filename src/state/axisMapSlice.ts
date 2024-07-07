@@ -28,6 +28,7 @@ export type AxisSettings = {
   allowDecimals: boolean;
   tickCount: number;
   includeHidden: boolean;
+  reversed: boolean;
 };
 
 export type XAxisSettings = AxisSettings & {
