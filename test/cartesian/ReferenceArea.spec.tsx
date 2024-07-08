@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import { BarChart, ReferenceArea, Bar, XAxis, YAxis, LabelProps, Customized } from '../../src';
 import { IfOverflow } from '../../src/util/IfOverflow';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectReferenceAreasByAxis } from '../../src/state/axisSelectors';
+import { selectReferenceAreasByAxis } from '../../src/state/selectors/axisSelectors';
 
 describe('<ReferenceArea />', () => {
   const data = [

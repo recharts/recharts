@@ -23,7 +23,7 @@ import {
   selectActiveCoordinate,
   selectTooltipPayload,
   useTooltipEventType,
-} from '../state/selectors';
+} from '../state/selectors/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppSelector } from '../state/hooks';

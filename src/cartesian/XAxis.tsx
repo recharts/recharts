@@ -11,7 +11,7 @@ import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartU
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
-import { selectAxisScale, selectNiceTicks } from '../state/axisSelectors';
+import { selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */

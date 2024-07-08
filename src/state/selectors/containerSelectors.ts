@@ -9,16 +9,11 @@ export const selectRootContainer = (state: RechartsRootState): RechartsHTMLConta
 
 export const selectRootContainerDomRect: (state: RechartsRootState) => DOMRect | undefined = (
   state: RechartsRootState,
-) => {
-  return selectRootContainer(state)?.getBoundingClientRect();
-};
+) => selectRootContainer(state)?.getBoundingClientRect();
 
 export const selectContainerOffset: (state: RechartsRootState) => ContainerOffset | undefined = createSelector(
-  state => state.layout.container,
-  state => selectRootContainer(state)?.getBoundingClientRect(),
-  (rect: DOMRect | undefined): ContainerOffset | undefined => {
-    return rect && getOffset(rect);
-  },
+  selectRootContainerDomRect,
+  (rect: DOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
 );
 
 export const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) => ChartPointer | undefined =
