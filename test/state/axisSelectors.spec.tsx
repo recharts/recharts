@@ -14,7 +14,7 @@ import {
   selectHasBar,
   selectNiceTicks,
   selectSmallestDistanceBetweenValues,
-} from '../../src/state/axisSelectors';
+} from '../../src/state/selectors/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import {
   Area,

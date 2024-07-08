@@ -6,7 +6,7 @@ import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-h
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomainIncludingNiceTicks } from '../../src/state/axisSelectors';
+import { selectAxisDomainIncludingNiceTicks } from '../../src/state/selectors/axisSelectors';
 import { getRealDirection } from '../../src/cartesian/ErrorBar';
 
 // asserts an error bar has both a start and end position

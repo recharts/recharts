@@ -12,7 +12,7 @@ import { filterProps } from '../util/ReactUtils';
 import { useTooltipContext } from '../context/tooltipContext';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
-import { useChartName } from '../state/selectors';
+import { useChartName } from '../state/selectors/selectors';
 import { TooltipPayload } from '../state/tooltipSlice';
 
 /**

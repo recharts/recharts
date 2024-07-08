@@ -6,14 +6,12 @@ import {
   combineTooltipPayload,
   selectActiveIndex,
   selectActivePropsFromMousePointer,
-  selectContainerScale,
   selectIsTooltipActive,
-  selectRootContainerDomRect,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
   selectTooltipState,
   useTooltipEventType,
-} from '../../src/state/selectors';
+} from '../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { BaseAxisProps, TooltipEventType } from '../../src/util/types';
@@ -44,6 +42,7 @@ import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { MousePointer } from '../../src/chart/generateCategoricalChart';
 import { Area, BarChart, ComposedChart, Customized, Line, Pie, PieChart, Scatter } from '../../src';
 import { PageData } from '../_data';
+import { selectRootContainerDomRect, selectContainerScale } from '../../src/state/selectors/containerSelectors';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {

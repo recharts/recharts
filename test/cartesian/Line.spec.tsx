@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, Line, ErrorBar, LineChart, Customized } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectErrorBarsSettings } from '../../src/state/axisSelectors';
+import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 
 describe('<Line />', () => {
   const data = [

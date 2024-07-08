@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
-import { selectChartLayout, selectChartOffset } from '../context/chartLayoutContext';
+import { selectChartLayout, selectChartOffset } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
   getStackedData,
@@ -10,7 +10,7 @@ import {
   ParsedScaleReturn,
   parseScale,
   StackId,
-} from '../util/ChartUtils';
+} from '../../util/ChartUtils';
 import {
   AxisDomain,
   AxisType,
@@ -20,22 +20,22 @@ import {
   LayoutType,
   NumberDomain,
   StackOffsetType,
-} from '../util/types';
-import { AxisId, AxisSettings, XAxisSettings, YAxisSettings } from './axisMapSlice';
+} from '../../util/types';
+import { AxisId, AxisSettings, XAxisSettings, YAxisSettings } from '../axisMapSlice';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './selectors';
-import { RechartsRootState } from './store';
+import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import {
   isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
-} from '../util/isDomainSpecifiedByUser';
-import { AppliedChartData, ChartData } from './chartDataSlice';
-import { getPercentValue, hasDuplicate } from '../util/DataUtils';
-import { CartesianGraphicalItemSettings, ErrorBarsSettings } from './graphicalItemsSlice';
-import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
-import { getNiceTickValues, getTickValuesFixedDomain } from '../util/scale';
-import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from './referenceElementsSlice';
+} from '../../util/isDomainSpecifiedByUser';
+import { AppliedChartData, ChartData } from '../chartDataSlice';
+import { getPercentValue, hasDuplicate } from '../../util/DataUtils';
+import { CartesianGraphicalItemSettings, ErrorBarsSettings } from '../graphicalItemsSlice';
+import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
+import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
+import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];

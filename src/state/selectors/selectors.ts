@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import sortBy from 'lodash/sortBy';
-import { useAppSelector } from './hooks';
-import { RechartsRootState } from './store';
+import { useAppSelector } from '../hooks';
+import { RechartsRootState } from '../store';
 import {
   ActiveTooltipProps,
   TooltipEntrySettings,
@@ -11,7 +11,7 @@ import {
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
   TooltipState,
-} from './tooltipSlice';
+} from '../tooltipSlice';
 import {
   AxisPropsNeededForTicksGenerator,
   calculateActiveTickIndex,
@@ -21,9 +21,9 @@ import {
   getTooltipEntry,
   getValueByDataKey,
   inRange,
-} from '../util/ChartUtils';
-import { ChartDataState } from './chartDataSlice';
-import { selectTooltipAxis } from '../context/useTooltipAxis';
+} from '../../util/ChartUtils';
+import { ChartDataState } from '../chartDataSlice';
+import { selectTooltipAxis } from '../../context/useTooltipAxis';
 import {
   BaseAxisProps,
   ChartCoordinate,
@@ -33,11 +33,9 @@ import {
   StackOffsetType,
   TickItem,
   TooltipEventType,
-} from '../util/types';
-import { findEntryInArray } from '../util/DataUtils';
-import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../chart/types';
-import { ContainerOffset, getOffset } from '../util/DOMUtils';
-import { RechartsHTMLContainer } from './layoutSlice';
+} from '../../util/types';
+import { findEntryInArray } from '../../util/DataUtils';
+import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../../chart/types';
 import {
   selectChartLayout,
   selectChartOffset,
@@ -45,9 +43,10 @@ import {
   selectPolarRadiusAxisMap,
   selectXAxisMap,
   selectYAxisMap,
-} from '../context/chartLayoutContext';
-import { ChartPointer, MousePointer } from '../chart/generateCategoricalChart';
+} from '../../context/chartLayoutContext';
+import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartCoordinates, selectContainerScale } from './containerSelectors';
 
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
@@ -310,39 +309,6 @@ export const selectIsTooltipActive: (
     }
     return state.tooltip.itemInteraction.activeClick;
   },
-);
-
-const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined => state.layout.container;
-
-export const selectRootContainerDomRect: (state: RechartsRootState) => DOMRect | undefined = (
-  state: RechartsRootState,
-) => selectRootContainer(state)?.getBoundingClientRect();
-
-const selectContainerOffset: (state: RechartsRootState) => ContainerOffset | undefined = createSelector(
-  selectRootContainerDomRect,
-  (rect: DOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
-);
-
-const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) => ChartPointer | undefined =
-  createSelector(
-    selectContainerOffset,
-    (_, event) => event,
-    (containerOffset: ContainerOffset | undefined, event: MousePointer): ChartPointer | undefined => {
-      if (!containerOffset) {
-        return undefined;
-      }
-      return {
-        chartX: Math.round(event.pageX - containerOffset.left),
-        chartY: Math.round(event.pageY - containerOffset.top),
-      };
-    },
-  );
-
-export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
-  selectRootContainer,
-  selectRootContainerDomRect,
-  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number =>
-    rect?.width / container?.offsetWidth || 1,
 );
 
 export const combineActiveProps = (

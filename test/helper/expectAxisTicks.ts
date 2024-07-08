@@ -1,7 +1,7 @@
 import { assertNotNull } from './assertNotNull';
 import { AxisType } from '../../src/util/types';
 import { AxisId } from '../../src/state/axisMapSlice';
-import { selectAxisScale } from '../../src/state/axisSelectors';
+import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 
 export type ExpectedTick = {

@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectChartDataWithIndexes } from '../../src/state/dataSelectors';
+import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { createRechartsStore } from '../../src/state/store';
 import { Area, BarChart, Brush, ComposedChart, Customized, Line, Scatter } from '../../src';
 import { PageData } from '../_data';

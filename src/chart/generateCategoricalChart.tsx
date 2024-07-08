@@ -104,7 +104,7 @@ import {
   TooltipPayloadType,
 } from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
-import { getDefaultDomainByAxisType } from '../state/axisSelectors';
+import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
 
 export interface MousePointer {
   pageX: number;

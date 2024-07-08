@@ -1,6 +1,6 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { selectActivePropsFromMousePointer } from './selectors';
+import { selectActivePropsFromMousePointer } from './selectors/selectors';
 import { MousePointer } from '../chart/generateCategoricalChart';
 import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 
