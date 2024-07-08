@@ -1,5 +1,5 @@
-import { RechartsRootState } from './store';
-import { ChartDataState } from './chartDataSlice';
+import { RechartsRootState } from '../store';
+import { ChartDataState } from '../chartDataSlice';
 
 /**
  * This is a "cheap" selector - it returns the data but doesn't iterate them, so it is not sensitive on the array length.
