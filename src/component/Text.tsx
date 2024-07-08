@@ -103,6 +103,11 @@ const calculateWordsByLines = (
     return originalResult;
   }
 
+  const overflows = originalResult.length > maxLines || findLongestLine(originalResult).width > Number(lineWidth);
+  if (!overflows) {
+    return originalResult;
+  }
+
   const suffix = '…';
 
   const checkOverflow = (index: number): [boolean, Words[]] => {
