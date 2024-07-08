@@ -18,14 +18,13 @@ import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey } from '../util/types';
 import { ViewBoxContext } from '../context/chartLayoutContext';
-import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
+import { TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
   TooltipIndex,
   TooltipPayloadConfiguration,
   TooltipPayloadSearcher,
-  mouseLeaveItem,
   setActiveClickItemIndex,
   setActiveMouseOverItemIndex,
 } from '../state/tooltipSlice';
@@ -453,14 +452,34 @@ function ContentItem({
 
 function ContentItemWithEvents(props: ContentItemProps) {
   const dispatch = useAppDispatch();
+  const activeCoordinate = props.nodeProps
+    ? {
+        x: props.nodeProps.x + props.nodeProps.width / 2,
+        y: props.nodeProps.y + props.nodeProps.height / 2,
+      }
+    : null;
+
   const onMouseEnter = () => {
-    dispatch(setActiveMouseOverItemIndex({ activeIndex: props.nodeProps.tooltipIndex, activeDataKey: props.dataKey }));
+    dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: props.nodeProps.tooltipIndex,
+        activeDataKey: props.dataKey,
+        activeMouseOverCoordinate: activeCoordinate,
+      }),
+    );
   };
   const onMouseLeave = () => {
-    dispatch(mouseLeaveItem());
+    // clearing state on mouseLeaveItem causes re-rendering issues
+    // we don't actually want to do this for TreeMap - we clear state when we leave the entire chart instead
   };
   const onClick = () => {
-    dispatch(setActiveClickItemIndex({ activeIndex: props.nodeProps.tooltipIndex, activeDataKey: props.dataKey }));
+    dispatch(
+      setActiveClickItemIndex({
+        activeIndex: props.nodeProps.tooltipIndex,
+        activeDataKey: props.dataKey,
+        activeClickCoordinate: activeCoordinate,
+      }),
+    );
   };
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
@@ -882,33 +901,31 @@ export class Treemap extends PureComponent<Props, State> {
               args={{ props: this.props, currentRoot: this.state.currentRoot }}
             />
             <ViewBoxContext.Provider value={viewBox}>
-              <TooltipContextProvider value={this.getTooltipContext()}>
-                <RechartsWrapper
-                  className={className}
-                  style={style}
-                  width={width}
-                  height={height}
-                  ref={(node: HTMLDivElement) => {
-                    if (this.state.tooltipPortal == null) {
-                      this.setState({ tooltipPortal: node });
-                    }
-                  }}
-                >
-                  <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-                    <g
-                      className="recharts-cursor-portal"
-                      ref={(node: SVGElement) => {
-                        if (this.state.cursorPortal == null) {
-                          this.setState({ cursorPortal: node });
-                        }
-                      }}
-                    />
-                    {this.renderAllNodes()}
-                    {children}
-                  </Surface>
-                  {type === 'nest' && this.renderNestIndex()}
-                </RechartsWrapper>
-              </TooltipContextProvider>
+              <RechartsWrapper
+                className={className}
+                style={style}
+                width={width}
+                height={height}
+                ref={(node: HTMLDivElement) => {
+                  if (this.state.tooltipPortal == null) {
+                    this.setState({ tooltipPortal: node });
+                  }
+                }}
+              >
+                <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (this.state.cursorPortal == null) {
+                        this.setState({ cursorPortal: node });
+                      }
+                    }}
+                  />
+                  {this.renderAllNodes()}
+                  {children}
+                </Surface>
+                {type === 'nest' && this.renderNestIndex()}
+              </RechartsWrapper>
             </ViewBoxContext.Provider>
           </TooltipPortalContext.Provider>
         </CursorPortalContext.Provider>

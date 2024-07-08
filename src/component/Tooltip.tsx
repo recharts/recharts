@@ -146,6 +146,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
 
   const coordinateFromRedux = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger));
   // TODO remove the payloadFromContext fallback
+  // until we move all chart types to redux and remove this there will be some noticable fallback behavior
   const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();
   /*

@@ -34,18 +34,25 @@ mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
-    if (activeProps?.activeIndex != null) {
-      listenerApi.dispatch(
-        setMouseOverAxisIndex({
-          activeIndex: activeProps.activeIndex,
-          activeDataKey: undefined,
-          activeMouseOverCoordinate: activeProps.activeCoordinate,
-        }),
-      );
-    } else {
-      // this is needed to clear tooltip state when the mouse moves out of the inRange (svg - offset) function, but not yet out of the svg
-      listenerApi.dispatch(mouseLeaveChart());
+    const state = listenerApi.getState();
+    // can we even check for the 'shared' prop here? This will be wrong if it is used... Can't use hooks.
+    const tooltipEventType = state.options.defaultTooltipEventType;
+    const activeProps = selectActivePropsFromMousePointer(state, mousePointer);
+
+    // this functionality only applies to charts that have axes
+    if (tooltipEventType === 'axis') {
+      if (activeProps?.activeIndex != null) {
+        listenerApi.dispatch(
+          setMouseOverAxisIndex({
+            activeIndex: activeProps.activeIndex,
+            activeDataKey: undefined,
+            activeMouseOverCoordinate: activeProps.activeCoordinate,
+          }),
+        );
+      } else {
+        // this is needed to clear tooltip state when the mouse moves out of the inRange (svg - offset) function, but not yet out of the svg
+        listenerApi.dispatch(mouseLeaveChart());
+      }
     }
   },
 });
