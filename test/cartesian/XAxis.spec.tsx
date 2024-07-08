@@ -20,7 +20,7 @@ import {
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
-} from '../../src/state/axisSelectors';
+} from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
 import { XAxisSettings } from '../../src/state/axisMapSlice';

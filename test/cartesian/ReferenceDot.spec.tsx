@@ -3,7 +3,7 @@ import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Bar, BarChart, Customized, LineChart, ReferenceDot, XAxis, YAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectReferenceDotsByAxis } from '../../src/state/axisSelectors';
+import { selectReferenceDotsByAxis } from '../../src/state/selectors/axisSelectors';
 
 describe('<ReferenceDot />', () => {
   const data = [

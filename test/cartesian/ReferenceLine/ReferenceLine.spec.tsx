@@ -4,7 +4,7 @@ import { screen, render } from '@testing-library/react';
 import { BarChart, ReferenceLine, Bar, XAxis, YAxis, LineChart, Line, Customized } from '../../../src';
 import { CartesianViewBox } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
-import { selectReferenceLinesByAxis } from '../../../src/state/axisSelectors';
+import { selectReferenceLinesByAxis } from '../../../src/state/selectors/axisSelectors';
 
 describe('<ReferenceLine />', () => {
   let consoleSpy: MockInstance<any[], void>;

@@ -19,7 +19,7 @@ import {
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomain, selectAxisSettings } from '../../src/state/axisSelectors';
+import { selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { IfOverflow } from '../../src/util/IfOverflow';
