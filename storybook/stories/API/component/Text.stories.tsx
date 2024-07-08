@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, Text } from '../../../../src';
+import { ResponsiveContainer, Surface, Text } from '../../../../src';
 import { TextProps } from '../props/TextProps';
 
 export default {
@@ -12,8 +12,10 @@ export default {
 export const API = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={80}>
-        <Text {...args}>{args.content}</Text>
+      <ResponsiveContainer width={500} height={300}>
+        <Surface width={500} height={80}>
+          <Text {...args}>{args.content}</Text>
+        </Surface>
       </ResponsiveContainer>
     );
   },
@@ -23,9 +25,11 @@ export const API = {
     maxLines: 3,
     scaleToFit: false,
     textAnchor: 'start',
-    verticalAnchor: 'end',
+    verticalAnchor: 'start',
     angle: 0,
     width: 200,
-    content: 'This is really long text',
+    y: 50,
+    x: 50,
+    content: 'This is really, really, really, really, really, really, really, really, really long text',
   },
 };

@@ -240,7 +240,7 @@ export const Text = ({
   if (scaleToFit) {
     const lineWidth = wordsByLines[0].width;
     const { width } = props;
-    transforms.push(`scale(${(isNumber(width as number) ? (width as number) / lineWidth : 1) / lineWidth})`);
+    transforms.push(`scale(${isNumber(width as number) ? (width as number) / lineWidth : 1})`);
   }
   if (angle) {
     transforms.push(`rotate(${angle}, ${x}, ${y})`);
