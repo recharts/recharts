@@ -99,7 +99,7 @@ const calculateWordsByLines = (
   const findLongestLine = (words: Array<Words>): Words =>
     words.reduce((a: Words, b: Words) => (a.width > b.width ? a : b));
 
-  if (!shouldLimitLines) {
+  if (!shouldLimitLines || scaleToFit) {
     return originalResult;
   }
 
