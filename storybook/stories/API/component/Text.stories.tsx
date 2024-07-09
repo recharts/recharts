@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, Text } from '../../../../src';
+import { Surface, Text } from '../../../../src';
 import { TextProps } from '../props/TextProps';
 
 export default {
@@ -10,22 +10,27 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: ({ containerWidth, containerHeight, ...args }: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={80}>
+      <Surface width={containerWidth} height={containerHeight}>
         <Text {...args}>{args.content}</Text>
-      </ResponsiveContainer>
+      </Surface>
     );
   },
   args: {
+    width: 250,
+    content:
+      'This is really long text to showcase how line wrapping as well as other properties from the `Text` component work',
     breakAll: false,
     lineHeight: '1em',
     maxLines: 3,
     scaleToFit: false,
     textAnchor: 'start',
-    verticalAnchor: 'end',
+    verticalAnchor: 'start',
     angle: 0,
-    width: 200,
-    content: 'This is really long text',
+    containerWidth: '100%',
+    containerHeight: 100,
+    fontSize: '1rem',
+    letterSpacing: '0px',
   },
 };
