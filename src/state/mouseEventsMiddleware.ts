@@ -1,6 +1,6 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { selectActivePropsFromMousePointer } from './selectors/selectors';
+import { selectActivePropsFromMousePointer, selectTooltipEventType } from './selectors/selectors';
 import { MousePointer } from '../chart/generateCategoricalChart';
 import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 
@@ -35,8 +35,7 @@ mouseMoveMiddleware.startListening({
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
     const state = listenerApi.getState();
-    // can we even check for the 'shared' prop here? This will be wrong if it is used... Can't use hooks.
-    const tooltipEventType = state.options.defaultTooltipEventType;
+    const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
     const activeProps = selectActivePropsFromMousePointer(state, mousePointer);
 
     // this functionality only applies to charts that have axes

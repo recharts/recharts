@@ -1,4 +1,4 @@
-import React, { CSSProperties, PureComponent, ReactElement, ReactNode } from 'react';
+import React, { CSSProperties, PureComponent, ReactElement, ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,
@@ -26,8 +26,8 @@ import {
 } from '../state/selectors/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
-import { useAppSelector } from '../state/hooks';
-import { TooltipPayload } from '../state/tooltipSlice';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -124,6 +124,12 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     defaultIndex,
     portal: portalFromProps,
   } = props;
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setTooltipSettingsState({ shared }));
+  }, [dispatch, shared]);
+
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);

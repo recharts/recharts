@@ -57,6 +57,8 @@ export type ActiveTooltipProps = {
   activeCoordinate: ChartCoordinate | undefined;
 };
 
+type TooltipSettingsState = { shared?: boolean };
+
 /**
  * The tooltip interaction state stores:
  *
@@ -146,6 +148,10 @@ export type TooltipState = {
    * may render multiple tooltip payloads.
    */
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>;
+  /**
+   * Tooltip props or other settings that need redux access
+   */
+  settings: TooltipSettingsState;
 };
 
 export const initialState: TooltipState = {
@@ -170,6 +176,7 @@ export const initialState: TooltipState = {
     activeClickAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
+  settings: {},
 };
 
 const tooltipSlice = createSlice({
@@ -184,6 +191,9 @@ const tooltipSlice = createSlice({
       if (index > -1) {
         state.tooltipItemPayloads.splice(index, 1);
       }
+    },
+    setTooltipSettingsState(state, action: PayloadAction<TooltipSettingsState>) {
+      state.settings = action.payload;
     },
     setActiveMouseOverItemIndex(
       state,
@@ -258,6 +268,7 @@ const tooltipSlice = createSlice({
 export const {
   addTooltipEntrySettings,
   removeTooltipEntrySettings,
+  setTooltipSettingsState,
   setActiveMouseOverItemIndex,
   mouseLeaveItem,
   mouseLeaveChart,

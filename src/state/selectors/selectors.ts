@@ -58,16 +58,21 @@ export const useChartName = (): string => {
   return useAppSelector(selectChartName);
 };
 
-export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {
-  const defaultTooltipEventType = useAppSelector((state: RechartsRootState) => state.options.defaultTooltipEventType);
-  const validateTooltipEventTypes = useAppSelector(
-    (state: RechartsRootState) => state.options.validateTooltipEventTypes,
-  );
+const selectDefaultTooltipEventType = (state: RechartsRootState) => state.options.defaultTooltipEventType;
+const selectValidateTooltipEventTypes = (state: RechartsRootState) => state.options.validateTooltipEventTypes;
+
+export function selectTooltipEventType(state: RechartsRootState, shared: boolean | undefined): TooltipEventType {
+  const defaultTooltipEventType = selectDefaultTooltipEventType(state);
+  const validateTooltipEventTypes = selectValidateTooltipEventTypes(state);
   if (shared == null) {
     return defaultTooltipEventType;
   }
   const eventType = shared ? 'axis' : 'item';
   return validateTooltipEventTypes.includes(eventType) ? eventType : defaultTooltipEventType;
+}
+
+export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {
+  return useAppSelector(state => selectTooltipEventType(state, shared));
 }
 
 function getSliced<T>(
