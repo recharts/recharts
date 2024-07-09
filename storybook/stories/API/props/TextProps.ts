@@ -1,6 +1,12 @@
 import { StorybookArgs } from '../../../StorybookArgs';
 
 export const TextProps: StorybookArgs = {
+  containerWidth: {
+    description: 'The width of the container. Can be configured to verify how overflow and wrapping work.',
+  },
+  containerHeight: {
+    description: 'The height of the container. Can be configured to verify how overflow and wrapping work.',
+  },
   content: {
     description: 'The content of text.',
   },
