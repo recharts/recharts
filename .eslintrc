@@ -32,10 +32,13 @@
       }
     ],
     "import/extensions": "off",
-    "valid-jsdoc": ["error", {
-      "requireReturnType": false,
-      "requireParamType": false
-    }],
+    "valid-jsdoc": [
+      "error",
+      {
+        "requireReturnType": false,
+        "requireParamType": false
+      }
+    ],
     "react/no-did-update-set-state": "warn",
     "react/sort-comp": "off",
     "react/jsx-uses-react": "error",
@@ -119,7 +122,7 @@
       }
     },
     {
-      "files": ["src/state/*Slice.ts", "test/state/*.spec.tsx"],
+      "files": ["src/state/*Slice.ts", "test/state/**/*.spec.tsx"],
       // param-reassign is allowed in slices following Redux recommendation: https://redux-toolkit.js.org/usage/immer-reducers#linting-state-mutations
       "rules": { "no-param-reassign": ["error", { "props": false }] }
     }

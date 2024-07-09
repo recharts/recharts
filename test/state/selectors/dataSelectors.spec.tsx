@@ -1,13 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useAppSelector } from '../../src/state/hooks';
-import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
-import { createRechartsStore } from '../../src/state/store';
-import { Area, BarChart, Brush, ComposedChart, Customized, Line, Scatter } from '../../src';
-import { PageData } from '../_data';
-import { ChartDataState } from '../../src/state/chartDataSlice';
-import { pageData } from '../../storybook/stories/data';
+import { useAppSelector } from '../../../src/state/hooks';
+import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
+import { createRechartsStore } from '../../../src/state/store';
+import { Area, BarChart, Brush, ComposedChart, Customized, Line, Scatter } from '../../../src';
+import { PageData } from '../../_data';
+import { ChartDataState } from '../../../src/state/chartDataSlice';
+import { pageData } from '../../../storybook/stories/data';
 
 describe('selectChartDataWithIndexes', () => {
   it('should return undefined when called outside of Redux context', () => {
