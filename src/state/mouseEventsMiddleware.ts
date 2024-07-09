@@ -1,6 +1,6 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { selectActivePropsFromMousePointer } from './selectors/selectors';
+import { selectActivePropsFromMousePointer, selectTooltipEventType } from './selectors/selectors';
 import { MousePointer } from '../chart/generateCategoricalChart';
 import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 
@@ -34,18 +34,24 @@ mouseMoveMiddleware.startListening({
   actionCreator: mouseMoveAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeProps = selectActivePropsFromMousePointer(listenerApi.getState(), mousePointer);
-    if (activeProps?.activeIndex != null) {
-      listenerApi.dispatch(
-        setMouseOverAxisIndex({
-          activeIndex: activeProps.activeIndex,
-          activeDataKey: undefined,
-          activeMouseOverCoordinate: activeProps.activeCoordinate,
-        }),
-      );
-    } else {
-      // this is needed to clear tooltip state when the mouse moves out of the inRange (svg - offset) function, but not yet out of the svg
-      listenerApi.dispatch(mouseLeaveChart());
+    const state = listenerApi.getState();
+    const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
+    const activeProps = selectActivePropsFromMousePointer(state, mousePointer);
+
+    // this functionality only applies to charts that have axes
+    if (tooltipEventType === 'axis') {
+      if (activeProps?.activeIndex != null) {
+        listenerApi.dispatch(
+          setMouseOverAxisIndex({
+            activeIndex: activeProps.activeIndex,
+            activeDataKey: undefined,
+            activeMouseOverCoordinate: activeProps.activeCoordinate,
+          }),
+        );
+      } else {
+        // this is needed to clear tooltip state when the mouse moves out of the inRange (svg - offset) function, but not yet out of the svg
+        listenerApi.dispatch(mouseLeaveChart());
+      }
     }
   },
 });
