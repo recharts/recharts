@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { useAppSelector } from '../../src/state/hooks';
+import { useAppSelector } from '../../../src/state/hooks';
 import {
   mergeDomains,
   selectAllAppliedValues,
@@ -14,8 +14,8 @@ import {
   selectHasBar,
   selectNiceTicks,
   selectSmallestDistanceBetweenValues,
-} from '../../src/state/selectors/axisSelectors';
-import { createRechartsStore, RechartsRootState } from '../../src/state/store';
+} from '../../../src/state/selectors/axisSelectors';
+import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import {
   Area,
   Bar,
@@ -34,14 +34,14 @@ import {
   ScatterChart,
   XAxis,
   YAxis,
-} from '../../src';
-import { misbehavedData, PageData } from '../_data';
-import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
-import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { generateMockData } from '../helper/generateMockData';
-import { AxisId } from '../../src/state/axisMapSlice';
-import { pageData } from '../../storybook/stories/data';
-import { AxisDomain } from '../../src/util/types';
+} from '../../../src';
+import { misbehavedData, PageData } from '../../_data';
+import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
+import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
+import { generateMockData } from '../../helper/generateMockData';
+import { AxisId } from '../../../src/state/axisMapSlice';
+import { pageData } from '../../../storybook/stories/data';
+import { AxisDomain } from '../../../src/util/types';
 
 const defaultAxisId: AxisId = 0;
 
