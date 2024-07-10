@@ -167,7 +167,7 @@ const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
 
 type GetWordsByLinesProps = Pick<Props, 'width' | 'scaleToFit' | 'children' | 'style' | 'breakAll' | 'maxLines'>;
 
-const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, maxLines }: GetWordsByLinesProps) => {
+export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, maxLines }: GetWordsByLinesProps) => {
   // Only perform calculations if using features that require them (multiline, scaleToFit)
   if ((width || scaleToFit) && !Global.isSsr) {
     let wordsWithComputedWidth: Array<WordWithComputedWidth>, spaceWidth: number;

@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { Surface, Text } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { getWordsByLines } from '../../src/component/Text';
+import * as DOMUtils from '../../src/util/DOMUtils';
 
 describe('<Text />', () => {
   const mockRect = {
@@ -229,5 +232,71 @@ describe('<Text />', () => {
 
     //   expect(lastLetter).toEqual('…');
     // });
+  });
+});
+
+describe('getWordsByLines', () => {
+  function mockGetStringSize(mockedWidths: Record<string, number | undefined>) {
+    vi.spyOn(DOMUtils, 'getStringSize').mockImplementation(text => {
+      const width = mockedWidths[text];
+
+      if (width == null) {
+        console.error(`Missing mock width for text "${text}"`);
+        return { width: 0, height: 0 };
+      }
+
+      return { width, height: 0 };
+    });
+  }
+
+  beforeEach(() => {
+    mockGetStringSize({
+      M: 2,
+      Ma: 4,
+      'M…': 5,
+      Mar: 6,
+      'Ma…': 7,
+      Marc: 8,
+      'Mar…': 9,
+      March: 10,
+      'Marc…': 11,
+      '\u00A0': 1,
+    });
+  });
+
+  it('returns the original text if it does not overflow', () => {
+    const wordsByLines = getWordsByLines({
+      width: 11,
+      scaleToFit: false,
+      children: 'March',
+      maxLines: 1,
+      breakAll: false,
+    });
+
+    expect(wordsByLines).toEqual([{ words: ['March'], width: 10 }]);
+  });
+
+  it('returns the original text if it does not overflow and an additional character is narrower than the suffix', () => {
+    const wordsByLines = getWordsByLines({
+      width: 10,
+      scaleToFit: false,
+      children: 'March',
+      maxLines: 1,
+      breakAll: false,
+    });
+
+    expect(wordsByLines).toEqual([{ words: ['March'], width: 10 }]);
+  });
+
+  it('truncates the text if it overflows and find the largest string with ellipsis that fits', () => {
+    const wordsByLines = getWordsByLines({
+      width: 7,
+      scaleToFit: false,
+      children: 'March',
+      maxLines: 1,
+      breakAll: false,
+    });
+
+    expect(wordsByLines).toEqual([{ words: ['Ma…'], width: 7 }]);
   });
 });
