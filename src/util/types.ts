@@ -1316,20 +1316,28 @@ export interface CategoricalChartOptions {
 }
 
 export interface SankeyNode {
-  x: number;
-  y: number;
+  // node attributes
   dx: number;
   dy: number;
+  name: string;
+  value: any;
+  x: number;
+  y: number;
+  // tree attributes
   depth: number;
-  value: number;
+  targetNodes: number[];
+  targetLinks: number[];
+  sourceNodes: number[];
+  sourceLinks: number[];
 }
+
 export interface SankeyLink {
   target: number;
   source: number;
   value: number;
-  sy: number;
-  dy: number;
-  ty: number;
+  sy?: number;
+  dy?: number;
+  ty?: number;
 }
 
 export type Size = { width: number; height: number };

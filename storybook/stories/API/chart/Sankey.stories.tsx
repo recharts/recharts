@@ -1,9 +1,9 @@
 import React from 'react';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
+import { NodeProps } from '../../../../src/chart/Sankey';
 import { data, margin } from '../props/ChartProps';
 import { dataKey } from '../props/CartesianComponentShared';
-import { SankeyNode } from '../../../../src/util/types';
 
 export default {
   argTypes: {
@@ -72,9 +72,7 @@ export const CustomNodeAndLink = {
       dy: number;
     };
 
-    const CustomNode = (
-      props: SankeyNode & { width: number; height: number; payload: CustomNodePayload },
-    ): React.ReactElement => {
+    const CustomNode = (props: NodeProps): React.ReactElement => {
       return (
         <rect
           x={props.x + 4}
