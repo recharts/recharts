@@ -285,8 +285,19 @@ const getTooltipData = (state: CategoricalChartState, chartData: any[], layout: 
   const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
 
   if (activeIndex >= 0 && tooltipTicks) {
-    const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
-    const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
+    const activeLabel = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value; // for backward compatibility
+    let activePayload: any[];
+    if (state.xAxisMap) {
+      activePayload = Object.values(state.xAxisMap).reduce<any[]>((acc, xAxis) => {
+        const label: TickItem['value'] | undefined = Array.isArray(xAxis.domain)
+          ? xAxis.domain[activeIndex]
+          : tooltipTicks[activeIndex]?.value;
+        const tooltipContent: any[] | null = getTooltipContent(state, chartData, activeIndex, label);
+        return [...acc, ...(tooltipContent ?? [])];
+      }, []);
+    } else {
+      activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
+    }
     const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
 
     return {
