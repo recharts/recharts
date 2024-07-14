@@ -1,30 +1,12 @@
 import React from 'react';
-import { Args } from '@storybook/react';
 import { YAxis, XAxis, Line, ResponsiveContainer, LineChart, CartesianGrid, Tooltip, Legend } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
+import { YAxisProps } from '../props/YAxisProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
-const GeneralProps: Args = {
-  yAxisId: {
-    description: 'The id of y-axis which is corresponding to the data.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  unit: {
-    description: 'The unit of data displayed in the axis.',
-    table: { type: { summary: 'string | number' }, category: 'General' },
-  },
-  scale: {
-    table: { type: { summary: 'ScaleType | Function' }, category: 'General' },
-  },
-  domain: {
-    description: 'The domain of scale in this axis.',
-    table: { type: { summary: 'AxisDomain' }, category: 'General' },
-  },
-};
 export default {
   component: YAxis,
-  argTypes: {
-    ...GeneralProps,
-  },
+  argTypes: YAxisProps,
 };
 
 export const API = {
@@ -43,12 +25,14 @@ export const API = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(YAxisProps),
     dataKey: 'pv',
     domain: [0, 300],
     type: 'number',
     allowDataOverflow: true,
     tickMargin: 20,
     angle: 45,
-    label: { value: 'The Axis Label', position: 'insideBottomRight', offset: 0 },
+    width: 120,
+    label: { value: 'The Axis Label', position: 'center', angle: 90 },
   },
 };

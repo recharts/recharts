@@ -1,14 +1,24 @@
-import { Args } from '@storybook/react';
+import { StorybookArgs } from '../../../StorybookArgs';
 
-export const XAxisProps: Args = {
+export const sharedAxisProps: StorybookArgs = {
   hide: {
     description: 'If set true, the axis do not display in the chart.',
     table: {
       type: {
-        summary: 'Boolean',
-        defaultValue: false,
+        summary: 'boolean',
       },
+      defaultValue: false,
       category: 'General',
+    },
+  },
+  includeHidden: {
+    description: 'Consider hidden graphical elements when computing domain.',
+    table: {
+      type: {
+        summary: 'boolean',
+      },
+      defaultValue: false,
+      category: 'Domain',
     },
   },
   dataKey: {
@@ -20,64 +30,14 @@ export const XAxisProps: Args = {
       category: 'General',
     },
   },
-  xAxisId: {
-    description: 'The unique id of x-axis.',
-    table: {
-      type: {
-        summary: 'String | Number',
-        defaultValue: 0,
-      },
-      category: 'General',
-    },
-  },
-  width: {
-    description: 'The width of axis which is usually calculated internally.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: 0,
-      },
-      category: 'General',
-    },
-  },
-  height: {
-    description: 'The height of axis, which can be setted by user.',
-    table: {
-      type: {
-        summary: 'Number',
-        defaultValue: 30,
-      },
-      category: 'General',
-    },
-  },
-  orientation: {
-    description: 'The orientation of axis',
-    table: {
-      type: {
-        summary: "'bottom' , 'top'",
-        defaultValue: 'bottom',
-      },
-      category: 'General',
-    },
-  },
-  type: {
-    description: 'The type of axis.',
-    table: {
-      type: {
-        summary: "'number' | 'category'",
-        defaultValue: 'category',
-      },
-      category: 'General',
-    },
-  },
   allowDecimals: {
-    description: 'Allow the ticks of XAxis to be decimals or not.',
+    description: 'Allow the ticks to be decimals or not.',
     table: {
       type: {
         summary: 'Boolean',
-        defaultValue: true,
       },
-      category: 'General',
+      defaultValue: true,
+      category: 'Ticks',
     },
   },
   allowDataOverflow: {
@@ -91,7 +51,7 @@ export const XAxisProps: Args = {
         summary: 'boolean',
       },
       defaultValue: false,
-      category: 'General',
+      category: 'Domain',
     },
   },
   allowDuplicatedCategory: {
@@ -101,7 +61,7 @@ export const XAxisProps: Args = {
         summary: 'boolean',
       },
       defaultValue: true,
-      category: 'General',
+      category: 'Domain',
     },
   },
   angle: {
@@ -109,9 +69,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 0,
       },
-      category: 'General',
+      defaultValue: 0,
+      category: 'Ticks',
     },
   },
   tickCount: {
@@ -119,9 +79,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 5,
       },
-      category: 'General',
+      defaultValue: 5,
+      category: 'Ticks',
     },
   },
   domain: {
@@ -135,9 +95,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Array | Function',
-        defaultValue: [0, 'auto'],
       },
-      category: 'General',
+      defaultValue: [0, 'auto'],
+      category: 'Domain',
     },
   },
   interval: {
@@ -146,19 +106,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: '"preserveStart" | "preserveEnd" | "preserveStartEnd" | Number',
-        defaultValue: 'preserveEnd',
       },
-      category: 'General',
-    },
-  },
-  padding: {
-    description: 'Specify the padding of x-axis.',
-    table: {
-      type: {
-        summary: 'Object | "gap" | "no-gap"',
-        defaultValue: { left: 0, right: 0 },
-      },
-      category: 'General',
+      defaultValue: 'preserveEnd',
+      category: 'Ticks',
     },
   },
   minTickGap: {
@@ -166,9 +116,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 5,
       },
-      category: 'General',
+      defaultValue: 5,
+      category: 'Ticks',
     },
   },
   axisLine: {
@@ -177,8 +127,8 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Boolean | Object',
-        defaultValue: true,
       },
+      defaultValue: true,
       category: 'General',
     },
   },
@@ -188,9 +138,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Boolean | Object',
-        defaultValue: true,
       },
-      category: 'General',
+      defaultValue: true,
+      category: 'Ticks',
     },
   },
   tickSize: {
@@ -198,9 +148,9 @@ export const XAxisProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 6,
       },
-      category: 'General',
+      defaultValue: 6,
+      category: 'Ticks',
     },
   },
   tickFormatter: {
@@ -209,7 +159,7 @@ export const XAxisProps: Args = {
       type: {
         summary: 'Function',
       },
-      category: 'General',
+      category: 'Ticks',
     },
   },
   ticks: {
@@ -218,7 +168,7 @@ export const XAxisProps: Args = {
       type: {
         summary: 'Array',
       },
-      category: 'General',
+      category: 'Ticks',
     },
   },
   tick: {
@@ -228,27 +178,27 @@ export const XAxisProps: Args = {
       type: {
         summary: 'Boolean | Object | ReactElement',
       },
-      category: 'General',
+      category: 'Ticks',
     },
   },
   mirror: {
     description:
-      'If set true, flips ticks around the axis line, displaying the labels inside the chart instead of outside.',
+      'If set true, flips ticks around the horizontal axis line, displaying the labels inside the chart instead of outside.',
     table: {
       type: {
         summary: 'Boolean',
-        defaultValue: false,
       },
+      defaultValue: false,
       category: 'General',
     },
   },
   reversed: {
-    description: 'Reverse the ticks or not.',
+    description: 'Reverses ticks left-to-right.',
     table: {
       type: {
         summary: 'Boolean',
-        defaultValue: false,
       },
+      defaultValue: false,
       category: 'General',
     },
   },
@@ -270,8 +220,8 @@ export const XAxisProps: Args = {
       type: {
         summary: `'auto' | 'linear' | 'pow' | 'sqrt' | 'log' | 'identity' | 'time' |
           'band' | 'point' | 'ordinal' | 'quantile' | 'quantize' | 'utc' | 'sequential' | 'threshold' | Function`,
-        defaultValue: 'auto',
       },
+      defaultValue: 'auto',
       category: 'General',
     },
   },
