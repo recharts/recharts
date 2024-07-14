@@ -381,7 +381,7 @@ function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | 
   if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'string' || value instanceof Date) {
     return value;
   }
-  return '';
+  return undefined;
 }
 
 const computeNumericalDomain = (
@@ -397,10 +397,10 @@ const computeCategoricalDomain = (
   axisSettings: AxisSettings,
   isCategorical: boolean,
 ): CategoricalDomain => {
-  const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates);
+  const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates).filter(v => v != null);
   if (
-    axisSettings.dataKey == null ||
-    (isCategorical && axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain))
+    isCategorical &&
+    (axisSettings.dataKey == null || (axisSettings.allowDuplicatedCategory && hasDuplicate(categoricalDomain)))
   ) {
     /*
      * 1. In an absence of dataKey, Recharts will use array indexes as its categorical domain
@@ -416,7 +416,25 @@ const computeCategoricalDomain = (
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
-const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => axisSettings?.domain ?? defaultNumericDomain;
+const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => {
+  if (axisSettings == null) {
+    return defaultNumericDomain;
+  }
+
+  if (axisSettings.domain != null) {
+    return axisSettings.domain;
+  }
+  if (axisSettings.ticks != null) {
+    if (axisSettings.type === 'number') {
+      const allValues = onlyAllowNumbers(axisSettings.ticks);
+      return [Math.min(...allValues), Math.max(...allValues)];
+    }
+    if (axisSettings.type === 'category') {
+      return axisSettings.ticks.map(String);
+    }
+  }
+  return axisSettings?.domain ?? defaultNumericDomain;
+};
 
 export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>): NumberDomain | undefined => {
   const allDomains = domains.filter(Boolean);

@@ -82,10 +82,10 @@ describe('<YAxis />', () => {
     expect(ticks[ticks.length - 1]).toHaveTextContent(textContent);
   });
 
-  it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist"', () => {
+  it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={[0, 1000]} />
+        <YAxis stroke="#ff7300" domain={[0, 1000]} allowDataOverflow />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
@@ -116,6 +116,26 @@ describe('<YAxis />', () => {
         y: '5',
       },
     ]);
+  });
+
+  it('Renders no ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow=false', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={[0, 1000]} allowDataOverflow={false} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, []);
+  });
+
+  it('Renders no ticks when dataKey is "noExist"', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, []);
   });
 
   const casesThatDoNotShowTicks: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
@@ -491,13 +511,14 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed />
+          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed ticks={[1, 2, 3]} />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        ticks: [1, 2, 3],
         includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
@@ -532,6 +553,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
@@ -579,6 +601,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          ticks: undefined,
         },
         bar: {
           includeHidden: false,
@@ -596,6 +619,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          ticks: undefined,
         },
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
@@ -607,6 +631,7 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         id: 'bar',
@@ -781,7 +806,7 @@ describe('<YAxis />', () => {
       expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
     });
 
-    it('should ignore domain of hidden items with includeHidden! this feels like a bug to me - why does this not work for stacked data?', () => {
+    it('should include domain of hidden items when includeHidden=true', () => {
       const stackedData = [
         {
           x: 10,
@@ -802,7 +827,6 @@ describe('<YAxis />', () => {
           <Customized component={<Comp />} />
         </BarChart>,
       );
-      // includeHidden does not work with stacked data, why?
       expectYAxisTicks(container, [
         {
           textContent: '0',
@@ -810,29 +834,29 @@ describe('<YAxis />', () => {
           y: '95',
         },
         {
-          textContent: '3',
+          textContent: '55',
           x: '57',
           y: '72.5',
         },
         {
-          textContent: '6',
+          textContent: '110',
           x: '57',
           y: '50',
         },
         {
-          textContent: '9',
+          textContent: '165',
           x: '57',
           y: '27.5',
         },
         {
-          textContent: '12',
+          textContent: '220',
           x: '57',
           y: '5',
         },
       ]);
       expect(domainSpy).toHaveBeenLastCalledWith([0, 210]);
 
-      // the same data, when not stacked, are included when includeHidden is true.
+      // the same data, not stacked
       rerender(
         <BarChart width={100} height={100} data={stackedData}>
           <YAxis includeHidden />

@@ -200,7 +200,7 @@ describe('<XAxis />', () => {
     expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
   });
 
-  it('should return empty strings when dataKey is specified but does not match the data', () => {
+  it('should not render any ticks when dataKey is specified but does not match the data', () => {
     const spy = vi.fn();
     const { container } = render(
       <LineChart width={400} height={400} data={lineData}>
@@ -209,39 +209,8 @@ describe('<XAxis />', () => {
       </LineChart>,
     );
 
-    expectXAxisTicks(container, [
-      {
-        textContent: '',
-        x: '5',
-        y: '373',
-      },
-      {
-        textContent: '',
-        x: '83',
-        y: '373',
-      },
-      {
-        textContent: '',
-        x: '161',
-        y: '373',
-      },
-      {
-        textContent: '',
-        x: '239',
-        y: '373',
-      },
-      {
-        textContent: '',
-        x: '317',
-        y: '373',
-      },
-      {
-        textContent: '',
-        x: '395',
-        y: '373',
-      },
-    ]);
-    expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+    expectXAxisTicks(container, []);
+    expect(spy).toHaveBeenLastCalledWith([]);
   });
 
   it('Render duplicated ticks of XAxis', () => {
@@ -858,13 +827,14 @@ describe('<XAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <XAxis xAxisId="foo" scale="log" type="number" includeHidden />
+          <XAxis xAxisId="foo" scale="log" type="number" includeHidden ticks={[4, 5, 6]} />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        ticks: [4, 5, 6],
         includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
@@ -899,6 +869,7 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
@@ -931,6 +902,7 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          ticks: undefined,
           includeHidden: false,
           id: 'foo',
           scale: 'log',
@@ -948,6 +920,7 @@ describe('<XAxis />', () => {
           reversed: false,
         },
         bar: {
+          ticks: undefined,
           includeHidden: false,
           id: 'bar',
           scale: 'utc',
@@ -974,6 +947,7 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         id: 'bar',
@@ -3361,6 +3335,7 @@ describe('<XAxis />', () => {
         },
       ]);
       const expectedSettings: XAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         allowDataOverflow: false,
         allowDecimals: true,

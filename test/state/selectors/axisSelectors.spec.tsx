@@ -6,6 +6,7 @@ import {
   mergeDomains,
   selectAllAppliedValues,
   selectAxisDomain,
+  selectAxisDomainIncludingNiceTicks,
   selectAxisScale,
   selectCalculatedXAxisPadding,
   selectCartesianGraphicalItemsData,
@@ -42,6 +43,7 @@ import { generateMockData } from '../../helper/generateMockData';
 import { AxisId } from '../../../src/state/axisMapSlice';
 import { pageData } from '../../../storybook/stories/data';
 import { AxisDomain } from '../../../src/util/types';
+import { ChartData } from '../../../src/state/chartDataSlice';
 
 const defaultAxisId: AxisId = 0;
 
@@ -59,7 +61,7 @@ describe('selectAxisScale', () => {
     render(<Comp />);
   });
 
-  it('should return empty object for initial state', () => {
+  it('should return empty for initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectAxisScale(initialState, 'yAxis', 'foo');
     expect(result).toEqual({ scale: undefined, realScaleType: undefined });
@@ -740,10 +742,128 @@ describe('selectAxisDomain', () => {
     });
 
     it('with allowDuplicatedCategory=true, and the data has duplicates, it should return domain as array indexes', () => {
-      const spy = vi.fn();
+      const domainSpy = vi.fn();
       const Comp = (): null => {
         const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
-        spy(result);
+        domainSpy(result);
+        return null;
+      };
+      const monthsWithDuplicatesData: ChartData = [
+        { x: 'Jan' },
+        { x: 'Jan' },
+        { x: 'Feb' },
+        { x: 'Feb' },
+        { x: 'Mar' },
+        { x: 'Mar' },
+        { x: 'Apr' },
+        { x: 'Apr' },
+        { x: 'May' },
+        { x: 'May' },
+        { x: 'Jun' },
+        { x: 'Jun' },
+        { x: 'Jul' },
+        { x: 'Jul' },
+        { x: 'Aug' },
+        { x: 'Aug' },
+      ];
+      const { container } = render(
+        <BarChart data={monthsWithDuplicatesData} width={100} height={100}>
+          <XAxis dataKey="x" type={type} allowDuplicatedCategory />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+      expectXAxisTicks(container, [
+        {
+          textContent: 'Jan',
+          x: '7.8125',
+          y: '73',
+        },
+        {
+          textContent: 'Jan',
+          x: '13.4375',
+          y: '73',
+        },
+        {
+          textContent: 'Feb',
+          x: '19.0625',
+          y: '73',
+        },
+        {
+          textContent: 'Feb',
+          x: '24.6875',
+          y: '73',
+        },
+        {
+          textContent: 'Mar',
+          x: '30.3125',
+          y: '73',
+        },
+        {
+          textContent: 'Mar',
+          x: '35.9375',
+          y: '73',
+        },
+        {
+          textContent: 'Apr',
+          x: '41.5625',
+          y: '73',
+        },
+        {
+          textContent: 'Apr',
+          x: '47.1875',
+          y: '73',
+        },
+        {
+          textContent: 'May',
+          x: '52.8125',
+          y: '73',
+        },
+        {
+          textContent: 'May',
+          x: '58.4375',
+          y: '73',
+        },
+        {
+          textContent: 'Jun',
+          x: '64.0625',
+          y: '73',
+        },
+        {
+          textContent: 'Jun',
+          x: '69.6875',
+          y: '73',
+        },
+        {
+          textContent: 'Jul',
+          x: '75.3125',
+          y: '73',
+        },
+        {
+          textContent: 'Jul',
+          x: '80.9375',
+          y: '73',
+        },
+        {
+          textContent: 'Aug',
+          x: '86.5625',
+          y: '73',
+        },
+        {
+          textContent: 'Aug',
+          x: '92.1875',
+          y: '73',
+        },
+      ]);
+    });
+
+    it('with allowDuplicatedCategory=true, and the data has duplicates that are not strings, it should return domain of values', () => {
+      const domainSpy = vi.fn();
+      const scaleSpy = vi.fn();
+      const Comp = (): null => {
+        domainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        const scaleObj = useAppSelector(state => selectAxisScale(state, 'xAxis', 0));
+        scaleSpy(scaleObj?.scale?.domain());
         return null;
       };
       const { container } = render(
@@ -752,92 +872,53 @@ describe('selectAxisDomain', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+      expect(domainSpy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
+      expect(scaleSpy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
+      /*
+       * These are not great ticks.
+       * All of them are undefined because axisOptions.categoricalDomain is undefined
+       * - once we move categoricalDomain and getTicksOfAxis to be selectors,
+       * I expect that to improve.
+       */
       expectXAxisTicks(container, [
         {
-          textContent: '',
-          x: '7.647058823529411',
-          y: '73',
-        },
-        {
-          textContent: 'Jan',
-          x: '12.941176470588234',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '18.235294117647058',
-          y: '73',
-        },
-        {
-          textContent: 'Feb',
-          x: '23.529411764705884',
-          y: '73',
-        },
-        {
-          textContent: 'Mar',
-          x: '28.823529411764707',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '34.11764705882353',
-          y: '73',
-        },
-        {
-          textContent: 'Apr',
-          x: '39.411764705882355',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '44.705882352941174',
-          y: '73',
-        },
-        {
-          textContent: 'May',
-          x: '50',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '55.294117647058826',
-          y: '73',
-        },
-        {
-          textContent: 'Jun',
-          x: '60.588235294117645',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '65.88235294117646',
-          y: '73',
-        },
-        {
-          textContent: 'Jul',
-          x: '71.17647058823529',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '76.47058823529412',
-          y: '73',
-        },
-        {
-          textContent: 'Aug',
-          x: '81.76470588235293',
-          y: '73',
-        },
-        {
-          textContent: '',
-          x: '87.05882352941175',
-          y: '73',
-        },
-        {
-          // no idea where the string 'undefined' comes from - the new implementation doesn't have it, breaking or not.
           textContent: 'undefined',
-          x: '92.35294117647058',
+          x: '10.625',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '21.875',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '33.125',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '44.375',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '55.625',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '66.875',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '78.125',
+          y: '73',
+        },
+        {
+          textContent: 'undefined',
+          x: '89.375',
           y: '73',
         },
       ]);
@@ -905,51 +986,46 @@ describe('selectAxisDomain', () => {
           <Customized component={Comp} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith(['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
+      expect(spy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
       expectXAxisTicks(container, [
         {
-          textContent: '',
-          x: '10',
-          y: '73',
-        },
-        {
           textContent: 'Jan',
-          x: '20',
+          x: '10.625',
           y: '73',
         },
         {
           textContent: 'Feb',
-          x: '30',
+          x: '21.875',
           y: '73',
         },
         {
           textContent: 'Mar',
-          x: '40',
+          x: '33.125',
           y: '73',
         },
         {
           textContent: 'Apr',
-          x: '50',
+          x: '44.375',
           y: '73',
         },
         {
           textContent: 'May',
-          x: '60',
+          x: '55.625',
           y: '73',
         },
         {
           textContent: 'Jun',
-          x: '70',
+          x: '66.875',
           y: '73',
         },
         {
           textContent: 'Jul',
-          x: '80',
+          x: '78.125',
           y: '73',
         },
         {
           textContent: 'Aug',
-          x: '90',
+          x: '89.375',
           y: '73',
         },
       ]);

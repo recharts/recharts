@@ -56,8 +56,8 @@ const XAxisImpl = (props: Props) => {
   const height = useChartHeight();
   const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
-  const scaleObj = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
-  const niceTicks = useAppSelector(state => selectNiceTicks(state, 'xAxis', xAxisId));
+  const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
+  const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, xAxisId));
 
   if (axisOptions == null || scaleObj == null) {
     return null;
@@ -111,6 +111,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
         tickCount={props.tickCount}
         includeHidden={props.includeHidden ?? false}
         reversed={props.reversed}
+        ticks={props.ticks}
       />
       <XAxisImpl {...props} />
     </>

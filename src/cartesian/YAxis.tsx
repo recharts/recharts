@@ -5,7 +5,8 @@ import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chart
 import { CartesianAxis } from './CartesianAxis';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { addYAxis, removeYAxis, YAxisSettings } from '../state/axisMapSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -50,9 +51,11 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const width = useChartWidth();
   const height = useChartHeight();
   const axisType = 'yAxis';
-
   const axisOptions = useYAxisOrThrow(yAxisId);
-  if (axisOptions == null) {
+  const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
+  const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, yAxisId));
+
+  if (axisOptions == null || scaleObj == null) {
     return null;
   }
 
@@ -61,10 +64,10 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     categoricalDomain: axisOptions.categoricalDomain,
     duplicateDomain: axisOptions.duplicateDomain,
     isCategorical: axisOptions.isCategorical,
-    niceTicks: axisOptions.niceTicks,
     range: axisOptions.range,
-    realScaleType: axisOptions.realScaleType,
-    scale: axisOptions.scale,
+    realScaleType: scaleObj.realScaleType,
+    niceTicks,
+    scale: scaleObj.scale,
     tickCount: props.tickCount,
     ticks: props.ticks,
     type: props.type,
@@ -104,6 +107,7 @@ const YAxisSettingsDispatcher = (props: Props) => {
         padding={props.padding}
         includeHidden={props.includeHidden ?? false}
         reversed={props.reversed}
+        ticks={props.ticks}
       />
       <YAxisImpl {...props} />
     </>

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { AxisDomain, AxisDomainType, DataKey, ScaleType } from '../util/types';
+import { AxisDomain, AxisDomainType, AxisTick, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 
 export type AxisId = string | number;
@@ -29,6 +29,11 @@ export type AxisSettings = {
   tickCount: number;
   includeHidden: boolean;
   reversed: boolean;
+  /**
+   * Ticks can be any type when the axis is the type of category
+   * Ticks must be numbers when the axis is the type of number
+   */
+  ticks: ReadonlyArray<AxisTick> | undefined;
 };
 
 export type XAxisSettings = AxisSettings & {
