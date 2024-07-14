@@ -2,6 +2,7 @@ import React from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 import { XAxisProps } from '../props/XAxisProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
   component: XAxis,
@@ -24,12 +25,14 @@ export const API = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(XAxisProps),
     dataKey: 'x',
     domain: [100, 500],
     type: 'number',
     allowDataOverflow: true,
     tickMargin: 20,
     angle: 45,
-    label: { value: 'The Axis Label', position: 'insideBottomRight', offset: 0 },
+    height: 70,
+    label: { value: 'The Axis Label', position: 'insideBottomRight' },
   },
 };

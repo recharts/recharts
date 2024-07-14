@@ -678,7 +678,7 @@ export type AxisPropsNeededForTicksGenerator = {
   /**
    * The range appears to be only used in Angle Axis - needs further investigation
    */
-  range?: Array<number>;
+  range?: ReadonlyArray<number>;
   tickCount?: number;
 };
 

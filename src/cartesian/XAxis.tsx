@@ -16,8 +16,6 @@ import { selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelecto
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
   xAxisId?: string | number;
-  /** The width of axis which is usually calculated internally */
-  width?: number;
   /** The height of axis, which need to be set by user */
   height?: number;
   mirror?: boolean;
@@ -126,7 +124,6 @@ export class XAxis extends Component<Props> {
     allowDecimals: true,
     hide: false,
     orientation: 'bottom',
-    width: 0,
     height: 30,
     mirror: false,
     xAxisId: 0,

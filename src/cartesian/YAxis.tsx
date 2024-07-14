@@ -18,8 +18,6 @@ interface YAxisProps extends BaseAxisProps {
   ticks?: ReadonlyArray<AxisTick>;
   /** The width of axis, which need to be set by user */
   width?: number;
-  /** The height of axis which is usually calculated in Chart */
-  height?: number;
   mirror?: boolean;
   /** The orientation of axis */
   orientation?: 'left' | 'right';
@@ -124,7 +122,6 @@ export class YAxis extends Component<Props> {
     hide: false,
     orientation: 'left',
     width: 60,
-    height: 0,
     mirror: false,
     yAxisId: 0,
     tickCount: 5,
