@@ -15,9 +15,11 @@ import {
   ReferenceDot,
   ReferenceArea,
   ReferenceLine,
+  XAxis,
+  ComposedChart,
 } from '../../src';
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
-import { pageData } from '../../storybook/stories/data';
+import { pageData, rangeData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
@@ -46,6 +48,63 @@ describe('<YAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(3);
+  });
+
+  it('should render ticks from Area with range', () => {
+    const domainSpy = vi.fn();
+    const Comp = (): null => {
+      const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+      domainSpy(domain);
+      return null;
+    };
+    const { container } = render(
+      <AreaChart
+        width={500}
+        height={400}
+        data={rangeData}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <XAxis dataKey="day" />
+        <YAxis />
+        <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
+        <Tooltip defaultIndex={4} active />
+        <Customized component={<Comp />} />
+      </AreaChart>,
+    );
+
+    expectYAxisTicks(container, [
+      {
+        textContent: '-6',
+        x: '52',
+        y: '370',
+      },
+      {
+        textContent: '0',
+        x: '52',
+        y: '280',
+      },
+      {
+        textContent: '6',
+        x: '52',
+        y: '190',
+      },
+      {
+        textContent: '12',
+        x: '52',
+        y: '100',
+      },
+      {
+        textContent: '18',
+        x: '52',
+        y: '10',
+      },
+    ]);
+    expect(domainSpy).toHaveBeenLastCalledWith([-3, 16]);
   });
 
   it('Should render 5 ticks', () => {
@@ -1377,6 +1436,72 @@ describe('<YAxis />', () => {
           },
         ]);
         expect(domainSpy).toHaveBeenLastCalledWith([-100, 5000]);
+      });
+    });
+
+    describe('ReferenceArea without any graphical elements', () => {
+      it('should render ticks following the domain of the area', () => {
+        const axisDomainSpy = vi.fn();
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          axisDomainSpy(domain);
+          return null;
+        };
+        const { container } = render(
+          <ComposedChart
+            width={500}
+            height={500}
+            data={pageData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis type="number" />
+            <ReferenceArea
+              x1="Page B"
+              x2="Page E"
+              y1={1890}
+              y2={-1000}
+              stroke="red"
+              strokeOpacity={0.3}
+              ifOverflow="extendDomain"
+            />
+            <Customized component={<Comp />} />
+          </ComposedChart>,
+        );
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([-1000, 1890]);
+        expectYAxisTicks(container, [
+          {
+            textContent: '-1900',
+            x: '72',
+            y: '465',
+          },
+          {
+            textContent: '-950',
+            x: '72',
+            y: '350',
+          },
+          {
+            textContent: '0',
+            x: '72',
+            y: '235',
+          },
+          {
+            textContent: '950',
+            x: '72',
+            y: '120',
+          },
+          {
+            textContent: '1900',
+            x: '72',
+            y: '5',
+          },
+        ]);
       });
     });
 

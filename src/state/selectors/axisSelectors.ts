@@ -387,8 +387,15 @@ function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | 
 const computeNumericalDomain = (
   dataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
 ): NumberDomain | undefined => {
-  const allDataSquished = dataWithErrorDomains.flatMap(d => [d.value, ...d.errorDomain]);
+  const allDataSquished = dataWithErrorDomains
+    // This flatMap has to be flat because we're creating a new array in the return value
+    .flatMap(d => [d.value, d.errorDomain])
+    // This flat is needed because a) errorDomain is an array, and b) value may be a number, or it may be a range (for Area, for example)
+    .flat(1);
   const onlyNumbers = onlyAllowNumbers(allDataSquished);
+  if (onlyNumbers.length === 0) {
+    return undefined;
+  }
   return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
 };
 
