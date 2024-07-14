@@ -15,9 +15,11 @@ import {
   ReferenceDot,
   ReferenceArea,
   ReferenceLine,
+  XAxis,
+  ComposedChart,
 } from '../../src';
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
-import { pageData } from '../../storybook/stories/data';
+import { pageData, rangeData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
@@ -46,6 +48,63 @@ describe('<YAxis />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(3);
+  });
+
+  it('should render ticks from Area with range', () => {
+    const domainSpy = vi.fn();
+    const Comp = (): null => {
+      const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+      domainSpy(domain);
+      return null;
+    };
+    const { container } = render(
+      <AreaChart
+        width={500}
+        height={400}
+        data={rangeData}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <XAxis dataKey="day" />
+        <YAxis />
+        <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
+        <Tooltip defaultIndex={4} active />
+        <Customized component={<Comp />} />
+      </AreaChart>,
+    );
+
+    expectYAxisTicks(container, [
+      {
+        textContent: '-6',
+        x: '52',
+        y: '370',
+      },
+      {
+        textContent: '0',
+        x: '52',
+        y: '280',
+      },
+      {
+        textContent: '6',
+        x: '52',
+        y: '190',
+      },
+      {
+        textContent: '12',
+        x: '52',
+        y: '100',
+      },
+      {
+        textContent: '18',
+        x: '52',
+        y: '10',
+      },
+    ]);
+    expect(domainSpy).toHaveBeenLastCalledWith([-3, 16]);
   });
 
   it('Should render 5 ticks', () => {
@@ -82,10 +141,10 @@ describe('<YAxis />', () => {
     expect(ticks[ticks.length - 1]).toHaveTextContent(textContent);
   });
 
-  it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist"', () => {
+  it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={[0, 1000]} />
+        <YAxis stroke="#ff7300" domain={[0, 1000]} allowDataOverflow />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
@@ -116,6 +175,26 @@ describe('<YAxis />', () => {
         y: '5',
       },
     ]);
+  });
+
+  it('Renders no ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow=false', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis stroke="#ff7300" domain={[0, 1000]} allowDataOverflow={false} />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, []);
+  });
+
+  it('Renders no ticks when dataKey is "noExist"', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis />
+        <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, []);
   });
 
   const casesThatDoNotShowTicks: [AxisDomain][] = [[[0, 'dataMax + 100']], [[0, 'dataMax - 100']], [['auto', 'auto']]];
@@ -491,13 +570,14 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed />
+          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed ticks={[1, 2, 3]} />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        ticks: [1, 2, 3],
         includeHidden: true,
         tickCount: 5,
         allowDecimals: true,
@@ -532,6 +612,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         allowDecimals: true,
@@ -579,6 +660,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          ticks: undefined,
         },
         bar: {
           includeHidden: false,
@@ -596,6 +678,7 @@ describe('<YAxis />', () => {
           allowDecimals: true,
           tickCount: 5,
           reversed: false,
+          ticks: undefined,
         },
       };
       expect(spy).toHaveBeenLastCalledWith(expectedSettings2);
@@ -607,6 +690,7 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        ticks: undefined,
         includeHidden: false,
         tickCount: 5,
         id: 'bar',
@@ -781,7 +865,7 @@ describe('<YAxis />', () => {
       expect(domainSpy).toHaveBeenLastCalledWith([0, 100]);
     });
 
-    it('should ignore domain of hidden items with includeHidden! this feels like a bug to me - why does this not work for stacked data?', () => {
+    it('should include domain of hidden items when includeHidden=true', () => {
       const stackedData = [
         {
           x: 10,
@@ -802,7 +886,6 @@ describe('<YAxis />', () => {
           <Customized component={<Comp />} />
         </BarChart>,
       );
-      // includeHidden does not work with stacked data, why?
       expectYAxisTicks(container, [
         {
           textContent: '0',
@@ -810,29 +893,29 @@ describe('<YAxis />', () => {
           y: '95',
         },
         {
-          textContent: '3',
+          textContent: '55',
           x: '57',
           y: '72.5',
         },
         {
-          textContent: '6',
+          textContent: '110',
           x: '57',
           y: '50',
         },
         {
-          textContent: '9',
+          textContent: '165',
           x: '57',
           y: '27.5',
         },
         {
-          textContent: '12',
+          textContent: '220',
           x: '57',
           y: '5',
         },
       ]);
       expect(domainSpy).toHaveBeenLastCalledWith([0, 210]);
 
-      // the same data, when not stacked, are included when includeHidden is true.
+      // the same data, not stacked
       rerender(
         <BarChart width={100} height={100} data={stackedData}>
           <YAxis includeHidden />
@@ -1353,6 +1436,72 @@ describe('<YAxis />', () => {
           },
         ]);
         expect(domainSpy).toHaveBeenLastCalledWith([-100, 5000]);
+      });
+    });
+
+    describe('ReferenceArea without any graphical elements', () => {
+      it('should render ticks following the domain of the area', () => {
+        const axisDomainSpy = vi.fn();
+        const Comp = (): null => {
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          axisDomainSpy(domain);
+          return null;
+        };
+        const { container } = render(
+          <ComposedChart
+            width={500}
+            height={500}
+            data={pageData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis type="number" />
+            <ReferenceArea
+              x1="Page B"
+              x2="Page E"
+              y1={1890}
+              y2={-1000}
+              stroke="red"
+              strokeOpacity={0.3}
+              ifOverflow="extendDomain"
+            />
+            <Customized component={<Comp />} />
+          </ComposedChart>,
+        );
+        expect(axisDomainSpy).toHaveBeenLastCalledWith([-1000, 1890]);
+        expectYAxisTicks(container, [
+          {
+            textContent: '-1900',
+            x: '72',
+            y: '465',
+          },
+          {
+            textContent: '-950',
+            x: '72',
+            y: '350',
+          },
+          {
+            textContent: '0',
+            x: '72',
+            y: '235',
+          },
+          {
+            textContent: '950',
+            x: '72',
+            y: '120',
+          },
+          {
+            textContent: '1900',
+            x: '72',
+            y: '5',
+          },
+        ]);
       });
     });
 
