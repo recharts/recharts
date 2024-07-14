@@ -130,6 +130,16 @@ export const LineBarHorizontal = {
 
 export const LineBarAreaScatterTimeScale = {
   render: (args: Record<string, any>) => {
+    const tickFormatter = (tick: Date) => {
+      return tick.toLocaleString('en-GB', {
+        /*
+         * Forced timezone so that our visual diff renders the same for all contributors.
+         * In real app you will probably leave timeZone undefined
+         */
+        timeZone: 'UTC',
+        dateStyle: 'medium',
+      });
+    };
     return (
       <ResponsiveContainer width="100%" height={500}>
         <div style={{ width: '600px', margin: 'auto' }}>
@@ -153,6 +163,7 @@ export const LineBarAreaScatterTimeScale = {
                 scale="time"
                 type="number"
                 tick={{ fontSize: 10, fill: 'red' }}
+                tickFormatter={tickFormatter}
               />
               <YAxis />
               <Legend />
