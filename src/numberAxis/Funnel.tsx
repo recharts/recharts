@@ -10,6 +10,8 @@ import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
+import { selectActiveIndex } from '../state/selectors/selectors';
+import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
@@ -34,7 +36,6 @@ import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
-  useTooltipContext,
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -115,7 +116,9 @@ function getTooltipEntrySettings(props: FunnelProps): TooltipPayloadConfiguratio
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
-  const { index: activeIndex } = useTooltipContext();
+  const activeItemIndex = useAppSelector(state =>
+    selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
+  );
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -128,7 +131,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
 
   return trapezoids.map((entry, i) => {
-    const isActiveIndex = activeShape && activeIndex === i;
+    const isActiveIndex = activeShape && activeItemIndex === String(i);
     const trapezoidOptions = isActiveIndex ? activeShape : shape;
     const trapezoidProps: FunnelTrapezoidProps = {
       ...entry,

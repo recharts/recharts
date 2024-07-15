@@ -127,8 +127,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTooltipSettingsState({ shared }));
-  }, [dispatch, shared]);
+    dispatch(setTooltipSettingsState({ shared, trigger }));
+  }, [dispatch, shared, trigger]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
