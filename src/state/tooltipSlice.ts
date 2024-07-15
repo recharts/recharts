@@ -1,4 +1,5 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { TooltipTrigger } from '../chart/types';
 import { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { ChartCoordinate, DataKey } from '../util/types';
 
@@ -57,7 +58,7 @@ export type ActiveTooltipProps = {
   activeCoordinate: ChartCoordinate | undefined;
 };
 
-type TooltipSettingsState = { shared?: boolean };
+type TooltipSettingsState = { shared?: boolean; trigger?: TooltipTrigger };
 
 /**
  * The tooltip interaction state stores:
@@ -176,7 +177,7 @@ export const initialState: TooltipState = {
     activeClickAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
-  settings: {},
+  settings: { shared: false, trigger: 'hover' },
 };
 
 const tooltipSlice = createSlice({
