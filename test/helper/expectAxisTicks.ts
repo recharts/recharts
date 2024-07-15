@@ -10,7 +10,7 @@ export type ExpectedTick = {
   y: string;
 };
 
-export function expectXAxisTicks(container: Element, ticks: ReadonlyArray<ExpectedTick>) {
+export function expectXAxisTicks(container: Element, expectedTicks: ReadonlyArray<ExpectedTick>) {
   const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
   assertNotNull(allTicks);
   const ticksContexts = Array.from(allTicks).map(tick => ({
@@ -18,7 +18,7 @@ export function expectXAxisTicks(container: Element, ticks: ReadonlyArray<Expect
     x: tick.getAttribute('x'),
     y: tick.getAttribute('y'),
   }));
-  expect(ticksContexts).toEqual(ticks);
+  expect(ticksContexts).toEqual(expectedTicks);
 }
 
 export function expectYAxisTicks(container: Element, ticks: ReadonlyArray<ExpectedTick>) {
