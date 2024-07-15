@@ -141,6 +141,124 @@ describe('<YAxis />', () => {
     expect(ticks[ticks.length - 1]).toHaveTextContent(textContent);
   });
 
+  it('should render multiple axes', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis yAxisId="a" />
+        <Area dataKey="uv" yAxisId="a" />
+        <YAxis yAxisId="b" />
+        <Area dataKey="pv" yAxisId="b" />
+        <YAxis yAxisId="c" orientation="right" />
+        <Area dataKey="amt" yAxisId="c" />
+        <YAxis yAxisId="d" type="category" orientation="right" />
+        <Area dataKey="name" yAxisId="d" />
+      </AreaChart>,
+    );
+
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '117',
+        y: '395',
+      },
+      {
+        textContent: '100',
+        x: '117',
+        y: '297.5',
+      },
+      {
+        textContent: '200',
+        x: '117',
+        y: '200',
+      },
+      {
+        textContent: '300',
+        x: '117',
+        y: '102.5',
+      },
+      {
+        textContent: '400',
+        x: '117',
+        y: '5',
+      },
+      {
+        textContent: '0',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: '2500',
+        x: '57',
+        y: '297.5',
+      },
+      {
+        textContent: '5000',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: '7500',
+        x: '57',
+        y: '102.5',
+      },
+      {
+        textContent: '10000',
+        x: '57',
+        y: '5',
+      },
+      {
+        textContent: '0',
+        x: '483',
+        y: '395',
+      },
+      {
+        textContent: '600',
+        x: '483',
+        y: '297.5',
+      },
+      {
+        textContent: '1200',
+        x: '483',
+        y: '200',
+      },
+      {
+        textContent: '1800',
+        x: '483',
+        y: '102.5',
+      },
+      {
+        textContent: '2400',
+        x: '483',
+        y: '5',
+      },
+      {
+        textContent: 'Page A',
+        x: '543',
+        y: '395',
+      },
+      {
+        textContent: 'Page B',
+        x: '543',
+        y: '297.5',
+      },
+      {
+        textContent: 'Page C',
+        x: '543',
+        y: '200',
+      },
+      {
+        textContent: 'Page D',
+        x: '543',
+        y: '102.5',
+      },
+      {
+        textContent: 'Page E',
+        x: '543',
+        y: '5',
+      },
+    ]);
+  });
+
   it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>
