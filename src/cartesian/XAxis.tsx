@@ -11,7 +11,7 @@ import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartU
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
-import { selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
+import { selectAxisRange, selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -56,6 +56,7 @@ const XAxisImpl = (props: Props) => {
   const axisType = 'xAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
   const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, xAxisId));
+  const range = useAppSelector(state => selectAxisRange(state, axisType, xAxisId));
 
   if (axisOptions == null || scaleObj == null) {
     return null;
@@ -67,7 +68,7 @@ const XAxisImpl = (props: Props) => {
     duplicateDomain: axisOptions.duplicateDomain,
     isCategorical: axisOptions.isCategorical,
     niceTicks,
-    range: axisOptions.range,
+    range,
     realScaleType: scaleObj.realScaleType,
     scale: scaleObj.scale,
     tickCount: props.tickCount,
@@ -81,7 +82,7 @@ const XAxisImpl = (props: Props) => {
   return (
     <CartesianAxis
       {...allOtherProps}
-      scale={axisOptions.scale}
+      scale={scaleObj.scale}
       x={axisOptions.x}
       y={axisOptions.y}
       width={axisOptions.width}
