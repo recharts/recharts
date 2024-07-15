@@ -866,7 +866,7 @@ export const combineYAxisRange = createSelector(
   },
 );
 
-const selectAxisRange = (
+export const selectAxisRange = (
   state: RechartsRootState,
   axisType: AxisType,
   axisId: AxisId,
