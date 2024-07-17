@@ -377,6 +377,73 @@ describe('<YAxis />', () => {
     ]);
   });
 
+  it('should not leave space for hidden axes', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis yAxisId="a" />
+        <Area dataKey="uv" yAxisId="a" />
+        <YAxis yAxisId="b" hide />
+        <Area dataKey="pv" yAxisId="b" />
+        <YAxis yAxisId="c" orientation="right" />
+        <Area dataKey="amt" yAxisId="c" />
+        <YAxis yAxisId="d" type="category" orientation="right" hide />
+        <Area dataKey="name" yAxisId="d" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: '100',
+        x: '57',
+        y: '297.5',
+      },
+      {
+        textContent: '200',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: '300',
+        x: '57',
+        y: '102.5',
+      },
+      {
+        textContent: '400',
+        x: '57',
+        y: '5',
+      },
+      {
+        textContent: '0',
+        x: '543',
+        y: '395',
+      },
+      {
+        textContent: '600',
+        x: '543',
+        y: '297.5',
+      },
+      {
+        textContent: '1200',
+        x: '543',
+        y: '200',
+      },
+      {
+        textContent: '1800',
+        x: '543',
+        y: '102.5',
+      },
+      {
+        textContent: '2400',
+        x: '543',
+        y: '5',
+      },
+    ]);
+  });
+
   it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>
@@ -806,13 +873,26 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed ticks={[1, 2, 3]} />
+          <YAxis
+            yAxisId="foo"
+            scale="log"
+            type="number"
+            includeHidden
+            reversed
+            ticks={[1, 2, 3]}
+            width={32}
+            orientation="right"
+            mirror
+          />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        orientation: 'right',
+        mirror: true,
+        width: 32,
         ticks: [1, 2, 3],
         includeHidden: true,
         tickCount: 5,
@@ -848,6 +928,9 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        orientation: 'left',
+        mirror: false,
+        width: 60,
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,
@@ -881,6 +964,9 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          orientation: 'left',
+          mirror: false,
+          width: 60,
           includeHidden: false,
           id: 'foo',
           scale: 'log',
@@ -899,6 +985,9 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
         bar: {
+          orientation: 'left',
+          mirror: false,
+          width: 60,
           includeHidden: false,
           id: 'bar',
           scale: 'utc',
@@ -926,6 +1015,9 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        mirror: false,
+        orientation: 'left',
+        width: 60,
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,

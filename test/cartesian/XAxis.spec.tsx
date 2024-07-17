@@ -17,9 +17,11 @@ import {
   YAxis,
 } from '../../src';
 import {
+  selectAllXAxesOffsetSteps,
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
+  selectXAxisPosition,
 } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
@@ -818,6 +820,21 @@ describe('<XAxis />', () => {
   });
 
   it('should render multiple axes', () => {
+    const topOffsetStepsSpy = vi.fn();
+    const bottomOffsetStepsSpy = vi.fn();
+    const axisAPositionSpy = vi.fn();
+    const axisBPositionSpy = vi.fn();
+    const axisCPositionSpy = vi.fn();
+    const axisDPositionSpy = vi.fn();
+    const Comp = (): null => {
+      topOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'top', false)));
+      bottomOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'bottom', false)));
+      axisAPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'a')));
+      axisBPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'b')));
+      axisCPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'c')));
+      axisDPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'd')));
+      return null;
+    };
     const { container } = render(
       <LineChart width={700} height={700} data={pageData}>
         <XAxis dataKey="name" xAxisId="a" orientation="top" height={40} />
@@ -829,6 +846,7 @@ describe('<XAxis />', () => {
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
         <Tooltip defaultIndex={2} />
+        <Customized component={<Comp />} />
       </LineChart>,
     );
 
@@ -954,6 +972,30 @@ describe('<XAxis />', () => {
         y: '67',
       },
     ]);
+    expect(topOffsetStepsSpy).toHaveBeenLastCalledWith({
+      a: 75,
+      d: 5,
+    });
+    expect(bottomOffsetStepsSpy).toHaveBeenLastCalledWith({
+      b: 585,
+      c: 635,
+    });
+    expect(axisAPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 75,
+    });
+    expect(axisBPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 585,
+    });
+    expect(axisCPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 635,
+    });
+    expect(axisDPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 5,
+    });
   });
 
   it('should render multiple axes with some ticks mirrored', () => {
@@ -1095,6 +1137,135 @@ describe('<XAxis />', () => {
     ]);
   });
 
+  it('should not leave space for hidden axes', () => {
+    const topOffsetStepsSpy = vi.fn();
+    const bottomOffsetStepsSpy = vi.fn();
+    const axisAPositionSpy = vi.fn();
+    const axisBPositionSpy = vi.fn();
+    const axisCPositionSpy = vi.fn();
+    const axisDPositionSpy = vi.fn();
+    const Comp = (): null => {
+      topOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'top', false)));
+      bottomOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'bottom', false)));
+      axisAPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'a')));
+      axisBPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'b')));
+      axisCPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'c')));
+      axisDPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'd')));
+      return null;
+    };
+    const { container } = render(
+      <LineChart width={700} height={700} data={pageData}>
+        <XAxis dataKey="name" xAxisId="a" orientation="top" height={40} />
+        <XAxis dataKey="uv" xAxisId="b" height={50} />
+        <XAxis hide dataKey="pv" type="number" xAxisId="c" height={60} />
+        <XAxis hide dataKey="amt" type="number" orientation="top" xAxisId="d" height={70} />
+        <Line dataKey="name" xAxisId="a" />
+        <Line dataKey="uv" xAxisId="b" />
+        <Line dataKey="pv" xAxisId="c" />
+        <Line dataKey="amt" xAxisId="d" />
+        <Tooltip defaultIndex={2} />
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Page A',
+        x: '5',
+        y: '37',
+      },
+      {
+        textContent: 'Page B',
+        x: '120',
+        y: '37',
+      },
+      {
+        textContent: 'Page C',
+        x: '235',
+        y: '37',
+      },
+      {
+        textContent: 'Page D',
+        x: '350',
+        y: '37',
+      },
+      {
+        textContent: 'Page E',
+        x: '465',
+        y: '37',
+      },
+      {
+        textContent: 'Page F',
+        x: '580',
+        y: '37',
+      },
+      {
+        textContent: 'Page G',
+        x: '695',
+        y: '37',
+      },
+      {
+        textContent: '590',
+        x: '5',
+        y: '653',
+      },
+      {
+        textContent: '590',
+        x: '120',
+        y: '653',
+      },
+      {
+        textContent: '868',
+        x: '235',
+        y: '653',
+      },
+      {
+        textContent: '1397',
+        x: '350',
+        y: '653',
+      },
+      {
+        textContent: '1480',
+        x: '465',
+        y: '653',
+      },
+      {
+        textContent: '1520',
+        x: '580',
+        y: '653',
+      },
+      {
+        textContent: '1400',
+        x: '695',
+        y: '653',
+      },
+    ]);
+    expect(topOffsetStepsSpy).toHaveBeenLastCalledWith({
+      a: 5,
+      d: -65,
+    });
+    expect(bottomOffsetStepsSpy).toHaveBeenLastCalledWith({
+      b: 645,
+      c: 695,
+    });
+    expect(axisAPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 5,
+    });
+    expect(axisBPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 645,
+    });
+    expect(axisCPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 695,
+    });
+    expect(axisDPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: -65,
+    });
+  });
+
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
       const spy = vi.fn();
@@ -1105,13 +1276,25 @@ describe('<XAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <XAxis xAxisId="foo" scale="log" type="number" includeHidden ticks={[4, 5, 6]} />
+          <XAxis
+            xAxisId="foo"
+            scale="log"
+            type="number"
+            includeHidden
+            ticks={[4, 5, 6]}
+            height={31}
+            orientation="top"
+            mirror
+          />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        mirror: true,
+        orientation: 'top',
+        height: 31,
         ticks: [4, 5, 6],
         includeHidden: true,
         tickCount: 5,
@@ -1147,6 +1330,9 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        mirror: false,
+        height: 30,
+        orientation: 'bottom',
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,
@@ -1180,6 +1366,9 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          mirror: false,
+          orientation: 'bottom',
+          height: 30,
           ticks: undefined,
           includeHidden: false,
           id: 'foo',
@@ -1198,6 +1387,9 @@ describe('<XAxis />', () => {
           reversed: false,
         },
         bar: {
+          mirror: false,
+          orientation: 'bottom',
+          height: 30,
           ticks: undefined,
           includeHidden: false,
           id: 'bar',
@@ -1225,6 +1417,9 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        mirror: false,
+        orientation: 'bottom',
+        height: 30,
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,
@@ -3613,6 +3808,9 @@ describe('<XAxis />', () => {
         },
       ]);
       const expectedSettings: XAxisSettings = {
+        mirror: false,
+        orientation: 'bottom',
+        height: 30,
         ticks: undefined,
         includeHidden: false,
         allowDataOverflow: false,
@@ -3635,7 +3833,7 @@ describe('<XAxis />', () => {
       expect(itemDataSpy).toHaveBeenCalledTimes(3);
       expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);
       // oof
-      expect(axisDomainSpy).toHaveBeenCalledTimes(20);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(21);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
     });
   });

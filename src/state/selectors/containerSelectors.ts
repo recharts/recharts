@@ -16,6 +16,10 @@ export const selectContainerOffset: (state: RechartsRootState) => ContainerOffse
   (rect: DOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
 );
 
+export const selectChartWidth = (state: RechartsRootState): number => state.layout.width;
+
+export const selectChartHeight = (state: RechartsRootState): number => state.layout.height;
+
 export const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) => ChartPointer | undefined =
   createSelector(
     selectContainerOffset,

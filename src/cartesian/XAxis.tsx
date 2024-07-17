@@ -4,14 +4,21 @@
 import type { SVGProps } from 'react';
 import React, { Component, useEffect } from 'react';
 import clsx from 'clsx';
-import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
+import { useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { addXAxis, removeXAxis, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
+import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import { XAxisWithExtraData } from '../chart/types';
-import { selectAxisRange, selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
+import {
+  selectAxisRange,
+  selectAxisScale,
+  selectNiceTicks,
+  selectXAxisPosition,
+  selectXAxisSize,
+} from '../state/selectors/axisSelectors';
+import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -19,8 +26,7 @@ interface XAxisProps extends BaseAxisProps {
   /** The height of axis, which need to be set by user */
   height?: number;
   mirror?: boolean;
-  // The orientation of axis
-  orientation?: 'top' | 'bottom';
+  orientation?: XAxisOrientation;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
@@ -50,15 +56,17 @@ function SetXAxisSettings(settings: XAxisSettings): null {
 
 const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
-  const width = useChartWidth();
-  const height = useChartHeight();
+  const width = useAppSelector(selectChartWidth);
+  const height = useAppSelector(selectChartHeight);
   const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
   const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, xAxisId));
   const range = useAppSelector(state => selectAxisRange(state, axisType, xAxisId));
+  const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
+  const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
 
-  if (axisOptions == null || scaleObj == null) {
+  if (axisSize == null || position == null || axisOptions == null || scaleObj == null) {
     return null;
   }
 
@@ -83,10 +91,10 @@ const XAxisImpl = (props: Props) => {
     <CartesianAxis
       {...allOtherProps}
       scale={scaleObj.scale}
-      x={axisOptions.x}
-      y={axisOptions.y}
-      width={axisOptions.width}
-      height={axisOptions.height}
+      x={position.x}
+      y={position.y}
+      width={axisSize.width}
+      height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
       ticks={cartesianTickItems}
@@ -111,6 +119,9 @@ const XAxisSettingsDispatcher = (props: Props) => {
         includeHidden={props.includeHidden ?? false}
         reversed={props.reversed}
         ticks={props.ticks}
+        height={props.height}
+        orientation={props.orientation}
+        mirror={props.mirror}
       />
       <XAxisImpl {...props} />
     </>

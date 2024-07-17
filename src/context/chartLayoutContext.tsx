@@ -23,7 +23,7 @@ import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
-import { setLayout, setOffset } from '../state/layoutSlice';
+import { setChartSize, setLayout, setOffset } from '../state/layoutSlice';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
@@ -95,6 +95,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   dispatch(setPolarRadiusAxisMap(radiusAxisMap));
   dispatch(setLayout(layout));
   dispatch(setOffset(offset));
+  dispatch(setChartSize({ width, height }));
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -314,10 +315,18 @@ export const useOffset = (): ChartOffset => {
   return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
+/**
+ * @deprecated instead use selectChartWidth
+ * @return chart width
+ */
 export const useChartWidth = (): number => {
   return useContext(ChartWidthContext);
 };
 
+/**
+ * @deprecated instead use selectChartHeight
+ * @return chart height
+ */
 export const useChartHeight = (): number => {
   return useContext(ChartHeightContext);
 };
