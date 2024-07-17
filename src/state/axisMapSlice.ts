@@ -7,6 +7,9 @@ export type AxisId = string | number;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
 export type YAxisPadding = { top?: number; bottom?: number } | 'gap' | 'no-gap';
 
+export type XAxisOrientation = 'top' | 'bottom';
+export type YAxisOrientation = 'left' | 'right';
+
 /**
  * These are the external props, visible for users as they set them using our public API.
  * There is all sorts of internal computed things based on these, but they will come through selectors.
@@ -29,6 +32,7 @@ export type AxisSettings = {
   tickCount: number;
   includeHidden: boolean;
   reversed: boolean;
+  mirror: boolean;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
@@ -38,10 +42,14 @@ export type AxisSettings = {
 
 export type XAxisSettings = AxisSettings & {
   padding: XAxisPadding;
+  height: number;
+  orientation: XAxisOrientation;
 };
 
 export type YAxisSettings = AxisSettings & {
   padding: YAxisPadding;
+  width: number;
+  orientation: YAxisOrientation;
 };
 
 export type ZAxisSettings = AxisSettings;

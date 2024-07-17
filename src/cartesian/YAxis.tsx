@@ -4,7 +4,7 @@ import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../uti
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
-import { addYAxis, removeYAxis, YAxisSettings } from '../state/axisMapSlice';
+import { addYAxis, removeYAxis, YAxisOrientation, YAxisSettings } from '../state/axisMapSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisRange, selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
 
@@ -19,8 +19,7 @@ interface YAxisProps extends BaseAxisProps {
   /** The width of axis, which need to be set by user */
   width?: number;
   mirror?: boolean;
-  /** The orientation of axis */
-  orientation?: 'left' | 'right';
+  orientation?: YAxisOrientation;
   padding?: {
     top?: number;
     bottom?: number;
@@ -107,6 +106,9 @@ const YAxisSettingsDispatcher = (props: Props) => {
         includeHidden={props.includeHidden ?? false}
         reversed={props.reversed}
         ticks={props.ticks}
+        width={props.width}
+        orientation={props.orientation}
+        mirror={props.mirror}
       />
       <YAxisImpl {...props} />
     </>

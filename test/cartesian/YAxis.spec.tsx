@@ -806,13 +806,26 @@ describe('<YAxis />', () => {
       };
       const { container } = render(
         <BarChart width={100} height={100}>
-          <YAxis yAxisId="foo" scale="log" type="number" includeHidden reversed ticks={[1, 2, 3]} />
+          <YAxis
+            yAxisId="foo"
+            scale="log"
+            type="number"
+            includeHidden
+            reversed
+            ticks={[1, 2, 3]}
+            width={32}
+            orientation="right"
+            mirror
+          />
           <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        orientation: 'right',
+        mirror: true,
+        width: 32,
         ticks: [1, 2, 3],
         includeHidden: true,
         tickCount: 5,
@@ -848,6 +861,9 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        orientation: 'left',
+        mirror: false,
+        width: 60,
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,
@@ -881,6 +897,9 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          orientation: 'left',
+          mirror: false,
+          width: 60,
           includeHidden: false,
           id: 'foo',
           scale: 'log',
@@ -899,6 +918,9 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
         bar: {
+          orientation: 'left',
+          mirror: false,
+          width: 60,
           includeHidden: false,
           id: 'bar',
           scale: 'utc',
@@ -926,6 +948,9 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        mirror: false,
+        orientation: 'left',
+        width: 60,
         ticks: undefined,
         includeHidden: false,
         tickCount: 5,
