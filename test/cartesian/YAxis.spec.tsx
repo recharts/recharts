@@ -377,6 +377,73 @@ describe('<YAxis />', () => {
     ]);
   });
 
+  it('should not leave space for hidden axes', () => {
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis yAxisId="a" />
+        <Area dataKey="uv" yAxisId="a" />
+        <YAxis yAxisId="b" hide />
+        <Area dataKey="pv" yAxisId="b" />
+        <YAxis yAxisId="c" orientation="right" />
+        <Area dataKey="amt" yAxisId="c" />
+        <YAxis yAxisId="d" type="category" orientation="right" hide />
+        <Area dataKey="name" yAxisId="d" />
+      </AreaChart>,
+    );
+    expectYAxisTicks(container, [
+      {
+        textContent: '0',
+        x: '57',
+        y: '395',
+      },
+      {
+        textContent: '100',
+        x: '57',
+        y: '297.5',
+      },
+      {
+        textContent: '200',
+        x: '57',
+        y: '200',
+      },
+      {
+        textContent: '300',
+        x: '57',
+        y: '102.5',
+      },
+      {
+        textContent: '400',
+        x: '57',
+        y: '5',
+      },
+      {
+        textContent: '0',
+        x: '543',
+        y: '395',
+      },
+      {
+        textContent: '600',
+        x: '543',
+        y: '297.5',
+      },
+      {
+        textContent: '1200',
+        x: '543',
+        y: '200',
+      },
+      {
+        textContent: '1800',
+        x: '543',
+        y: '102.5',
+      },
+      {
+        textContent: '2400',
+        x: '543',
+        y: '5',
+      },
+    ]);
+  });
+
   it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>

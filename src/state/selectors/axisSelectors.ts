@@ -23,7 +23,14 @@ import {
   Size,
   StackOffsetType,
 } from '../../util/types';
-import { AxisId, AxisSettings, XAxisOrientation, XAxisSettings, YAxisSettings } from '../axisMapSlice';
+import {
+  AxisId,
+  AxisSettings,
+  XAxisOrientation,
+  XAxisSettings,
+  YAxisOrientation,
+  YAxisSettings,
+} from '../axisMapSlice';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -38,13 +45,13 @@ import { CartesianGraphicalItemSettings, ErrorBarsSettings } from '../graphicalI
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
-import { selectChartHeight } from './containerSelectors';
+import { selectChartHeight, selectChartWidth } from './containerSelectors';
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
   return state.axisMap.xAxis[axisId];
 };
 
-export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): AxisSettings => {
+export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
   return state.axisMap.yAxis[axisId];
 };
 
@@ -937,6 +944,12 @@ const selectAllXAxes: (state: RechartsRootState) => ReadonlyArray<XAxisSettings>
   return Object.values(state.axisMap.xAxis);
 };
 
+const selectAllYAxes: (state: RechartsRootState) => ReadonlyArray<YAxisSettings> = (
+  state: RechartsRootState,
+): ReadonlyArray<YAxisSettings> => {
+  return Object.values(state.axisMap.yAxis);
+};
+
 function compareIds(a: AxisSettings, b: AxisSettings) {
   if (a.id < b.id) {
     return -1;
@@ -966,6 +979,21 @@ const selectAllXAxesWithOffsetType: (
       .sort(compareIds),
 );
 
+const selectAllYAxesWithOffsetType: (
+  state: RechartsRootState,
+  orientation: YAxisOrientation,
+  mirror: true,
+) => ReadonlyArray<YAxisSettings> = createSelector(
+  selectAllYAxes,
+  pickAxisOrientation,
+  pickMirror,
+  (allAxes: ReadonlyArray<YAxisSettings>, orientation: YAxisOrientation, mirror: boolean) =>
+    allAxes
+      .filter(axis => axis.orientation === orientation)
+      .filter(axis => axis.mirror === mirror)
+      .sort(compareIds),
+);
+
 const getXAxisSize = (offset: ChartOffset, axisSettings: XAxisSettings | undefined): Size => {
   if (axisSettings == null) {
     return undefined;
@@ -973,6 +1001,16 @@ const getXAxisSize = (offset: ChartOffset, axisSettings: XAxisSettings | undefin
   return {
     width: offset.width,
     height: axisSettings.height,
+  };
+};
+
+const getYAxisSize = (offset: ChartOffset, axisSettings: YAxisSettings | undefined): Size => {
+  if (axisSettings == null) {
+    return undefined;
+  }
+  return {
+    width: axisSettings.width,
+    height: offset.height,
   };
 };
 
@@ -986,6 +1024,17 @@ const combineXAxisPositionStartingPoint = (offset: ChartOffset, orientation: XAx
       return offset.top;
     case 'bottom':
       return chartHeight - offset.bottom;
+    default:
+      return 0;
+  }
+};
+
+const combineYAxisPositionStartingPoint = (offset: ChartOffset, orientation: YAxisOrientation, chartWidth: number) => {
+  switch (orientation) {
+    case 'left':
+      return offset.left;
+    case 'right':
+      return chartWidth - offset.right;
     default:
       return 0;
   }
@@ -1017,6 +1066,32 @@ export const selectAllXAxesOffsetSteps: (
   },
 );
 
+export const selectAllYAxesOffsetSteps: (
+  state: RechartsRootState,
+  orientation: YAxisOrientation,
+  mirror: boolean,
+) => AxisOffsetSteps = createSelector(
+  selectChartWidth,
+  selectChartOffset,
+  selectAllYAxesWithOffsetType,
+  pickAxisOrientation,
+  pickMirror,
+  (chartWidth, offset, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
+    const steps: AxisOffsetSteps = {};
+    let position: number;
+    allAxesWithSameOffsetType.forEach(axis => {
+      const axisSize = getYAxisSize(offset, axis);
+      if (position == null) {
+        position = combineYAxisPositionStartingPoint(offset, orientation, chartWidth);
+      }
+      const needSpace = (orientation === 'left' && !mirror) || (orientation === 'right' && mirror);
+      steps[axis.id] = position - Number(needSpace) * axisSize.width;
+      position += (needSpace ? -1 : 1) * axisSize.width;
+    });
+    return steps;
+  },
+);
+
 export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
   const offset = selectChartOffset(state);
   const axisSettings = selectXAxisSettings(state, axisId);
@@ -1029,6 +1104,20 @@ export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): C
     return { x: offset.left, y: 0 };
   }
   return { x: offset.left, y: stepOfThisAxis };
+};
+
+export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
+  const offset = selectChartOffset(state);
+  const axisSettings: YAxisSettings = selectYAxisSettings(state, axisId);
+  if (axisSettings == null) {
+    return undefined;
+  }
+  const allSteps = selectAllYAxesOffsetSteps(state, axisSettings.orientation, axisSettings.mirror);
+  const stepOfThisAxis = allSteps[axisId];
+  if (stepOfThisAxis == null) {
+    return { x: 0, y: offset.top };
+  }
+  return { x: stepOfThisAxis, y: offset.top };
 };
 
 export const selectYAxisSize = createSelector(

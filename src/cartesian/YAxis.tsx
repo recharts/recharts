@@ -1,12 +1,19 @@
 import React, { Component, FunctionComponent, SVGProps, useEffect } from 'react';
 import clsx from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
-import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
 import { addYAxis, removeYAxis, YAxisOrientation, YAxisSettings } from '../state/axisMapSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectAxisRange, selectAxisScale, selectNiceTicks } from '../state/selectors/axisSelectors';
+import {
+  selectAxisRange,
+  selectAxisScale,
+  selectNiceTicks,
+  selectYAxisPosition,
+  selectYAxisSize,
+} from '../state/selectors/axisSelectors';
+import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -45,15 +52,17 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const { yAxisId, className } = props;
-  const width = useChartWidth();
-  const height = useChartHeight();
+  const width = useAppSelector(selectChartWidth);
+  const height = useAppSelector(selectChartHeight);
   const axisType = 'yAxis';
   const axisOptions = useYAxisOrThrow(yAxisId);
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
   const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, yAxisId));
   const range = useAppSelector(state => selectAxisRange(state, axisType, yAxisId));
+  const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
+  const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
 
-  if (axisOptions == null || scaleObj == null) {
+  if (axisSize == null || position == null || axisOptions == null || scaleObj == null) {
     return null;
   }
 
@@ -78,10 +87,10 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     <CartesianAxis
       {...allOtherProps}
       scale={scaleObj.scale}
-      x={axisOptions.x}
-      y={axisOptions.y}
-      width={axisOptions.width}
-      height={axisOptions.height}
+      x={position.x}
+      y={position.y}
+      width={axisSize.width}
+      height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
       viewBox={{ x: 0, y: 0, width, height }}
       ticks={cartesianTickItems}

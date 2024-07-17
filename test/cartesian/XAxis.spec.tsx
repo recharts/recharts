@@ -1137,6 +1137,135 @@ describe('<XAxis />', () => {
     ]);
   });
 
+  it('should not leave space for hidden axes', () => {
+    const topOffsetStepsSpy = vi.fn();
+    const bottomOffsetStepsSpy = vi.fn();
+    const axisAPositionSpy = vi.fn();
+    const axisBPositionSpy = vi.fn();
+    const axisCPositionSpy = vi.fn();
+    const axisDPositionSpy = vi.fn();
+    const Comp = (): null => {
+      topOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'top', false)));
+      bottomOffsetStepsSpy(useAppSelector(state => selectAllXAxesOffsetSteps(state, 'bottom', false)));
+      axisAPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'a')));
+      axisBPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'b')));
+      axisCPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'c')));
+      axisDPositionSpy(useAppSelector(state => selectXAxisPosition(state, 'd')));
+      return null;
+    };
+    const { container } = render(
+      <LineChart width={700} height={700} data={pageData}>
+        <XAxis dataKey="name" xAxisId="a" orientation="top" height={40} />
+        <XAxis dataKey="uv" xAxisId="b" height={50} />
+        <XAxis hide dataKey="pv" type="number" xAxisId="c" height={60} />
+        <XAxis hide dataKey="amt" type="number" orientation="top" xAxisId="d" height={70} />
+        <Line dataKey="name" xAxisId="a" />
+        <Line dataKey="uv" xAxisId="b" />
+        <Line dataKey="pv" xAxisId="c" />
+        <Line dataKey="amt" xAxisId="d" />
+        <Tooltip defaultIndex={2} />
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expectXAxisTicks(container, [
+      {
+        textContent: 'Page A',
+        x: '5',
+        y: '37',
+      },
+      {
+        textContent: 'Page B',
+        x: '120',
+        y: '37',
+      },
+      {
+        textContent: 'Page C',
+        x: '235',
+        y: '37',
+      },
+      {
+        textContent: 'Page D',
+        x: '350',
+        y: '37',
+      },
+      {
+        textContent: 'Page E',
+        x: '465',
+        y: '37',
+      },
+      {
+        textContent: 'Page F',
+        x: '580',
+        y: '37',
+      },
+      {
+        textContent: 'Page G',
+        x: '695',
+        y: '37',
+      },
+      {
+        textContent: '590',
+        x: '5',
+        y: '653',
+      },
+      {
+        textContent: '590',
+        x: '120',
+        y: '653',
+      },
+      {
+        textContent: '868',
+        x: '235',
+        y: '653',
+      },
+      {
+        textContent: '1397',
+        x: '350',
+        y: '653',
+      },
+      {
+        textContent: '1480',
+        x: '465',
+        y: '653',
+      },
+      {
+        textContent: '1520',
+        x: '580',
+        y: '653',
+      },
+      {
+        textContent: '1400',
+        x: '695',
+        y: '653',
+      },
+    ]);
+    expect(topOffsetStepsSpy).toHaveBeenLastCalledWith({
+      a: 5,
+      d: -65,
+    });
+    expect(bottomOffsetStepsSpy).toHaveBeenLastCalledWith({
+      b: 645,
+      c: 695,
+    });
+    expect(axisAPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 5,
+    });
+    expect(axisBPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 645,
+    });
+    expect(axisCPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: 695,
+    });
+    expect(axisDPositionSpy).toHaveBeenLastCalledWith({
+      x: 5,
+      y: -65,
+    });
+  });
+
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
       const spy = vi.fn();
