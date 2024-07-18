@@ -38,6 +38,7 @@ export type AxisSettings = {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
+  hide: boolean;
 };
 
 export type XAxisSettings = AxisSettings & {

@@ -9,6 +9,7 @@ import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
 import {
+  implicitXAxis,
   selectAxisScale,
   selectTicksOfAxis,
   selectXAxisPosition,
@@ -101,6 +102,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
         height={props.height}
         orientation={props.orientation}
         mirror={props.mirror}
+        hide={props.hide}
       />
       <XAxisImpl {...props} />
     </>
@@ -112,19 +114,19 @@ export class XAxis extends Component<Props> {
   static displayName = 'XAxis';
 
   static defaultProps = {
-    allowDecimals: true,
+    allowDataOverflow: implicitXAxis.allowDataOverflow,
+    allowDecimals: implicitXAxis.allowDecimals,
+    allowDuplicatedCategory: implicitXAxis.allowDuplicatedCategory,
+    height: implicitXAxis.height,
     hide: false,
-    orientation: 'bottom',
-    height: 30,
-    mirror: false,
+    mirror: implicitXAxis.mirror,
+    orientation: implicitXAxis.orientation,
+    padding: implicitXAxis.padding,
+    reversed: implicitXAxis.reversed,
+    scale: implicitXAxis.scale,
+    tickCount: implicitXAxis.tickCount,
+    type: implicitXAxis.type,
     xAxisId: 0,
-    tickCount: 5,
-    type: 'category',
-    padding: { left: 0, right: 0 },
-    allowDataOverflow: false,
-    scale: 'auto',
-    reversed: false,
-    allowDuplicatedCategory: true,
   };
 
   render() {

@@ -82,8 +82,8 @@ describe('selectAxisScale', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenCalledWith({ scale: undefined, realScaleType: undefined });
+    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledWith({ scale: expect.any(Function), realScaleType: 'band' });
   });
 
   it('should return scale, and scale name, if there is an Axis in the chart', () => {
@@ -169,13 +169,13 @@ describe('selectAxisDomain', () => {
     render(<Customized component={Comp} />);
   });
 
-  it('should return undefined when called with initial state', () => {
+  it('should return empty array when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectAxisDomain(initialState, 'xAxis', '0');
-    expect(result).toBeUndefined();
+    expect(result).toEqual([]);
   });
 
-  it('should return undefined if there is no data in the chart', () => {
+  it('should return empty array if there is no data in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectAxisDomain(state, 'xAxis', '0'));
@@ -189,7 +189,7 @@ describe('selectAxisDomain', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledWith(undefined);
+    expect(spy).toHaveBeenCalledWith([]);
     expectXAxisTicks(container, []);
   });
 

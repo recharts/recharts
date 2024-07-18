@@ -8,9 +8,10 @@ import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { useClipPathId } from '../context/chartLayoutContext';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale } from '../state/selectors/axisSelectors';
 
 interface ReferenceDotProps {
   r?: number;
@@ -42,13 +43,14 @@ const useCoordinate = (
 ) => {
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
-  const xAxis = useXAxisOrThrow(xAxisId);
-  const yAxis = useYAxisOrThrow(yAxisId);
-  if (!isX || !isY) {
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+
+  if (!isX || !isY || xAxisScale?.scale == null || yAxisScale?.scale == null) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
