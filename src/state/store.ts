@@ -10,6 +10,7 @@ import { axisMapReducer } from './axisMapSlice';
 import { graphicalItemsReducer } from './graphicalItemsSlice';
 import { referenceElementsReducer } from './referenceElementsSlice';
 import { brushReducer } from './brushSlice';
+import { legendReducer } from './legendSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,
   layout: chartLayoutReducer,
+  legend: legendReducer,
   options: optionsReducer,
   referenceElements: referenceElementsReducer,
   tooltip: tooltipReducer,
