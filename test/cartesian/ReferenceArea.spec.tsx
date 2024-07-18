@@ -478,7 +478,7 @@ describe('<ReferenceArea />', () => {
           <ReferenceArea x1="201106" x2="201110" fill="#666" shape={spy} radius={10} strokeWidth={3} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledTimes(3);
       expect(spy).toHaveBeenCalledWith({
         clipPath: undefined,
         fill: '#666',
