@@ -58,6 +58,7 @@ const preloadedRadialState: Partial<RechartsRootState> = {
     container: undefined,
     width: 0,
     height: 0,
+    margin: { top: 11, right: 22, bottom: 33, left: 4 },
   },
   tooltip: {
     ...initialTooltipState,
