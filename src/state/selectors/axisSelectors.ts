@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
 import isNan from 'lodash/isNaN';
-import { selectChartLayout, selectChartOffset } from '../../context/chartLayoutContext';
+import { selectChartLayout, selectChartOffsetOld } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
   getStackedData,
@@ -847,7 +847,7 @@ const selectCalculatedPadding: (
   selectSmallestDistanceBetweenValues,
   selectChartLayout,
   selectBarCategoryGap,
-  selectChartOffset,
+  selectChartOffsetOld,
   (_1, _2, _3, padding) => padding,
   (
     smallestDistanceInPercent: number | undefined,
@@ -922,7 +922,7 @@ const selectYAxisPadding: (state: RechartsRootState, axisId: AxisId) => { top: n
   );
 
 export const combineXAxisRange = createSelector(
-  selectChartOffset,
+  selectChartOffsetOld,
   selectXAxisPadding,
   (offset: ChartOffset, padding): ReadonlyArray<number> | undefined => {
     return [offset.left + padding.left, offset.left + offset.width - padding.right];
@@ -930,7 +930,7 @@ export const combineXAxisRange = createSelector(
 );
 
 export const combineYAxisRange = createSelector(
-  selectChartOffset,
+  selectChartOffsetOld,
   selectChartLayout,
   selectYAxisPadding,
   (
@@ -1007,13 +1007,13 @@ export const selectErrorBarsSettings = createSelector(
   },
 );
 
-const selectAllXAxes: (state: RechartsRootState) => ReadonlyArray<XAxisSettings> = (
+export const selectAllXAxes: (state: RechartsRootState) => ReadonlyArray<XAxisSettings> = (
   state: RechartsRootState,
 ): ReadonlyArray<XAxisSettings> => {
   return Object.values(state.axisMap.xAxis);
 };
 
-const selectAllYAxes: (state: RechartsRootState) => ReadonlyArray<YAxisSettings> = (
+export const selectAllYAxes: (state: RechartsRootState) => ReadonlyArray<YAxisSettings> = (
   state: RechartsRootState,
 ): ReadonlyArray<YAxisSettings> => {
   return Object.values(state.axisMap.yAxis);
@@ -1083,7 +1083,7 @@ const getYAxisSize = (offset: ChartOffset, axisSettings: YAxisSettings | undefin
   };
 };
 
-export const selectXAxisSize = createSelector(selectChartOffset, selectXAxisSettings, getXAxisSize);
+export const selectXAxisSize = createSelector(selectChartOffsetOld, selectXAxisSettings, getXAxisSize);
 
 type AxisOffsetSteps = Record<AxisId, number>;
 
@@ -1115,7 +1115,7 @@ export const selectAllXAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartHeight,
-  selectChartOffset,
+  selectChartOffsetOld,
   selectAllXAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
@@ -1141,7 +1141,7 @@ export const selectAllYAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartWidth,
-  selectChartOffset,
+  selectChartOffsetOld,
   selectAllYAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
@@ -1162,7 +1162,7 @@ export const selectAllYAxesOffsetSteps: (
 );
 
 export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetOld(state);
   const axisSettings = selectXAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1176,7 +1176,7 @@ export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetOld(state);
   const axisSettings: YAxisSettings = selectYAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1190,7 +1190,7 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisSize = createSelector(
-  selectChartOffset,
+  selectChartOffsetOld,
   selectYAxisSettings,
   (offset: ChartOffset, axisSettings: YAxisSettings): Size | undefined => {
     if (axisSettings == null) {

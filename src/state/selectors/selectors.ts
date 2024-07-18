@@ -38,7 +38,7 @@ import { findEntryInArray } from '../../util/DataUtils';
 import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../../chart/types';
 import {
   selectChartLayout,
-  selectChartOffset,
+  selectChartOffsetOld,
   selectPolarAngleAxisMap,
   selectPolarRadiusAxisMap,
   selectXAxisMap,
@@ -359,6 +359,6 @@ export const selectActivePropsFromMousePointer: (
   selectTooltipAxis,
   selectTooltipTicks,
   selectOrderedTooltipTicks,
-  selectChartOffset,
+  selectChartOffsetOld,
   combineActiveProps,
 );

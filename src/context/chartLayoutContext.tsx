@@ -223,11 +223,16 @@ export const useViewBox = (): CartesianViewBox => {
   return useContext(ViewBoxContext);
 };
 
-export const selectChartOffset = (state: RechartsRootState): ChartOffset => state.layout.offset;
+/**
+ * @deprecated instead use selectChartOffset
+ * @param state Recharts Root State
+ * @return offset top bottom left right
+ */
+export const selectChartOffsetOld = (state: RechartsRootState): ChartOffset => state.layout.offset;
 
 const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
 export const useOffset = (): ChartOffset => {
-  return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
+  return useAppSelector(selectChartOffsetOld) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
 /**

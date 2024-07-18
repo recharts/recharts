@@ -736,7 +736,8 @@ const calculateOffset = (
   }
 
   if (legendItem && prevLegendBBox) {
-    offset = appendOffsetOfLegend(offset, legendItem, prevLegendBBox);
+    // @ts-expect-error some properties are optional but should be required
+    offset = appendOffsetOfLegend(offset, { ...legendItem.props, ...prevLegendBBox });
   }
 
   const offsetWidth = width - offset.left - offset.right;
