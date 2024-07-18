@@ -70,6 +70,20 @@ function ReportReferenceDot(props: ReferenceDotSettings): null {
   return null;
 }
 
+const renderDot = (option: Props['shape'], props: any) => {
+  let dot;
+
+  if (React.isValidElement(option)) {
+    dot = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dot = option(props);
+  } else {
+    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+  }
+
+  return dot;
+};
+
 export function ReferenceDot(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
@@ -96,7 +110,7 @@ export function ReferenceDot(props: Props) {
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
       <ReportReferenceDot y={y} x={x} r={r} yAxisId={props.yAxisId} xAxisId={props.xAxisId} ifOverflow={ifOverflow} />
-      {ReferenceDot.renderDot(shape, dotProps)}
+      {renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,
         y: cy - r,
@@ -117,17 +131,4 @@ ReferenceDot.defaultProps = {
   stroke: '#ccc',
   fillOpacity: 1,
   strokeWidth: 1,
-};
-ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
-  let dot;
-
-  if (React.isValidElement(option)) {
-    dot = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    dot = option(props);
-  } else {
-    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
-  }
-
-  return dot;
 };
