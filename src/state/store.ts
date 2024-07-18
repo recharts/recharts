@@ -9,16 +9,20 @@ import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringify
 import { axisMapReducer } from './axisMapSlice';
 import { graphicalItemsReducer } from './graphicalItemsSlice';
 import { referenceElementsReducer } from './referenceElementsSlice';
+import { brushReducer } from './brushSlice';
+import { legendReducer } from './legendSlice';
 
 const rootReducer = combineReducers({
-  options: optionsReducer,
-  tooltip: tooltipReducer,
-  chartData: chartDataReducer,
   axis: axisReducer,
   axisMap: axisMapReducer,
-  layout: chartLayoutReducer,
+  brush: brushReducer,
+  chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,
+  layout: chartLayoutReducer,
+  legend: legendReducer,
+  options: optionsReducer,
   referenceElements: referenceElementsReducer,
+  tooltip: tooltipReducer,
 });
 
 export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {

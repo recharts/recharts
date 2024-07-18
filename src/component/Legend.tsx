@@ -1,13 +1,15 @@
-import React, { CSSProperties, PureComponent, useContext } from 'react';
+import React, { CSSProperties, PureComponent, useContext, useEffect } from 'react';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
-import { LayoutType, Margin } from '../util/types';
+import { LayoutType, Margin, Size } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
+import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
+import { useAppDispatch } from '../state/hooks';
 
 function defaultUniqBy(entry: Payload) {
   return entry.value;
@@ -96,6 +98,22 @@ interface State {
   boxHeight: number;
 }
 
+function LegendSettingsDispatcher(props: LegendSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setLegendSettings(props));
+  }, [dispatch, props]);
+  return null;
+}
+
+function LegendSizeDispatcher(props: Size): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setLegendSize(props));
+  }, [dispatch, props]);
+  return null;
+}
+
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
   const margin = useMargin();
@@ -119,6 +137,8 @@ function LegendWrapper(props: Props) {
 
   return (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
+      <LegendSettingsDispatcher layout={props.layout} align={props.align} verticalAlign={props.verticalAlign} />
+      <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />
       <LegendContent
         {...props}
         {...widthOrHeight}
