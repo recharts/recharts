@@ -50,10 +50,6 @@ import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 
-export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
-  return state.axisMap.xAxis[axisId];
-};
-
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 /**
@@ -81,8 +77,12 @@ export const implicitXAxis: XAxisSettings = {
   type: 'category',
 };
 
-export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
-  return state.axisMap.yAxis[axisId];
+export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
+  const axis = state.axisMap.xAxis[axisId];
+  if (axis == null) {
+    return implicitXAxis;
+  }
+  return axis;
 };
 
 /**
@@ -110,21 +110,21 @@ export const implicitYAxis: YAxisSettings = {
   width: 60,
 };
 
+export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
+  const axis = state.axisMap.yAxis[axisId];
+  if (axis == null) {
+    return implicitYAxis;
+  }
+  return axis;
+};
+
 export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: AxisId): AxisSettings => {
   switch (axisType) {
     case 'xAxis': {
-      const axisSettings = selectXAxisSettings(state, axisId);
-      if (axisSettings == null) {
-        return implicitXAxis;
-      }
-      return axisSettings;
+      return selectXAxisSettings(state, axisId);
     }
     case 'yAxis': {
-      const axisSettings = selectYAxisSettings(state, axisId);
-      if (axisSettings == null) {
-        return implicitYAxis;
-      }
-      return axisSettings;
+      return selectYAxisSettings(state, axisId);
     }
     default:
       throw new Error('Not implemented yet, TODO add!');

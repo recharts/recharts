@@ -14,9 +14,10 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId, useViewBox, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { useClipPathId, useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale, selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -153,23 +154,34 @@ function ReferenceLineImpl(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const clipPathId = useClipPathId();
-  const xAxis = useXAxisOrThrow(xAxisId);
-  const yAxis = useYAxisOrThrow(yAxisId);
+  const xAxis = useAppSelector(state => selectXAxisSettings(state, xAxisId));
+  const yAxis = useAppSelector(state => selectYAxisSettings(state, yAxisId));
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+
   const viewBox = useViewBox();
-  if (!clipPathId || !viewBox) {
+  const isFixedX = isNumOrStr(fixedX);
+  const isFixedY = isNumOrStr(fixedY);
+
+  if (
+    !clipPathId ||
+    !viewBox ||
+    xAxis == null ||
+    yAxis == null ||
+    xAxisScale?.scale == null ||
+    yAxisScale?.scale == null
+  ) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
 
-  const isX = isNumOrStr(fixedX);
-  const isY = isNumOrStr(fixedY);
   const isSegment = segment && segment.length === 2;
 
   const endPoints = getEndPoints(
     scales,
-    isX,
-    isY,
+    isFixedX,
+    isFixedY,
     isSegment,
     viewBox,
     props.position,
