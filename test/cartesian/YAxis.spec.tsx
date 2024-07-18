@@ -664,10 +664,9 @@ describe('<YAxis />', () => {
     expectYAxisTicks(container, []);
   });
 
-  it('should throw when attempting to render outside of Chart', () => {
-    expect(() => render(<YAxis dataKey="x" name="stature" unit="cm" />)).toThrow(
-      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
-    );
+  it('should not render anything when attempting to render outside of Chart', () => {
+    const { container } = render(<YAxis dataKey="x" name="stature" unit="cm" />);
+    expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(0);
   });
 
   describe('includeHidden', () => {

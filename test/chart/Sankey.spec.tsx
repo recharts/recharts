@@ -68,7 +68,7 @@ describe('<Sankey />', () => {
       ),
     );
 
-    it('should throw if axes are provided - they are not an allowed child anyway', () => {
+    it('should not throw if axes are provided - they are not an allowed child anyway', () => {
       expect(() =>
         render(
           <Sankey width={1000} height={500} data={exampleSankeyData}>
@@ -76,7 +76,7 @@ describe('<Sankey />', () => {
             <YAxis type="category" dataKey="name" />
           </Sankey>,
         ),
-      ).toThrowError('Invariant failed: Could not find Recharts context');
+      ).not.toThrow();
     });
   });
 });

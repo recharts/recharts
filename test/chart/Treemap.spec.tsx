@@ -94,7 +94,7 @@ describe('<Treemap />', () => {
       ),
     );
 
-    it('should throw if axes are provided - they are not an allowed child anyway', () => {
+    it('should not throw if axes are provided - they are not an allowed child', () => {
       expect(() =>
         render(
           <Treemap width={100} height={50}>
@@ -102,7 +102,7 @@ describe('<Treemap />', () => {
             <YAxis type="category" dataKey="name" />
           </Treemap>,
         ),
-      ).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
+      ).not.toThrow();
     });
   });
 });
