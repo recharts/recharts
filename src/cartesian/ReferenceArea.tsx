@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, useEffect } from 'react';
+import React, { Component, ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -9,13 +9,14 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
-import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
+import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
-import { useClipPathId, useMaybeXAxis, useMaybeYAxis } from '../context/chartLayoutContext';
+import { useClipPathId } from '../context/chartLayoutContext';
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale } from '../state/selectors/axisSelectors';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -38,15 +39,17 @@ const getRect = (
   hasX2: boolean,
   hasY1: boolean,
   hasY2: boolean,
-  xAxis: { scale: D3Scale<string | number> },
-  yAxis: { scale: D3Scale<string | number> },
+  xAxisScale: D3Scale<string | number>,
+  yAxisScale: D3Scale<string | number>,
   props: Props,
 ) => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
 
-  if (!xAxis || !yAxis) return null;
+  if (xAxisScale == null || yAxisScale == null) {
+    return null;
+  }
 
-  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
   const p1 = {
     x: hasX1 ? scales.x.apply(xValue1, { position: 'start' }) : scales.x.rangeMin,
@@ -90,13 +93,15 @@ function ReportReferenceArea(props: ReferenceAreaSettings): null {
   return null;
 }
 
-export function ReferenceArea(props: Props) {
+function ReferenceAreaImpl(props: Props) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
-  const xAxis = useMaybeXAxis(xAxisId);
-  const yAxis = useMaybeYAxis(yAxisId);
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
 
-  if (!xAxis || !yAxis) return null;
+  if (xAxisScale?.scale == null || !yAxisScale?.scale == null) {
+    return null;
+  }
 
   const hasX1 = isNumOrStr(x1);
   const hasX2 = isNumOrStr(x2);
@@ -108,7 +113,7 @@ export function ReferenceArea(props: Props) {
   }
 
   // @ts-expect-error the xAxis and yAxis in context do not match what this function is expecting - the whole axis type situation needs improvement
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxis, yAxis, props);
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxisScale.scale, yAxisScale.scale, props);
 
   if (!rect && !shape) {
     return null;
@@ -119,6 +124,15 @@ export function ReferenceArea(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-area', className)}>
+      {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
+      {Label.renderCallByParent(props, rect)}
+    </Layer>
+  );
+}
+
+function ReferenceAreaSettingsDispatcher(props: Props) {
+  return (
+    <>
       <ReportReferenceArea
         yAxisId={props.yAxisId}
         xAxisId={props.xAxisId}
@@ -128,20 +142,27 @@ export function ReferenceArea(props: Props) {
         y1={props.y1}
         y2={props.y2}
       />
-      {renderRect(shape, { clipPath, ...filterProps(props, true), ...rect })}
-      {Label.renderCallByParent(props, rect)}
-    </Layer>
+      <ReferenceAreaImpl {...props} />
+    </>
   );
 }
 
-ReferenceArea.displayName = 'ReferenceArea';
-ReferenceArea.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#ccc',
-  fillOpacity: 0.5,
-  stroke: 'none',
-  strokeWidth: 1,
-};
+// eslint-disable-next-line react/prefer-stateless-function
+export class ReferenceArea extends Component<Props> {
+  static displayName = 'ReferenceArea';
+
+  static defaultProps = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#ccc',
+    fillOpacity: 0.5,
+    stroke: 'none',
+    strokeWidth: 1,
+  };
+
+  render() {
+    return <ReferenceAreaSettingsDispatcher {...this.props} />;
+  }
+}

@@ -50,20 +50,82 @@ import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 
+const defaultNumericDomain: AxisDomain = [0, 'auto'];
+
+/**
+ * If an axis is not explicitly defined as an element,
+ * we still need to render something in the chart and we need
+ * some object to hold the domain and default settings.
+ */
+export const implicitXAxis: XAxisSettings = {
+  allowDataOverflow: false,
+  allowDecimals: true,
+  allowDuplicatedCategory: true,
+  dataKey: undefined,
+  domain: undefined,
+  height: 30,
+  hide: true,
+  id: undefined,
+  includeHidden: false,
+  mirror: false,
+  orientation: 'bottom',
+  padding: { left: 0, right: 0 },
+  reversed: false,
+  scale: 'auto',
+  tickCount: 5,
+  ticks: undefined,
+  type: 'category',
+};
+
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
-  return state.axisMap.xAxis[axisId];
+  const axis = state.axisMap.xAxis[axisId];
+  if (axis == null) {
+    return implicitXAxis;
+  }
+  return axis;
+};
+
+/**
+ * If an axis is not explicitly defined as an element,
+ * we still need to render something in the chart and we need
+ * some object to hold the domain and default settings.
+ */
+export const implicitYAxis: YAxisSettings = {
+  allowDataOverflow: false,
+  allowDecimals: true,
+  allowDuplicatedCategory: true,
+  dataKey: undefined,
+  domain: defaultNumericDomain,
+  hide: true,
+  id: undefined,
+  includeHidden: false,
+  mirror: false,
+  orientation: 'left',
+  padding: { top: 0, bottom: 0 },
+  reversed: false,
+  scale: 'auto',
+  tickCount: 5,
+  ticks: undefined,
+  type: 'number',
+  width: 60,
 };
 
 export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
-  return state.axisMap.yAxis[axisId];
+  const axis = state.axisMap.yAxis[axisId];
+  if (axis == null) {
+    return implicitYAxis;
+  }
+  return axis;
 };
 
 export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: AxisId): AxisSettings => {
   switch (axisType) {
-    case 'xAxis':
+    case 'xAxis': {
       return selectXAxisSettings(state, axisId);
-    case 'yAxis':
+    }
+    case 'yAxis': {
       return selectYAxisSettings(state, axisId);
+    }
     default:
       throw new Error('Not implemented yet, TODO add!');
   }
@@ -434,8 +496,6 @@ const computeCategoricalDomain = (
   return Array.from(new Set(categoricalDomain));
 };
 
-const defaultNumericDomain: AxisDomain = [0, 'auto'];
-
 const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => {
   if (axisSettings == null) {
     return defaultNumericDomain;
@@ -635,8 +695,7 @@ export const selectAxisDomain = (
 
   if (type === 'category') {
     const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
-    const domain = computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
-    return domain;
+    return computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
   }
 
   if (selectStackOffsetType(state) === 'expand') {
@@ -714,7 +773,7 @@ export const selectNiceTicks = createSelector(
       return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
     }
 
-    if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number') {
+    if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number' && axisDomain != null) {
       return getTickValuesFixedDomain(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
     }
 

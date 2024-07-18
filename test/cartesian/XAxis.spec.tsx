@@ -17,6 +17,7 @@ import {
   YAxis,
 } from '../../src';
 import {
+  implicitXAxis,
   selectAllXAxesOffsetSteps,
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
@@ -1292,6 +1293,7 @@ describe('<XAxis />', () => {
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        hide: false,
         mirror: true,
         orientation: 'top',
         height: 31,
@@ -1330,6 +1332,7 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        hide: false,
         mirror: false,
         height: 30,
         orientation: 'bottom',
@@ -1352,7 +1355,7 @@ describe('<XAxis />', () => {
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: expectedSettings1,
-        bar: undefined,
+        bar: implicitXAxis,
       });
       rerender(
         <BarChart width={100} height={100}>
@@ -1366,6 +1369,7 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          hide: false,
           mirror: false,
           orientation: 'bottom',
           height: 30,
@@ -1387,6 +1391,7 @@ describe('<XAxis />', () => {
           reversed: false,
         },
         bar: {
+          hide: false,
           mirror: false,
           orientation: 'bottom',
           height: 30,
@@ -1417,6 +1422,7 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        hide: false,
         mirror: false,
         orientation: 'bottom',
         height: 30,
@@ -1438,7 +1444,7 @@ describe('<XAxis />', () => {
         reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
-        foo: undefined,
+        foo: implicitXAxis,
         bar: expectedSettings3,
       });
       rerender(
@@ -1448,8 +1454,8 @@ describe('<XAxis />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({
-        foo: undefined,
-        bar: undefined,
+        foo: implicitXAxis,
+        bar: implicitXAxis,
       });
     });
   });
@@ -2394,7 +2400,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
+        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith([]);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 180]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 160]);
       });
@@ -2465,7 +2471,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
+        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith([]);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([100, 170]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([110, 150]);
       });
@@ -3335,7 +3341,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(defaultReduxDomainSpy).toHaveBeenLastCalledWith(undefined);
+          expect(defaultReduxDomainSpy).toHaveBeenLastCalledWith([]);
           expect(reduxDomainSpyA).toHaveBeenLastCalledWith([200, 260, 400]);
           expect(reduxDomainSpyB).toHaveBeenLastCalledWith([280, 500, 200]);
         },
@@ -3946,6 +3952,7 @@ describe('<XAxis />', () => {
         },
       ]);
       const expectedSettings: XAxisSettings = {
+        hide: false,
         mirror: false,
         orientation: 'bottom',
         height: 30,

@@ -21,7 +21,7 @@ import {
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
 import { pageData, rangeData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
+import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
 import { YAxisSettings } from '../../src/state/axisMapSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { IfOverflow } from '../../src/util/IfOverflow';
@@ -889,6 +889,7 @@ describe('<YAxis />', () => {
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        hide: false,
         orientation: 'right',
         mirror: true,
         width: 32,
@@ -946,10 +947,11 @@ describe('<YAxis />', () => {
           bottom: 0,
         },
         reversed: false,
+        hide: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
         foo: expectedSettings1,
-        bar: undefined,
+        bar: implicitYAxis,
       });
       rerender(
         <BarChart width={100} height={100}>
@@ -963,6 +965,7 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          hide: false,
           orientation: 'left',
           mirror: false,
           width: 60,
@@ -984,6 +987,7 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
         bar: {
+          hide: false,
           orientation: 'left',
           mirror: false,
           width: 60,
@@ -1014,6 +1018,7 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        hide: false,
         mirror: false,
         orientation: 'left',
         width: 60,
@@ -1035,7 +1040,7 @@ describe('<YAxis />', () => {
         reversed: false,
       };
       expect(spy).toHaveBeenLastCalledWith({
-        foo: undefined,
+        foo: implicitYAxis,
         bar: expectedSettings3,
       });
       rerender(
@@ -1045,8 +1050,8 @@ describe('<YAxis />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({
-        foo: undefined,
-        bar: undefined,
+        foo: implicitYAxis,
+        bar: implicitYAxis,
       });
     });
   });

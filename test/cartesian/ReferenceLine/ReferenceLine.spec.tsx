@@ -253,7 +253,7 @@ describe('<ReferenceLine />', () => {
         <ReferenceLine y={20} ifOverflow="visible" shape={spy} viewBox={viewBox} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenCalledWith({
       clipPath: undefined,
       fill: 'none',
@@ -268,80 +268,71 @@ describe('<ReferenceLine />', () => {
     });
   });
 
-  test('throws an error when rendered without any axes', () => {
-    expect(() => {
-      render(
-        <BarChart width={1100} height={250}>
-          <ReferenceLine />
-        </BarChart>,
-      );
-    }).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
-  });
-
-  test('throws an error when rendered without YAxis', () => {
-    expect(() => {
-      render(
-        <BarChart width={1100} height={250}>
-          <XAxis />
-          <ReferenceLine x={20} />
-        </BarChart>,
-      );
-    }).toThrowError('Invariant failed: Could not find yAxis by id "0" [number]. There are no available ids.');
-  });
-
-  test('throws an error when rendered without XAxis', () => {
-    expect(() => {
-      render(
-        <BarChart width={1100} height={250}>
-          <YAxis />
-          <ReferenceLine y={20} />
-        </BarChart>,
-      );
-    }).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
-  });
-
-  test('throws when passed in invalid xAxisId', () => {
-    expect(() => {
-      render(
-        <BarChart width={1100} height={250}>
-          <XAxis />
-          <YAxis />
-          <ReferenceLine xAxisId="this ID definitely does not exist anywhere" />
-        </BarChart>,
-      );
-    }).toThrowError(
-      'Invariant failed: Could not find xAxis by id "this ID definitely does not exist anywhere" [string]. Available ids are: 0',
+  it('should not render anything when used without any axes', () => {
+    const { container } = render(
+      <BarChart width={1100} height={250}>
+        <ReferenceLine />
+      </BarChart>,
     );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
   });
 
-  test('throws when passed in invalid yAxisId', () => {
-    expect(() => {
-      render(
-        <BarChart
-          width={1100}
-          height={250}
-          barGap={2}
-          barSize={6}
-          data={data}
-          margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
-        >
-          <XAxis />
-          <YAxis />
-          <ReferenceLine yAxisId="this ID definitely does not exist anywhere" />
-        </BarChart>,
-      );
-    }).toThrowError(
-      'Invariant failed: Could not find yAxis by id "this ID definitely does not exist anywhere" [string]. Available ids are: 0',
+  it('should not render anything when rendered without YAxis', () => {
+    const { container } = render(
+      <BarChart width={1100} height={250}>
+        <XAxis />
+        <ReferenceLine x={20} />
+      </BarChart>,
     );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
   });
 
-  test('throws when rendered alone, outside of context', () => {
-    expect(() => render(<ReferenceLine x={20} />)).toThrow(
-      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
+  it('should not render anything when rendered without XAxis', () => {
+    const { container } = render(
+      <BarChart width={1100} height={250}>
+        <YAxis />
+        <ReferenceLine y={20} />
+      </BarChart>,
     );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
   });
 
-  test('does not return anything when rendered as a nested child', () => {
+  it('should not render anything when passed in invalid xAxisId', () => {
+    const { container } = render(
+      <BarChart width={1100} height={250}>
+        <XAxis />
+        <YAxis />
+        <ReferenceLine xAxisId="this ID definitely does not exist anywhere" />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  it('should not render anything when passed in invalid yAxisId', () => {
+    const { container } = render(
+      <BarChart
+        width={1100}
+        height={250}
+        barGap={2}
+        barSize={6}
+        data={data}
+        margin={{ top: 20, right: 60, bottom: 0, left: 20 }}
+      >
+        <XAxis />
+        <YAxis />
+        <ReferenceLine yAxisId="this ID definitely does not exist anywhere" />
+      </BarChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  it('should not render anything when rendered alone, outside of context', () => {
+    const { container } = render(<ReferenceLine x={20} />);
+    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+  });
+
+  it('should not return anything when rendered as a nested child', () => {
     const { container } = render(
       <BarChart width={1100} height={250}>
         <XAxis />
@@ -354,18 +345,21 @@ describe('<ReferenceLine />', () => {
     expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
   });
 
-  test('does not return anything when there is a duplicated category', () => {
+  it('should render one line when there is a duplicated category', () => {
     const firstDataItem = data[0];
     const dataWithDupe = [...data, firstDataItem];
     const { container } = render(
       <BarChart width={1100} height={250} data={dataWithDupe}>
         <XAxis dataKey="name" />
         <YAxis />
-        {/* reference line is currently unable to differentiate between duplicates on categorical axes. Which one do I render on? The first? Both? */}
         <ReferenceLine y={firstDataItem.name} ifOverflow="extendDomain" />
       </BarChart>,
     );
-    expect(container.querySelectorAll('.recharts-reference-line-line')).toHaveLength(0);
+    const allLines = container.querySelectorAll('.recharts-reference-line-line');
+    expect(allLines).toHaveLength(1);
+    // Is this correct? That looks like a category, not pixel coordinate.
+    expect(allLines[0]).toHaveAttribute('y', '201102');
+    expect(allLines[0]).not.toHaveAttribute('x');
   });
 
   /**

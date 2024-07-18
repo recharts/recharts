@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { Component, ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -8,9 +8,10 @@ import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { useClipPathId } from '../context/chartLayoutContext';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale } from '../state/selectors/axisSelectors';
 
 interface ReferenceDotProps {
   r?: number;
@@ -42,13 +43,14 @@ const useCoordinate = (
 ) => {
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
-  const xAxis = useXAxisOrThrow(xAxisId);
-  const yAxis = useYAxisOrThrow(yAxisId);
-  if (!isX || !isY) {
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+
+  if (!isX || !isY || xAxisScale?.scale == null || yAxisScale?.scale == null) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 
@@ -70,7 +72,21 @@ function ReportReferenceDot(props: ReferenceDotSettings): null {
   return null;
 }
 
-export function ReferenceDot(props: Props) {
+const renderDot = (option: Props['shape'], props: any) => {
+  let dot;
+
+  if (React.isValidElement(option)) {
+    dot = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dot = option(props);
+  } else {
+    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+  }
+
+  return dot;
+};
+
+function ReferenceDotImpl(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
@@ -95,8 +111,7 @@ export function ReferenceDot(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
-      <ReportReferenceDot y={y} x={x} r={r} yAxisId={props.yAxisId} xAxisId={props.xAxisId} ifOverflow={ifOverflow} />
-      {ReferenceDot.renderDot(shape, dotProps)}
+      {renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,
         y: cy - r,
@@ -107,27 +122,32 @@ export function ReferenceDot(props: Props) {
   );
 }
 
-ReferenceDot.displayName = 'ReferenceDot';
-ReferenceDot.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#fff',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-};
-ReferenceDot.renderDot = (option: Props['shape'], props: any) => {
-  let dot;
+function ReferenceDotSettingsDispatcher(props: Props) {
+  const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
+  return (
+    <>
+      <ReportReferenceDot y={y} x={x} r={r} yAxisId={yAxisId} xAxisId={xAxisId} ifOverflow={ifOverflow} />
+      <ReferenceDotImpl {...props} />
+    </>
+  );
+}
 
-  if (React.isValidElement(option)) {
-    dot = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
-    dot = option(props);
-  } else {
-    dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;
+// eslint-disable-next-line react/prefer-stateless-function
+export class ReferenceDot extends Component<Props> {
+  static displayName = 'ReferenceDot';
+
+  static defaultProps: Partial<Props> = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#fff',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+  };
+
+  render() {
+    return <ReferenceDotSettingsDispatcher {...this.props} />;
   }
-
-  return dot;
-};
+}

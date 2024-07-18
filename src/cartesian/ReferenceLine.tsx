@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, SVGProps, useEffect } from 'react';
+import React, { Component, ReactElement, SVGProps, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
@@ -14,9 +14,10 @@ import { CartesianViewBox, D3Scale } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId, useViewBox, useXAxisOrThrow, useYAxisOrThrow } from '../context/chartLayoutContext';
+import { useClipPathId, useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectAxisScale, selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -149,27 +150,38 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
   return null;
 }
 
-export function ReferenceLine(props: Props) {
+function ReferenceLineImpl(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const clipPathId = useClipPathId();
-  const xAxis = useXAxisOrThrow(xAxisId);
-  const yAxis = useYAxisOrThrow(yAxisId);
+  const xAxis = useAppSelector(state => selectXAxisSettings(state, xAxisId));
+  const yAxis = useAppSelector(state => selectYAxisSettings(state, yAxisId));
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+
   const viewBox = useViewBox();
-  if (!clipPathId || !viewBox) {
+  const isFixedX = isNumOrStr(fixedX);
+  const isFixedY = isNumOrStr(fixedY);
+
+  if (
+    !clipPathId ||
+    !viewBox ||
+    xAxis == null ||
+    yAxis == null ||
+    xAxisScale?.scale == null ||
+    yAxisScale?.scale == null
+  ) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxis.scale, y: yAxis.scale });
+  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
 
-  const isX = isNumOrStr(fixedX);
-  const isY = isNumOrStr(fixedY);
   const isSegment = segment && segment.length === 2;
 
   const endPoints = getEndPoints(
     scales,
-    isX,
-    isY,
+    isFixedX,
+    isFixedY,
     isSegment,
     viewBox,
     props.position,
@@ -196,6 +208,15 @@ export function ReferenceLine(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-line', className)}>
+      {renderLine(shape, lineProps)}
+      {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
+    </Layer>
+  );
+}
+
+function ReferenceLineSettingsDispatcher(props: Props) {
+  return (
+    <>
       <ReportReferenceLine
         yAxisId={props.yAxisId}
         xAxisId={props.xAxisId}
@@ -203,20 +224,27 @@ export function ReferenceLine(props: Props) {
         x={props.x}
         y={props.y}
       />
-      {renderLine(shape, lineProps)}
-      {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
-    </Layer>
+      <ReferenceLineImpl {...props} />
+    </>
   );
 }
 
-ReferenceLine.displayName = 'ReferenceLine';
-ReferenceLine.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  fill: 'none',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-  position: 'middle',
-};
+// eslint-disable-next-line react/prefer-stateless-function
+export class ReferenceLine extends Component<Props> {
+  static displayName = 'ReferenceLine';
+
+  static defaultProps = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    fill: 'none',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+    position: 'middle',
+  };
+
+  render() {
+    return <ReferenceLineSettingsDispatcher {...this.props} />;
+  }
+}

@@ -2,9 +2,10 @@ import React, { Component, FunctionComponent, SVGProps, useEffect } from 'react'
 import clsx from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
-import { addYAxis, removeYAxis, YAxisOrientation, YAxisSettings } from '../state/axisMapSlice';
+import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/axisMapSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
+  implicitYAxis,
   selectAxisScale,
   selectTicksOfAxis,
   selectYAxisPosition,
@@ -24,10 +25,7 @@ interface YAxisProps extends BaseAxisProps {
   width?: number;
   mirror?: boolean;
   orientation?: YAxisOrientation;
-  padding?: {
-    top?: number;
-    bottom?: number;
-  };
+  padding?: YAxisPadding;
   minTickGap?: number;
   interval?: AxisInterval;
   reversed?: boolean;
@@ -98,31 +96,34 @@ const YAxisSettingsDispatcher = (props: Props) => {
         width={props.width}
         orientation={props.orientation}
         mirror={props.mirror}
+        hide={props.hide}
       />
       <YAxisImpl {...props} />
     </>
   );
 };
 
+export const YAxisDefaultProps: Partial<Props> = {
+  allowDataOverflow: implicitYAxis.allowDataOverflow,
+  allowDecimals: implicitYAxis.allowDecimals,
+  allowDuplicatedCategory: implicitYAxis.allowDuplicatedCategory,
+  hide: false,
+  mirror: implicitYAxis.mirror,
+  orientation: implicitYAxis.orientation,
+  padding: implicitYAxis.padding,
+  reversed: implicitYAxis.reversed,
+  scale: implicitYAxis.scale,
+  tickCount: implicitYAxis.tickCount,
+  type: implicitYAxis.type,
+  width: implicitYAxis.width,
+  yAxisId: 0,
+};
+
 // eslint-disable-next-line react/prefer-stateless-function
 export class YAxis extends Component<Props> {
   static displayName = 'YAxis';
 
-  static defaultProps = {
-    allowDuplicatedCategory: true,
-    allowDecimals: true,
-    hide: false,
-    orientation: 'left',
-    width: 60,
-    mirror: false,
-    yAxisId: 0,
-    tickCount: 5,
-    type: 'number',
-    padding: { top: 0, bottom: 0 },
-    allowDataOverflow: false,
-    scale: 'auto',
-    reversed: false,
-  };
+  static defaultProps = YAxisDefaultProps;
 
   render() {
     return <YAxisSettingsDispatcher {...this.props} />;
