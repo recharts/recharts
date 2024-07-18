@@ -1,11 +1,16 @@
 import React from 'react';
-import { vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { getMockDomRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
 import { RechartsHTMLContainer, setContainer } from '../../../src/state/layoutSlice';
-import { selectRootContainerDomRect, selectContainerScale } from '../../../src/state/selectors/containerSelectors';
+import {
+  selectRootContainerDomRect,
+  selectContainerScale,
+  selectMargin,
+} from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
+import { BarChart, Customized } from '../../../src';
 
 describe('selectRootContainerDomRect', () => {
   it('should return undefined when called outside of Redux context', () => {
@@ -150,5 +155,60 @@ describe('selectContainerScale', () => {
     };
     store.dispatch(setContainer(mockElement));
     expect(selectContainerScale(store.getState())).toBe(1);
+  });
+});
+
+describe('selectMargin', () => {
+  it('should return undefined when called outside of Redux state', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const margin = useAppSelector(selectMargin);
+      expect(margin).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return initial margin when called with an initial state', () => {
+    const store = createRechartsStore();
+    expect(selectMargin(store.getState())).toEqual({
+      top: 5,
+      right: 5,
+      bottom: 5,
+      left: 5,
+    });
+  });
+
+  it('should return margin from root chart props, and update it when props change', () => {
+    const marginSpy = vi.fn();
+    const Comp = (): null => {
+      marginSpy(useAppSelector(selectMargin));
+      return null;
+    };
+    const { rerender } = render(
+      <BarChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }} width={500} height={300}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(marginSpy).toHaveBeenLastCalledWith({
+      top: 10,
+      right: 10,
+      bottom: 10,
+      left: 10,
+    });
+    expect(marginSpy).toHaveBeenCalledTimes(2);
+
+    rerender(
+      <BarChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }} width={500} height={300}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(marginSpy).toHaveBeenLastCalledWith({
+      top: 20,
+      right: 20,
+      bottom: 20,
+      left: 20,
+    });
+    expect(marginSpy).toHaveBeenCalledTimes(4);
   });
 });

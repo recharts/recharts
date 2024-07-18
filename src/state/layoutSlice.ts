@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { ChartOffset, LayoutType, Size } from '../util/types';
+import { ChartOffset, LayoutType, Margin, Size } from '../util/types';
 
 export interface RechartsHTMLContainer {
   getBoundingClientRect: () => DOMRect;
@@ -16,6 +16,7 @@ type ChartLayout = {
   container: RechartsHTMLContainer | null;
   width: number;
   height: number;
+  margin: Margin;
 };
 
 const initialState: ChartLayout = {
@@ -24,6 +25,7 @@ const initialState: ChartLayout = {
   offset: {},
   width: 0,
   height: 0,
+  margin: { top: 5, right: 5, bottom: 5, left: 5 },
 };
 
 const chartLayoutSlice = createSlice({
@@ -43,9 +45,12 @@ const chartLayoutSlice = createSlice({
       state.width = action.payload.width;
       state.height = action.payload.height;
     },
+    setMargin(state, action: PayloadAction<Margin>) {
+      state.margin = action.payload;
+    },
   },
 });
 
-export const { setLayout, setContainer, setOffset, setChartSize } = chartLayoutSlice.actions;
+export const { setMargin, setLayout, setContainer, setOffset, setChartSize } = chartLayoutSlice.actions;
 
 export const chartLayoutReducer = chartLayoutSlice.reducer;

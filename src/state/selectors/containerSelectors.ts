@@ -3,6 +3,7 @@ import { RechartsRootState } from '../store';
 import { ContainerOffset, getOffset } from '../../util/DOMUtils';
 import { RechartsHTMLContainer } from '../layoutSlice';
 import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
+import { Margin } from '../../util/types';
 
 export const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined =>
   state.layout.container;
@@ -41,3 +42,5 @@ export const selectContainerScale: (state: RechartsRootState) => number | undefi
   (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number =>
     rect?.width / container?.offsetWidth || 1,
 );
+
+export const selectMargin = (state: RechartsRootState): Margin | undefined => state.layout.margin;
