@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
+import isNan from 'lodash/isNaN';
 import { selectChartLayout, selectChartOffset } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
@@ -13,7 +14,9 @@ import {
 } from '../../util/ChartUtils';
 import {
   AxisDomain,
+  AxisTick,
   AxisType,
+  CartesianTickItem,
   CategoricalDomain,
   ChartOffset,
   Coordinate,
@@ -22,6 +25,7 @@ import {
   NumberDomain,
   Size,
   StackOffsetType,
+  TickItem,
 } from '../../util/types';
 import {
   AxisId,
@@ -40,7 +44,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, mathSign } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -632,7 +636,8 @@ export const selectAxisDomain = (
 
   if (type === 'category') {
     const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
-    return computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
+    const domain = computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
+    return domain;
   }
 
   if (selectStackOffsetType(state) === 'expand') {
@@ -667,6 +672,12 @@ export const selectEmptyAxisScale: (state: RechartsRootState, axisType: AxisType
     selectHasBar,
     selectChartName,
     pickAxisType,
+    /*
+     * The d3 scale causes troubles because it's a mutable object.
+     * This selectEmptyAxisScale returns one version but followup selectors mutate it.
+     * We need this "cache buster" to make this particular selector selectEmptyAxisScale always return a fresh instance.
+     */
+    state => state,
     (axisConfig: AxisSettings, chartLayout: LayoutType, hasBar: boolean, chartName: string, axisType: AxisType) => {
       if (axisConfig == null) {
         return unknownScale;
@@ -1131,5 +1142,135 @@ export const selectYAxisSize = createSelector(
       width: axisSettings.width,
       height: offset.height,
     };
+  },
+);
+
+export const selectDuplicateDomain = createSelector(
+  selectChartLayout,
+  selectAllAppliedValues,
+  selectAxisSettings,
+  pickAxisType,
+  (chartLayout, appliedValues, axis, axisType) => {
+    if (axis == null) {
+      return undefined;
+    }
+    const { allowDuplicatedCategory, type, dataKey } = axis;
+    const isCategorical = isCategoricalAxis(chartLayout, axisType);
+    const allData = appliedValues.map(av => av.value);
+    if (dataKey && isCategorical && type === 'category' && allowDuplicatedCategory && hasDuplicate(allData)) {
+      return allData;
+    }
+    return undefined;
+  },
+);
+
+export const selectCategoricalDomain = createSelector(
+  selectChartLayout,
+  selectAllAppliedValues,
+  selectAxisSettings,
+  pickAxisType,
+  (layout, displayedData, axis, axisType) => {
+    if (axis == null) {
+      return undefined;
+    }
+    const { type, scale } = axis;
+    const isCategorical = isCategoricalAxis(layout, axisType);
+    if (isCategorical && (type === 'number' || scale !== 'auto')) {
+      return displayedData.map(d => d.value);
+    }
+    return undefined;
+  },
+);
+
+export const selectTicksOfAxis = createSelector(
+  selectChartLayout,
+  selectAxisSettings,
+  selectAxisScale,
+  selectNiceTicks,
+  selectAxisRange,
+  selectDuplicateDomain,
+  selectCategoricalDomain,
+  pickAxisType,
+  (
+    layout,
+    axis,
+    scaleReturn,
+    niceTicks,
+    axisRange,
+    duplicateDomain,
+    categoricalDomain,
+    axisType,
+  ): ReadonlyArray<CartesianTickItem> | null => {
+    if (axis == null || scaleReturn == null) {
+      return null;
+    }
+
+    const isCategorical = isCategoricalAxis(layout, axisType);
+
+    const { type, ticks, tickCount } = axis;
+
+    const isGrid = true;
+    const isAll = false;
+
+    const { scale, realScaleType } = scaleReturn;
+    if (scale == null) {
+      return null;
+    }
+
+    const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+    let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
+
+    offset =
+      axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
+
+    // The ticks set by user should only affect the ticks adjacent to axis line
+    if (isGrid && (ticks || niceTicks)) {
+      const result = (ticks || niceTicks).map((entry: AxisTick) => {
+        const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
+
+        return {
+          // If the scaleContent is not a number, the coordinate will be NaN.
+          // That could be the case for example with a PointScale and a string as domain.
+          coordinate: scale(scaleContent) + offset,
+          value: entry,
+          offset,
+        };
+      });
+
+      return result.filter((row: TickItem) => !isNan(row.coordinate));
+    }
+
+    // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
+    if (isCategorical && categoricalDomain) {
+      return categoricalDomain.map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          // @ts-expect-error why does the offset go here? The type does not require it
+          offset,
+        }),
+      );
+    }
+
+    if (scale.ticks && !isAll) {
+      return (
+        scale
+          .ticks(tickCount)
+          // @ts-expect-error why does the offset go here? The type does not require it
+          .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+      );
+    }
+
+    // When axis has duplicated text, serial numbers are used to generate scale
+    return scale.domain().map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      }),
+    );
   },
 );

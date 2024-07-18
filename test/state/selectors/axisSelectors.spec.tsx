@@ -874,50 +874,44 @@ describe('selectAxisDomain', () => {
       );
       expect(domainSpy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
       expect(scaleSpy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
-      /*
-       * These are not great ticks.
-       * All of them are undefined because axisOptions.categoricalDomain is undefined
-       * - once we move categoricalDomain and getTicksOfAxis to be selectors,
-       * I expect that to improve.
-       */
       expectXAxisTicks(container, [
         {
-          textContent: 'undefined',
+          textContent: 'Jan',
           x: '10.625',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Feb',
           x: '21.875',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Mar',
           x: '33.125',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Apr',
           x: '44.375',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'May',
           x: '55.625',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Jun',
           x: '66.875',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Jul',
           x: '78.125',
           y: '73',
         },
         {
-          textContent: 'undefined',
+          textContent: 'Aug',
           x: '89.375',
           y: '73',
         },

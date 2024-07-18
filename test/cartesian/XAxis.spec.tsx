@@ -21,6 +21,7 @@ import {
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
+  selectTicksOfAxis,
   selectXAxisPosition,
 } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
@@ -65,10 +66,9 @@ describe('<XAxis />', () => {
     expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
   });
 
-  it('should throw when attempting to render outside of Chart', () => {
-    expect(() => render(<XAxis dataKey="x" name="stature" unit="cm" />)).toThrow(
-      'Invariant failed: Could not find Recharts context; are you sure this is rendered inside a Recharts wrapper component?',
-    );
+  it('should not render anything when attempting to render outside of Chart', () => {
+    const { container } = render(<XAxis dataKey="x" name="stature" unit="cm" />);
+    expect(container.querySelectorAll('.recharts-cartesian-axis-line')).toHaveLength(0);
   });
 
   it("Don't render x-axis when hide is set to be true", () => {
@@ -3552,13 +3552,85 @@ describe('<XAxis />', () => {
   });
 
   describe('brush and startIndex + endIndex', () => {
+    it('should hide ticks when Brush renders with startIndex and endIndex', () => {
+      const axisDomainSpy = vi.fn();
+      const ticksSpy = vi.fn();
+      const Comp = (): null => {
+        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0)));
+        return null;
+      };
+      const { container } = render(
+        <BarChart width={300} height={300} data={data}>
+          <XAxis dataKey="x" type="category" />
+          <Brush startIndex={1} endIndex={4} />
+          <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+      expectXAxisTicks(container, [
+        {
+          textContent: '120',
+          x: '41.25',
+          y: '233',
+        },
+        {
+          textContent: '170',
+          x: '113.75',
+          y: '233',
+        },
+        {
+          textContent: '140',
+          x: '186.25',
+          y: '233',
+        },
+        {
+          textContent: '150',
+          x: '258.75',
+          y: '233',
+        },
+      ]);
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([120, 170, 140, 150]);
+      expect(ticksSpy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 41.25,
+          index: 0,
+          offset: 36.25,
+          value: 120,
+        },
+        {
+          coordinate: 113.75,
+          index: 1,
+          offset: 36.25,
+          value: 170,
+        },
+        {
+          coordinate: 186.25,
+          index: 2,
+          offset: 36.25,
+          value: 140,
+        },
+        {
+          coordinate: 258.75,
+          index: 3,
+          offset: 36.25,
+          value: 150,
+        },
+      ]);
+    });
+
     it('should hide ticks when Brush travellers move', () => {
       const axisDomainSpy = vi.fn();
+      const ticksSpy = vi.fn();
+      const Comp = (): null => {
+        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0)));
+        return null;
+      };
       const { container, rerender } = render(
         <BarChart width={300} height={300} data={data}>
           <XAxis dataKey="x" type="category" />
           <Brush />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+          <Customized component={<Comp />} />
         </BarChart>,
       );
       expectXAxisTicks(container, [
@@ -3594,14 +3666,81 @@ describe('<XAxis />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 120, 170, 140, 150, 110]);
+      expect(ticksSpy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 29.166666666666668,
+          index: 0,
+          offset: 24.166666666666668,
+          value: 100,
+        },
+        {
+          coordinate: 77.5,
+          index: 1,
+          offset: 24.166666666666668,
+          value: 120,
+        },
+        {
+          coordinate: 125.83333333333334,
+          index: 2,
+          offset: 24.166666666666668,
+          value: 170,
+        },
+        {
+          coordinate: 174.16666666666666,
+          index: 3,
+          offset: 24.166666666666668,
+          value: 140,
+        },
+        {
+          coordinate: 222.5,
+          index: 4,
+          offset: 24.166666666666668,
+          value: 150,
+        },
+        {
+          coordinate: 270.83333333333337,
+          index: 5,
+          offset: 24.166666666666668,
+          value: 110,
+        },
+      ]);
 
       rerender(
         <BarChart width={300} height={300} data={data}>
           <XAxis dataKey="x" type="category" />
           <Brush startIndex={1} endIndex={4} />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+          <Customized component={<Comp />} />
         </BarChart>,
       );
+
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([120, 170, 140, 150]);
+      expect(ticksSpy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 41.25,
+          index: 0,
+          offset: 36.25,
+          value: 120,
+        },
+        {
+          coordinate: 113.75,
+          index: 1,
+          offset: 36.25,
+          value: 170,
+        },
+        {
+          coordinate: 186.25,
+          index: 2,
+          offset: 36.25,
+          value: 140,
+        },
+        {
+          coordinate: 258.75,
+          index: 3,
+          offset: 36.25,
+          value: 150,
+        },
+      ]);
 
       expectXAxisTicks(container, [
         {
@@ -3625,7 +3764,6 @@ describe('<XAxis />', () => {
           y: '233',
         },
       ]);
-      expect(axisDomainSpy).toHaveBeenLastCalledWith([120, 170, 140, 150]);
     });
   });
 

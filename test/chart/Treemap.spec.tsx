@@ -102,7 +102,7 @@ describe('<Treemap />', () => {
             <YAxis type="category" dataKey="name" />
           </Treemap>,
         ),
-      ).toThrowError('Invariant failed: Could not find xAxis by id "0" [number]. There are no available ids.');
+      ).toThrowError('Invariant failed: Could not find yAxis by id "0" [number]. There are no available ids.');
     });
   });
 });

@@ -4,17 +4,13 @@
 import type { SVGProps } from 'react';
 import React, { Component, useEffect } from 'react';
 import clsx from 'clsx';
-import { useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { AxisInterval, AxisTick, BaseAxisProps, CartesianTickItem } from '../util/types';
-import { AxisPropsNeededForTicksGenerator, getTicksOfAxis } from '../util/ChartUtils';
+import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
-import { XAxisWithExtraData } from '../chart/types';
 import {
-  selectAxisRange,
   selectAxisScale,
-  selectNiceTicks,
+  selectTicksOfAxis,
   selectXAxisPosition,
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
@@ -58,32 +54,15 @@ const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
   const width = useAppSelector(selectChartWidth);
   const height = useAppSelector(selectChartHeight);
-  const axisOptions: XAxisWithExtraData = useXAxisOrThrow(xAxisId);
   const axisType = 'xAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
-  const niceTicks = useAppSelector(state => selectNiceTicks(state, axisType, xAxisId));
-  const range = useAppSelector(state => selectAxisRange(state, axisType, xAxisId));
+  const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
 
-  if (axisSize == null || position == null || axisOptions == null || scaleObj == null) {
+  if (axisSize == null || position == null || scaleObj == null) {
     return null;
   }
-
-  const tickGeneratorInput: AxisPropsNeededForTicksGenerator = {
-    axisType,
-    categoricalDomain: axisOptions.categoricalDomain,
-    duplicateDomain: axisOptions.duplicateDomain,
-    isCategorical: axisOptions.isCategorical,
-    niceTicks,
-    range,
-    realScaleType: scaleObj.realScaleType,
-    scale: scaleObj.scale,
-    tickCount: props.tickCount,
-    ticks: props.ticks,
-    type: props.type,
-  };
-  const cartesianTickItems: ReadonlyArray<CartesianTickItem> = getTicksOfAxis(tickGeneratorInput, true);
 
   const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
 
