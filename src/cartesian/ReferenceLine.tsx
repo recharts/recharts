@@ -1,7 +1,7 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { ReactElement, SVGProps, useEffect } from 'react';
+import React, { Component, ReactElement, SVGProps, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
@@ -149,7 +149,7 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
   return null;
 }
 
-export function ReferenceLine(props: Props) {
+function ReferenceLineImpl(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
   const clipPathId = useClipPathId();
@@ -196,6 +196,15 @@ export function ReferenceLine(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-line', className)}>
+      {renderLine(shape, lineProps)}
+      {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
+    </Layer>
+  );
+}
+
+function ReferenceLineSettingsDispatcher(props: Props) {
+  return (
+    <>
       <ReportReferenceLine
         yAxisId={props.yAxisId}
         xAxisId={props.xAxisId}
@@ -203,20 +212,27 @@ export function ReferenceLine(props: Props) {
         x={props.x}
         y={props.y}
       />
-      {renderLine(shape, lineProps)}
-      {Label.renderCallByParent(props, rectWithCoords({ x1, y1, x2, y2 }))}
-    </Layer>
+      <ReferenceLineImpl {...props} />
+    </>
   );
 }
 
-ReferenceLine.displayName = 'ReferenceLine';
-ReferenceLine.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  fill: 'none',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-  position: 'middle',
-};
+// eslint-disable-next-line react/prefer-stateless-function
+export class ReferenceLine extends Component<Props> {
+  static displayName = 'ReferenceLine';
+
+  static defaultProps = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    fill: 'none',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+    position: 'middle',
+  };
+
+  render() {
+    return <ReferenceLineSettingsDispatcher {...this.props} />;
+  }
+}
