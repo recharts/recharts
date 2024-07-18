@@ -923,7 +923,7 @@ export class Brush extends PureComponent<Props, State> {
     return (
       <>
         <BrushSettingsDispatcher height={this.props.height} />
-        <BrushInternal {...this.props} />;
+        <BrushInternal {...this.props} />
       </>
     );
   }
