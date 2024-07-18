@@ -30,6 +30,7 @@ import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
 import { useAppDispatch } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
+import { setBrushHeight } from '../state/brushSlice';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -893,6 +894,17 @@ function BrushInternal(props: Props) {
   return <BrushWithState {...props} {...contextProperties} />;
 }
 
+function BrushSettingsDispatcher(props: { height: number }): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setBrushHeight(props.height));
+    return () => {
+      dispatch(setBrushHeight(0));
+    };
+  }, [dispatch, props.height]);
+  return null;
+}
+
 export class Brush extends PureComponent<Props, State> {
   static displayName = 'Brush';
 
@@ -908,6 +920,11 @@ export class Brush extends PureComponent<Props, State> {
   };
 
   render() {
-    return <BrushInternal {...this.props} />;
+    return (
+      <>
+        <BrushSettingsDispatcher height={this.props.height} />
+        <BrushInternal {...this.props} />;
+      </>
+    );
   }
 }
