@@ -25,7 +25,6 @@ import {
   NumberDomain,
   Size,
   StackOffsetType,
-  TickItem,
 } from '../../util/types';
 import {
   AxisId,
@@ -1209,23 +1208,20 @@ export const selectTicksOfAxis = createSelector(
 
     const { type, ticks, tickCount } = axis;
 
-    const isGrid = true;
-    const isAll = false;
-
     const { scale, realScaleType } = scaleReturn;
     if (scale == null) {
       return null;
     }
 
     const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
-    let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
+    let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
     offset =
       axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
 
     // The ticks set by user should only affect the ticks adjacent to axis line
-    if (isGrid && (ticks || niceTicks)) {
-      const result = (ticks || niceTicks).map((entry: AxisTick) => {
+    if (ticks || niceTicks) {
+      const result = (ticks || niceTicks).map((entry: AxisTick): CartesianTickItem => {
         const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
         return {
@@ -1233,17 +1229,18 @@ export const selectTicksOfAxis = createSelector(
           // That could be the case for example with a PointScale and a string as domain.
           coordinate: scale(scaleContent) + offset,
           value: entry,
+          // @ts-expect-error why does the offset go here? The type does not require it
           offset,
         };
       });
 
-      return result.filter((row: TickItem) => !isNan(row.coordinate));
+      return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
     }
 
     // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
     if (isCategorical && categoricalDomain) {
       return categoricalDomain.map(
-        (entry: any, index: number): TickItem => ({
+        (entry: any, index: number): CartesianTickItem => ({
           coordinate: scale(entry) + offset,
           value: entry,
           index,
@@ -1253,18 +1250,18 @@ export const selectTicksOfAxis = createSelector(
       );
     }
 
-    if (scale.ticks && !isAll) {
+    if (scale.ticks) {
       return (
         scale
           .ticks(tickCount)
           // @ts-expect-error why does the offset go here? The type does not require it
-          .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+          .map((entry: any): CartesianTickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
       );
     }
 
     // When axis has duplicated text, serial numbers are used to generate scale
     return scale.domain().map(
-      (entry: any, index: number): TickItem => ({
+      (entry: any, index: number): CartesianTickItem => ({
         coordinate: scale(entry) + offset,
         value: duplicateDomain ? duplicateDomain[entry] : entry,
         index,
