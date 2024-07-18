@@ -967,7 +967,7 @@ const pickMirror = (_state: RechartsRootState, _orientation: unknown, mirror: bo
 const selectAllXAxesWithOffsetType: (
   state: RechartsRootState,
   orientation: XAxisOrientation,
-  mirror: true,
+  mirror: boolean,
 ) => ReadonlyArray<XAxisSettings> = createSelector(
   selectAllXAxes,
   pickAxisOrientation,
@@ -982,7 +982,7 @@ const selectAllXAxesWithOffsetType: (
 const selectAllYAxesWithOffsetType: (
   state: RechartsRootState,
   orientation: YAxisOrientation,
-  mirror: true,
+  mirror: boolean,
 ) => ReadonlyArray<YAxisSettings> = createSelector(
   selectAllYAxes,
   pickAxisOrientation,
