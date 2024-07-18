@@ -210,17 +210,16 @@ const tooltipSlice = createSlice({
       state.itemInteraction.activeMouseOverCoordinate = action.payload.activeMouseOverCoordinate;
     },
     mouseLeaveChart(state) {
+      // clear everything except for coordinate - we don't always want to animate from 0,0
       state.itemInteraction.activeHover = false;
-      state.itemInteraction.activeMouseOverCoordinate = null;
       state.itemInteraction.activeMouseOverIndex = null;
       state.axisInteraction.activeHover = false;
-      state.axisInteraction.activeMouseOverCoordinate = null;
       state.axisInteraction.activeMouseOverAxisDataKey = undefined;
       state.axisInteraction.activeMouseOverAxisIndex = null;
     },
     mouseLeaveItem(state) {
+      // clear everything except for coordinate - we don't always want to animate from 0,0
       state.itemInteraction.activeHover = false;
-      state.itemInteraction.activeMouseOverCoordinate = null;
       state.itemInteraction.activeMouseOverIndex = null;
       state.itemInteraction.activeMouseOverDataKey = undefined;
     },
