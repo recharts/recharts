@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import { Store } from '@reduxjs/toolkit';
 import {
   combineTooltipPayload,
+  selectActiveCoordinate,
   selectActiveIndex,
   selectActivePropsFromMousePointer,
   selectIsTooltipActive,
@@ -14,10 +15,11 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
-import { BaseAxisProps, TooltipEventType } from '../../../src/util/types';
+import { BaseAxisProps, ChartCoordinate, TooltipEventType } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   addTooltipEntrySettings,
+  mouseLeaveChart,
   mouseLeaveItem,
   setActiveClickItemIndex,
   setActiveMouseOverItemIndex,
@@ -482,6 +484,109 @@ describe('selectActiveIndex', () => {
     });
     const expected: TooltipIndex = '7';
     expect(selectActiveIndex(state, 'axis', 'click', 17)).toBe(expected);
+  });
+});
+
+describe('selectActiveCoordinate', () => {
+  it('should return undefined for initial state', () => {
+    const initialState = createRechartsStore().getState();
+    const expected: ChartCoordinate = undefined;
+    expect(selectActiveCoordinate(initialState, 'axis', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'axis', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'item', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'item', 'click')).toBe(expected);
+  });
+
+  it('should return coordinates when mouseOverAxisIndex is fired and keep them after mouseLeaveChart', () => {
+    const store = createRechartsStore(preloadedState);
+
+    const initialState = createRechartsStore().getState();
+    const expected: ChartCoordinate = { x: 100, y: 150 };
+    expect(selectActiveCoordinate(initialState, 'axis', 'hover')).toBe(undefined);
+
+    store.dispatch(
+      setMouseOverAxisIndex({
+        activeIndex: '1',
+        activeMouseOverCoordinate: expected,
+        activeDataKey: undefined,
+      }),
+    );
+
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover')).toBe(expected);
+
+    store.dispatch(mouseLeaveChart());
+
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover')).toBe(expected);
+  });
+
+  it('should return coordinates when mouseClickAxisIndex is fired and keep them after mouseLeaveChart', () => {
+    const store = createRechartsStore(preloadedState);
+
+    const initialState = createRechartsStore().getState();
+    const expected: ChartCoordinate = { x: 100, y: 150 };
+    expect(selectActiveCoordinate(initialState, 'axis', 'click')).toBe(undefined);
+
+    store.dispatch(
+      setMouseClickAxisIndex({
+        activeIndex: '1',
+        activeClickCoordinate: expected,
+        activeDataKey: undefined,
+      }),
+    );
+
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'click')).toBe(expected);
+
+    store.dispatch(mouseLeaveChart());
+
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'click')).toBe(expected);
+  });
+
+  it('should return coordinates when mouseOverItemIndex is fired and keep them after mouseLeaveItem', () => {
+    const store = createRechartsStore(preloadedState);
+
+    const initialState = createRechartsStore().getState();
+    const expected: ChartCoordinate = { x: 100, y: 150 };
+    expect(selectActiveCoordinate(initialState, 'item', 'hover')).toBe(undefined);
+
+    store.dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: '1',
+        activeMouseOverCoordinate: expected,
+        activeDataKey: undefined,
+      }),
+    );
+
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover')).toBe(expected);
+
+    // neither of these should reset coordinate
+    store.dispatch(mouseLeaveItem());
+    store.dispatch(mouseLeaveChart());
+
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover')).toBe(expected);
+  });
+
+  it('should return coordinates when mouseClickItemIndex is fired and keep them after mouseLeaveItem', () => {
+    const store = createRechartsStore(preloadedState);
+
+    const initialState = createRechartsStore().getState();
+    const expected: ChartCoordinate = { x: 100, y: 150 };
+    expect(selectActiveCoordinate(initialState, 'item', 'click')).toBe(undefined);
+
+    store.dispatch(
+      setActiveClickItemIndex({
+        activeIndex: '1',
+        activeClickCoordinate: expected,
+        activeDataKey: undefined,
+      }),
+    );
+
+    expect(selectActiveCoordinate(store.getState(), 'item', 'click')).toBe(expected);
+
+    // neither of these should reset coordinate
+    store.dispatch(mouseLeaveItem());
+    store.dispatch(mouseLeaveChart());
+
+    expect(selectActiveCoordinate(store.getState(), 'item', 'click')).toBe(expected);
   });
 });
 
