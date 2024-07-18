@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { Component, ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -84,7 +84,7 @@ const renderDot = (option: Props['shape'], props: any) => {
   return dot;
 };
 
-export function ReferenceDot(props: Props) {
+function ReferenceDotImpl(props: Props) {
   const { x, y, r } = props;
   const clipPathId = useClipPathId();
 
@@ -109,7 +109,6 @@ export function ReferenceDot(props: Props) {
 
   return (
     <Layer className={clsx('recharts-reference-dot', className)}>
-      <ReportReferenceDot y={y} x={x} r={r} yAxisId={props.yAxisId} xAxisId={props.xAxisId} ifOverflow={ifOverflow} />
       {renderDot(shape, dotProps)}
       {Label.renderCallByParent(props, {
         x: cx - r,
@@ -121,14 +120,32 @@ export function ReferenceDot(props: Props) {
   );
 }
 
-ReferenceDot.displayName = 'ReferenceDot';
-ReferenceDot.defaultProps = {
-  ifOverflow: 'discard',
-  xAxisId: 0,
-  yAxisId: 0,
-  r: 10,
-  fill: '#fff',
-  stroke: '#ccc',
-  fillOpacity: 1,
-  strokeWidth: 1,
-};
+function ReferenceDotSettingsDispatcher(props: Props) {
+  const { x, y, r, ifOverflow, yAxisId, xAxisId } = props;
+  return (
+    <>
+      <ReportReferenceDot y={y} x={x} r={r} yAxisId={yAxisId} xAxisId={xAxisId} ifOverflow={ifOverflow} />
+      <ReferenceDotImpl {...props} />
+    </>
+  );
+}
+
+// eslint-disable-next-line react/prefer-stateless-function
+export class ReferenceDot extends Component<Props> {
+  static displayName = 'ReferenceDot';
+
+  static defaultProps: Partial<Props> = {
+    ifOverflow: 'discard',
+    xAxisId: 0,
+    yAxisId: 0,
+    r: 10,
+    fill: '#fff',
+    stroke: '#ccc',
+    fillOpacity: 1,
+    strokeWidth: 1,
+  };
+
+  render() {
+    return <ReferenceDotSettingsDispatcher {...this.props} />;
+  }
+}
