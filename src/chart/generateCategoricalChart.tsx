@@ -1851,7 +1851,7 @@ export const generateCategoricalChart = ({
             layout={this.props.layout}
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-              <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
+              <ClipPath clipPathId={this.clipPathId} />
               {renderByOrder(children, this.renderMap)}
             </Surface>
           </ChartLayoutContextProvider>
@@ -1921,7 +1921,7 @@ export const generateCategoricalChart = ({
                                 desc={desc}
                                 style={FULL_WIDTH_AND_HEIGHT}
                               >
-                                <ClipPath clipPathId={this.clipPathId} offset={this.state.offset} />
+                                <ClipPath clipPathId={this.clipPathId} />
                                 <g
                                   className="recharts-cursor-portal"
                                   ref={(node: SVGElement) => {

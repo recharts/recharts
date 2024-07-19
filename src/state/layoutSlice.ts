@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { ChartOffset, LayoutType, Margin, Size } from '../util/types';
+import { LayoutType, Margin, Size } from '../util/types';
 
 export interface RechartsHTMLContainer {
   getBoundingClientRect: () => DOMRect;
@@ -9,7 +9,6 @@ export interface RechartsHTMLContainer {
 
 type ChartLayout = {
   layoutType: LayoutType;
-  offset: ChartOffset;
   /**
    * Why not DOMRect? Because resize
    */
@@ -22,7 +21,6 @@ type ChartLayout = {
 const initialState: ChartLayout = {
   layoutType: 'horizontal',
   container: null,
-  offset: {},
   width: 0,
   height: 0,
   margin: { top: 5, right: 5, bottom: 5, left: 5 },
@@ -38,9 +36,6 @@ const chartLayoutSlice = createSlice({
     setContainer(state, action: PayloadAction<RechartsHTMLContainer | null>) {
       state.container = castDraft(action.payload);
     },
-    setOffset(state, action: PayloadAction<ChartOffset>) {
-      state.offset = action.payload;
-    },
     setChartSize(state, action: PayloadAction<Size>) {
       state.width = action.payload.width;
       state.height = action.payload.height;
@@ -51,6 +46,6 @@ const chartLayoutSlice = createSlice({
   },
 });
 
-export const { setMargin, setLayout, setContainer, setOffset, setChartSize } = chartLayoutSlice.actions;
+export const { setMargin, setLayout, setContainer, setChartSize } = chartLayoutSlice.actions;
 
 export const chartLayoutReducer = chartLayoutSlice.reducer;
