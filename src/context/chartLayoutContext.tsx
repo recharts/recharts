@@ -25,11 +25,10 @@ import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap }
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset } from '../state/selectors/selectChartOffset';
+import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
-export const ChartHeightContext = createContext<number>(0);
-export const ChartWidthContext = createContext<number>(0);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
 const UpdateIdContext = createContext<number>(0);
@@ -117,11 +116,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
         <LegendPayloadProvider>
           <ViewBoxContext.Provider value={viewBox}>
             <ClipPathIdContext.Provider value={clipPathId}>
-              <ChartHeightContext.Provider value={height}>
-                <ChartWidthContext.Provider value={width}>
-                  <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-                </ChartWidthContext.Provider>
-              </ChartHeightContext.Provider>
+              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
             </ClipPathIdContext.Provider>
           </ViewBoxContext.Provider>
         </LegendPayloadProvider>
@@ -229,20 +224,12 @@ export const useOffset = (): ChartOffset => {
   return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
-/**
- * @deprecated instead use selectChartWidth
- * @return chart width
- */
 export const useChartWidth = (): number => {
-  return useContext(ChartWidthContext);
+  return useAppSelector(selectChartWidth);
 };
 
-/**
- * @deprecated instead use selectChartHeight
- * @return chart height
- */
 export const useChartHeight = (): number => {
-  return useContext(ChartHeightContext);
+  return useAppSelector(selectChartHeight);
 };
 
 export const useMargin = (): Margin => {
