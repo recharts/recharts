@@ -20,9 +20,8 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import React, { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
-import { Props as LegendProps } from '../component/Legend';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import {
   findEntryInArray,
@@ -54,10 +53,10 @@ import {
   StackOffsetType,
   TickItem,
 } from './types';
-import { BoundingBox } from './useGetBoundingClientRect';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
+import { LegendState } from '../state/legendSlice';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNil(obj) || isNil(dataKey)) {
@@ -412,14 +411,9 @@ export const getBarPosition = ({
   return result;
 };
 
-export const appendOffsetOfLegend = (
-  offset: ChartOffset,
-  legendItem: React.ReactElement<LegendProps>,
-  legendBox: BoundingBox | null,
-): ChartOffset => {
-  if (legendItem) {
-    const { width: boxWidth, height: boxHeight } = legendBox || {};
-    const { align, verticalAlign, layout } = legendItem?.props;
+export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendState): ChartOffset => {
+  if (legendState) {
+    const { width: boxWidth, height: boxHeight, align, verticalAlign, layout } = legendState;
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&

@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
 import isNan from 'lodash/isNaN';
-import { selectChartLayout, selectChartOffset } from '../../context/chartLayoutContext';
+import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
   getStackedData,
@@ -49,6 +49,8 @@ import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
+import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
+import { selectChartOffset } from './selectChartOffset';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1006,18 +1008,6 @@ export const selectErrorBarsSettings = createSelector(
       });
   },
 );
-
-const selectAllXAxes: (state: RechartsRootState) => ReadonlyArray<XAxisSettings> = (
-  state: RechartsRootState,
-): ReadonlyArray<XAxisSettings> => {
-  return Object.values(state.axisMap.xAxis);
-};
-
-const selectAllYAxes: (state: RechartsRootState) => ReadonlyArray<YAxisSettings> = (
-  state: RechartsRootState,
-): ReadonlyArray<YAxisSettings> => {
-  return Object.values(state.axisMap.yAxis);
-};
 
 function compareIds(a: AxisSettings, b: AxisSettings) {
   if (a.id < b.id) {
