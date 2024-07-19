@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 import find from 'lodash/find';
 import every from 'lodash/every';
 import { createSelector } from '@reduxjs/toolkit';
@@ -9,6 +9,7 @@ import {
   Margin,
   PolarAngleAxisMap,
   PolarRadiusAxisMap,
+  Size,
   XAxisMap,
   YAxisMap,
 } from '../util/types';
@@ -253,3 +254,13 @@ export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
 export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
 
 export const useChartLayout = () => useAppSelector(selectChartLayout);
+
+export const ReportChartSize = (props: Size): null => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setChartSize(props));
+  }, [dispatch, props]);
+
+  return null;
+};

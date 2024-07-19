@@ -6,12 +6,13 @@ import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 
 export interface SunburstData {
   [key: string]: any;
@@ -234,38 +235,41 @@ export const SunburstChart = ({
   const viewBox = { x: 0, y: 0, width, height };
 
   return (
-    <CursorPortalContext.Provider value={cursorPortal}>
-      <TooltipPortalContext.Provider value={tooltipPortal}>
-        <ViewBoxContext.Provider value={viewBox}>
-          <TooltipContextProvider value={getTooltipContext()}>
-            <RechartsWrapper
-              className={className}
-              width={width}
-              // Sunburst doesn't support `style` property, why?
-              height={height}
-              ref={(node: HTMLDivElement) => {
-                if (tooltipPortal == null && node != null) {
-                  setTooltipPortal(node);
-                }
-              }}
-            >
-              <Surface width={width} height={height}>
-                <g
-                  className="recharts-cursor-portal"
-                  ref={(node: SVGElement) => {
-                    if (cursorPortal == null && node != null) {
-                      setCursorPortal(node);
-                    }
-                  }}
-                />
-                <Layer className={layerClass}>{sectors}</Layer>
-                <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
-                {children}
-              </Surface>
-            </RechartsWrapper>
-          </TooltipContextProvider>
-        </ViewBoxContext.Provider>
-      </TooltipPortalContext.Provider>
-    </CursorPortalContext.Provider>
+    <RechartsStoreProvider reduxStoreName={className ?? 'SunburstChart'}>
+      <ReportChartSize width={width} height={height} />
+      <CursorPortalContext.Provider value={cursorPortal}>
+        <TooltipPortalContext.Provider value={tooltipPortal}>
+          <ViewBoxContext.Provider value={viewBox}>
+            <TooltipContextProvider value={getTooltipContext()}>
+              <RechartsWrapper
+                className={className}
+                width={width}
+                // Sunburst doesn't support `style` property, why?
+                height={height}
+                ref={(node: HTMLDivElement) => {
+                  if (tooltipPortal == null && node != null) {
+                    setTooltipPortal(node);
+                  }
+                }}
+              >
+                <Surface width={width} height={height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (cursorPortal == null && node != null) {
+                        setCursorPortal(node);
+                      }
+                    }}
+                  />
+                  <Layer className={layerClass}>{sectors}</Layer>
+                  <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
+                  {children}
+                </Surface>
+              </RechartsWrapper>
+            </TooltipContextProvider>
+          </ViewBoxContext.Provider>
+        </TooltipPortalContext.Provider>
+      </CursorPortalContext.Provider>
+    </RechartsStoreProvider>
   );
 };
