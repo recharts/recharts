@@ -8,7 +8,11 @@ const TooltipProps: StorybookArgs = {
   active: {
     description: `When set to true, the tooltip will remain visible, even after the user has moved off of the chart.
       Set \`defaultIndex\` if you want the tooltip to be visible by default, before first mouse enter.`,
-    defaultValue: false,
+    defaultValue: undefined,
+    options: [true, false, undefined],
+    control: {
+      type: 'inline-radio',
+    },
   },
   defaultIndex: {
     description: 'The index where the Tooltip should appear *before* the user has interacted with the chart.',
