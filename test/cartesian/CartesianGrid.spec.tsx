@@ -404,7 +404,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           </ChartElement>,
         );
 
-        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
 
         const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
         expect(allLines).toHaveLength(2);
@@ -452,10 +452,22 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           </ChartElement>,
         );
 
-        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            yAxis: undefined,
+            yAxis: {
+              axisType: 'yAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: false,
+              niceTicks: undefined,
+              range: [189, 14],
+              realScaleType: undefined,
+              scale: undefined,
+              tickCount: 5,
+              ticks: undefined,
+              type: 'number',
+            },
             width: 300,
             height: 200,
             offset: expectedOffset,
@@ -478,10 +490,22 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           </ChartElement>,
         );
 
-        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
         expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            yAxis: undefined,
+            yAxis: {
+              axisType: 'yAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: false,
+              niceTicks: undefined,
+              range: [189, 14],
+              realScaleType: undefined,
+              scale: undefined,
+              tickCount: 5,
+              ticks: ['a', 'b'],
+              type: 'number',
+            },
             width: 300,
             height: 200,
             offset: expectedOffset,
@@ -505,10 +529,22 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              yAxis: undefined,
+              yAxis: {
+                axisType: 'yAxis',
+                categoricalDomain: undefined,
+                duplicateDomain: undefined,
+                isCategorical: false,
+                niceTicks: undefined,
+                range: [189, 14],
+                realScaleType: undefined,
+                scale: undefined,
+                tickCount: 5,
+                ticks: undefined,
+                type: 'number',
+              },
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -532,10 +568,22 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              yAxis: undefined,
+              yAxis: {
+                axisType: 'yAxis',
+                categoricalDomain: undefined,
+                duplicateDomain: undefined,
+                isCategorical: false,
+                niceTicks: undefined,
+                range: [189, 14],
+                realScaleType: undefined,
+                scale: undefined,
+                tickCount: 5,
+                ticks: undefined,
+                type: 'number',
+              },
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -558,7 +606,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
 
           const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
           expect(allLines).toHaveLength(0);
@@ -652,7 +700,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
         expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            xAxis: undefined,
+            xAxis: {
+              axisType: 'xAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: true,
+              niceTicks: undefined,
+              range: [12, 287],
+              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+              scale: expect.any(Function),
+              tickCount: 5,
+              ticks: undefined,
+              type: 'category',
+            },
             width: 300,
             height: 200,
             offset: expectedOffset,
@@ -678,7 +738,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
         expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
           {
-            xAxis: undefined,
+            xAxis: {
+              axisType: 'xAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: true,
+              niceTicks: undefined,
+              range: [12, 287],
+              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+              scale: expect.any(Function),
+              tickCount: 5,
+              ticks: ['a', 'b'],
+              type: 'category',
+            },
             width: 300,
             height: 200,
             offset: expectedOffset,
@@ -705,7 +777,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              xAxis: undefined,
+              xAxis: {
+                axisType: 'xAxis',
+                categoricalDomain: undefined,
+                duplicateDomain: undefined,
+                isCategorical: true,
+                niceTicks: undefined,
+                range: [12, 287],
+                realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+                scale: expect.any(Function),
+                tickCount: 5,
+                ticks: undefined,
+                type: 'category',
+              },
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -732,7 +816,19 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-              xAxis: undefined,
+              xAxis: {
+                axisType: 'xAxis',
+                categoricalDomain: undefined,
+                duplicateDomain: undefined,
+                isCategorical: true,
+                niceTicks: undefined,
+                range: [12, 287],
+                realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+                scale: expect.any(Function),
+                tickCount: 5,
+                ticks: undefined,
+                type: 'category',
+              },
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -820,8 +916,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: expect.any(Number),
           y2: expect.any(Number),
           index: expect.any(Number),
-          horizontalCoordinatesGenerator: undefined,
-          verticalCoordinatesGenerator: undefined,
           offset: {
             bottom: 5,
             brushBottom: 5,
@@ -831,8 +925,32 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             top: 5,
             width: 490,
           },
-          xAxis: null,
-          yAxis: null,
+          xAxis: {
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [5, 495],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+          },
+          yAxis: {
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [495, 5],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'number',
+          },
         };
         expect(horizontal).toHaveBeenCalledWith(expectedProps);
 
@@ -878,8 +996,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: expect.any(Number),
           y2: expect.any(Number),
           index: expect.any(Number),
-          horizontalCoordinatesGenerator: undefined,
-          verticalCoordinatesGenerator: undefined,
           offset: {
             bottom: 5,
             brushBottom: 5,
@@ -889,8 +1005,32 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             top: 5,
             width: 490,
           },
-          xAxis: null,
-          yAxis: null,
+          xAxis: {
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [5, 495],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+          },
+          yAxis: {
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [495, 5],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'number',
+          },
         };
         expect(spy).toHaveBeenCalledWith(expectedProps);
 
@@ -932,8 +1072,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           y1: 2,
           y2: 202,
           index: expect.any(Number),
-          horizontalCoordinatesGenerator: undefined,
-          verticalCoordinatesGenerator: undefined,
           offset: {
             bottom: 5,
             brushBottom: 5,
@@ -943,8 +1081,32 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             top: 5,
             width: 490,
           },
-          xAxis: null,
-          yAxis: null,
+          xAxis: {
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [5, 495],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+          },
+          yAxis: {
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [495, 5],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'number',
+          },
         };
         expect(vertical).toHaveBeenCalledWith(expectedProps);
 
@@ -982,8 +1144,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           verticalFill: [],
           verticalPoints,
           vertical: <Vertical />,
-          horizontalCoordinatesGenerator: undefined,
-          verticalCoordinatesGenerator: undefined,
           offset: {
             bottom: 5,
             brushBottom: 5,
@@ -993,8 +1153,32 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             top: 5,
             width: 490,
           },
-          xAxis: null,
-          yAxis: null,
+          xAxis: {
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [5, 495],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+          },
+          yAxis: {
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [495, 5],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'number',
+          },
           key: undefined,
           x: 1,
           y: 2,
@@ -1079,7 +1263,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           </ChartElement>,
         );
 
-        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+        expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(6);
 
         const allLines = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
         expect(allLines).toHaveLength(3);

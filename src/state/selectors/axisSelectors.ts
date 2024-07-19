@@ -4,6 +4,7 @@ import { Series } from 'victory-vendor/d3-shape';
 import isNan from 'lodash/isNaN';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
+  AxisPropsNeededForTicksGenerator,
   getDomainOfStackGroups,
   getStackedData,
   getValueByDataKey,
@@ -52,6 +53,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
+import { createStructuredSelector } from 'reselect';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1244,6 +1246,45 @@ export const selectCategoricalDomain = createSelector(
       return displayedData.map(d => d.value);
     }
     return undefined;
+  },
+);
+
+export const selectAxisPropsNeededForTicksGenerator = createSelector(
+  selectChartLayout,
+  selectAxisSettings,
+  selectAxisScale,
+  selectDuplicateDomain,
+  selectCategoricalDomain,
+  selectAxisRange,
+  selectNiceTicks,
+  pickAxisType,
+  (
+    layout,
+    axis,
+    scaleReturn,
+    duplicateDomain,
+    categoricalDomain,
+    axisRange,
+    niceTicks,
+    axisType,
+  ): AxisPropsNeededForTicksGenerator => {
+    if (axis == null || scaleReturn == null) {
+      return null;
+    }
+    const isCategorical = isCategoricalAxis(layout, axisType);
+    return {
+      axisType,
+      categoricalDomain,
+      duplicateDomain,
+      isCategorical,
+      niceTicks,
+      range: axisRange,
+      realScaleType: scaleReturn.realScaleType,
+      scale: scaleReturn.scale,
+      tickCount: axis.tickCount,
+      ticks: axis.ticks,
+      type: axis.type,
+    };
   },
 );
 

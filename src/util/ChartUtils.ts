@@ -524,20 +524,20 @@ export interface RechartsScale {
 }
 
 export type AxisPropsNeededForTicksGenerator = {
-  duplicateDomain?: ReadonlyArray<AxisTick>;
-  realScaleType?: 'scaleBand' | string;
-  scale: RechartsScale;
   axisType?: AxisType;
-  ticks?: ReadonlyArray<AxisTick>;
-  niceTicks?: ReadonlyArray<AxisTick>;
+  categoricalDomain?: ReadonlyArray<unknown>;
+  duplicateDomain?: ReadonlyArray<unknown>;
   isCategorical?: boolean;
-  categoricalDomain?: ReadonlyArray<AxisTick>;
-  type?: 'number' | 'category';
+  niceTicks?: ReadonlyArray<AxisTick>;
   /**
    * The range appears to be only used in Angle Axis - needs further investigation
    */
   range?: ReadonlyArray<number>;
+  realScaleType?: 'scaleBand' | string;
+  scale: RechartsScale;
   tickCount?: number;
+  ticks?: ReadonlyArray<AxisTick>;
+  type?: 'number' | 'category';
 };
 
 /**
