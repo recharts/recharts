@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin, setOffset } from '../state/layoutSlice';
+import { selectChartOffset } from '../state/selectors/selectChartOffset';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
@@ -223,16 +224,9 @@ export const useViewBox = (): CartesianViewBox => {
   return useContext(ViewBoxContext);
 };
 
-/**
- * @deprecated instead use selectChartOffset
- * @param state Recharts Root State
- * @return offset top bottom left right
- */
-export const selectChartOffsetOld = (state: RechartsRootState): ChartOffset => state.layout.offset;
-
 const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
 export const useOffset = (): ChartOffset => {
-  return useAppSelector(selectChartOffsetOld) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
+  return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
 /**

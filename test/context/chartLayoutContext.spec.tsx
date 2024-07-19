@@ -813,7 +813,7 @@ describe('ChartLayoutContextProvider', () => {
 });
 
 describe('useOffset', () => {
-  it('should return undefined when used outside of chart', () => {
+  it('should return empty object when used outside of chart', () => {
     expect.assertions(1);
     const Comp = (): null => {
       const offset = useOffset();
