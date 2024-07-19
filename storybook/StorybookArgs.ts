@@ -18,7 +18,7 @@ export type StorybookArg = {
    */
   defaultValue?: unknown;
   control?: ControlType | { type: ControlType };
-  options?: string[];
+  options?: unknown[];
   /**
    * Specifies the semantic type of the argType.
    * When an argType is inferred, the information from the various tools is summarized in this property,
