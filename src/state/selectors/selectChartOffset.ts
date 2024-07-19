@@ -1,13 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { selectBrushHeight } from './brushSelectors';
-import { selectAllXAxes, selectAllYAxes } from './axisSelectors';
 import { selectLegendState } from './legendSelectors';
 import { ChartOffset, Margin } from '../../util/types';
 import { XAxisSettings, YAxisSettings } from '../axisMapSlice';
 import { LegendState } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
+import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 
 export const selectChartOffset = createSelector(
   selectChartWidth,

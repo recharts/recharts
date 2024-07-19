@@ -38,7 +38,6 @@ import { findEntryInArray } from '../../util/DataUtils';
 import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../../chart/types';
 import {
   selectChartLayout,
-  selectChartOffsetOld,
   selectPolarAngleAxisMap,
   selectPolarRadiusAxisMap,
   selectXAxisMap,
@@ -47,6 +46,7 @@ import {
 import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectChartCoordinates, selectContainerScale } from './containerSelectors';
+import { selectChartOffset } from './selectChartOffset';
 
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
@@ -359,6 +359,6 @@ export const selectActivePropsFromMousePointer: (
   selectTooltipAxis,
   selectTooltipTicks,
   selectOrderedTooltipTicks,
-  selectChartOffsetOld,
+  selectChartOffset,
   combineActiveProps,
 );
