@@ -22,7 +22,7 @@ import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
-import { setChartSize, setLayout, setMargin, setOffset } from '../state/layoutSlice';
+import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset } from '../state/selectors/selectChartOffset';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
@@ -94,7 +94,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   dispatch(setPolarAngleAxisMap(angleAxisMap));
   dispatch(setPolarRadiusAxisMap(radiusAxisMap));
   dispatch(setLayout(layout));
-  dispatch(setOffset(offset));
   dispatch(setChartSize({ width, height }));
   dispatch(setMargin(margin));
 

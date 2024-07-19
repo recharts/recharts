@@ -54,7 +54,6 @@ const preloadedRadialState: Partial<RechartsRootState> = {
   ...preloadedState,
   layout: {
     layoutType: 'radial',
-    offset: undefined,
     container: undefined,
     width: 0,
     height: 0,
