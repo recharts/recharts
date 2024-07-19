@@ -87,12 +87,18 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         expect.soft(line).toHaveAttribute('y', '2');
         expect.soft(line).toHaveAttribute('x1', '1');
         expect.soft(line).toHaveAttribute('x2', '301');
+        expect.soft(line).toHaveAttribute('y1', expect.any(String));
+        expect.soft(line).toHaveAttribute('y2', expect.any(String));
+        expect(line.getAttribute('y1')).toEqual(line.getAttribute('y2'));
       });
       const verticalLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
       expect(verticalLines).toHaveLength(verticalPoints.length);
       verticalLines.forEach(line => {
         expect.soft(line).toHaveAttribute('x', '1');
         expect.soft(line).toHaveAttribute('y', '2');
+        expect.soft(line).toHaveAttribute('x1', expect.any(String));
+        expect.soft(line).toHaveAttribute('x2', expect.any(String));
+        expect(line.getAttribute('x1')).toEqual(line.getAttribute('x2'));
         expect.soft(line).toHaveAttribute('y1', '2');
         expect.soft(line).toHaveAttribute('y2', '202');
       });
@@ -114,12 +120,16 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       expect(horizontalStripes).toHaveLength(5);
       horizontalStripes.forEach(stripe => {
         expect.soft(stripe).toHaveAttribute('x', '1');
+        expect.soft(stripe).toHaveAttribute('y', expect.any(String));
         expect.soft(stripe).toHaveAttribute('width', '300');
+        expect.soft(stripe).toHaveAttribute('height', expect.any(String));
       });
       const verticalStripes = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
       expect(verticalStripes).toHaveLength(4);
       verticalStripes.forEach(stripe => {
+        expect.soft(stripe).toHaveAttribute('x', expect.any(String));
         expect.soft(stripe).toHaveAttribute('y', '2');
+        expect.soft(stripe).toHaveAttribute('width', expect.any(String));
         expect.soft(stripe).toHaveAttribute('height', '200');
       });
     });
