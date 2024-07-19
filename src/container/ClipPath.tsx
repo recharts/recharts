@@ -1,12 +1,15 @@
 import React from 'react';
-import { ChartOffset } from '../util/types';
+import { useOffset } from '../context/chartLayoutContext';
 
 type ClipPathProps = {
   clipPathId: string;
-  offset: ChartOffset;
 };
 
-export function ClipPath({ clipPathId, offset }: ClipPathProps) {
+export function ClipPath({ clipPathId }: ClipPathProps) {
+  const offset = useOffset();
+  if (offset == null) {
+    return null;
+  }
   const { left, top, height, width } = offset;
 
   return (
