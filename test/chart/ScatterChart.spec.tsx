@@ -54,6 +54,27 @@ describe('ScatterChart of three dimension data', () => {
     expect(container.querySelectorAll('.recharts-scatter-symbol path')).toHaveLength(data01.length + data02.length);
   });
 
+  it('should render clipPath if one of axes has allowDataOverflow=true', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" allowDataOverflow />
+        <YAxis dataKey="y" name="weight" unit="kg" allowDataOverflow />
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
+        <CartesianGrid />
+        <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
+        <Tooltip />
+        <Legend layout="vertical" />
+      </ScatterChart>,
+    );
+
+    const clipPath = container.querySelector('clipPath rect');
+    expect(clipPath.getAttributeNames().sort()).toEqual(['height', 'width', 'x', 'y']);
+    expect(clipPath).toHaveAttribute('width', '280');
+    expect(clipPath).toHaveAttribute('height', '330');
+    expect(clipPath).toHaveAttribute('x', '100');
+    expect(clipPath).toHaveAttribute('y', '10');
+  });
+
   test("Don't render any symbols when data is empty", () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
