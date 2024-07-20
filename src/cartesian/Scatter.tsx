@@ -333,6 +333,50 @@ function computeScatterPoints({
   });
 }
 
+function ScatterLine(props: Props) {
+  const { points, line, lineType, lineJointType } = props;
+
+  if (!line) {
+    return null;
+  }
+
+  const scatterProps = filterProps(props, false);
+  const customLineProps = filterProps(line, false);
+  let linePoints, lineItem;
+
+  if (lineType === 'joint') {
+    linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
+  } else if (lineType === 'fitting') {
+    const { xmin, xmax, a, b } = getLinearRegression(points);
+    const linearExp = (x: number) => a * x + b;
+    linePoints = [
+      { x: xmin, y: linearExp(xmin) },
+      { x: xmax, y: linearExp(xmax) },
+    ];
+  }
+  const lineProps = {
+    ...scatterProps,
+    fill: 'none',
+    stroke: scatterProps && scatterProps.fill,
+    ...customLineProps,
+    points: linePoints,
+  };
+
+  if (React.isValidElement(line)) {
+    lineItem = React.cloneElement(line as any, lineProps);
+  } else if (isFunction(line)) {
+    lineItem = line(lineProps);
+  } else {
+    lineItem = <Curve {...lineProps} type={lineJointType} />;
+  }
+
+  return (
+    <Layer className="recharts-scatter-line" key="recharts-scatter-line">
+      {lineItem}
+    </Layer>
+  );
+}
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -522,47 +566,8 @@ export class Scatter extends PureComponent<Props, State> {
     });
   }
 
-  renderLine() {
-    const { points, line, lineType, lineJointType } = this.props;
-    const scatterProps = filterProps(this.props, false);
-    const customLineProps = filterProps(line, false);
-    let linePoints, lineItem;
-
-    if (lineType === 'joint') {
-      linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
-    } else if (lineType === 'fitting') {
-      const { xmin, xmax, a, b } = getLinearRegression(points);
-      const linearExp = (x: number) => a * x + b;
-      linePoints = [
-        { x: xmin, y: linearExp(xmin) },
-        { x: xmax, y: linearExp(xmax) },
-      ];
-    }
-    const lineProps = {
-      ...scatterProps,
-      fill: 'none',
-      stroke: scatterProps && scatterProps.fill,
-      ...customLineProps,
-      points: linePoints,
-    };
-
-    if (React.isValidElement(line)) {
-      lineItem = React.cloneElement(line as any, lineProps);
-    } else if (isFunction(line)) {
-      lineItem = line(lineProps);
-    } else {
-      lineItem = <Curve {...lineProps} type={lineJointType} />;
-    }
-
-    return (
-      <Layer className="recharts-scatter-line" key="recharts-scatter-line">
-        {lineItem}
-      </Layer>
-    );
-  }
-
   render() {
-    const { hide, points, line, className, xAxis, yAxis, id, isAnimationActive } = this.props;
+    const { hide, points, className, xAxis, yAxis, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
       return (
         <>
@@ -602,7 +607,7 @@ export class Scatter extends PureComponent<Props, State> {
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? <ClipPath clipPathId={`clipPath-${clipPathId}`} /> : null}
-          {line && this.renderLine()}
+          <ScatterLine {...this.props} />
           {this.renderErrorBar()}
           <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}

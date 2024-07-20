@@ -149,7 +149,7 @@ describe('ScatterChart of two dimension data', () => {
     expect(container.querySelectorAll('.recharts-symbols')).toHaveLength(6);
   });
 
-  test('renders 1 jointed line when line is setted to be true', () => {
+  test('renders line when line prop=true', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -158,7 +158,15 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-scatter-line')).toHaveLength(1);
+    const allLines = container.querySelectorAll('.recharts-scatter-line path');
+    expect(allLines).toHaveLength(1);
+    const line = allLines[0];
+    expect(line.getAttributeNames()).toEqual(['name', 'fill', 'stroke', 'class', 'd']);
+    expect(line.getAttribute('name')).toEqual('A school');
+    expect(line.getAttribute('fill')).toEqual('none');
+    expect(line.getAttribute('stroke')).toEqual('#ff7300');
+    expect(line.getAttribute('class')).toEqual('recharts-curve');
+    expect(line.getAttribute('d')).toEqual('M105,185L155,267.5L205,102.5L255,143.75L305,20L355,119');
   });
 
   test('Renders customized active shape when activeShape set to be an object', () => {
