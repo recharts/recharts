@@ -39,6 +39,8 @@ export type AxisSettings = {
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
   hide: boolean;
+  unit: string | undefined;
+  name: string | undefined;
 };
 
 export type XAxisSettings = AxisSettings & {
@@ -53,7 +55,13 @@ export type YAxisSettings = AxisSettings & {
   orientation: YAxisOrientation;
 };
 
-export type ZAxisSettings = AxisSettings;
+export type ZAxisSettings = {
+  id: AxisId;
+  dataKey: AxisSettings['dataKey'];
+  name: AxisSettings['name'];
+  unit: AxisSettings['unit'];
+  range: number[];
+};
 
 type AxisMapState = {
   xAxis: Record<AxisId, XAxisSettings>;
@@ -87,9 +95,15 @@ const axisMapSlice = createSlice({
     removeYAxis(state, action: PayloadAction<YAxisSettings>) {
       delete state.yAxis[action.payload.id];
     },
+    addZAxis(state, action: PayloadAction<ZAxisSettings>) {
+      state.zAxis[action.payload.id] = castDraft(action.payload);
+    },
+    removeZAxis(state, action: PayloadAction<ZAxisSettings>) {
+      delete state.zAxis[action.payload.id];
+    },
   },
 });
 
-export const { addXAxis, removeXAxis, addYAxis, removeYAxis } = axisMapSlice.actions;
+export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis } = axisMapSlice.actions;
 
 export const axisMapReducer = axisMapSlice.reducer;

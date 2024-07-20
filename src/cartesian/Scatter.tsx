@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of scatters
  */
-import React, { PureComponent, ReactElement } from 'react';
+// eslint-disable-next-line max-classes-per-file
+import React, { Component, PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 
 import isNil from 'lodash/isNil';
@@ -17,12 +18,11 @@ import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
-import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp } from '../util/ChartUtils';
+import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp, RechartsScale } from '../util/ChartUtils';
 import {
   LegendType,
   AnimationTiming,
   D3Scale,
-  ChartOffset,
   DataKey,
   TickItem,
   adaptEventsOfChild,
@@ -48,6 +48,8 @@ import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { AxisId, AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
+import { ClipPath } from '../container/ClipPath';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -66,16 +68,11 @@ export interface ScatterPointItem {
 
 export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
-interface ScatterProps {
+interface ScatterInternalProps {
   data?: any[];
   xAxisId?: string | number;
   yAxisId?: string | number;
   zAxisId?: string | number;
-
-  left?: number;
-  top?: number;
-  width?: number;
-  height?: number;
 
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
@@ -89,7 +86,7 @@ interface ScatterProps {
   legendType?: LegendType;
   tooltipType?: TooltipType;
   className?: string;
-  name?: string | number;
+  name?: string;
 
   activeShape?: ScatterCustomizedShape;
   shape?: ScatterCustomizedShape;
@@ -104,6 +101,36 @@ interface ScatterProps {
   animationEasing?: AnimationTiming;
 }
 
+interface ScatterProps {
+  data?: any[];
+  xAxisId?: AxisId;
+  yAxisId?: string | number;
+  zAxisId?: string | number;
+
+  dataKey?: DataKey<any>;
+
+  line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
+  lineType?: 'fitting' | 'joint';
+  lineJointType?: CurveType;
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  className?: string;
+  name?: string;
+
+  activeShape?: ScatterCustomizedShape;
+  shape?: ScatterCustomizedShape;
+  hide?: boolean;
+  label?: ImplicitLabelListType<any>;
+
+  isAnimationActive?: boolean;
+  animationId?: number;
+  animationBegin?: number;
+  animationDuration?: AnimationDuration;
+  animationEasing?: AnimationTiming;
+}
+
+type InternalProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterInternalProps;
+
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterProps;
 
 interface State {
@@ -113,11 +140,11 @@ interface State {
   prevAnimationId?: number;
 }
 
-type ScatterComposedData = ChartOffset & {
+type ScatterComposedData = {
   points: ReadonlyArray<ScatterPointItem>;
 };
 
-const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
+const computeLegendPayloadFromScatterProps = (props: InternalProps): Array<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
@@ -131,14 +158,14 @@ const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload
   ];
 };
 
-function SetScatterLegend(props: Props): null {
+function SetScatterLegend(props: InternalProps): null {
   useLegendPayloadDispatch(computeLegendPayloadFromScatterProps, props);
   return null;
 }
 
 type ScatterSymbolsProps = {
   points: ScatterPointItem[];
-  allOtherScatterProps: Props;
+  allOtherScatterProps: InternalProps;
 };
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
@@ -197,7 +224,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
   const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: points.map((p: ScatterPointItem) => p.tooltipPayload),
@@ -218,151 +245,200 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 const noErrorBars: never[] = [];
 
-export class Scatter extends PureComponent<Props, State> {
-  static displayName = 'Scatter';
+type AxisWithScale = Omit<AxisSettings, 'scale'> & { scale: RechartsScale };
 
-  static defaultProps = {
-    xAxisId: 0,
-    yAxisId: 0,
-    zAxisId: 0,
-    legendType: 'circle',
-    lineType: 'joint',
-    lineJointType: 'linear',
-    data: [] as any[],
-    shape: 'circle',
-    hide: false,
-
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 400,
-    animationEasing: 'linear',
+function computeScatterPoints({
+  displayedData,
+  xAxis,
+  yAxis,
+  zAxis,
+  scatterSettings,
+  xAxisTicks,
+  yAxisTicks,
+  cells,
+}: {
+  displayedData: ReadonlyArray<any>;
+  xAxis: AxisWithScale;
+  yAxis: AxisWithScale;
+  zAxis: ZAxisSettings;
+  scatterSettings: {
+    dataKey: DataKey<any> | undefined;
+    tooltipType: TooltipType;
+    name: string | number;
   };
+  xAxisTicks: TickItem[];
+  yAxisTicks: TickItem[];
+  cells: ReadonlyArray<ReactElement> | undefined;
+}): ReadonlyArray<ScatterPointItem> {
+  const xAxisDataKey = isNil(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
+  const yAxisDataKey = isNil(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
+  const zAxisDataKey = zAxis && zAxis.dataKey;
+  const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
+  const defaultZ = defaultRangeZ && defaultRangeZ[0];
+  const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
+  const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
+  return displayedData.map((entry, index): ScatterPointItem => {
+    const x = getValueByDataKey(entry, xAxisDataKey);
+    const y = getValueByDataKey(entry, yAxisDataKey);
+    const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
-  /**
-   * Compose the data of each group
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({
-    xAxis,
-    yAxis,
-    zAxis,
-    item,
-    displayedData,
-    xAxisTicks,
-    yAxisTicks,
-    offset,
-  }: {
-    props: Props;
-    xAxis: Props['xAxis'];
-    yAxis: Props['yAxis'];
-    zAxis: Props['zAxis'];
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    item: Scatter;
-    bandSize: number;
-    displayedData: any[];
-    offset: ChartOffset;
-  }): ScatterComposedData => {
-    const { tooltipType } = item.props;
-    const cells = findAllByType(item.props.children, Cell);
-    const xAxisDataKey = isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
-    const yAxisDataKey = isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
-    const zAxisDataKey = zAxis && zAxis.dataKey;
-    const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
-    const defaultZ = defaultRangeZ && defaultRangeZ[0];
-    const xBandSize = (xAxis.scale as any).bandwidth ? (xAxis.scale as any).bandwidth() : 0;
-    const yBandSize = (yAxis.scale as any).bandwidth ? (yAxis.scale as any).bandwidth() : 0;
-    const points: ReadonlyArray<ScatterPointItem> = displayedData.map((entry, index): ScatterPointItem => {
-      const x = getValueByDataKey(entry, xAxisDataKey);
-      const y = getValueByDataKey(entry, yAxisDataKey);
-      const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
-      const tooltipPayload: Array<TooltipPayloadEntry> = [
-        {
-          // @ts-expect-error name prop should not have dataKey in it
-          name: isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
-          unit: xAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: x,
-          payload: entry,
-          dataKey: xAxisDataKey,
-          type: tooltipType,
-        },
-        {
-          // @ts-expect-error name prop should not have dataKey in it
-          name: isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
-          unit: yAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: y,
-          payload: entry,
-          dataKey: yAxisDataKey,
-          type: tooltipType,
-        },
-      ];
-
-      if (z !== '-') {
-        tooltipPayload.push({
-          // @ts-expect-error name prop should not have dataKey in it
-          name: zAxis.name || zAxis.dataKey,
-          unit: zAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: z,
-          payload: entry,
-          dataKey: zAxisDataKey,
-          type: tooltipType,
-        });
-      }
-      const cx = getCateCoordinateOfLine({
-        axis: xAxis,
-        ticks: xAxisTicks,
-        bandSize: xBandSize,
-        entry,
-        index,
-        dataKey: xAxisDataKey,
-      });
-      const cy = getCateCoordinateOfLine({
-        axis: yAxis,
-        ticks: yAxisTicks,
-        bandSize: yBandSize,
-        entry,
-        index,
-        dataKey: yAxisDataKey,
-      });
-      // @ts-expect-error getValueByDataKey does not validate the output type
-      const size = z !== '-' ? zAxis.scale(z) : defaultZ;
-      const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
-
-      return {
-        ...entry,
-        cx,
-        cy,
-        x: cx - radius,
-        y: cy - radius,
-        xAxis,
-        yAxis,
-        zAxis,
-        width: 2 * radius,
-        height: 2 * radius,
-        size,
-        node: { x, y, z },
-        tooltipPayload,
-        tooltipPosition: { x: cx, y: cy },
+    const tooltipPayload: Array<TooltipPayloadEntry> = [
+      {
+        // @ts-expect-error name prop should not have dataKey in it
+        name: isNil(xAxis.dataKey) ? scatterSettings.name : xAxis.name || xAxis.dataKey,
+        unit: xAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: x,
         payload: entry,
-        ...(cells && cells[index] && cells[index].props),
-      };
+        dataKey: xAxisDataKey,
+        type: scatterSettings.tooltipType,
+      },
+      {
+        // @ts-expect-error name prop should not have dataKey in it
+        name: isNil(yAxis.dataKey) ? scatterSettings.name : yAxis.name || yAxis.dataKey,
+        unit: yAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: y,
+        payload: entry,
+        dataKey: yAxisDataKey,
+        type: scatterSettings.tooltipType,
+      },
+    ];
+
+    if (z !== '-') {
+      tooltipPayload.push({
+        // @ts-expect-error name prop should not have dataKey in it
+        name: zAxis.name || zAxis.dataKey,
+        unit: zAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: z,
+        payload: entry,
+        dataKey: zAxisDataKey,
+        type: scatterSettings.tooltipType,
+      });
+    }
+
+    const cx = getCateCoordinateOfLine({
+      axis: xAxis,
+      ticks: xAxisTicks,
+      bandSize: xBandSize,
+      entry,
+      index,
+      dataKey: xAxisDataKey,
     });
+    const cy = getCateCoordinateOfLine({
+      axis: yAxis,
+      ticks: yAxisTicks,
+      bandSize: yBandSize,
+      entry,
+      index,
+      dataKey: yAxisDataKey,
+    });
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    const size = z !== '-' ? zAxis.scale(z) : defaultZ;
+    const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
 
     return {
-      points,
-      ...offset,
+      ...entry,
+      cx,
+      cy,
+      x: cx - radius,
+      y: cy - radius,
+      xAxis,
+      yAxis,
+      zAxis,
+      width: 2 * radius,
+      height: 2 * radius,
+      size,
+      node: { x, y, z },
+      tooltipPayload,
+      tooltipPosition: { x: cx, y: cy },
+      payload: entry,
+      ...(cells && cells[index] && cells[index].props),
     };
+  });
+}
+
+function ScatterLine(props: InternalProps) {
+  const { points, line, lineType, lineJointType } = props;
+
+  if (!line) {
+    return null;
+  }
+
+  const scatterProps = filterProps(props, false);
+  const customLineProps = filterProps(line, false);
+  let linePoints, lineItem;
+
+  if (lineType === 'joint') {
+    linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
+  } else if (lineType === 'fitting') {
+    const { xmin, xmax, a, b } = getLinearRegression(points);
+    const linearExp = (x: number) => a * x + b;
+    linePoints = [
+      { x: xmin, y: linearExp(xmin) },
+      { x: xmax, y: linearExp(xmax) },
+    ];
+  }
+  const lineProps = {
+    ...scatterProps,
+    fill: 'none',
+    stroke: scatterProps && scatterProps.fill,
+    ...customLineProps,
+    points: linePoints,
   };
 
+  if (React.isValidElement(line)) {
+    lineItem = React.cloneElement(line as any, lineProps);
+  } else if (isFunction(line)) {
+    lineItem = line(lineProps);
+  } else {
+    lineItem = <Curve {...lineProps} type={lineJointType} />;
+  }
+
+  return (
+    <Layer className="recharts-scatter-line" key="recharts-scatter-line">
+      {lineItem}
+    </Layer>
+  );
+}
+
+function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean }) {
+  const { points, xAxis, yAxis, children, isAnimationActive, isAnimationFinished } = props;
+  if (isAnimationActive && !isAnimationFinished) {
+    return null;
+  }
+  const errorBarItems = findAllByType(children, ErrorBar);
+
+  if (!errorBarItems) {
+    return null;
+  }
+
+  return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
+    const { direction, dataKey: errorDataKey } = item.props;
+    return React.cloneElement(item, {
+      key: `${direction}-${errorDataKey}-${points[i]}`,
+      data: points,
+      xAxis,
+      yAxis,
+      layout: direction === 'x' ? 'vertical' : 'horizontal',
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
+        return {
+          x: dataPoint.cx,
+          y: dataPoint.cy,
+          value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
+          errorVal: getValueByDataKey(dataPoint, dataKey),
+        };
+      },
+    });
+  });
+}
+
+class ScatterWithState extends PureComponent<InternalProps, State> {
   state: State = { isAnimationFinished: false };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -448,81 +524,8 @@ export class Scatter extends PureComponent<Props, State> {
     return this.renderSymbolsStatically(points);
   }
 
-  renderErrorBar() {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-
-    const { points, xAxis, yAxis, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
-
-    if (!errorBarItems) {
-      return null;
-    }
-
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
-      const { direction, dataKey: errorDataKey } = item.props;
-      return React.cloneElement(item, {
-        key: `${direction}-${errorDataKey}-${points[i]}`,
-        data: points,
-        xAxis,
-        yAxis,
-        layout: direction === 'x' ? 'vertical' : 'horizontal',
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
-          return {
-            x: dataPoint.cx,
-            y: dataPoint.cy,
-            value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
-            errorVal: getValueByDataKey(dataPoint, dataKey),
-          };
-        },
-      });
-    });
-  }
-
-  renderLine() {
-    const { points, line, lineType, lineJointType } = this.props;
-    const scatterProps = filterProps(this.props, false);
-    const customLineProps = filterProps(line, false);
-    let linePoints, lineItem;
-
-    if (lineType === 'joint') {
-      linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
-    } else if (lineType === 'fitting') {
-      const { xmin, xmax, a, b } = getLinearRegression(points);
-      const linearExp = (x: number) => a * x + b;
-      linePoints = [
-        { x: xmin, y: linearExp(xmin) },
-        { x: xmax, y: linearExp(xmax) },
-      ];
-    }
-    const lineProps = {
-      ...scatterProps,
-      fill: 'none',
-      stroke: scatterProps && scatterProps.fill,
-      ...customLineProps,
-      points: linePoints,
-    };
-
-    if (React.isValidElement(line)) {
-      lineItem = React.cloneElement(line as any, lineProps);
-    } else if (isFunction(line)) {
-      lineItem = line(lineProps);
-    } else {
-      lineItem = <Curve {...lineProps} type={lineJointType} />;
-    }
-
-    return (
-      <Layer className="recharts-scatter-line" key="recharts-scatter-line">
-        {lineItem}
-      </Layer>
-    );
-  }
-
   render() {
-    const { hide, points, line, className, xAxis, yAxis, left, top, width, height, id, isAnimationActive } = this.props;
+    const { hide, points, className, xAxis, yAxis, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
       return (
         <>
@@ -561,24 +564,91 @@ export class Scatter extends PureComponent<Props, State> {
         <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? (
-            <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
-            </defs>
-          ) : null}
-          {line && this.renderLine()}
-          {this.renderErrorBar()}
+          {needClipX || needClipY ? <ClipPath clipPathId={`clipPath-${clipPathId}`} /> : null}
+          <ScatterLine {...this.props} />
+          <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
           <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
       </CartesianGraphicalItemContext>
     );
+  }
+}
+
+function ScatterImpl(props: InternalProps) {
+  const { ref, ...everythingElse } = props;
+  return <ScatterWithState {...everythingElse} />;
+}
+
+// eslint-disable-next-line react/prefer-stateless-function
+export class Scatter extends Component<InternalProps> {
+  static displayName = 'Scatter';
+
+  static defaultProps = {
+    xAxisId: 0,
+    yAxisId: 0,
+    zAxisId: 0,
+    legendType: 'circle',
+    lineType: 'joint',
+    lineJointType: 'linear',
+    data: [] as any[],
+    shape: 'circle',
+    hide: false,
+
+    isAnimationActive: !Global.isSsr,
+    animationBegin: 0,
+    animationDuration: 400,
+    animationEasing: 'linear',
+  };
+
+  /**
+   * Compose the data of each group
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array}  Composed data
+   */
+  static getComposedData = ({
+    xAxis,
+    yAxis,
+    zAxis,
+    item,
+    displayedData,
+    xAxisTicks,
+    yAxisTicks,
+  }: {
+    props: InternalProps;
+    xAxis: InternalProps['xAxis'];
+    yAxis: InternalProps['yAxis'];
+    zAxis: InternalProps['zAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    item: ScatterWithState;
+    bandSize: number;
+    displayedData: any[];
+  }): ScatterComposedData => {
+    const cells = findAllByType(item.props.children, Cell);
+    const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
+      displayedData,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      xAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      yAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      zAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      scatterSettings: item.props,
+      xAxisTicks,
+      yAxisTicks,
+      cells,
+    });
+
+    return {
+      points,
+    };
+  };
+
+  render() {
+    return <ScatterImpl {...this.props} />;
   }
 }

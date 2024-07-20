@@ -103,6 +103,8 @@ const XAxisSettingsDispatcher = (props: Props) => {
         orientation={props.orientation}
         mirror={props.mirror}
         hide={props.hide}
+        unit={props.unit}
+        name={props.name}
       />
       <XAxisImpl {...props} />
     </>

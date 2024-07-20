@@ -33,6 +33,7 @@ import {
   XAxisSettings,
   YAxisOrientation,
   YAxisSettings,
+  ZAxisSettings,
 } from '../axisMapSlice';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from '../store';
@@ -70,6 +71,7 @@ export const implicitXAxis: XAxisSettings = {
   id: undefined,
   includeHidden: false,
   mirror: false,
+  name: undefined,
   orientation: 'bottom',
   padding: { left: 0, right: 0 },
   reversed: false,
@@ -77,6 +79,7 @@ export const implicitXAxis: XAxisSettings = {
   tickCount: 5,
   ticks: undefined,
   type: 'category',
+  unit: undefined,
 };
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
@@ -102,6 +105,7 @@ export const implicitYAxis: YAxisSettings = {
   id: undefined,
   includeHidden: false,
   mirror: false,
+  name: undefined,
   orientation: 'left',
   padding: { top: 0, bottom: 0 },
   reversed: false,
@@ -109,6 +113,7 @@ export const implicitYAxis: YAxisSettings = {
   tickCount: 5,
   ticks: undefined,
   type: 'number',
+  unit: undefined,
   width: 60,
 };
 
@@ -120,6 +125,18 @@ export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): Y
   return axis;
 };
 
+export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): ZAxisSettings => {
+  // there is no implicit Z axis - so here we return null.
+  return state.axisMap.zAxis[axisId];
+};
+
+/**
+ * Selects either an X or Y axis. Doesn't work with Z axis - for that, instead use selectZAxisSettings
+ * @param state Root state
+ * @param axisType xAxis | yAxis
+ * @param axisId xAxisId | yAxisId
+ * @returns axis settings object
+ */
 export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: AxisId): AxisSettings => {
   switch (axisType) {
     case 'xAxis': {
@@ -129,7 +146,7 @@ export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType,
       return selectYAxisSettings(state, axisId);
     }
     default:
-      throw new Error('Not implemented yet, TODO add!');
+      throw new Error(`Unexpected axis type: ${axisType}`);
   }
 };
 

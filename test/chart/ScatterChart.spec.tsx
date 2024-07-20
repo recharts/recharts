@@ -54,6 +54,27 @@ describe('ScatterChart of three dimension data', () => {
     expect(container.querySelectorAll('.recharts-scatter-symbol path')).toHaveLength(data01.length + data02.length);
   });
 
+  it('should render clipPath if one of axes has allowDataOverflow=true', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
+        <XAxis dataKey="x" name="stature" unit="cm" allowDataOverflow />
+        <YAxis dataKey="y" name="weight" unit="kg" allowDataOverflow />
+        <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
+        <CartesianGrid />
+        <Scatter name="A school" data={[]} fillOpacity={0.3} fill="#ff7300" />
+        <Tooltip />
+        <Legend layout="vertical" />
+      </ScatterChart>,
+    );
+
+    const clipPath = container.querySelector('clipPath rect');
+    expect(clipPath.getAttributeNames().sort()).toEqual(['height', 'width', 'x', 'y']);
+    expect(clipPath).toHaveAttribute('width', '280');
+    expect(clipPath).toHaveAttribute('height', '330');
+    expect(clipPath).toHaveAttribute('x', '100');
+    expect(clipPath).toHaveAttribute('y', '10');
+  });
+
   test("Don't render any symbols when data is empty", () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -128,7 +149,7 @@ describe('ScatterChart of two dimension data', () => {
     expect(container.querySelectorAll('.recharts-symbols')).toHaveLength(6);
   });
 
-  test('renders 1 jointed line when line is setted to be true', () => {
+  test('renders line when line prop=true', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="x" name="stature" unit="cm" />
@@ -137,7 +158,15 @@ describe('ScatterChart of two dimension data', () => {
       </ScatterChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-scatter-line')).toHaveLength(1);
+    const allLines = container.querySelectorAll('.recharts-scatter-line path');
+    expect(allLines).toHaveLength(1);
+    const line = allLines[0];
+    expect(line.getAttributeNames()).toEqual(['name', 'fill', 'stroke', 'class', 'd']);
+    expect(line.getAttribute('name')).toEqual('A school');
+    expect(line.getAttribute('fill')).toEqual('none');
+    expect(line.getAttribute('stroke')).toEqual('#ff7300');
+    expect(line.getAttribute('class')).toEqual('recharts-curve');
+    expect(line.getAttribute('d')).toEqual('M105,185L155,267.5L205,102.5L255,143.75L305,20L355,119');
   });
 
   test('Renders customized active shape when activeShape set to be an object', () => {

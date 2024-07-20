@@ -1158,7 +1158,7 @@ export interface BaseAxisProps {
   /** The name of data displayed in the axis */
   name?: string;
   /** The unit of data displayed in the axis */
-  unit?: string | number;
+  unit?: string;
   range?: Array<number>;
   /** axis react component */
   AxisComp?: any;
