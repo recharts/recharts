@@ -377,6 +377,38 @@ function ScatterLine(props: Props) {
   );
 }
 
+function ScatterErrorBars(props: Props & { isAnimationFinished: boolean }) {
+  const { points, xAxis, yAxis, children, isAnimationActive, isAnimationFinished } = props;
+  if (isAnimationActive && !isAnimationFinished) {
+    return null;
+  }
+  const errorBarItems = findAllByType(children, ErrorBar);
+
+  if (!errorBarItems) {
+    return null;
+  }
+
+  return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
+    const { direction, dataKey: errorDataKey } = item.props;
+    return React.cloneElement(item, {
+      key: `${direction}-${errorDataKey}-${points[i]}`,
+      data: points,
+      xAxis,
+      yAxis,
+      layout: direction === 'x' ? 'vertical' : 'horizontal',
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
+        return {
+          x: dataPoint.cx,
+          y: dataPoint.cy,
+          value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
+          errorVal: getValueByDataKey(dataPoint, dataKey),
+        };
+      },
+    });
+  });
+}
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -532,40 +564,6 @@ export class Scatter extends PureComponent<Props, State> {
     return this.renderSymbolsStatically(points);
   }
 
-  renderErrorBar() {
-    const { isAnimationActive } = this.props;
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-
-    const { points, xAxis, yAxis, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
-
-    if (!errorBarItems) {
-      return null;
-    }
-
-    return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
-      const { direction, dataKey: errorDataKey } = item.props;
-      return React.cloneElement(item, {
-        key: `${direction}-${errorDataKey}-${points[i]}`,
-        data: points,
-        xAxis,
-        yAxis,
-        layout: direction === 'x' ? 'vertical' : 'horizontal',
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
-          return {
-            x: dataPoint.cx,
-            y: dataPoint.cy,
-            value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
-            errorVal: getValueByDataKey(dataPoint, dataKey),
-          };
-        },
-      });
-    });
-  }
-
   render() {
     const { hide, points, className, xAxis, yAxis, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
@@ -608,7 +606,7 @@ export class Scatter extends PureComponent<Props, State> {
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClipX || needClipY ? <ClipPath clipPathId={`clipPath-${clipPathId}`} /> : null}
           <ScatterLine {...this.props} />
-          {this.renderErrorBar()}
+          <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
           <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
