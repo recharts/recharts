@@ -70,6 +70,7 @@ export const implicitXAxis: XAxisSettings = {
   id: undefined,
   includeHidden: false,
   mirror: false,
+  name: undefined,
   orientation: 'bottom',
   padding: { left: 0, right: 0 },
   reversed: false,
@@ -77,6 +78,7 @@ export const implicitXAxis: XAxisSettings = {
   tickCount: 5,
   ticks: undefined,
   type: 'category',
+  unit: undefined,
 };
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
@@ -102,6 +104,7 @@ export const implicitYAxis: YAxisSettings = {
   id: undefined,
   includeHidden: false,
   mirror: false,
+  name: undefined,
   orientation: 'left',
   padding: { top: 0, bottom: 0 },
   reversed: false,
@@ -109,6 +112,7 @@ export const implicitYAxis: YAxisSettings = {
   tickCount: 5,
   ticks: undefined,
   type: 'number',
+  unit: undefined,
   width: 60,
 };
 

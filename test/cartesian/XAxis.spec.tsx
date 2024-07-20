@@ -1286,6 +1286,8 @@ describe('<XAxis />', () => {
             height={31}
             orientation="top"
             mirror
+            name="axis name"
+            unit="axis unit"
           />
           <Customized component={Comp} />
         </BarChart>,
@@ -1293,6 +1295,8 @@ describe('<XAxis />', () => {
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        name: 'axis name',
+        unit: 'axis unit',
         hide: false,
         mirror: true,
         orientation: 'top',
@@ -1332,6 +1336,8 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        name: undefined,
+        unit: undefined,
         hide: false,
         mirror: false,
         height: 30,
@@ -1369,6 +1375,8 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          name: undefined,
+          unit: undefined,
           hide: false,
           mirror: false,
           orientation: 'bottom',
@@ -1391,6 +1399,8 @@ describe('<XAxis />', () => {
           reversed: false,
         },
         bar: {
+          name: undefined,
+          unit: undefined,
           hide: false,
           mirror: false,
           orientation: 'bottom',
@@ -1422,6 +1432,8 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        name: undefined,
+        unit: undefined,
         hide: false,
         mirror: false,
         orientation: 'bottom',
@@ -3952,6 +3964,8 @@ describe('<XAxis />', () => {
         },
       ]);
       const expectedSettings: XAxisSettings = {
+        name: undefined,
+        unit: undefined,
         hide: false,
         mirror: false,
         orientation: 'bottom',

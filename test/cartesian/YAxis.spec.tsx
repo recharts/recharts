@@ -882,6 +882,8 @@ describe('<YAxis />', () => {
             width={32}
             orientation="right"
             mirror
+            name="axis name"
+            unit="axis unit"
           />
           <Customized component={Comp} />
         </BarChart>,
@@ -889,6 +891,8 @@ describe('<YAxis />', () => {
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        name: 'axis name',
+        unit: 'axis unit',
         hide: false,
         orientation: 'right',
         mirror: true,
@@ -928,6 +932,8 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        name: undefined,
+        unit: undefined,
         orientation: 'left',
         mirror: false,
         width: 60,
@@ -965,6 +971,8 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          name: undefined,
+          unit: undefined,
           hide: false,
           orientation: 'left',
           mirror: false,
@@ -987,6 +995,8 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
         bar: {
+          name: undefined,
+          unit: undefined,
           hide: false,
           orientation: 'left',
           mirror: false,
@@ -1018,6 +1028,8 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        name: undefined,
+        unit: undefined,
         hide: false,
         mirror: false,
         orientation: 'left',

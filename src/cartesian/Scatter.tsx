@@ -17,7 +17,7 @@ import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
-import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp } from '../util/ChartUtils';
+import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp, RechartsScale } from '../util/ChartUtils';
 import {
   LegendType,
   AnimationTiming,
@@ -48,6 +48,7 @@ import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -218,6 +219,120 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 const noErrorBars: never[] = [];
 
+type AxisWithScale = Omit<AxisSettings, 'scale'> & { scale: RechartsScale };
+
+function computeScatterPoints({
+  displayedData,
+  xAxis,
+  yAxis,
+  zAxis,
+  scatterSettings,
+  xAxisTicks,
+  yAxisTicks,
+  cells,
+}: {
+  displayedData: ReadonlyArray<any>;
+  xAxis: AxisWithScale;
+  yAxis: AxisWithScale;
+  zAxis: ZAxisSettings;
+  scatterSettings: {
+    dataKey: DataKey<any> | undefined;
+    tooltipType: TooltipType;
+    name: string | number;
+  };
+  xAxisTicks: TickItem[];
+  yAxisTicks: TickItem[];
+  cells: ReadonlyArray<ReactElement> | undefined;
+}): ReadonlyArray<ScatterPointItem> {
+  const xAxisDataKey = isNil(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
+  const yAxisDataKey = isNil(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
+  const zAxisDataKey = zAxis && zAxis.dataKey;
+  const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
+  const defaultZ = defaultRangeZ && defaultRangeZ[0];
+  const xBandSize = xAxis.scale.bandwidth ? xAxis.scale.bandwidth() : 0;
+  const yBandSize = yAxis.scale.bandwidth ? yAxis.scale.bandwidth() : 0;
+  return displayedData.map((entry, index): ScatterPointItem => {
+    const x = getValueByDataKey(entry, xAxisDataKey);
+    const y = getValueByDataKey(entry, yAxisDataKey);
+    const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
+
+    const tooltipPayload: Array<TooltipPayloadEntry> = [
+      {
+        // @ts-expect-error name prop should not have dataKey in it
+        name: isNil(xAxis.dataKey) ? scatterSettings.name : xAxis.name || xAxis.dataKey,
+        unit: xAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: x,
+        payload: entry,
+        dataKey: xAxisDataKey,
+        type: scatterSettings.tooltipType,
+      },
+      {
+        // @ts-expect-error name prop should not have dataKey in it
+        name: isNil(yAxis.dataKey) ? scatterSettings.name : yAxis.name || yAxis.dataKey,
+        unit: yAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: y,
+        payload: entry,
+        dataKey: yAxisDataKey,
+        type: scatterSettings.tooltipType,
+      },
+    ];
+
+    if (z !== '-') {
+      tooltipPayload.push({
+        // @ts-expect-error name prop should not have dataKey in it
+        name: zAxis.name || zAxis.dataKey,
+        unit: zAxis.unit || '',
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        value: z,
+        payload: entry,
+        dataKey: zAxisDataKey,
+        type: scatterSettings.tooltipType,
+      });
+    }
+
+    const cx = getCateCoordinateOfLine({
+      axis: xAxis,
+      ticks: xAxisTicks,
+      bandSize: xBandSize,
+      entry,
+      index,
+      dataKey: xAxisDataKey,
+    });
+    const cy = getCateCoordinateOfLine({
+      axis: yAxis,
+      ticks: yAxisTicks,
+      bandSize: yBandSize,
+      entry,
+      index,
+      dataKey: yAxisDataKey,
+    });
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    const size = z !== '-' ? zAxis.scale(z) : defaultZ;
+    const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
+
+    return {
+      ...entry,
+      cx,
+      cy,
+      x: cx - radius,
+      y: cy - radius,
+      xAxis,
+      yAxis,
+      zAxis,
+      width: 2 * radius,
+      height: 2 * radius,
+      size,
+      node: { x, y, z },
+      tooltipPayload,
+      tooltipPosition: { x: cx, y: cy },
+      payload: entry,
+      ...(cells && cells[index] && cells[index].props),
+    };
+  });
+}
+
 export class Scatter extends PureComponent<Props, State> {
   static displayName = 'Scatter';
 
@@ -266,92 +381,20 @@ export class Scatter extends PureComponent<Props, State> {
     displayedData: any[];
     offset: ChartOffset;
   }): ScatterComposedData => {
-    const { tooltipType } = item.props;
     const cells = findAllByType(item.props.children, Cell);
-    const xAxisDataKey = isNil(xAxis.dataKey) ? item.props.dataKey : xAxis.dataKey;
-    const yAxisDataKey = isNil(yAxis.dataKey) ? item.props.dataKey : yAxis.dataKey;
-    const zAxisDataKey = zAxis && zAxis.dataKey;
-    const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
-    const defaultZ = defaultRangeZ && defaultRangeZ[0];
-    const xBandSize = (xAxis.scale as any).bandwidth ? (xAxis.scale as any).bandwidth() : 0;
-    const yBandSize = (yAxis.scale as any).bandwidth ? (yAxis.scale as any).bandwidth() : 0;
-    const points: ReadonlyArray<ScatterPointItem> = displayedData.map((entry, index): ScatterPointItem => {
-      const x = getValueByDataKey(entry, xAxisDataKey);
-      const y = getValueByDataKey(entry, yAxisDataKey);
-      const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
-      const tooltipPayload: Array<TooltipPayloadEntry> = [
-        {
-          // @ts-expect-error name prop should not have dataKey in it
-          name: isNil(xAxis.dataKey) ? item.props.name : xAxis.name || xAxis.dataKey,
-          unit: xAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: x,
-          payload: entry,
-          dataKey: xAxisDataKey,
-          type: tooltipType,
-        },
-        {
-          // @ts-expect-error name prop should not have dataKey in it
-          name: isNil(yAxis.dataKey) ? item.props.name : yAxis.name || yAxis.dataKey,
-          unit: yAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: y,
-          payload: entry,
-          dataKey: yAxisDataKey,
-          type: tooltipType,
-        },
-      ];
-
-      if (z !== '-') {
-        tooltipPayload.push({
-          // @ts-expect-error name prop should not have dataKey in it
-          name: zAxis.name || zAxis.dataKey,
-          unit: zAxis.unit || '',
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          value: z,
-          payload: entry,
-          dataKey: zAxisDataKey,
-          type: tooltipType,
-        });
-      }
-      const cx = getCateCoordinateOfLine({
-        axis: xAxis,
-        ticks: xAxisTicks,
-        bandSize: xBandSize,
-        entry,
-        index,
-        dataKey: xAxisDataKey,
-      });
-      const cy = getCateCoordinateOfLine({
-        axis: yAxis,
-        ticks: yAxisTicks,
-        bandSize: yBandSize,
-        entry,
-        index,
-        dataKey: yAxisDataKey,
-      });
-      // @ts-expect-error getValueByDataKey does not validate the output type
-      const size = z !== '-' ? zAxis.scale(z) : defaultZ;
-      const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
-
-      return {
-        ...entry,
-        cx,
-        cy,
-        x: cx - radius,
-        y: cy - radius,
-        xAxis,
-        yAxis,
-        zAxis,
-        width: 2 * radius,
-        height: 2 * radius,
-        size,
-        node: { x, y, z },
-        tooltipPayload,
-        tooltipPosition: { x: cx, y: cy },
-        payload: entry,
-        ...(cells && cells[index] && cells[index].props),
-      };
+    const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
+      displayedData,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      xAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      yAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      zAxis,
+      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
+      scatterSettings: item.props,
+      xAxisTicks,
+      yAxisTicks,
+      cells,
     });
 
     return {

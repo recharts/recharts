@@ -39,6 +39,8 @@ export type AxisSettings = {
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
   hide: boolean;
+  unit: string | undefined;
+  name: string | undefined;
 };
 
 export type XAxisSettings = AxisSettings & {
@@ -53,7 +55,12 @@ export type YAxisSettings = AxisSettings & {
   orientation: YAxisOrientation;
 };
 
-export type ZAxisSettings = AxisSettings;
+export type ZAxisSettings = {
+  dataKey: AxisSettings['dataKey'];
+  name: AxisSettings['name'];
+  unit: AxisSettings['unit'];
+  range: number[];
+};
 
 type AxisMapState = {
   xAxis: Record<AxisId, XAxisSettings>;
