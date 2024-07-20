@@ -1,8 +1,12 @@
-import { render } from '@testing-library/react';
 import React from 'react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { expect } from 'vitest';
-import { CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
+import { describe, it, expect, vi } from 'vitest';
+import { CartesianGrid, Customized, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
+import { assertNotNull } from '../helper/assertNotNull';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectZAxisSettings } from '../../src/state/selectors/axisSelectors';
+import { ZAxisSettings } from '../../src/state/axisMapSlice';
 
 describe('<ZAxis />', () => {
   const data = [
@@ -19,16 +23,17 @@ describe('<ZAxis />', () => {
       yAxis: 1400,
     },
   ];
-  it("Don't render anything", () => {
+  it('should not render anything', () => {
     render(
       <Surface width={500} height={500}>
         <ZAxis dataKey="x" name="stature" unit="cm" />
       </Surface>,
     );
     const svg = document.querySelector('svg');
+    assertNotNull(svg);
 
     expect(svg).toBeInTheDocument();
-    expect(svg?.children).toHaveLength(2);
+    expect(svg.children).toHaveLength(2);
   });
 
   it('Renders Scatters symbols and tooltips with Z axis data', async () => {
@@ -74,5 +79,35 @@ describe('<ZAxis />', () => {
     await userEvent.hover(secondShape);
     expect(tooltip).toBeVisible();
     expect(tooltip).toHaveTextContent(`xAxis : ${data[1].xAxis}yAxis : ${data[1].yAxis}test name : ${data[1].zAxis}km`);
+  });
+
+  describe('state integration', () => {
+    it('should publish its configuration to redux store', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
+        return null;
+      };
+      render(
+        <ScatterChart height={400} width={400}>
+          <XAxis dataKey="xAxis" type="number" />
+          <YAxis dataKey="yAxis" />
+          <ZAxis zAxisId="zaxis id" dataKey="zAxis dataKey" name="test name" range={[0, 2000]} unit="km" />
+          <CartesianGrid />
+          <Scatter data={data} name="pageData" />
+          <Tooltip />
+          <Customized component={Comp} />
+        </ScatterChart>,
+      );
+      const expected: ZAxisSettings = {
+        id: 'zaxis id',
+        dataKey: 'zAxis dataKey',
+        name: 'test name',
+        unit: 'km',
+        range: [0, 2000],
+      };
+      expect(spy).toHaveBeenLastCalledWith(expected);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
   });
 });

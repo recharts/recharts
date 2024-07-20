@@ -1814,6 +1814,7 @@ export const generateCategoricalChart = ({
       ReferenceDot: { handler: renderAsIs },
       XAxis: { handler: renderAsIs },
       YAxis: { handler: renderAsIs },
+      ZAxis: { handler: renderAsIs },
       Brush: { handler: renderAsIs },
       Bar: { handler: this.renderGraphicChild },
       Line: { handler: this.renderGraphicChild },

@@ -56,6 +56,7 @@ export type YAxisSettings = AxisSettings & {
 };
 
 export type ZAxisSettings = {
+  id: AxisId;
   dataKey: AxisSettings['dataKey'];
   name: AxisSettings['name'];
   unit: AxisSettings['unit'];
@@ -94,9 +95,15 @@ const axisMapSlice = createSlice({
     removeYAxis(state, action: PayloadAction<YAxisSettings>) {
       delete state.yAxis[action.payload.id];
     },
+    addZAxis(state, action: PayloadAction<ZAxisSettings>) {
+      state.zAxis[action.payload.id] = castDraft(action.payload);
+    },
+    removeZAxis(state, action: PayloadAction<ZAxisSettings>) {
+      delete state.zAxis[action.payload.id];
+    },
   },
 });
 
-export const { addXAxis, removeXAxis, addYAxis, removeYAxis } = axisMapSlice.actions;
+export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis } = axisMapSlice.actions;
 
 export const axisMapReducer = axisMapSlice.reducer;
