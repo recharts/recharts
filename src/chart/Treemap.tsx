@@ -16,8 +16,8 @@ import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
-import { AnimationDuration, AnimationTiming, DataKey } from '../util/types';
-import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
+import { ReportChartMargin, ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -519,6 +519,14 @@ function createTooltipPayload(activeNode: TreemapNode) {
   ];
 }
 
+// Why is margin not a treemap prop? No clue. Probably it should be
+const defaultTreemapMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
 export class Treemap extends PureComponent<Props, State> {
   static displayName = 'Treemap';
 
@@ -895,6 +903,7 @@ export class Treemap extends PureComponent<Props, State> {
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
         <ReportChartSize width={this.props.width} height={this.props.height} />
+        <ReportChartMargin margin={defaultTreemapMargin} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
             <SetTooltipEntrySettings

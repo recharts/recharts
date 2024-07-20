@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { Customized, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
 import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
-import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -63,14 +63,16 @@ describe('<Treemap />', () => {
   });
 
   describe('Treemap layout context', () => {
-    it('should set width and height in state', () => {
+    it('should set width and height and margin in state', () => {
       const sizeSpy = vi.fn();
       const viewBoxSpy = vi.fn();
+      const marginSpy = vi.fn();
       const Comp = (): null => {
         const width = useChartWidth();
         const height = useChartHeight();
         sizeSpy({ width, height });
         viewBoxSpy(useViewBox());
+        marginSpy(useMargin());
         return null;
       };
       render(
@@ -78,6 +80,12 @@ describe('<Treemap />', () => {
           <Customized component={<Comp />} />
         </Treemap>,
       );
+      expect(marginSpy).toHaveBeenLastCalledWith({
+        bottom: 0,
+        left: 0,
+        right: 0,
+        top: 0,
+      });
       expect(sizeSpy).toHaveBeenLastCalledWith({ width: 100, height: 50 });
       expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
       expect(sizeSpy).toHaveBeenCalledTimes(3);

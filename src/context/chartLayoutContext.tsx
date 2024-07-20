@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
-import { selectChartOffset } from '../state/selectors/selectChartOffset';
+import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
 export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
@@ -190,7 +190,7 @@ export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined 
   useAppSelector(selectArbitraryPolarRadiusAxis);
 
 export const useViewBox = (): CartesianViewBox => {
-  return useContext(ViewBoxContext);
+  return useAppSelector(selectChartViewBox);
 };
 
 const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
@@ -206,8 +206,14 @@ export const useChartHeight = (): number => {
   return useAppSelector(selectChartHeight);
 };
 
+const manyComponentsThrowErrorsIfMarginIsUndefined: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
 export const useMargin = (): Margin => {
-  return useContext(MarginContext);
+  return useAppSelector(state => state.layout.margin) ?? manyComponentsThrowErrorsIfMarginIsUndefined;
 };
 
 export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
@@ -223,5 +229,13 @@ export const ReportChartSize = (props: Size): null => {
     dispatch(setChartSize(props));
   }, [dispatch, props]);
 
+  return null;
+};
+
+export const ReportChartMargin = ({ margin }: { margin: Margin }): null => {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setMargin(margin));
+  }, [dispatch, margin]);
   return null;
 };

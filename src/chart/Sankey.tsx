@@ -13,7 +13,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
-import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -446,6 +446,14 @@ interface State {
   tooltipPortal?: HTMLElement | null;
 }
 
+// Why is margin not a Sankey prop? No clue. Probably it should be
+const defaultSankeyMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
 export class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
 
@@ -740,6 +748,7 @@ export class Sankey extends PureComponent<Props, State> {
     return (
       <RechartsStoreProvider reduxStoreName={className ?? 'Sankey'}>
         <ReportChartSize width={width} height={height} />
+        <ReportChartMargin margin={defaultSankeyMargin} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
             <ViewBoxContext.Provider value={viewBox}>

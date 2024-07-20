@@ -6,13 +6,14 @@ import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
+import { Margin } from '../util/types';
 
 export interface SunburstData {
   [key: string]: any;
@@ -113,6 +114,14 @@ function getTooltipEntrySettings({
     },
   };
 }
+
+// Why is margin not a sunburst prop? No clue. Probably it should be
+const defaultSunburstMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
 
 export const SunburstChart = ({
   className,
@@ -237,6 +246,7 @@ export const SunburstChart = ({
   return (
     <RechartsStoreProvider reduxStoreName={className ?? 'SunburstChart'}>
       <ReportChartSize width={width} height={height} />
+      <ReportChartMargin margin={defaultSunburstMargin} />
       <CursorPortalContext.Provider value={cursorPortal}>
         <TooltipPortalContext.Provider value={tooltipPortal}>
           <ViewBoxContext.Provider value={viewBox}>

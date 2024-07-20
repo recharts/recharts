@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, MockInstance, test, vi } from 'vitest';
-import { Brush, CartesianAxis, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
+import { Brush, CartesianAxis, Customized, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { CurveType } from '../../src/shape/Curve';
@@ -10,6 +10,8 @@ import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltip
 import { PageData } from '../_data';
 import { expectXAxisTicks } from '../helper/expectAxisTicks';
 import { generateMockData } from '../helper/generateMockData';
+import { useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useAppSelector } from '../../src/state/hooks';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
@@ -1404,104 +1406,95 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       ),
     );
 
-    it(
-      'should provide axisMaps if axes are specified',
-      testChartLayoutContext(
-        props => (
-          <LineChart width={100} height={50} barSize={20}>
-            <XAxis dataKey="number" type="number" />
-            <YAxis type="category" dataKey="name" />
-            {props.children}
-          </LineChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 10, width: 30, x: 65, y: 5 });
-          expect(xAxisMap).toMatchInlineSnapshot(`
-            {
-              "0": {
-                "allowDataOverflow": false,
-                "allowDecimals": true,
-                "allowDuplicatedCategory": true,
-                "axisType": "xAxis",
-                "bandSize": 0,
-                "categoricalDomain": [],
-                "dataKey": "number",
-                "domain": [
-                  0,
-                  -Infinity,
-                ],
-                "duplicateDomain": undefined,
-                "height": 30,
-                "hide": false,
-                "isCategorical": true,
-                "layout": "horizontal",
-                "mirror": false,
-                "niceTicks": [
-                  0,
-                  -Infinity,
-                  -Infinity,
-                  -Infinity,
-                  -Infinity,
-                ],
-                "orientation": "bottom",
-                "originalDomain": [
-                  0,
-                  "auto",
-                ],
-                "padding": {
-                  "left": 0,
-                  "right": 0,
-                },
-                "realScaleType": "linear",
-                "reversed": false,
-                "scale": [Function],
-                "tickCount": 5,
-                "type": "number",
-                "width": 30,
-                "x": 65,
-                "xAxisId": 0,
-                "y": 15,
-              },
-            }
-          `);
-          expect(yAxisMap).toMatchInlineSnapshot(`
-            {
-              "0": {
-                "allowDataOverflow": false,
-                "allowDecimals": true,
-                "allowDuplicatedCategory": true,
-                "axisType": "yAxis",
-                "bandSize": 0,
-                "categoricalDomain": undefined,
-                "dataKey": "name",
-                "domain": [],
-                "duplicateDomain": undefined,
-                "height": 10,
-                "hide": false,
-                "isCategorical": false,
-                "layout": "horizontal",
-                "mirror": false,
-                "orientation": "left",
-                "originalDomain": undefined,
-                "padding": {
-                  "bottom": 0,
-                  "top": 0,
-                },
-                "realScaleType": "point",
-                "reversed": false,
-                "scale": [Function],
-                "tickCount": 5,
-                "type": "category",
-                "width": 60,
-                "x": 5,
-                "y": 5,
-                "yAxisId": 0,
-              },
-            }
-          `);
+    it('should provide axisMaps if axes are specified', () => {
+      const clipPathSpy = vi.fn();
+      const viewBoxSpy = vi.fn();
+      const xAxisMapSpy = vi.fn();
+      const yAxisMapSpy = vi.fn();
+      const Comp = (): null => {
+        clipPathSpy(useClipPathId());
+        viewBoxSpy(useViewBox());
+        xAxisMapSpy(useAppSelector(state => state.axis.xAxisMap));
+        yAxisMapSpy(useAppSelector(state => state.axis.yAxisMap));
+        return null;
+      };
+      render(
+        <LineChart width={100} height={50} barSize={20}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Customized component={<Comp />} />
+        </LineChart>,
+      );
+      expect(clipPathSpy).toHaveBeenLastCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(viewBoxSpy).toHaveBeenLastCalledWith({ height: 10, width: 30, x: 65, y: 5 });
+      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+      expect(xAxisMapSpy).toHaveBeenLastCalledWith({
+        '0': {
+          allowDataOverflow: false,
+          allowDecimals: true,
+          allowDuplicatedCategory: true,
+          axisType: 'xAxis',
+          bandSize: 0,
+          categoricalDomain: [],
+          dataKey: 'number',
+          domain: [0, -Infinity],
+          duplicateDomain: undefined,
+          height: 30,
+          hide: false,
+          isCategorical: true,
+          layout: 'horizontal',
+          mirror: false,
+          niceTicks: [0, -Infinity, -Infinity, -Infinity, -Infinity],
+          orientation: 'bottom',
+          originalDomain: [0, 'auto'],
+          padding: {
+            left: 0,
+            right: 0,
+          },
+          realScaleType: 'linear',
+          reversed: false,
+          scale: expect.any(Function),
+          tickCount: 5,
+          type: 'number',
+          width: 30,
+          x: 65,
+          xAxisId: 0,
+          y: 15,
         },
-      ),
-    );
+      });
+      expect(yAxisMapSpy).toHaveBeenLastCalledWith({
+        '0': {
+          allowDataOverflow: false,
+          allowDecimals: true,
+          allowDuplicatedCategory: true,
+          axisType: 'yAxis',
+          bandSize: 0,
+          categoricalDomain: undefined,
+          dataKey: 'name',
+          domain: [],
+          duplicateDomain: undefined,
+          height: 10,
+          hide: false,
+          isCategorical: false,
+          layout: 'horizontal',
+          mirror: false,
+          orientation: 'left',
+          originalDomain: undefined,
+          padding: {
+            bottom: 0,
+            top: 0,
+          },
+          realScaleType: 'point',
+          reversed: false,
+          scale: expect.any(Function),
+          tickCount: 5,
+          type: 'category',
+          width: 60,
+          x: 5,
+          y: 5,
+          yAxisId: 0,
+        },
+      });
+    });
   });
 });
