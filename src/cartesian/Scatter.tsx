@@ -22,7 +22,6 @@ import {
   LegendType,
   AnimationTiming,
   D3Scale,
-  ChartOffset,
   DataKey,
   TickItem,
   adaptEventsOfChild,
@@ -49,6 +48,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
+import { ClipPath } from '../container/ClipPath';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -114,7 +114,7 @@ interface State {
   prevAnimationId?: number;
 }
 
-type ScatterComposedData = ChartOffset & {
+type ScatterComposedData = {
   points: ReadonlyArray<ScatterPointItem>;
 };
 
@@ -368,7 +368,6 @@ export class Scatter extends PureComponent<Props, State> {
     displayedData,
     xAxisTicks,
     yAxisTicks,
-    offset,
   }: {
     props: Props;
     xAxis: Props['xAxis'];
@@ -379,7 +378,6 @@ export class Scatter extends PureComponent<Props, State> {
     item: Scatter;
     bandSize: number;
     displayedData: any[];
-    offset: ChartOffset;
   }): ScatterComposedData => {
     const cells = findAllByType(item.props.children, Cell);
     const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
@@ -399,7 +397,6 @@ export class Scatter extends PureComponent<Props, State> {
 
     return {
       points,
-      ...offset,
     };
   };
 
@@ -565,7 +562,7 @@ export class Scatter extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, points, line, className, xAxis, yAxis, left, top, width, height, id, isAnimationActive } = this.props;
+    const { hide, points, line, className, xAxis, yAxis, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
       return (
         <>
@@ -604,18 +601,7 @@ export class Scatter extends PureComponent<Props, State> {
         <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? (
-            <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
-            </defs>
-          ) : null}
+          {needClipX || needClipY ? <ClipPath clipPathId={`clipPath-${clipPathId}`} /> : null}
           {line && this.renderLine()}
           {this.renderErrorBar()}
           <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
