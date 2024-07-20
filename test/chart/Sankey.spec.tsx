@@ -1,9 +1,10 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { Sankey, XAxis, YAxis } from '../../src';
+import { Customized, Sankey, XAxis, YAxis } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { exampleSankeyData } from '../_data';
+import { useChartHeight, useChartWidth } from '../../src/context/chartLayoutContext';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -47,26 +48,30 @@ describe('<Sankey />', () => {
         ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
           expect(clipPathId).toBe(undefined);
           expect(viewBox).toEqual({ x: 0, y: 0, width: 1000, height: 500 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
+          expect(xAxisMap).toEqual({});
+          expect(yAxisMap).toEqual({});
         },
       ),
     );
 
-    it(
-      'should not set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <Sankey width={100} height={50} data={exampleSankeyData}>
-            {props.children}
-          </Sankey>
-        ),
-        ({ width, height }) => {
-          expect.soft(width).toBe(0);
-          expect.soft(height).toBe(0);
-        },
-      ),
-    );
+    it('should set width and height in context', () => {
+      const widthSpy = vi.fn();
+      const heightSpy = vi.fn();
+      const Comp = (): null => {
+        widthSpy(useChartWidth());
+        heightSpy(useChartHeight());
+        return null;
+      };
+      render(
+        <Sankey width={100} height={50} data={exampleSankeyData}>
+          <Customized component={<Comp />} />
+        </Sankey>,
+      );
+      expect(widthSpy).toHaveBeenLastCalledWith(100);
+      expect(heightSpy).toHaveBeenLastCalledWith(50);
+      expect(widthSpy).toHaveBeenCalledTimes(3);
+      expect(heightSpy).toHaveBeenCalledTimes(3);
+    });
 
     it('should not throw if axes are provided - they are not an allowed child anyway', () => {
       expect(() =>
