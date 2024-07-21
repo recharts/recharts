@@ -27,7 +27,10 @@ class DecimalCSS {
     return new DecimalCSS(parseFloat(numStr), unit ?? '');
   }
 
-  constructor(public num: number, public unit: string) {
+  constructor(
+    public num: number,
+    public unit: string,
+  ) {
     this.num = num;
     this.unit = unit;
 

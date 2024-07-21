@@ -522,7 +522,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
 
-      const button = container.querySelector('BUTTON') as HTMLButtonElement;
+      const button = container.querySelector('button') as HTMLButtonElement;
       fireEvent.click(button);
 
       // Key events should now go in reverse

@@ -186,7 +186,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
   // TODO: update when moving synchronization to redux
   // TODO: where should we put this check for tooltipEventType? Is anything else affected?
-  const finalLabel = tooltipEventType === 'axis' ? labelFromContext ?? labelFromRedux : undefined;
+  const finalLabel = tooltipEventType === 'axis' ? (labelFromContext ?? labelFromRedux) : undefined;
 
   const hasPayload = finalPayload.length > 0;
 

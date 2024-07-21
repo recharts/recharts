@@ -593,7 +593,7 @@ export const HighlightAndZoom = {
             top,
             bottom2,
             top2,
-          } as any),
+          }) as any,
       );
     };
 

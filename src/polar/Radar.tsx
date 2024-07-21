@@ -166,7 +166,7 @@ export class Radar extends PureComponent<Props, State> {
     const { cx, cy } = angleAxis;
     let isRange = false;
     const points: RadarPoint[] = [];
-    const angleBandSize = angleAxis.type !== 'number' ? bandSize ?? 0 : 0;
+    const angleBandSize = angleAxis.type !== 'number' ? (bandSize ?? 0) : 0;
 
     displayedData.forEach((entry, i) => {
       const name = getValueByDataKey(entry, angleAxis.dataKey, i);

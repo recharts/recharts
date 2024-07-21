@@ -125,16 +125,16 @@ describe('addToTreemapNodeIndex + treemapPayloadSearcher tandem', () => {
   });
   it('should return index for root node and then look it up', () => {
     expect(computedRootNode.children[4]).toBeDefined();
-    const activeIndex = addToTreemapNodeIndex(undefined, 4);
+    const activeIndex = addToTreemapNodeIndex(4);
     expect(activeIndex).toEqual('children[4]');
     expect(treemapPayloadSearcher(computedRootNode, activeIndex)).toBe(computedRootNode.children[4]);
   });
 
   it('should return index for nested node and then look it up', () => {
     const level1 = computedRootNode.children[0];
-    const activeIndex1 = addToTreemapNodeIndex(undefined, 0);
+    const activeIndex1 = addToTreemapNodeIndex(0);
     const level2 = level1.children[1];
-    const activeIndex2 = addToTreemapNodeIndex(activeIndex1, 1);
+    const activeIndex2 = addToTreemapNodeIndex(1, activeIndex1);
     expect(activeIndex2).toEqual('children[0]children[1]');
     expect(level1).toBeDefined();
     expect(level2).toBeDefined();

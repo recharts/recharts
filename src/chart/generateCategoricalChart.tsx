@@ -1174,10 +1174,10 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    static getDerivedStateFromProps = (
+    static getDerivedStateFromProps(
       nextProps: CategoricalChartProps,
       prevState: CategoricalChartState,
-    ): CategoricalChartState => {
+    ): CategoricalChartState {
       const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
       const { dataStartIndex, dataEndIndex } = prevState;
 
@@ -1263,8 +1263,8 @@ export const generateCategoricalChart = ({
         // specifically check for Brush - if it exists and the start and end indexes are different, re-render with the new ones
         const brush = findChildByType(children, Brush);
 
-        const startIndex = brush ? brush.props?.startIndex ?? dataStartIndex : dataStartIndex;
-        const endIndex = brush ? brush.props?.endIndex ?? dataEndIndex : dataEndIndex;
+        const startIndex = brush ? (brush.props?.startIndex ?? dataStartIndex) : dataStartIndex;
+        const endIndex = brush ? (brush.props?.endIndex ?? dataEndIndex) : dataEndIndex;
         const hasDifferentStartOrEndIndex = startIndex !== dataStartIndex || endIndex !== dataEndIndex;
 
         // update configuration in children
@@ -1290,7 +1290,7 @@ export const generateCategoricalChart = ({
       }
 
       return null;
-    };
+    }
 
     componentDidUpdate(prevProps: CategoricalChartProps) {
       // Check to see if the Tooltip updated. If so, re-check default tooltip position
