@@ -53,7 +53,6 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
-import { createStructuredSelector } from 'reselect';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
