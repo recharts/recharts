@@ -583,7 +583,7 @@ export class Bar extends PureComponent<Props, State> {
       return null;
     }
 
-    const { data, xAxis, yAxis, layout, children } = this.props;
+    const { data, xAxisId, yAxisId, layout, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
@@ -617,8 +617,8 @@ export class Bar extends PureComponent<Props, State> {
           React.cloneElement(item, {
             key: `error-bar-${clipPathId}-${item.props.dataKey}`,
             data,
-            xAxis,
-            yAxis,
+            xAxisId,
+            yAxisId,
             layout,
             offset,
             dataPointFormatter,

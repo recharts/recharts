@@ -1,6 +1,6 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { TooltipTrigger } from '../chart/types';
-import { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
+import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { ChartCoordinate, DataKey } from '../util/types';
 
 /**

@@ -342,7 +342,7 @@ export class Line extends PureComponent<Props, State> {
       return null;
     }
 
-    const { points, xAxis, yAxis, layout, children } = this.props;
+    const { points, xAxisId, yAxisId, layout, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
@@ -369,8 +369,8 @@ export class Line extends PureComponent<Props, State> {
           React.cloneElement(item, {
             key: `bar-${item.props.dataKey}`,
             data: points,
-            xAxis,
-            yAxis,
+            xAxisId,
+            yAxisId,
             layout,
             dataPointFormatter,
           }),
