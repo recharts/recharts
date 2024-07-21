@@ -1,7 +1,19 @@
 import React from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { CartesianGrid, LineChart, ComposedChart, BarChart, ScatterChart, AreaChart, Surface } from '../../src';
+import {
+  CartesianGrid,
+  LineChart,
+  ComposedChart,
+  BarChart,
+  ScatterChart,
+  AreaChart,
+  Surface,
+  Area,
+  YAxis,
+  XAxis,
+  Brush,
+} from '../../src';
 import {
   GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
@@ -9,6 +21,7 @@ import {
 } from '../../src/cartesian/CartesianGrid';
 import { ChartOffset, Margin } from '../../src/util/types';
 import { assertNotNull } from '../helper/assertNotNull';
+import { pageData } from '../../storybook/stories/data';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
@@ -53,6 +66,161 @@ function expectVerticalGridLines(container: Element, expectedLines: ReadonlyArra
     expect.soft(line).toHaveAttribute('y2', expect.any(String));
   });
 }
+
+describe('CartesianGrid', () => {
+  test('renders 2 grid lines in an empty chart', () => {
+    const { container } = render(
+      <AreaChart width={500} height={500}>
+        <CartesianGrid />
+      </AreaChart>,
+    );
+    expectHorizontalGridLines(container, [
+      {
+        y: '5',
+      },
+      {
+        y: '495',
+      },
+    ]);
+    expectVerticalGridLines(container, [
+      {
+        x: '5',
+      },
+      {
+        x: '495',
+      },
+    ]);
+  });
+
+  it('renders more grid lines when the chart has data', () => {
+    const { container } = render(
+      <AreaChart width={500} height={500} data={pageData}>
+        <Area dataKey="pv" />
+        <CartesianGrid />
+      </AreaChart>,
+    );
+    expectHorizontalGridLines(container, [
+      {
+        y: '495',
+      },
+      {
+        y: '372.5',
+      },
+      {
+        y: '250',
+      },
+      {
+        y: '127.5',
+      },
+      {
+        y: '5',
+      },
+    ]);
+    expectVerticalGridLines(container, [
+      {
+        x: '5',
+      },
+      {
+        x: '86.66666666666667',
+      },
+      {
+        x: '168.33333333333334',
+      },
+      {
+        x: '250',
+      },
+      {
+        x: '331.6666666666667',
+      },
+      {
+        x: '413.33333333333337',
+      },
+      {
+        x: '495',
+      },
+    ]);
+  });
+
+  it('renders as many grid lines as the axis has ticks', () => {
+    const { container } = render(
+      <AreaChart width={500} height={500} data={pageData}>
+        <Area dataKey="pv" />
+        <YAxis tickCount={6} />
+        <XAxis dataKey="uv" type="number" tickCount={3} />
+        <CartesianGrid />
+      </AreaChart>,
+    );
+    expectHorizontalGridLines(container, [
+      {
+        y: '465',
+      },
+      {
+        y: '373',
+      },
+      {
+        y: '281',
+      },
+      {
+        y: '189',
+      },
+      {
+        y: '96.99999999999999',
+      },
+      {
+        y: '5',
+      },
+    ]);
+    expectVerticalGridLines(container, [
+      {
+        x: '65',
+      },
+      {
+        x: '280',
+      },
+      {
+        x: '495',
+      },
+    ]);
+  });
+
+  it('should render fewer ticks when clipped by a Brush', () => {
+    const { container } = render(
+      <AreaChart width={500} height={500} data={pageData}>
+        <Area dataKey="pv" />
+        <CartesianGrid />
+        <Brush startIndex={0} endIndex={2} />
+      </AreaChart>,
+    );
+    expectHorizontalGridLines(container, [
+      {
+        y: '455',
+      },
+      {
+        y: '342.5',
+      },
+      {
+        y: '230',
+      },
+      {
+        y: '117.5',
+      },
+      {
+        y: '5',
+      },
+    ]);
+    expectVerticalGridLines(container, [
+      {
+        x: '5',
+      },
+      {
+        x: '250',
+      },
+      {
+        x: '495',
+      },
+    ]);
+  });
+});
 
 describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child of $testName', ({ ChartElement }) => {
   describe('when horizontalPoints and verticalPoints are set explicitly', () => {
