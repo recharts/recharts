@@ -39,7 +39,6 @@ import {
   getBandSizeOfAxis,
   getBarPositions,
   getDomainOfDataByKey,
-  getDomainOfItemsWithSameAxis,
   getDomainOfStackGroups,
   getStackedDataOfItem,
   getStackGroupsByAxisId,
@@ -49,7 +48,6 @@ import {
   isAxisLTR,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
-  parseErrorBarsOfAxis,
   parseSpecifiedDomain,
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
@@ -105,6 +103,7 @@ import {
 } from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
+import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
 
 export interface MousePointer {
   pageX: number;

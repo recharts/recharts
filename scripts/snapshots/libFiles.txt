@@ -18,6 +18,7 @@
   "lib/util/isWellBehavedNumber.js",
   "lib/util/isDomainSpecifiedByUser.js",
   "lib/util/getEveryNthWithCondition.js",
+  "lib/util/getDomainOfErrorBars.js",
   "lib/util/cursor",
   "lib/util/calculateViewBox.js",
   "lib/util/TickUtils.js",

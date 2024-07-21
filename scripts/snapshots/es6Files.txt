@@ -18,6 +18,7 @@
   "es6/util/isWellBehavedNumber.js",
   "es6/util/isDomainSpecifiedByUser.js",
   "es6/util/getEveryNthWithCondition.js",
+  "es6/util/getDomainOfErrorBars.js",
   "es6/util/cursor",
   "es6/util/calculateViewBox.js",
   "es6/util/TickUtils.js",

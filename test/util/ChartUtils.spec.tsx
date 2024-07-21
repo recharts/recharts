@@ -6,7 +6,6 @@ import {
   calculateActiveTickIndex,
   getBandSizeOfAxis,
   getDomainOfDataByKey,
-  getDomainOfErrorBars,
   getDomainOfStackGroups,
   getTicksOfScale,
   getValueByDataKey,
@@ -19,6 +18,7 @@ import {
   isCategoricalAxis,
 } from '../../src/util/ChartUtils';
 import { AxisType, BaseAxisProps, DataKey, LayoutType } from '../../src/util/types';
+import { getDomainOfErrorBars } from '../../src/util/getDomainOfErrorBars';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
