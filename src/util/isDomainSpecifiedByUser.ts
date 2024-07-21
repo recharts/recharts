@@ -189,6 +189,7 @@ export function parseNumericalUserDomain(
       }
     } else if (typeof providedMin === 'string' && MIN_VALUE_REG.test(providedMin)) {
       const value = +MIN_VALUE_REG.exec(providedMin)[1];
+      // eslint-disable-next-line no-unsafe-optional-chaining
       finalMin = dataDomain?.[0] - value;
     } else {
       finalMin = dataDomain?.[0];
@@ -208,6 +209,7 @@ export function parseNumericalUserDomain(
       }
     } else if (typeof providedMax === 'string' && MAX_VALUE_REG.test(providedMax)) {
       const value = +MAX_VALUE_REG.exec(providedMax)[1];
+      // eslint-disable-next-line no-unsafe-optional-chaining
       finalMax = dataDomain?.[1] + value;
     } else {
       finalMax = dataDomain?.[1];
