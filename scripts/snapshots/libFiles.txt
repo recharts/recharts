@@ -5,6 +5,7 @@
   "lib/polar",
   "lib/numberAxis",
   "lib/index.js",
+  "lib/hooks.js",
   "lib/context",
   "lib/container",
   "lib/component",

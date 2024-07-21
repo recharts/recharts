@@ -5,6 +5,7 @@
   "es6/polar",
   "es6/numberAxis",
   "es6/index.js",
+  "es6/hooks.js",
   "es6/context",
   "es6/container",
   "es6/component",

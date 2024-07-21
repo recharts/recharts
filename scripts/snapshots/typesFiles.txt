@@ -5,6 +5,7 @@
   "types/polar",
   "types/numberAxis",
   "types/index.d.ts",
+  "types/hooks.d.ts",
   "types/context",
   "types/container",
   "types/component",
