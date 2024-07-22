@@ -13,6 +13,9 @@ import {
   YAxis,
   XAxis,
   Brush,
+  Legend,
+  Line,
+  Tooltip,
 } from '../../src';
 import {
   GridLineTypeFunctionProps,
@@ -217,6 +220,72 @@ describe('CartesianGrid', () => {
       },
       {
         x: '495',
+      },
+    ]);
+  });
+
+  it('should render all ticks from LineChart Biaxial storybook', () => {
+    const { container } = render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis yAxisId="left" />
+        <YAxis yAxisId="right" orientation="right" />
+        <Legend />
+        <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <Tooltip />
+      </LineChart>,
+    );
+
+    expectHorizontalGridLines(container, [
+      {
+        y: '265',
+      },
+      {
+        y: '200',
+      },
+      {
+        y: '135',
+      },
+      {
+        y: '70',
+      },
+      {
+        y: '5',
+      },
+    ]);
+    expectVerticalGridLines(container, [
+      {
+        x: '80',
+      },
+      {
+        x: '135',
+      },
+      {
+        x: '190',
+      },
+      {
+        x: '245',
+      },
+      {
+        x: '300',
+      },
+      {
+        x: '355',
+      },
+      {
+        x: '410',
       },
     ]);
   });
