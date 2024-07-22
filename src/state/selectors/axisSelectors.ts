@@ -1337,3 +1337,20 @@ export const selectTicksOfAxis = createSelector(
     );
   },
 );
+
+export type AxisWithScale = AxisSettings & ParsedScaleReturn;
+
+export const selectAxisWithScale = createSelector(
+  selectAxisSettings,
+  selectAxisScale,
+  (axis, parsedScaleReturn): AxisWithScale | undefined => {
+    if (axis == null || parsedScaleReturn == null || parsedScaleReturn.scale == null) {
+      return undefined;
+    }
+    return {
+      ...axis,
+      scale: parsedScaleReturn.scale,
+      realScaleType: parsedScaleReturn.realScaleType,
+    };
+  },
+);

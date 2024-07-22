@@ -11,29 +11,26 @@ import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { ZAxis, Props as ZAxisProps } from './ZAxis';
-import { Curve, Props as CurveProps, CurveType } from '../shape/Curve';
+import { ZAxis } from './ZAxis';
+import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
-import { uniqueId, interpolateNumber, getLinearRegression } from '../util/DataUtils';
-import { getValueByDataKey, getCateCoordinateOfLine, getTooltipNameProp, RechartsScale } from '../util/ChartUtils';
+import { getLinearRegression, interpolateNumber, uniqueId } from '../util/DataUtils';
+import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
 import {
-  LegendType,
-  AnimationTiming,
-  D3Scale,
-  DataKey,
-  TickItem,
-  adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-  AnimationDuration,
   ActiveShape,
+  adaptEventsOfChild,
+  AnimationDuration,
+  AnimationTiming,
+  DataKey,
+  LegendType,
+  PresentationAttributesAdaptChildEvent,
   SymbolType,
+  TickItem,
 } from '../util/types';
 import { TooltipType } from '../component/DefaultTooltipContent';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
@@ -74,9 +71,9 @@ interface ScatterInternalProps {
   yAxisId?: string | number;
   zAxisId?: string | number;
 
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  zAxis?: Omit<ZAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: AxisWithScale;
+  yAxis?: AxisWithScale;
+  zAxis?: ZAxisSettings;
 
   dataKey?: DataKey<any>;
 
@@ -404,7 +401,7 @@ function ScatterLine(props: InternalProps) {
 }
 
 function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean }) {
-  const { points, xAxis, yAxis, children, isAnimationActive, isAnimationFinished } = props;
+  const { points, xAxisId, yAxisId, children, isAnimationActive, isAnimationFinished } = props;
   if (isAnimationActive && !isAnimationFinished) {
     return null;
   }
@@ -419,8 +416,8 @@ function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean 
     return React.cloneElement(item, {
       key: `${direction}-${errorDataKey}-${points[i]}`,
       data: points,
-      xAxis,
-      yAxis,
+      xAxisId,
+      yAxisId,
       layout: direction === 'x' ? 'vertical' : 'horizontal',
       // @ts-expect-error getValueByDataKey does not validate the output type
       dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
@@ -630,11 +627,8 @@ export class Scatter extends Component<InternalProps> {
     const cells = findAllByType(item.props.children, Cell);
     const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
       displayedData,
-      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
       xAxis,
-      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
       yAxis,
-      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
       zAxis,
       // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
       scatterSettings: item.props,

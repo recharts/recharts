@@ -1,8 +1,7 @@
 /**
  * @fileOverview Render a group of error bar
  */
-import React, { SVGProps } from 'react';
-import invariant from 'tiny-invariant';
+import React, { Component, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
 import { Props as XAxisProps } from './XAxis';
@@ -13,6 +12,8 @@ import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings } from '../context/CartesianGraphicalItemContext';
+import { AxisId } from '../state/axisMapSlice';
+import { useXAxis, useYAxis } from '../hooks';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -40,6 +41,8 @@ export type ErrorBarDirection = 'x' | 'y';
 interface InternalErrorBarProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxisId?: AxisId;
+  yAxisId?: AxisId;
   data?: any[];
   layout?: 'horizontal' | 'vertical';
   dataPointFormatter?: ErrorBarDataPointFormatter;
@@ -71,7 +74,7 @@ export function getRealDirection(
   return directionFromProps ?? (layout === 'horizontal' ? 'y' : 'x');
 }
 
-export function ErrorBar(props: Props) {
+function ErrorBarImpl(props: Props) {
   const {
     offset,
     layout,
@@ -79,8 +82,10 @@ export function ErrorBar(props: Props) {
     dataKey,
     data,
     dataPointFormatter,
-    xAxis,
-    yAxis,
+    xAxis: xAxisFromClonedProps,
+    yAxis: yAxisFromClonedProps,
+    xAxisId,
+    yAxisId,
     isAnimationActive,
     animationBegin,
     animationDuration,
@@ -89,10 +94,17 @@ export function ErrorBar(props: Props) {
   } = props;
   const svgProps = filterProps(others, false);
 
-  invariant(
-    !(props.direction === 'x' && xAxis.type !== 'number'),
-    'ErrorBar requires Axis type property to be "number".',
-  );
+  const xAxis = useXAxis(props.xAxisId);
+  const yAxis = useYAxis(props.yAxisId);
+
+  if (xAxis?.scale == null || yAxis?.scale == null) {
+    return null;
+  }
+
+  // ErrorBar requires type number XAxis, why?
+  if (props.direction === 'x' && xAxis.type !== 'number') {
+    return null;
+  }
 
   const errorBars = data.map((entry: any) => {
     const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
@@ -177,25 +189,33 @@ export function ErrorBar(props: Props) {
     );
   });
 
-  const realDirection: ErrorBarDirection = getRealDirection(props.direction, layout);
-
-  return (
-    <Layer className="recharts-errorBars">
-      <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
-      {errorBars}
-    </Layer>
-  );
+  return <Layer className="recharts-errorBars">{errorBars}</Layer>;
 }
 
-ErrorBar.defaultProps = {
-  stroke: 'black',
-  strokeWidth: 1.5,
-  width: 5,
-  offset: 0,
-  layout: 'horizontal',
-  isAnimationActive: true,
-  animationBegin: 0,
-  animationDuration: 400,
-  animationEasing: 'ease-in-out',
-};
-ErrorBar.displayName = 'ErrorBar';
+// eslint-disable-next-line react/prefer-stateless-function
+export class ErrorBar extends Component<Props, {}> {
+  static defaultProps = {
+    stroke: 'black',
+    strokeWidth: 1.5,
+    width: 5,
+    offset: 0,
+    layout: 'horizontal',
+    isAnimationActive: true,
+    animationBegin: 0,
+    animationDuration: 400,
+    animationEasing: 'ease-in-out',
+  };
+
+  static displayName = 'ErrorBar';
+
+  render() {
+    const realDirection: ErrorBarDirection = getRealDirection(this.props.direction, this.props.layout);
+
+    return (
+      <>
+        <ReportErrorBarSettings dataKey={this.props.dataKey} direction={realDirection} />
+        <ErrorBarImpl {...this.props} />
+      </>
+    );
+  }
+}
