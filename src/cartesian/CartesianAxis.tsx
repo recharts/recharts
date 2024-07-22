@@ -283,6 +283,7 @@ export class CartesianAxis extends Component<Props, IState> {
     ticks: ReadonlyArray<CartesianTickItem> = [],
   ): React.ReactElement | null {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
+    // @ts-expect-error some properties are optional in props but required in getTicks
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
     const textAnchor = this.getTickTextAnchor();
     const verticalAnchor = this.getTickVerticalAnchor();

@@ -5,6 +5,7 @@ import {
   CartesianGrid,
   LineChart,
   ComposedChart,
+  Customized,
   BarChart,
   ScatterChart,
   AreaChart,
@@ -25,6 +26,8 @@ import {
 import { ChartOffset, Margin } from '../../src/util/types';
 import { assertNotNull } from '../helper/assertNotNull';
 import { pageData } from '../../storybook/stories/data';
+import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
+import { useAppSelector } from '../../src/state/hooks';
 
 const allChartsThatSupportCartesianGrid = [
   { ChartElement: AreaChart, testName: 'AreaElement' },
@@ -225,6 +228,12 @@ describe('CartesianGrid', () => {
   });
 
   it('should render all ticks from LineChart Biaxial storybook', () => {
+    const scaleSpy = vi.fn();
+    const Comp = (): null => {
+      const scale = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left'));
+      scaleSpy(scale?.scale?.domain());
+      return null;
+    };
     const { container } = render(
       <LineChart
         width={500}
@@ -237,7 +246,7 @@ describe('CartesianGrid', () => {
           bottom: 5,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
+        <CartesianGrid yAxisId="left" strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis yAxisId="left" />
         <YAxis yAxisId="right" orientation="right" />
@@ -245,9 +254,11 @@ describe('CartesianGrid', () => {
         <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
         <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
         <Tooltip />
+        <Customized component={<Comp />} />
       </LineChart>,
     );
 
+    expect(scaleSpy).toHaveBeenLastCalledWith([0, 1200]);
     expectHorizontalGridLines(container, [
       {
         y: '265',

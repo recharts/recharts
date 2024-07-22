@@ -870,6 +870,7 @@ describe('<YAxis />', () => {
         spy(settings);
         return null;
       };
+      const fakeTickFormatter = () => '';
       const { container } = render(
         <BarChart width={100} height={100}>
           <YAxis
@@ -884,6 +885,11 @@ describe('<YAxis />', () => {
             mirror
             name="axis name"
             unit="axis unit"
+            interval={9}
+            angle={17}
+            tick={false}
+            minTickGap={8}
+            tickFormatter={fakeTickFormatter}
           />
           <Customized component={Comp} />
         </BarChart>,
@@ -891,6 +897,11 @@ describe('<YAxis />', () => {
       expect(container.querySelector('.yAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: YAxisSettings = {
+        angle: 17,
+        minTickGap: 8,
+        tick: false,
+        tickFormatter: fakeTickFormatter,
+        interval: 9,
         name: 'axis name',
         unit: 'axis unit',
         hide: false,
@@ -932,6 +943,11 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
         name: undefined,
         unit: undefined,
         orientation: 'left',
@@ -971,6 +987,11 @@ describe('<YAxis />', () => {
         foo: YAxisSettings;
       } = {
         foo: {
+          angle: 0,
+          minTickGap: 5,
+          tick: true,
+          tickFormatter: undefined,
+          interval: 'preserveEnd',
           name: undefined,
           unit: undefined,
           hide: false,
@@ -995,6 +1016,11 @@ describe('<YAxis />', () => {
           ticks: undefined,
         },
         bar: {
+          angle: 0,
+          minTickGap: 5,
+          tick: true,
+          tickFormatter: undefined,
+          interval: 'preserveEnd',
           name: undefined,
           unit: undefined,
           hide: false,
@@ -1028,6 +1054,11 @@ describe('<YAxis />', () => {
       );
 
       const expectedSettings3: YAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
         name: undefined,
         unit: undefined,
         hide: false,

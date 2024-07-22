@@ -10,11 +10,11 @@ import { ChartOffset } from '../util/types';
 
 import { filterProps } from '../util/ReactUtils';
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
-import { getTicks } from './getTicks';
+import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
 import { AxisId } from '../state/axisMapSlice';
-import { selectAxisPropsNeededForTicksGenerator } from '../state/selectors/axisSelectors';
+import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 
 /**
@@ -27,6 +27,9 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   offset: ChartOffset;
 };
 
+export type AxisPropsForCartesianGridTicksGeneration = AxisPropsNeededForTicksGenerator &
+  Omit<GetTicksInput, 'ticks' | 'viewBox'>;
+
 type GridLineType =
   | SVGProps<SVGLineElement>
   | ReactElement<SVGElement>
@@ -35,7 +38,7 @@ type GridLineType =
 
 export type HorizontalCoordinatesGenerator = (
   props: {
-    yAxis: AxisPropsNeededForTicksGenerator;
+    yAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
     offset: ChartOffset;
@@ -45,7 +48,7 @@ export type HorizontalCoordinatesGenerator = (
 
 export type VerticalCoordinatesGenerator = (
   props: {
-    xAxis: AxisPropsNeededForTicksGenerator;
+    xAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
     offset: ChartOffset;
@@ -388,11 +391,11 @@ export function CartesianGrid(props: Props) {
   const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
     propsIncludingDefaults;
 
-  const xAxis: AxisPropsNeededForTicksGenerator = useAppSelector(state =>
-    selectAxisPropsNeededForTicksGenerator(state, 'xAxis', xAxisId),
+  const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId),
   );
-  const yAxis: AxisPropsNeededForTicksGenerator = useAppSelector(state =>
-    selectAxisPropsNeededForTicksGenerator(state, 'yAxis', yAxisId),
+  const yAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId),
   );
 
   if (

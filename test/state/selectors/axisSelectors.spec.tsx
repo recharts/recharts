@@ -22,9 +22,11 @@ import {
   Bar,
   BarChart,
   Brush,
+  CartesianGrid,
   ComposedChart,
   Customized,
   ErrorBar,
+  Legend,
   Line,
   LineChart,
   Pie,
@@ -33,6 +35,7 @@ import {
   RadialBarChart,
   Scatter,
   ScatterChart,
+  Tooltip,
   XAxis,
   YAxis,
 } from '../../../src';
@@ -228,6 +231,65 @@ describe('selectAxisDomain', () => {
         <Customized component={Comp} />
       </LineChart>,
     );
+  });
+
+  it('should return domain from multiple axes', () => {
+    const scaleLeftSpy = vi.fn();
+    const scaleRightSpy = vi.fn();
+    const domainLeftSpy = vi.fn();
+    const domainRightSpy = vi.fn();
+    const domainLeftIncludingNiceTicksSpy = vi.fn();
+    const domainRightIncludingNiceTicksSpy = vi.fn();
+    const Comp = (): null => {
+      domainLeftSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 'left')));
+      domainLeftIncludingNiceTicksSpy(
+        useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'left')),
+      );
+      domainRightSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 'right')));
+      domainRightIncludingNiceTicksSpy(
+        useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'right')),
+      );
+      const scaleLeft = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left'));
+      scaleLeftSpy(scaleLeft?.scale?.domain());
+      const scaleRight = useAppSelector(state => selectAxisScale(state, 'yAxis', 'right'));
+      scaleRightSpy(scaleRight?.scale?.domain());
+      return null;
+    };
+    render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis yAxisId="left" />
+        <YAxis yAxisId="right" orientation="right" />
+        <Legend />
+        <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <Tooltip />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+    expect(domainLeftSpy).toHaveBeenLastCalledWith([0, 1200]);
+    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1200]);
+    expect(scaleLeftSpy).toHaveBeenLastCalledWith([0, 1200]);
+    expect(domainRightSpy).toHaveBeenLastCalledWith([0, 1520]);
+    expect(domainRightIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1600]);
+    expect(scaleRightSpy).toHaveBeenLastCalledWith([0, 1600]);
+    expect(domainLeftSpy).toHaveBeenCalledTimes(3);
+    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
+    expect(scaleLeftSpy).toHaveBeenCalledTimes(3);
+    expect(domainRightSpy).toHaveBeenCalledTimes(3);
+    expect(domainRightIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
+    expect(scaleRightSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
