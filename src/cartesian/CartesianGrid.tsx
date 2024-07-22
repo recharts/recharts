@@ -159,8 +159,8 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 
 type LineItemProps = Props & {
   offset: ChartOffset;
-  xAxis: null | AxisPropsNeededForTicksGenerator;
-  yAxis: null | AxisPropsNeededForTicksGenerator;
+  xAxis: null | AxisPropsForCartesianGridTicksGeneration;
+  yAxis: null | AxisPropsForCartesianGridTicksGeneration;
   x1: number;
   y1: number;
   x2: number;

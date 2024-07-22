@@ -19,6 +19,7 @@ import {
   Tooltip,
 } from '../../src';
 import {
+  AxisPropsForCartesianGridTicksGeneration,
   GridLineTypeFunctionProps,
   HorizontalCoordinatesGenerator,
   VerticalCoordinatesGenerator,
@@ -780,21 +781,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           );
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
+            angle: 0,
+            interval: 'preserveEnd',
+            minTickGap: 5,
+            orientation: 'left',
+            tick: true,
+            tickFormatter: undefined,
+            unit: undefined,
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [189, 14],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'number',
+          };
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-            yAxis: {
-              axisType: 'yAxis',
-              categoricalDomain: undefined,
-              duplicateDomain: undefined,
-              isCategorical: false,
-              niceTicks: undefined,
-              range: [189, 14],
-              realScaleType: undefined,
-              scale: undefined,
-              tickCount: 5,
-              ticks: undefined,
-              type: 'number',
-            },
+              yAxis: expectedYAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -818,21 +827,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           );
 
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
+            angle: 0,
+            interval: 'preserveEnd',
+            minTickGap: 5,
+            orientation: 'left',
+            tick: true,
+            tickFormatter: undefined,
+            unit: undefined,
+            axisType: 'yAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: false,
+            niceTicks: undefined,
+            range: [189, 14],
+            realScaleType: undefined,
+            scale: undefined,
+            tickCount: 5,
+            ticks: ['a', 'b'],
+            type: 'number',
+          };
           expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-            yAxis: {
-              axisType: 'yAxis',
-              categoricalDomain: undefined,
-              duplicateDomain: undefined,
-              isCategorical: false,
-              niceTicks: undefined,
-              range: [189, 14],
-              realScaleType: undefined,
-              scale: undefined,
-              tickCount: 5,
-              ticks: ['a', 'b'],
-              type: 'number',
-            },
+              yAxis: expectedYAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -857,21 +874,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             );
 
             expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+            const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
+              axisType: 'yAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: false,
+              niceTicks: undefined,
+              range: [189, 14],
+              realScaleType: undefined,
+              scale: undefined,
+              tickCount: 5,
+              ticks: undefined,
+              type: 'number',
+            };
             expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
               {
-              yAxis: {
-                axisType: 'yAxis',
-                categoricalDomain: undefined,
-                duplicateDomain: undefined,
-                isCategorical: false,
-                niceTicks: undefined,
-                range: [189, 14],
-                realScaleType: undefined,
-                scale: undefined,
-                tickCount: 5,
-                ticks: undefined,
-                type: 'number',
-              },
+                yAxis: expectedYAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
@@ -896,21 +921,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             );
 
             expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+            const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
+              axisType: 'yAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: false,
+              niceTicks: undefined,
+              range: [189, 14],
+              realScaleType: undefined,
+              scale: undefined,
+              tickCount: 5,
+              ticks: undefined,
+              type: 'number',
+            };
             expect(horizontalCoordinatesGenerator).toHaveBeenCalledWith(
               {
-              yAxis: {
-                axisType: 'yAxis',
-                categoricalDomain: undefined,
-                duplicateDomain: undefined,
-                isCategorical: false,
-                niceTicks: undefined,
-                range: [189, 14],
-                realScaleType: undefined,
-                scale: undefined,
-                tickCount: 5,
-                ticks: undefined,
-                type: 'number',
-              },
+                yAxis: expectedYAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
@@ -1025,21 +1058,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
+            angle: 0,
+            interval: 'preserveEnd',
+            minTickGap: 5,
+            orientation: 'bottom',
+            tick: true,
+            tickFormatter: undefined,
+            unit: undefined,
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [12, 287],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+          };
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-            xAxis: {
-              axisType: 'xAxis',
-              categoricalDomain: undefined,
-              duplicateDomain: undefined,
-              isCategorical: true,
-              niceTicks: undefined,
-              range: [12, 287],
-              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
-              scale: expect.any(Function),
-              tickCount: 5,
-              ticks: undefined,
-              type: 'category',
-            },
+              xAxis: expectedXAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -1063,21 +1104,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           );
 
           expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+          const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
+            angle: 0,
+            interval: 'preserveEnd',
+            minTickGap: 5,
+            orientation: 'bottom',
+            tick: true,
+            tickFormatter: undefined,
+            unit: undefined,
+            axisType: 'xAxis',
+            categoricalDomain: undefined,
+            duplicateDomain: undefined,
+            isCategorical: true,
+            niceTicks: undefined,
+            range: [12, 287],
+            realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+            scale: expect.any(Function),
+            tickCount: 5,
+            ticks: ['a', 'b'],
+            type: 'category',
+          };
           expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
             {
-            xAxis: {
-              axisType: 'xAxis',
-              categoricalDomain: undefined,
-              duplicateDomain: undefined,
-              isCategorical: true,
-              niceTicks: undefined,
-              range: [12, 287],
-              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
-              scale: expect.any(Function),
-              tickCount: 5,
-              ticks: ['a', 'b'],
-              type: 'category',
-            },
+              xAxis: expectedXAxis,
               width: 300,
               height: 200,
               offset: expectedOffset,
@@ -1102,21 +1151,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             );
 
             expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+            const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
+              axisType: 'xAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: true,
+              niceTicks: undefined,
+              range: [12, 287],
+              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+              scale: expect.any(Function),
+              tickCount: 5,
+              ticks: undefined,
+              type: 'category',
+            };
             expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
               {
-              xAxis: {
-                axisType: 'xAxis',
-                categoricalDomain: undefined,
-                duplicateDomain: undefined,
-                isCategorical: true,
-                niceTicks: undefined,
-                range: [12, 287],
-                realScaleType: expect.any(String), // different charts have different defaults for realScaleType
-                scale: expect.any(Function),
-                tickCount: 5,
-                ticks: undefined,
-                type: 'category',
-              },
+                xAxis: expectedXAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
@@ -1141,21 +1198,29 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             );
 
             expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(3);
+            const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
+              axisType: 'xAxis',
+              categoricalDomain: undefined,
+              duplicateDomain: undefined,
+              isCategorical: true,
+              niceTicks: undefined,
+              range: [12, 287],
+              realScaleType: expect.any(String), // different charts have different defaults for realScaleType
+              scale: expect.any(Function),
+              tickCount: 5,
+              ticks: undefined,
+              type: 'category',
+            };
             expect(verticalCoordinatesGenerator).toHaveBeenCalledWith(
               {
-              xAxis: {
-                axisType: 'xAxis',
-                categoricalDomain: undefined,
-                duplicateDomain: undefined,
-                isCategorical: true,
-                niceTicks: undefined,
-                range: [12, 287],
-                realScaleType: expect.any(String), // different charts have different defaults for realScaleType
-                scale: expect.any(Function),
-                tickCount: 5,
-                ticks: undefined,
-                type: 'category',
-              },
+                xAxis: expectedXAxis,
                 width: 300,
                 height: 200,
                 offset: expectedOffset,
@@ -1253,6 +1318,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               width: 490,
             },
           xAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'xAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1266,6 +1338,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             type: 'category',
           },
           yAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'yAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1333,6 +1412,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               width: 490,
             },
           xAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'xAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1346,6 +1432,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             type: 'category',
           },
           yAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'yAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1409,6 +1502,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               width: 490,
             },
           xAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'xAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1422,6 +1522,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             type: 'category',
           },
           yAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'yAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1481,6 +1588,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               width: 490,
             },
           xAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'bottom',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'xAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
@@ -1494,6 +1608,13 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             type: 'category',
           },
           yAxis: {
+              angle: 0,
+              interval: 'preserveEnd',
+              minTickGap: 5,
+              orientation: 'left',
+              tick: true,
+              tickFormatter: undefined,
+              unit: undefined,
             axisType: 'yAxis',
             categoricalDomain: undefined,
             duplicateDomain: undefined,
