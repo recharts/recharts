@@ -265,9 +265,10 @@ describe('<ErrorBar />', () => {
     assertErrorBars(container, 8);
   });
 
-  test.each(['category', undefined])('throws when direction=x and XAxis id type=%s', (domainType: AxisDomainType) => {
-    expect(() => {
-      render(
+  test.each(['category', undefined])(
+    'does not render anything when direction=x and XAxis id type=%s',
+    (domainType: AxisDomainType) => {
+      const { container } = render(
         <BarChart data={dataWithError} width={500} height={500}>
           <XAxis dataKey="name" type={domainType} />
           <Bar isAnimationActive={false} dataKey="uv">
@@ -275,8 +276,9 @@ describe('<ErrorBar />', () => {
           </Bar>
         </BarChart>,
       );
-    }).toThrow('Invariant failed: ErrorBar requires Axis type property to be "number".');
-  });
+      assertErrorBars(container, 0);
+    },
+  );
 
   describe('ErrorBar and axis domain interaction', () => {
     it('should extend YAxis domain', () => {
