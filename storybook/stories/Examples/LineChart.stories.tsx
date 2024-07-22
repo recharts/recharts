@@ -581,21 +581,19 @@ export const HighlightAndZoom = {
       const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
       const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
 
-      setZoomGraph(
-        prev =>
-          ({
-            ...prev,
-            refAreaLeft: '',
-            refAreaRight: '',
-            data: data?.slice(),
-            left: refAreaLeft,
-            right: refAreaRight,
-            bottom,
-            top,
-            bottom2,
-            top2,
-          }) as any,
-      );
+      // @ts-expect-error this storybook needs types
+      setZoomGraph(prev => ({
+        ...prev,
+        refAreaLeft: '',
+        refAreaRight: '',
+        data: data?.slice(),
+        left: refAreaLeft,
+        right: refAreaRight,
+        bottom,
+        top,
+        bottom2,
+        top2,
+      }));
     };
 
     const zoomOut = () => {
