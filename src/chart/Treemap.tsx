@@ -17,7 +17,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey } from '../util/types';
-import { ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
 import { TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -894,6 +894,7 @@ export class Treemap extends PureComponent<Props, State> {
 
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
+        <ReportChartSize width={this.props.width} height={this.props.height} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
             <SetTooltipEntrySettings
