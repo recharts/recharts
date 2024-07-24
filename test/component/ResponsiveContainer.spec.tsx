@@ -17,8 +17,8 @@ describe('<ResponsiveContainer />', () => {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry
    */
   let notifyResizeObserverChange: (arg: unknown) => void,
-    consoleWarnSpy: MockInstance<(...args: any[]) => void>,
-    resizeObserverMock: Mock<(arg: any) => any>;
+    consoleWarnSpy: MockInstance<any[], void>,
+    resizeObserverMock: Mock<any, any>;
 
   beforeEach(() => {
     /**
