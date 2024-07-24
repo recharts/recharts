@@ -1,9 +1,10 @@
 import React from 'react';
+import { describe, test, expect, it, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import { Treemap, XAxis, YAxis } from '../../src';
-import { testChartLayoutContext } from '../util/context';
+import { Customized, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
 import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -62,37 +63,26 @@ describe('<Treemap />', () => {
   });
 
   describe('Treemap layout context', () => {
-    it(
-      'should provide viewBox but not clipPathId nor any axes',
-      testChartLayoutContext(
-        props => (
-          <Treemap width={100} height={50}>
-            {props.children}
-          </Treemap>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
-          expect(xAxisMap).toEqual({});
-          expect(yAxisMap).toEqual({});
-        },
-      ),
-    );
-
-    it(
-      'should not set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <Treemap width={100} height={50}>
-            {props.children}
-          </Treemap>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(0);
-          expect(height).toBe(0);
-        },
-      ),
-    );
+    it('should set width and height in state', () => {
+      const sizeSpy = vi.fn();
+      const viewBoxSpy = vi.fn();
+      const Comp = (): null => {
+        const width = useChartWidth();
+        const height = useChartHeight();
+        sizeSpy({ width, height });
+        viewBoxSpy(useViewBox());
+        return null;
+      };
+      render(
+        <Treemap width={100} height={50}>
+          <Customized component={<Comp />} />
+        </Treemap>,
+      );
+      expect(sizeSpy).toHaveBeenLastCalledWith({ width: 100, height: 50 });
+      expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
+      expect(sizeSpy).toHaveBeenCalledTimes(3);
+      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+    });
 
     it('should not throw if axes are provided - they are not an allowed child', () => {
       expect(() =>
