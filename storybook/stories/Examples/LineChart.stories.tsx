@@ -988,16 +988,16 @@ export const HideOnLegendClick: StoryObj = {
   },
 };
 
-export const MultipleXandYAxisAreaChart = {
+export const MultipleXandYAxisLineChartHorizontalLayout = {
   render: () => {
     const dataKey = 'month';
     const colors = ['green', 'red'];
-    const xAxisOrientations = ['top', 'bottom'];
-    const yAxisOrientations = ['left', 'right'];
+    const xAxisOrientations = ['top', 'bottom'] as const;
+    const yAxisOrientations = ['left', 'right'] as const;
     const categories = ['Revenue', 'Cost'];
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart width={500} height={300}>
+        <LineChart width={500} height={300} layout="horizontal">
           <CartesianGrid strokeDasharray="3 3" />
 
           <Tooltip />
@@ -1041,6 +1041,78 @@ export const MultipleXandYAxisAreaChart = {
                         name={`${s.name}: ${category}`}
                         xAxisId={sIdx}
                         yAxisId={cIdx}
+                        stroke={colors[cIdx]}
+                        fill={colors[cIdx]}
+                        strokeDasharray={`5 ${sIdx > 0 ? 5 : ''}`}
+                      />
+                    </>
+                  );
+                })}
+              </>
+            );
+          })}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const MultipleXandYAxisLineChartVerticalLayout = {
+  render: () => {
+    const dataKey = 'month';
+    const colors = ['green', 'red'];
+    const xAxisOrientations = ['top', 'bottom'] as const;
+    const yAxisOrientations = ['left', 'right'] as const;
+    const categories = ['Revenue', 'Cost'];
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart width={500} height={300} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+
+          <Tooltip />
+          <Legend />
+          {finDataOverTime.map((s, sIdx) => {
+            return (
+              <>
+                <YAxis
+                  key={`yaxis-${s.name}-`}
+                  // domain={['auto', 'auto']}
+                  orientation={yAxisOrientations[sIdx]}
+                  dataKey={dataKey}
+                  allowDuplicatedCategory={false}
+                  yAxisId={sIdx}
+                  type="category"
+                />
+                {categories.map((category, cIdx) => {
+                  const dataRange = [].concat(
+                    ...s.data.map(d =>
+                      d[category]
+                        ? [
+                            {
+                              [dataKey]: d[dataKey],
+                              [category]: d[category],
+                            },
+                          ]
+                        : [],
+                    ),
+                  );
+                  return (
+                    <>
+                      <XAxis
+                        key={s.name}
+                        // dataKey={dataKey}
+                        orientation={xAxisOrientations[cIdx]}
+                        xAxisId={cIdx}
+                        type="number"
+                        domain={['auto', 'auto']}
+                      />
+                      <Line
+                        key={`line-${s.name}-${category}`}
+                        dataKey={category}
+                        data={dataRange}
+                        name={`${s.name}: ${category}`}
+                        xAxisId={cIdx}
+                        yAxisId={sIdx}
                         stroke={colors[cIdx]}
                         fill={colors[cIdx]}
                         strokeDasharray={`5 ${sIdx > 0 ? 5 : ''}`}
