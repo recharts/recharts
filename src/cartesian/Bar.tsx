@@ -555,7 +555,7 @@ function BarImpl(props: Props) {
   return <BarWithState {...everythingElse} needClip={needClip} />;
 }
 
-export class Bar extends PureComponent<Props, State> {
+export class Bar extends PureComponent<Props> {
   static displayName = 'Bar';
 
   static defaultProps: Partial<Props> = {

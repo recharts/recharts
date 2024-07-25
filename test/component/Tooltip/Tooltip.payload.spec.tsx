@@ -156,7 +156,7 @@ const ComposedChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['My custom name : 1398$$$', 'uv : 300kg', 'amt : 2400'],
+  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
 
 const PieChartTestCase: TooltipPayloadTestCase = {

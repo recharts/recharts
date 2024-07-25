@@ -1,6 +1,7 @@
 /**
  * @fileOverview Area
  */
+// eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, SVGProps } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
@@ -155,173 +156,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 const noErrorBars: never[] = [];
 
-export class Area extends PureComponent<Props, State> {
-  static displayName = 'Area';
-
-  static defaultProps = {
-    stroke: '#3182bd',
-    fill: '#3182bd',
-    fillOpacity: 0.6,
-    xAxisId: 0,
-    yAxisId: 0,
-    legendType: 'line',
-    connectNulls: false,
-    // points of area
-    points: [] as AreaPointItem[],
-    dot: false,
-    activeDot: true,
-    hide: false,
-
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-  };
-
-  static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
-    const { layout, baseValue: chartBaseValue } = props;
-    const { baseValue: itemBaseValue } = item.props;
-
-    // The baseValue can be defined both on the AreaChart as well as on the Area.
-    // The value for the item takes precedence.
-    const baseValue = itemBaseValue ?? chartBaseValue;
-
-    if (isNumber(baseValue) && typeof baseValue === 'number') {
-      return baseValue;
-    }
-
-    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-    const domain = numericAxis.scale.domain();
-
-    if (numericAxis.type === 'number') {
-      const domainMax = Math.max(domain[0], domain[1]);
-      const domainMin = Math.min(domain[0], domain[1]);
-
-      if (baseValue === 'dataMin') {
-        return domainMin;
-      }
-      if (baseValue === 'dataMax') {
-        return domainMax;
-      }
-
-      return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
-    }
-
-    if (baseValue === 'dataMin') {
-      return domain[0];
-    }
-    if (baseValue === 'dataMax') {
-      return domain[1];
-    }
-
-    return domain[0];
-  };
-
-  static getComposedData = ({
-    props,
-    item,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    bandSize,
-    dataKey,
-    stackedData,
-    dataStartIndex,
-    displayedData,
-    offset,
-  }: {
-    props: Props;
-    item: Area;
-    bandSize: number;
-    xAxis: InternalAreaProps['xAxis'];
-    yAxis: InternalAreaProps['yAxis'];
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    stackedData: number[][];
-    dataStartIndex: number;
-    offset: ChartOffset;
-    displayedData: any[];
-    dataKey: Props['dataKey'];
-  }): AreaComposedData => {
-    const { layout } = props;
-    const { connectNulls } = item.props;
-    const hasStack = stackedData && stackedData.length;
-    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
-    const isHorizontalLayout = layout === 'horizontal';
-    let isRange = false;
-
-    const points = displayedData.map((entry, index) => {
-      let value;
-
-      if (hasStack) {
-        value = stackedData[dataStartIndex + index];
-      } else {
-        value = getValueByDataKey(entry, dataKey);
-
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
-        } else {
-          isRange = true;
-        }
-      }
-
-      const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
-
-      if (isHorizontalLayout) {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: isBreakPoint ? null : yAxis.scale(value[1]),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        x: isBreakPoint ? null : xAxis.scale(value[1]),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
-    });
-
-    let baseLine;
-    if (hasStack || isRange) {
-      baseLine = points.map((entry: AreaPointItem) => {
-        const x = Array.isArray(entry.value) ? entry.value[0] : null;
-        if (isHorizontalLayout) {
-          return {
-            x: entry.x,
-            y: x != null && entry.y != null ? yAxis.scale(x) : null,
-          };
-        }
-        return {
-          x: x != null ? xAxis.scale(x) : null,
-          y: entry.y,
-        };
-      });
-    } else {
-      baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
-    }
-
-    return { points, baseLine, layout, isRange, ...offset };
-  };
-
-  static renderDotItem = (option: ActiveDotType, props: any) => {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
-  };
-
+class AreaWithState extends PureComponent<Props, State> {
   state: State = {
     isAnimationFinished: true,
   };
@@ -394,6 +229,7 @@ export class Area extends PureComponent<Props, State> {
         points,
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       return Area.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
@@ -689,5 +525,182 @@ export class Area extends PureComponent<Props, State> {
         )}
       </CartesianGraphicalItemContext>
     );
+  }
+}
+
+function AreaImpl(props: Props) {
+  const { ref, ...everythingElse } = props;
+  return <AreaWithState {...everythingElse} />;
+}
+
+export class Area extends PureComponent<Props, State> {
+  static displayName = 'Area';
+
+  static defaultProps = {
+    stroke: '#3182bd',
+    fill: '#3182bd',
+    fillOpacity: 0.6,
+    xAxisId: 0,
+    yAxisId: 0,
+    legendType: 'line',
+    connectNulls: false,
+    // points of area
+    points: [] as AreaPointItem[],
+    dot: false,
+    activeDot: true,
+    hide: false,
+
+    isAnimationActive: !Global.isSsr,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
+  };
+
+  static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
+    const { layout, baseValue: chartBaseValue } = props;
+    const { baseValue: itemBaseValue } = item.props;
+
+    // The baseValue can be defined both on the AreaChart as well as on the Area.
+    // The value for the item takes precedence.
+    const baseValue = itemBaseValue ?? chartBaseValue;
+
+    if (isNumber(baseValue) && typeof baseValue === 'number') {
+      return baseValue;
+    }
+
+    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+    const domain = numericAxis.scale.domain();
+
+    if (numericAxis.type === 'number') {
+      const domainMax = Math.max(domain[0], domain[1]);
+      const domainMin = Math.min(domain[0], domain[1]);
+
+      if (baseValue === 'dataMin') {
+        return domainMin;
+      }
+      if (baseValue === 'dataMax') {
+        return domainMax;
+      }
+
+      return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
+    }
+
+    if (baseValue === 'dataMin') {
+      return domain[0];
+    }
+    if (baseValue === 'dataMax') {
+      return domain[1];
+    }
+
+    return domain[0];
+  };
+
+  static getComposedData = ({
+    props,
+    item,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    bandSize,
+    dataKey,
+    stackedData,
+    dataStartIndex,
+    displayedData,
+    offset,
+  }: {
+    props: Props;
+    item: Area;
+    bandSize: number;
+    xAxis: InternalAreaProps['xAxis'];
+    yAxis: InternalAreaProps['yAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    stackedData: number[][];
+    dataStartIndex: number;
+    offset: ChartOffset;
+    displayedData: any[];
+    dataKey: Props['dataKey'];
+  }): AreaComposedData => {
+    const { layout } = props;
+    const { connectNulls } = item.props;
+    const hasStack = stackedData && stackedData.length;
+    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
+    const isHorizontalLayout = layout === 'horizontal';
+    let isRange = false;
+
+    const points = displayedData.map((entry, index) => {
+      let value;
+
+      if (hasStack) {
+        value = stackedData[dataStartIndex + index];
+      } else {
+        value = getValueByDataKey(entry, dataKey);
+
+        if (!Array.isArray(value)) {
+          value = [baseValue, value];
+        } else {
+          isRange = true;
+        }
+      }
+
+      const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+
+      if (isHorizontalLayout) {
+        return {
+          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+          y: isBreakPoint ? null : yAxis.scale(value[1]),
+          value,
+          payload: entry,
+        };
+      }
+
+      return {
+        x: isBreakPoint ? null : xAxis.scale(value[1]),
+        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+        value,
+        payload: entry,
+      };
+    });
+
+    let baseLine;
+    if (hasStack || isRange) {
+      baseLine = points.map((entry: AreaPointItem) => {
+        const x = Array.isArray(entry.value) ? entry.value[0] : null;
+        if (isHorizontalLayout) {
+          return {
+            x: entry.x,
+            y: x != null && entry.y != null ? yAxis.scale(x) : null,
+          };
+        }
+        return {
+          x: x != null ? xAxis.scale(x) : null,
+          y: entry.y,
+        };
+      });
+    } else {
+      baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
+    }
+
+    return { points, baseLine, layout, isRange, ...offset };
+  };
+
+  static renderDotItem = (option: ActiveDotType, props: any) => {
+    let dotItem;
+
+    if (React.isValidElement(option)) {
+      dotItem = React.cloneElement(option, props);
+    } else if (isFunction(option)) {
+      dotItem = option(props);
+    } else {
+      const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
+      dotItem = <Dot {...props} className={className} />;
+    }
+
+    return dotItem;
+  };
+
+  render() {
+    return <AreaImpl {...this.props} />;
   }
 }
