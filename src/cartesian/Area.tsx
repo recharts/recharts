@@ -40,6 +40,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
@@ -47,8 +48,7 @@ interface AreaPointItem extends CurvePoint {
 }
 
 interface InternalAreaProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  needClip?: boolean;
   top?: number;
   left?: number;
   width?: number;
@@ -439,16 +439,30 @@ class AreaWithState extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, dot, points, className, top, left, xAxis, yAxis, width, height, isAnimationActive, id, baseLine } =
-      this.props;
+    const {
+      hide,
+      dot,
+      points,
+      className,
+      top,
+      left,
+      needClip,
+      xAxisId,
+      yAxisId,
+      width,
+      height,
+      isAnimationActive,
+      id,
+      baseLine,
+    } = this.props;
 
     if (hide || !points || !points.length) {
       return (
         <>
           <SetCartesianGraphicalItem
             data={this.props.data}
-            xAxisId={this.props.xAxisId}
-            yAxisId={this.props.yAxisId}
+            xAxisId={xAxisId}
+            yAxisId={yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             stackId={this.props.stackId}
@@ -463,9 +477,6 @@ class AreaWithState extends PureComponent<Props, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-area', className);
-    const needClipX = xAxis && xAxis.allowDataOverflow;
-    const needClipY = yAxis && yAxis.allowDataOverflow;
-    const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
@@ -474,25 +485,18 @@ class AreaWithState extends PureComponent<Props, State> {
     return (
       <CartesianGraphicalItemContext
         data={this.props.data}
-        xAxisId={this.props.xAxisId}
         dataKey={this.props.dataKey}
-        yAxisId={this.props.yAxisId}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
         stackId={this.props.stackId}
         hide={this.props.hide}
       >
         <Layer className={layerClass}>
           <SetAreaLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? (
+          {needClip && (
             <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
+              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
               {!clipDot && (
                 <clipPath id={`clipPath-dots-${clipPathId}`}>
                   <rect
@@ -504,7 +508,7 @@ class AreaWithState extends PureComponent<Props, State> {
                 </clipPath>
               )}
             </defs>
-          ) : null}
+          )}
           {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
           {(dot || hasSinglePoint) && this.renderDots(needClip, clipDot, clipPathId)}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
@@ -529,8 +533,9 @@ class AreaWithState extends PureComponent<Props, State> {
 }
 
 function AreaImpl(props: Props) {
+  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <AreaWithState {...everythingElse} />;
+  return <AreaWithState {...everythingElse} needClip={needClip} />;
 }
 
 export class Area extends PureComponent<Props, State> {
@@ -556,7 +561,12 @@ export class Area extends PureComponent<Props, State> {
     animationEasing: 'ease',
   };
 
-  static getBaseValue = (props: Props, item: Area, xAxis: Props['xAxis'], yAxis: Props['yAxis']): number => {
+  static getBaseValue = (
+    props: Props,
+    item: Area,
+    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+  ): number => {
     const { layout, baseValue: chartBaseValue } = props;
     const { baseValue: itemBaseValue } = item.props;
 
@@ -612,8 +622,8 @@ export class Area extends PureComponent<Props, State> {
     props: Props;
     item: Area;
     bandSize: number;
-    xAxis: InternalAreaProps['xAxis'];
-    yAxis: InternalAreaProps['yAxis'];
+    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     stackedData: number[][];

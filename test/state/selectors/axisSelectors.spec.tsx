@@ -293,7 +293,7 @@ describe('selectAxisDomain', () => {
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([70, 80, 90, 10, 20, 30, 40, 50, 60]);
     // big oof
-    expect(domainSpy).toHaveBeenCalledTimes(25);
+    expect(domainSpy).toHaveBeenCalledTimes(29);
   });
 
   it('should return array indexes if there are multiple graphical items, and no explicit dataKey on the matching XAxis', () => {
@@ -359,7 +359,7 @@ describe('selectAxisDomain', () => {
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     // big oof
-    expect(domainSpy).toHaveBeenCalledTimes(25);
+    expect(domainSpy).toHaveBeenCalledTimes(29);
   });
 
   describe('XAxis with type = number', () => {
