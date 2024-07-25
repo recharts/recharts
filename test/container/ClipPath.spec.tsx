@@ -50,7 +50,7 @@ describe('clip paths', () => {
   });
 
   describe('in Line', () => {
-    it('should render no clipPaths by default', () => {
+    it('should render no clipPaths by default, and not clip the curve', () => {
       const { container } = render(
         <LineChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Line dataKey="pv" />
@@ -58,9 +58,11 @@ describe('clip paths', () => {
       );
       const line = container.querySelector('.recharts-line');
       expect(selectAllClipPaths(line)).toHaveLength(0);
+      const curve = container.querySelector('.recharts-line-curve');
+      expect(curve.getAttribute('clip-path')).toEqual(null);
     });
 
-    it('should clip in X dimension if xAxis has allowDataOverflow = true', () => {
+    it('should clip in X dimension if xAxis has allowDataOverflow = true, and should clip the curve', () => {
       const { container } = render(
         <LineChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Line dataKey="pv" />
@@ -74,6 +76,11 @@ describe('clip paths', () => {
         x: '99',
         y: '-196.5',
       });
+      const clipPath = line.querySelector('clipPath');
+      const clipPathId = clipPath.getAttribute('id');
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-line-\d+/));
+      const curve = container.querySelector('.recharts-line-curve');
+      expect(curve.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 
     it('should clip in Y dimension if yAxis has allowDataOverflow = true', () => {
@@ -165,7 +172,7 @@ describe('clip paths', () => {
   });
 
   describe('in Bar', () => {
-    it('should render no clipPaths by default', () => {
+    it('should render no clipPaths by default, and not clip its layer', () => {
       const { container } = render(
         <BarChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Bar dataKey="pv" />
@@ -173,9 +180,11 @@ describe('clip paths', () => {
       );
       const bar = container.querySelector('.recharts-bar');
       expect(selectAllClipPaths(bar)).toHaveLength(0);
+      const layer = bar.querySelector('.recharts-bar-rectangles');
+      expect(layer.getAttribute('clip-path')).toBe(null);
     });
 
-    it('should clip in X dimension if xAxis has allowDataOverflow = true', () => {
+    it('should clip in X dimension if xAxis has allowDataOverflow = true, and clip its layer', () => {
       const { container } = render(
         <BarChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Bar dataKey="pv" />
@@ -189,6 +198,11 @@ describe('clip paths', () => {
         x: '99',
         y: '-196.5',
       });
+      const clipPath = bar.querySelector('clipPath');
+      const clipPathId = clipPath.getAttribute('id');
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-bar-\d+/));
+      const layer = bar.querySelector('.recharts-bar-rectangles');
+      expect(layer.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 
     it('should clip in Y dimension if yAxis has allowDataOverflow = true', () => {
@@ -226,7 +240,7 @@ describe('clip paths', () => {
   });
 
   describe('in Scatter', () => {
-    it('should render no clipPaths by default', () => {
+    it('should render no clipPaths by default, and not clip its layer', () => {
       const { container } = render(
         <ScatterChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Scatter dataKey="pv" />
@@ -234,9 +248,10 @@ describe('clip paths', () => {
       );
       const scatter = container.querySelector('.recharts-scatter');
       expect(selectAllClipPaths(scatter)).toHaveLength(0);
+      expect(scatter.getAttribute('clip-path')).toBe(null);
     });
 
-    it('should clip in X dimension if xAxis has allowDataOverflow = true', () => {
+    it('should clip in X dimension if xAxis has allowDataOverflow = true, and clip its layer', () => {
       const { container } = render(
         <ScatterChart width={500} height={500} margin={{ top: 11, right: 22, bottom: 44, left: 99 }} data={pageData}>
           <Scatter dataKey="pv" />
@@ -250,6 +265,10 @@ describe('clip paths', () => {
         x: '99',
         y: '-196.5',
       });
+      const clipPath = scatter.querySelector('clipPath');
+      const clipPathId = clipPath.getAttribute('id');
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-scatter-\d+/));
+      expect(scatter.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 
     it('should clip in Y dimension if yAxis has allowDataOverflow = true', () => {
