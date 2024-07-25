@@ -26,8 +26,6 @@ import {
   getValueByDataKey,
   truncateByDomain,
 } from '../util/ChartUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import {
   ActiveShape,
   adaptEventsOfChild,
@@ -57,6 +55,8 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
+import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
+import type { XAxisProps, YAxisProps } from '../index';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -70,11 +70,8 @@ export interface BarRectangleItem extends RectangleProps {
 }
 
 interface InternalBarProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
   data?: BarRectangleItem[];
-  top?: number;
-  left?: number;
+  needClip?: boolean;
   width?: number;
   height?: number;
 }
@@ -488,29 +485,16 @@ class BarWithState extends PureComponent<Props, State> {
   }
 
   render() {
-    const {
-      hide,
-      data,
-      dataKey,
-      className,
-      xAxis,
-      yAxis,
-      left,
-      top,
-      width,
-      height,
-      isAnimationActive,
-      background,
-      id,
-    } = this.props;
+    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id } =
+      this.props;
     if (hide || !data || !data.length) {
       return (
         <>
           <SetCartesianGraphicalItem
             // Bar does not allow setting data directly on the graphical item (why?)
             data={null}
-            xAxisId={this.props.xAxisId}
-            yAxisId={this.props.yAxisId}
+            xAxisId={xAxisId}
+            yAxisId={yAxisId}
             dataKey={this.props.dataKey}
             errorBars={emptyArray}
             stackId={this.props.stackId}
@@ -525,17 +509,14 @@ class BarWithState extends PureComponent<Props, State> {
 
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-bar', className);
-    const needClipX = xAxis && xAxis.allowDataOverflow;
-    const needClipY = yAxis && yAxis.allowDataOverflow;
-    const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
       <CartesianGraphicalItemContext
         // Bar does not allow setting data directly on the graphical item (why?)
         data={null}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
         dataKey={this.props.dataKey}
         stackId={this.props.stackId}
         hide={this.props.hide}
@@ -544,18 +525,11 @@ class BarWithState extends PureComponent<Props, State> {
           <ReportBar />
           <SetBarLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? (
+          {needClip && (
             <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
+              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
             </defs>
-          ) : null}
+          )}
           <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
             <BarBackground
               data={data}
@@ -576,8 +550,9 @@ class BarWithState extends PureComponent<Props, State> {
 }
 
 function BarImpl(props: Props) {
+  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <BarWithState {...everythingElse} />;
+  return <BarWithState {...everythingElse} needClip={needClip} />;
 }
 
 export class Bar extends PureComponent<Props, State> {
@@ -626,8 +601,8 @@ export class Bar extends PureComponent<Props, State> {
     item: ReactElement;
     barPosition: ReadonlyArray<BarPosition>;
     bandSize: number;
-    xAxis: InternalBarProps['xAxis'];
-    yAxis: InternalBarProps['yAxis'];
+    xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
+    yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     stackedData: Array<[number, number]>;
