@@ -1,7 +1,8 @@
 /**
  * @fileOverview Line
  */
-import React, { PureComponent, ReactElement } from 'react';
+// eslint-disable-next-line max-classes-per-file
+import React, { Component, PureComponent, ReactElement } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
@@ -141,86 +142,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 const noErrorBars: never[] = [];
 
-export class Line extends PureComponent<Props, State> {
-  static displayName = 'Line';
-
-  static defaultProps = {
-    xAxisId: 0,
-    yAxisId: 0,
-    connectNulls: false,
-    activeDot: true,
-    dot: true,
-    legendType: 'line',
-    stroke: '#3182bd',
-    strokeWidth: 1,
-    fill: '#fff',
-    points: [] as LinePointItem[],
-    isAnimationActive: !Global.isSsr,
-    animateNewValues: true,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-    hide: false,
-    label: false,
-  };
-
-  /**
-   * Compose the data of each group
-   * @param {Object} props The props from the component
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({
-    props,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    dataKey,
-    bandSize,
-    displayedData,
-    offset,
-  }: {
-    props: Props;
-    xAxis: Props['xAxis'];
-    yAxis: Props['yAxis'];
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    dataKey: Props['dataKey'];
-    bandSize: number;
-    displayedData: any[];
-    offset: ChartOffset;
-  }): LineComposedData => {
-    const { layout } = props;
-
-    const points = displayedData.map((entry, index) => {
-      const value = getValueByDataKey(entry, dataKey);
-
-      if (layout === 'horizontal') {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          y: isNil(value) ? null : yAxis.scale(value),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        x: isNil(value) ? null : xAxis.scale(value),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
-    });
-
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    return { points, layout, ...offset };
-  };
-
+class LineWithState extends Component<Props, State> {
   mainCurve?: SVGPathElement;
 
   state: State = {
@@ -301,6 +223,7 @@ export class Line extends PureComponent<Props, State> {
 
     const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return [...Line.repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
   };
 
@@ -309,17 +232,6 @@ export class Line extends PureComponent<Props, State> {
   pathRef = (node: SVGPathElement): void => {
     this.mainCurve = node;
   };
-
-  static repeat(lines: number[], count: number) {
-    const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
-    let result: number[] = [];
-
-    for (let i = 0; i < count; ++i) {
-      result = [...result, ...linesUnit];
-    }
-
-    return result;
-  }
 
   handleAnimationEnd = () => {
     this.setState({ isAnimationFinished: true });
@@ -379,21 +291,6 @@ export class Line extends PureComponent<Props, State> {
     );
   }
 
-  static renderDotItem(option: ActiveDotType, props: any) {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
-  }
-
   renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
     const { isAnimationActive } = this.props;
 
@@ -417,6 +314,7 @@ export class Line extends PureComponent<Props, State> {
         payload: entry.payload,
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       return Line.renderDotItem(dot, dotProps);
     });
     const dotsProps = {
@@ -618,5 +516,122 @@ export class Line extends PureComponent<Props, State> {
         />
       </CartesianGraphicalItemContext>
     );
+  }
+}
+
+function LineImpl(props: Props) {
+  // const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const { ref, ...everythingElse } = props;
+  return <LineWithState {...everythingElse} /* needClip={needClip} */ />;
+}
+
+export class Line extends PureComponent<Props> {
+  static displayName = 'Line';
+
+  static defaultProps = {
+    xAxisId: 0,
+    yAxisId: 0,
+    connectNulls: false,
+    activeDot: true,
+    dot: true,
+    legendType: 'line',
+    stroke: '#3182bd',
+    strokeWidth: 1,
+    fill: '#fff',
+    points: [] as LinePointItem[],
+    isAnimationActive: !Global.isSsr,
+    animateNewValues: true,
+    animationBegin: 0,
+    animationDuration: 1500,
+    animationEasing: 'ease',
+    hide: false,
+    label: false,
+  };
+
+  /**
+   * Compose the data of each group
+   * @param {Object} props The props from the component
+   * @param  {Object} xAxis   The configuration of x-axis
+   * @param  {Object} yAxis   The configuration of y-axis
+   * @param  {String} dataKey The unique key of a group
+   * @return {Array}  Composed data
+   */
+  static getComposedData = ({
+    props,
+    xAxis,
+    yAxis,
+    xAxisTicks,
+    yAxisTicks,
+    dataKey,
+    bandSize,
+    displayedData,
+    offset,
+  }: {
+    props: Props;
+    xAxis: Props['xAxis'];
+    yAxis: Props['yAxis'];
+    xAxisTicks: TickItem[];
+    yAxisTicks: TickItem[];
+    dataKey: Props['dataKey'];
+    bandSize: number;
+    displayedData: any[];
+    offset: ChartOffset;
+  }): LineComposedData => {
+    const { layout } = props;
+
+    const points = displayedData.map((entry, index) => {
+      const value = getValueByDataKey(entry, dataKey);
+
+      if (layout === 'horizontal') {
+        return {
+          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+          // @ts-expect-error getValueByDataKey does not validate the output type
+          y: isNil(value) ? null : yAxis.scale(value),
+          value,
+          payload: entry,
+        };
+      }
+
+      return {
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        x: isNil(value) ? null : xAxis.scale(value),
+        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+        value,
+        payload: entry,
+      };
+    });
+
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    return { points, layout, ...offset };
+  };
+
+  static repeat(lines: number[], count: number) {
+    const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
+    let result: number[] = [];
+
+    for (let i = 0; i < count; ++i) {
+      result = [...result, ...linesUnit];
+    }
+
+    return result;
+  }
+
+  static renderDotItem(option: ActiveDotType, props: any) {
+    let dotItem;
+
+    if (React.isValidElement(option)) {
+      dotItem = React.cloneElement(option, props);
+    } else if (isFunction(option)) {
+      dotItem = option(props);
+    } else {
+      const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
+      dotItem = <Dot {...props} className={className} />;
+    }
+
+    return dotItem;
+  }
+
+  render() {
+    return <LineImpl {...this.props} />;
   }
 }
