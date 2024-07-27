@@ -148,6 +148,7 @@
   "lib/cartesian/ReferenceDot.js",
   "lib/cartesian/ReferenceArea.js",
   "lib/cartesian/Line.js",
+  "lib/cartesian/GraphicalItemClipPath.js",
   "lib/cartesian/ErrorBar.js",
   "lib/cartesian/CartesianGrid.js",
   "lib/cartesian/CartesianAxis.js",
