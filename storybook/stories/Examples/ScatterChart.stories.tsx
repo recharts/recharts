@@ -514,7 +514,7 @@ export const MultipleYAxes = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ScatterChart {...args}>
-          <CartesianGrid />
+          <CartesianGrid yAxisId="left" />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis yAxisId="left" type="number" dataKey="y" name="weight" unit="kg" stroke="#8884d8" />
           <YAxis

@@ -52,6 +52,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
+import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -64,19 +65,24 @@ export const implicitXAxis: XAxisSettings = {
   allowDataOverflow: false,
   allowDecimals: true,
   allowDuplicatedCategory: true,
+  angle: 0,
   dataKey: undefined,
   domain: undefined,
   height: 30,
   hide: true,
   id: undefined,
   includeHidden: false,
+  interval: 'preserveEnd',
+  minTickGap: 5,
   mirror: false,
   name: undefined,
   orientation: 'bottom',
   padding: { left: 0, right: 0 },
   reversed: false,
   scale: 'auto',
+  tick: true,
   tickCount: 5,
+  tickFormatter: undefined,
   ticks: undefined,
   type: 'category',
   unit: undefined,
@@ -99,18 +105,23 @@ export const implicitYAxis: YAxisSettings = {
   allowDataOverflow: false,
   allowDecimals: true,
   allowDuplicatedCategory: true,
+  angle: 0,
   dataKey: undefined,
   domain: defaultNumericDomain,
   hide: true,
   id: undefined,
   includeHidden: false,
+  interval: 'preserveEnd',
+  minTickGap: 5,
   mirror: false,
   name: undefined,
   orientation: 'left',
   padding: { top: 0, bottom: 0 },
   reversed: false,
   scale: 'auto',
+  tick: true,
   tickCount: 5,
+  tickFormatter: undefined,
   ticks: undefined,
   type: 'number',
   unit: undefined,
@@ -137,7 +148,11 @@ export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): Z
  * @param axisId xAxisId | yAxisId
  * @returns axis settings object
  */
-export const selectAxisSettings = (state: RechartsRootState, axisType: AxisType, axisId: AxisId): AxisSettings => {
+export const selectAxisSettings = (
+  state: RechartsRootState,
+  axisType: AxisType,
+  axisId: AxisId,
+): XAxisSettings | YAxisSettings => {
   switch (axisType) {
     case 'xAxis': {
       return selectXAxisSettings(state, axisId);
@@ -995,6 +1010,7 @@ export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axi
     selectEmptyAxisScale,
     selectAxisDomainIncludingNiceTicks,
     selectAxisRangeWithReverse,
+    pickAxisId,
     (parsedScaleReturn: ParsedScaleReturn, axisDomain, axisRange) => {
       if (parsedScaleReturn == null || parsedScaleReturn === unknownScale || axisDomain == null) {
         return unknownScale;
@@ -1244,6 +1260,52 @@ export const selectCategoricalDomain = createSelector(
       return displayedData.map(d => d.value);
     }
     return undefined;
+  },
+);
+
+export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(
+  selectChartLayout,
+  selectAxisSettings,
+  selectAxisScale,
+  selectDuplicateDomain,
+  selectCategoricalDomain,
+  selectAxisRange,
+  selectNiceTicks,
+  pickAxisType,
+  (
+    layout,
+    axis,
+    scaleReturn,
+    duplicateDomain,
+    categoricalDomain,
+    axisRange,
+    niceTicks,
+    axisType,
+  ): AxisPropsForCartesianGridTicksGeneration => {
+    if (axis == null || scaleReturn == null) {
+      return null;
+    }
+    const isCategorical = isCategoricalAxis(layout, axisType);
+    return {
+      angle: axis.angle,
+      interval: axis.interval,
+      minTickGap: axis.minTickGap,
+      orientation: axis.orientation,
+      tick: axis.tick,
+      tickCount: axis.tickCount,
+      tickFormatter: axis.tickFormatter,
+      ticks: axis.ticks,
+      type: axis.type,
+      unit: axis.unit,
+      axisType,
+      categoricalDomain,
+      duplicateDomain,
+      isCategorical,
+      niceTicks,
+      range: axisRange,
+      realScaleType: scaleReturn.realScaleType,
+      scale: scaleReturn.scale,
+    };
   },
 );
 

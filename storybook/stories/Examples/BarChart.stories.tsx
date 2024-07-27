@@ -552,7 +552,7 @@ export const Biaxial = {
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid yAxisId="left" strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />

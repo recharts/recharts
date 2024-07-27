@@ -30,6 +30,8 @@ interface YAxisProps extends BaseAxisProps {
   interval?: AxisInterval;
   reversed?: boolean;
   tickMargin?: number;
+  /** the rotate angle of tick */
+  angle?: number;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
@@ -80,6 +82,7 @@ const YAxisSettingsDispatcher = (props: Props) => {
   return (
     <>
       <SetYAxisSettings
+        interval={props.interval ?? 'preserveEnd'}
         id={props.yAxisId}
         scale={props.scale}
         type={props.type}
@@ -99,6 +102,10 @@ const YAxisSettingsDispatcher = (props: Props) => {
         hide={props.hide}
         unit={props.unit}
         name={props.name}
+        angle={props.angle ?? 0}
+        minTickGap={props.minTickGap ?? 5}
+        tick={props.tick ?? true}
+        tickFormatter={props.tickFormatter}
       />
       <YAxisImpl {...props} />
     </>

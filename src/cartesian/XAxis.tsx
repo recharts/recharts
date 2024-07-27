@@ -86,6 +86,7 @@ const XAxisSettingsDispatcher = (props: Props) => {
   return (
     <>
       <SetXAxisSettings
+        interval={props.interval ?? 'preserveEnd'}
         id={props.xAxisId}
         scale={props.scale}
         type={props.type}
@@ -105,6 +106,10 @@ const XAxisSettingsDispatcher = (props: Props) => {
         hide={props.hide}
         unit={props.unit}
         name={props.name}
+        angle={props.angle ?? 0}
+        minTickGap={props.minTickGap ?? 5}
+        tick={props.tick ?? true}
+        tickFormatter={props.tickFormatter}
       />
       <XAxisImpl {...props} />
     </>

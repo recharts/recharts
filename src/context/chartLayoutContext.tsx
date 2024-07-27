@@ -1,6 +1,4 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import find from 'lodash/find';
-import every from 'lodash/every';
 import { createSelector } from '@reduxjs/toolkit';
 import {
   CartesianViewBox,
@@ -140,34 +138,10 @@ export const selectArbitraryXAxis: (state: RechartsRootState) => XAxisWithExtraD
   getAnyElementOfObject,
 );
 
-/**
- * This will find an arbitrary first XAxis. If there's exactly one it always returns that one
- * - but if there are multiple then it can return any of those.
- *
- * If you want specific XAxis out of multiple then prefer using useXAxisOrThrow
- *
- * @returns X axisOptions, or undefined - if there are no X axes
- */
-export const useArbitraryXAxis = (): XAxisWithExtraData | undefined => useAppSelector(selectArbitraryXAxis);
-
 export const selectArbitraryYAxis: (state: RechartsRootState) => YAxisWithExtraData | undefined = createSelector(
   selectYAxisMap,
   getAnyElementOfObject,
 );
-
-/**
- * This hooks will:
- * 1st attempt to find an YAxis that has all elements in its domain finite
- * If no such axis exists, it will return an arbitrary YAxis
- * if there are no Y axes then it returns undefined
- *
- * @returns Either Y axisOptions, or undefined if there are no Y axes
- */
-export const useYAxisWithFiniteDomainOrRandom = (): YAxisWithExtraData | undefined => {
-  const yAxisMap = useAppSelector(selectYAxisMap);
-  const yAxisWithFiniteDomain = find(yAxisMap, axis => every(axis.domain, Number.isFinite));
-  return yAxisWithFiniteDomain || getAnyElementOfObject(yAxisMap);
-};
 
 /**
  * This either finds and returns Axis by the specified ID, or returns undefined if an axis with this ID does not exist.

@@ -123,6 +123,7 @@ export const Vertical = {
     );
   },
 };
+
 export const BiAxial = {
   render: () => {
     return (
@@ -138,7 +139,7 @@ export const BiAxial = {
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid yAxisId="left" strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" />
           <YAxis yAxisId="right" orientation="right" />
@@ -580,21 +581,19 @@ export const HighlightAndZoom = {
       const [bottom, top] = getAxisYDomain(refAreaLeft, refAreaRight, 'cost', 1);
       const [bottom2, top2] = getAxisYDomain(refAreaLeft, refAreaRight, 'impression', 50);
 
-      setZoomGraph(
-        prev =>
-          ({
-            ...prev,
-            refAreaLeft: '',
-            refAreaRight: '',
-            data: data?.slice(),
-            left: refAreaLeft,
-            right: refAreaRight,
-            bottom,
-            top,
-            bottom2,
-            top2,
-          }) as any,
-      );
+      // @ts-expect-error this storybook needs types
+      setZoomGraph(prev => ({
+        ...prev,
+        refAreaLeft: '',
+        refAreaRight: '',
+        data: data?.slice(),
+        left: refAreaLeft,
+        right: refAreaRight,
+        bottom,
+        top,
+        bottom2,
+        top2,
+      }));
     };
 
     const zoomOut = () => {
@@ -630,7 +629,7 @@ export const HighlightAndZoom = {
             onMouseMove={e => zoomGraph.refAreaLeft && setZoomGraph(prev => ({ ...prev, refAreaRight: e.activeLabel }))}
             onMouseUp={() => zoom()}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid yAxisId="1" strokeDasharray="3 3" />
             <XAxis allowDataOverflow dataKey="name" domain={left && right ? [left, right] : undefined} type="number" />
             <YAxis allowDataOverflow domain={[bottom, top]} type="number" yAxisId="1" />
             <YAxis orientation="right" allowDataOverflow domain={[bottom2, top2]} type="number" yAxisId="2" />

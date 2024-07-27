@@ -6,24 +6,16 @@ import isFunction from 'lodash/isFunction';
 
 import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';
-import { ChartOffset, D3Scale } from '../util/types';
+import { ChartOffset } from '../util/types';
 
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
-import { getTicks } from './getTicks';
+import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
+import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import {
-  useArbitraryXAxis,
-  useChartHeight,
-  useChartWidth,
-  useOffset,
-  useYAxisWithFiniteDomainOrRandom,
-} from '../context/chartLayoutContext';
-
-type XAxisWithD3Scale = Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-type YAxisWithD3Scale = Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import { AxisId } from '../state/axisMapSlice';
+import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
+import { useAppSelector } from '../state/hooks';
 
 /**
  * The <CartesianGrid horizontal
@@ -33,20 +25,10 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   key: LineItemProps['key'] | undefined;
   // offset is not present in LineItemProps but it is read from context and then passed to the GridLineType function and element
   offset: ChartOffset;
-  /**
-   * The first available xAxis. This is rather arbitrary - if there's one XAxis then it's the first one,
-   * if there are multiple then it's a random one.
-   *
-   * If there are no XAxis present then this will be null.
-   */
-  xAxis: null | XAxisWithD3Scale;
-  /**
-   * The first available yAxis. The axes with finite domain will be preferred.
-   *
-   * If there are no YAxis present then this will be null.
-   */
-  yAxis: null | YAxisWithD3Scale;
 };
+
+export type AxisPropsForCartesianGridTicksGeneration = AxisPropsNeededForTicksGenerator &
+  Omit<GetTicksInput, 'ticks' | 'viewBox'>;
 
 type GridLineType =
   | SVGProps<SVGLineElement>
@@ -56,7 +38,7 @@ type GridLineType =
 
 export type HorizontalCoordinatesGenerator = (
   props: {
-    yAxis: any;
+    yAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
     offset: ChartOffset;
@@ -66,7 +48,7 @@ export type HorizontalCoordinatesGenerator = (
 
 export type VerticalCoordinatesGenerator = (
   props: {
-    xAxis: any;
+    xAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
     offset: ChartOffset;
@@ -144,6 +126,8 @@ interface CartesianGridProps extends InternalCartesianGridProps {
    * Has priority over syncWithTicks but not over verticalValues.
    */
   verticalValues?: number[] | string[];
+  xAxisId?: AxisId;
+  yAxisId?: AxisId;
 }
 
 type AcceptedSvgProps = Omit<SVGProps<SVGElement>, 'offset'>;
@@ -175,8 +159,8 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 
 type LineItemProps = Props & {
   offset: ChartOffset;
-  xAxis: null | XAxisWithD3Scale;
-  yAxis: null | YAxisWithD3Scale;
+  xAxis: null | AxisPropsForCartesianGridTicksGeneration;
+  yAxis: null | AxisPropsForCartesianGridTicksGeneration;
   x1: number;
   y1: number;
   x2: number;
@@ -215,9 +199,11 @@ function HorizontalGridLines(props: GridLinesProps) {
     return null;
   }
 
+  const { xAxisId, yAxisId, ...otherLineItemProps } = props;
+
   const items = horizontalPoints.map((entry, i) => {
     const lineItemProps: LineItemProps = {
-      ...props,
+      ...otherLineItemProps,
       x1: x,
       y1: entry,
       x2: x + width,
@@ -239,9 +225,11 @@ function VerticalGridLines(props: GridLinesProps) {
     return null;
   }
 
+  const { xAxisId, yAxisId, ...otherLineItemProps } = props;
+
   const items = verticalPoints.map((entry, i) => {
     const lineItemProps: LineItemProps = {
-      ...props,
+      ...otherLineItemProps,
       x1: entry,
       y1: y,
       x2: entry,
@@ -396,14 +384,19 @@ export function CartesianGrid(props: Props) {
     y: isNumber(props.y) ? props.y : offset.top,
     width: isNumber(props.width) ? props.width : offset.width,
     height: isNumber(props.height) ? props.height : offset.height,
+    xAxisId: props.xAxisId ?? 0,
+    yAxisId: props.yAxisId ?? 0,
   };
 
-  const { x, y, width, height, syncWithTicks, horizontalValues, verticalValues } = propsIncludingDefaults;
+  const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
+    propsIncludingDefaults;
 
-  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
-  const xAxis: XAxisWithD3Scale = useArbitraryXAxis();
-  // @ts-expect-error the scale prop is mixed up - we need to untagle this at some point
-  const yAxis: YAxisWithD3Scale = useYAxisWithFiniteDomainOrRandom();
+  const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId),
+  );
+  const yAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId),
+  );
 
   if (
     !isNumber(width) ||
@@ -450,6 +443,7 @@ export function CartesianGrid(props: Props) {
       },
       isHorizontalValues ? true : syncWithTicks,
     );
+
     warn(
       Array.isArray(generatorResult),
       `horizontalCoordinatesGenerator should return Array but instead it returned [${typeof generatorResult}]`,

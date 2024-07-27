@@ -3,6 +3,8 @@ import { getTicks, GetTicksInput } from '../../src/cartesian/getTicks';
 import { CartesianTickItem } from '../../src/util/types';
 
 const EXAMPLE_INPUT: GetTicksInput = {
+  tickFormatter: undefined,
+  unit: '',
   angle: undefined,
   interval: 'preserveStart' as const,
   minTickGap: 5,

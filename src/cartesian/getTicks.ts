@@ -1,11 +1,11 @@
 import isFunction from 'lodash/isFunction';
-import { CartesianTickItem, Size } from '../util/types';
+import { CartesianTickItem, CartesianViewBox, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
-import { Props as CartesianAxisProps } from './CartesianAxis';
 import { Global } from '../util/Global';
 import { isVisible, getTickBoundaries, getNumberIntervalTicks, getAngledTickWidth } from '../util/TickUtils';
 import { getEquidistantTicks } from './getEquidistantTicks';
+import { AxisSettings, XAxisOrientation, YAxisOrientation } from '../state/axisMapSlice';
 
 export type Sign = 0 | 1 | -1;
 
@@ -119,11 +119,16 @@ function getTicksStart(
   return result;
 }
 
-export type GetTicksInput = Pick<
-  CartesianAxisProps,
-  'tick' | 'viewBox' | 'minTickGap' | 'orientation' | 'interval' | 'tickFormatter' | 'unit' | 'angle'
-> & {
+export type GetTicksInput = {
+  angle: number;
+  interval: AxisSettings['interval'];
+  minTickGap: number;
+  orientation: XAxisOrientation | YAxisOrientation;
+  tick: AxisSettings['tick'];
+  tickFormatter: AxisSettings['tickFormatter'];
   ticks: ReadonlyArray<CartesianTickItem>;
+  unit: AxisSettings['unit'];
+  viewBox: CartesianViewBox;
 };
 
 export function getTicks(

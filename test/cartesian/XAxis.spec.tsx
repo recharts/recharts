@@ -1275,6 +1275,7 @@ describe('<XAxis />', () => {
         spy(settings);
         return null;
       };
+      const fakeTickFormatter = () => '';
       const { container } = render(
         <BarChart width={100} height={100}>
           <XAxis
@@ -1288,6 +1289,11 @@ describe('<XAxis />', () => {
             mirror
             name="axis name"
             unit="axis unit"
+            interval={7}
+            angle={13}
+            minTickGap={9}
+            tick={false}
+            tickFormatter={fakeTickFormatter}
           />
           <Customized component={Comp} />
         </BarChart>,
@@ -1295,6 +1301,11 @@ describe('<XAxis />', () => {
       expect(container.querySelector('.xAxis')).toBeVisible();
       expect(spy).toHaveBeenCalledTimes(3);
       const expectedSettings: XAxisSettings = {
+        angle: 13,
+        minTickGap: 9,
+        tick: false,
+        tickFormatter: fakeTickFormatter,
+        interval: 7,
         name: 'axis name',
         unit: 'axis unit',
         hide: false,
@@ -1336,6 +1347,11 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       const expectedSettings1: XAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
         name: undefined,
         unit: undefined,
         hide: false,
@@ -1375,6 +1391,11 @@ describe('<XAxis />', () => {
         foo: XAxisSettings;
       } = {
         foo: {
+          angle: 0,
+          minTickGap: 5,
+          tick: true,
+          tickFormatter: undefined,
+          interval: 'preserveEnd',
           name: undefined,
           unit: undefined,
           hide: false,
@@ -1399,6 +1420,11 @@ describe('<XAxis />', () => {
           reversed: false,
         },
         bar: {
+          angle: 0,
+          minTickGap: 5,
+          tick: true,
+          tickFormatter: undefined,
+          interval: 'preserveEnd',
           name: undefined,
           unit: undefined,
           hide: false,
@@ -1432,6 +1458,11 @@ describe('<XAxis />', () => {
       );
 
       const expectedSettings3: XAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
         name: undefined,
         unit: undefined,
         hide: false,
@@ -3964,6 +3995,11 @@ describe('<XAxis />', () => {
         },
       ]);
       const expectedSettings: XAxisSettings = {
+        angle: 0,
+        minTickGap: 5,
+        tick: true,
+        tickFormatter: undefined,
+        interval: 'preserveEnd',
         name: undefined,
         unit: undefined,
         hide: false,

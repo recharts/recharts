@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { AxisDomain, AxisDomainType, AxisTick, DataKey, ScaleType } from '../util/types';
+import { ReactElement, SVGProps } from 'react';
+import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
+import { TickFormatter } from '../cartesian/CartesianAxis';
 
 export type AxisId = string | number;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
@@ -30,9 +32,12 @@ export type AxisSettings = {
   allowDuplicatedCategory: boolean;
   allowDecimals: boolean;
   tickCount: number;
+  interval: AxisInterval;
   includeHidden: boolean;
   reversed: boolean;
   mirror: boolean;
+  minTickGap: number;
+  angle: number;
   /**
    * Ticks can be any type when the axis is the type of category
    * Ticks must be numbers when the axis is the type of number
@@ -41,6 +46,8 @@ export type AxisSettings = {
   hide: boolean;
   unit: string | undefined;
   name: string | undefined;
+  tickFormatter: TickFormatter | undefined;
+  tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
 };
 
 export type XAxisSettings = AxisSettings & {
