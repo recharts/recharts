@@ -139,9 +139,7 @@ describe('<BarChart />', () => {
     const Spy = (props: { formattedGraphicalItems?: any }) => {
       const { formattedGraphicalItems } = props;
       const [seriesOneBarOne, seriesTwoBarOne] = formattedGraphicalItems;
-      // eslint-disable-next-line prefer-destructuring
       seriesOneBarOneValue = seriesOneBarOne.props.data[0].value;
-      // eslint-disable-next-line prefer-destructuring
       seriesTwoBarOneValue = seriesTwoBarOne.props.data[0].value;
       return <></>;
     };

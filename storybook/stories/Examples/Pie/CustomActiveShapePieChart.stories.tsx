@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 import React from 'react';
 import { Args } from '@storybook/react';
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';

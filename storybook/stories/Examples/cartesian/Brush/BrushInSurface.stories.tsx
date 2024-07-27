@@ -32,7 +32,6 @@ export const InSurface = {
       setGap(res);
     };
 
-    // eslint-disable-next-line no-shadow
     const renderTraveller = (props: { x: number; y: number; width: number; height: number }) => {
       const { x, y, width, height } = props;
 

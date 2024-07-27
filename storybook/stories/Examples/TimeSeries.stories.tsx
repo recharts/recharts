@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-nested-ternary */
 import React from 'react';
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
