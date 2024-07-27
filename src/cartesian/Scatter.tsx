@@ -576,7 +576,6 @@ function ScatterImpl(props: InternalProps) {
   return <ScatterWithState {...everythingElse} needClip={needClip} />;
 }
 
-// eslint-disable-next-line react/prefer-stateless-function
 export class Scatter extends Component<InternalProps> {
   static displayName = 'Scatter';
 

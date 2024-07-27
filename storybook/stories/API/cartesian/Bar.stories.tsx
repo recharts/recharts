@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { Args } from '@storybook/react';
 import { data as dataProp, General as GeneralProps, layout as layoutProp } from '../props/CartesianComponentShared';

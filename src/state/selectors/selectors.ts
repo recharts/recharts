@@ -171,7 +171,6 @@ function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: Readonl
 export function selectTooltipPayloadConfigurations(
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   trigger: TooltipTrigger,
 ): ReadonlyArray<TooltipPayloadConfiguration> {
   const tooltipState = selectTooltipState(state);

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { ComposedChart, Scatter, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';

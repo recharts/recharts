@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { ReactElement } from 'react';
 
 import { render, fireEvent } from '@testing-library/react';
