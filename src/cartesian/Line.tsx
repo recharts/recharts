@@ -275,16 +275,16 @@ export class Line extends PureComponent<Props, State> {
     }
   }
 
-  generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
+  static generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
     return `${length}px ${totalLength - length}px`;
   };
 
-  getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
+  static getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
     const lineLength = lines.reduce((pre, next) => pre + next);
 
     // if lineLength is 0 return the default when no strokeDasharray is provided
     if (!lineLength) {
-      return this.generateSimpleStrokeDasharray(totalLength, length);
+      return Line.generateSimpleStrokeDasharray(totalLength, length);
     }
 
     const count = Math.floor(length / lineLength);
@@ -508,9 +508,9 @@ export class Line extends PureComponent<Props, State> {
 
           if (strokeDasharray) {
             const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-            currentStrokeDasharray = this.getStrokeDasharray(curLength, totalLength, lines);
+            currentStrokeDasharray = Line.getStrokeDasharray(curLength, totalLength, lines);
           } else {
-            currentStrokeDasharray = this.generateSimpleStrokeDasharray(totalLength, curLength);
+            currentStrokeDasharray = Line.generateSimpleStrokeDasharray(totalLength, curLength);
           }
 
           return this.renderCurveStatically(points, needClip, clipPathId, {

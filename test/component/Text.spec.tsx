@@ -209,8 +209,8 @@ describe('<Text />', () => {
 
       const text = screen.getByRole('img');
       expect(text).toBeInTheDocument();
-      const lastChild = text?.children[text?.children?.length - 1];
-      const lastLetter = lastChild.textContent?.[lastChild?.textContent?.length - 1];
+      const lastChild = text.children[text.children.length - 1];
+      const lastLetter = lastChild.textContent[lastChild.textContent.length - 1];
 
       expect(lastLetter).toEqual('…');
     });

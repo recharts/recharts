@@ -69,8 +69,8 @@ export const treemapPayloadSearcher: TooltipPayloadSearcher<TreemapNode, Treemap
 };
 
 export const addToTreemapNodeIndex = (
-  activeTooltipIndexSoFar: TooltipIndex | undefined = '',
   indexInChildrenArr: number,
+  activeTooltipIndexSoFar: TooltipIndex | undefined = '',
 ): TooltipIndex => {
   return `${activeTooltipIndexSoFar}children[${indexInChildrenArr}]`;
 };
@@ -99,7 +99,7 @@ export const computeNode = ({
   nameKey: DataKey<any>;
   nestedActiveTooltipIndex: TooltipIndex | undefined;
 }): TreemapNode => {
-  const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(nestedActiveTooltipIndex, index);
+  const currentTooltipIndex = depth === 0 ? '' : addToTreemapNodeIndex(index, nestedActiveTooltipIndex);
   const { children } = node;
   const childDepth = depth + 1;
   const computedChildren =

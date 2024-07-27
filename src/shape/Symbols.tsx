@@ -92,7 +92,9 @@ export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest
    */
   const getPath = () => {
     const symbolFactory = getSymbolFactory(type);
-    const symbol = shapeSymbol().type(symbolFactory).size(calculateAreaSize(size, sizeType, type));
+    const symbol = shapeSymbol()
+      .type(symbolFactory)
+      .size(calculateAreaSize(size, sizeType, type));
 
     return symbol();
   };

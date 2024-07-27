@@ -272,15 +272,15 @@ export class CartesianAxis extends Component<Props, IState> {
 
   /**
    * render the ticks
-   * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @param {string} fontSize Fontsize to consider for tick spacing
    * @param {string} letterSpacing Letterspacing to consider for tick spacing
+   * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @return {ReactElement | null} renderedTicks
    */
   renderTicks(
-    ticks: ReadonlyArray<CartesianTickItem> = [],
     fontSize: string,
     letterSpacing: string,
+    ticks: ReadonlyArray<CartesianTickItem> = [],
   ): React.ReactElement | null {
     const { tickLine, stroke, tick, tickFormatter, unit } = this.props;
     const finalTicks = getTicks({ ...this.props, ticks }, fontSize, letterSpacing);
@@ -356,7 +356,7 @@ export class CartesianAxis extends Component<Props, IState> {
         }}
       >
         {axisLine && this.renderAxisLine()}
-        {this.renderTicks(ticks, this.state.fontSize, this.state.letterSpacing)}
+        {this.renderTicks(this.state.fontSize, this.state.letterSpacing, ticks)}
         {Label.renderCallByParent(this.props)}
       </Layer>
     );

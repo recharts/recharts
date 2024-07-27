@@ -110,7 +110,7 @@ export const calculateActiveTickIndex = (
    * radial -> radius
    */
   coordinate: number,
-  ticks: ReadonlyArray<TickItem> = [],
+  ticks: ReadonlyArray<TickItem>,
   unsortedTicks?: ReadonlyArray<TickItem>,
   axis?: AxisPropsWithExtraComputedData,
 ): number => {

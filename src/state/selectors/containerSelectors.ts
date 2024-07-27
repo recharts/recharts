@@ -39,8 +39,12 @@ export const selectChartCoordinates: (state: RechartsRootState, event: MousePoin
 export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
   selectRootContainer,
   selectRootContainerDomRect,
-  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number =>
-    rect?.width / container?.offsetWidth || 1,
+  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number => {
+    if (!rect?.width || !container?.offsetWidth) {
+      return 1;
+    }
+    return rect.width / container.offsetWidth;
+  },
 );
 
 export const selectMargin = (state: RechartsRootState): Margin | undefined => state.layout.margin;
