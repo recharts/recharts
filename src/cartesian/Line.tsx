@@ -141,6 +141,61 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   };
 }
 
+const generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
+  return `${length}px ${totalLength - length}px`;
+};
+
+function repeat(lines: number[], count: number) {
+  const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
+  let result: number[] = [];
+
+  for (let i = 0; i < count; ++i) {
+    result = [...result, ...linesUnit];
+  }
+
+  return result;
+}
+
+const getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
+  const lineLength = lines.reduce((pre, next) => pre + next);
+
+  // if lineLength is 0 return the default when no strokeDasharray is provided
+  if (!lineLength) {
+    return generateSimpleStrokeDasharray(totalLength, length);
+  }
+
+  const count = Math.floor(length / lineLength);
+  const remainLength = length % lineLength;
+  const restLength = totalLength - length;
+
+  let remainLines: number[] = [];
+  for (let i = 0, sum = 0; i < lines.length; sum += lines[i], ++i) {
+    if (sum + lines[i] > remainLength) {
+      remainLines = [...lines.slice(0, i), remainLength - sum];
+      break;
+    }
+  }
+
+  const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
+
+  return [...repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
+};
+
+function renderDotItem(option: ActiveDotType, props: any) {
+  let dotItem;
+
+  if (React.isValidElement(option)) {
+    dotItem = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dotItem = option(props);
+  } else {
+    const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
+    dotItem = <Dot {...props} className={className} />;
+  }
+
+  return dotItem;
+}
+
 const noErrorBars: never[] = [];
 
 class LineWithState extends Component<Props, State> {
@@ -197,36 +252,6 @@ class LineWithState extends Component<Props, State> {
       return 0;
     }
   }
-
-  static generateSimpleStrokeDasharray = (totalLength: number, length: number): string => {
-    return `${length}px ${totalLength - length}px`;
-  };
-
-  static getStrokeDasharray = (length: number, totalLength: number, lines: number[]) => {
-    const lineLength = lines.reduce((pre, next) => pre + next);
-
-    // if lineLength is 0 return the default when no strokeDasharray is provided
-    if (!lineLength) {
-      return Line.generateSimpleStrokeDasharray(totalLength, length);
-    }
-
-    const count = Math.floor(length / lineLength);
-    const remainLength = length % lineLength;
-    const restLength = totalLength - length;
-
-    let remainLines: number[] = [];
-    for (let i = 0, sum = 0; i < lines.length; sum += lines[i], ++i) {
-      if (sum + lines[i] > remainLength) {
-        remainLines = [...lines.slice(0, i), remainLength - sum];
-        break;
-      }
-    }
-
-    const emptyLines = remainLines.length % 2 === 0 ? [0, restLength] : [restLength];
-
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return [...Line.repeat(lines, count), ...remainLines, ...emptyLines].map(line => `${line}px`).join(', ');
-  };
 
   id = uniqueId('recharts-line-');
 
@@ -315,8 +340,7 @@ class LineWithState extends Component<Props, State> {
         payload: entry.payload,
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      return Line.renderDotItem(dot, dotProps);
+      return renderDotItem(dot, dotProps);
     });
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
@@ -407,9 +431,9 @@ class LineWithState extends Component<Props, State> {
 
           if (strokeDasharray) {
             const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-            currentStrokeDasharray = Line.getStrokeDasharray(curLength, totalLength, lines);
+            currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
           } else {
-            currentStrokeDasharray = Line.generateSimpleStrokeDasharray(totalLength, curLength);
+            currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
           }
 
           return this.renderCurveStatically(points, needClip, clipPathId, {
@@ -609,32 +633,6 @@ export class Line extends PureComponent<Props> {
     // @ts-expect-error getValueByDataKey does not validate the output type
     return { points, layout, ...offset };
   };
-
-  static repeat(lines: number[], count: number) {
-    const linesUnit = lines.length % 2 !== 0 ? [...lines, 0] : lines;
-    let result: number[] = [];
-
-    for (let i = 0; i < count; ++i) {
-      result = [...result, ...linesUnit];
-    }
-
-    return result;
-  }
-
-  static renderDotItem(option: ActiveDotType, props: any) {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
-  }
 
   render() {
     return <LineImpl {...this.props} />;
