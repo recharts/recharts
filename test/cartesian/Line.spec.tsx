@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { scaleLinear } from 'victory-vendor/d3-scale';
-import { Surface, Line, ErrorBar, LineChart, Customized } from '../../src';
+import { Surface, Line, ErrorBar, LineChart, Customized, XAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 
@@ -54,14 +53,11 @@ describe('<Line />', () => {
 
   it('Does not render clip dot when clipDot is false', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Line
-          isAnimationActive={false}
-          points={data}
-          dot={{ clipDot: false }} // Line must have an XAxis or YAxis in order for clips to render
-          xAxis={{ allowDataOverflow: true, scale: scaleLinear() }}
-        />
-      </Surface>,
+      <LineChart width={500} height={500} data={data}>
+        <Line isAnimationActive={false} dataKey="x" dot={{ clipDot: false }} />
+        {/* Line must have an XAxis or YAxis in order for clips to render */}
+        <XAxis allowDataOverflow />
+      </LineChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
@@ -75,15 +71,11 @@ describe('<Line />', () => {
 
   it('Does render clip dot when clipDot is true', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Line
-          isAnimationActive={false}
-          points={data}
-          dot={{ clipDot: true }}
-          // Line must have an XAxis or YAxis in order for clips to render
-          xAxis={{ allowDataOverflow: true, scale: scaleLinear() }}
-        />
-      </Surface>,
+      <LineChart width={500} height={500} data={data}>
+        <Line isAnimationActive={false} dataKey="x" dot={{ clipDot: true }} />
+        {/* Line must have an XAxis or YAxis in order for clips to render */}
+        <XAxis allowDataOverflow />
+      </LineChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
@@ -92,6 +84,7 @@ describe('<Line />', () => {
     expect(dots).toHaveLength(5);
 
     const dotsWrapper = container.querySelector('.recharts-line-dots');
+    expect(dotsWrapper.hasAttribute('clip-path')).toBe(true);
     expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-line');
   });
 

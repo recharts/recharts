@@ -46,7 +46,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { AxisId, AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
-import { ClipPath } from '../container/ClipPath';
+import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -71,10 +71,6 @@ interface ScatterInternalProps {
   yAxisId?: string | number;
   zAxisId?: string | number;
 
-  xAxis?: AxisWithScale;
-  yAxis?: AxisWithScale;
-  zAxis?: ZAxisSettings;
-
   dataKey?: DataKey<any>;
 
   line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
@@ -96,6 +92,8 @@ interface ScatterInternalProps {
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
+
+  needClip?: boolean;
 }
 
 interface ScatterProps {
@@ -522,7 +520,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
   }
 
   render() {
-    const { hide, points, className, xAxis, yAxis, id, isAnimationActive } = this.props;
+    const { hide, points, className, needClip, xAxisId, yAxisId, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
       return (
         <>
@@ -543,11 +541,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
     }
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
-    const needClipX = xAxis && xAxis.allowDataOverflow;
-    const needClipY = yAxis && yAxis.allowDataOverflow;
-    const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
-
     return (
       <CartesianGraphicalItemContext
         data={this.props.data}
@@ -561,7 +555,11 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
         <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <SetScatterLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? <ClipPath clipPathId={`clipPath-${clipPathId}`} /> : null}
+          {needClip && (
+            <defs>
+              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+            </defs>
+          )}
           <ScatterLine {...this.props} />
           <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
           <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
@@ -573,8 +571,9 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 }
 
 function ScatterImpl(props: InternalProps) {
+  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <ScatterWithState {...everythingElse} />;
+  return <ScatterWithState {...everythingElse} needClip={needClip} />;
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -615,9 +614,9 @@ export class Scatter extends Component<InternalProps> {
     yAxisTicks,
   }: {
     props: InternalProps;
-    xAxis: InternalProps['xAxis'];
-    yAxis: InternalProps['yAxis'];
-    zAxis: InternalProps['zAxis'];
+    xAxis?: AxisWithScale;
+    yAxis?: AxisWithScale;
+    zAxis?: ZAxisSettings;
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     item: ScatterWithState;

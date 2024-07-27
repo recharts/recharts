@@ -451,7 +451,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(6);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(7);
     });
 
     it('should extend XAxis domain', () => {

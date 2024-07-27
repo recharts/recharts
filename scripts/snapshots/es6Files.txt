@@ -148,6 +148,7 @@
   "es6/cartesian/ReferenceDot.js",
   "es6/cartesian/ReferenceArea.js",
   "es6/cartesian/Line.js",
+  "es6/cartesian/GraphicalItemClipPath.js",
   "es6/cartesian/ErrorBar.js",
   "es6/cartesian/CartesianGrid.js",
   "es6/cartesian/CartesianAxis.js",
