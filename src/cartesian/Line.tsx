@@ -40,6 +40,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -47,13 +48,12 @@ export interface LinePointItem extends CurvePoint {
 }
 
 interface InternalLineProps {
+  needClip?: boolean;
   top?: number;
   left?: number;
   width?: number;
   height?: number;
   points?: LinePointItem[];
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
 }
 
 interface LineProps extends InternalLineProps {
@@ -104,6 +104,7 @@ type LineComposedData = ChartOffset & {
 
 const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
+  const { needClip, ...otherPayload } = props;
   return [
     {
       inactive: hide,
@@ -111,7 +112,7 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
       type: legendType,
       color: stroke,
       value: name || dataKey,
-      payload: props,
+      payload: otherPayload,
     },
   ];
 };
@@ -436,15 +437,29 @@ class LineWithState extends Component<Props, State> {
   }
 
   render() {
-    const { hide, dot, points, className, xAxis, yAxis, top, left, width, height, isAnimationActive, id } = this.props;
+    const {
+      hide,
+      dot,
+      points,
+      className,
+      xAxisId,
+      yAxisId,
+      top,
+      left,
+      width,
+      height,
+      isAnimationActive,
+      id,
+      needClip,
+    } = this.props;
 
     if (hide || !points || !points.length) {
       return (
         <>
           <SetCartesianGraphicalItem
             data={this.props.data}
-            xAxisId={this.props.xAxisId}
-            yAxisId={this.props.yAxisId}
+            xAxisId={xAxisId}
+            yAxisId={yAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             // line doesn't stack
@@ -460,9 +475,6 @@ class LineWithState extends Component<Props, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-line', className);
-    const needClipX = xAxis && xAxis.allowDataOverflow;
-    const needClipY = yAxis && yAxis.allowDataOverflow;
-    const needClip = needClipX || needClipY;
     const clipPathId = isNil(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
@@ -471,8 +483,8 @@ class LineWithState extends Component<Props, State> {
     return (
       <CartesianGraphicalItemContext
         data={this.props.data}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
         dataKey={this.props.dataKey}
         // line doesn't stack
         stackId={undefined}
@@ -481,16 +493,9 @@ class LineWithState extends Component<Props, State> {
         <Layer className={layerClass}>
           <SetLineLegend {...this.props} />
           <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClipX || needClipY ? (
+          {needClip && (
             <defs>
-              <clipPath id={`clipPath-${clipPathId}`}>
-                <rect
-                  x={needClipX ? left : left - width / 2}
-                  y={needClipY ? top : top - height / 2}
-                  width={needClipX ? width : width * 2}
-                  height={needClipY ? height : height * 2}
-                />
-              </clipPath>
+              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
               {!clipDot && (
                 <clipPath id={`clipPath-dots-${clipPathId}`}>
                   <rect
@@ -502,7 +507,7 @@ class LineWithState extends Component<Props, State> {
                 </clipPath>
               )}
             </defs>
-          ) : null}
+          )}
           {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
           {this.renderErrorBar(needClip, clipPathId)}
           {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
@@ -520,9 +525,9 @@ class LineWithState extends Component<Props, State> {
 }
 
 function LineImpl(props: Props) {
-  // const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <LineWithState {...everythingElse} /* needClip={needClip} */ />;
+  return <LineWithState {...everythingElse} needClip={needClip} />;
 }
 
 export class Line extends PureComponent<Props> {
@@ -568,8 +573,8 @@ export class Line extends PureComponent<Props> {
     offset,
   }: {
     props: Props;
-    xAxis: Props['xAxis'];
-    yAxis: Props['yAxis'];
+    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     dataKey: Props['dataKey'];
