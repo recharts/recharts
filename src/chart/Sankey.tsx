@@ -13,7 +13,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
-import { ReportChartMargin, ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -742,7 +742,6 @@ export class Sankey extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
-    const viewBox = { x: 0, y: 0, width, height };
     const attrs = filterProps(others, false);
 
     return (
@@ -751,35 +750,33 @@ export class Sankey extends PureComponent<Props, State> {
         <ReportChartMargin margin={defaultSankeyMargin} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <ViewBoxContext.Provider value={viewBox}>
-              <TooltipContextProvider value={this.getTooltipContext()}>
-                <RechartsWrapper
-                  className={className}
-                  style={style}
-                  width={width}
-                  height={height}
-                  ref={(node: HTMLDivElement) => {
-                    if (this.state.tooltipPortal == null) {
-                      this.setState({ tooltipPortal: node });
-                    }
-                  }}
-                >
-                  <Surface {...attrs} width={width} height={height}>
-                    <g
-                      className="recharts-cursor-portal"
-                      ref={(node: SVGElement) => {
-                        if (this.state.cursorPortal == null) {
-                          this.setState({ cursorPortal: node });
-                        }
-                      }}
-                    />
-                    {children}
-                    {this.renderLinks(links, nodes)}
-                    {this.renderNodes(nodes)}
-                  </Surface>
-                </RechartsWrapper>
-              </TooltipContextProvider>
-            </ViewBoxContext.Provider>
+            <TooltipContextProvider value={this.getTooltipContext()}>
+              <RechartsWrapper
+                className={className}
+                style={style}
+                width={width}
+                height={height}
+                ref={(node: HTMLDivElement) => {
+                  if (this.state.tooltipPortal == null) {
+                    this.setState({ tooltipPortal: node });
+                  }
+                }}
+              >
+                <Surface {...attrs} width={width} height={height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (this.state.cursorPortal == null) {
+                        this.setState({ cursorPortal: node });
+                      }
+                    }}
+                  />
+                  {children}
+                  {this.renderLinks(links, nodes)}
+                  {this.renderNodes(nodes)}
+                </Surface>
+              </RechartsWrapper>
+            </TooltipContextProvider>
           </TooltipPortalContext.Provider>
         </CursorPortalContext.Provider>
       </RechartsStoreProvider>

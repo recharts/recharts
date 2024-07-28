@@ -12,7 +12,6 @@ import {
   YAxisMap,
 } from '../util/types';
 import type { CategoricalChartState, XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
-import { calculateViewBox } from '../util/calculateViewBox';
 import { getAnyElementOfObject } from '../util/DataUtils';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
@@ -25,7 +24,6 @@ import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
-export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
@@ -56,7 +54,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       yAxisMap,
       angleAxisMap,
       radiusAxisMap,
-      offset,
       activeLabel,
       activePayload,
       isTooltipActive,
@@ -71,11 +68,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     margin,
     layout,
   } = props;
-
-  /**
-   * Perhaps we should compute this property when reading? Let's see what is more often used
-   */
-  const viewBox = calculateViewBox(offset);
 
   const tooltipContextValue: TooltipContextValue = {
     label: activeLabel,
@@ -112,11 +104,9 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     <UpdateIdContext.Provider value={updateId}>
       <MarginContext.Provider value={margin}>
         <LegendPayloadProvider>
-          <ViewBoxContext.Provider value={viewBox}>
-            <ClipPathIdContext.Provider value={clipPathId}>
-              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-            </ClipPathIdContext.Provider>
-          </ViewBoxContext.Provider>
+          <ClipPathIdContext.Provider value={clipPathId}>
+            <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+          </ClipPathIdContext.Provider>
         </LegendPayloadProvider>
       </MarginContext.Provider>
     </UpdateIdContext.Provider>
