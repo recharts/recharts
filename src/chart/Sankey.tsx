@@ -454,6 +454,136 @@ const defaultSankeyMargin: Margin = {
   left: 0,
 };
 
+function renderLinkItem(option: SankeyLinkOptions, props: LinkProps) {
+  if (React.isValidElement(option)) {
+    return React.cloneElement(option, props);
+  }
+  if (isFunction(option)) {
+    return option(props);
+  }
+
+  const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, ...others } = props;
+
+  return (
+    <path
+      className="recharts-sankey-link"
+      d={`
+          M${sourceX},${sourceY}
+          C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
+        `}
+      fill="none"
+      stroke="#333"
+      strokeWidth={linkWidth}
+      strokeOpacity="0.2"
+      {...filterProps(others, false)}
+    />
+  );
+}
+
+function SankeyLinkElement({
+  link,
+  nodes,
+  left,
+  top,
+  i,
+  linkContent,
+  linkCurvature,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+}: {
+  link: SankeyLink;
+  nodes: SankeyNode[];
+  top: number;
+  left: number;
+  linkContent: SankeyLinkOptions;
+  i: number;
+  linkCurvature: number;
+  onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
+  onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
+  onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+}) {
+  const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
+  const sourceNode = nodes[link.source];
+  const targetNode = nodes[link.target];
+  const sourceX = sourceNode.x + sourceNode.dx + left;
+  const targetX = targetNode.x + left;
+  const interpolationFunc = interpolationGenerator(sourceX, targetX);
+  const sourceControlX = interpolationFunc(linkCurvature);
+  const targetControlX = interpolationFunc(1 - linkCurvature);
+  const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
+  const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
+
+  const linkProps: LinkProps = {
+    sourceX,
+    targetX,
+    sourceY,
+    targetY,
+    sourceControlX,
+    targetControlX,
+    sourceRelativeY,
+    targetRelativeY,
+    linkWidth,
+    index: i,
+    payload: { ...link, source: sourceNode, target: targetNode },
+    ...filterProps(linkContent, false),
+  };
+  const events = {
+    onMouseEnter: (e: MouseEvent) => onMouseEnter(linkProps, e),
+    onMouseLeave: (e: MouseEvent) => onMouseLeave(linkProps, e),
+    onClick: (e: MouseEvent) => onClick(linkProps, e),
+  };
+
+  return (
+    <Layer key={`link-${link.source}-${link.target}-${link.value}`} {...events}>
+      {renderLinkItem(linkContent, linkProps)}
+    </Layer>
+  );
+}
+
+function AllSankeyLinkElements({
+  links,
+  nodes,
+  linkCurvature,
+  linkContent,
+  margin,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+}: {
+  links: SankeyLink[];
+  nodes: SankeyNode[];
+  linkCurvature: number;
+  linkContent: SankeyLinkOptions;
+  margin: Margin;
+  onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
+  onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
+  onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+}) {
+  const top = get(margin, 'top') || 0;
+  const left = get(margin, 'left') || 0;
+
+  return (
+    <Layer className="recharts-sankey-links" key="recharts-sankey-links">
+      {links.map((link: SankeyLink, i: number) => (
+        <SankeyLinkElement
+          key={`link-${link.source}-${link.target}-${link.value}`}
+          link={link}
+          nodes={nodes}
+          left={left}
+          top={top}
+          linkContent={linkContent}
+          linkCurvature={linkCurvature}
+          i={i}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+        />
+      ))}
+    </Layer>
+  );
+}
+
 export class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
 
@@ -590,81 +720,6 @@ export class Sankey extends PureComponent<Props, State> {
     if (onClick) onClick(item, type, e);
   }
 
-  static renderLinkItem(option: SankeyLinkOptions, props: LinkProps) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    if (isFunction(option)) {
-      return option(props);
-    }
-
-    const { sourceX, sourceY, sourceControlX, targetX, targetY, targetControlX, linkWidth, ...others } = props;
-
-    return (
-      <path
-        className="recharts-sankey-link"
-        d={`
-          M${sourceX},${sourceY}
-          C${sourceControlX},${sourceY} ${targetControlX},${targetY} ${targetX},${targetY}
-        `}
-        fill="none"
-        stroke="#333"
-        strokeWidth={linkWidth}
-        strokeOpacity="0.2"
-        {...filterProps(others, false)}
-      />
-    );
-  }
-
-  renderLinks(links: SankeyLink[], nodes: SankeyNode[]) {
-    const { linkCurvature, link: linkContent, margin } = this.props;
-    const top = get(margin, 'top') || 0;
-    const left = get(margin, 'left') || 0;
-
-    return (
-      <Layer className="recharts-sankey-links" key="recharts-sankey-links">
-        {links.map((link: SankeyLink, i: number) => {
-          const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
-          const sourceNode = nodes[link.source];
-          const targetNode = nodes[link.target];
-          const sourceX = sourceNode.x + sourceNode.dx + left;
-          const targetX = targetNode.x + left;
-          const interpolationFunc = interpolationGenerator(sourceX, targetX);
-          const sourceControlX = interpolationFunc(linkCurvature);
-          const targetControlX = interpolationFunc(1 - linkCurvature);
-          const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
-          const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
-
-          const linkProps: LinkProps = {
-            sourceX,
-            targetX,
-            sourceY,
-            targetY,
-            sourceControlX,
-            targetControlX,
-            sourceRelativeY,
-            targetRelativeY,
-            linkWidth,
-            index: i,
-            payload: { ...link, source: sourceNode, target: targetNode },
-            ...filterProps(linkContent, false),
-          };
-          const events = {
-            onMouseEnter: this.handleMouseEnter.bind(this, linkProps, 'link'),
-            onMouseLeave: this.handleMouseLeave.bind(this, linkProps, 'link'),
-            onClick: this.handleClick.bind(this, linkProps, 'link'),
-          };
-
-          return (
-            <Layer key={`link-${link.source}-${link.target}-${link.value}`} {...events}>
-              {Sankey.renderLinkItem(linkContent, linkProps)}
-            </Layer>
-          );
-        })}
-      </Layer>
-    );
-  }
-
   static renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
     if (React.isValidElement(option)) {
       return React.cloneElement(option, props);
@@ -772,7 +827,16 @@ export class Sankey extends PureComponent<Props, State> {
                     }}
                   />
                   {children}
-                  {this.renderLinks(links, nodes)}
+                  <AllSankeyLinkElements
+                    links={links}
+                    nodes={nodes}
+                    linkCurvature={this.props.linkCurvature}
+                    linkContent={this.props.link}
+                    margin={this.props.margin}
+                    onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
+                    onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
+                    onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
+                  />
                   {this.renderNodes(nodes)}
                 </Surface>
               </RechartsWrapper>
