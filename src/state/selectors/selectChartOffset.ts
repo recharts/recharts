@@ -84,12 +84,12 @@ export const selectChartViewBox = createSelector(
 );
 
 export const selectAxisViewBox = createSelector(
-  selectChartOffset,
-  (offset: ChartOffset): CartesianViewBox => ({
-    // Not sure why but axis viewbox has x,y zeroes and ignores top, left offset. Is that intentional?
+  selectChartWidth,
+  selectChartHeight,
+  (width: number, height: number): CartesianViewBox => ({
     x: 0,
     y: 0,
-    width: offset.width,
-    height: offset.height,
+    width,
+    height,
   }),
 );

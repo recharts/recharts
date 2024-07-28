@@ -15,7 +15,7 @@ import {
   selectXAxisPosition,
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
-import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
+import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -53,8 +53,7 @@ function SetXAxisSettings(settings: XAxisSettings): null {
 
 const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
-  const width = useAppSelector(selectChartWidth);
-  const height = useAppSelector(selectChartHeight);
+  const viewBox = useAppSelector(selectAxisViewBox);
   const axisType = 'xAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId));
@@ -76,7 +75,7 @@ const XAxisImpl = (props: Props) => {
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
-      viewBox={{ x: 0, y: 0, width, height }}
+      viewBox={viewBox}
       ticks={cartesianTickItems}
     />
   );
