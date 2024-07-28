@@ -1,10 +1,12 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { Customized, Sankey, XAxis, YAxis } from '../../src';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { assertNotNull } from '../helper/assertNotNull';
+import { sankeyChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -87,6 +89,74 @@ describe('<Sankey />', () => {
           </Sankey>,
         ),
       ).not.toThrow();
+    });
+  });
+
+  describe('tooltip state', () => {
+    it('should start with tooltip inactive, and activate it on hover and click on a link', () => {
+      const tooltipStateSpy = vi.fn();
+      const Comp = (): null => {
+        tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
+        return null;
+      };
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Customized component={<Comp />} />
+        </Sankey>,
+      );
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: false,
+        activeMouseOverCoordinate: undefined,
+        activeMouseOverDataKey: undefined,
+        activeMouseOverIndex: null,
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
+
+      const tooltipTriggerElement = container.querySelector(sankeyChartMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
+
+      fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: true,
+        activeMouseOverCoordinate: {
+          x: 80,
+          y: 142.14339872499383,
+        },
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'link-0',
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: true,
+        activeClickCoordinate: {
+          x: 80,
+          y: 142.14339872499383,
+        },
+        activeClickDataKey: 'value',
+        activeClickIndex: 'link-0',
+        activeHover: true,
+        activeMouseOverCoordinate: {
+          x: 80,
+          y: 142.14339872499383,
+        },
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'link-0',
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
