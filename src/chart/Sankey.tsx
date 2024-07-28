@@ -18,6 +18,8 @@ import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipC
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
+import { useAppDispatch } from '../state/hooks';
+import { mouseLeaveItem, setActiveClickItemIndex, setActiveMouseOverItemIndex } from '../state/tooltipSlice';
 
 const defaultCoordinateOfTooltip: Coordinate = { x: 0, y: 0 };
 
@@ -491,6 +493,7 @@ function SankeyLinkElement({
   onMouseEnter,
   onMouseLeave,
   onClick,
+  dataKey,
 }: {
   link: SankeyLink;
   nodes: SankeyNode[];
@@ -502,6 +505,7 @@ function SankeyLinkElement({
   onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
   onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
   onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+  dataKey: DataKey<any>;
 }) {
   const { sy: sourceRelativeY, ty: targetRelativeY, dy: linkWidth } = link;
   const sourceNode = nodes[link.source];
@@ -514,6 +518,7 @@ function SankeyLinkElement({
   const sourceY = sourceNode.y + sourceRelativeY + linkWidth / 2 + top;
   const targetY = targetNode.y + targetRelativeY + linkWidth / 2 + top;
 
+  const dispatch = useAppDispatch();
   const linkProps: LinkProps = {
     sourceX,
     targetX,
@@ -528,10 +533,34 @@ function SankeyLinkElement({
     payload: { ...link, source: sourceNode, target: targetNode },
     ...filterProps(linkContent, false),
   };
+  const activeCoordinate = getCoordinateOfTooltip(linkProps, 'link');
+  const activeIndex = `link-${i}`;
+
   const events = {
-    onMouseEnter: (e: MouseEvent) => onMouseEnter(linkProps, e),
-    onMouseLeave: (e: MouseEvent) => onMouseLeave(linkProps, e),
-    onClick: (e: MouseEvent) => onClick(linkProps, e),
+    onMouseEnter: (e: MouseEvent) => {
+      dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex,
+          activeDataKey: dataKey,
+          activeMouseOverCoordinate: activeCoordinate,
+        }),
+      );
+      onMouseEnter(linkProps, e);
+    },
+    onMouseLeave: (e: MouseEvent) => {
+      dispatch(mouseLeaveItem());
+      onMouseLeave(linkProps, e);
+    },
+    onClick: (e: MouseEvent) => {
+      dispatch(
+        setActiveClickItemIndex({
+          activeIndex,
+          activeDataKey: dataKey,
+          activeClickCoordinate: activeCoordinate,
+        }),
+      );
+      onClick(linkProps, e);
+    },
   };
 
   return <Layer {...events}>{renderLinkItem(linkContent, linkProps)}</Layer>;
@@ -546,6 +575,7 @@ function AllSankeyLinkElements({
   onMouseEnter,
   onMouseLeave,
   onClick,
+  dataKey,
 }: {
   links: SankeyLink[];
   nodes: SankeyNode[];
@@ -555,6 +585,7 @@ function AllSankeyLinkElements({
   onMouseEnter: (linkProps: LinkProps, e: MouseEvent) => void;
   onMouseLeave: (linkProps: LinkProps, e: MouseEvent) => void;
   onClick: (linkProps: LinkProps, e: MouseEvent) => void;
+  dataKey: DataKey<any>;
 }) {
   const top = get(margin, 'top') || 0;
   const left = get(margin, 'left') || 0;
@@ -574,6 +605,7 @@ function AllSankeyLinkElements({
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
+          dataKey={dataKey}
         />
       ))}
     </Layer>
@@ -868,6 +900,7 @@ export class Sankey extends PureComponent<Props, State> {
                     linkCurvature={this.props.linkCurvature}
                     linkContent={this.props.link}
                     margin={this.props.margin}
+                    dataKey={this.props.dataKey}
                     onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
                     onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
                     onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
