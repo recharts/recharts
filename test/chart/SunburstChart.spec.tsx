@@ -1,11 +1,13 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
 import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { sunburstChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
@@ -86,6 +88,92 @@ describe('<Sunburst />', () => {
       expect(heightSpy).toHaveBeenLastCalledWith(50);
       expect(widthSpy).toHaveBeenCalledTimes(3);
       expect(heightSpy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('tooltip state', () => {
+    it('should start with tooltip inactive, and activate it on hover and click on a link', () => {
+      const tooltipStateSpy = vi.fn();
+      const Comp = (): null => {
+        tooltipStateSpy(useAppSelector(state => state.tooltip.itemInteraction));
+        return null;
+      };
+      const { container } = render(
+        <SunburstChart width={1000} height={500} data={exampleSunburstData}>
+          <Customized component={<Comp />} />
+        </SunburstChart>,
+      );
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: false,
+        activeMouseOverCoordinate: undefined,
+        activeMouseOverDataKey: undefined,
+        activeMouseOverIndex: null,
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
+
+      const tooltipTriggerElement = container.querySelector(sunburstChartMouseHoverTooltipSelector);
+      assertNotNull(tooltipTriggerElement);
+
+      fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: true,
+        activeMouseOverCoordinate: {
+          x: 583.3333333333334,
+          y: 250,
+        },
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'Child1',
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: true,
+        activeClickCoordinate: {
+          x: 583.3333333333334,
+          y: 250,
+        },
+        activeClickDataKey: 'value',
+        activeClickIndex: 'Child1',
+        activeHover: true,
+        activeMouseOverCoordinate: {
+          x: 583.3333333333334,
+          y: 250,
+        },
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'Child1',
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
+
+      fireEvent.mouseLeave(tooltipTriggerElement);
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: true,
+        activeClickCoordinate: {
+          x: 583.3333333333334,
+          y: 250,
+        },
+        activeClickDataKey: 'value',
+        activeClickIndex: 'Child1',
+        activeHover: false,
+        activeMouseOverCoordinate: {
+          x: 583.3333333333334,
+          y: 250,
+        },
+        activeMouseOverDataKey: undefined,
+        activeMouseOverIndex: null,
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
   });
 });

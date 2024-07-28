@@ -10,13 +10,21 @@ import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContex
 import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
-import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import {
+  mouseLeaveItem,
+  setActiveClickItemIndex,
+  setActiveMouseOverItemIndex,
+  TooltipPayloadConfiguration,
+} from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { Margin } from '../util/types';
+import { ChartCoordinate, Margin } from '../util/types';
+import { useAppDispatch } from '../state/hooks';
+import { RechartsRootState } from '../state/store';
 
 export interface SunburstData {
   [key: string]: any;
+
   name: string;
   value?: number;
   fill?: string;
@@ -123,7 +131,18 @@ const defaultSunburstMargin: Margin = {
   left: 0,
 };
 
-export const SunburstChart = ({
+const preloadedState: Partial<RechartsRootState> = {
+  options: {
+    validateTooltipEventTypes: ['item'],
+    defaultTooltipEventType: 'item',
+    chartName: 'Sunburst',
+    tooltipPayloadSearcher: undefined,
+    barCategoryGap: '',
+    stackOffset: 'none',
+  },
+};
+
+const SunburstChartImpl = ({
   className,
   data,
   children,
@@ -145,6 +164,7 @@ export const SunburstChart = ({
   onMouseEnter,
   onMouseLeave,
 }: SunburstChartProps) => {
+  const dispatch = useAppDispatch();
   const [isTooltipActive, setIsTooltipActive] = useState(false);
   const [activeNode, setActiveNode] = useState<SunburstData | null>(null);
 
@@ -153,27 +173,44 @@ export const SunburstChart = ({
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
-  const positions = new Map([]);
+  const positions = new Map<string, ChartCoordinate>([]);
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   const [cursorPortal, setCursorPortal] = useState<SVGElement | null>(null);
-
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
     setActiveNode(node);
 
     setIsTooltipActive(true);
+
+    dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: node.name,
+        activeDataKey: dataKey,
+        activeMouseOverCoordinate: positions.get(node.name),
+      }),
+    );
   }
 
   function handleMouseLeave(node: SunburstData, e: React.MouseEvent) {
     if (onMouseLeave) onMouseLeave(node, e);
     setActiveNode(null);
     setIsTooltipActive(false);
+
+    dispatch(mouseLeaveItem());
   }
 
   function handleClick(node: SunburstData) {
     if (onClick) onClick(node);
+
+    dispatch(
+      setActiveClickItemIndex({
+        activeIndex: node.name,
+        activeDataKey: dataKey,
+        activeClickCoordinate: positions.get(node.name),
+      }),
+    );
   }
 
   // recursively add nodes for each data point and its children
@@ -228,13 +265,13 @@ export const SunburstChart = ({
   drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: startAngle });
 
   const layerClass = clsx('recharts-sunburst', className);
-
   function getTooltipContext(): TooltipContextValue {
     if (activeNode == null) {
       return doNotDisplayTooltip;
     }
     return {
-      // @ts-expect-error positions map does not match what Tooltip is expecting
+      index: 0,
+      label: '',
       coordinate: positions.get(activeNode.name),
       payload: [activeNode],
       active: isTooltipActive,
@@ -242,40 +279,46 @@ export const SunburstChart = ({
   }
 
   return (
-    <RechartsStoreProvider reduxStoreName={className ?? 'SunburstChart'}>
-      <ReportChartSize width={width} height={height} />
+    <CursorPortalContext.Provider value={cursorPortal}>
+      <TooltipPortalContext.Provider value={tooltipPortal}>
+        <TooltipContextProvider value={getTooltipContext()}>
+          <RechartsWrapper
+            className={className}
+            width={width}
+            // Sunburst doesn't support `style` property, why?
+            height={height}
+            ref={(node: HTMLDivElement) => {
+              if (tooltipPortal == null && node != null) {
+                setTooltipPortal(node);
+              }
+            }}
+          >
+            <Surface width={width} height={height}>
+              <g
+                className="recharts-cursor-portal"
+                ref={(node: SVGElement) => {
+                  if (cursorPortal == null && node != null) {
+                    setCursorPortal(node);
+                  }
+                }}
+              />
+              <Layer className={layerClass}>{sectors}</Layer>
+              <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
+              {children}
+            </Surface>
+          </RechartsWrapper>
+        </TooltipContextProvider>
+      </TooltipPortalContext.Provider>
+    </CursorPortalContext.Provider>
+  );
+};
+
+export const SunburstChart = (props: SunburstChartProps) => {
+  return (
+    <RechartsStoreProvider preloadedState={preloadedState} reduxStoreName={props.className ?? 'SunburstChart'}>
+      <ReportChartSize width={props.width} height={props.height} />
       <ReportChartMargin margin={defaultSunburstMargin} />
-      <CursorPortalContext.Provider value={cursorPortal}>
-        <TooltipPortalContext.Provider value={tooltipPortal}>
-          <TooltipContextProvider value={getTooltipContext()}>
-            <RechartsWrapper
-              className={className}
-              width={width}
-              // Sunburst doesn't support `style` property, why?
-              height={height}
-              ref={(node: HTMLDivElement) => {
-                if (tooltipPortal == null && node != null) {
-                  setTooltipPortal(node);
-                }
-              }}
-            >
-              <Surface width={width} height={height}>
-                <g
-                  className="recharts-cursor-portal"
-                  ref={(node: SVGElement) => {
-                    if (cursorPortal == null && node != null) {
-                      setCursorPortal(node);
-                    }
-                  }}
-                />
-                <Layer className={layerClass}>{sectors}</Layer>
-                <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
-                {children}
-              </Surface>
-            </RechartsWrapper>
-          </TooltipContextProvider>
-        </TooltipPortalContext.Provider>
-      </CursorPortalContext.Provider>
+      <SunburstChartImpl {...props} />
     </RechartsStoreProvider>
   );
 };
