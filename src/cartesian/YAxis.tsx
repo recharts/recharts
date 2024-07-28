@@ -11,7 +11,7 @@ import {
   selectYAxisPosition,
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
-import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
+import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -49,8 +49,7 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const { yAxisId, className } = props;
-  const width = useAppSelector(selectChartWidth);
-  const height = useAppSelector(selectChartHeight);
+  const viewBox = useAppSelector(selectAxisViewBox);
   const axisType = 'yAxis';
   const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
@@ -72,7 +71,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
-      viewBox={{ x: 0, y: 0, width, height }}
+      viewBox={viewBox}
       ticks={cartesianTickItems}
     />
   );
