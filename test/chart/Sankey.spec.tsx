@@ -178,5 +178,7 @@ describe('<Sankey />', () => {
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
+
+    it.todo('should start with tooltip inactive, and activate it on hover and click on a node');
   });
 });
