@@ -534,11 +534,7 @@ function SankeyLinkElement({
     onClick: (e: MouseEvent) => onClick(linkProps, e),
   };
 
-  return (
-    <Layer key={`link-${link.source}-${link.target}-${link.value}`} {...events}>
-      {renderLinkItem(linkContent, linkProps)}
-    </Layer>
-  );
+  return <Layer {...events}>{renderLinkItem(linkContent, linkProps)}</Layer>;
 }
 
 function AllSankeyLinkElements({
@@ -574,6 +570,98 @@ function AllSankeyLinkElements({
           top={top}
           linkContent={linkContent}
           linkCurvature={linkCurvature}
+          i={i}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={onClick}
+        />
+      ))}
+    </Layer>
+  );
+}
+
+function renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
+  if (React.isValidElement(option)) {
+    return React.cloneElement(option, props);
+  }
+  if (isFunction(option)) {
+    return option(props);
+  }
+
+  return (
+    <Rectangle
+      className="recharts-sankey-node"
+      fill="#0088fe"
+      fillOpacity="0.8"
+      {...filterProps(props, false)}
+      role="img"
+    />
+  );
+}
+
+function NodeElement({
+  node,
+  nodeContent,
+  top,
+  left,
+  i,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+}: {
+  node: SankeyNode;
+  nodeContent: SankeyNodeOptions;
+  top: number;
+  left: number;
+  i: number;
+  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+}) {
+  const { x, y, dx, dy } = node;
+  const nodeProps: NodeProps = {
+    ...filterProps(nodeContent, false),
+    x: x + left,
+    y: y + top,
+    width: dx,
+    height: dy,
+    index: i,
+    payload: node,
+  };
+  const events = {
+    onMouseEnter: (e: MouseEvent) => onMouseEnter(nodeProps, e),
+    onMouseLeave: (e: MouseEvent) => onMouseLeave(nodeProps, e),
+    onClick: (e: MouseEvent) => onClick(nodeProps, e),
+  };
+
+  return <Layer {...events}>{renderNodeItem(nodeContent, nodeProps)}</Layer>;
+}
+
+function AllNodeElements({
+  nodes,
+  nodeContent,
+  margin,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+}: {
+  nodes: SankeyNode[];
+  nodeContent: SankeyNodeOptions;
+  margin: Margin;
+  onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
+  onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+}) {
+  const top = get(margin, 'top') || 0;
+  const left = get(margin, 'left') || 0;
+  return (
+    <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">
+      {nodes.map((node, i) => (
+        <NodeElement
+          node={node}
+          nodeContent={nodeContent}
+          top={top}
+          left={left}
           i={i}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
@@ -720,59 +808,6 @@ export class Sankey extends PureComponent<Props, State> {
     if (onClick) onClick(item, type, e);
   }
 
-  static renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
-    if (React.isValidElement(option)) {
-      return React.cloneElement(option, props);
-    }
-    if (isFunction(option)) {
-      return option(props);
-    }
-
-    return (
-      <Rectangle
-        className="recharts-sankey-node"
-        fill="#0088fe"
-        fillOpacity="0.8"
-        {...filterProps(props, false)}
-        role="img"
-      />
-    );
-  }
-
-  renderNodes(nodes: SankeyNode[]) {
-    const { node: nodeContent, margin } = this.props;
-    const top = get(margin, 'top') || 0;
-    const left = get(margin, 'left') || 0;
-
-    return (
-      <Layer className="recharts-sankey-nodes" key="recharts-sankey-nodes">
-        {nodes.map((node, i) => {
-          const { x, y, dx, dy } = node;
-          const nodeProps: NodeProps = {
-            ...filterProps(nodeContent, false),
-            x: x + left,
-            y: y + top,
-            width: dx,
-            height: dy,
-            index: i,
-            payload: node,
-          };
-          const events = {
-            onMouseEnter: this.handleMouseEnter.bind(this, nodeProps, 'node'),
-            onMouseLeave: this.handleMouseLeave.bind(this, nodeProps, 'node'),
-            onClick: this.handleClick.bind(this, nodeProps, 'node'),
-          };
-
-          return (
-            <Layer key={`node-${node.x}-${node.y}-${node.value}`} {...events}>
-              {Sankey.renderNodeItem(nodeContent, nodeProps)}
-            </Layer>
-          );
-        })}
-      </Layer>
-    );
-  }
-
   getTooltipContext(): TooltipContextValue {
     const { nameKey } = this.props;
     const { isTooltipActive, activeElement, activeElementType } = this.state;
@@ -837,7 +872,14 @@ export class Sankey extends PureComponent<Props, State> {
                     onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
                     onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
                   />
-                  {this.renderNodes(nodes)}
+                  <AllNodeElements
+                    nodes={nodes}
+                    nodeContent={this.props.node}
+                    margin={this.props.margin}
+                    onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
+                    onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
+                    onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
+                  />
                 </Surface>
               </RechartsWrapper>
             </TooltipContextProvider>
