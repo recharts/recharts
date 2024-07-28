@@ -157,6 +157,26 @@ describe('<Sankey />', () => {
         activeMouseOverIndex: 'link-0',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
+
+      fireEvent.mouseLeave(tooltipTriggerElement);
+
+      expect(tooltipStateSpy).toHaveBeenLastCalledWith({
+        activeClick: true,
+        activeClickCoordinate: {
+          x: 80,
+          y: 142.14339872499383,
+        },
+        activeClickDataKey: 'value',
+        activeClickIndex: 'link-0',
+        activeHover: false,
+        activeMouseOverCoordinate: {
+          x: 80,
+          y: 142.14339872499383,
+        },
+        activeMouseOverDataKey: undefined,
+        activeMouseOverIndex: null,
+      });
+      expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
   });
 });
