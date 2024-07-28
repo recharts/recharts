@@ -12,7 +12,6 @@ import {
   YAxisMap,
 } from '../util/types';
 import type { CategoricalChartState, XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
-import { calculateViewBox } from '../util/calculateViewBox';
 import { getAnyElementOfObject } from '../util/DataUtils';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
@@ -22,10 +21,9 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
-import { selectChartOffset } from '../state/selectors/selectChartOffset';
+import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 
-export const ViewBoxContext = createContext<CartesianViewBox | undefined>(undefined);
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
@@ -56,7 +54,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
       yAxisMap,
       angleAxisMap,
       radiusAxisMap,
-      offset,
       activeLabel,
       activePayload,
       isTooltipActive,
@@ -71,11 +68,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     margin,
     layout,
   } = props;
-
-  /**
-   * Perhaps we should compute this property when reading? Let's see what is more often used
-   */
-  const viewBox = calculateViewBox(offset);
 
   const tooltipContextValue: TooltipContextValue = {
     label: activeLabel,
@@ -112,11 +104,9 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     <UpdateIdContext.Provider value={updateId}>
       <MarginContext.Provider value={margin}>
         <LegendPayloadProvider>
-          <ViewBoxContext.Provider value={viewBox}>
-            <ClipPathIdContext.Provider value={clipPathId}>
-              <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-            </ClipPathIdContext.Provider>
-          </ViewBoxContext.Provider>
+          <ClipPathIdContext.Provider value={clipPathId}>
+            <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
+          </ClipPathIdContext.Provider>
         </LegendPayloadProvider>
       </MarginContext.Provider>
     </UpdateIdContext.Provider>
@@ -190,7 +180,7 @@ export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined 
   useAppSelector(selectArbitraryPolarRadiusAxis);
 
 export const useViewBox = (): CartesianViewBox => {
-  return useContext(ViewBoxContext);
+  return useAppSelector(selectChartViewBox);
 };
 
 const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
@@ -206,8 +196,14 @@ export const useChartHeight = (): number => {
   return useAppSelector(selectChartHeight);
 };
 
+const manyComponentsThrowErrorsIfMarginIsUndefined: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
 export const useMargin = (): Margin => {
-  return useContext(MarginContext);
+  return useAppSelector(state => state.layout.margin) ?? manyComponentsThrowErrorsIfMarginIsUndefined;
 };
 
 export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
@@ -223,5 +219,13 @@ export const ReportChartSize = (props: Size): null => {
     dispatch(setChartSize(props));
   }, [dispatch, props]);
 
+  return null;
+};
+
+export const ReportChartMargin = ({ margin }: { margin: Margin }): null => {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setMargin(margin));
+  }, [dispatch, margin]);
   return null;
 };

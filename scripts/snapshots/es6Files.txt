@@ -21,7 +21,6 @@
   "es6/util/getEveryNthWithCondition.js",
   "es6/util/getDomainOfErrorBars.js",
   "es6/util/cursor",
-  "es6/util/calculateViewBox.js",
   "es6/util/TickUtils.js",
   "es6/util/ShallowEqual.js",
   "es6/util/ScatterUtils.js",

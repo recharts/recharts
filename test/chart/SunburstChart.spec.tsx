@@ -4,8 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
-import { testChartLayoutContext } from '../util/context';
-import { useChartHeight, useChartWidth } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useAppSelector } from '../../src/state/hooks';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {
@@ -44,22 +44,30 @@ describe('<Sunburst />', () => {
   });
 
   describe('SunburstChart layout context', () => {
-    it(
-      'should provide viewBox but not clipPathId if there are no axes',
-      testChartLayoutContext(
-        props => (
-          <SunburstChart width={100} height={50} data={exampleSunburstData}>
-            {props.children}
-          </SunburstChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual({ x: 0, y: 0, width: 100, height: 50 });
-          expect(xAxisMap).toEqual({});
-          expect(yAxisMap).toEqual({});
-        },
-      ),
-    );
+    it('should provide viewBox but not clipPathId if there are no axes', () => {
+      const clipPathSpy = vi.fn();
+      const viewBoxSpy = vi.fn();
+      const xAxisMapSpy = vi.fn();
+      const yAxisMapSpy = vi.fn();
+      const Comp = (): null => {
+        clipPathSpy(useClipPathId());
+        viewBoxSpy(useViewBox());
+        xAxisMapSpy(useAppSelector(state => state.axis.xAxisMap));
+        yAxisMapSpy(useAppSelector(state => state.axis.yAxisMap));
+        return null;
+      };
+      render(
+        <SunburstChart width={100} height={50} data={exampleSunburstData}>
+          <Customized component={<Comp />} />
+        </SunburstChart>,
+      );
+
+      expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
+      expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
+      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+      expect(xAxisMapSpy).toHaveBeenLastCalledWith({});
+      expect(yAxisMapSpy).toHaveBeenLastCalledWith({});
+    });
 
     it('should set width and height in context', () => {
       const widthSpy = vi.fn();

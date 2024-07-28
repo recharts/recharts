@@ -21,7 +21,6 @@
   "types/util/getEveryNthWithCondition.d.ts",
   "types/util/getDomainOfErrorBars.d.ts",
   "types/util/cursor",
-  "types/util/calculateViewBox.d.ts",
   "types/util/TickUtils.d.ts",
   "types/util/ShallowEqual.d.ts",
   "types/util/ScatterUtils.d.ts",

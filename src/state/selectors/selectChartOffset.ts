@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { selectBrushHeight } from './brushSelectors';
 import { selectLegendState } from './legendSelectors';
-import { ChartOffset, Margin } from '../../util/types';
+import { CartesianViewBox, ChartOffset, Margin } from '../../util/types';
 import { XAxisSettings, YAxisSettings } from '../axisMapSlice';
 import { LegendState } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
@@ -71,4 +71,25 @@ export const selectChartOffset = createSelector(
       height: Math.max(offsetHeight, 0),
     };
   },
+);
+
+export const selectChartViewBox = createSelector(
+  selectChartOffset,
+  (offset: ChartOffset): CartesianViewBox => ({
+    x: offset.left,
+    y: offset.top,
+    width: offset.width,
+    height: offset.height,
+  }),
+);
+
+export const selectAxisViewBox = createSelector(
+  selectChartOffset,
+  (offset: ChartOffset): CartesianViewBox => ({
+    // Not sure why but axis viewbox has x,y zeroes and ignores top, left offset. Is that intentional?
+    x: 0,
+    y: 0,
+    width: offset.width,
+    height: offset.height,
+  }),
 );

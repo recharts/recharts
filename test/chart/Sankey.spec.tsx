@@ -2,9 +2,9 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Customized, Sankey, XAxis, YAxis } from '../../src';
-import { testChartLayoutContext } from '../util/context';
 import { exampleSankeyData } from '../_data';
-import { useChartHeight, useChartWidth } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useAppSelector } from '../../src/state/hooks';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -37,22 +37,27 @@ describe('<Sankey />', () => {
   });
 
   describe('Sankey layout context', () => {
-    it(
-      'should provide viewBox, but not clipPathId nor any axes',
-      testChartLayoutContext(
-        props => (
-          <Sankey width={1000} height={500} data={exampleSankeyData}>
-            {props.children}
-          </Sankey>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toBe(undefined);
-          expect(viewBox).toEqual({ x: 0, y: 0, width: 1000, height: 500 });
-          expect(xAxisMap).toEqual({});
-          expect(yAxisMap).toEqual({});
-        },
-      ),
-    );
+    it('should provide viewBox, but not clipPathId nor any axes', () => {
+      const clipPathSpy = vi.fn();
+      const viewBoxSpy = vi.fn();
+      const xAxisMapSpy = vi.fn();
+      const yAxisMapSpy = vi.fn();
+      const Comp = (): null => {
+        clipPathSpy(useClipPathId());
+        viewBoxSpy(useViewBox());
+        xAxisMapSpy(useAppSelector(state => state.axis.xAxisMap));
+        yAxisMapSpy(useAppSelector(state => state.axis.yAxisMap));
+        return null;
+      };
+      render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <Customized component={<Comp />} />
+        </Sankey>,
+      );
+      expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
+      expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 1000, height: 500 });
+      expect(viewBoxSpy).toHaveBeenCalledTimes(3);
+    });
 
     it('should set width and height in context', () => {
       const widthSpy = vi.fn();

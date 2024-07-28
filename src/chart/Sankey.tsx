@@ -13,7 +13,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode, Coordinate } from '../util/types';
-import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -446,6 +446,14 @@ interface State {
   tooltipPortal?: HTMLElement | null;
 }
 
+// Why is margin not a Sankey prop? No clue. Probably it should be
+const defaultSankeyMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
 export class Sankey extends PureComponent<Props, State> {
   static displayName = 'Sankey';
 
@@ -734,43 +742,41 @@ export class Sankey extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, ...others } = this.props;
     const { links, nodes } = this.state;
-    const viewBox = { x: 0, y: 0, width, height };
     const attrs = filterProps(others, false);
 
     return (
       <RechartsStoreProvider reduxStoreName={className ?? 'Sankey'}>
         <ReportChartSize width={width} height={height} />
+        <ReportChartMargin margin={defaultSankeyMargin} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <ViewBoxContext.Provider value={viewBox}>
-              <TooltipContextProvider value={this.getTooltipContext()}>
-                <RechartsWrapper
-                  className={className}
-                  style={style}
-                  width={width}
-                  height={height}
-                  ref={(node: HTMLDivElement) => {
-                    if (this.state.tooltipPortal == null) {
-                      this.setState({ tooltipPortal: node });
-                    }
-                  }}
-                >
-                  <Surface {...attrs} width={width} height={height}>
-                    <g
-                      className="recharts-cursor-portal"
-                      ref={(node: SVGElement) => {
-                        if (this.state.cursorPortal == null) {
-                          this.setState({ cursorPortal: node });
-                        }
-                      }}
-                    />
-                    {children}
-                    {this.renderLinks(links, nodes)}
-                    {this.renderNodes(nodes)}
-                  </Surface>
-                </RechartsWrapper>
-              </TooltipContextProvider>
-            </ViewBoxContext.Provider>
+            <TooltipContextProvider value={this.getTooltipContext()}>
+              <RechartsWrapper
+                className={className}
+                style={style}
+                width={width}
+                height={height}
+                ref={(node: HTMLDivElement) => {
+                  if (this.state.tooltipPortal == null) {
+                    this.setState({ tooltipPortal: node });
+                  }
+                }}
+              >
+                <Surface {...attrs} width={width} height={height}>
+                  <g
+                    className="recharts-cursor-portal"
+                    ref={(node: SVGElement) => {
+                      if (this.state.cursorPortal == null) {
+                        this.setState({ cursorPortal: node });
+                      }
+                    }}
+                  />
+                  {children}
+                  {this.renderLinks(links, nodes)}
+                  {this.renderNodes(nodes)}
+                </Surface>
+              </RechartsWrapper>
+            </TooltipContextProvider>
           </TooltipPortalContext.Provider>
         </CursorPortalContext.Provider>
       </RechartsStoreProvider>

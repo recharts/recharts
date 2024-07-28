@@ -16,8 +16,8 @@ import { uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
-import { AnimationDuration, AnimationTiming, DataKey } from '../util/types';
-import { ReportChartSize, ViewBoxContext } from '../context/chartLayoutContext';
+import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
+import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -519,6 +519,14 @@ function createTooltipPayload(activeNode: TreemapNode) {
   ];
 }
 
+// Why is margin not a treemap prop? No clue. Probably it should be
+const defaultTreemapMargin: Margin = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+};
+
 export class Treemap extends PureComponent<Props, State> {
   static displayName = 'Treemap';
 
@@ -890,44 +898,42 @@ export class Treemap extends PureComponent<Props, State> {
 
     const { width, height, className, style, children, type, ...others } = this.props;
     const attrs = filterProps(others, false);
-    const viewBox = { x: 0, y: 0, width, height };
 
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
         <ReportChartSize width={this.props.width} height={this.props.height} />
+        <ReportChartMargin margin={defaultTreemapMargin} />
         <CursorPortalContext.Provider value={this.state.cursorPortal}>
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
             <SetTooltipEntrySettings
               fn={getTooltipEntrySettings}
               args={{ props: this.props, currentRoot: this.state.currentRoot }}
             />
-            <ViewBoxContext.Provider value={viewBox}>
-              <RechartsWrapper
-                className={className}
-                style={style}
-                width={width}
-                height={height}
-                ref={(node: HTMLDivElement) => {
-                  if (this.state.tooltipPortal == null) {
-                    this.setState({ tooltipPortal: node });
-                  }
-                }}
-              >
-                <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-                  <g
-                    className="recharts-cursor-portal"
-                    ref={(node: SVGElement) => {
-                      if (this.state.cursorPortal == null) {
-                        this.setState({ cursorPortal: node });
-                      }
-                    }}
-                  />
-                  {this.renderAllNodes()}
-                  {children}
-                </Surface>
-                {type === 'nest' && this.renderNestIndex()}
-              </RechartsWrapper>
-            </ViewBoxContext.Provider>
+            <RechartsWrapper
+              className={className}
+              style={style}
+              width={width}
+              height={height}
+              ref={(node: HTMLDivElement) => {
+                if (this.state.tooltipPortal == null) {
+                  this.setState({ tooltipPortal: node });
+                }
+              }}
+            >
+              <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+                <g
+                  className="recharts-cursor-portal"
+                  ref={(node: SVGElement) => {
+                    if (this.state.cursorPortal == null) {
+                      this.setState({ cursorPortal: node });
+                    }
+                  }}
+                />
+                {this.renderAllNodes()}
+                {children}
+              </Surface>
+              {type === 'nest' && this.renderNestIndex()}
+            </RechartsWrapper>
           </TooltipPortalContext.Provider>
         </CursorPortalContext.Provider>
       </RechartsStoreProvider>
