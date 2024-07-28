@@ -21,8 +21,25 @@ export const doNotDisplayTooltip: TooltipContextValue = {
 
 const TooltipContext = createContext<TooltipContextValue>(doNotDisplayTooltip);
 
+/**
+ * @deprecated do not use; instead prefer actions from tooltipSlice
+ *
+ * This depends on state set from generateCategoricalChart.
+ */
 export const TooltipContextProvider = TooltipContext.Provider;
 
+/**
+ * @deprecated this is depending on generateCategoricalChart state, do not use.
+ *
+ * Instead, use:
+ * - selectActiveIndex for index
+ * - selectActiveCoordinate for coordinate
+ * - selectActiveLabel for label
+ * - selectTooltipPayload for payload
+ * - selectIsTooltipActive for active
+ *
+ * @returns deprecated, do not use
+ */
 export const useTooltipContext = () => useContext(TooltipContext);
 
 export type TooltipPayloadType = any[];
