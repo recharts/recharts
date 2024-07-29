@@ -1,5 +1,4 @@
 import { assertNotNull } from './assertNotNull';
-import { AxisType } from '../../src/util/types';
 import { AxisId } from '../../src/state/axisMapSlice';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
@@ -37,7 +36,7 @@ export function ExpectAxisDomain({
   axisId = 0,
   assert,
 }: {
-  axisType: AxisType;
+  axisType: 'xAxis' | 'yAxis';
   axisId?: AxisId;
   assert: (domainFromRedux: ReadonlyArray<unknown>) => void;
 }): null {

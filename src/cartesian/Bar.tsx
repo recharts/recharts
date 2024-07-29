@@ -495,6 +495,7 @@ class BarWithState extends PureComponent<Props, State> {
             data={null}
             xAxisId={xAxisId}
             yAxisId={yAxisId}
+            zAxisId={0}
             dataKey={this.props.dataKey}
             errorBars={emptyArray}
             stackId={this.props.stackId}
@@ -517,6 +518,7 @@ class BarWithState extends PureComponent<Props, State> {
         data={null}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
+        zAxisId={0}
         dataKey={this.props.dataKey}
         stackId={this.props.stackId}
         hide={this.props.hide}

@@ -5,7 +5,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { CartesianGrid, Customized, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectZAxisSettings } from '../../src/state/selectors/axisSelectors';
+import { selectAxisDomain, selectZAxisSettings, selectZAxisWithScale } from '../../src/state/selectors/axisSelectors';
 import { ZAxisSettings } from '../../src/state/axisMapSlice';
 
 describe('<ZAxis />', () => {
@@ -83,31 +83,56 @@ describe('<ZAxis />', () => {
 
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
-      const spy = vi.fn();
+      const axisSettingsSpy = vi.fn();
+      const axisDomainSpy = vi.fn();
+      const axisScaleSpy = vi.fn();
       const Comp = (): null => {
-        spy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
+        axisSettingsSpy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
+        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 'zaxis id')));
+        const scaleReturn = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id'));
+        axisScaleSpy({
+          domain: scaleReturn?.scale?.domain(),
+          range: scaleReturn?.scale?.range(),
+          realScaleType: scaleReturn?.realScaleType,
+        });
         return null;
       };
       render(
         <ScatterChart height={400} width={400}>
           <XAxis dataKey="xAxis" type="number" />
           <YAxis dataKey="yAxis" />
-          <ZAxis zAxisId="zaxis id" dataKey="zAxis dataKey" name="test name" range={[0, 2000]} unit="km" />
+          <ZAxis zAxisId="zaxis id" dataKey="zAxis" name="test name" range={[20, 30]} unit="km" />
           <CartesianGrid />
-          <Scatter data={data} name="pageData" />
+          <Scatter data={data} name="pageData" zAxisId="zaxis id" />
           <Tooltip />
           <Customized component={Comp} />
         </ScatterChart>,
       );
       const expected: ZAxisSettings = {
+        allowDataOverflow: false,
+        allowDuplicatedCategory: false,
+        includeHidden: false,
+        reversed: false,
+        scale: 'auto',
+        type: 'number',
         id: 'zaxis id',
-        dataKey: 'zAxis dataKey',
+        dataKey: 'zAxis',
         name: 'test name',
         unit: 'km',
-        range: [0, 2000],
+        range: [20, 30],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(axisSettingsSpy).toHaveBeenLastCalledWith(expected);
+      expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
+
+      expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 800]);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+
+      expect(axisScaleSpy).toHaveBeenLastCalledWith({
+        domain: [0, 800],
+        range: [20, 30],
+        realScaleType: 'linear',
+      });
+      expect(axisScaleSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

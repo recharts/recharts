@@ -37,6 +37,7 @@ export type CartesianGraphicalItemSettings = {
    */
   xAxisId: AxisId;
   yAxisId: AxisId;
+  zAxisId: AxisId;
   dataKey: DataKey<any> | undefined;
   /**
    * ErrorBars are only rendered if they are explicitly set in the React tree, otherwise this will be an empty array.

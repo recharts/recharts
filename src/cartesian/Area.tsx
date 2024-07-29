@@ -463,6 +463,7 @@ class AreaWithState extends PureComponent<Props, State> {
             data={this.props.data}
             xAxisId={xAxisId}
             yAxisId={yAxisId}
+            zAxisId={0}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             stackId={this.props.stackId}
@@ -488,6 +489,7 @@ class AreaWithState extends PureComponent<Props, State> {
         dataKey={this.props.dataKey}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
+        zAxisId={0}
         stackId={this.props.stackId}
         hide={this.props.hide}
       >

@@ -1,7 +1,10 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { vi } from 'vitest';
-import { Surface, Scatter } from '../../src';
+import { Customized, Surface, Scatter, ScatterChart } from '../../src';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
+import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 describe('<Scatter />', () => {
   const data = [
@@ -103,5 +106,34 @@ describe('<Scatter />', () => {
     expect(onMouseLeave).toHaveBeenCalled();
     fireEvent.click(symbol);
     expect(onClick).toHaveBeenCalled();
+  });
+
+  describe('state integration', () => {
+    it('should publish its configuration to redux store', () => {
+      const settingsSpy = vi.fn();
+      const Comp = (): null => {
+        settingsSpy(useAppSelector(selectUnfilteredCartesianItems));
+        return null;
+      };
+      render(
+        <ScatterChart height={400} width={400}>
+          <Scatter data={data} dataKey="cx" xAxisId="xaxis id" yAxisId="yaxis id" zAxisId="zaxis id" />
+          <Customized component={<Comp />} />
+        </ScatterChart>,
+      );
+
+      const expected: CartesianGraphicalItemSettings = {
+        data,
+        dataKey: 'cx',
+        errorBars: [],
+        hide: false,
+        stackId: undefined,
+        xAxisId: 'xaxis id',
+        yAxisId: 'yaxis id',
+        zAxisId: 'zaxis id',
+      };
+      expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
+      expect(settingsSpy).toHaveBeenCalledTimes(3);
+    });
   });
 });

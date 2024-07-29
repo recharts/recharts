@@ -15,7 +15,6 @@ import {
 import {
   AxisDomain,
   AxisTick,
-  AxisType,
   CartesianTickItem,
   CategoricalDomain,
   ChartOffset,
@@ -29,6 +28,7 @@ import {
 import {
   AxisId,
   AxisSettings,
+  BaseAxis,
   XAxisOrientation,
   XAxisSettings,
   YAxisOrientation,
@@ -55,6 +55,17 @@ import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
+
+/**
+ * X, Y, and Z axes all have domain and range and scale and associated settings
+ */
+type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis';
+
+/**
+ * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
+ * and tick settings.
+ */
+type XorYType = 'xAxis' | 'yAxis';
 
 /**
  * If an axis is not explicitly defined as an element,
@@ -136,13 +147,46 @@ export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): Y
   return axis;
 };
 
+export const implicitZAxis: ZAxisSettings = {
+  includeHidden: false,
+  reversed: false,
+  allowDataOverflow: false,
+  allowDuplicatedCategory: false,
+  dataKey: undefined,
+  id: undefined,
+  name: '',
+  range: [64, 64],
+  scale: 'auto',
+  type: 'number',
+  unit: '',
+};
+
 export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): ZAxisSettings => {
-  // there is no implicit Z axis - so here we return null.
-  return state.axisMap.zAxis[axisId];
+  const axis = state.axisMap.zAxis[axisId];
+  if (axis == null) {
+    return implicitZAxis;
+  }
+  return axis;
+};
+
+export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId): BaseAxis => {
+  switch (axisType) {
+    case 'xAxis': {
+      return selectXAxisSettings(state, axisId);
+    }
+    case 'yAxis': {
+      return selectYAxisSettings(state, axisId);
+    }
+    case 'zAxis': {
+      return selectZAxisSettings(state, axisId);
+    }
+    default:
+      throw new Error(`Unexpected axis type: ${axisType}`);
+  }
 };
 
 /**
- * Selects either an X or Y axis. Doesn't work with Z axis - for that, instead use selectZAxisSettings
+ * Selects either an X or Y axis. Doesn't work with Z axis - for that, instead use selectBaseAxis.
  * @param state Root state
  * @param axisType xAxis | yAxis
  * @param axisId xAxisId | yAxisId
@@ -150,7 +194,7 @@ export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): Z
  */
 export const selectAxisSettings = (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYType,
   axisId: AxisId,
 ): XAxisSettings | YAxisSettings => {
   switch (axisType) {
@@ -167,8 +211,8 @@ export const selectAxisSettings = (
 
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
-const pickAxisType = (_state: RechartsRootState, axisType: AxisType): AxisType => axisType;
-const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: AxisId): AxisId => axisId;
+const pickAxisType = <T>(_state: RechartsRootState, axisType: T): T => axisType;
+const pickAxisId = (_state: RechartsRootState, _axisType: unknown, axisId: AxisId): AxisId => axisId;
 
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
@@ -177,7 +221,7 @@ const pickAxisId = (_state: RechartsRootState, _axisType: AxisType, axisId: Axis
  *
  * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
  */
-function itemAxisPredicate(axisType: AxisType, axisId: AxisId) {
+function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
   return (item: CartesianGraphicalItemSettings) => {
     switch (axisType) {
       case 'xAxis':
@@ -185,25 +229,23 @@ function itemAxisPredicate(axisType: AxisType, axisId: AxisId) {
         return item.xAxisId === axisId;
       case 'yAxis':
         return item.yAxisId === axisId;
+      case 'zAxis':
+        return item.zAxisId === axisId;
       default:
-        // TODO Z axis
         return false;
     }
   };
 }
 
-const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
+export const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
 
 const selectCartesianItemsSettings: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
-  selectUnfilteredCartesianItems,
-  selectAxisSettings,
-  pickAxisType,
-  pickAxisId,
-  (cartesianItems, axisSettings, axisType: AxisType, axisId: AxisId) =>
+  [selectUnfilteredCartesianItems, selectBaseAxis, pickAxisType, pickAxisId],
+  (cartesianItems, axisSettings: BaseAxis, axisType: XorYorZType, axisId: AxisId) =>
     cartesianItems.filter(itemAxisPredicate(axisType, axisId)).filter(item => {
       if (axisSettings?.includeHidden === true) {
         return true;
@@ -214,7 +256,7 @@ const selectCartesianItemsSettings: (
 
 const selectCartesianItemsSettingsExceptStacked: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(selectCartesianItemsSettings, cartesianItems =>
   cartesianItems.filter(item => item.stackId === undefined),
@@ -228,7 +270,7 @@ const selectCartesianItemsSettingsExceptStacked: (
  */
 export const selectCartesianGraphicalItemsData: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ) => ChartData = createSelector(
   selectCartesianItemsSettings,
@@ -248,7 +290,7 @@ export const selectCartesianGraphicalItemsData: (
  */
 export const selectDisplayedData: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ) => ChartData | undefined = createSelector(
   selectCartesianGraphicalItemsData,
@@ -284,7 +326,7 @@ export const selectDisplayedData: (
  */
 export const selectAllAppliedValues = createSelector(
   selectDisplayedData,
-  selectAxisSettings,
+  selectBaseAxis,
   selectCartesianItemsSettings,
   (
     data: ChartData,
@@ -303,7 +345,7 @@ export const selectAllAppliedValues = createSelector(
   },
 );
 
-export function isErrorBarRelevantForAxisType(axisType: AxisType, errorBar: ErrorBarsSettings): boolean {
+export function isErrorBarRelevantForAxisType(axisType: XorYorZType, errorBar: ErrorBarsSettings): boolean {
   switch (axisType) {
     case 'xAxis':
       return errorBar.direction === 'x';
@@ -398,7 +440,7 @@ export type StackGroup = { readonly stackedData: ReadonlyArray<Series<Record<str
 
 export const selectStackGroups: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ) => Record<StackId, StackGroup> = createSelector(
   selectDisplayedData,
@@ -444,14 +486,14 @@ export const selectDomainOfStackGroups = createSelector(
 
 export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelector(
   selectDisplayedData,
-  selectAxisSettings,
+  selectBaseAxis,
   selectCartesianItemsSettingsExceptStacked,
   pickAxisType,
   (
     data: ChartData,
-    axisSettings: AxisSettings,
+    axisSettings: BaseAxis,
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
-    axisType: AxisType,
+    axisType: XorYorZType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
     if (items.length > 0) {
       return data
@@ -510,7 +552,7 @@ const computeNumericalDomain = (
 
 const computeCategoricalDomain = (
   allDataSquished: AppliedChartData,
-  axisSettings: AxisSettings,
+  axisSettings: BaseAxis,
   isCategorical: boolean,
 ): CategoricalDomain => {
   const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates).filter(v => v != null);
@@ -530,8 +572,8 @@ const computeCategoricalDomain = (
   return Array.from(new Set(categoricalDomain));
 };
 
-const getDomainDefinition = (axisSettings: AxisSettings): AxisDomain => {
-  if (axisSettings == null) {
+const getDomainDefinition = (axisSettings: AxisSettings | BaseAxis): AxisDomain => {
+  if (axisSettings == null || !('domain' in axisSettings)) {
     return defaultNumericDomain;
   }
 
@@ -621,7 +663,7 @@ export const selectReferenceLinesByAxis = createSelector(
 const selectReferenceDotsDomain = createSelector(
   selectReferenceDotsByAxis,
   pickAxisType,
-  (dots: ReadonlyArray<ReferenceDotSettings>, axisType: AxisType): NumberDomain => {
+  (dots: ReadonlyArray<ReferenceDotSettings>, axisType: XorYType): NumberDomain => {
     const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
     if (allCoords.length === 0) {
       return undefined;
@@ -633,7 +675,7 @@ const selectReferenceDotsDomain = createSelector(
 const selectReferenceAreasDomain = createSelector(
   selectReferenceAreasByAxis,
   pickAxisType,
-  (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: AxisType): NumberDomain => {
+  (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: XorYType): NumberDomain => {
     const allCoords = onlyAllowNumbers(
       areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
     );
@@ -647,7 +689,7 @@ const selectReferenceAreasDomain = createSelector(
 const selectReferenceLinesDomain = createSelector(
   selectReferenceLinesByAxis,
   pickAxisType,
-  (lines: ReadonlyArray<ReferenceLineSettings>, axisType: AxisType): NumberDomain => {
+  (lines: ReadonlyArray<ReferenceLineSettings>, axisType: XorYType): NumberDomain => {
     const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
     if (allCoords.length === 0) {
       return undefined;
@@ -667,8 +709,8 @@ const selectReferenceElementsDomain = createSelector(
 
 const selectNumericalDomain = (
   state: RechartsRootState,
-  axisSettings: AxisSettings,
-  axisType: AxisType,
+  axisSettings: BaseAxis,
+  axisType: XorYorZType,
   axisId: AxisId,
 ): NumberDomain => {
   const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
@@ -710,10 +752,10 @@ const expandDomain: NumberDomain = [0, 1];
 
 export const selectAxisDomain = (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ): NumberDomain | CategoricalDomain => {
-  const axisSettings = selectAxisSettings(state, axisType, axisId);
+  const axisSettings: BaseAxis = selectBaseAxis(state, axisType, axisId);
   if (axisSettings == null) {
     return undefined;
   }
@@ -757,35 +799,44 @@ const unknownScale: ParsedScaleReturn = {
  *
  * Prefer to use `selectAxisScale` instead.
  */
-export const selectEmptyAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
-  createSelector(
-    selectAxisSettings,
-    selectChartLayout,
-    selectHasBar,
-    selectChartName,
-    pickAxisType,
-    /*
-     * The d3 scale causes troubles because it's a mutable object.
-     * This selectEmptyAxisScale returns one version but followup selectors mutate it.
-     * We need this "cache buster" to make this particular selector selectEmptyAxisScale always return a fresh instance.
-     */
-    state => state,
-    (axisConfig: AxisSettings, chartLayout: LayoutType, hasBar: boolean, chartName: string, axisType: AxisType) => {
-      if (axisConfig == null) {
-        return unknownScale;
-      }
-      return parseScale(
-        {
-          scale: axisConfig.scale,
-          type: axisConfig.type,
-          layout: chartLayout,
-          axisType,
-        },
-        chartName,
-        hasBar,
-      );
-    },
-  );
+export const selectEmptyAxisScale: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ParsedScaleReturn = createSelector(
+  selectBaseAxis,
+  selectChartLayout,
+  selectHasBar,
+  selectChartName,
+  pickAxisType,
+  /*
+   * The d3 scale causes troubles because it's a mutable object.
+   * This selectEmptyAxisScale returns one version but followup selectors mutate it.
+   * We need this "cache buster" to make this particular selector selectEmptyAxisScale always return a fresh instance.
+   */
+  state => state,
+  (
+    axisConfig: BaseAxis | undefined,
+    chartLayout: LayoutType,
+    hasBar: boolean,
+    chartName: string,
+    axisType: XorYorZType,
+  ) => {
+    if (axisConfig == null) {
+      return unknownScale;
+    }
+    return parseScale(
+      {
+        scale: axisConfig.scale,
+        type: axisConfig.type,
+        layout: chartLayout,
+        axisType,
+      },
+      chartName,
+      hasBar,
+    );
+  },
+);
 
 export const selectNiceTicks = createSelector(
   selectAxisDomain,
@@ -816,7 +867,7 @@ export const selectNiceTicks = createSelector(
 );
 
 export const selectAxisDomainIncludingNiceTicks = createSelector(
-  selectAxisSettings,
+  selectBaseAxis,
   selectAxisDomain,
   selectNiceTicks,
   (axisSettings, domain, niceTicks) => {
@@ -844,7 +895,7 @@ export const selectAxisDomainIncludingNiceTicks = createSelector(
  */
 export const selectSmallestDistanceBetweenValues: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYType,
   axisId: AxisId,
 ) => number | undefined = createSelector(
   selectAllAppliedValues,
@@ -874,7 +925,7 @@ export const selectSmallestDistanceBetweenValues: (
 
 const selectCalculatedPadding: (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYType,
   axisId: AxisId,
   padding: string,
 ) => number = createSelector(
@@ -981,7 +1032,7 @@ export const combineYAxisRange = createSelector(
 
 export const selectAxisRange = (
   state: RechartsRootState,
-  axisType: AxisType,
+  axisType: XorYorZType,
   axisId: AxisId,
 ): ReadonlyArray<number> | undefined => {
   switch (axisType) {
@@ -989,15 +1040,17 @@ export const selectAxisRange = (
       return combineXAxisRange(state, axisId);
     case 'yAxis':
       return combineYAxisRange(state, axisId);
+    case 'zAxis':
+      return selectZAxisSettings(state, axisId)?.range;
     default:
       return undefined;
   }
 };
 
 const selectAxisRangeWithReverse = createSelector(
-  selectAxisSettings,
+  selectBaseAxis,
   selectAxisRange,
-  (axisSettings: AxisSettings, axisRange): ReadonlyArray<number> | undefined => {
+  (axisSettings: BaseAxis | undefined, axisRange): ReadonlyArray<number> | undefined => {
     if (axisSettings?.reversed) {
       return axisRange?.slice().reverse();
     }
@@ -1005,7 +1058,7 @@ const selectAxisRangeWithReverse = createSelector(
   },
 );
 
-export const selectAxisScale: (state: RechartsRootState, axisType: AxisType, axisId: AxisId) => ParsedScaleReturn =
+export const selectAxisScale: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => ParsedScaleReturn =
   createSelector(
     selectEmptyAxisScale,
     selectAxisDomainIncludingNiceTicks,
@@ -1030,7 +1083,7 @@ export const selectErrorBarsSettings = createSelector(
   pickAxisType,
   (
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
-    axisType: AxisType,
+    axisType: XorYType,
   ): ReadonlyArray<ErrorBarsSettings> | undefined => {
     return items
       .flatMap(item => {
@@ -1400,12 +1453,12 @@ export const selectTicksOfAxis = createSelector(
   },
 );
 
-export type AxisWithScale = AxisSettings & ParsedScaleReturn;
+export type BaseAxisWithScale = BaseAxis & ParsedScaleReturn;
 
 export const selectAxisWithScale = createSelector(
-  selectAxisSettings,
+  selectBaseAxis,
   selectAxisScale,
-  (axis, parsedScaleReturn): AxisWithScale | undefined => {
+  (axis, parsedScaleReturn): BaseAxisWithScale | undefined => {
     if (axis == null || parsedScaleReturn == null || parsedScaleReturn.scale == null) {
       return undefined;
     }
@@ -1416,3 +1469,34 @@ export const selectAxisWithScale = createSelector(
     };
   },
 );
+
+const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: AxisId) => ParsedScaleReturn =
+  createSelector(
+    selectEmptyAxisScale,
+    selectAxisDomain,
+    selectAxisRangeWithReverse,
+    pickAxisId,
+    (parsedScaleReturn: ParsedScaleReturn, axisDomain, axisRange) => {
+      if (parsedScaleReturn == null || parsedScaleReturn === unknownScale || axisDomain == null) {
+        return unknownScale;
+      }
+      /*
+       * This setter will also modify the domain internally!
+       * so the domain returned from selectAxisDomain, and domain from scale.domain(),
+       * may or may not be the same.
+       */
+      parsedScaleReturn.scale.domain(axisDomain).range(axisRange);
+      return parsedScaleReturn;
+    },
+  );
+
+export const selectZAxisWithScale = createSelector(selectBaseAxis, selectZAxisScale, (axis, scaleReturn) => {
+  if (axis == null || scaleReturn == null || scaleReturn.scale == null) {
+    return undefined;
+  }
+  return {
+    ...axis,
+    scale: scaleReturn.scale,
+    realScaleType: scaleReturn.realScaleType,
+  };
+});

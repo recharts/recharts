@@ -57,7 +57,7 @@ const data2 = mockData.slice(5);
 describe('selectAxisScale', () => {
   it('should return undefined when called outside of Redux context', () => {
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisScale(state, 'angleAxis', 'foo'));
+      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', 'foo'));
       expect(result).toBeUndefined();
       return null;
     };
@@ -1507,6 +1507,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       data: PageData,
       xAxisId: 'x',
       yAxisId: 'y',
+      zAxisId: 0,
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
@@ -2582,6 +2583,7 @@ describe('selectErrorBarsSettings', () => {
       data: [],
       xAxisId: '',
       yAxisId: '',
+      zAxisId: 0,
       errorBars: [
         {
           direction: 'x',

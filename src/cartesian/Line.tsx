@@ -484,6 +484,7 @@ class LineWithState extends Component<Props, State> {
             data={this.props.data}
             xAxisId={xAxisId}
             yAxisId={yAxisId}
+            zAxisId={0}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             // line doesn't stack
@@ -509,6 +510,7 @@ class LineWithState extends Component<Props, State> {
         data={this.props.data}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
+        zAxisId={0}
         dataKey={this.props.dataKey}
         // line doesn't stack
         stackId={undefined}

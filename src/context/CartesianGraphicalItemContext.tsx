@@ -22,6 +22,7 @@ type GraphicalItemContextProps = {
   data: ChartData;
   xAxisId: AxisId;
   yAxisId: AxisId;
+  zAxisId: AxisId;
   dataKey: DataKey<any>;
   children: React.ReactNode;
   stackId: StackId | undefined;
@@ -32,6 +33,7 @@ export const CartesianGraphicalItemContext = ({
   children,
   xAxisId,
   yAxisId,
+  zAxisId,
   dataKey,
   data,
   stackId,
@@ -57,6 +59,7 @@ export const CartesianGraphicalItemContext = ({
         data={data}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
+        zAxisId={zAxisId}
         dataKey={dataKey}
         errorBars={errorBars}
         stackId={stackId}

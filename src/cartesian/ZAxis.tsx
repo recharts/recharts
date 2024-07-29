@@ -2,6 +2,8 @@ import React, { Component, useEffect } from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
 import { addZAxis, removeZAxis, ZAxisSettings } from '../state/axisMapSlice';
 import { useAppDispatch } from '../state/hooks';
+import { RechartsScale } from '../util/ChartUtils';
+import { implicitZAxis } from '../state/selectors/axisSelectors';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -26,7 +28,7 @@ export interface Props {
   dataKey?: DataKey<any>;
   /** The range of axis */
   range?: number[];
-  scale?: ScaleType | Function;
+  scale?: ScaleType | RechartsScale | undefined;
   /** The domain of scale in this axis */
   domain?: AxisDomain;
 }
@@ -37,9 +39,9 @@ export class ZAxis extends Component<Props> {
 
   static defaultProps = {
     zAxisId: 0,
-    range: [64, 64],
-    scale: 'auto',
-    type: 'number',
+    range: implicitZAxis.range,
+    scale: implicitZAxis.scale,
+    type: implicitZAxis.type,
   };
 
   render() {
@@ -50,6 +52,12 @@ export class ZAxis extends Component<Props> {
         name={this.props.name}
         unit={this.props.unit}
         range={this.props.range}
+        scale={this.props.scale}
+        type={this.props.type}
+        allowDuplicatedCategory={implicitZAxis.allowDuplicatedCategory}
+        allowDataOverflow={implicitZAxis.allowDataOverflow}
+        reversed={implicitZAxis.reversed}
+        includeHidden={implicitZAxis.includeHidden}
       />
     );
   }
