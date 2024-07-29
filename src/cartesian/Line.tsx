@@ -14,7 +14,7 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
+import { ErrorBar, ErrorBarDataItem, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -198,6 +198,19 @@ function renderDotItem(option: ActiveDotType, props: any) {
 
 const noErrorBars: never[] = [];
 
+const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
+  dataPoint: LinePointItem,
+  dataKey,
+): ErrorBarDataItem => {
+  return {
+    x: dataPoint.x,
+    y: dataPoint.y,
+    value: dataPoint.value,
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    errorVal: getValueByDataKey(dataPoint.payload, dataKey),
+  };
+};
+
 class LineWithState extends Component<Props, State> {
   mainCurve?: SVGPathElement;
 
@@ -287,16 +300,6 @@ class LineWithState extends Component<Props, State> {
       return null;
     }
 
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    const dataPointFormatter: ErrorBarDataPointFormatter = (dataPoint: LinePointItem, dataKey) => {
-      return {
-        x: dataPoint.x,
-        y: dataPoint.y,
-        value: dataPoint.value,
-        errorVal: getValueByDataKey(dataPoint.payload, dataKey),
-      };
-    };
-
     const errorBarProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
     };
@@ -310,7 +313,7 @@ class LineWithState extends Component<Props, State> {
             xAxisId,
             yAxisId,
             layout,
-            dataPointFormatter,
+            dataPointFormatter: errorBarDataPointFormatter,
           }),
         )}
       </Layer>

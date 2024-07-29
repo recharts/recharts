@@ -22,11 +22,6 @@ export interface ErrorBarDataItem {
   errorVal?: number[] | number;
 }
 
-export type ErrorBarDataPointFormatter = (
-  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
-  dataKey: DataKey<any>,
-) => ErrorBarDataItem;
-
 /**
  * So usually the direction is decided by the chart layout.
  * Horizontal layout means error bars are vertical means direction=y
@@ -37,6 +32,12 @@ export type ErrorBarDataPointFormatter = (
  * So this property is only ever used in Scatter chart, and ignored elsewhere.
  */
 export type ErrorBarDirection = 'x' | 'y';
+
+export type ErrorBarDataPointFormatter = (
+  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
+  dataKey: DataKey<any>,
+  direction: ErrorBarDirection,
+) => ErrorBarDataItem;
 
 interface InternalErrorBarProps {
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
@@ -107,7 +108,7 @@ function ErrorBarImpl(props: Props) {
   }
 
   const errorBars = data.map((entry: any) => {
-    const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
+    const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey, direction);
 
     if (!errorVal) {
       return null;
