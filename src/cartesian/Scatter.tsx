@@ -528,6 +528,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
             data={this.props.data}
             xAxisId={this.props.xAxisId}
             yAxisId={this.props.yAxisId}
+            zAxisId={this.props.zAxisId}
             dataKey={this.props.dataKey}
             errorBars={noErrorBars}
             // scatter doesn't stack
@@ -547,6 +548,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
         data={this.props.data}
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
+        zAxisId={this.props.zAxisId}
         dataKey={this.props.dataKey}
         // scatter doesn't stack
         stackId={undefined}

@@ -13,15 +13,12 @@ export type XAxisOrientation = 'top' | 'bottom';
 export type YAxisOrientation = 'left' | 'right';
 
 /**
- * These are the external props, visible for users as they set them using our public API.
- * There is all sorts of internal computed things based on these, but they will come through selectors.
+ * Properties shared in X, Y, and Z axes
  */
-export type AxisSettings = {
+export type BaseAxis = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
   type: AxisDomainType;
-  domain: AxisDomain | undefined;
-  allowDataOverflow: boolean;
   /**
    * The axis functionality is severely restricted without a dataKey
    * - but there is still something left, and the prop is optional
@@ -29,12 +26,25 @@ export type AxisSettings = {
    * There are no defaults.
    */
   dataKey: DataKey<any> | undefined;
+  unit: string | undefined;
+  name: string | undefined;
   allowDuplicatedCategory: boolean;
+  allowDataOverflow: boolean;
+  reversed: boolean;
+  includeHidden: boolean;
+};
+
+/**
+ * These are the external props, visible for users as they set them using our public API.
+ * There is all sorts of internal computed things based on these, but they will come through selectors.
+ *
+ * Properties shared between X and Y axes
+ */
+export type AxisSettings = BaseAxis & {
+  domain: AxisDomain | undefined;
   allowDecimals: boolean;
   tickCount: number;
   interval: AxisInterval;
-  includeHidden: boolean;
-  reversed: boolean;
   mirror: boolean;
   minTickGap: number;
   angle: number;
@@ -44,8 +54,6 @@ export type AxisSettings = {
    */
   ticks: ReadonlyArray<AxisTick> | undefined;
   hide: boolean;
-  unit: string | undefined;
-  name: string | undefined;
   tickFormatter: TickFormatter | undefined;
   tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
 };
@@ -62,11 +70,11 @@ export type YAxisSettings = AxisSettings & {
   orientation: YAxisOrientation;
 };
 
-export type ZAxisSettings = {
-  id: AxisId;
-  dataKey: AxisSettings['dataKey'];
-  name: AxisSettings['name'];
-  unit: AxisSettings['unit'];
+/**
+ * Z axis is special because it's never displayed. It controls the size of Scatter dots,
+ * but it never displays ticks anywhere.
+ */
+export type ZAxisSettings = BaseAxis & {
   range: number[];
 };
 
