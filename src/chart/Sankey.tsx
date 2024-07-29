@@ -640,6 +640,7 @@ function NodeElement({
   onMouseEnter,
   onMouseLeave,
   onClick,
+  dataKey,
 }: {
   node: SankeyNode;
   nodeContent: SankeyNodeOptions;
@@ -649,7 +650,9 @@ function NodeElement({
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
   onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+  dataKey: DataKey<any>;
 }) {
+  const dispatch = useAppDispatch();
   const { x, y, dx, dy } = node;
   const nodeProps: NodeProps = {
     ...filterProps(nodeContent, false),
@@ -660,10 +663,35 @@ function NodeElement({
     index: i,
     payload: node,
   };
+
+  const activeCoordinate = getCoordinateOfTooltip(nodeProps, 'node');
+  const activeIndex = `node-${i}`;
+
   const events = {
-    onMouseEnter: (e: MouseEvent) => onMouseEnter(nodeProps, e),
-    onMouseLeave: (e: MouseEvent) => onMouseLeave(nodeProps, e),
-    onClick: (e: MouseEvent) => onClick(nodeProps, e),
+    onMouseEnter: (e: MouseEvent) => {
+      dispatch(
+        setActiveMouseOverItemIndex({
+          activeIndex,
+          activeDataKey: dataKey,
+          activeMouseOverCoordinate: activeCoordinate,
+        }),
+      );
+      onMouseEnter(nodeProps, e);
+    },
+    onMouseLeave: (e: MouseEvent) => {
+      dispatch(mouseLeaveItem());
+      onMouseLeave(nodeProps, e);
+    },
+    onClick: (e: MouseEvent) => {
+      dispatch(
+        setActiveClickItemIndex({
+          activeIndex,
+          activeDataKey: dataKey,
+          activeClickCoordinate: activeCoordinate,
+        }),
+      );
+      onClick(nodeProps, e);
+    },
   };
 
   return <Layer {...events}>{renderNodeItem(nodeContent, nodeProps)}</Layer>;
@@ -676,6 +704,7 @@ function AllNodeElements({
   onMouseEnter,
   onMouseLeave,
   onClick,
+  dataKey,
 }: {
   nodes: SankeyNode[];
   nodeContent: SankeyNodeOptions;
@@ -683,6 +712,7 @@ function AllNodeElements({
   onMouseEnter: (nodeProps: NodeProps, e: MouseEvent) => void;
   onMouseLeave: (nodeProps: NodeProps, e: MouseEvent) => void;
   onClick: (nodeProps: NodeProps, e: MouseEvent) => void;
+  dataKey: DataKey<any>;
 }) {
   const top = get(margin, 'top') || 0;
   const left = get(margin, 'left') || 0;
@@ -698,6 +728,7 @@ function AllNodeElements({
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
+          dataKey={dataKey}
         />
       ))}
     </Layer>
@@ -909,6 +940,7 @@ export class Sankey extends PureComponent<Props, State> {
                     nodes={nodes}
                     nodeContent={this.props.node}
                     margin={this.props.margin}
+                    dataKey={this.props.dataKey}
                     onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
                     onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
                     onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
