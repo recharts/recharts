@@ -4,9 +4,7 @@
 import React, { Component, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
-import { AnimationTiming, D3Scale, DataKey, LayoutType } from '../util/types';
+import { AnimationTiming, DataKey, LayoutType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
@@ -40,8 +38,6 @@ export type ErrorBarDataPointFormatter = (
 ) => ErrorBarDataItem;
 
 interface InternalErrorBarProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   xAxisId?: AxisId;
   yAxisId?: AxisId;
   data?: any[];
@@ -83,8 +79,6 @@ function ErrorBarImpl(props: Props) {
     dataKey,
     data,
     dataPointFormatter,
-    xAxis: xAxisFromClonedProps,
-    yAxis: yAxisFromClonedProps,
     xAxisId,
     yAxisId,
     isAnimationActive,
