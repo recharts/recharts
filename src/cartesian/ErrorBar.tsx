@@ -77,7 +77,7 @@ export function getRealDirection(
 function ErrorBarImpl(props: Props) {
   const {
     offset,
-    layout,
+    direction,
     width,
     dataKey,
     data,
@@ -102,7 +102,7 @@ function ErrorBarImpl(props: Props) {
   }
 
   // ErrorBar requires type number XAxis, why?
-  if (props.direction === 'x' && xAxis.type !== 'number') {
+  if (direction === 'x' && xAxis.type !== 'number') {
     return null;
   }
 
@@ -122,7 +122,7 @@ function ErrorBarImpl(props: Props) {
       lowBound = highBound = errorVal;
     }
 
-    if (layout === 'vertical') {
+    if (direction === 'x') {
       // error bar for horizontal charts, the y is fixed, x is a range value
       const { scale } = xAxis;
 
@@ -139,7 +139,7 @@ function ErrorBarImpl(props: Props) {
       lineCoordinates.push({ x1: xMin, y1: yMid, x2: xMax, y2: yMid });
       // the left line of |--|
       lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMin, y2: yMax });
-    } else if (layout === 'horizontal') {
+    } else if (direction === 'y') {
       // error bar for horizontal charts, the x is fixed, y is a range value
       const { scale } = yAxis;
 
