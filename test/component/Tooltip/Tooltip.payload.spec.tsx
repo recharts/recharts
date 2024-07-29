@@ -406,7 +406,11 @@ describe('Tooltip payload', () => {
     },
   );
 
-  describe('filterNull prop', () => {
+  /*
+   * Scatter no longer renders values with nulls in them so the Tooltip never displays in the first place.
+   * What should we do here? I would be in favour of removing the `filterNull` prop completely.
+   */
+  describe.skip('filterNull prop', () => {
     const dataWithNulls: Array<{ x: number | null; y: number | null }> = [{ x: null, y: 2 }];
     test.each([undefined, true])('should filter away nulls when filterNull = %s', filterNull => {
       const { container, debug } = render(

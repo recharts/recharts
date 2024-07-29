@@ -131,7 +131,7 @@ export const JointLine = {
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-          <ZAxis type="number" range={[100]} />
+          <ZAxis type="number" dataKey="x" range={[100, 100]} />
           <Legend />
           <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
           <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />

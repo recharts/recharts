@@ -29,6 +29,7 @@ import {
   YAxis,
 } from '../../src';
 import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
+import { expectScatterPoints } from '../helper/expectScatterPoints';
 
 const svgTagMustHaveLabelViolation = expect.objectContaining({
   description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
@@ -166,12 +167,62 @@ describe('Static scanning for accessibility markup issues', () => {
   test('Scatter chart', async () => {
     const { container } = render(
       <ScatterChart width={400} height={400}>
-        <XAxis dataKey="x" name="stature" unit="cm" />
-        <YAxis dataKey="y" name="weight" unit="kg" />
+        <XAxis dataKey="uv" name="stature" unit="cm" />
+        <YAxis dataKey="pv" name="weight" unit="kg" />
         <Scatter line name="A school" data={data} fill="#ff7300" />
         <Tooltip />
       </ScatterChart>,
     );
+    expectScatterPoints(container, [
+      {
+        cx: '92.5',
+        cy: '278.59999999999997',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(92.5, 278.59999999999997)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '147.5',
+        cy: '200.588',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(147.5, 200.588)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '202.5',
+        cy: '314.672',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(202.5, 314.672)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '257.5',
+        cy: '12.200000000000006',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(257.5, 12.200000000000006)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '312.5',
+        cy: '224.31199999999998',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(312.5, 224.31199999999998)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '367.5',
+        cy: '192.20000000000002',
+        d: 'M0,0',
+        height: '9.0270333367641',
+        transform: 'translate(367.5, 192.20000000000002)',
+        width: '9.0270333367641',
+      },
+    ]);
     expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });

@@ -6,27 +6,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-
-type ExpectedPoint = {
-  cx: string;
-  cy: string;
-  transform: string;
-  d: string;
-};
-
-function expectScatterPoints(container: Element, expectedPoints: ReadonlyArray<ExpectedPoint>) {
-  assertNotNull(container);
-  const allPoints = container.querySelectorAll('.recharts-scatter-symbol .recharts-symbols');
-  const actualPoints = Array.from(allPoints).map(point => {
-    return {
-      cx: point.getAttribute('cx'),
-      cy: point.getAttribute('cy'),
-      transform: point.getAttribute('transform'),
-      d: point.getAttribute('d'),
-    };
-  });
-  expect(actualPoints).toEqual(expectedPoints);
-}
+import { expectScatterPoints } from '../helper/expectScatterPoints';
 
 describe('<Scatter />', () => {
   const data = [
@@ -49,31 +29,41 @@ describe('<Scatter />', () => {
         cx: '54',
         cy: '467.77777777777777',
         d: 'M0,0',
+        height: '9.0270333367641',
         transform: 'translate(54, 467.77777777777777)',
+        width: '9.0270333367641',
       },
       {
         cx: '152',
         cy: '358.8888888888889',
         d: 'M0,0',
+        height: '9.0270333367641',
         transform: 'translate(152, 358.8888888888889)',
+        width: '9.0270333367641',
       },
       {
         cx: '250',
         cy: '250',
         d: 'M0,0',
+        height: '9.0270333367641',
         transform: 'translate(250, 250)',
+        width: '9.0270333367641',
       },
       {
         cx: '348',
         cy: '141.11111111111111',
         d: 'M0,0',
+        height: '9.0270333367641',
         transform: 'translate(348, 141.11111111111111)',
+        width: '9.0270333367641',
       },
       {
         cx: '446',
         cy: '32.222222222222236',
         d: 'M0,0',
+        height: '9.0270333367641',
         transform: 'translate(446, 32.222222222222236)',
+        width: '9.0270333367641',
       },
     ]);
   });
@@ -94,7 +84,7 @@ describe('<Scatter />', () => {
     );
     const { container } = render(
       <ScatterChart width={500} height={500}>
-        <Scatter isAnimationActive={false} shape={<CustomizedShape cx={0} cy={0} />} data={data} />
+        <Scatter isAnimationActive={false} shape={<CustomizedShape cx={0} cy={0} />} data={data} dataKey="size" />
       </ScatterChart>,
     );
 
@@ -107,7 +97,7 @@ describe('<Scatter />', () => {
     );
     const { container } = render(
       <ScatterChart width={500} height={500}>
-        <Scatter isAnimationActive={false} shape={renderCustomizedShape} data={data} />
+        <Scatter isAnimationActive={false} shape={renderCustomizedShape} data={data} dataKey="size" />
       </ScatterChart>,
     );
 
@@ -118,7 +108,7 @@ describe('<Scatter />', () => {
     const CustomizedLine = () => <path d="M0,0L200,200" className="customized-line" />;
     const { container } = render(
       <ScatterChart width={500} height={500}>
-        <Scatter isAnimationActive={false} line={<CustomizedLine />} data={data} />
+        <Scatter isAnimationActive={false} line={<CustomizedLine />} data={data} dataKey="size" />
       </ScatterChart>,
     );
 
@@ -129,7 +119,7 @@ describe('<Scatter />', () => {
     const renderCustomizedLine = () => <path d="M0,0L200,200" className="customized-line" />;
     const { container } = render(
       <ScatterChart width={500} height={500}>
-        <Scatter isAnimationActive={false} line={renderCustomizedLine} data={data} />
+        <Scatter isAnimationActive={false} line={renderCustomizedLine} data={data} dataKey="size" />
       </ScatterChart>,
     );
 

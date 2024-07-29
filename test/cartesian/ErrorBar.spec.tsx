@@ -231,6 +231,7 @@ describe('<ErrorBar />', () => {
         <XAxis type="number" />
       </ScatterChart>,
     );
+    expect(container.querySelectorAll('.recharts-errorBars')).toHaveLength(2);
     assertErrorBars(container, 8);
   });
 
@@ -244,6 +245,16 @@ describe('<ErrorBar />', () => {
         <XAxis type="number" />
       </ScatterChart>,
     );
+
+    expect(container.querySelectorAll('.recharts-errorBars')).toHaveLength(2);
+
+    const errorBars = container.querySelectorAll('.recharts-errorBar');
+    errorBars.forEach(bar => {
+      expect(bar.tagName).toEqual('g');
+      expect(bar.getAttributeNames()).toEqual(['class', 'stroke', 'stroke-width', 'offset']);
+      expect(bar.childElementCount).toEqual(3);
+    });
+
     assertErrorBars(container, 8);
   });
 

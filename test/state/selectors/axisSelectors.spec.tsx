@@ -11,6 +11,7 @@ import {
   selectAxisDomainIncludingNiceTicks,
   selectAxisRangeWithReverse,
   selectAxisScale,
+  selectAxisSettings,
   selectBaseAxis,
   selectCalculatedXAxisPadding,
   selectCartesianGraphicalItemsData,
@@ -2612,16 +2613,18 @@ describe('selectErrorBarsSettings', () => {
   });
 
   it('should return bars settings if present in ScatterChart', () => {
-    const xAxisSpy = vi.fn();
+    const xAxisErrorBarSpy = vi.fn();
+    const yAxisErrorBarSpy = vi.fn();
     const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      xAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
-      yAxisSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
+      xAxisErrorBarSpy(useAppSelector(state => selectErrorBarsSettings(state, 'xAxis', defaultAxisId)));
+      yAxisErrorBarSpy(useAppSelector(state => selectErrorBarsSettings(state, 'yAxis', defaultAxisId)));
+      yAxisSpy(useAppSelector(state => selectAxisSettings(state, 'yAxis', defaultAxisId)));
       return null;
     };
     render(
       <ScatterChart width={100} height={100}>
-        <Scatter data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+        <Scatter data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" isAnimationActive={false}>
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Scatter>
@@ -2629,20 +2632,49 @@ describe('selectErrorBarsSettings', () => {
         <XAxis type="number" />
       </ScatterChart>,
     );
-    expect(xAxisSpy).toHaveBeenLastCalledWith([
+    expect(yAxisSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: undefined,
+      domain: [0, 'auto'],
+      hide: true,
+      id: undefined,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'left',
+      padding: {
+        bottom: 0,
+        top: 0,
+      },
+      reversed: false,
+      scale: 'auto',
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'number',
+      unit: undefined,
+      width: 60,
+    });
+    expect(xAxisErrorBarSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'data-x',
         direction: 'x',
       },
     ]);
-    expect(yAxisSpy).toHaveBeenLastCalledWith([
+    expect(yAxisErrorBarSpy).toHaveBeenLastCalledWith([
       {
         dataKey: 'data-y',
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisErrorBarSpy).toHaveBeenCalledTimes(4);
+    expect(yAxisErrorBarSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should report all relevant error bars on Bar, Line, and Scatter', () => {
@@ -2669,6 +2701,7 @@ describe('selectErrorBarsSettings', () => {
         </Scatter>
         <Customized component={Comp} />
         <XAxis type="number" />
+        <YAxis dataKey="x" />
       </ComposedChart>,
     );
     expect(xAxisSpy).toHaveBeenLastCalledWith([
@@ -2829,5 +2862,10 @@ describe('mergeDomains', () => {
   it('should find min, max when called with multiple domains', () => {
     expect(mergeDomains([100, 200], [150, 250])).toEqual([100, 250]);
     expect(mergeDomains([100, 200], [150, 250], [0, 50])).toEqual([0, 250]);
+  });
+
+  it('should ignore domains that are undefined', () => {
+    expect(mergeDomains([100, 200], [150, 250])).toEqual([100, 250]);
+    expect(mergeDomains([100, 200], [150, 250], undefined, [0, 50])).toEqual([0, 250]);
   });
 });

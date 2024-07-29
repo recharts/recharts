@@ -18,7 +18,7 @@ interface Data {
 
 interface LabelListProps<T extends Data> {
   id?: string;
-  data?: Array<T>;
+  data?: ReadonlyArray<T>;
   valueAccessor?: Function;
   clockWise?: boolean;
   dataKey?: DataKey<T>;
@@ -73,7 +73,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
 
 LabelList.displayName = 'LabelList';
 
-function parseLabelList<T extends Data>(label: unknown, data: Array<T>) {
+function parseLabelList<T extends Data>(label: unknown, data: ReadonlyArray<T>) {
   if (!label) {
     return null;
   }
@@ -95,7 +95,7 @@ function parseLabelList<T extends Data>(label: unknown, data: Array<T>) {
 
 function renderCallByParent<T extends Data>(
   parentProps: { children?: ReactNode; label?: unknown },
-  data: Array<T>,
+  data: ReadonlyArray<T>,
   checkPropsLabel = true,
 ) {
   if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {

@@ -2427,6 +2427,93 @@ describe('<XAxis />', () => {
       });
     });
 
+    describe('when the axis dataKey and graphical item dataKey are different', () => {
+      it('should render ticks', () => {
+        const dataWithNegativeValues = [
+          {
+            x: -50,
+            y: -50,
+          },
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: 50,
+            y: 50,
+          },
+          {
+            x: 100,
+            y: 100,
+          },
+          {
+            x: 150,
+            y: 150,
+          },
+          {
+            x: 200,
+            y: 200,
+          },
+          {
+            x: 250,
+            y: 250,
+          },
+          {
+            x: 350,
+            y: 350,
+          },
+          {
+            x: 400,
+            y: 400,
+          },
+          {
+            x: 450,
+            y: 450,
+          },
+          {
+            x: 500,
+            y: 500,
+          },
+        ];
+
+        const { container } = render(
+          <LineChart width={500} height={300}>
+            <XAxis dataKey="x" domain={['auto', 'auto']} interval={0} type="number" allowDataOverflow />
+
+            <Line data={dataWithNegativeValues} dataKey="y" />
+          </LineChart>,
+        );
+
+        expectXAxisTicks(container, [
+          {
+            textContent: '-200',
+            x: '5',
+            y: '273',
+          },
+          {
+            textContent: '0',
+            x: '127.5',
+            y: '273',
+          },
+          {
+            textContent: '200',
+            x: '250',
+            y: '273',
+          },
+          {
+            textContent: '400',
+            x: '372.5',
+            y: '273',
+          },
+          {
+            textContent: '600',
+            x: '495',
+            y: '273',
+          },
+        ]);
+      });
+    });
+
     describe('when data is defined on multiple graphical elements', () => {
       const spy = vi.fn();
       const data1 = data.slice(0, 3);
