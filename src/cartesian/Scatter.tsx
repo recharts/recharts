@@ -15,7 +15,7 @@ import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
-import { ErrorBar, Props as ErrorBarProps } from './ErrorBar';
+import { ErrorBar, ErrorBarDataItem, ErrorBarDirection, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { getLinearRegression, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
@@ -398,6 +398,20 @@ function ScatterLine(props: InternalProps) {
   );
 }
 
+const errorBarDataPointFormatter = (
+  dataPoint: ScatterPointItem,
+  dataKey: Props['dataKey'],
+  direction: ErrorBarDirection,
+): ErrorBarDataItem => {
+  return {
+    x: dataPoint.cx,
+    y: dataPoint.cy,
+    value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    errorVal: getValueByDataKey(dataPoint, dataKey),
+  };
+};
+
 function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean }) {
   const { points, xAxisId, yAxisId, children, isAnimationActive, isAnimationFinished } = props;
   if (isAnimationActive && !isAnimationFinished) {
@@ -411,21 +425,14 @@ function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean 
 
   return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
     const { direction, dataKey: errorDataKey } = item.props;
+
     return React.cloneElement(item, {
       key: `${direction}-${errorDataKey}-${points[i]}`,
       data: points,
       xAxisId,
       yAxisId,
       layout: direction === 'x' ? 'vertical' : 'horizontal',
-      // @ts-expect-error getValueByDataKey does not validate the output type
-      dataPointFormatter: (dataPoint: ScatterPointItem, dataKey: Props['dataKey']) => {
-        return {
-          x: dataPoint.cx,
-          y: dataPoint.cy,
-          value: direction === 'x' ? +dataPoint.node.x : +dataPoint.node.y,
-          errorVal: getValueByDataKey(dataPoint, dataKey),
-        };
-      },
+      dataPointFormatter: errorBarDataPointFormatter,
     });
   });
 }

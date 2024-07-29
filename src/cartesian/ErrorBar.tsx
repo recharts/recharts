@@ -4,9 +4,7 @@
 import React, { Component, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
-import { AnimationTiming, D3Scale, DataKey, LayoutType } from '../util/types';
+import { AnimationTiming, DataKey, LayoutType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
@@ -22,11 +20,6 @@ export interface ErrorBarDataItem {
   errorVal?: number[] | number;
 }
 
-export type ErrorBarDataPointFormatter = (
-  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
-  dataKey: DataKey<any>,
-) => ErrorBarDataItem;
-
 /**
  * So usually the direction is decided by the chart layout.
  * Horizontal layout means error bars are vertical means direction=y
@@ -38,9 +31,13 @@ export type ErrorBarDataPointFormatter = (
  */
 export type ErrorBarDirection = 'x' | 'y';
 
+export type ErrorBarDataPointFormatter = (
+  entry: BarRectangleItem | LinePointItem | ScatterPointItem,
+  dataKey: DataKey<any>,
+  direction: ErrorBarDirection,
+) => ErrorBarDataItem;
+
 interface InternalErrorBarProps {
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   xAxisId?: AxisId;
   yAxisId?: AxisId;
   data?: any[];
@@ -77,13 +74,11 @@ export function getRealDirection(
 function ErrorBarImpl(props: Props) {
   const {
     offset,
-    layout,
+    direction,
     width,
     dataKey,
     data,
     dataPointFormatter,
-    xAxis: xAxisFromClonedProps,
-    yAxis: yAxisFromClonedProps,
     xAxisId,
     yAxisId,
     isAnimationActive,
@@ -102,12 +97,12 @@ function ErrorBarImpl(props: Props) {
   }
 
   // ErrorBar requires type number XAxis, why?
-  if (props.direction === 'x' && xAxis.type !== 'number') {
+  if (direction === 'x' && xAxis.type !== 'number') {
     return null;
   }
 
   const errorBars = data.map((entry: any) => {
-    const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey);
+    const { x, y, value, errorVal } = dataPointFormatter(entry, dataKey, direction);
 
     if (!errorVal) {
       return null;
@@ -122,7 +117,7 @@ function ErrorBarImpl(props: Props) {
       lowBound = highBound = errorVal;
     }
 
-    if (layout === 'vertical') {
+    if (direction === 'x') {
       // error bar for horizontal charts, the y is fixed, x is a range value
       const { scale } = xAxis;
 
@@ -139,7 +134,7 @@ function ErrorBarImpl(props: Props) {
       lineCoordinates.push({ x1: xMin, y1: yMid, x2: xMax, y2: yMid });
       // the left line of |--|
       lineCoordinates.push({ x1: xMin, y1: yMin, x2: xMin, y2: yMax });
-    } else if (layout === 'horizontal') {
+    } else if (direction === 'y') {
       // error bar for horizontal charts, the x is fixed, y is a range value
       const { scale } = yAxis;
 

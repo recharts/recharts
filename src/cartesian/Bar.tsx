@@ -9,7 +9,7 @@ import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
-import { ErrorBar, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
+import { ErrorBar, ErrorBarDataItem, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
@@ -313,6 +313,24 @@ const defaultMinPointSize: number = 0;
 
 const emptyArray: Array<never> = [];
 
+const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
+  dataPoint: BarRectangleItem,
+  dataKey,
+): ErrorBarDataItem => {
+  /**
+   * if the value coming from `getComposedData` is an array then this is a stacked bar chart.
+   * arr[1] represents end value of the bar since the data is in the form of [startValue, endValue].
+   * */
+  const value = Array.isArray(dataPoint.value) ? dataPoint.value[1] : dataPoint.value;
+  return {
+    x: dataPoint.x,
+    y: dataPoint.y,
+    value,
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    errorVal: getValueByDataKey(dataPoint, dataKey),
+  };
+};
+
 class BarWithState extends PureComponent<Props, State> {
   state: State = { isAnimationFinished: false };
 
@@ -448,21 +466,6 @@ class BarWithState extends PureComponent<Props, State> {
 
     const offset = layout === 'vertical' ? data[0].height / 2 : data[0].width / 2;
 
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    const dataPointFormatter: ErrorBarDataPointFormatter = (dataPoint: BarRectangleItem, dataKey) => {
-      /**
-       * if the value coming from `getComposedData` is an array then this is a stacked bar chart.
-       * arr[1] represents end value of the bar since the data is in the form of [startValue, endValue].
-       * */
-      const value = Array.isArray(dataPoint.value) ? dataPoint.value[1] : dataPoint.value;
-      return {
-        x: dataPoint.x,
-        y: dataPoint.y,
-        value,
-        errorVal: getValueByDataKey(dataPoint, dataKey),
-      };
-    };
-
     const errorBarProps = {
       clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
     };
@@ -477,7 +480,7 @@ class BarWithState extends PureComponent<Props, State> {
             yAxisId,
             layout,
             offset,
-            dataPointFormatter,
+            dataPointFormatter: errorBarDataPointFormatter,
           }),
         )}
       </Layer>
