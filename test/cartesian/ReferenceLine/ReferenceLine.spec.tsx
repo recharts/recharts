@@ -7,7 +7,7 @@ import { useAppSelector } from '../../../src/state/hooks';
 import { selectReferenceLinesByAxis } from '../../../src/state/selectors/axisSelectors';
 
 describe('<ReferenceLine />', () => {
-  let consoleSpy: MockInstance<any[], void>;
+  let consoleSpy: MockInstance<(...args: any[]) => void>;
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'warn').mockImplementation((): void => undefined);
   });
