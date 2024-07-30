@@ -1018,9 +1018,9 @@ describe('<LineChart /> and various data sources', () => {
 describe('<LineChart /> - Pure Rendering', () => {
   const pureElements = [Line];
 
-  const spies: Array<MockInstance<[], React.ReactElement | null>> = [];
+  const spies: Array<MockInstance<() => React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: MockInstance<[], React.ReactElement | null>;
+  let axisSpy: MockInstance<() => React.ReactElement | null>;
 
   beforeEach(() => {
     pureElements.forEach((el, i) => {
@@ -1077,9 +1077,9 @@ describe('<LineChart /> - Pure Rendering', () => {
 describe('<LineChart /> - Pure Rendering with legend', () => {
   const pureElements = [Line];
 
-  const spies: Array<MockInstance<[], React.ReactElement | null>> = [];
+  const spies: Array<MockInstance<() => React.ReactElement | null>> = [];
   // CartesianAxis is what is actually render for XAxis and YAxis
-  let axisSpy: MockInstance<[], React.ReactElement | null>;
+  let axisSpy: MockInstance<() => React.ReactElement | null>;
 
   beforeEach(() => {
     pureElements.forEach((el, i) => {
