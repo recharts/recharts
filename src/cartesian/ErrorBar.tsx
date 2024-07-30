@@ -1,10 +1,10 @@
 /**
  * @fileOverview Render a group of error bar
  */
-import React, { Component, SVGProps } from 'react';
+import React, { Component, createContext, SVGProps, useContext } from 'react';
 import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
-import { AnimationTiming, DataKey, LayoutType } from '../util/types';
+import { AnimationTiming, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
@@ -41,7 +41,6 @@ interface InternalErrorBarProps {
   xAxisId?: AxisId;
   yAxisId?: AxisId;
   data?: any[];
-  layout?: 'horizontal' | 'vertical';
   dataPointFormatter?: ErrorBarDataPointFormatter;
   /** The offset between central and the given coordinate, often set by <Bar/> */
   offset?: number;
@@ -63,13 +62,6 @@ interface ErrorBarProps extends InternalErrorBarProps {
 }
 
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
-
-export function getRealDirection(
-  directionFromProps: ErrorBarDirection | undefined,
-  layout: LayoutType,
-): ErrorBarDirection {
-  return directionFromProps ?? (layout === 'horizontal' ? 'y' : 'x');
-}
 
 function ErrorBarImpl(props: Props) {
   const {
@@ -187,6 +179,40 @@ function ErrorBarImpl(props: Props) {
   return <Layer className="recharts-errorBars">{errorBars}</Layer>;
 }
 
+const ErrorBarPreferredDirection = createContext<ErrorBarDirection | undefined>(undefined);
+
+function useErrorBarDirection(directionFromProps: ErrorBarDirection | undefined): ErrorBarDirection {
+  const preferredDirection = useContext(ErrorBarPreferredDirection);
+  if (directionFromProps != null) {
+    return directionFromProps;
+  }
+  if (preferredDirection != null) {
+    return preferredDirection;
+  }
+  return 'x';
+}
+
+export function SetErrorBarPreferredDirection({
+  direction,
+  children,
+}: {
+  direction: ErrorBarDirection;
+  children: React.ReactNode;
+}) {
+  return <ErrorBarPreferredDirection.Provider value={direction}>{children}</ErrorBarPreferredDirection.Provider>;
+}
+
+function ErrorBarInternal(props: Props) {
+  const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
+
+  return (
+    <>
+      <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
+      <ErrorBarImpl {...props} />
+    </>
+  );
+}
+
 // eslint-disable-next-line react/prefer-stateless-function
 export class ErrorBar extends Component<Props, {}> {
   static defaultProps = {
@@ -194,7 +220,6 @@ export class ErrorBar extends Component<Props, {}> {
     strokeWidth: 1.5,
     width: 5,
     offset: 0,
-    layout: 'horizontal',
     isAnimationActive: true,
     animationBegin: 0,
     animationDuration: 400,
@@ -204,13 +229,6 @@ export class ErrorBar extends Component<Props, {}> {
   static displayName = 'ErrorBar';
 
   render() {
-    const realDirection: ErrorBarDirection = getRealDirection(this.props.direction, this.props.layout);
-
-    return (
-      <>
-        <ReportErrorBarSettings dataKey={this.props.dataKey} direction={realDirection} />
-        <ErrorBarImpl {...this.props} />
-      </>
-    );
+    return <ErrorBarInternal {...this.props} />;
   }
 }

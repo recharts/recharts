@@ -14,7 +14,13 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import { ErrorBar, ErrorBarDataItem, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
+import {
+  ErrorBar,
+  ErrorBarDataItem,
+  ErrorBarDataPointFormatter,
+  Props as ErrorBarProps,
+  SetErrorBarPreferredDirection,
+} from './ErrorBar';
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -293,7 +299,7 @@ class LineWithState extends Component<Props, State> {
       return null;
     }
 
-    const { points, xAxisId, yAxisId, layout, children } = this.props;
+    const { points, xAxisId, yAxisId, children } = this.props;
     const errorBarItems = findAllByType(children, ErrorBar);
 
     if (!errorBarItems) {
@@ -312,7 +318,6 @@ class LineWithState extends Component<Props, State> {
             data: points,
             xAxisId,
             yAxisId,
-            layout,
             dataPointFormatter: errorBarDataPointFormatter,
           }),
         )}
@@ -478,6 +483,7 @@ class LineWithState extends Component<Props, State> {
       isAnimationActive,
       id,
       needClip,
+      layout,
     } = this.props;
 
     if (hide || !points || !points.length) {
@@ -538,7 +544,9 @@ class LineWithState extends Component<Props, State> {
             </defs>
           )}
           {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
-          {this.renderErrorBar(needClip, clipPathId)}
+          <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
+            {this.renderErrorBar(needClip, clipPathId)}
+          </SetErrorBarPreferredDirection>
           {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>

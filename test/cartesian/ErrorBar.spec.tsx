@@ -7,7 +7,6 @@ import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisDomainIncludingNiceTicks } from '../../src/state/selectors/axisSelectors';
-import { getRealDirection } from '../../src/cartesian/ErrorBar';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -47,23 +46,6 @@ function assertAnimationStyles(
     });
   });
 }
-
-describe('getRealDirection', () => {
-  it('should return direction from props if it is provided', () => {
-    expect(getRealDirection('x', 'horizontal')).toBe('x');
-    expect(getRealDirection('y', 'horizontal')).toBe('y');
-    expect(getRealDirection('x', 'vertical')).toBe('x');
-    expect(getRealDirection('y', 'vertical')).toBe('y');
-  });
-
-  it('should return "y" for horizontal layout', () => {
-    expect(getRealDirection(undefined, 'horizontal')).toBe('y');
-  });
-
-  it('should return "x" for vertical layout', () => {
-    expect(getRealDirection(undefined, 'vertical')).toBe('x');
-  });
-});
 
 describe('<ErrorBar />', () => {
   const dataWithError = [
