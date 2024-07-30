@@ -9,8 +9,7 @@ import { filterProps } from '../util/ReactUtils';
 import { BarRectangleItem } from './Bar';
 import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
-import { ReportErrorBarSettings } from '../context/CartesianGraphicalItemContext';
-import { AxisId } from '../state/axisMapSlice';
+import { ReportErrorBarSettings, useErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { useXAxis, useYAxis } from '../hooks';
 
 export interface ErrorBarDataItem {
@@ -37,16 +36,7 @@ export type ErrorBarDataPointFormatter = (
   direction: ErrorBarDirection,
 ) => ErrorBarDataItem;
 
-interface InternalErrorBarProps {
-  xAxisId?: AxisId;
-  yAxisId?: AxisId;
-  data?: any[];
-  dataPointFormatter?: ErrorBarDataPointFormatter;
-  /** The offset between central and the given coordinate, often set by <Bar/> */
-  offset?: number;
-}
-
-interface ErrorBarProps extends InternalErrorBarProps {
+interface ErrorBarProps {
   dataKey: DataKey<any>;
   /** the width of the error bar ends */
   width?: number;
@@ -65,14 +55,9 @@ export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
 function ErrorBarImpl(props: Props) {
   const {
-    offset,
     direction,
     width,
     dataKey,
-    data,
-    dataPointFormatter,
-    xAxisId,
-    yAxisId,
     isAnimationActive,
     animationBegin,
     animationDuration,
@@ -81,10 +66,12 @@ function ErrorBarImpl(props: Props) {
   } = props;
   const svgProps = filterProps(others, false);
 
-  const xAxis = useXAxis(props.xAxisId);
-  const yAxis = useYAxis(props.yAxisId);
+  const { data, dataPointFormatter, xAxisId, yAxisId, errorBarOffset: offset } = useErrorBarContext();
 
-  if (xAxis?.scale == null || yAxis?.scale == null) {
+  const xAxis = useXAxis(xAxisId);
+  const yAxis = useYAxis(yAxisId);
+
+  if (xAxis?.scale == null || yAxis?.scale == null || data == null) {
     return null;
   }
 
