@@ -9,13 +9,7 @@ import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
-import {
-  ErrorBar,
-  ErrorBarDataItem,
-  ErrorBarDataPointFormatter,
-  Props as ErrorBarProps,
-  SetErrorBarPreferredDirection,
-} from './ErrorBar';
+import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
@@ -62,6 +56,7 @@ import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import type { XAxisProps, YAxisProps } from '../index';
+import { useChartLayout } from '../context/chartLayoutContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -455,40 +450,6 @@ class BarWithState extends PureComponent<Props, State> {
     return this.renderRectanglesStatically(data);
   }
 
-  renderErrorBar(needClip: boolean, clipPathId: string) {
-    if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-
-    const { data, xAxisId, yAxisId, layout, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
-
-    if (!errorBarItems) {
-      return null;
-    }
-
-    const offset = layout === 'vertical' ? data[0].height / 2 : data[0].width / 2;
-
-    const errorBarProps = {
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
-    };
-
-    return (
-      <Layer {...errorBarProps}>
-        {errorBarItems.map((item: ReactElement<ErrorBarProps>) =>
-          React.cloneElement(item, {
-            key: `error-bar-${clipPathId}-${item.props.dataKey}`,
-            data,
-            xAxisId,
-            yAxisId,
-            offset,
-            dataPointFormatter: errorBarDataPointFormatter,
-          }),
-        )}
-      </Layer>
-    );
-  }
-
   render() {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id, layout } =
       this.props;
@@ -519,7 +480,7 @@ class BarWithState extends PureComponent<Props, State> {
           {this.renderRectangles()}
         </Layer>
         <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-          {this.renderErrorBar(needClip, clipPathId)}
+          {this.props.children}
         </SetErrorBarPreferredDirection>
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
@@ -529,8 +490,37 @@ class BarWithState extends PureComponent<Props, State> {
 
 function BarImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const layout = useChartLayout();
+
+  let errorBarOffset: number;
+  const firstDataPoint = props.data?.[0];
+  if (firstDataPoint == null) {
+    errorBarOffset = 0;
+  } else {
+    errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
+  }
+
   const { ref, ...everythingElse } = props;
-  return <BarWithState {...everythingElse} needClip={needClip} />;
+  return (
+    <CartesianGraphicalItemContext
+      // Bar does not allow setting data directly on the graphical item (why?)
+      data={null}
+      xAxisId={props.xAxisId}
+      yAxisId={props.yAxisId}
+      zAxisId={0}
+      dataKey={props.dataKey}
+      stackId={props.stackId}
+      hide={props.hide}
+      errorBarData={props.data}
+      dataPointFormatter={errorBarDataPointFormatter}
+      errorBarOffset={errorBarOffset}
+    >
+      <ReportBar />
+      <SetBarLegend {...props} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <BarWithState {...everythingElse} needClip={needClip} />
+    </CartesianGraphicalItemContext>
+  );
 }
 
 export class Bar extends PureComponent<Props> {
@@ -677,22 +667,6 @@ export class Bar extends PureComponent<Props> {
   };
 
   render() {
-    return (
-      <CartesianGraphicalItemContext
-        // Bar does not allow setting data directly on the graphical item (why?)
-        data={null}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={0}
-        dataKey={this.props.dataKey}
-        stackId={this.props.stackId}
-        hide={this.props.hide}
-      >
-        <ReportBar />
-        <SetBarLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <BarImpl {...this.props} />
-      </CartesianGraphicalItemContext>
-    );
+    return <BarImpl {...this.props} />;
   }
 }

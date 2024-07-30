@@ -15,7 +15,7 @@ import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
-import { ErrorBar, ErrorBarDataItem, ErrorBarDirection, Props as ErrorBarProps } from './ErrorBar';
+import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { getLinearRegression, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
@@ -409,30 +409,6 @@ const errorBarDataPointFormatter = (
   };
 };
 
-function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean }) {
-  const { points, xAxisId, yAxisId, children, isAnimationActive, isAnimationFinished } = props;
-  if (isAnimationActive && !isAnimationFinished) {
-    return null;
-  }
-  const errorBarItems = findAllByType(children, ErrorBar);
-
-  if (!errorBarItems) {
-    return null;
-  }
-
-  return errorBarItems.map((item: ReactElement<ErrorBarProps>, i: number) => {
-    const { direction, dataKey: errorDataKey } = item.props;
-
-    return React.cloneElement(item, {
-      key: `${direction}-${errorDataKey}-${points[i]}`,
-      data: points,
-      xAxisId,
-      yAxisId,
-      dataPointFormatter: errorBarDataPointFormatter,
-    });
-  });
-}
-
 class ScatterWithState extends PureComponent<InternalProps, State> {
   state: State = { isAnimationFinished: false };
 
@@ -538,7 +514,8 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
           </defs>
         )}
         <ScatterLine {...this.props} />
-        <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
+        {/* <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} /> */}
+        {this.props.children}
         <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
       </Layer>
@@ -549,7 +526,25 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 function ScatterImpl(props: InternalProps) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <ScatterWithState {...everythingElse} needClip={needClip} />;
+  return (
+    <CartesianGraphicalItemContext
+      data={props.data}
+      xAxisId={props.xAxisId}
+      yAxisId={props.yAxisId}
+      zAxisId={props.zAxisId}
+      dataKey={props.dataKey}
+      // scatter doesn't stack
+      stackId={undefined}
+      hide={props.hide}
+      dataPointFormatter={errorBarDataPointFormatter}
+      errorBarData={props.points}
+      errorBarOffset={0}
+    >
+      <SetScatterLegend {...props} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <ScatterWithState {...everythingElse} needClip={needClip} />
+    </CartesianGraphicalItemContext>
+  );
 }
 
 export class Scatter extends Component<InternalProps> {
@@ -617,21 +612,6 @@ export class Scatter extends Component<InternalProps> {
   };
 
   render() {
-    return (
-      <CartesianGraphicalItemContext
-        data={this.props.data}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={this.props.zAxisId}
-        dataKey={this.props.dataKey}
-        // scatter doesn't stack
-        stackId={undefined}
-        hide={this.props.hide}
-      >
-        <SetScatterLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <ScatterImpl {...this.props} />
-      </CartesianGraphicalItemContext>
-    );
+    return <ScatterImpl {...this.props} />;
   }
 }

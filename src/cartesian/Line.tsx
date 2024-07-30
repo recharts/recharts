@@ -2,7 +2,7 @@
  * @fileOverview Line
  */
 // eslint-disable-next-line max-classes-per-file
-import React, { Component, PureComponent, ReactElement } from 'react';
+import React, { Component, PureComponent } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
@@ -14,15 +14,9 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import {
-  ErrorBar,
-  ErrorBarDataItem,
-  ErrorBarDataPointFormatter,
-  Props as ErrorBarProps,
-  SetErrorBarPreferredDirection,
-} from './ErrorBar';
+import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
-import { filterProps, findAllByType, hasClipDot } from '../util/ReactUtils';
+import { filterProps, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import { Props as XAxisProps } from './XAxis';
@@ -291,37 +285,6 @@ class LineWithState extends Component<Props, State> {
     }
   };
 
-  renderErrorBar(needClip: boolean, clipPathId: string) {
-    if (this.props.isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-
-    const { points, xAxisId, yAxisId, children } = this.props;
-    const errorBarItems = findAllByType(children, ErrorBar);
-
-    if (!errorBarItems) {
-      return null;
-    }
-
-    const errorBarProps = {
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
-    };
-
-    return (
-      <Layer {...errorBarProps}>
-        {errorBarItems.map((item: ReactElement<ErrorBarProps>) =>
-          React.cloneElement(item, {
-            key: `bar-${item.props.dataKey}`,
-            data: points,
-            xAxisId,
-            yAxisId,
-            dataPointFormatter: errorBarDataPointFormatter,
-          }),
-        )}
-      </Layer>
-    );
-  }
-
   renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
     const { isAnimationActive } = this.props;
 
@@ -515,7 +478,7 @@ class LineWithState extends Component<Props, State> {
           )}
           {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
           <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-            {this.renderErrorBar(needClip, clipPathId)}
+            {this.props.children}
           </SetErrorBarPreferredDirection>
           {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
@@ -628,6 +591,9 @@ export class Line extends PureComponent<Props> {
         // line doesn't stack
         stackId={undefined}
         hide={this.props.hide}
+        dataPointFormatter={errorBarDataPointFormatter}
+        errorBarData={this.props.points}
+        errorBarOffset={0}
       >
         <SetLineLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

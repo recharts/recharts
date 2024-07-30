@@ -346,7 +346,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(6);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(7);
     });
 
     it('should extend YAxis domain when data is defined on the graphical item', () => {
@@ -519,7 +519,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(6);
+      expect(xAxisSpy).toHaveBeenCalledTimes(7);
     });
 
     it('should extend XAxis domain when data is defined on the graphical item', () => {

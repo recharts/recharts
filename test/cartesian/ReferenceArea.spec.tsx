@@ -600,7 +600,7 @@ describe('<ReferenceArea />', () => {
       );
 
       expect(areaSpy).toHaveBeenLastCalledWith([]);
-      expect(areaSpy).toHaveBeenCalledTimes(5);
+      expect(areaSpy).toHaveBeenCalledTimes(6);
     });
   });
 });
