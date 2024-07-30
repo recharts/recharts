@@ -632,7 +632,7 @@ describe('Tooltip visibility', () => {
       assertNotNull(chart);
       fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
 
-      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('12statureweight35');
+      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('1235statureweight');
     });
 
     test('false - Should hide tooltip for hidden items', () => {
