@@ -38,7 +38,6 @@ import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
@@ -153,8 +152,6 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
     },
   };
 }
-
-const noErrorBars: never[] = [];
 
 class AreaWithState extends PureComponent<Props, State> {
   state: State = {
@@ -457,22 +454,7 @@ class AreaWithState extends PureComponent<Props, State> {
     } = this.props;
 
     if (hide || !points || !points.length) {
-      return (
-        <>
-          <SetCartesianGraphicalItem
-            data={this.props.data}
-            xAxisId={xAxisId}
-            yAxisId={yAxisId}
-            zAxisId={0}
-            dataKey={this.props.dataKey}
-            errorBars={noErrorBars}
-            stackId={this.props.stackId}
-            hide={this.props.hide}
-          />
-          <SetAreaLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
 
     const { isAnimationFinished } = this.state;
@@ -484,18 +466,8 @@ class AreaWithState extends PureComponent<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <CartesianGraphicalItemContext
-        data={this.props.data}
-        dataKey={this.props.dataKey}
-        xAxisId={xAxisId}
-        yAxisId={yAxisId}
-        zAxisId={0}
-        stackId={this.props.stackId}
-        hide={this.props.hide}
-      >
+      <>
         <Layer className={layerClass}>
-          <SetAreaLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClip && (
             <defs>
               <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -529,7 +501,7 @@ class AreaWithState extends PureComponent<Props, State> {
             activeDot={this.props.activeDot}
           />
         )}
-      </CartesianGraphicalItemContext>
+      </>
     );
   }
 }
@@ -713,6 +685,20 @@ export class Area extends PureComponent<Props, State> {
   };
 
   render() {
-    return <AreaImpl {...this.props} />;
+    return (
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        dataKey={this.props.dataKey}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        zAxisId={0}
+        stackId={this.props.stackId}
+        hide={this.props.hide}
+      >
+        <SetAreaLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <AreaImpl {...this.props} />
+      </CartesianGraphicalItemContext>
+    );
   }
 }

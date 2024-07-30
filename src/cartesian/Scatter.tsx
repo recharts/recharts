@@ -43,7 +43,6 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { AxisId, AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
@@ -237,8 +236,6 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
     },
   };
 }
-
-const noErrorBars: never[] = [];
 
 type AxisWithScale = Omit<AxisSettings, 'scale'> & { scale: RechartsScale };
 
@@ -528,52 +525,23 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
   render() {
     const { hide, points, className, needClip, xAxisId, yAxisId, id, isAnimationActive } = this.props;
     if (hide || !points || !points.length) {
-      return (
-        <>
-          <SetCartesianGraphicalItem
-            data={this.props.data}
-            xAxisId={this.props.xAxisId}
-            yAxisId={this.props.yAxisId}
-            zAxisId={this.props.zAxisId}
-            dataKey={this.props.dataKey}
-            errorBars={noErrorBars}
-            // scatter doesn't stack
-            stackId={undefined}
-            hide={this.props.hide}
-          />
-          <SetScatterLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
     const clipPathId = isNil(id) ? this.id : id;
     return (
-      <CartesianGraphicalItemContext
-        data={this.props.data}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={this.props.zAxisId}
-        dataKey={this.props.dataKey}
-        // scatter doesn't stack
-        stackId={undefined}
-        hide={this.props.hide}
-      >
-        <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-          <SetScatterLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClip && (
-            <defs>
-              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
-            </defs>
-          )}
-          <ScatterLine {...this.props} />
-          <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
-          <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-        </Layer>
-      </CartesianGraphicalItemContext>
+      <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+        {needClip && (
+          <defs>
+            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+          </defs>
+        )}
+        <ScatterLine {...this.props} />
+        <ScatterErrorBars {...this.props} isAnimationFinished={this.state.isAnimationFinished} />
+        <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+      </Layer>
     );
   }
 }
@@ -649,6 +617,21 @@ export class Scatter extends Component<InternalProps> {
   };
 
   render() {
-    return <ScatterImpl {...this.props} />;
+    return (
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        zAxisId={this.props.zAxisId}
+        dataKey={this.props.dataKey}
+        // scatter doesn't stack
+        stackId={undefined}
+        hide={this.props.hide}
+      >
+        <SetScatterLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <ScatterImpl {...this.props} />
+      </CartesianGraphicalItemContext>
+    );
   }
 }

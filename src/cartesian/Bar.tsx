@@ -60,7 +60,6 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
-import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import type { XAxisProps, YAxisProps } from '../index';
 
@@ -317,8 +316,6 @@ function BarRectangles(props: BarRectanglesProps) {
 
 const defaultMinPointSize: number = 0;
 
-const emptyArray: Array<never> = [];
-
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataPoint: BarRectangleItem,
   dataKey,
@@ -496,24 +493,7 @@ class BarWithState extends PureComponent<Props, State> {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id, layout } =
       this.props;
     if (hide || !data || !data.length) {
-      return (
-        <>
-          <SetCartesianGraphicalItem
-            // Bar does not allow setting data directly on the graphical item (why?)
-            data={null}
-            xAxisId={xAxisId}
-            yAxisId={yAxisId}
-            zAxisId={0}
-            dataKey={this.props.dataKey}
-            errorBars={emptyArray}
-            stackId={this.props.stackId}
-            hide={this.props.hide}
-          />
-          <ReportBar />
-          <SetBarLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
 
     const { isAnimationFinished } = this.state;
@@ -521,42 +501,28 @@ class BarWithState extends PureComponent<Props, State> {
     const clipPathId = isNil(id) ? this.id : id;
 
     return (
-      <CartesianGraphicalItemContext
-        // Bar does not allow setting data directly on the graphical item (why?)
-        data={null}
-        xAxisId={xAxisId}
-        yAxisId={yAxisId}
-        zAxisId={0}
-        dataKey={this.props.dataKey}
-        stackId={this.props.stackId}
-        hide={this.props.hide}
-      >
-        <Layer className={layerClass}>
-          <ReportBar />
-          <SetBarLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          {needClip && (
-            <defs>
-              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
-            </defs>
-          )}
-          <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-            <BarBackground
-              data={data}
-              dataKey={dataKey}
-              background={background}
-              onAnimationStart={this.handleAnimationStart}
-              onAnimationEnd={this.handleAnimationEnd}
-              allOtherBarProps={this.props}
-            />
-            {this.renderRectangles()}
-          </Layer>
-          <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-            {this.renderErrorBar(needClip, clipPathId)}
-          </SetErrorBarPreferredDirection>
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
+      <Layer className={layerClass}>
+        {needClip && (
+          <defs>
+            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+          </defs>
+        )}
+        <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+          <BarBackground
+            data={data}
+            dataKey={dataKey}
+            background={background}
+            onAnimationStart={this.handleAnimationStart}
+            onAnimationEnd={this.handleAnimationEnd}
+            allOtherBarProps={this.props}
+          />
+          {this.renderRectangles()}
         </Layer>
-      </CartesianGraphicalItemContext>
+        <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
+          {this.renderErrorBar(needClip, clipPathId)}
+        </SetErrorBarPreferredDirection>
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
+      </Layer>
     );
   }
 }
@@ -711,6 +677,22 @@ export class Bar extends PureComponent<Props> {
   };
 
   render() {
-    return <BarImpl {...this.props} />;
+    return (
+      <CartesianGraphicalItemContext
+        // Bar does not allow setting data directly on the graphical item (why?)
+        data={null}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        zAxisId={0}
+        dataKey={this.props.dataKey}
+        stackId={this.props.stackId}
+        hide={this.props.hide}
+      >
+        <ReportBar />
+        <SetBarLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <BarImpl {...this.props} />
+      </CartesianGraphicalItemContext>
+    );
   }
 }

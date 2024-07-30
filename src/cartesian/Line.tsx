@@ -44,7 +44,6 @@ import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
@@ -201,8 +200,6 @@ function renderDotItem(option: ActiveDotType, props: any) {
 
   return dotItem;
 }
-
-const noErrorBars: never[] = [];
 
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataPoint: LinePointItem,
@@ -487,23 +484,7 @@ class LineWithState extends Component<Props, State> {
     } = this.props;
 
     if (hide || !points || !points.length) {
-      return (
-        <>
-          <SetCartesianGraphicalItem
-            data={this.props.data}
-            xAxisId={xAxisId}
-            yAxisId={yAxisId}
-            zAxisId={0}
-            dataKey={this.props.dataKey}
-            errorBars={noErrorBars}
-            // line doesn't stack
-            stackId={undefined}
-            hide={this.props.hide}
-          />
-          <SetLineLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
 
     const { isAnimationFinished } = this.state;
@@ -515,19 +496,8 @@ class LineWithState extends Component<Props, State> {
     const dotSize = r * 2 + strokeWidth;
 
     return (
-      <CartesianGraphicalItemContext
-        data={this.props.data}
-        xAxisId={xAxisId}
-        yAxisId={yAxisId}
-        zAxisId={0}
-        dataKey={this.props.dataKey}
-        // line doesn't stack
-        stackId={undefined}
-        hide={this.props.hide}
-      >
+      <>
         <Layer className={layerClass}>
-          <SetLineLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
           {needClip && (
             <defs>
               <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
@@ -556,7 +526,7 @@ class LineWithState extends Component<Props, State> {
           mainColor={this.props.stroke}
           itemDataKey={this.props.dataKey}
         />
-      </CartesianGraphicalItemContext>
+      </>
     );
   }
 }
@@ -648,6 +618,21 @@ export class Line extends PureComponent<Props> {
   };
 
   render() {
-    return <LineImpl {...this.props} />;
+    return (
+      <CartesianGraphicalItemContext
+        data={this.props.data}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        zAxisId={0}
+        dataKey={this.props.dataKey}
+        // line doesn't stack
+        stackId={undefined}
+        hide={this.props.hide}
+      >
+        <SetLineLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <LineImpl {...this.props} />
+      </CartesianGraphicalItemContext>
+    );
   }
 }
