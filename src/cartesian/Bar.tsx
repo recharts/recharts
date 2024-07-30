@@ -9,7 +9,13 @@ import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
-import { ErrorBar, ErrorBarDataItem, ErrorBarDataPointFormatter, Props as ErrorBarProps } from './ErrorBar';
+import {
+  ErrorBar,
+  ErrorBarDataItem,
+  ErrorBarDataPointFormatter,
+  Props as ErrorBarProps,
+  SetErrorBarPreferredDirection,
+} from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
@@ -478,7 +484,6 @@ class BarWithState extends PureComponent<Props, State> {
             data,
             xAxisId,
             yAxisId,
-            layout,
             offset,
             dataPointFormatter: errorBarDataPointFormatter,
           }),
@@ -488,7 +493,7 @@ class BarWithState extends PureComponent<Props, State> {
   }
 
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id } =
+    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id, layout } =
       this.props;
     if (hide || !data || !data.length) {
       return (
@@ -546,7 +551,9 @@ class BarWithState extends PureComponent<Props, State> {
             />
             {this.renderRectangles()}
           </Layer>
-          {this.renderErrorBar(needClip, clipPathId)}
+          <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
+            {this.renderErrorBar(needClip, clipPathId)}
+          </SetErrorBarPreferredDirection>
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
         </Layer>
       </CartesianGraphicalItemContext>

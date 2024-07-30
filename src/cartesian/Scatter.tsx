@@ -431,7 +431,6 @@ function ScatterErrorBars(props: InternalProps & { isAnimationFinished: boolean 
       data: points,
       xAxisId,
       yAxisId,
-      layout: direction === 'x' ? 'vertical' : 'horizontal',
       dataPointFormatter: errorBarDataPointFormatter,
     });
   });
