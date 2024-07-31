@@ -372,9 +372,9 @@ describe('<XAxis />', () => {
       // This test assumes UTC timezone because it renders strings that include timezone
       expect(new Date().getTimezoneOffset()).toEqual(0);
       const axisDomainSpy = vi.fn();
-      // const scaleTypeSpy = vi.fn();
+      const scaleTypeSpy = vi.fn();
       const Comp = (): null => {
-        // scaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'xAxis', 0)));
+        scaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'xAxis', 0)));
         return null;
       };
 
@@ -405,7 +405,7 @@ describe('<XAxis />', () => {
         </LineChart>,
       );
 
-      // expect(scaleTypeSpy).toHaveBeenLastCalledWith(undefined);
+      expect(scaleTypeSpy).toHaveBeenLastCalledWith(undefined);
       expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
