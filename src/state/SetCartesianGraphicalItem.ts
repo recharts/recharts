@@ -6,13 +6,22 @@ import {
   removeCartesianGraphicalItem,
 } from './graphicalItemsSlice';
 
-export function SetCartesianGraphicalItem(props: CartesianGraphicalItemSettings): null {
+export function SetCartesianGraphicalItem({
+  data,
+  dataKey,
+  hide,
+  stackId,
+  xAxisId,
+  yAxisId,
+  zAxisId,
+  errorBars,
+}: CartesianGraphicalItemSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(addCartesianGraphicalItem(props));
+    dispatch(addCartesianGraphicalItem({ data, dataKey, hide, stackId, xAxisId, yAxisId, zAxisId, errorBars }));
     return () => {
-      dispatch(removeCartesianGraphicalItem(props));
+      dispatch(removeCartesianGraphicalItem({ data, dataKey, hide, stackId, xAxisId, yAxisId, zAxisId, errorBars }));
     };
-  }, [dispatch, props]);
+  }, [data, dataKey, dispatch, errorBars, hide, stackId, xAxisId, yAxisId, zAxisId]);
   return null;
 }

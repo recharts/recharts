@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React from 'react';
+import React, { Ref } from 'react';
 import {
   line as shapeLine,
   area as shapeArea,
@@ -96,7 +96,7 @@ interface CurveProps {
   points?: Array<Point>;
   connectNulls?: boolean;
   path?: string;
-  pathRef?: (ref: SVGPathElement) => void;
+  pathRef?: Ref<SVGPathElement>;
 }
 
 export type Props = Omit<PresentationAttributesWithProps<CurveProps, SVGPathElement>, 'type' | 'points'> & CurveProps;
@@ -164,7 +164,7 @@ export const Curve: React.FC<Props> = props => {
       {...adaptEventHandlers(props)}
       className={clsx('recharts-curve', className)}
       d={realPath}
-      ref={pathRef}
+      ref={props.ref ?? pathRef}
     />
   );
 };

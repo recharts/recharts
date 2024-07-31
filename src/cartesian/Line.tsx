@@ -1,13 +1,7 @@
-/**
- * @fileOverview Line
- */
-// eslint-disable-next-line max-classes-per-file
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent, Ref, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNil from 'lodash/isNil';
-import isEqual from 'lodash/isEqual';
-
 import clsx from 'clsx';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
@@ -18,21 +12,14 @@ import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirec
 import { interpolateNumber, uniqueId } from '../util/DataUtils';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
-import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import {
-  ActiveDotType,
-  AnimationDuration,
-  AnimationTiming,
-  ChartOffset,
-  D3Scale,
-  DataKey,
-  LayoutType,
-  LegendType,
-  TickItem,
-  TooltipType,
-} from '../util/types';
+  getBandSizeOfAxis,
+  getCateCoordinateOfLine,
+  getTicksOfAxis,
+  getTooltipNameProp,
+  getValueByDataKey,
+} from '../util/ChartUtils';
+import { ActiveDotType, AnimationDuration, AnimationTiming, DataKey, LegendType, TooltipType } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
@@ -40,6 +27,11 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
+import { useAppSelector } from '../state/hooks';
+import { selectChartLayout } from '../context/chartLayoutContext';
+import { selectChartOffset } from '../state/selectors/selectChartOffset';
+import { BaseAxisWithScale, selectDisplayedData } from '../state/selectors/axisSelectors';
+import { useXAxis, useYAxis } from '../hooks';
 
 export interface LinePointItem extends CurvePoint {
   value?: number;
@@ -87,19 +79,6 @@ interface LineProps extends InternalLineProps {
 }
 
 export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
-
-interface State {
-  isAnimationFinished?: boolean;
-  totalLength?: number;
-  prevPoints?: LinePointItem[];
-  curPoints?: LinePointItem[];
-  prevAnimationId?: number;
-}
-
-type LineComposedData = ChartOffset & {
-  points?: LinePointItem[];
-  layout: LayoutType;
-};
 
 const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
@@ -208,91 +187,296 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class LineWithState extends Component<Props, State> {
-  mainCurve?: SVGPathElement;
-
-  state: State = {
-    isAnimationFinished: true,
-    totalLength: 0,
+const StaticCurve = ({
+  lineProps,
+  points,
+  needClip,
+  clipPathId,
+  pathRef,
+  curveOptions,
+}: {
+  lineProps: Props;
+  points: LinePointItem[];
+  needClip: boolean;
+  clipPathId: string;
+  pathRef: Ref<SVGPathElement>;
+  curveOptions?: { strokeDasharray: string };
+}) => {
+  const layout = useAppSelector(selectChartLayout);
+  const { type, connectNulls, ref, ...others } = lineProps;
+  const curveProps = {
+    ...filterProps(others, true),
+    fill: 'none',
+    className: 'recharts-line-curve',
+    clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    points,
+    ...curveOptions,
+    type,
+    layout,
+    connectNulls,
   };
 
-  componentDidMount() {
-    if (!this.props.isAnimationActive) {
-      return;
-    }
+  return <Curve {...curveProps} pathRef={pathRef} />;
+};
 
-    const totalLength = this.getTotalLength();
-    this.setState({ totalLength });
-  }
+const AnimatedCurve = ({
+  lineProps,
+  prevPoints,
+  currentPoints,
+  needClip,
+  clipPathId,
+  totalLength,
+  pathRef,
+  handleAnimationStart,
+  handleAnimationEnd,
+}: {
+  lineProps: Props;
+  currentPoints: LinePointItem[];
+  prevPoints: LinePointItem[] | null;
+  totalLength: number;
+  needClip: boolean;
+  clipPathId: string;
+  pathRef: Ref<SVGPathElement>;
+  handleAnimationStart: () => void;
+  handleAnimationEnd: () => void;
+}) => {
+  const { height, width } = useAppSelector(selectChartOffset);
+  const {
+    strokeDasharray,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    // TODO: animationId is now always undefined - previously it was always updateId from generateCategoricalChart
+    // Determine if this is needed or if we can just remove `key` altogether.
+    animationId,
+    animateNewValues,
+  } = lineProps;
 
-  componentDidUpdate(): void {
-    if (!this.props.isAnimationActive) {
-      return;
-    }
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      key={`line-${animationId}`}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        // this breaks animation. Do we even need to store previous state? Seems to animate fine without doing so.
+        // do we need anything in the if statement? Seems to be a lot there for no usage...
+        // if (prevPoints)
+        if (undefined) {
+          const prevPointsDiffFactor = prevPoints.length / currentPoints.length;
+          const stepData = currentPoints.map((entry, index) => {
+            const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+            if (prevPoints[prevPointIndex]) {
+              const prev = prevPoints[prevPointIndex];
+              const interpolatorX = interpolateNumber(prev.x, entry.x);
+              const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-    const totalLength = this.getTotalLength();
-    if (totalLength !== this.state.totalLength) {
-      this.setState({ totalLength });
-    }
-  }
+              return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+            }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
+            // magic number of faking previous x and y location
+            if (animateNewValues) {
+              const interpolatorX = interpolateNumber(width * 2, entry.x);
+              const interpolatorY = interpolateNumber(height / 2, entry.y);
+              return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+            }
+            return { ...entry, x: entry.x, y: entry.y };
+          });
+          return (
+            <StaticCurve
+              lineProps={lineProps}
+              points={stepData}
+              needClip={needClip}
+              clipPathId={clipPathId}
+              pathRef={pathRef}
+            />
+          );
+        }
+        const interpolator = interpolateNumber(0, totalLength);
+        const curLength = interpolator(t);
+        let currentStrokeDasharray;
+
+        // when a strokeDasharry is set there is sometimes issues when animating where you can see the end of the line before it finishes
+        // TODO: investigate and fix
+        if (strokeDasharray) {
+          const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+          currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+        } else {
+          currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+        }
+
+        return (
+          <StaticCurve
+            lineProps={lineProps}
+            points={currentPoints}
+            needClip={needClip}
+            clipPathId={clipPathId}
+            curveOptions={{
+              strokeDasharray: currentStrokeDasharray,
+            }}
+            pathRef={pathRef}
+          />
+        );
+      }}
+    </Animate>
+  );
+};
+
+// do we need this? Animation doesn't work with it...
+const usePrevious = (value: any) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+
+const useComposedLineData = (
+  dataKey: DataKey<any>,
+  xAxisId: string | number,
+  yAxisId: string | number,
+): { points: LinePointItem[]; prevPoints: LinePointItem[]; xAxis: BaseAxisWithScale; yAxis: BaseAxisWithScale } => {
+  const layout = useAppSelector(selectChartLayout);
+
+  // we should use matching axes rather than arbirary ones since we know the Line's axisIds.
+  const matchingXAxis = useXAxis(xAxisId);
+  const matchingYAxis = useYAxis(yAxisId);
+
+  // if we don't throw we know the axisIds are good.
+  const { tooltipAxis, tooltipAxisId, axisType } =
+    layout === 'horizontal'
+      ? { tooltipAxis: matchingXAxis, tooltipAxisId: xAxisId, axisType: 'xAxis' as const }
+      : { tooltipAxis: matchingYAxis, tooltipAxisId: yAxisId, axisType: 'yAxis' as const };
+
+  // we could select this from redux, but should we? Having matching axisIds is important in the graphical item.
+  const tooltipTicks = getTicksOfAxis(tooltipAxis, false, true);
+
+  // TODO: does Line even need this?
+  const bandSize = getBandSizeOfAxis(tooltipAxis, tooltipTicks, false);
+
+  const displayedData = useAppSelector(state => selectDisplayedData(state, axisType, tooltipAxisId));
+
+  const points = displayedData.map((entry: Record<string, unknown>, index): LinePointItem => {
+    const value = getValueByDataKey(entry, dataKey);
+
+    if (layout === 'horizontal') {
       return {
-        prevAnimationId: nextProps.animationId,
-        curPoints: nextProps.points,
-        prevPoints: prevState.curPoints,
+        x: getCateCoordinateOfLine({ axis: tooltipAxis, ticks: tooltipTicks, bandSize, entry, index }),
+        y: isNil(value) ? null : matchingYAxis?.scale(value),
+        // @ts-expect-error unknown is not assignable to type number
+        value,
+        payload: entry,
       };
     }
-    if (nextProps.points !== prevState.curPoints) {
-      return {
-        curPoints: nextProps.points,
-      };
-    }
 
-    return null;
-  }
+    return {
+      x: isNil(value) ? null : matchingXAxis?.scale(value),
+      y: getCateCoordinateOfLine({ axis: tooltipAxis, ticks: tooltipTicks, bandSize, entry, index }),
+      // @ts-expect-error unknown is not assignable to type number
+      value,
+      payload: entry,
+    };
+  });
+  const prevPoints = usePrevious(points);
 
-  getTotalLength() {
-    const curveDom = this.mainCurve;
+  return { points, prevPoints, xAxis: matchingXAxis, yAxis: matchingYAxis };
+};
+
+const LineWithState = (props: Props & { id: string; needClip: boolean }) => {
+  const { dot, className, isAnimationActive, id, dataKey, yAxisId, xAxisId, needClip } = props;
+  const [isAnimationFinished, setIsAnimationFinished] = useState(true);
+  const [totalLength, setTotalLength] = useState(0);
+  const { top, left, height, width } = useAppSelector(selectChartOffset);
+  const layout = useAppSelector(selectChartLayout);
+
+  const { points: calculatedPoints } = useComposedLineData(dataKey, props.xAxisId, props.yAxisId);
+  const points = props.points.length > 0 ? props.points : calculatedPoints;
+
+  const pathRef = useRef<SVGPathElement>(null);
+
+  const getTotalLength = () => {
+    const curveDom = pathRef.current;
 
     try {
-      return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
+      if (!totalLength || totalLength === 0) {
+        return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
+      }
+      return totalLength;
     } catch (err) {
       return 0;
     }
-  }
-
-  id = uniqueId('recharts-line-');
-
-  pathRef = (node: SVGPathElement): void => {
-    this.mainCurve = node;
   };
 
-  handleAnimationEnd = () => {
-    this.setState({ isAnimationFinished: true });
+  const length = getTotalLength();
 
-    if (this.props.onAnimationEnd) {
-      this.props.onAnimationEnd();
+  /**
+   * This is expensive. But if we don't use it we always stutter on first render.
+   * TODO: look into other ways of preventing the extra render
+   */
+  useLayoutEffect(() => {
+    setTotalLength(length);
+
+    return () => {
+      setTotalLength(0);
+    };
+  }, [length]);
+
+  const handleAnimationEnd = () => {
+    setIsAnimationFinished(true);
+
+    if (props.onAnimationEnd) {
+      props.onAnimationEnd();
     }
   };
 
-  handleAnimationStart = () => {
-    this.setState({ isAnimationFinished: false });
+  const handleAnimationStart = () => {
+    setIsAnimationFinished(false);
 
-    if (this.props.onAnimationStart) {
-      this.props.onAnimationStart();
+    if (props.onAnimationStart) {
+      props.onAnimationStart();
     }
   };
 
-  renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
-    const { isAnimationActive } = this.props;
+  const renderCurve = (clipPathId: string) => {
+    if (
+      isAnimationActive &&
+      points &&
+      points.length > 0
+      // either of these comparisons break animation at the moment. Are these important? Not sure...
+      // ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points))
+    ) {
+      return (
+        <AnimatedCurve
+          lineProps={props}
+          currentPoints={points}
+          prevPoints={[]}
+          needClip={needClip}
+          clipPathId={clipPathId}
+          pathRef={pathRef}
+          totalLength={totalLength}
+          handleAnimationEnd={handleAnimationEnd}
+          handleAnimationStart={handleAnimationStart}
+        />
+      );
+    }
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
+    return (
+      <StaticCurve lineProps={props} points={points} needClip={needClip} clipPathId={clipPathId} pathRef={pathRef} />
+    );
+  };
+
+  const renderDots = (clipDot: boolean, clipPathId: string) => {
+    if (isAnimationActive && !isAnimationFinished) {
       return null;
     }
-    const { dot, points, dataKey } = this.props;
-    const lineProps = filterProps(this.props, false);
+    const lineProps = filterProps(props, false);
     const customDotProps = filterProps(dot, true);
     const dots = points.map((entry, i) => {
       const dotProps = {
@@ -310,194 +494,54 @@ class LineWithState extends Component<Props, State> {
 
       return renderDotItem(dot, dotProps);
     });
+
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
     };
-
     return (
       <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
         {dots}
       </Layer>
     );
-  }
+  };
 
-  renderCurveStatically(
-    points: LinePointItem[],
-    needClip: boolean,
-    clipPathId: string,
-    props?: { strokeDasharray: string },
-  ) {
-    const { type, layout, connectNulls, ref, ...others } = this.props;
-    const curveProps = {
-      ...filterProps(others, true),
-      fill: 'none',
-      className: 'recharts-line-curve',
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
-      points,
-      ...props,
-      type,
-      layout,
-      connectNulls,
-    };
+  const hasSinglePoint = points.length === 1;
+  const layerClass = clsx('recharts-line', className);
+  const clipPathId = isNil(props.id) ? id : props.id;
+  const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
+  const { clipDot = true } = hasClipDot(dot) ? dot : {};
+  const dotSize = r * 2 + strokeWidth;
 
-    return <Curve {...curveProps} pathRef={this.pathRef} />;
-  }
-
-  renderCurveWithAnimation(needClip: boolean, clipPathId: string) {
-    const {
-      points,
-      strokeDasharray,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-      animateNewValues,
-      width,
-      height,
-    } = this.props;
-    const { prevPoints, totalLength } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`line-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepData = points.map((entry, index) => {
-              const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-              if (prevPoints[prevPointIndex]) {
-                const prev = prevPoints[prevPointIndex];
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-              }
-
-              // magic number of faking previous x and y location
-              if (animateNewValues) {
-                const interpolatorX = interpolateNumber(width * 2, entry.x);
-                const interpolatorY = interpolateNumber(height / 2, entry.y);
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-              }
-              return { ...entry, x: entry.x, y: entry.y };
-            });
-            return this.renderCurveStatically(stepData, needClip, clipPathId);
-          }
-          const interpolator = interpolateNumber(0, totalLength);
-          const curLength = interpolator(t);
-          let currentStrokeDasharray;
-
-          if (strokeDasharray) {
-            const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-            currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
-          } else {
-            currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
-          }
-
-          return this.renderCurveStatically(points, needClip, clipPathId, {
-            strokeDasharray: currentStrokeDasharray,
-          });
-        }}
-      </Animate>
-    );
-  }
-
-  renderCurve(needClip: boolean, clipPathId: string) {
-    const { points, isAnimationActive } = this.props;
-    const { prevPoints, totalLength } = this.state;
-
-    if (
-      isAnimationActive &&
-      points &&
-      points.length &&
-      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points))
-    ) {
-      return this.renderCurveWithAnimation(needClip, clipPathId);
-    }
-
-    return this.renderCurveStatically(points, needClip, clipPathId);
-  }
-
-  render() {
-    const {
-      hide,
-      dot,
-      points,
-      className,
-      xAxisId,
-      yAxisId,
-      top,
-      left,
-      width,
-      height,
-      isAnimationActive,
-      id,
-      needClip,
-      layout,
-    } = this.props;
-
-    if (hide || !points || !points.length) {
-      return null;
-    }
-
-    const { isAnimationFinished } = this.state;
-    const hasSinglePoint = points.length === 1;
-    const layerClass = clsx('recharts-line', className);
-    const clipPathId = isNil(id) ? this.id : id;
-    const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = hasClipDot(dot) ? dot : {};
-    const dotSize = r * 2 + strokeWidth;
-
-    return (
-      <>
-        <Layer className={layerClass}>
-          {needClip && (
-            <defs>
-              <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
-              {!clipDot && (
-                <clipPath id={`clipPath-dots-${clipPathId}`}>
-                  <rect
-                    x={left - dotSize / 2}
-                    y={top - dotSize / 2}
-                    width={width + dotSize}
-                    height={height + dotSize}
-                  />
-                </clipPath>
-              )}
-            </defs>
-          )}
-          {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
-          <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-            {this.props.children}
-          </SetErrorBarPreferredDirection>
-          {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
-        </Layer>
-        <ActivePoints
-          activeDot={this.props.activeDot}
-          points={points}
-          mainColor={this.props.stroke}
-          itemDataKey={this.props.dataKey}
-        />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Layer className={layerClass}>
+        {needClip && (
+          <defs>
+            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+            {!clipDot && (
+              <clipPath id={`clipPath-dots-${clipPathId}`}>
+                <rect x={left - dotSize / 2} y={top - dotSize / 2} width={width + dotSize} height={height + dotSize} />
+              </clipPath>
+            )}
+          </defs>
+        )}
+        {!hasSinglePoint && renderCurve(clipPathId)}
+        <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
+          {props.children}
+        </SetErrorBarPreferredDirection>
+        {(hasSinglePoint || dot) && renderDots(clipDot, clipPathId)}
+        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(props, points)}
+      </Layer>
+      <ActivePoints activeDot={props.activeDot} points={points} mainColor={props.stroke} itemDataKey={props.dataKey} />
+    </>
+  );
+};
 
 function LineImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const { ref, ...everythingElse } = props;
-  return <LineWithState {...everythingElse} needClip={needClip} />;
+  const { ref, hide, ...everythingElse } = props;
+  const id = uniqueId('recharts-line-');
+  return !hide && <LineWithState {...everythingElse} needClip={needClip} id={id} />;
 }
 
 export class Line extends PureComponent<Props> {
@@ -521,63 +565,6 @@ export class Line extends PureComponent<Props> {
     animationEasing: 'ease',
     hide: false,
     label: false,
-  };
-
-  /**
-   * Compose the data of each group
-   * @param {Object} props The props from the component
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({
-    props,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    dataKey,
-    bandSize,
-    displayedData,
-    offset,
-  }: {
-    props: Props;
-    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    dataKey: Props['dataKey'];
-    bandSize: number;
-    displayedData: any[];
-    offset: ChartOffset;
-  }): LineComposedData => {
-    const { layout } = props;
-
-    const points = displayedData.map((entry, index) => {
-      const value = getValueByDataKey(entry, dataKey);
-
-      if (layout === 'horizontal') {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          y: isNil(value) ? null : yAxis.scale(value),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        x: isNil(value) ? null : xAxis.scale(value),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
-    });
-
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    return { points, layout, ...offset };
   };
 
   render() {

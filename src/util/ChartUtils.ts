@@ -1037,7 +1037,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
     type?: BaseAxisProps['type'];
     scale: (v: number) => number;
   };
-  ticks: Array<TickItem>;
+  ticks: Array<TickItem> | Readonly<Array<TickItem>>;
   bandSize: number;
   entry: T;
   index: number;
