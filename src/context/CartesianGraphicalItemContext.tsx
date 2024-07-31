@@ -37,9 +37,14 @@ const initialContextState: ErrorBarContextType<any> = {
 
 const ErrorBarContext = createContext(initialContextState);
 
+export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children: React.ReactNode }) {
+  const { children, ...rest } = props;
+  return <ErrorBarContext.Provider value={rest}>{children}</ErrorBarContext.Provider>;
+}
+
 export const useErrorBarContext = () => useContext(ErrorBarContext);
 
-type GraphicalItemContextProps<T> = {
+type GraphicalItemContextProps = {
   data: ChartData;
   xAxisId: AxisId;
   yAxisId: AxisId;
@@ -48,9 +53,6 @@ type GraphicalItemContextProps<T> = {
   children: React.ReactNode;
   stackId: StackId | undefined;
   hide: boolean;
-  errorBarData: ReadonlyArray<T>;
-  dataPointFormatter: ErrorBarDataPointFormatter;
-  errorBarOffset: number;
 };
 
 export const CartesianGraphicalItemContext = ({
@@ -62,10 +64,7 @@ export const CartesianGraphicalItemContext = ({
   data,
   stackId,
   hide,
-  errorBarData,
-  dataPointFormatter,
-  errorBarOffset,
-}: GraphicalItemContextProps<any>) => {
+}: GraphicalItemContextProps) => {
   const [errorBars, updateErrorBars] = React.useState<ReadonlyArray<ErrorBarsSettings>>([]);
   // useCallback is necessary in these two because without it, the new function reference causes an infinite render loop
   const addErrorBar = useCallback(
@@ -81,29 +80,19 @@ export const CartesianGraphicalItemContext = ({
     [updateErrorBars],
   );
   return (
-    <ErrorBarContext.Provider
-      value={{
-        data: errorBarData,
-        xAxisId,
-        yAxisId,
-        dataPointFormatter,
-        errorBarOffset,
-      }}
-    >
-      <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
-        <SetCartesianGraphicalItem
-          data={data}
-          xAxisId={xAxisId}
-          yAxisId={yAxisId}
-          zAxisId={zAxisId}
-          dataKey={dataKey}
-          errorBars={errorBars}
-          stackId={stackId}
-          hide={hide}
-        />
-        {children}
-      </ErrorBarDirectionDispatchContext.Provider>
-    </ErrorBarContext.Provider>
+    <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
+      <SetCartesianGraphicalItem
+        data={data}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
+        zAxisId={zAxisId}
+        dataKey={dataKey}
+        errorBars={errorBars}
+        stackId={stackId}
+        hide={hide}
+      />
+      {children}
+    </ErrorBarDirectionDispatchContext.Provider>
   );
 };
 
