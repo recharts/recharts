@@ -433,7 +433,7 @@ describe('<LineChart />', () => {
         onClick,
         onMouseDown,
         onMouseUp,
-        pathRef: expect.any(Function),
+        pathRef: { current: expect.any(Object) },
         points: expect.any(Array),
         stroke: '#ff7300',
         strokeDasharray: '0px 0px',
