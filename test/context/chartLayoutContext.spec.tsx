@@ -564,7 +564,7 @@ describe('useOffset', () => {
   });
 
   it('should return default offset in an empty chart', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     const Comp = (): null => {
       const offset = useOffset();
       expect(offset).toEqual({ top: 5, right: 5, bottom: 5, left: 5, brushBottom: 5, height: 190, width: 90 });
@@ -578,7 +578,7 @@ describe('useOffset', () => {
   });
 
   it('should add chart margin', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     const Comp = (): null => {
       const offset = useOffset();
       expect(offset).toEqual({ top: 10, right: 20, bottom: 30, left: 40, brushBottom: 30, height: 160, width: 40 });

@@ -636,7 +636,7 @@ export type ParseScaleAxisInput = {
   axisType: 'radiusAxis' | 'angleAxis' | unknown;
 };
 
-export type ParsedScaleReturn = {
+type ParsedScaleReturn = {
   scale: RechartsScale | undefined;
   realScaleType: string | undefined;
 };

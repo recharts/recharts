@@ -46,11 +46,11 @@ const useCoordinate = (
   const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
   const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
 
-  if (!isX || !isY || xAxisScale?.scale == null || yAxisScale?.scale == null) {
+  if (!isX || !isY || xAxisScale == null || yAxisScale == null) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
+  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
   const result = scales.apply({ x, y }, { bandAware: true });
 

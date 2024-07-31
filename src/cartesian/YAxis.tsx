@@ -51,12 +51,12 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const { yAxisId, className } = props;
   const viewBox = useAppSelector(selectAxisViewBox);
   const axisType = 'yAxis';
-  const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
+  const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId));
 
-  if (axisSize == null || position == null || scaleObj == null) {
+  if (axisSize == null || position == null) {
     return null;
   }
 
@@ -65,7 +65,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   return (
     <CartesianAxis
       {...allOtherProps}
-      scale={scaleObj.scale}
+      scale={scale}
       x={position.x}
       y={position.y}
       width={axisSize.width}

@@ -163,18 +163,11 @@ function ReferenceLineImpl(props: Props) {
   const isFixedX = isNumOrStr(fixedX);
   const isFixedY = isNumOrStr(fixedY);
 
-  if (
-    !clipPathId ||
-    !viewBox ||
-    xAxis == null ||
-    yAxis == null ||
-    xAxisScale?.scale == null ||
-    yAxisScale?.scale == null
-  ) {
+  if (!clipPathId || !viewBox || xAxis == null || yAxis == null || xAxisScale == null || yAxisScale == null) {
     return null;
   }
 
-  const scales = createLabeledScales({ x: xAxisScale.scale, y: yAxisScale.scale });
+  const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
   const isSegment = segment && segment.length === 2;
 
