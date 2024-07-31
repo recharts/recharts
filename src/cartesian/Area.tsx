@@ -512,8 +512,6 @@ function AreaImpl(props: Props) {
   return <AreaWithState {...everythingElse} needClip={needClip} />;
 }
 
-const noop = (): undefined => {};
-
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
@@ -687,6 +685,7 @@ export class Area extends PureComponent<Props, State> {
   };
 
   render() {
+    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
         data={this.props.data}
@@ -696,10 +695,6 @@ export class Area extends PureComponent<Props, State> {
         zAxisId={0}
         stackId={this.props.stackId}
         hide={this.props.hide}
-        // Area does not support ErrorBars
-        errorBarData={undefined}
-        dataPointFormatter={noop}
-        errorBarOffset={0}
       >
         <SetAreaLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

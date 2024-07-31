@@ -38,7 +38,7 @@ import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
 export interface LinePointItem extends CurvePoint {
@@ -478,7 +478,15 @@ class LineWithState extends Component<Props, State> {
           )}
           {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
           <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
-            {this.props.children}
+            <SetErrorBarContext
+              xAxisId={xAxisId}
+              yAxisId={yAxisId}
+              data={points}
+              dataPointFormatter={errorBarDataPointFormatter}
+              errorBarOffset={0}
+            >
+              {this.props.children}
+            </SetErrorBarContext>
           </SetErrorBarPreferredDirection>
           {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
@@ -581,6 +589,7 @@ export class Line extends PureComponent<Props> {
   };
 
   render() {
+    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
         data={this.props.data}
@@ -591,9 +600,6 @@ export class Line extends PureComponent<Props> {
         // line doesn't stack
         stackId={undefined}
         hide={this.props.hide}
-        dataPointFormatter={errorBarDataPointFormatter}
-        errorBarData={this.props.points}
-        errorBarOffset={0}
       >
         <SetLineLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

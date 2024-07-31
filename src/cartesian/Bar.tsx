@@ -53,7 +53,7 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
-import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
+import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import type { XAxisProps, YAxisProps } from '../index';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -502,24 +502,15 @@ function BarImpl(props: Props) {
 
   const { ref, ...everythingElse } = props;
   return (
-    <CartesianGraphicalItemContext
-      // Bar does not allow setting data directly on the graphical item (why?)
-      data={null}
+    <SetErrorBarContext
       xAxisId={props.xAxisId}
       yAxisId={props.yAxisId}
-      zAxisId={0}
-      dataKey={props.dataKey}
-      stackId={props.stackId}
-      hide={props.hide}
-      errorBarData={props.data}
+      data={props.data}
       dataPointFormatter={errorBarDataPointFormatter}
       errorBarOffset={errorBarOffset}
     >
-      <ReportBar />
-      <SetBarLegend {...props} />
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
       <BarWithState {...everythingElse} needClip={needClip} />
-    </CartesianGraphicalItemContext>
+    </SetErrorBarContext>
   );
 }
 
@@ -667,6 +658,23 @@ export class Bar extends PureComponent<Props> {
   };
 
   render() {
-    return <BarImpl {...this.props} />;
+    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
+    return (
+      <CartesianGraphicalItemContext
+        // Bar does not allow setting data directly on the graphical item (why?)
+        data={null}
+        xAxisId={this.props.xAxisId}
+        yAxisId={this.props.yAxisId}
+        zAxisId={0}
+        dataKey={this.props.dataKey}
+        stackId={this.props.stackId}
+        hide={this.props.hide}
+      >
+        <ReportBar />
+        <SetBarLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <BarImpl {...this.props} />
+      </CartesianGraphicalItemContext>
+    );
   }
 }
