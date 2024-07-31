@@ -870,12 +870,20 @@ function getD3ScaleFromType(realScaleType: string | undefined) {
 }
 
 function combineScaleFunction(
+  axis: BaseAxis,
   realScaleType: string | undefined,
   axisDomain: NumberDomain | CategoricalDomain,
   axisRange: [number, number],
 ): RechartsScale | undefined {
+  if (axisDomain == null) {
+    return undefined;
+  }
+  if (typeof axis.scale === 'function') {
+    // @ts-expect-error we're going to assume here that if axis.scale is a function then it is a d3Scale function
+    return axis.scale.copy().domain(axisDomain).range(axisRange);
+  }
   const d3ScaleFunction = getD3ScaleFromType(realScaleType);
-  if (d3ScaleFunction == null || axisDomain == null) {
+  if (d3ScaleFunction == null) {
     return undefined;
   }
   return d3ScaleFunction.domain(axisDomain).range(axisRange);
@@ -1106,7 +1114,7 @@ export const selectAxisScale: (
   axisType: XorYorZType,
   axisId: AxisId,
 ) => RechartsScale | undefined = createSelector(
-  [selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
+  [selectBaseAxis, selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
   combineScaleFunction,
 );
 
@@ -1501,7 +1509,10 @@ export const selectAxisWithScale = createSelector(
 );
 
 const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: AxisId) => RechartsScale | undefined =
-  createSelector([selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse], combineScaleFunction);
+  createSelector(
+    [selectBaseAxis, selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse],
+    combineScaleFunction,
+  );
 
 export const selectZAxisWithScale = createSelector(selectBaseAxis, selectZAxisScale, (axis, scale) => {
   if (axis == null || scale == null) {
