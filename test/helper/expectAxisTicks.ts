@@ -42,7 +42,7 @@ export function ExpectAxisDomain({
 }): null {
   useAppSelector(state => {
     const scale = selectAxisScale(state, axisType, axisId);
-    assert(scale.scale?.domain());
+    assert(scale?.domain());
   });
   return null;
 }

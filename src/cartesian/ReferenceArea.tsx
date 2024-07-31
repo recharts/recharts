@@ -1,6 +1,3 @@
-/**
- * @fileOverview Reference Line
- */
 import React, { Component, ReactElement, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
@@ -10,13 +7,13 @@ import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
-import { D3Scale } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 
 import { useClipPathId } from '../context/chartLayoutContext';
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
+import { RechartsScale } from '../util/ChartUtils';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -39,8 +36,8 @@ const getRect = (
   hasX2: boolean,
   hasY1: boolean,
   hasY2: boolean,
-  xAxisScale: D3Scale<string | number>,
-  yAxisScale: D3Scale<string | number>,
+  xAxisScale: RechartsScale | undefined,
+  yAxisScale: RechartsScale | undefined,
   props: Props,
 ) => {
   const { x1: xValue1, x2: xValue2, y1: yValue1, y2: yValue2 } = props;
@@ -99,7 +96,7 @@ function ReferenceAreaImpl(props: Props) {
   const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
   const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
 
-  if (xAxisScale?.scale == null || !yAxisScale?.scale == null) {
+  if (xAxisScale == null || !yAxisScale == null) {
     return null;
   }
 
@@ -112,8 +109,7 @@ function ReferenceAreaImpl(props: Props) {
     return null;
   }
 
-  // @ts-expect-error the xAxis and yAxis in context do not match what this function is expecting - the whole axis type situation needs improvement
-  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxisScale.scale, yAxisScale.scale, props);
+  const rect = getRect(hasX1, hasX2, hasY1, hasY2, xAxisScale, yAxisScale, props);
 
   if (!rect && !shape) {
     return null;

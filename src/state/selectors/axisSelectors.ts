@@ -2,14 +2,15 @@ import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
 import isNan from 'lodash/isNaN';
+import * as d3Scales from 'victory-vendor/d3-scale';
+import upperFirst from 'lodash/upperFirst';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   getDomainOfStackGroups,
   getStackedData,
   getValueByDataKey,
   isCategoricalAxis,
-  ParsedScaleReturn,
-  parseScale,
+  RechartsScale,
   StackId,
 } from '../../util/ChartUtils';
 import {
@@ -707,41 +708,51 @@ const selectReferenceElementsDomain = createSelector(
   },
 );
 
-const selectNumericalDomain = (
+const selectDomainDefinition: (
   state: RechartsRootState,
-  axisSettings: BaseAxis,
   axisType: XorYorZType,
   axisId: AxisId,
-): NumberDomain => {
-  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
 
-  const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
-    domainDefinition,
-    axisSettings.allowDataOverflow,
+const selectNumericalDomain: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => NumberDomain =
+  createSelector(
+    [
+      selectBaseAxis,
+      selectDomainDefinition,
+      selectDomainOfStackGroups,
+      selectAllAppliedNumericalValuesIncludingErrorValues,
+      selectReferenceElementsDomain,
+    ],
+    (
+      axisSettings,
+      domainDefinition,
+      domainOfStackGroups,
+      allDataWithErrorDomains,
+      referenceElementsDomain,
+    ): NumberDomain => {
+      const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
+        domainDefinition,
+        axisSettings.allowDataOverflow,
+      );
+      if (domainFromUserPreference != null) {
+        // We're done! No need to compute anything else.
+        return domainFromUserPreference;
+      }
+
+      let domainFromData: NumberDomain;
+      if (domainOfStackGroups[0] !== 0 || domainOfStackGroups[1] !== 0) {
+        domainFromData = domainOfStackGroups;
+      } else {
+        domainFromData = computeNumericalDomain(allDataWithErrorDomains);
+      }
+
+      return parseNumericalUserDomain(
+        domainDefinition,
+        mergeDomains(domainFromData, referenceElementsDomain),
+        axisSettings.allowDataOverflow,
+      );
+    },
   );
-  if (domainFromUserPreference != null) {
-    // We're done! No need to compute anything else.
-    return domainFromUserPreference;
-  }
-
-  let domainFromData: NumberDomain;
-  const domainOfStackGroups = selectDomainOfStackGroups(state, axisType, axisId);
-  if (domainOfStackGroups[0] !== 0 || domainOfStackGroups[1] !== 0) {
-    domainFromData = domainOfStackGroups;
-  } else {
-    const allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain> =
-      selectAllAppliedNumericalValuesIncludingErrorValues(state, axisType, axisId);
-    domainFromData = computeNumericalDomain(allDataWithErrorDomains);
-  }
-
-  const referenceElementsDomain = selectReferenceElementsDomain(state, axisType, axisId);
-
-  return parseNumericalUserDomain(
-    domainDefinition,
-    mergeDomains(domainFromData, referenceElementsDomain),
-    axisSettings.allowDataOverflow,
-  );
-};
 
 /**
  * Expand by design maps everything between 0 and 1,
@@ -750,99 +761,131 @@ const selectNumericalDomain = (
  */
 const expandDomain: NumberDomain = [0, 1];
 
-export const selectAxisDomain = (
+export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-): NumberDomain | CategoricalDomain => {
-  const axisSettings: BaseAxis = selectBaseAxis(state, axisType, axisId);
-  if (axisSettings == null) {
-    return undefined;
-  }
-
-  const { dataKey, type } = axisSettings;
-  const layout = selectChartLayout(state);
-  const isCategorical = isCategoricalAxis(layout, axisType);
-
-  if (isCategorical && dataKey == null) {
-    const allDataSquished = selectDisplayedData(state, axisType, axisId);
-    return range(0, allDataSquished.length);
-  }
-
-  if (type === 'category') {
-    const allDataSquished = selectAllAppliedValues(state, axisType, axisId);
-    return computeCategoricalDomain(allDataSquished, axisSettings, isCategorical);
-  }
-
-  if (selectStackOffsetType(state) === 'expand') {
-    return expandDomain;
-  }
-
-  return selectNumericalDomain(state, axisSettings, axisType, axisId);
-};
-
-const unknownScale: ParsedScaleReturn = {
-  scale: undefined,
-  realScaleType: undefined,
-};
-
-/**
- * This returns an axis scale and type (linear, log, etc.) for the given axis.
- * This is before applying the correct domain and range!
- *
- * That's on one hand silly, yes, but on the other hand also required
- * because the final domain depends on nice ticks,
- * and nice ticks depend on the scale type.
- * With this shared dependency we cannot create the scale and set its domain in one step.
- *
- * Usually you would never want to use this selector, ever, outside of this circular dependency problem.
- *
- * Prefer to use `selectAxisScale` instead.
- */
-export const selectEmptyAxisScale: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-) => ParsedScaleReturn = createSelector(
-  selectBaseAxis,
-  selectChartLayout,
-  selectHasBar,
-  selectChartName,
-  pickAxisType,
-  /*
-   * The d3 scale causes troubles because it's a mutable object.
-   * This selectEmptyAxisScale returns one version but followup selectors mutate it.
-   * We need this "cache buster" to make this particular selector selectEmptyAxisScale always return a fresh instance.
-   */
-  state => state,
+) => NumberDomain | CategoricalDomain = createSelector(
+  [
+    selectBaseAxis,
+    selectChartLayout,
+    selectDisplayedData,
+    selectAllAppliedValues,
+    selectStackOffsetType,
+    pickAxisType,
+    selectNumericalDomain,
+  ],
   (
-    axisConfig: BaseAxis | undefined,
-    chartLayout: LayoutType,
-    hasBar: boolean,
-    chartName: string,
-    axisType: XorYorZType,
-  ) => {
-    if (axisConfig == null) {
-      return unknownScale;
+    axisSettings,
+    layout,
+    displayedData,
+    allAppliedValues,
+    stackOffsetType,
+    axisType,
+    numericalDomain,
+  ): NumberDomain | CategoricalDomain => {
+    if (axisSettings == null) {
+      return undefined;
     }
-    return parseScale(
-      {
-        scale: axisConfig.scale,
-        type: axisConfig.type,
-        layout: chartLayout,
-        axisType,
-      },
-      chartName,
-      hasBar,
-    );
+
+    const { dataKey, type } = axisSettings;
+    const isCategorical = isCategoricalAxis(layout, axisType);
+
+    if (isCategorical && dataKey == null) {
+      return range(0, displayedData.length);
+    }
+
+    if (type === 'category') {
+      return computeCategoricalDomain(allAppliedValues, axisSettings, isCategorical);
+    }
+
+    if (stackOffsetType === 'expand') {
+      return expandDomain;
+    }
+
+    return numericalDomain;
   },
 );
+
+export const selectRealScaleType = createSelector(
+  [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
+  (
+    axisConfig: BaseAxis | undefined,
+    layout: LayoutType,
+    hasBar: boolean,
+    chartType: string,
+    // axisType: XorYorZType,
+  ): string | undefined => {
+    if (axisConfig == null) {
+      return undefined;
+    }
+    const { scale, type } = axisConfig;
+    if (scale === 'auto') {
+      // TODO add support for polar charts
+      // if (layout === 'radial' && axisType === 'radiusAxis') {
+      //   return 'band';
+      // }
+      // if (layout === 'radial' && axisType === 'angleAxis') {
+      //   return 'linear';
+      // }
+
+      if (
+        type === 'category' &&
+        chartType &&
+        (chartType.indexOf('LineChart') >= 0 ||
+          chartType.indexOf('AreaChart') >= 0 ||
+          (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
+      ) {
+        return 'point';
+      }
+      if (type === 'category') {
+        return 'band';
+      }
+
+      return 'linear';
+    }
+    if (typeof scale === 'string') {
+      const name = `scale${upperFirst(scale)}`;
+
+      return name in d3Scales ? name : 'point';
+    }
+    return undefined;
+  },
+);
+
+function getD3ScaleFromType(realScaleType: string | undefined) {
+  if (realScaleType == null) {
+    return undefined;
+  }
+  if (realScaleType in d3Scales) {
+    // @ts-expect-error we should do better type verification here
+    return d3Scales[realScaleType]();
+  }
+  const name = `scale${upperFirst(realScaleType)}`;
+  if (name in d3Scales) {
+    // @ts-expect-error we should do better type verification here
+    return d3Scales[name]();
+  }
+  return undefined;
+}
+
+function combineScaleFunction(
+  realScaleType: string | undefined,
+  axisDomain: NumberDomain | CategoricalDomain,
+  axisRange: [number, number],
+): RechartsScale | undefined {
+  const d3ScaleFunction = getD3ScaleFromType(realScaleType);
+  if (d3ScaleFunction == null || axisDomain == null) {
+    return undefined;
+  }
+  return d3ScaleFunction.domain(axisDomain).range(axisRange);
+}
 
 export const selectNiceTicks = createSelector(
   selectAxisDomain,
   selectAxisSettings,
-  selectEmptyAxisScale,
-  (axisDomain, axisSettings, { realScaleType }): ReadonlyArray<number> | undefined => {
+  selectRealScaleType,
+  (axisDomain, axisSettings, realScaleType): ReadonlyArray<number> | undefined => {
     const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
 
     if (realScaleType !== 'auto' && realScaleType !== 'linear') {
@@ -1030,7 +1073,7 @@ export const combineYAxisRange = createSelector(
   },
 );
 
-export const selectAxisRange = (
+const selectAxisRange = (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
@@ -1047,7 +1090,7 @@ export const selectAxisRange = (
   }
 };
 
-const selectAxisRangeWithReverse = createSelector(
+export const selectAxisRangeWithReverse = createSelector(
   selectBaseAxis,
   selectAxisRange,
   (axisSettings: BaseAxis | undefined, axisRange): ReadonlyArray<number> | undefined => {
@@ -1058,25 +1101,14 @@ const selectAxisRangeWithReverse = createSelector(
   },
 );
 
-export const selectAxisScale: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => ParsedScaleReturn =
-  createSelector(
-    selectEmptyAxisScale,
-    selectAxisDomainIncludingNiceTicks,
-    selectAxisRangeWithReverse,
-    pickAxisId,
-    (parsedScaleReturn: ParsedScaleReturn, axisDomain, axisRange) => {
-      if (parsedScaleReturn == null || parsedScaleReturn === unknownScale || axisDomain == null) {
-        return unknownScale;
-      }
-      /*
-       * This setter will also modify the domain internally!
-       * so the domain returned from selectAxisDomain, and domain from scale.domain(),
-       * may or may not be the same.
-       */
-      parsedScaleReturn.scale.domain(axisDomain).range(axisRange);
-      return parsedScaleReturn;
-    },
-  );
+export const selectAxisScale: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => RechartsScale | undefined = createSelector(
+  [selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
+  combineScaleFunction,
+);
 
 export const selectErrorBarsSettings = createSelector(
   selectCartesianItemsSettings,
@@ -1319,6 +1351,7 @@ export const selectCategoricalDomain = createSelector(
 export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(
   selectChartLayout,
   selectAxisSettings,
+  selectRealScaleType,
   selectAxisScale,
   selectDuplicateDomain,
   selectCategoricalDomain,
@@ -1328,14 +1361,15 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
   (
     layout,
     axis,
-    scaleReturn,
+    realScaleType,
+    scale,
     duplicateDomain,
     categoricalDomain,
     axisRange,
     niceTicks,
     axisType,
   ): AxisPropsForCartesianGridTicksGeneration => {
-    if (axis == null || scaleReturn == null) {
+    if (axis == null) {
       return null;
     }
     const isCategorical = isCategoricalAxis(layout, axisType);
@@ -1356,8 +1390,8 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
       isCategorical,
       niceTicks,
       range: axisRange,
-      realScaleType: scaleReturn.realScaleType,
-      scale: scaleReturn.scale,
+      realScaleType,
+      scale,
     };
   },
 );
@@ -1365,6 +1399,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
 export const selectTicksOfAxis = createSelector(
   selectChartLayout,
   selectAxisSettings,
+  selectRealScaleType,
   selectAxisScale,
   selectNiceTicks,
   selectAxisRange,
@@ -1374,25 +1409,21 @@ export const selectTicksOfAxis = createSelector(
   (
     layout,
     axis,
-    scaleReturn,
+    realScaleType,
+    scale,
     niceTicks,
     axisRange,
     duplicateDomain,
     categoricalDomain,
     axisType,
   ): ReadonlyArray<CartesianTickItem> | null => {
-    if (axis == null || scaleReturn == null) {
+    if (axis == null || scale == null) {
       return null;
     }
 
     const isCategorical = isCategoricalAxis(layout, axisType);
 
     const { type, ticks, tickCount } = axis;
-
-    const { scale, realScaleType } = scaleReturn;
-    if (scale == null) {
-      return null;
-    }
 
     const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
     let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
@@ -1453,50 +1484,31 @@ export const selectTicksOfAxis = createSelector(
   },
 );
 
-export type BaseAxisWithScale = BaseAxis & ParsedScaleReturn;
+export type BaseAxisWithScale = BaseAxis & { scale: RechartsScale };
 
 export const selectAxisWithScale = createSelector(
   selectBaseAxis,
   selectAxisScale,
-  (axis, parsedScaleReturn): BaseAxisWithScale | undefined => {
-    if (axis == null || parsedScaleReturn == null || parsedScaleReturn.scale == null) {
+  (axis, scale): BaseAxisWithScale | undefined => {
+    if (axis == null || scale == null) {
       return undefined;
     }
     return {
       ...axis,
-      scale: parsedScaleReturn.scale,
-      realScaleType: parsedScaleReturn.realScaleType,
+      scale,
     };
   },
 );
 
-const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: AxisId) => ParsedScaleReturn =
-  createSelector(
-    selectEmptyAxisScale,
-    selectAxisDomain,
-    selectAxisRangeWithReverse,
-    pickAxisId,
-    (parsedScaleReturn: ParsedScaleReturn, axisDomain, axisRange) => {
-      if (parsedScaleReturn == null || parsedScaleReturn === unknownScale || axisDomain == null) {
-        return unknownScale;
-      }
-      /*
-       * This setter will also modify the domain internally!
-       * so the domain returned from selectAxisDomain, and domain from scale.domain(),
-       * may or may not be the same.
-       */
-      parsedScaleReturn.scale.domain(axisDomain).range(axisRange);
-      return parsedScaleReturn;
-    },
-  );
+const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: AxisId) => RechartsScale | undefined =
+  createSelector([selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse], combineScaleFunction);
 
-export const selectZAxisWithScale = createSelector(selectBaseAxis, selectZAxisScale, (axis, scaleReturn) => {
-  if (axis == null || scaleReturn == null || scaleReturn.scale == null) {
+export const selectZAxisWithScale = createSelector(selectBaseAxis, selectZAxisScale, (axis, scale) => {
+  if (axis == null || scale == null) {
     return undefined;
   }
   return {
     ...axis,
-    scale: scaleReturn.scale,
-    realScaleType: scaleReturn.realScaleType,
+    scale,
   };
 });

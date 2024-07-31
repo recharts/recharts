@@ -55,12 +55,12 @@ const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
   const viewBox = useAppSelector(selectAxisViewBox);
   const axisType = 'xAxis';
-  const scaleObj = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
+  const scale = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
 
-  if (axisSize == null || position == null || scaleObj == null) {
+  if (axisSize == null || position == null) {
     return null;
   }
 
@@ -69,7 +69,7 @@ const XAxisImpl = (props: Props) => {
   return (
     <CartesianAxis
       {...allOtherProps}
-      scale={scaleObj.scale}
+      scale={scale}
       x={position.x}
       y={position.y}
       width={axisSize.width}

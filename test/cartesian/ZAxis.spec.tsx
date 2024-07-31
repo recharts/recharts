@@ -5,7 +5,12 @@ import { describe, it, expect, vi } from 'vitest';
 import { CartesianGrid, Customized, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomain, selectZAxisSettings, selectZAxisWithScale } from '../../src/state/selectors/axisSelectors';
+import {
+  selectAxisDomain,
+  selectRealScaleType,
+  selectZAxisSettings,
+  selectZAxisWithScale,
+} from '../../src/state/selectors/axisSelectors';
 import { ZAxisSettings } from '../../src/state/axisMapSlice';
 
 describe('<ZAxis />', () => {
@@ -89,11 +94,12 @@ describe('<ZAxis />', () => {
       const Comp = (): null => {
         axisSettingsSpy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
         axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 'zaxis id')));
-        const scaleReturn = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id'));
+        const axis = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id'));
+        const realScaleType = useAppSelector(state => selectRealScaleType(state, 'zAxis', 'zaxis id'));
         axisScaleSpy({
-          domain: scaleReturn?.scale?.domain(),
-          range: scaleReturn?.scale?.range(),
-          realScaleType: scaleReturn?.realScaleType,
+          domain: axis?.scale?.domain(),
+          range: axis?.scale?.range(),
+          realScaleType,
         });
         return null;
       };

@@ -22,6 +22,7 @@ import {
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
+  selectRealScaleType,
   selectTicksOfAxis,
   selectXAxisPosition,
 } from '../../src/state/selectors/axisSelectors';
@@ -266,7 +267,12 @@ describe('<XAxis />', () => {
   it('Render ticks of when the scale of XAxis is time', () => {
     // This test assumes UTC timezone because it renders strings that include timezone
     expect(new Date().getTimezoneOffset()).toEqual(0);
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
+    const scaleTypeSpy = vi.fn();
+    const Comp = (): null => {
+      scaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'xAxis', 0)));
+      return null;
+    };
     const timeData = [
       {
         x: new Date('2019-07-04T00:00:00.000Z'),
@@ -308,10 +314,12 @@ describe('<XAxis />', () => {
         />
         <YAxis />
         <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <Customized component={<Comp />} />
       </LineChart>,
     );
 
+    expect(scaleTypeSpy).toHaveBeenLastCalledWith('scaleTime');
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
     expectXAxisTicks(container, [
       {
@@ -350,7 +358,10 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([new Date('2019-07-04T00:00:00.000Z'), new Date('2019-07-10T00:00:00.000Z')]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([
+      new Date('2019-07-04T00:00:00.000Z'),
+      new Date('2019-07-10T00:00:00.000Z'),
+    ]);
   });
 
   it('Render Bars with gap', () => {

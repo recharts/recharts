@@ -3,11 +3,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
+  combineXAxisRange,
+  implicitXAxis,
   mergeDomains,
   selectAllAppliedValues,
   selectAxisDomain,
   selectAxisDomainIncludingNiceTicks,
+  selectAxisRangeWithReverse,
   selectAxisScale,
+  selectBaseAxis,
   selectCalculatedXAxisPadding,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
@@ -47,6 +51,8 @@ import { AxisId } from '../../../src/state/axisMapSlice';
 import { pageData } from '../../../storybook/stories/data';
 import { AxisDomain } from '../../../src/util/types';
 import { ChartData } from '../../../src/state/chartDataSlice';
+import { setLegendSize } from '../../../src/state/legendSlice';
+import { setActiveMouseOverItemIndex } from '../../../src/state/tooltipSlice';
 
 const defaultAxisId: AxisId = 0;
 
@@ -64,13 +70,13 @@ describe('selectAxisScale', () => {
     render(<Comp />);
   });
 
-  it('should return empty for initial state', () => {
+  it('should return undefined for initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectAxisScale(initialState, 'yAxis', 'foo');
-    expect(result).toEqual({ scale: undefined, realScaleType: undefined });
+    expect(result).toEqual(undefined);
   });
 
-  it('should return empty object if there is no XAxis with this ID', () => {
+  it('should return implicit scale if there is no XAxis with this ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectAxisScale(state, 'xAxis', 'this id is not present in the chart'));
@@ -86,10 +92,10 @@ describe('selectAxisScale', () => {
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
     expect(spy).toHaveBeenCalledTimes(3);
-    expect(spy).toHaveBeenCalledWith({ scale: expect.any(Function), realScaleType: 'band' });
+    expect(spy).toHaveBeenCalledWith(expect.any(Function));
   });
 
-  it('should return scale, and scale name, if there is an Axis in the chart', () => {
+  it('should return scale if there is an Axis in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
@@ -105,17 +111,42 @@ describe('selectAxisScale', () => {
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
     expect(spy).toHaveBeenCalledTimes(3);
-    expect(spy).toHaveBeenLastCalledWith({
-      scale: expect.any(Function),
-      realScaleType: 'band',
-    });
+    expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
+  });
+
+  it('should be stable', () => {
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      const result2 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <XAxis dataKey="name" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+  });
+
+  it('should not recompute when an irrelevant property in the state changes', () => {
+    const store = createRechartsStore();
+    const result1 = selectAxisScale(store.getState(), 'xAxis', '0');
+    store.dispatch(
+      setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
+    );
+    const result2 = selectAxisScale(store.getState(), 'xAxis', '0');
+    expect(result1).toBe(result2);
   });
 
   it('should set the scale domain and range based on the axis type, and data', () => {
     const scaleDomainSpy = vi.fn();
+    const scaleRangeSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
-      scaleDomainSpy(result.scale?.domain());
+      const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      scaleDomainSpy(scale?.domain());
+      scaleRangeSpy(scale?.range());
       return null;
     };
     const { container } = render(
@@ -158,6 +189,88 @@ describe('selectAxisScale', () => {
       },
     ]);
     expect(scaleDomainSpy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
+    expect(scaleRangeSpy).toHaveBeenLastCalledWith([5, 95]);
+  });
+});
+
+describe('selectBaseAxis', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectBaseAxis(state, 'xAxis', '0'));
+      expect(result).toBeUndefined();
+      return null;
+    };
+    render(<Customized component={Comp} />);
+  });
+
+  it('should return implicit axis when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectBaseAxis(initialState, 'xAxis', '0');
+    expect(result).toBe(implicitXAxis);
+  });
+
+  it('should be stable', () => {
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectBaseAxis(state, 'xAxis', '0'));
+      const result2 = useAppSelector(state => selectBaseAxis(state, 'xAxis', '0'));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <XAxis dataKey="name" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+  });
+});
+
+describe('selectAxisRangeWithReverse', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
+      expect(result).toBeUndefined();
+      return null;
+    };
+    render(<Customized component={Comp} />);
+  });
+
+  it('should return default array when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectAxisRangeWithReverse(initialState, 'xAxis', '0');
+    expect(result).toEqual([5, 5]);
+  });
+
+  it('should be stable', () => {
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
+      const result2 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <BarChart data={PageData} width={100} height={100}>
+        <Bar dataKey="uv" />
+        <XAxis dataKey="name" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+  });
+
+  it('should not recompute when an irrelevant property in the state changes', () => {
+    const store = createRechartsStore();
+    const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0');
+    const xAxisRange1 = combineXAxisRange(store.getState(), '0');
+    store.dispatch(
+      setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
+    );
+    const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0');
+    const xAxisRange2 = combineXAxisRange(store.getState(), '0');
+    expect(xAxisRange1).toBe(xAxisRange2);
+    expect(result1).toBe(result2);
   });
 });
 
@@ -214,9 +327,8 @@ describe('selectAxisDomain', () => {
     expect(axisDomainSpy).toHaveBeenCalledTimes(3);
   });
 
-  it.fails('should be stable', () => {
-    // TODO make selectAxisDomain stable
-    expect.assertions(1);
+  it('should be stable', () => {
+    expect.assertions(3);
     const Comp = (): null => {
       const result1 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
       const result2 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
@@ -250,9 +362,9 @@ describe('selectAxisDomain', () => {
         useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'right')),
       );
       const scaleLeft = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left'));
-      scaleLeftSpy(scaleLeft?.scale?.domain());
+      scaleLeftSpy(scaleLeft?.domain());
       const scaleRight = useAppSelector(state => selectAxisScale(state, 'yAxis', 'right'));
-      scaleRightSpy(scaleRight?.scale?.domain());
+      scaleRightSpy(scaleRight?.domain());
       return null;
     };
     render(
@@ -924,8 +1036,8 @@ describe('selectAxisDomain', () => {
       const scaleSpy = vi.fn();
       const Comp = (): null => {
         domainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
-        const scaleObj = useAppSelector(state => selectAxisScale(state, 'xAxis', 0));
-        scaleSpy(scaleObj?.scale?.domain());
+        const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', 0));
+        scaleSpy(scale?.domain());
         return null;
       };
       const { container } = render(
@@ -1795,6 +1907,30 @@ describe('selectDisplayedData', () => {
       },
     ]);
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should be stable', () => {
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
+      const result2 = useAppSelector(state => selectDisplayedData(state, 'xAxis', defaultAxisId));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100}>
+        <Line data={data1} />
+        <Line data={data2} />
+        <Customized component={Comp} />
+      </LineChart>,
+    );
+  });
+
+  it('should not recompute when an irrelevant property in the state changes', () => {
+    const store = createRechartsStore();
+    const result1 = selectDisplayedData(store.getState(), 'xAxis', '0');
+    store.dispatch(setLegendSize({ width: 10, height: 20 }));
+    const result2 = selectDisplayedData(store.getState(), 'xAxis', '0');
+    expect(result1).toBe(result2);
   });
 
   it('should return the original data if there is no axis with matching ID but graphical items have dataKeys', () => {
