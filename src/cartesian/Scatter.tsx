@@ -594,7 +594,6 @@ export class Scatter extends Component<InternalProps> {
     displayedData: any[];
   }): ScatterComposedData => {
     const cells = findAllByType(item.props.children, Cell);
-    console.log('getComposedData', { xAxisTicks });
     const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
       displayedData,
       xAxis,
