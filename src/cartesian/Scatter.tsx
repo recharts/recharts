@@ -2,7 +2,7 @@
  * @fileOverview Render a group of scatters
  */
 // eslint-disable-next-line max-classes-per-file
-import React, { Component, PureComponent, ReactElement } from 'react';
+import React, { Component, PureComponent, ReactElement, useMemo } from 'react';
 import Animate from 'react-smooth';
 
 import isNil from 'lodash/isNil';
@@ -18,7 +18,7 @@ import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { getLinearRegression, interpolateNumber, uniqueId } from '../util/DataUtils';
-import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
   adaptEventsOfChild,
@@ -44,8 +44,11 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
-import { AxisId, AxisSettings, ZAxisSettings } from '../state/axisMapSlice';
+import { AxisId } from '../state/axisMapSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
+import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
+import { useAppSelector } from '../state/hooks';
+import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -59,7 +62,7 @@ export interface ScatterPointItem {
   size?: number;
   node?: ScatterPointNode;
   payload?: any;
-  tooltipPayload?: ReadonlyArray<TooltipPayload>;
+  tooltipPayload?: TooltipPayload;
 }
 
 export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
@@ -82,7 +85,7 @@ interface ScatterInternalProps {
 
   activeShape?: ScatterCustomizedShape;
   shape?: ScatterCustomizedShape;
-  points?: ScatterPointItem[];
+  points?: ReadonlyArray<ScatterPointItem>;
   hide?: boolean;
   label?: ImplicitLabelListType<any>;
 
@@ -123,7 +126,7 @@ interface ScatterProps {
   animationEasing?: AnimationTiming;
 }
 
-type InternalProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterInternalProps;
+type InternalProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'points'> & ScatterInternalProps;
 
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterProps;
 
@@ -158,7 +161,7 @@ function SetScatterLegend(props: InternalProps): null {
 }
 
 type ScatterSymbolsProps = {
-  points: ScatterPointItem[];
+  points: ReadonlyArray<ScatterPointItem>;
   allOtherScatterProps: InternalProps;
 };
 
@@ -237,9 +240,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
   };
 }
 
-type AxisWithScale = Omit<AxisSettings, 'scale'> & { scale: RechartsScale };
-
-function computeScatterPoints({
+export function computeScatterPoints({
   displayedData,
   xAxis,
   yAxis,
@@ -250,9 +251,9 @@ function computeScatterPoints({
   cells,
 }: {
   displayedData: ReadonlyArray<any>;
-  xAxis: AxisWithScale;
-  yAxis: AxisWithScale;
-  zAxis: ZAxisSettings;
+  xAxis: BaseAxisWithScale;
+  yAxis: BaseAxisWithScale;
+  zAxis: ZAxisWithScale;
   scatterSettings: {
     dataKey: DataKey<any> | undefined;
     tooltipType: TooltipType;
@@ -326,7 +327,6 @@ function computeScatterPoints({
       index,
       dataKey: yAxisDataKey,
     });
-    // @ts-expect-error getValueByDataKey does not validate the output type
     const size = z !== '-' ? zAxis.scale(z) : defaultZ;
     const radius = Math.sqrt(Math.max(size, 0) / Math.PI);
 
@@ -336,9 +336,6 @@ function computeScatterPoints({
       cy,
       x: cx - radius,
       y: cy - radius,
-      xAxis,
-      yAxis,
-      zAxis,
       width: 2 * radius,
       height: 2 * radius,
       size,
@@ -439,7 +436,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 
   id = uniqueId('recharts-scatter-');
 
-  renderSymbolsStatically(points: ScatterPointItem[]) {
+  renderSymbolsStatically(points: ReadonlyArray<ScatterPointItem>) {
     return <ScatterSymbols points={points} allOtherScatterProps={this.props} />;
   }
 
@@ -532,8 +529,22 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 
 function ScatterImpl(props: InternalProps) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const { ref, ...everythingElse } = props;
-  return <ScatterWithState {...everythingElse} needClip={needClip} />;
+  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const scatterSettings: ResolvedScatterSettings = useMemo(
+    () => ({
+      name: props.name,
+      tooltipType: props.tooltipType,
+      data: props.data,
+      dataKey: props.dataKey,
+    }),
+    [props.data, props.dataKey, props.name, props.tooltipType],
+  );
+  const points = useAppSelector(state => {
+    return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells);
+  });
+  const { ref, points: _pointsFromClonedProps, ...everythingElse } = props;
+
+  return <ScatterWithState {...everythingElse} points={points} needClip={needClip} />;
 }
 
 export class Scatter extends Component<InternalProps> {
@@ -573,9 +584,9 @@ export class Scatter extends Component<InternalProps> {
     yAxisTicks,
   }: {
     props: InternalProps;
-    xAxis?: AxisWithScale;
-    yAxis?: AxisWithScale;
-    zAxis?: ZAxisSettings;
+    xAxis?: BaseAxisWithScale;
+    yAxis?: BaseAxisWithScale;
+    zAxis?: ZAxisWithScale;
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     item: ScatterWithState;

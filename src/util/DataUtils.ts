@@ -123,7 +123,7 @@ export function findEntryInArray<T>(
  * @param {Array} data The array of points
  * @returns {Object} The domain of x, and the parameter of linear function
  */
-export const getLinearRegression = (data: Array<{ cx?: number; cy?: number }>) => {
+export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: number }>) => {
   if (!data || !data.length) {
     return null;
   }

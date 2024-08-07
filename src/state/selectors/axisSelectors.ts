@@ -25,6 +25,7 @@ import {
   NumberDomain,
   Size,
   StackOffsetType,
+  TickItem,
 } from '../../util/types';
 import {
   AxisId,
@@ -479,9 +480,18 @@ export const selectStackGroups: (
 export const selectDomainOfStackGroups = createSelector(
   selectStackGroups,
   selectChartDataWithIndexes,
-  (stackGroups, { dataStartIndex, dataEndIndex }): NumberDomain => {
+  pickAxisType,
+  (stackGroups, { dataStartIndex, dataEndIndex }, axisType): NumberDomain => {
+    if (axisType === 'zAxis') {
+      // ZAxis ignores stacks
+      return undefined;
+    }
     // @ts-expect-error typescript is unhappy with the two different types of StackGroups
-    return getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
+    const domainOfStackGroups = getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
+    if (domainOfStackGroups != null && domainOfStackGroups[0] === 0 && domainOfStackGroups[1] === 0) {
+      return undefined;
+    }
+    return domainOfStackGroups;
   },
 );
 
@@ -739,16 +749,9 @@ const selectNumericalDomain: (state: RechartsRootState, axisType: XorYorZType, a
         return domainFromUserPreference;
       }
 
-      let domainFromData: NumberDomain;
-      if (domainOfStackGroups[0] !== 0 || domainOfStackGroups[1] !== 0) {
-        domainFromData = domainOfStackGroups;
-      } else {
-        domainFromData = computeNumericalDomain(allDataWithErrorDomains);
-      }
-
       return parseNumericalUserDomain(
         domainDefinition,
-        mergeDomains(domainFromData, referenceElementsDomain),
+        mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
         axisSettings.allowDataOverflow,
       );
     },
@@ -1405,15 +1408,17 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
 );
 
 export const selectTicksOfAxis = createSelector(
-  selectChartLayout,
-  selectAxisSettings,
-  selectRealScaleType,
-  selectAxisScale,
-  selectNiceTicks,
-  selectAxisRange,
-  selectDuplicateDomain,
-  selectCategoricalDomain,
-  pickAxisType,
+  [
+    selectChartLayout,
+    selectAxisSettings,
+    selectRealScaleType,
+    selectAxisScale,
+    selectNiceTicks,
+    selectAxisRange,
+    selectDuplicateDomain,
+    selectCategoricalDomain,
+    pickAxisType,
+  ],
   (
     layout,
     axis,
@@ -1434,6 +1439,7 @@ export const selectTicksOfAxis = createSelector(
     const { type, ticks, tickCount } = axis;
 
     const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+
     let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
     offset =
@@ -1492,6 +1498,66 @@ export const selectTicksOfAxis = createSelector(
   },
 );
 
+export const selectTicksOfGraphicalItem = createSelector(
+  [
+    selectChartLayout,
+    selectAxisSettings,
+    selectRealScaleType,
+    selectAxisScale,
+    selectNiceTicks,
+    selectAxisRange,
+    selectDuplicateDomain,
+    selectCategoricalDomain,
+    pickAxisType,
+  ],
+  (layout, axis, realScaleType, scale, niceTicks, axisRange, duplicateDomain, categoricalDomain, axisType) => {
+    if (axis == null || scale == null) {
+      return null;
+    }
+    const isCategorical = isCategoricalAxis(layout, axisType);
+
+    const { tickCount } = axis;
+
+    let offset = 0;
+
+    offset =
+      axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
+
+    // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
+    if (isCategorical && categoricalDomain) {
+      return categoricalDomain.map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          // @ts-expect-error why does the offset go here? The type does not require it
+          offset,
+        }),
+      );
+    }
+
+    if (scale.ticks) {
+      return (
+        scale
+          .ticks(tickCount)
+          // @ts-expect-error why does the offset go here? The type does not require it
+          .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+      );
+    }
+
+    // When axis has duplicated text, serial numbers are used to generate scale
+    return scale.domain().map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      }),
+    );
+  },
+);
+
 export type BaseAxisWithScale = BaseAxis & { scale: RechartsScale };
 
 export const selectAxisWithScale = createSelector(
@@ -1514,12 +1580,18 @@ const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: Ax
     combineScaleFunction,
   );
 
-export const selectZAxisWithScale = createSelector(selectBaseAxis, selectZAxisScale, (axis, scale) => {
-  if (axis == null || scale == null) {
-    return undefined;
-  }
-  return {
-    ...axis,
-    scale,
-  };
-});
+export type ZAxisWithScale = ZAxisSettings & { scale: RechartsScale };
+
+export const selectZAxisWithScale = createSelector(
+  (state: RechartsRootState, _axisType: 'zAxis', axisId: AxisId) => selectZAxisSettings(state, axisId),
+  selectZAxisScale,
+  (axis: ZAxisSettings, scale: RechartsScale): ZAxisWithScale => {
+    if (axis == null || scale == null) {
+      return undefined;
+    }
+    return {
+      ...axis,
+      scale,
+    };
+  },
+);
