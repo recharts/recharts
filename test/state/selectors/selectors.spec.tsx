@@ -856,8 +856,8 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         <Area dataKey="" data={[10, 20, 30]} />
         <Line data={[4, 5, 6]} />
         <Line data={[40, 50, 60]} />
-        <Scatter data={[7, 8, 9]} />
-        <Scatter data={[70, 80, 90]} />
+        <Scatter data={[{ x: 7 }, { x: 8 }, { x: 9 }]} dataKey="x" />
+        <Scatter data={[{ y: 70 }, { y: 80 }, { y: 90 }]} dataKey="y" />
         <Customized component={Comp} />
       </ComposedChart>,
     );
@@ -872,112 +872,136 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
         [
           [
             {
-              dataKey: undefined,
+              dataKey: 'x',
               name: undefined,
-              payload: 7,
+              payload: {
+                x: 7,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 7,
             },
             {
-              dataKey: undefined,
+              dataKey: 'x',
               name: undefined,
-              payload: 7,
+              payload: {
+                x: 7,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
-            },
-          ],
-          [
-            {
-              dataKey: undefined,
-              name: undefined,
-              payload: 8,
-              type: undefined,
-              unit: '',
-              value: undefined,
-            },
-            {
-              dataKey: undefined,
-              name: undefined,
-              payload: 8,
-              type: undefined,
-              unit: '',
-              value: undefined,
+              value: 7,
             },
           ],
           [
             {
-              dataKey: undefined,
+              dataKey: 'x',
               name: undefined,
-              payload: 9,
+              payload: {
+                x: 8,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 8,
             },
             {
-              dataKey: undefined,
+              dataKey: 'x',
               name: undefined,
-              payload: 9,
+              payload: {
+                x: 8,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 8,
+            },
+          ],
+          [
+            {
+              dataKey: 'x',
+              name: undefined,
+              payload: {
+                x: 9,
+              },
+              type: undefined,
+              unit: '',
+              value: 9,
+            },
+            {
+              dataKey: 'x',
+              name: undefined,
+              payload: {
+                x: 9,
+              },
+              type: undefined,
+              unit: '',
+              value: 9,
             },
           ],
         ],
         [
           [
             {
-              dataKey: undefined,
+              dataKey: 'y',
               name: undefined,
-              payload: 70,
+              payload: {
+                y: 70,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 70,
             },
             {
-              dataKey: undefined,
+              dataKey: 'y',
               name: undefined,
-              payload: 70,
+              payload: {
+                y: 70,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
-            },
-          ],
-          [
-            {
-              dataKey: undefined,
-              name: undefined,
-              payload: 80,
-              type: undefined,
-              unit: '',
-              value: undefined,
-            },
-            {
-              dataKey: undefined,
-              name: undefined,
-              payload: 80,
-              type: undefined,
-              unit: '',
-              value: undefined,
+              value: 70,
             },
           ],
           [
             {
-              dataKey: undefined,
+              dataKey: 'y',
               name: undefined,
-              payload: 90,
+              payload: {
+                y: 80,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 80,
             },
             {
-              dataKey: undefined,
+              dataKey: 'y',
               name: undefined,
-              payload: 90,
+              payload: {
+                y: 80,
+              },
               type: undefined,
               unit: '',
-              value: undefined,
+              value: 80,
+            },
+          ],
+          [
+            {
+              dataKey: 'y',
+              name: undefined,
+              payload: {
+                y: 90,
+              },
+              type: undefined,
+              unit: '',
+              value: 90,
+            },
+            {
+              dataKey: 'y',
+              name: undefined,
+              payload: {
+                y: 90,
+              },
+              type: undefined,
+              unit: '',
+              value: 90,
             },
           ],
         ],
