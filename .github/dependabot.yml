@@ -28,3 +28,10 @@ updates:
       babel:
         patterns:
           - '@babel*'
+      stryker:
+        patterns:
+          - 'stryker*'
+      typescript-eslint:
+        patterns:
+          - '@typescript-eslint*'
+          - 'eslint-plugin-typescript*'
