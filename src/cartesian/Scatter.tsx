@@ -224,7 +224,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
   const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
-    dataDefinedOnItem: points.map((p: ScatterPointItem) => p.tooltipPayload),
+    dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
     settings: {
       stroke,
       strokeWidth,
@@ -544,7 +544,12 @@ function ScatterImpl(props: InternalProps) {
   });
   const { ref, points: _pointsFromClonedProps, ...everythingElse } = props;
 
-  return <ScatterWithState {...everythingElse} points={points} needClip={needClip} />;
+  return (
+    <>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
+      <ScatterWithState {...everythingElse} points={points} needClip={needClip} />
+    </>
+  );
 }
 
 export class Scatter extends Component<InternalProps> {
@@ -594,7 +599,6 @@ export class Scatter extends Component<InternalProps> {
     displayedData: any[];
   }): ScatterComposedData => {
     const cells = findAllByType(item.props.children, Cell);
-    console.log('getComposedData', { xAxisTicks });
     const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
       displayedData,
       xAxis,
@@ -626,7 +630,6 @@ export class Scatter extends Component<InternalProps> {
         hide={this.props.hide}
       >
         <SetScatterLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <ScatterImpl {...this.props} />
       </CartesianGraphicalItemContext>
     );
