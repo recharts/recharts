@@ -468,7 +468,7 @@ describe('selectAxisDomain', () => {
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([10, 20, 30, 40, 50, 60, 70, 80, 90]);
     // big oof
-    expect(domainSpy).toHaveBeenCalledTimes(21);
+    expect(domainSpy).toHaveBeenCalledTimes(17);
   });
 
   it('should return array indexes if there are multiple graphical items, and no explicit dataKey on the matching XAxis', () => {
@@ -534,7 +534,7 @@ describe('selectAxisDomain', () => {
     ]);
     expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8]);
     // big oof
-    expect(domainSpy).toHaveBeenCalledTimes(21);
+    expect(domainSpy).toHaveBeenCalledTimes(17);
   });
 
   describe('XAxis with type = number', () => {
@@ -2673,8 +2673,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisErrorBarSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisErrorBarSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisErrorBarSpy).toHaveBeenCalledTimes(5);
+    expect(yAxisErrorBarSpy).toHaveBeenCalledTimes(5);
   });
 
   it('should report all relevant error bars on Bar, Line, and Scatter', () => {
@@ -2732,8 +2732,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(5);
+    expect(yAxisSpy).toHaveBeenCalledTimes(5);
   });
 
   it('should be stable when empty', () => {

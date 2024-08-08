@@ -49,6 +49,7 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
+import { useUpdateId } from '../context/chartLayoutContext';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -67,37 +68,43 @@ export interface ScatterPointItem {
 
 export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
 
+/**
+ * Internal props, combination of external props + defaultProps + private Recharts state
+ */
 interface ScatterInternalProps {
   data?: any[];
-  xAxisId?: string | number;
-  yAxisId?: string | number;
-  zAxisId?: string | number;
+  xAxisId: string | number;
+  yAxisId: string | number;
+  zAxisId: string | number;
 
   dataKey?: DataKey<any>;
 
   line?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | CurveProps | boolean;
-  lineType?: 'fitting' | 'joint';
-  lineJointType?: CurveType;
-  legendType?: LegendType;
+  lineType: 'fitting' | 'joint';
+  lineJointType: CurveType;
+  legendType: LegendType;
   tooltipType?: TooltipType;
   className?: string;
   name?: string;
 
   activeShape?: ScatterCustomizedShape;
-  shape?: ScatterCustomizedShape;
-  points?: ReadonlyArray<ScatterPointItem>;
-  hide?: boolean;
+  shape: ScatterCustomizedShape;
+  points: ReadonlyArray<ScatterPointItem>;
+  hide: boolean;
   label?: ImplicitLabelListType<any>;
 
-  isAnimationActive?: boolean;
-  animationId?: number;
-  animationBegin?: number;
-  animationDuration?: AnimationDuration;
-  animationEasing?: AnimationTiming;
+  isAnimationActive: boolean;
+  animationId: string;
+  animationBegin: number;
+  animationDuration: AnimationDuration;
+  animationEasing: AnimationTiming;
 
-  needClip?: boolean;
+  needClip: boolean;
 }
 
+/**
+ * External props, intended for end users to fill in
+ */
 interface ScatterProps {
   data?: any[];
   xAxisId?: AxisId;
@@ -120,28 +127,32 @@ interface ScatterProps {
   label?: ImplicitLabelListType<any>;
 
   isAnimationActive?: boolean;
-  animationId?: number;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
 }
 
-type InternalProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'points'> & ScatterInternalProps;
+/**
+ * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
+ */
+type BaseScatterSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'points'>;
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & ScatterProps;
+type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
+
+export type Props = BaseScatterSvgProps & ScatterProps;
 
 interface State {
   isAnimationFinished?: boolean;
   prevPoints?: ReadonlyArray<ScatterPointItem>;
   curPoints?: ReadonlyArray<ScatterPointItem>;
-  prevAnimationId?: number;
+  prevAnimationId?: string;
 }
 
 type ScatterComposedData = {
   points: ReadonlyArray<ScatterPointItem>;
 };
 
-const computeLegendPayloadFromScatterProps = (props: InternalProps): Array<LegendPayload> => {
+const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
@@ -155,7 +166,7 @@ const computeLegendPayloadFromScatterProps = (props: InternalProps): Array<Legen
   ];
 };
 
-function SetScatterLegend(props: InternalProps): null {
+function SetScatterLegend(props: Props): null {
   useLegendPayloadDispatch(computeLegendPayloadFromScatterProps, props);
   return null;
 }
@@ -221,10 +232,21 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   );
 }
 
-function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
+type InputRequiredToComputeTooltipEntrySettings = {
+  dataKey?: DataKey<any> | undefined;
+  points?: ReadonlyArray<ScatterPointItem>;
+  stroke?: string;
+  strokeWidth?: number | string;
+  fill?: string;
+  name?: string;
+  hide?: boolean;
+  tooltipType?: TooltipType;
+};
+
+function getTooltipEntrySettings(props: InputRequiredToComputeTooltipEntrySettings): TooltipPayloadConfiguration {
   const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
-    dataDefinedOnItem: points.map((p: ScatterPointItem) => p.tooltipPayload),
+    dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
     settings: {
       stroke,
       strokeWidth,
@@ -527,9 +549,27 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
   }
 }
 
-function ScatterImpl(props: InternalProps) {
+const defaultScatterProps: Partial<Props> = {
+  xAxisId: 0,
+  yAxisId: 0,
+  zAxisId: 0,
+  legendType: 'circle',
+  lineType: 'joint',
+  lineJointType: 'linear',
+  data: [] as any[],
+  shape: 'circle',
+  hide: false,
+
+  isAnimationActive: !Global.isSsr,
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'linear',
+};
+
+function ScatterImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const updateId = useUpdateId();
   const scatterSettings: ResolvedScatterSettings = useMemo(
     () => ({
       name: props.name,
@@ -542,30 +582,37 @@ function ScatterImpl(props: InternalProps) {
   const points = useAppSelector(state => {
     return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells);
   });
-  const { ref, points: _pointsFromClonedProps, ...everythingElse } = props;
+  const { ref, xAxisId, ...everythingElse } = props;
 
-  return <ScatterWithState {...everythingElse} points={points} needClip={needClip} />;
+  return (
+    <>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
+      <ScatterWithState
+        {...everythingElse}
+        xAxisId={props.xAxisId ?? defaultScatterProps.xAxisId}
+        yAxisId={props.yAxisId ?? defaultScatterProps.yAxisId}
+        zAxisId={props.zAxisId ?? defaultScatterProps.zAxisId}
+        lineType={props.lineType ?? defaultScatterProps.lineType}
+        lineJointType={props.lineJointType ?? defaultScatterProps.lineJointType}
+        legendType={props.legendType ?? defaultScatterProps.legendType}
+        shape={props.shape ?? defaultScatterProps.shape}
+        hide={props.hide ?? defaultScatterProps.hide}
+        isAnimationActive={props.isAnimationActive ?? defaultScatterProps.isAnimationActive}
+        animationBegin={props.animationBegin ?? defaultScatterProps.animationBegin}
+        animationDuration={props.animationDuration ?? defaultScatterProps.animationDuration}
+        animationEasing={props.animationEasing ?? defaultScatterProps.animationEasing}
+        points={points}
+        needClip={needClip}
+        animationId={updateId}
+      />
+    </>
+  );
 }
 
-export class Scatter extends Component<InternalProps> {
+export class Scatter extends Component<Props> {
   static displayName = 'Scatter';
 
-  static defaultProps = {
-    xAxisId: 0,
-    yAxisId: 0,
-    zAxisId: 0,
-    legendType: 'circle',
-    lineType: 'joint',
-    lineJointType: 'linear',
-    data: [] as any[],
-    shape: 'circle',
-    hide: false,
-
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 400,
-    animationEasing: 'linear',
-  };
+  static defaultProps = defaultScatterProps;
 
   /**
    * Compose the data of each group
@@ -625,7 +672,6 @@ export class Scatter extends Component<InternalProps> {
         hide={this.props.hide}
       >
         <SetScatterLegend {...this.props} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <ScatterImpl {...this.props} />
       </CartesianGraphicalItemContext>
     );
