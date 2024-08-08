@@ -76,7 +76,7 @@ export const General: StorybookArgs = {
   yAxisId,
 };
 
-export const points: StorybookArg = {
+const points: StorybookArg = {
   description:
     'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
   table: {
@@ -88,7 +88,18 @@ export const points: StorybookArg = {
   },
 };
 
-export const data: StorybookArg = { table: { category: 'Internal' } };
+export const data: StorybookArg = {
+  description: `The source data, in which each element is an object.
+    This can be defined either on the chart element (ScatterChart, LineChart, etc) or on the graphical item (Scatter, Line).
+    The object shape is flexible, with no pre-defined properties;
+    The dataKey props then define which properties from this object render where.`,
+  table: {
+    category: 'General',
+    type: {
+      summary: 'array of objects',
+    },
+  },
+};
 export const layout: StorybookArg = {
   description: 'The layout of line, usually inherited from parent.',
   table: {
