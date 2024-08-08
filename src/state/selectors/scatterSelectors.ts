@@ -16,16 +16,49 @@ export type ResolvedScatterSettings = {
   name: string | number;
 };
 
-const selectXAxisWithScale = (state: RechartsRootState, xAxisId: AxisId) =>
-  selectAxisWithScale(state, 'xAxis', xAxisId);
-const selectXAxisTicks = (state: RechartsRootState, xAxisId: AxisId) =>
-  selectTicksOfGraphicalItem(state, 'xAxis', xAxisId);
-const selectYAxisWithScale = (state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId) =>
-  selectAxisWithScale(state, 'yAxis', yAxisId);
-const selectYAxisTicks = (state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId) =>
-  selectTicksOfGraphicalItem(state, 'yAxis', yAxisId);
+const selectXAxisWithScale = (
+  state: RechartsRootState,
+  xAxisId: AxisId,
+  _yAxisId: AxisId,
+  _zAxisId: AxisId,
+  _scatterSettings: ResolvedScatterSettings,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  isPanorama: boolean,
+) => selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
+
+const selectXAxisTicks = (
+  state: RechartsRootState,
+  xAxisId: AxisId,
+  _yAxisId: AxisId,
+  _zAxisId: AxisId,
+  _scatterSettings: ResolvedScatterSettings,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  isPanorama: boolean,
+) => selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
+
+const selectYAxisWithScale = (
+  state: RechartsRootState,
+  _xAxisId: AxisId,
+  yAxisId: AxisId,
+  _zAxisId: AxisId,
+  _scatterSettings: ResolvedScatterSettings,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  isPanorama: boolean,
+) => selectAxisWithScale(state, 'yAxis', yAxisId, isPanorama);
+
+const selectYAxisTicks = (
+  state: RechartsRootState,
+  _xAxisId: AxisId,
+  yAxisId: AxisId,
+  _zAxisId: AxisId,
+  _scatterSettings: ResolvedScatterSettings,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  isPanorama: boolean,
+) => selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
+
 const selectZAxis = (state: RechartsRootState, _xAxisId: AxisId, _yAxisId: AxisId, zAxisId: AxisId) =>
-  selectZAxisWithScale(state, 'zAxis', zAxisId);
+  selectZAxisWithScale(state, 'zAxis', zAxisId, false);
+
 const pickScatterSettings = (
   _state: RechartsRootState,
   _xAxisId: AxisId,
@@ -41,6 +74,7 @@ const pickCells = (
   _scatterSettings: ResolvedScatterSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => cells;
+
 export const selectScatterPoints: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -48,15 +82,18 @@ export const selectScatterPoints: (
   zAxisId: AxisId,
   scatterSettings: ResolvedScatterSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
+  isPanorama: boolean,
 ) => ReadonlyArray<ScatterPointItem> = createSelector(
-  selectChartDataWithIndexes,
-  selectXAxisWithScale,
-  selectXAxisTicks,
-  selectYAxisWithScale,
-  selectYAxisTicks,
-  selectZAxis,
-  pickScatterSettings,
-  pickCells,
+  [
+    selectChartDataWithIndexes,
+    selectXAxisWithScale,
+    selectXAxisTicks,
+    selectYAxisWithScale,
+    selectYAxisTicks,
+    selectZAxis,
+    pickScatterSettings,
+    pickCells,
+  ],
   (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
     xAxis,

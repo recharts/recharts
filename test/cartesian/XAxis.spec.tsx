@@ -3790,7 +3790,7 @@ describe('<XAxis />', () => {
       const axisDomainSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0)));
+        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
         return null;
       };
       const { container } = render(
@@ -3856,7 +3856,7 @@ describe('<XAxis />', () => {
       const axisDomainSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0)));
+        ticksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
         return null;
       };
       const { container, rerender } = render(

@@ -4,6 +4,7 @@ import { ReactElement, SVGProps } from 'react';
 import { AxisDomain, AxisDomainType, AxisInterval, AxisTick, DataKey, ScaleType } from '../util/types';
 import { RechartsScale } from '../util/ChartUtils';
 import { TickFormatter } from '../cartesian/CartesianAxis';
+import type { AxisRange } from './selectors/axisSelectors';
 
 export type AxisId = string | number;
 export type XAxisPadding = { left?: number; right?: number } | 'gap' | 'no-gap';
@@ -75,7 +76,7 @@ export type YAxisSettings = AxisSettings & {
  * but it never displays ticks anywhere.
  */
 export type ZAxisSettings = BaseAxis & {
-  range: number[];
+  range: AxisRange;
 };
 
 type AxisMapState = {

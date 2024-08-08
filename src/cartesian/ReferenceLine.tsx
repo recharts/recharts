@@ -18,6 +18,7 @@ import { useClipPathId, useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale, selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
@@ -153,11 +154,12 @@ function ReportReferenceLine(props: ReferenceLineSettings): null {
 function ReferenceLineImpl(props: Props) {
   const { x: fixedX, y: fixedY, segment, xAxisId, yAxisId, shape, className, ifOverflow } = props;
 
+  const isPanorama = useIsPanorama();
   const clipPathId = useClipPathId();
   const xAxis = useAppSelector(state => selectXAxisSettings(state, xAxisId));
   const yAxis = useAppSelector(state => selectYAxisSettings(state, yAxisId));
-  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
-  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
   const viewBox = useViewBox();
   const isFixedX = isNumOrStr(fixedX);

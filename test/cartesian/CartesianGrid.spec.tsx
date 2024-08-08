@@ -231,7 +231,7 @@ describe('CartesianGrid', () => {
   it('should render all ticks from LineChart Biaxial storybook', () => {
     const scaleSpy = vi.fn();
     const Comp = (): null => {
-      const scale = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left'));
+      const scale = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left', false));
       scaleSpy(scale?.domain());
       return null;
     };

@@ -18,7 +18,7 @@ describe('selectScatterPoints', () => {
     const scatterPointsSpy = vi.fn();
     const Comp = (): null => {
       scatterPointsSpy(
-        useAppSelector(state => selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [])),
+        useAppSelector(state => selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false)),
       );
       return null;
     };
@@ -29,7 +29,7 @@ describe('selectScatterPoints', () => {
 
   it('should return undefined when called with initial state', () => {
     const store = createRechartsStore();
-    const result = selectScatterPoints(store.getState(), 'xAxis', 'yAxis', 'zAxis', scatterSettings, []);
+    const result = selectScatterPoints(store.getState(), 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false);
     expect(result).toEqual(undefined);
   });
 
@@ -37,7 +37,7 @@ describe('selectScatterPoints', () => {
     const scatterPointsSpy = vi.fn();
     const Comp = (): null => {
       scatterPointsSpy(
-        useAppSelector(state => selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [])),
+        useAppSelector(state => selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false)),
       );
       return null;
     };
@@ -422,7 +422,7 @@ describe('selectScatterPoints', () => {
     ];
     const Comp = (props: any): null => {
       expect(props.formattedGraphicalItems[0].props.points).toEqual(expectedPoints);
-      scatterPointsSpy(useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined)));
+      scatterPointsSpy(useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false)));
       return null;
     };
     render(
@@ -437,8 +437,8 @@ describe('selectScatterPoints', () => {
   it('should be stable', () => {
     expect.assertions(3);
     const Comp = (): null => {
-      const result1 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined));
-      const result2 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined));
+      const result1 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false));
+      const result2 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false));
       expect(result1).toBe(result2);
       return null;
     };

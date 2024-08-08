@@ -16,6 +16,7 @@ import {
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface XAxisProps extends BaseAxisProps {
   /** The unique id of x-axis */
@@ -54,9 +55,10 @@ function SetXAxisSettings(settings: XAxisSettings): null {
 const XAxisImpl = (props: Props) => {
   const { xAxisId, className } = props;
   const viewBox = useAppSelector(selectAxisViewBox);
+  const isPanorama = useIsPanorama();
   const axisType = 'xAxis';
-  const scale = useAppSelector(state => selectAxisScale(state, axisType, xAxisId));
-  const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId));
+  const scale = useAppSelector(state => selectAxisScale(state, axisType, xAxisId, isPanorama));
+  const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, xAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectXAxisSize(state, xAxisId));
   const position = useAppSelector(state => selectXAxisPosition(state, xAxisId));
 

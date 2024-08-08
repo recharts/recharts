@@ -55,6 +55,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
+import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1065,23 +1066,58 @@ const selectYAxisPadding: (state: RechartsRootState, axisId: AxisId) => { top: n
     },
   );
 
-export const combineXAxisRange = createSelector(
-  selectChartOffset,
-  selectXAxisPadding,
-  (offset: ChartOffset, padding): ReadonlyArray<number> | undefined => {
+export const combineXAxisRange: (
+  state: RechartsRootState,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => AxisRange | undefined = createSelector(
+  [
+    selectChartOffset,
+    selectXAxisPadding,
+    selectBrushDimensions,
+    selectBrushSettings,
+    (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
+  ],
+  (
+    offset: ChartOffset,
+    padding,
+    brushDimensions: BrushDimensions,
+    { padding: brushPadding },
+    isPanorama: boolean,
+  ): AxisRange | undefined => {
+    if (isPanorama) {
+      return [brushPadding.left, brushDimensions.width - brushPadding.right];
+    }
     return [offset.left + padding.left, offset.left + offset.width - padding.right];
   },
 );
 
-export const combineYAxisRange = createSelector(
-  selectChartOffset,
-  selectChartLayout,
-  selectYAxisPadding,
+export type AxisRange = readonly [number, number];
+
+export const combineYAxisRange: (
+  state: RechartsRootState,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => AxisRange | undefined = createSelector(
+  [
+    selectChartOffset,
+    selectChartLayout,
+    selectYAxisPadding,
+    selectBrushDimensions,
+    selectBrushSettings,
+    (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
+  ],
   (
     offset: ChartOffset,
     layout: LayoutType,
     padding: { top: number; bottom: number },
-  ): ReadonlyArray<number> | undefined => {
+    brushDimensions: BrushDimensions,
+    { padding: brushPadding },
+    isPanorama: boolean,
+  ): AxisRange | undefined => {
+    if (isPanorama) {
+      return [brushDimensions.height - brushPadding.bottom, brushPadding.top];
+    }
     if (layout === 'horizontal') {
       return [offset.top + offset.height - padding.bottom, offset.top + padding.top];
     }
@@ -1093,12 +1129,13 @@ const selectAxisRange = (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-): ReadonlyArray<number> | undefined => {
+  isPanorama: boolean,
+): AxisRange | undefined => {
   switch (axisType) {
     case 'xAxis':
-      return combineXAxisRange(state, axisId);
+      return combineXAxisRange(state, axisId, isPanorama);
     case 'yAxis':
-      return combineYAxisRange(state, axisId);
+      return combineYAxisRange(state, axisId, isPanorama);
     case 'zAxis':
       return selectZAxisSettings(state, axisId)?.range;
     default:
@@ -1106,12 +1143,16 @@ const selectAxisRange = (
   }
 };
 
-export const selectAxisRangeWithReverse = createSelector(
-  selectBaseAxis,
-  selectAxisRange,
-  (axisSettings: BaseAxis | undefined, axisRange): ReadonlyArray<number> | undefined => {
+export const selectAxisRangeWithReverse: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => AxisRange | undefined = createSelector(
+  [selectBaseAxis, selectAxisRange],
+  (axisSettings: BaseAxis | undefined, axisRange: AxisRange): AxisRange | undefined => {
     if (axisSettings?.reversed) {
-      return axisRange?.slice().reverse();
+      return [axisRange[1], axisRange[0]];
     }
     return axisRange;
   },
@@ -1121,6 +1162,7 @@ export const selectAxisScale: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => RechartsScale | undefined = createSelector(
   [selectBaseAxis, selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
   combineScaleFunction,
@@ -1579,11 +1621,15 @@ export const selectAxisWithScale = createSelector(
   },
 );
 
-const selectZAxisScale: (state: RechartsRootState, axisType: 'zAxis', axisId: AxisId) => RechartsScale | undefined =
-  createSelector(
-    [selectBaseAxis, selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse],
-    combineScaleFunction,
-  );
+const selectZAxisScale: (
+  state: RechartsRootState,
+  axisType: 'zAxis',
+  axisId: AxisId,
+  isPanorama: false,
+) => RechartsScale | undefined = createSelector(
+  [selectBaseAxis, selectRealScaleType, selectAxisDomain, selectAxisRangeWithReverse],
+  combineScaleFunction,
+);
 
 export type ZAxisWithScale = ZAxisSettings & { scale: RechartsScale };
 

@@ -3,7 +3,7 @@ import { ScaleType, DataKey, AxisDomain } from '../util/types';
 import { addZAxis, removeZAxis, ZAxisSettings } from '../state/axisMapSlice';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsScale } from '../util/ChartUtils';
-import { implicitZAxis } from '../state/selectors/axisSelectors';
+import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';
 
 function SetZAxisSettings(settings: ZAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -27,7 +27,7 @@ export interface Props {
   /** The key of data displayed in the axis */
   dataKey?: DataKey<any>;
   /** The range of axis */
-  range?: number[];
+  range?: AxisRange;
   scale?: ScaleType | RechartsScale | undefined;
   /** The domain of scale in this axis */
   domain?: AxisDomain;

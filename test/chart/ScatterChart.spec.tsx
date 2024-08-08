@@ -249,7 +249,7 @@ describe('ScatterChart with joint line', () => {
     const zAxisScaleSpy = vi.fn();
     const zAxisDataSpy = vi.fn();
     const Comp = (): null => {
-      zAxisScaleSpy(useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 0)));
+      zAxisScaleSpy(useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 0, false)));
       zAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0)));
       return null;
     };
@@ -721,7 +721,7 @@ describe('ScatterChart of two dimension data', () => {
     ]);
   });
 
-  test.fails('renders scatter points in Brush panorama. TODO fix brush panorama before releasing 3.0', () => {
+  test('renders scatter points in Brush panorama', () => {
     const { container } = render(
       <ScatterChart width={400} height={400} data={data}>
         <Scatter dataKey="y" />
@@ -880,7 +880,7 @@ describe('ScatterChart of two dimension data', () => {
       );
       zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
       zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0)));
-      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0)));
+      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
       yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
       yAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
       return null;
@@ -1056,7 +1056,7 @@ describe('ScatterChart of two dimension data', () => {
       );
       zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
       zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0)));
-      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0)));
+      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
       yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
       yAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
       return null;

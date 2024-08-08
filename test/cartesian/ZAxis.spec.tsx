@@ -94,7 +94,7 @@ describe('<ZAxis />', () => {
       const Comp = (): null => {
         axisSettingsSpy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
         axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 'zaxis id')));
-        const axis = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id'));
+        const axis = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id', false));
         const realScaleType = useAppSelector(state => selectRealScaleType(state, 'zAxis', 'zaxis id'));
         axisScaleSpy({
           domain: axis?.scale?.domain(),

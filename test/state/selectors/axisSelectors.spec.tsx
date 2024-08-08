@@ -64,7 +64,7 @@ const data2 = mockData.slice(5);
 describe('selectAxisScale', () => {
   it('should return undefined when called outside of Redux context', () => {
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', 'foo'));
+      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', 'foo', false));
       expect(result).toBeUndefined();
       return null;
     };
@@ -73,14 +73,16 @@ describe('selectAxisScale', () => {
 
   it('should return undefined for initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
-    const result = selectAxisScale(initialState, 'yAxis', 'foo');
+    const result = selectAxisScale(initialState, 'yAxis', 'foo', false);
     expect(result).toEqual(undefined);
   });
 
   it('should return implicit scale if there is no XAxis with this ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', 'this id is not present in the chart'));
+      const result = useAppSelector(state =>
+        selectAxisScale(state, 'xAxis', 'this id is not present in the chart', false),
+      );
       spy(result);
       return null;
     };
@@ -99,7 +101,7 @@ describe('selectAxisScale', () => {
   it('should return scale if there is an Axis in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      const result = useAppSelector(state => selectAxisScale(state, 'xAxis', '0', false));
       spy(result);
       return null;
     };
@@ -117,8 +119,8 @@ describe('selectAxisScale', () => {
 
   it('should be stable', () => {
     const Comp = (): null => {
-      const result1 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
-      const result2 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      const result1 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0', false));
+      const result2 = useAppSelector(state => selectAxisScale(state, 'xAxis', '0', false));
       expect(result1).toBe(result2);
       return null;
     };
@@ -133,11 +135,11 @@ describe('selectAxisScale', () => {
 
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
-    const result1 = selectAxisScale(store.getState(), 'xAxis', '0');
+    const result1 = selectAxisScale(store.getState(), 'xAxis', '0', false);
     store.dispatch(
       setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
     );
-    const result2 = selectAxisScale(store.getState(), 'xAxis', '0');
+    const result2 = selectAxisScale(store.getState(), 'xAxis', '0', false);
     expect(result1).toBe(result2);
   });
 
@@ -145,7 +147,7 @@ describe('selectAxisScale', () => {
     const scaleDomainSpy = vi.fn();
     const scaleRangeSpy = vi.fn();
     const Comp = (): null => {
-      const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', '0'));
+      const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', '0', false));
       scaleDomainSpy(scale?.domain());
       scaleRangeSpy(scale?.range());
       return null;
@@ -232,7 +234,7 @@ describe('selectAxisRangeWithReverse', () => {
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const result = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
+      const result = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0', false));
       expect(result).toBeUndefined();
       return null;
     };
@@ -241,14 +243,14 @@ describe('selectAxisRangeWithReverse', () => {
 
   it('should return default array when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
-    const result = selectAxisRangeWithReverse(initialState, 'xAxis', '0');
+    const result = selectAxisRangeWithReverse(initialState, 'xAxis', '0', false);
     expect(result).toEqual([5, 5]);
   });
 
   it('should be stable', () => {
     const Comp = (): null => {
-      const result1 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
-      const result2 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0'));
+      const result1 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0', false));
+      const result2 = useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', '0', false));
       expect(result1).toBe(result2);
       return null;
     };
@@ -263,13 +265,13 @@ describe('selectAxisRangeWithReverse', () => {
 
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
-    const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0');
-    const xAxisRange1 = combineXAxisRange(store.getState(), '0');
+    const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
+    const xAxisRange1 = combineXAxisRange(store.getState(), '0', false);
     store.dispatch(
       setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
     );
-    const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0');
-    const xAxisRange2 = combineXAxisRange(store.getState(), '0');
+    const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
+    const xAxisRange2 = combineXAxisRange(store.getState(), '0', false);
     expect(xAxisRange1).toBe(xAxisRange2);
     expect(result1).toBe(result2);
   });
@@ -362,9 +364,9 @@ describe('selectAxisDomain', () => {
       domainRightIncludingNiceTicksSpy(
         useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'right')),
       );
-      const scaleLeft = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left'));
+      const scaleLeft = useAppSelector(state => selectAxisScale(state, 'yAxis', 'left', false));
       scaleLeftSpy(scaleLeft?.domain());
-      const scaleRight = useAppSelector(state => selectAxisScale(state, 'yAxis', 'right'));
+      const scaleRight = useAppSelector(state => selectAxisScale(state, 'yAxis', 'right', false));
       scaleRightSpy(scaleRight?.domain());
       return null;
     };
@@ -1037,7 +1039,7 @@ describe('selectAxisDomain', () => {
       const scaleSpy = vi.fn();
       const Comp = (): null => {
         domainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
-        const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', 0));
+        const scale = useAppSelector(state => selectAxisScale(state, 'xAxis', 0, false));
         scaleSpy(scale?.domain());
         return null;
       };

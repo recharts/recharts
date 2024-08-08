@@ -50,6 +50,7 @@ import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors
 import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
 import { useUpdateId } from '../context/chartLayoutContext';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -579,8 +580,10 @@ function ScatterImpl(props: Props) {
     }),
     [props.data, props.dataKey, props.name, props.tooltipType],
   );
+
+  const isPanorama = useIsPanorama();
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells);
+    return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells, isPanorama);
   });
   const { ref, xAxisId, ...everythingElse } = props;
 

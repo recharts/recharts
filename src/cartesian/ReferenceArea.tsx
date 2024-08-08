@@ -14,6 +14,7 @@ import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceEl
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { RechartsScale } from '../util/ChartUtils';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;
@@ -93,8 +94,9 @@ function ReportReferenceArea(props: ReferenceAreaSettings): null {
 function ReferenceAreaImpl(props: Props) {
   const { x1, x2, y1, y2, className, shape, xAxisId, yAxisId } = props;
   const clipPathId = useClipPathId();
-  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
-  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+  const isPanorama = useIsPanorama();
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
   if (xAxisScale == null || !yAxisScale == null) {
     return null;
