@@ -12,6 +12,7 @@ import {
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -50,11 +51,12 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const { yAxisId, className } = props;
   const viewBox = useAppSelector(selectAxisViewBox);
+  const isPanorama = useIsPanorama();
   const axisType = 'yAxis';
-  const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId));
+  const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
-  const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId));
+  const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
 
   if (axisSize == null || position == null) {
     return null;

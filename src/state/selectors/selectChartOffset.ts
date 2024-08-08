@@ -1,6 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
-import { selectBrushHeight } from './brushSelectors';
 import { selectLegendState } from './legendSelectors';
 import { CartesianViewBox, ChartOffset, Margin } from '../../util/types';
 import { XAxisSettings, YAxisSettings } from '../axisMapSlice';
@@ -8,6 +7,9 @@ import { LegendState } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
+import { RechartsRootState } from '../store';
+
+export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
 export const selectChartOffset = createSelector(
   selectChartWidth,

@@ -16,6 +16,7 @@ import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayout
 import { AxisId } from '../state/axisMapSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 /**
  * The <CartesianGrid horizontal
@@ -391,11 +392,12 @@ export function CartesianGrid(props: Props) {
   const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
     propsIncludingDefaults;
 
+  const isPanorama = useIsPanorama();
   const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
-    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId),
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
   );
   const yAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
-    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId),
+    selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
   );
 
   if (

@@ -41,7 +41,7 @@ export function ExpectAxisDomain({
   assert: (domainFromRedux: ReadonlyArray<unknown>) => void;
 }): null {
   useAppSelector(state => {
-    const scale = selectAxisScale(state, axisType, axisId);
+    const scale = selectAxisScale(state, axisType, axisId, false);
     assert(scale?.domain());
   });
   return null;

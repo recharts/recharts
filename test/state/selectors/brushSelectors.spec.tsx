@@ -2,9 +2,9 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../../src/state/hooks';
-import { selectBrushHeight } from '../../../src/state/selectors/brushSelectors';
 import { BarChart, Brush, Customized } from '../../../src';
 import { createRechartsStore } from '../../../src/state/store';
+import { selectBrushHeight } from '../../../src/state/selectors/selectChartOffset';
 
 describe('selectBrushHeight', () => {
   it('should return undefined when called outside of Redux context', () => {

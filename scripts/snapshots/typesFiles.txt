@@ -105,6 +105,7 @@
   "types/context/chartDataContext.d.ts",
   "types/context/brushUpdateContext.d.ts",
   "types/context/accessibilityContext.d.ts",
+  "types/context/PanoramaContext.d.ts",
   "types/context/CartesianGraphicalItemContext.d.ts",
   "types/container/Surface.d.ts",
   "types/container/Layer.d.ts",

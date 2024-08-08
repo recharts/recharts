@@ -12,6 +12,7 @@ import { useClipPathId } from '../context/chartLayoutContext';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface ReferenceDotProps {
   r?: number;
@@ -43,8 +44,9 @@ const useCoordinate = (
 ) => {
   const isX = isNumOrStr(x);
   const isY = isNumOrStr(y);
-  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId));
-  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId));
+  const isPanorama = useIsPanorama();
+  const xAxisScale = useAppSelector(state => selectAxisScale(state, 'xAxis', xAxisId, isPanorama));
+  const yAxisScale = useAppSelector(state => selectAxisScale(state, 'yAxis', yAxisId, isPanorama));
 
   if (!isX || !isY || xAxisScale == null || yAxisScale == null) {
     return null;

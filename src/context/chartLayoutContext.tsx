@@ -23,6 +23,8 @@ import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
+import { useIsPanorama } from './PanoramaContext';
+import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
 
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
@@ -79,13 +81,22 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
 
   const dispatch = useAppDispatch();
 
-  dispatch(setXAxisMap(xAxisMap));
-  dispatch(setYAxisMap(yAxisMap));
-  dispatch(setPolarAngleAxisMap(angleAxisMap));
-  dispatch(setPolarRadiusAxisMap(radiusAxisMap));
-  dispatch(setLayout(layout));
-  dispatch(setChartSize({ width, height }));
-  dispatch(setMargin(margin));
+  /*
+   * Skip dispatching properties in panorama chart for two reasons:
+   * 1. The root chart should be deciding on these properties, and
+   * 2. Brush reads these properties from redux store, and so they must remain stable
+   *      to avoid circular dependency and infinite re-rendering.
+   */
+  const isPanorama = useIsPanorama();
+  if (!isPanorama) {
+    dispatch(setXAxisMap(xAxisMap));
+    dispatch(setYAxisMap(yAxisMap));
+    dispatch(setPolarAngleAxisMap(angleAxisMap));
+    dispatch(setPolarRadiusAxisMap(radiusAxisMap));
+    dispatch(setLayout(layout));
+    dispatch(setChartSize({ width, height }));
+    dispatch(setMargin(margin));
+  }
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
@@ -180,7 +191,19 @@ export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined 
   useAppSelector(selectArbitraryPolarRadiusAxis);
 
 export const useViewBox = (): CartesianViewBox => {
-  return useAppSelector(selectChartViewBox);
+  const panorama = useIsPanorama();
+  const rootViewBox = useAppSelector(selectChartViewBox);
+  const brushDimensions = useAppSelector(selectBrushDimensions);
+  const brushPadding = useAppSelector(selectBrushSettings)?.padding;
+  if (!panorama) {
+    return rootViewBox;
+  }
+  return {
+    width: brushDimensions.width - brushPadding.left - brushPadding.right,
+    height: brushDimensions.height - brushPadding.top - brushPadding.bottom,
+    x: brushPadding.left,
+    y: brushPadding.top,
+  };
 };
 
 const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};

@@ -25,12 +25,14 @@ import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { useMargin, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
-import { setBrushHeight } from '../state/brushSlice';
+import { BrushSettings, setBrushSettings } from '../state/brushSlice';
+import { PanoramaContextProvider } from '../context/PanoramaContext';
+import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -787,9 +789,11 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         style={style}
       >
         <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
-        <Panorama x={x} y={y} width={width} height={height} data={data} padding={padding}>
-          {children}
-        </Panorama>
+        <PanoramaContextProvider>
+          <Panorama x={x} y={y} width={width} height={height} data={data} padding={padding}>
+            {children}
+          </Panorama>
+        </PanoramaContextProvider>
         <Slide
           y={y}
           height={height}
@@ -856,8 +860,6 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
 function BrushInternal(props: Props) {
   const dispatch = useAppDispatch();
-  const offset = useOffset();
-  const margin = useMargin();
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
   const updateId = useUpdateId();
@@ -880,28 +882,29 @@ function BrushInternal(props: Props) {
     },
     [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
   );
+  const { x, y, width } = useAppSelector(selectBrushDimensions);
   const contextProperties: PropertiesFromContext = {
     data: chartData,
-    x: isNumber(props.x) ? props.x : offset.left,
-    y: isNumber(props.y) ? props.y : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
-    width: isNumber(props.width) ? props.width : offset.width,
+    x,
+    y,
+    width,
     startIndex,
     endIndex,
     updateId,
     onChange,
   };
-  // @ts-expect-error typescript complains about IntrinsicClassAttributes not matching
-  return <BrushWithState {...props} {...contextProperties} />;
+  const { ref, ...allOtherProps } = props;
+  return <BrushWithState {...allOtherProps} {...contextProperties} />;
 }
 
-function BrushSettingsDispatcher(props: { height: number }): null {
+function BrushSettingsDispatcher(props: BrushSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(setBrushHeight(props.height));
+    dispatch(setBrushSettings(props));
     return () => {
-      dispatch(setBrushHeight(0));
+      dispatch(setBrushSettings(null));
     };
-  }, [dispatch, props.height]);
+  }, [dispatch, props]);
   return null;
 }
 
@@ -922,7 +925,13 @@ export class Brush extends PureComponent<Props, State> {
   render() {
     return (
       <>
-        <BrushSettingsDispatcher height={this.props.height} />
+        <BrushSettingsDispatcher
+          height={this.props.height}
+          x={this.props.x}
+          y={this.props.y}
+          width={this.props.width}
+          padding={this.props.padding}
+        />
         <BrushInternal {...this.props} />
       </>
     );

@@ -2,8 +2,32 @@ import React, { useState } from 'react';
 import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine } from '../../src';
+import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine, Customized } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectAxisRangeWithReverse, selectDisplayedData } from '../../src/state/selectors/axisSelectors';
+import { pageData } from '../../storybook/stories/data';
+import { useViewBox } from '../../src/context/chartLayoutContext';
+
+type ExpectedBrush = {
+  x: string;
+  y: string;
+  width: string;
+  height: string;
+};
+
+function expectBrush(container: Element, expected: ExpectedBrush) {
+  assertNotNull(container);
+  const brush = container.querySelector('.recharts-brush rect');
+  assertNotNull(brush);
+  const actual = {
+    x: brush.getAttribute('x'),
+    y: brush.getAttribute('y'),
+    width: brush.getAttribute('width'),
+    height: brush.getAttribute('height'),
+  };
+  expect(actual).toEqual(expected);
+}
 
 describe('<Brush />', () => {
   const data = [
@@ -29,6 +53,13 @@ describe('<Brush />', () => {
         <Brush dataKey="value" x={100} y={50} width={400} height={40} />
       </BarChart>,
     );
+
+    expectBrush(container, {
+      height: '40',
+      width: '400',
+      x: '100',
+      y: '50',
+    });
 
     const allTravellers = container.querySelectorAll('.recharts-brush-traveller');
     expect(allTravellers).toHaveLength(2);
@@ -86,6 +117,14 @@ describe('<Brush />', () => {
         />
       </BarChart>,
     );
+
+    expectBrush(container, {
+      height: '40',
+      width: '400',
+      x: '100',
+      y: '50',
+    });
+
     const customTraveller = container.querySelector('[data-testid="custom-traveller-element"]');
     expect(customTraveller).toBeInTheDocument();
     expect(customTraveller).toBeVisible();
@@ -140,13 +179,20 @@ describe('<Brush />', () => {
   test('Render panorama when specified LineChart as child', () => {
     const { container } = render(
       <BarChart width={400} height={100} data={data}>
-        <Brush x={100} y={50} width={400} height={40}>
+        <Brush x={90} y={40} width={300} height={50}>
           <LineChart>
             <Line />
           </LineChart>
         </Brush>
       </BarChart>,
     );
+
+    expectBrush(container, {
+      height: '50',
+      width: '300',
+      x: '90',
+      y: '40',
+    });
 
     expect(container.querySelectorAll('.recharts-line')).toHaveLength(1);
   });
@@ -158,6 +204,13 @@ describe('<Brush />', () => {
         <Brush dataKey="date" height={90} stroke="#8884d8" />
       </BarChart>,
     );
+
+    expectBrush(container, {
+      height: '90',
+      width: '490',
+      x: '5',
+      y: '5',
+    });
 
     const brushSlide = container.querySelector('.recharts-brush-slide') as SVGRectElement;
     fireEvent.mouseOver(brushSlide, { pageX: 0, pageY: 0 });
@@ -182,6 +235,13 @@ describe('<Brush />', () => {
         <Brush dataKey="date" height={90} stroke="#8884d8" />
       </BarChart>,
     );
+
+    expectBrush(container, {
+      height: '90',
+      width: '300',
+      x: '100',
+      y: '10',
+    });
 
     const brushSlide = container.querySelector('.recharts-brush-slide');
     assertNotNull(brushSlide);
@@ -349,11 +409,7 @@ describe('<Brush />', () => {
       expect(brushTexts.item(1)?.textContent).toContain('5');
     });
 
-    /**
-     * TODO this test fails because Charts inside the Brush do not automatically inherit all props.
-     * Once we move Brush panoramas to Redux this should get fixed too.
-     */
-    test.fails('Should render panorama in brush', async () => {
+    test('Should render panorama in brush', async () => {
       const { container } = render(<ControlledPanoramicBrush />);
 
       const svgs = container.getElementsByTagName('svg');
@@ -374,6 +430,97 @@ describe('<Brush />', () => {
       // reference lines should be created on different scales and therefore have different values
       expect(chartReferenceLineY1).not.toEqual(panoReferenceLineY1);
       expect(chartReferenceLineY2).not.toEqual(panoReferenceLineY2);
+    });
+  });
+
+  describe('panorama and state integration', () => {
+    it('should select data from the parent chart', () => {
+      const rootDataSpy = vi.fn();
+      const panoramaDataSpy = vi.fn();
+
+      const RootComp = (): null => {
+        rootDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0)));
+        return null;
+      };
+
+      const PanoramaComp = (): null => {
+        panoramaDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 1)));
+        return null;
+      };
+
+      const { container } = render(
+        <ComposedChart height={100} width={200} margin={{ top: 10, right: 20, left: 30, bottom: 40 }} data={pageData}>
+          <Customized component={<RootComp />} />
+          <Brush>
+            <ComposedChart>
+              <Customized component={<PanoramaComp />} />
+            </ComposedChart>
+          </Brush>
+        </ComposedChart>,
+      );
+
+      expectBrush(container, {
+        height: '40',
+        width: '150',
+        x: '30',
+        y: '20',
+      });
+
+      expect(rootDataSpy).toHaveBeenLastCalledWith(pageData);
+      expect(panoramaDataSpy).toHaveBeenLastCalledWith(pageData);
+    });
+
+    it('should have its own viewBox, and its own YAxis range', () => {
+      const rootViewBoxSpy = vi.fn();
+      const rootYAxisRangeSpy = vi.fn();
+      const panoramaViewBoxSpy = vi.fn();
+      const panoramaYAxisRangeSpy = vi.fn();
+
+      const RootComp = (): null => {
+        rootViewBoxSpy(useViewBox());
+        rootYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
+        return null;
+      };
+
+      const PanoramaComp = (): null => {
+        panoramaViewBoxSpy(useViewBox());
+        panoramaYAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, true)));
+        return null;
+      };
+
+      const { container } = render(
+        <ComposedChart height={300} width={500} data={pageData} margin={{ top: 11, right: 22, left: 33, bottom: 44 }}>
+          <Customized component={<RootComp />} />
+          <Brush>
+            <ComposedChart>
+              <Customized component={<PanoramaComp />} />
+            </ComposedChart>
+          </Brush>
+        </ComposedChart>,
+      );
+
+      expectBrush(container, {
+        height: '40',
+        width: '445',
+        x: '33',
+        y: '216',
+      });
+
+      expect(rootViewBoxSpy).toHaveBeenLastCalledWith({
+        height: 205,
+        width: 445,
+        x: 33,
+        y: 11,
+      });
+      expect(panoramaViewBoxSpy).toHaveBeenLastCalledWith({
+        height: 38,
+        width: 443,
+        x: 1,
+        y: 1,
+      });
+
+      expect(rootYAxisRangeSpy).toHaveBeenLastCalledWith([216, 11]);
+      expect(panoramaYAxisRangeSpy).toHaveBeenLastCalledWith([39, 1]);
     });
   });
 });

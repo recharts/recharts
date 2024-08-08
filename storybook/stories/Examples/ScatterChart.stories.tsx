@@ -222,7 +222,7 @@ export const BubbleChart = {
     ];
 
     const domain = parseDomain();
-    const range = [16, 225];
+    const range = [16, 225] as const;
 
     const renderTooltip = (props: any) => {
       const { active, payload } = props;
