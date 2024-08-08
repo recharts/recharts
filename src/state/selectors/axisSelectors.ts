@@ -428,12 +428,17 @@ export function getErrorDomainByDataKey(
   return onlyAllowNumbers(
     relevantErrorBars.flatMap(eb => {
       const errorValue = getValueByDataKey(entry, eb.dataKey);
-      const minError: unknown = Array.isArray(errorValue) ? Math.min(...errorValue) : errorValue;
-      const maxError: unknown = Array.isArray(errorValue) ? Math.max(...errorValue) : errorValue;
-      if (!isWellBehavedNumber(minError) || !isWellBehavedNumber(maxError)) {
+      let lowBound, highBound: unknown;
+
+      if (Array.isArray(errorValue)) {
+        [lowBound, highBound] = errorValue;
+      } else {
+        lowBound = highBound = errorValue;
+      }
+      if (!isWellBehavedNumber(lowBound) || !isWellBehavedNumber(highBound)) {
         return undefined;
       }
-      return [appliedValue - minError, appliedValue + maxError];
+      return [appliedValue - lowBound, appliedValue + highBound];
     }),
   );
 }

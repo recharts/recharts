@@ -6,7 +6,10 @@ import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-h
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectAxisDomainIncludingNiceTicks } from '../../src/state/selectors/axisSelectors';
+import {
+  selectAllAppliedNumericalValuesIncludingErrorValues,
+  selectAxisDomainIncludingNiceTicks,
+} from '../../src/state/selectors/axisSelectors';
 
 // asserts an error bar has both a start and end position
 const assertErrorBars = (container: HTMLElement, barsExpected: number) => {
@@ -616,6 +619,155 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
+    });
+
+    it('should extend domains to negative values', () => {
+      const data = [
+        { x: 100, y: 200, errorY: 30, errorX: 30 },
+        { x: 120, y: 100, errorY: [500, 30], errorX: [200, 30] },
+        { x: 170, y: 300, errorY: [10, 20], errorX: 20 },
+        { x: 140, y: 250, errorY: 30, errorX: 20 },
+        { x: 150, y: 400, errorY: [20, 300], errorX: 30 },
+        { x: 110, y: 280, errorY: 40, errorX: 40 },
+      ];
+
+      const xValuesSpy = vi.fn();
+      const yValuesSpy = vi.fn();
+
+      const Comp = (): null => {
+        xValuesSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'xAxis', 0)));
+        yValuesSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
+        return null;
+      };
+      const { container } = render(
+        <ScatterChart
+          width={400}
+          height={400}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          <XAxis type="number" dataKey="x" />
+          <YAxis type="number" dataKey="y" />
+          <Scatter data={data}>
+            <ErrorBar dataKey="errorX" direction="x" />
+            <ErrorBar dataKey="errorY" direction="y" />
+          </Scatter>
+
+          <Customized component={<Comp />} />
+        </ScatterChart>,
+      );
+
+      expect(xValuesSpy).toHaveBeenLastCalledWith([
+        {
+          errorDomain: [70, 130],
+          value: 100,
+        },
+        {
+          errorDomain: [-80, 150],
+          value: 120,
+        },
+        {
+          errorDomain: [150, 190],
+          value: 170,
+        },
+        {
+          errorDomain: [120, 160],
+          value: 140,
+        },
+        {
+          errorDomain: [120, 180],
+          value: 150,
+        },
+        {
+          errorDomain: [70, 150],
+          value: 110,
+        },
+      ]);
+      expect(yValuesSpy).toHaveBeenLastCalledWith([
+        {
+          errorDomain: [170, 230],
+          value: 200,
+        },
+        {
+          errorDomain: [-400, 130],
+          value: 100,
+        },
+        {
+          errorDomain: [290, 320],
+          value: 300,
+        },
+        {
+          errorDomain: [220, 280],
+          value: 250,
+        },
+        {
+          errorDomain: [380, 700],
+          value: 400,
+        },
+        {
+          errorDomain: [240, 320],
+          value: 280,
+        },
+      ]);
+      expectXAxisTicks(container, [
+        {
+          textContent: '-80',
+          x: '80',
+          y: '358',
+        },
+        {
+          textContent: '0',
+          x: '155',
+          y: '358',
+        },
+        {
+          textContent: '80',
+          x: '230',
+          y: '358',
+        },
+        {
+          textContent: '160',
+          x: '305',
+          y: '358',
+        },
+        {
+          textContent: '240',
+          x: '380',
+          y: '358',
+        },
+      ]);
+
+      expectYAxisTicks(container, [
+        {
+          textContent: '-700',
+          x: '72',
+          y: '350',
+        },
+        {
+          textContent: '-350',
+          x: '72',
+          y: '267.5',
+        },
+        {
+          textContent: '0',
+          x: '72',
+          y: '185',
+        },
+        {
+          textContent: '350',
+          x: '72',
+          y: '102.5',
+        },
+        {
+          textContent: '700',
+          x: '72',
+          y: '20',
+        },
+      ]);
     });
   });
 });
