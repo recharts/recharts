@@ -465,49 +465,6 @@ const ReactiveProps = {
   },
 };
 
-const OtherProps = {
-  xAxis: {
-    table: {
-      category: 'Other',
-    },
-  },
-  yAxis: {
-    table: {
-      category: 'Other',
-    },
-  },
-  zAxis: {
-    table: {
-      category: 'Other',
-    },
-  },
-  top: {
-    table: {
-      category: 'Other',
-    },
-  },
-  left: {
-    table: {
-      category: 'Other',
-    },
-  },
-};
-
-const InternalProps = {
-  points: {
-    description: 'The coordinates of all the scatters.',
-    table: {
-      category: 'Internal',
-    },
-  },
-  activeIndex: {
-    description: "The active scatter's index in all the scatters. Active here refers to activeShape and the Tooltip.",
-    table: {
-      category: 'Internal',
-    },
-  },
-};
-
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 const GeneralPropsForScatter = {
@@ -526,10 +483,6 @@ export default {
     ...EventHandlers,
     ...AnimationProps,
     ...ReactiveProps,
-    ...OtherProps,
-    ...InternalProps,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
   },
 };
 
