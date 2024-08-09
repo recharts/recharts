@@ -181,7 +181,7 @@ describe('<Brush />', () => {
       <BarChart width={400} height={100} data={data}>
         <Brush x={90} y={40} width={300} height={50}>
           <LineChart>
-            <Line />
+            <Line dataKey="value" />
           </LineChart>
         </Brush>
       </BarChart>,

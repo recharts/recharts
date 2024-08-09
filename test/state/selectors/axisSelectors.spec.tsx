@@ -2506,8 +2506,8 @@ describe('selectErrorBarsSettings', () => {
     // There are ErrorBars but they are specified for another XAxis
     expect(xAxisSpy).toHaveBeenLastCalledWith([]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return bars settings if present in BarChart', () => {
@@ -2555,7 +2555,7 @@ describe('selectErrorBarsSettings', () => {
     render(
       <LineChart width={100} height={100}>
         <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
-        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} dataKey="x">
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Line>
@@ -2590,7 +2590,7 @@ describe('selectErrorBarsSettings', () => {
     render(
       <LineChart width={100} height={100} layout="vertical">
         <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
-        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false}>
+        <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} isAnimationActive={false} dataKey="x">
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Line>

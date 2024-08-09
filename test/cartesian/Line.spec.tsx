@@ -16,9 +16,9 @@ describe('<Line />', () => {
 
   it('Renders a path in a simple Line', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Line isAnimationActive={false} points={data} />
-      </Surface>,
+      <LineChart width={500} height={500}>
+        <Line isAnimationActive={false} data={data} dataKey="y" />
+      </LineChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
@@ -26,9 +26,9 @@ describe('<Line />', () => {
 
   it('Does not fall into infinite loop if strokeDasharray is 0', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Line points={data} strokeDasharray="0" />
-      </Surface>,
+      <LineChart width={500} height={500}>
+        <Line data={data} dataKey="y" strokeDasharray="0" />
+      </LineChart>,
     );
 
     const line = container.querySelectorAll('.recharts-line-curve');
@@ -39,12 +39,10 @@ describe('<Line />', () => {
 
   it('Does not throw when dot is null', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
+      <LineChart width={500} height={500}>
         {/* Test that the error Cannot read properties of null (reading 'clipDot') does not appear in JS projects */}
-        {/* eslint-disable-next-line */}
-        {/* @ts-ignore */}
-        <Line isAnimationActive={false} points={data} dot={null} />
-      </Surface>,
+        <Line isAnimationActive={false} data={data} dataKey="value" dot={null} />
+      </LineChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);

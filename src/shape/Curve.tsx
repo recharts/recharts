@@ -67,8 +67,8 @@ export type CurveType =
   | CurveFactory;
 
 export interface Point {
-  x: number;
-  y: number;
+  readonly x: number;
+  readonly y: number;
 }
 
 const defined = (p: Point) => p.x === +p.x && p.y === +p.y;
@@ -92,8 +92,8 @@ interface CurveProps {
   className?: string;
   type?: CurveType;
   layout?: LayoutType;
-  baseLine?: number | Array<Point>;
-  points?: Array<Point>;
+  baseLine?: number | ReadonlyArray<Point>;
+  points?: ReadonlyArray<Point>;
   connectNulls?: boolean;
   path?: string;
   pathRef?: (ref: SVGPathElement) => void;

@@ -75,6 +75,7 @@
   "es6/state/selectors/selectChartOffset.js",
   "es6/state/selectors/selectAllAxes.js",
   "es6/state/selectors/scatterSelectors.js",
+  "es6/state/selectors/lineSelectors.js",
   "es6/state/selectors/legendSelectors.js",
   "es6/state/selectors/dataSelectors.js",
   "es6/state/selectors/containerSelectors.js",
