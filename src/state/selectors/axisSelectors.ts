@@ -1558,7 +1558,7 @@ export const selectTicksOfGraphicalItem = createSelector(
     pickAxisType,
   ],
   (layout, axis, realScaleType, scale, niceTicks, axisRange, duplicateDomain, categoricalDomain, axisType) => {
-    if (axis == null || scale == null) {
+    if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
       return null;
     }
     const isCategorical = isCategoricalAxis(layout, axisType);

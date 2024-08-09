@@ -19,14 +19,11 @@ import { interpolateNumber, uniqueId } from '../util/DataUtils';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
-  D3Scale,
   DataKey,
   LayoutType,
   LegendType,
@@ -40,22 +37,28 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
+import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
+import { selectLinePoints } from '../state/selectors/lineSelectors';
+import { useAppSelector } from '../state/hooks';
 
 export interface LinePointItem extends CurvePoint {
-  value?: number;
-  payload?: any;
+  readonly value?: number;
+  readonly payload?: any;
 }
 
 interface InternalLineProps {
-  needClip?: boolean;
-  top?: number;
-  left?: number;
-  width?: number;
-  height?: number;
-  points?: LinePointItem[];
+  needClip: boolean;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  points: ReadonlyArray<LinePointItem>;
+  layout: 'horizontal' | 'vertical';
 }
 
-interface LineProps extends InternalLineProps {
+interface LineProps {
   className?: string;
   data?: any;
   type?: CurveType;
@@ -66,7 +69,6 @@ interface LineProps extends InternalLineProps {
   dataKey?: DataKey<any>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
-  layout?: 'horizontal' | 'vertical';
   connectNulls?: boolean;
   hide?: boolean;
 
@@ -86,24 +88,27 @@ interface LineProps extends InternalLineProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<CurveProps, 'points' | 'pathRef'> & LineProps;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef'>;
+
+type InternalProps = LineSvgProps & InternalLineProps & LineProps;
+
+export type Props = LineSvgProps & LineProps;
 
 interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
-  prevPoints?: LinePointItem[];
-  curPoints?: LinePointItem[];
+  prevPoints?: ReadonlyArray<LinePointItem>;
+  curPoints?: ReadonlyArray<LinePointItem>;
   prevAnimationId?: number;
 }
 
 type LineComposedData = ChartOffset & {
-  points?: LinePointItem[];
+  points?: ReadonlyArray<LinePointItem>;
   layout: LayoutType;
 };
 
 const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
-  const { needClip, ...otherPayload } = props;
   return [
     {
       inactive: hide,
@@ -111,7 +116,7 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
       type: legendType,
       color: stroke,
       value: name || dataKey,
-      payload: otherPayload,
+      payload: props,
     },
   ];
 };
@@ -208,7 +213,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class LineWithState extends Component<Props, State> {
+class LineWithState extends Component<InternalProps, State> {
   mainCurve?: SVGPathElement;
 
   state: State = {
@@ -236,7 +241,7 @@ class LineWithState extends Component<Props, State> {
     }
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -322,7 +327,7 @@ class LineWithState extends Component<Props, State> {
   }
 
   renderCurveStatically(
-    points: LinePointItem[],
+    points: ReadonlyArray<LinePointItem>,
     needClip: boolean,
     clipPathId: string,
     props?: { strokeDasharray: string },
@@ -505,7 +510,69 @@ class LineWithState extends Component<Props, State> {
 function LineImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <LineWithState {...everythingElse} needClip={needClip} />;
+  const { height, width, left, top } = useOffset();
+  const layout = useChartLayout();
+  const isPanorama = useIsPanorama();
+  const points = useAppSelector(state =>
+    selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, { dataKey: props.dataKey, data: props.data }),
+  );
+  if (layout !== 'horizontal' && layout !== 'vertical') {
+    // Cannot render Line in an unsupported layout
+    return null;
+  }
+  return (
+    <LineWithState
+      {...everythingElse}
+      points={points}
+      layout={layout}
+      height={height}
+      width={width}
+      left={left}
+      top={top}
+      needClip={needClip}
+    />
+  );
+}
+
+export function computeLinePoints({
+  layout,
+  xAxis,
+  yAxis,
+  xAxisTicks,
+  yAxisTicks,
+  dataKey,
+  bandSize,
+  displayedData,
+}: {
+  layout: Props['layout'];
+  xAxis: BaseAxisWithScale;
+  yAxis: BaseAxisWithScale;
+  xAxisTicks: TickItem[];
+  yAxisTicks: TickItem[];
+  dataKey: Props['dataKey'];
+  bandSize: number;
+  displayedData: any[];
+}): ReadonlyArray<LinePointItem> {
+  return displayedData.map((entry, index): LinePointItem => {
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    const value: number = getValueByDataKey(entry, dataKey);
+
+    if (layout === 'horizontal') {
+      return {
+        x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+        y: isNil(value) ? null : yAxis.scale(value),
+        value,
+        payload: entry,
+      };
+    }
+
+    return {
+      x: isNil(value) ? null : xAxis.scale(value),
+      y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+      value,
+      payload: entry,
+    };
+  });
 }
 
 export class Line extends PureComponent<Props> {
@@ -521,7 +588,7 @@ export class Line extends PureComponent<Props> {
     stroke: '#3182bd',
     strokeWidth: 1,
     fill: '#fff',
-    points: [] as LinePointItem[],
+    points: [] as ReadonlyArray<LinePointItem>,
     isAnimationActive: !Global.isSsr,
     animateNewValues: true,
     animationBegin: 0,
@@ -551,8 +618,8 @@ export class Line extends PureComponent<Props> {
     offset,
   }: {
     props: Props;
-    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+    xAxis: BaseAxisWithScale;
+    yAxis: BaseAxisWithScale;
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     dataKey: Props['dataKey'];
@@ -562,29 +629,17 @@ export class Line extends PureComponent<Props> {
   }): LineComposedData => {
     const { layout } = props;
 
-    const points = displayedData.map((entry, index) => {
-      const value = getValueByDataKey(entry, dataKey);
-
-      if (layout === 'horizontal') {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          // @ts-expect-error getValueByDataKey does not validate the output type
-          y: isNil(value) ? null : yAxis.scale(value),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        x: isNil(value) ? null : xAxis.scale(value),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
+    const points = computeLinePoints({
+      layout: props.layout,
+      xAxis,
+      yAxis,
+      xAxisTicks,
+      yAxisTicks,
+      dataKey,
+      bandSize,
+      displayedData,
     });
 
-    // @ts-expect-error getValueByDataKey does not validate the output type
     return { points, layout, ...offset };
   };
 

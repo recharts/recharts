@@ -2,7 +2,18 @@ import React, { FC } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { describe, MockInstance, test, vi } from 'vitest';
-import { Brush, CartesianAxis, Customized, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Brush,
+  CartesianAxis,
+  CartesianGrid,
+  Customized,
+  Legend,
+  Line,
+  LineChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { CurveType } from '../../src/shape/Curve';
@@ -12,6 +23,8 @@ import { expectXAxisTicks } from '../helper/expectAxisTicks';
 import { generateMockData } from '../helper/generateMockData';
 import { useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { pageData } from '../../storybook/stories/data';
+import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../src/state/selectors/axisSelectors';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
@@ -81,6 +94,129 @@ describe('<LineChart />', () => {
       'd',
       'M80,350C100,308.75,120,267.5,140,267.5C160,267.5,180,267.5,200,267.5C220,267.5,240,212.5,260,185C280,157.5,300,130,320,102.5C340,75,360,47.5,380,20',
     );
+  });
+
+  test('renders two lines with two axes', () => {
+    const xAxisRangeSpy = vi.fn();
+    const xAxisLineTicks = vi.fn();
+
+    const Comp = (): null => {
+      xAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'xAxis', 0, false)));
+      xAxisLineTicks(useAppSelector(state => selectTicksOfGraphicalItem(state, 'xAxis', 0, false)));
+      return null;
+    };
+    const { container } = render(
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid yAxisId="left" />
+        <XAxis dataKey="name" />
+        <YAxis yAxisId="left" />
+        <YAxis yAxisId="right" orientation="right" />
+        <Legend />
+        <Line yAxisId="left" dataKey="pv" />
+        <Line yAxisId="right" dataKey="uv" />
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expect(xAxisRangeSpy).toHaveBeenLastCalledWith([80, 410]);
+    expect(xAxisLineTicks).toHaveBeenLastCalledWith([
+      {
+        coordinate: 80,
+        index: 0,
+        offset: 0,
+        value: 'Page A',
+      },
+      {
+        coordinate: 135,
+        index: 1,
+        offset: 0,
+        value: 'Page B',
+      },
+      {
+        coordinate: 190,
+        index: 2,
+        offset: 0,
+        value: 'Page C',
+      },
+      {
+        coordinate: 245,
+        index: 3,
+        offset: 0,
+        value: 'Page D',
+      },
+      {
+        coordinate: 300,
+        index: 4,
+        offset: 0,
+        value: 'Page E',
+      },
+      {
+        coordinate: 355,
+        index: 5,
+        offset: 0,
+        value: 'Page F',
+      },
+      {
+        coordinate: 410,
+        index: 6,
+        offset: 0,
+        value: 'Page G',
+      },
+    ]);
+
+    const allLines = container.querySelectorAll('.recharts-line .recharts-line-curve');
+    expect(allLines).toHaveLength(2);
+    const line1 = allLines[0];
+    assertNotNull(line1);
+    expect(line1.getAttributeNames()).toEqual([
+      'stroke',
+      'stroke-width',
+      'fill',
+      'width',
+      'height',
+      'class',
+      'stroke-dasharray',
+      'd',
+    ]);
+    expect(line1).toHaveAttribute('stroke', '#3182bd');
+    expect(line1).toHaveAttribute('stroke-width', '1');
+    expect(line1).toHaveAttribute('fill', 'none');
+    expect(line1).toHaveAttribute('width', '330');
+    expect(line1).toHaveAttribute('height', '260');
+    expect(line1).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
+    expect(line1).toHaveAttribute('stroke-dasharray', '0px 0px');
+    expect(line1).toHaveAttribute('d', 'M80,91.667L135,91.667L190,55.483L245,27.1L300,5L355,24.933L410,117.667');
+
+    const line2 = allLines[1];
+    assertNotNull(line2);
+    expect(line2.getAttributeNames()).toEqual([
+      'stroke',
+      'stroke-width',
+      'fill',
+      'width',
+      'height',
+      'class',
+      'stroke-dasharray',
+      'd',
+    ]);
+    expect(line2).toHaveAttribute('stroke', '#3182bd');
+    expect(line2).toHaveAttribute('stroke-width', '1');
+    expect(line2).toHaveAttribute('fill', 'none');
+    expect(line2).toHaveAttribute('width', '330');
+    expect(line2).toHaveAttribute('height', '260');
+    expect(line2).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
+    expect(line2).toHaveAttribute('stroke-dasharray', '0px 0px');
+    expect(line2).toHaveAttribute('d', 'M80,169.125L135,169.125L190,123.95L245,37.987L300,24.5L355,18L410,37.5');
   });
 
   test('Sets title and description correctly', () => {
