@@ -144,7 +144,7 @@ function evaluateExpression(expression: string): string {
 export function safeEvaluateExpression(expression: string): string {
   try {
     return evaluateExpression(expression);
-  } catch (e) {
+  } catch {
     /* istanbul ignore next */
     return STR_NAN;
   }

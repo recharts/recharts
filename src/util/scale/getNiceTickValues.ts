@@ -167,7 +167,7 @@ export const calculateStep = (
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
  * @return {Array}   ticks
  */
-function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true) {
+function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true): number[] {
   // More than two ticks should be return
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
@@ -202,7 +202,7 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
  * @return {Array}   ticks
  */
-function getTickValuesFixedDomainFn([min, max]: [number, number], tickCount: number, allowDecimals = true) {
+function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickCount: number, allowDecimals = true) {
   // More than two ticks should be return
   const [cormin, cormax] = getValidInterval([min, max]);
 

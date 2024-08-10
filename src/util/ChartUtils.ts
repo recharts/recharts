@@ -481,7 +481,7 @@ export const getCoordinatesOfGrid = (
   ticks: ReadonlyArray<TickItem>,
   minValue: number,
   maxValue: number,
-  syncWithTicks: Boolean,
+  syncWithTicks: boolean,
 ) => {
   if (syncWithTicks) {
     return ticks.map(entry => entry.coordinate);

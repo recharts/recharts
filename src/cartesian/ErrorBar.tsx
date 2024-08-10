@@ -201,7 +201,7 @@ function ErrorBarInternal(props: Props) {
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
-export class ErrorBar extends Component<Props, {}> {
+export class ErrorBar extends Component<Props> {
   static defaultProps = {
     stroke: 'black',
     strokeWidth: 1.5,

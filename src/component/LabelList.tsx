@@ -19,7 +19,7 @@ interface Data {
 interface LabelListProps<T extends Data> {
   id?: string;
   data?: ReadonlyArray<T>;
-  valueAccessor?: Function;
+  valueAccessor?: (entry: T, index: number) => string | number;
   clockWise?: boolean;
   dataKey?: DataKey<T>;
   content?: ContentType;
@@ -27,7 +27,7 @@ interface LabelListProps<T extends Data> {
   position?: LabelPosition;
   offset?: LabelProps['offset'];
   angle?: number;
-  formatter?: Function;
+  formatter?: (label: React.ReactNode) => React.ReactNode;
 }
 
 export type Props<T extends Data> = SVGProps<SVGTextElement> & LabelListProps<T>;
@@ -50,7 +50,9 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
   return (
     <Layer className="recharts-label-list">
       {data.map((entry, index) => {
-        const value = isNil(dataKey) ? valueAccessor(entry, index) : getValueByDataKey(entry && entry.payload, dataKey);
+        const value = isNil(dataKey)
+          ? valueAccessor(entry, index)
+          : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
         const idProps = isNil(id) ? {} : { id: `${id}-${index}` };
 
         return (

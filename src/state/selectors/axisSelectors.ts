@@ -919,7 +919,7 @@ export const selectNiceTicks = createSelector(
     }
 
     if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number' && axisDomain != null) {
-      return getTickValuesFixedDomain(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
+      return getTickValuesFixedDomain(axisDomain as NumberDomain, axisSettings.tickCount, axisSettings.allowDecimals);
     }
 
     return undefined;
