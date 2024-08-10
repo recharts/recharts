@@ -41,7 +41,7 @@ export type LabelPosition =
 interface LabelProps {
   viewBox?: ViewBox;
   parentViewBox?: ViewBox;
-  formatter?: Function;
+  formatter?: (label: React.ReactNode) => React.ReactNode;
   value?: number | string;
   offset?: number;
   position?: LabelPosition;

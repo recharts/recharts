@@ -96,20 +96,20 @@ export function numericalDomainSpecifiedWithoutRequiringData(
       if (isWellFormedNumberDomain(result)) {
         return result;
       }
-    } catch (ex) {
+    } catch {
       /* ignore the exception and compute domain from data later */
     }
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
-    let finalMin, finalMax: number;
+    let finalMin, finalMax: string | number;
 
     if (isWellBehavedNumber(providedMin)) {
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
       try {
         finalMin = providedMin(undefined);
-      } catch (ex) {
+      } catch {
         /* ignore the exception and compute domain from data later */
       }
     }
@@ -119,7 +119,7 @@ export function numericalDomainSpecifiedWithoutRequiringData(
     } else if (typeof providedMax === 'function') {
       try {
         finalMax = providedMax(undefined);
-      } catch (ex) {
+      } catch {
         /* ignore the exception and compute domain from data later */
       }
     }
@@ -167,13 +167,13 @@ export function parseNumericalUserDomain(
       if (isWellFormedNumberDomain(result)) {
         return extendDomain(result, dataDomain, allowDataOverflow);
       }
-    } catch (ex) {
+    } catch {
       /* ignore the exception and compute domain from data later */
     }
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
-    let finalMin, finalMax: number;
+    let finalMin, finalMax: string | number;
 
     if (providedMin === 'auto') {
       if (dataDomain != null) {
@@ -184,7 +184,7 @@ export function parseNumericalUserDomain(
     } else if (typeof providedMin === 'function') {
       try {
         finalMin = providedMin(dataDomain?.[0]);
-      } catch (ex) {
+      } catch {
         /* ignore the exception and compute domain from data later */
       }
     } else if (typeof providedMin === 'string' && MIN_VALUE_REG.test(providedMin)) {
@@ -204,7 +204,7 @@ export function parseNumericalUserDomain(
     } else if (typeof providedMax === 'function') {
       try {
         finalMax = providedMax(dataDomain?.[1]);
-      } catch (ex) {
+      } catch {
         /* ignore the exception and compute domain from data later */
       }
     } else if (typeof providedMax === 'string' && MAX_VALUE_REG.test(providedMax)) {

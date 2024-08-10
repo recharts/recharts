@@ -263,7 +263,7 @@ class LineWithState extends Component<InternalProps, State> {
 
     try {
       return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
-    } catch (err) {
+    } catch {
       return 0;
     }
   }

@@ -38,7 +38,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
     const spaceWidth = breakAll ? 0 : getStringSize('\u00A0', style).width;
 
     return { wordsWithComputedWidth, spaceWidth };
-  } catch (e) {
+  } catch {
     return null;
   }
 };

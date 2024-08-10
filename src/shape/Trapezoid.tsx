@@ -60,7 +60,7 @@ export const Trapezoid: React.FC<Props> = props => {
         if (pathTotalLength) {
           setTotalLength(pathTotalLength);
         }
-      } catch (err) {
+      } catch {
         // calculate total length error
       }
     }

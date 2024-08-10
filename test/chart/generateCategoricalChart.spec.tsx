@@ -191,7 +191,7 @@ describe('generateCategoricalChart', () => {
       // eslint-disable-next-line no-underscore-dangle
       stackGroups[0].stackGroups._stackId_49.cateAxisId = 'yAxisId';
 
-      type SecondParam<F extends Function> = F extends (...args: infer A) => any ? A[1] : never;
+      type SecondParam<F extends (...args: any[]) => any> = Parameters<F>[1];
       const yAxisInput: SecondParam<typeof getAxisMapByAxes> = {
         ...input,
         axisIdKey: 'yAxisId',

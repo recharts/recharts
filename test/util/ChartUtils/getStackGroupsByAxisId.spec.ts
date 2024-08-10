@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { getStackGroupsByAxisId } from '../../../src/util/ChartUtils';
 import { createSeries, createSeriesPoint } from './getStackedData.spec';
 
-function makeItem(props: {}): ReactElement {
+function makeItem(props: object): ReactElement {
   // @ts-expect-error incomplete mock of ReactElement
   return {
     props,

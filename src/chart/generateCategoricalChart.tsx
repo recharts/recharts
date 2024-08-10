@@ -759,7 +759,7 @@ export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any
 
 export interface CategoricalChartProps {
   syncId?: number | string;
-  syncMethod?: 'index' | 'value' | Function;
+  syncMethod?: 'index' | 'value' | ((ticks: TickItem[], data: CategoricalChartState) => number);
   compact?: boolean;
   width?: number;
   height?: number;
@@ -1020,7 +1020,7 @@ export const generateCategoricalChart = ({
   class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    readonly eventEmitterSymbol: Symbol = Symbol('rechartsEventEmitter');
+    readonly eventEmitterSymbol = Symbol('rechartsEventEmitter');
 
     clipPathId: string;
 
@@ -1441,7 +1441,7 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState, emitter: Symbol) => {
+    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState, emitter: symbol) => {
       if (this.props.syncId === cId) {
         if (emitter === this.eventEmitterSymbol && typeof this.props.syncMethod !== 'function') {
           return;

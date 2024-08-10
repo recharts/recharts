@@ -109,7 +109,7 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
         if (pathTotalLength) {
           setTotalLength(pathTotalLength);
         }
-      } catch (err) {
+      } catch {
         // calculate total length error
       }
     }

@@ -6,7 +6,7 @@ export const PLACE_HOLDER = {
 
 const isPlaceHolder = (val: any) => val === PLACE_HOLDER;
 
-const curry0 = (fn: Function) =>
+const curry0 = (fn: (...args: any[]) => any) =>
   function _curried(...args: any[]) {
     if (args.length === 0 || (args.length === 1 && isPlaceHolder(args[0]))) {
       return _curried;
@@ -15,7 +15,7 @@ const curry0 = (fn: Function) =>
     return fn(...args);
   };
 
-const curryN = (n: number, fn: Function) => {
+const curryN = (n: number, fn: (...args: any[]) => any) => {
   if (n === 1) {
     return fn;
   }
@@ -38,7 +38,7 @@ const curryN = (n: number, fn: Function) => {
   });
 };
 
-export const curry = (fn: Function) => curryN(fn.length, fn);
+export const curry = (fn: (...args: any[]) => any) => curryN(fn.length, fn);
 
 export const range = (begin: number, end: number) => {
   const arr = [];
@@ -73,20 +73,20 @@ export const compose = (...args: any[]) => {
   return (...composeArgs: any[]) => tailsFn.reduce((res, fn) => fn(res), firstFn(...composeArgs));
 };
 
-export const reverse = (arr: any[] | string) => {
+export const reverse = <T extends any[] | string>(arr: T): T => {
   if (Array.isArray(arr)) {
-    return arr.reverse();
+    return arr.reverse() as T;
   }
 
   // can be string
-  return arr.split('').reverse().join('');
+  return arr.split('').reverse().join('') as T;
 };
 
-export const memoize = (fn: Function) => {
+export const memoize = <F extends (...args: any[]) => any>(fn: F): F => {
   let lastArgs: any[] = null;
   let lastResult: any[] = null;
 
-  return (...args: any[]) => {
+  return ((...args: Parameters<F>) => {
     if (lastArgs && args.every((val, i) => val === lastArgs[i])) {
       return lastResult;
     }
@@ -95,5 +95,5 @@ export const memoize = (fn: Function) => {
     lastResult = fn(...args);
 
     return lastResult;
-  };
+  }) as F;
 };

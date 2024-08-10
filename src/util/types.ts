@@ -1076,7 +1076,7 @@ export interface GeometrySector {
 
 export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
-export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
+export type AxisDomainItem = string | number | ((d: number) => string | number) | 'auto' | 'dataMin' | 'dataMax';
 
 /**
  * The domain of axis.
@@ -1255,7 +1255,7 @@ export const adaptEventHandlers = (
 };
 
 const getEventHandlerOfChild =
-  (originalHandler: Function, data: any, index: number) =>
+  (originalHandler: (data: any, index: number, e: Event) => void, data: any, index: number) =>
   (e: Event): null => {
     originalHandler(data, index, e);
 
