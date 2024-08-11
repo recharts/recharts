@@ -517,12 +517,10 @@ function AreaImpl(props: Props) {
 export const getBaseValue = (
   layout: 'horizontal' | 'vertical',
   chartBaseValue: BaseValue | undefined,
-  item: Area,
+  itemBaseValue: BaseValue | undefined,
   xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
   yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
 ): number => {
-  const { baseValue: itemBaseValue } = item.props;
-
   // The baseValue can be defined both on the AreaChart as well as on the Area.
   // The value for the item takes precedence.
   const baseValue = itemBaseValue ?? chartBaseValue;
@@ -611,7 +609,7 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const { connectNulls } = item.props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = getBaseValue(layout, props.baseValue, item, xAxis, yAxis);
+    const baseValue = getBaseValue(layout, props.baseValue, item.props.baseValue, xAxis, yAxis);
     const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 
