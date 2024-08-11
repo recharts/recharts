@@ -2,7 +2,7 @@ import React, { ComponentType, FC, ReactNode } from 'react';
 import { describe, test, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Area, Customized, XAxis, YAxis } from '../../src';
-import type { Props } from '../../src/cartesian/Area';
+import { getBaseValue, Props } from '../../src/cartesian/Area';
 import { D3Scale, LayoutType } from '../../src/util/types';
 import {
   AreaChartCase,
@@ -558,7 +558,7 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue(props, item, xAxis, yAxis);
       expect(actual).toBe(8);
     });
 
@@ -575,7 +575,7 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue(props, item, xAxis, yAxis);
       expect(actual).toBe(9);
     });
 
@@ -592,7 +592,7 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue(props, item, xAxis, yAxis);
       expect(actual).toBe(10);
     });
 
@@ -613,7 +613,7 @@ describe('getBaseValue', () => {
           domain: () => [30, 40],
         },
       };
-      const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue(props, item, xAxis, yAxis);
       expect(actual).toBe(30);
     });
   });
@@ -677,7 +677,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -704,7 +704,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -771,7 +771,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -798,7 +798,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -868,7 +868,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -895,7 +895,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = Area.getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue(props, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );

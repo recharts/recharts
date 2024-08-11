@@ -512,6 +512,50 @@ function AreaImpl(props: Props) {
   return <AreaWithState {...everythingElse} needClip={needClip} />;
 }
 
+export const getBaseValue = (
+  props: Props,
+  item: Area,
+  xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+  yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+): number => {
+  const { layout, baseValue: chartBaseValue } = props;
+  const { baseValue: itemBaseValue } = item.props;
+
+  // The baseValue can be defined both on the AreaChart as well as on the Area.
+  // The value for the item takes precedence.
+  const baseValue = itemBaseValue ?? chartBaseValue;
+
+  if (isNumber(baseValue) && typeof baseValue === 'number') {
+    return baseValue;
+  }
+
+  const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+  const domain = numericAxis.scale.domain();
+
+  if (numericAxis.type === 'number') {
+    const domainMax = Math.max(domain[0], domain[1]);
+    const domainMin = Math.min(domain[0], domain[1]);
+
+    if (baseValue === 'dataMin') {
+      return domainMin;
+    }
+    if (baseValue === 'dataMax') {
+      return domainMax;
+    }
+
+    return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
+  }
+
+  if (baseValue === 'dataMin') {
+    return domain[0];
+  }
+  if (baseValue === 'dataMax') {
+    return domain[1];
+  }
+
+  return domain[0];
+};
+
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
@@ -533,50 +577,6 @@ export class Area extends PureComponent<Props, State> {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
-  };
-
-  static getBaseValue = (
-    props: Props,
-    item: Area,
-    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
-    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
-  ): number => {
-    const { layout, baseValue: chartBaseValue } = props;
-    const { baseValue: itemBaseValue } = item.props;
-
-    // The baseValue can be defined both on the AreaChart as well as on the Area.
-    // The value for the item takes precedence.
-    const baseValue = itemBaseValue ?? chartBaseValue;
-
-    if (isNumber(baseValue) && typeof baseValue === 'number') {
-      return baseValue;
-    }
-
-    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-    const domain = numericAxis.scale.domain();
-
-    if (numericAxis.type === 'number') {
-      const domainMax = Math.max(domain[0], domain[1]);
-      const domainMin = Math.min(domain[0], domain[1]);
-
-      if (baseValue === 'dataMin') {
-        return domainMin;
-      }
-      if (baseValue === 'dataMax') {
-        return domainMax;
-      }
-
-      return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
-    }
-
-    if (baseValue === 'dataMin') {
-      return domain[0];
-    }
-    if (baseValue === 'dataMax') {
-      return domain[1];
-    }
-
-    return domain[0];
   };
 
   static getComposedData = ({
@@ -609,7 +609,7 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const { connectNulls } = item.props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
+    const baseValue = getBaseValue(props, item, xAxis, yAxis);
     const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 
