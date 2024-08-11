@@ -41,6 +41,8 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
+export type BaseValue = number | 'dataMin' | 'dataMax';
+
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
@@ -77,7 +79,7 @@ interface AreaProps extends InternalAreaProps {
   label?: any;
   layout?: 'horizontal' | 'vertical';
   hide?: boolean;
-  baseValue?: number | 'dataMin' | 'dataMax';
+  baseValue?: BaseValue;
   isRange?: boolean;
 
   onAnimationStart?: () => void;
@@ -513,12 +515,12 @@ function AreaImpl(props: Props) {
 }
 
 export const getBaseValue = (
-  props: Props,
+  layout: 'horizontal' | 'vertical',
+  chartBaseValue: BaseValue | undefined,
   item: Area,
   xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
   yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
 ): number => {
-  const { layout, baseValue: chartBaseValue } = props;
   const { baseValue: itemBaseValue } = item.props;
 
   // The baseValue can be defined both on the AreaChart as well as on the Area.
@@ -609,7 +611,7 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const { connectNulls } = item.props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = getBaseValue(props, item, xAxis, yAxis);
+    const baseValue = getBaseValue(layout, props.baseValue, item, xAxis, yAxis);
     const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 

@@ -548,8 +548,6 @@ describe.each(chartsThatDoNotSupportArea)('<Area /> as a child of $testName', ({
 describe('getBaseValue', () => {
   describe('when defined explicitly in props', () => {
     it('should return number if baseValue is a number', () => {
-      // @ts-expect-error incomplete mock
-      const props: Props = {};
       const item: Area = {
         // @ts-expect-error incomplete mock
         props: { baseValue: 8 },
@@ -558,15 +556,11 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', undefined, item, xAxis, yAxis);
       expect(actual).toBe(8);
     });
 
     it('should read baseValue from chart props, if item.props.baseValue is undefined', () => {
-      // @ts-expect-error incomplete mock
-      const props: Props = {
-        baseValue: 9,
-      };
       const item: Area = {
         // @ts-expect-error incomplete mock
         props: { baseValue: undefined },
@@ -575,15 +569,11 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', 9, item, xAxis, yAxis);
       expect(actual).toBe(9);
     });
 
     it('should prefer baseValue from Area props, if both are provided', () => {
-      // @ts-expect-error incomplete mock
-      const props: Props = {
-        baseValue: 9,
-      };
       const item: Area = {
         // @ts-expect-error incomplete mock
         props: { baseValue: 10 },
@@ -592,15 +582,11 @@ describe('getBaseValue', () => {
       const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
       // @ts-expect-error incomplete mock
       const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', 9, item, xAxis, yAxis);
       expect(actual).toBe(10);
     });
 
     it('should return number from domain when baseValue is NaN', () => {
-      // @ts-expect-error incomplete mock
-      const props: Props = {
-        layout: 'horizontal',
-      };
       const item: Area = {
         // @ts-expect-error incomplete mock
         props: { baseValue: NaN },
@@ -613,7 +599,7 @@ describe('getBaseValue', () => {
           domain: () => [30, 40],
         },
       };
-      const actual = getBaseValue(props, item, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', undefined, item, xAxis, yAxis);
       expect(actual).toBe(30);
     });
   });
@@ -659,11 +645,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'horizontal',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -677,7 +658,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -686,11 +667,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'vertical',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -704,7 +680,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -753,11 +729,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'horizontal',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -771,7 +742,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -780,11 +751,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'vertical',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -798,7 +764,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -850,11 +816,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'horizontal',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -868,7 +829,7 @@ describe('getBaseValue', () => {
             },
             type: axisType,
           };
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -877,11 +838,6 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const props: Props = {
-            baseValue,
-            layout: 'vertical',
-          };
           const item: Area = {
             // @ts-expect-error incomplete mock
             props: { baseValue },
@@ -895,7 +851,7 @@ describe('getBaseValue', () => {
           };
           // @ts-expect-error incomplete mock
           const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue(props, item, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, item, xAxis, yAxis);
           expect(actual).toBe(expected);
         },
       );
