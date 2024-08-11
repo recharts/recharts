@@ -24,7 +24,7 @@ export const animationEasing: StorybookArg = {
     category: 'Animation',
   },
 };
-export const animationId: StorybookArg = { table: { category: 'Animation' } };
+
 export const isAnimationActive: StorybookArg = {
   description: 'If set false, animation of component will be disabled.',
   table: {
@@ -45,6 +45,5 @@ export const AnimationProps: StorybookArgs = {
   animationBegin,
   animationEasing,
   animationDuration,
-  animationId,
   isAnimationActive,
 };

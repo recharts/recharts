@@ -2,13 +2,7 @@ import React from 'react';
 import { sizeData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
-import {
-  animationBegin,
-  animationDuration,
-  animationEasing,
-  animationId,
-  isAnimationActive,
-} from '../props/AnimationProps';
+import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
 import { isUpdateAnimationActive } from '../props/RectangleProps';
 import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
 import { dataKey } from '../props/CartesianComponentShared';
@@ -65,7 +59,6 @@ export default {
     ...ChartSizeProps,
     animationDuration,
     animationEasing,
-    animationId,
     data,
     dataKey,
     isAnimationActive,

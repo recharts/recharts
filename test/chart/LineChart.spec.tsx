@@ -37,15 +37,15 @@ describe('<LineChart />', () => {
     expect(allLines).toHaveLength(1);
     const line = allLines[0];
     assertNotNull(line);
-    expect(line.getAttributeNames()).toEqual([
-      'stroke',
-      'stroke-width',
-      'fill',
-      'width',
-      'height',
+    expect(line.getAttributeNames().sort()).toEqual([
       'class',
-      'stroke-dasharray',
       'd',
+      'fill',
+      'height',
+      'stroke',
+      'stroke-dasharray',
+      'stroke-width',
+      'width',
     ]);
     expect(line).toHaveAttribute('stroke', '#ff7300');
     expect(line).toHaveAttribute('stroke-width', '1');
@@ -73,15 +73,15 @@ describe('<LineChart />', () => {
     expect(allLines).toHaveLength(1);
     const line = allLines[0];
     assertNotNull(line);
-    expect(line.getAttributeNames()).toEqual([
-      'stroke',
-      'stroke-width',
-      'fill',
-      'width',
-      'height',
+    expect(line.getAttributeNames().sort()).toEqual([
       'class',
-      'stroke-dasharray',
       'd',
+      'fill',
+      'height',
+      'stroke',
+      'stroke-dasharray',
+      'stroke-width',
+      'width',
     ]);
     expect(line).toHaveAttribute('stroke', '#ff7300');
     expect(line).toHaveAttribute('stroke-width', '1');
@@ -178,15 +178,15 @@ describe('<LineChart />', () => {
     expect(allLines).toHaveLength(2);
     const line1 = allLines[0];
     assertNotNull(line1);
-    expect(line1.getAttributeNames()).toEqual([
-      'stroke',
-      'stroke-width',
-      'fill',
-      'width',
-      'height',
+    expect(line1.getAttributeNames().sort()).toEqual([
       'class',
-      'stroke-dasharray',
       'd',
+      'fill',
+      'height',
+      'stroke',
+      'stroke-dasharray',
+      'stroke-width',
+      'width',
     ]);
     expect(line1).toHaveAttribute('stroke', '#3182bd');
     expect(line1).toHaveAttribute('stroke-width', '1');
@@ -199,15 +199,15 @@ describe('<LineChart />', () => {
 
     const line2 = allLines[1];
     assertNotNull(line2);
-    expect(line2.getAttributeNames()).toEqual([
-      'stroke',
-      'stroke-width',
-      'fill',
-      'width',
-      'height',
+    expect(line2.getAttributeNames().sort()).toEqual([
       'class',
-      'stroke-dasharray',
       'd',
+      'fill',
+      'height',
+      'stroke',
+      'stroke-dasharray',
+      'stroke-width',
+      'width',
     ]);
     expect(line2).toHaveAttribute('stroke', '#3182bd');
     expect(line2).toHaveAttribute('stroke-width', '1');
@@ -671,16 +671,16 @@ describe('<LineChart />', () => {
 
     const dotC = allDots[2];
     assertNotNull(dotC);
-    expect(dotC.getAttributeNames()).toEqual([
+    expect(dotC.getAttributeNames().sort()).toEqual([
+      'class',
+      'cx',
+      'cy',
+      'fill',
+      'height',
       'r',
       'stroke',
       'stroke-width',
-      'fill',
       'width',
-      'height',
-      'cx',
-      'cy',
-      'class',
     ]);
     expect(dotC).toHaveAttribute('cx', '164');
     expect(dotC).toHaveAttribute('width', '360');

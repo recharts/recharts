@@ -172,7 +172,6 @@ import {
   animationBegin,
   animationDuration,
   animationEasing,
-  animationId,
   AnimationProps,
   isAnimationActive,
 } from '../props/AnimationProps';
@@ -436,7 +435,6 @@ const AnimationPropsForBar: Args = {
   animationBegin,
   animationEasing,
   animationDuration,
-  animationId,
   isAnimationActive,
 };
 
