@@ -155,6 +155,21 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   };
 }
 
+const renderDotItem = (option: ActiveDotType, props: any) => {
+  let dotItem;
+
+  if (React.isValidElement(option)) {
+    dotItem = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dotItem = option(props);
+  } else {
+    const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
+    dotItem = <Dot {...props} className={className} />;
+  }
+
+  return dotItem;
+};
+
 class AreaWithState extends PureComponent<Props, State> {
   state: State = {
     isAnimationFinished: true,
@@ -228,8 +243,7 @@ class AreaWithState extends PureComponent<Props, State> {
         points,
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      return Area.renderDotItem(dot, dotProps);
+      return renderDotItem(dot, dotProps);
     });
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
@@ -667,21 +681,6 @@ export class Area extends PureComponent<Props, State> {
     }
 
     return { points, baseLine, layout, isRange, ...offset };
-  };
-
-  static renderDotItem = (option: ActiveDotType, props: any) => {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
   };
 
   render() {
