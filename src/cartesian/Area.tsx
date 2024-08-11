@@ -54,7 +54,7 @@ interface InternalAreaProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: AreaPointItem[];
+  points?: ReadonlyArray<AreaPointItem>;
   baseLine?: number | Coordinate[];
 }
 
@@ -98,16 +98,16 @@ export type Props = Omit<SVGProps<SVGElement>, 'type' | 'points'> & AreaProps;
 
 interface State {
   prevAnimationId?: number;
-  prevPoints?: AreaPointItem[];
+  prevPoints?: ReadonlyArray<AreaPointItem>;
   prevBaseLine?: number | Coordinate[];
-  curPoints?: AreaPointItem[];
+  curPoints?: ReadonlyArray<AreaPointItem>;
   curBaseLine?: number | Coordinate[];
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
 
 type AreaComposedData = ChartOffset & {
-  points?: AreaPointItem[];
+  points?: ReadonlyArray<AreaPointItem>;
   baseLine?: number | Coordinate[];
   layout: LayoutType;
   isRange: boolean;
@@ -319,7 +319,12 @@ class AreaWithState extends PureComponent<Props, State> {
     return this.renderHorizontalRect(alpha);
   }
 
-  renderAreaStatically(points: AreaPointItem[], baseLine: Props['baseLine'], needClip: boolean, clipPathId: string) {
+  renderAreaStatically(
+    points: ReadonlyArray<AreaPointItem>,
+    baseLine: Props['baseLine'],
+    needClip: boolean,
+    clipPathId: string,
+  ) {
     const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
 
     return (
@@ -582,7 +587,7 @@ export class Area extends PureComponent<Props, State> {
     legendType: 'line',
     connectNulls: false,
     // points of area
-    points: [] as AreaPointItem[],
+    points: [] as ReadonlyArray<AreaPointItem>,
     dot: false,
     activeDot: true,
     hide: false,
