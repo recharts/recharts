@@ -26,7 +26,7 @@ type TestCase = {
   testName: string;
 };
 
-const chartsThatSupportArea: ReadonlyArray<TestCase> = includingCompact([ComposedChartCase, AreaChartCase]);
+const chartsThatSupportArea: ReadonlyArray<TestCase> = [ComposedChartCase, AreaChartCase];
 
 const chartsThatDoNotSupportArea: ReadonlyArray<TestCase> = includingCompact(
   allCategoricalsChartsExcept(chartsThatSupportArea),

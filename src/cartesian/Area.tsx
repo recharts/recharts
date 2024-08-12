@@ -1,6 +1,3 @@
-/**
- * @fileOverview Area
- */
 // eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, SVGProps } from 'react';
 import clsx from 'clsx';
@@ -39,13 +36,11 @@ import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItem
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
+import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
+import { useAppSelector } from '../state/hooks';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
-
-interface AreaPointItem extends CurvePoint {
-  value?: number | number[];
-  payload?: any;
-}
 
 interface InternalAreaProps {
   needClip?: boolean;
@@ -104,12 +99,6 @@ interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
-
-type ComputedArea = {
-  points: ReadonlyArray<AreaPointItem>;
-  baseLine: number | Coordinate[];
-  isRange: boolean;
-};
 
 type AreaComposedData = ComputedArea &
   ChartOffset & {
@@ -533,7 +522,20 @@ class AreaWithState extends PureComponent<Props, State> {
 function AreaImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const { ref, ...everythingElse } = props;
-  return <AreaWithState {...everythingElse} needClip={needClip} />;
+  const isPanorama = useIsPanorama();
+  const { points, isRange, baseLine } =
+    useAppSelector(state =>
+      selectArea(state, props.xAxisId, props.yAxisId, isPanorama, {
+        baseValue: props.baseValue,
+        stackId: props.stackId,
+        connectNulls: props.connectNulls,
+        data: props.data,
+        dataKey: props.dataKey,
+      }),
+    ) ?? {};
+  return (
+    <AreaWithState {...everythingElse} points={points} isRange={isRange} baseLine={baseLine} needClip={needClip} />
+  );
 }
 
 export const getBaseValue = (
@@ -577,12 +579,6 @@ export const getBaseValue = (
   }
 
   return domain[0];
-};
-
-type AreaSettings = {
-  connectNulls: boolean;
-  baseValue: BaseValue | undefined;
-  dataKey: DataKey<any>;
 };
 
 export function computeArea({
@@ -688,8 +684,6 @@ export class Area extends PureComponent<Props, State> {
     yAxisId: 0,
     legendType: 'line',
     connectNulls: false,
-    // points of area
-    points: [] as ReadonlyArray<AreaPointItem>,
     dot: false,
     activeDot: true,
     hide: false,
