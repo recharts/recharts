@@ -116,7 +116,9 @@ export const selectArea: (
       xAxis == null ||
       yAxis == null ||
       xAxisTicks == null ||
-      yAxisTicks == null
+      yAxisTicks == null ||
+      xAxisTicks.length === 0 ||
+      yAxisTicks.length === 0
     ) {
       return undefined;
     }

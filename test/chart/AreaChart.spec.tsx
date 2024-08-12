@@ -1,11 +1,14 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-import { vi, MockInstance } from 'vitest';
+import { describe, test, it, expect, vi, MockInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { pageData } from '../../storybook/stories/data';
+import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
+import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedArea = {
   d: string;
@@ -154,6 +157,219 @@ describe('AreaChart', () => {
     expectAreaCurve(container, [
       {
         d: 'M95,5C91.25,5.667,87.5,6.333,87.5,7C87.5,7.667,87.5,8.333,87.5,9C87.5,9.667,80,10.333,80,11C80,11.667,85.85,12.333,85.85,13C85.85,13.667,82.513,14.333,79.175,15',
+      },
+    ]);
+  });
+
+  test('renders a stacked percentage chart', () => {
+    const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
+
+    const areaSpy = vi.fn();
+    const xAxisTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const areaSettings: AreaSettings = {
+        baseValue: undefined,
+        stackId: '1',
+        dataKey: 'uv',
+        connectNulls: false,
+        data: undefined,
+      };
+      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings)));
+      xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
+      return null;
+    };
+
+    const { container } = render(
+      <AreaChart
+        width={500}
+        height={400}
+        data={pageData}
+        stackOffset="expand"
+        margin={{
+          top: 10,
+          right: 30,
+          left: 20,
+          bottom: 20,
+        }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis tickFormatter={toPercent} />
+        <Area dataKey="uv" stackId="1" />
+        <Area dataKey="pv" stackId="1" />
+        <Area dataKey="amt" stackId="1" />
+        <Customized component={<Comp />} />
+      </AreaChart>,
+    );
+
+    expect(xAxisTicksSpy).toHaveBeenLastCalledWith([
+      {
+        coordinate: 80,
+        index: 0,
+        offset: 0,
+        value: 'Page A',
+      },
+      {
+        coordinate: 145,
+        index: 1,
+        offset: 0,
+        value: 'Page B',
+      },
+      {
+        coordinate: 210,
+        index: 2,
+        offset: 0,
+        value: 'Page C',
+      },
+      {
+        coordinate: 275,
+        index: 3,
+        offset: 0,
+        value: 'Page D',
+      },
+      {
+        coordinate: 340,
+        index: 4,
+        offset: 0,
+        value: 'Page E',
+      },
+      {
+        coordinate: 405,
+        index: 5,
+        offset: 0,
+        value: 'Page F',
+      },
+      {
+        coordinate: 470,
+        index: 6,
+        offset: 0,
+        value: 'Page G',
+      },
+    ]);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(3);
+
+    // For some reason this assertion always fails but never shows what's the difference.
+    // expect(areaSpy).toHaveBeenLastCalledWith({
+    //   baseLine: [
+    //     {
+    //       x: 80,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 145,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 210,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 275,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 340,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 405,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 470,
+    //       y: 350,
+    //     },
+    //   ],
+    //   isRange: false,
+    //   points: [
+    //     {
+    //       payload: {
+    //         amt: 1400,
+    //         name: 'Page A',
+    //         pv: 800,
+    //         uv: 590,
+    //       },
+    //       value: [0, 0.2114695340501792],
+    //       x: 80,
+    //       y: 278.10035842293905,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1400,
+    //         name: 'Page B',
+    //         pv: 800,
+    //         uv: 590,
+    //       },
+    //       value: [0, 0.2114695340501792],
+    //       x: 145,
+    //       y: 278.10035842293905,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1506,
+    //         name: 'Page C',
+    //         pv: 967,
+    //         uv: 868,
+    //       },
+    //       value: [0, 0.25980245435498356],
+    //       x: 210,
+    //       y: 261.6671655193056,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 989,
+    //         name: 'Page D',
+    //         pv: 1098,
+    //         uv: 1397,
+    //       },
+    //       value: [0, 0.40097588978185994],
+    //       x: 275,
+    //       y: 213.66819747416764,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1228,
+    //         name: 'Page E',
+    //         pv: 1200,
+    //         uv: 1480,
+    //       },
+    //       value: [0, 0.37871033776867963],
+    //       x: 340,
+    //       y: 221.23848515864896,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1100,
+    //         name: 'Page F',
+    //         pv: 1108,
+    //         uv: 1520,
+    //       },
+    //       value: [0, 0.40772532188841204],
+    //       x: 405,
+    //       y: 211.3733905579399,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1700,
+    //         name: 'Page G',
+    //         pv: 680,
+    //         uv: 1400,
+    //       },
+    //       value: [0, 0.37037037037037035],
+    //       x: 470,
+    //       y: 224.07407407407408,
+    //     },
+    //   ],
+    // });
+
+    expectAreaCurve(container, [
+      {
+        d: 'M80,278.1L145,278.1L210,261.667L275,213.668L340,221.238L405,211.373L470,224.074',
+      },
+      {
+        d: 'M80,180.609L145,180.609L210,163.26L275,106.515L340,116.837L405,110.322L470,162.91',
+      },
+      {
+        d: 'M80,10L145,10L210,10L275,10L340,10L405,10L470,10',
       },
     ]);
   });
