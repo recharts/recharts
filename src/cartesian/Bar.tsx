@@ -70,7 +70,7 @@ export interface BarRectangleItem extends RectangleProps {
 }
 
 interface InternalBarProps {
-  data?: BarRectangleItem[];
+  data?: ReadonlyArray<BarRectangleItem>;
   needClip?: boolean;
   width?: number;
   height?: number;
@@ -114,14 +114,14 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem,
 
 interface State {
   readonly isAnimationFinished?: boolean;
-  readonly prevData?: BarRectangleItem[];
-  readonly curData?: BarRectangleItem[];
+  readonly prevData?: ReadonlyArray<BarRectangleItem>;
+  readonly curData?: ReadonlyArray<BarRectangleItem>;
   readonly prevAnimationId?: number;
 }
 
 type BarComposedData = ChartOffset & {
   layout: LayoutType;
-  data: BarRectangleItem[];
+  data: ReadonlyArray<BarRectangleItem>;
 };
 
 const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => {
@@ -164,7 +164,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
 
 type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
-  data: BarRectangleItem[];
+  data: ReadonlyArray<BarRectangleItem>;
   dataKey: DataKey<any>;
   onAnimationStart: () => void;
   onAnimationEnd: () => void;
@@ -239,7 +239,7 @@ function BarBackground(props: BarBackgroundProps) {
 }
 
 type BarRectanglesProps = Props & {
-  data: BarRectangleItem[];
+  data: ReadonlyArray<BarRectangleItem>;
   onAnimationStart: () => void;
   onAnimationEnd: () => void;
 };
@@ -369,7 +369,7 @@ class BarWithState extends PureComponent<Props, State> {
     }
   };
 
-  renderRectanglesStatically(data: BarRectangleItem[]) {
+  renderRectanglesStatically(data: ReadonlyArray<BarRectangleItem>) {
     return (
       <BarRectangles
         {...this.props}
