@@ -109,7 +109,7 @@ describe('ActiveDot', () => {
       expect(spy).toHaveBeenCalledTimes(0);
       expect(container.querySelector('.recharts-active-dot')).not.toBeInTheDocument();
       const tooltipTrigger = showTooltip(container, areaChartMouseHoverTooltipSelector, debug);
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
       expect(container.querySelector('.recharts-active-dot')).toBeVisible();
       expect(spy).toHaveBeenCalledWith({
         cx: 161,

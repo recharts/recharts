@@ -81,6 +81,7 @@
   "es6/state/selectors/containerSelectors.js",
   "es6/state/selectors/brushSelectors.js",
   "es6/state/selectors/axisSelectors.js",
+  "es6/state/selectors/areaSelectors.js",
   "es6/shape/Trapezoid.js",
   "es6/shape/Symbols.js",
   "es6/shape/Sector.js",

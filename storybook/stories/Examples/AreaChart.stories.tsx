@@ -130,7 +130,7 @@ export const PercentAreaChart = {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
+          <XAxis dataKey="name" />
           <YAxis tickFormatter={toPercent} />
           <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />

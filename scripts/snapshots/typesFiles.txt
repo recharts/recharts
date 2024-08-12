@@ -81,6 +81,7 @@
   "types/state/selectors/containerSelectors.d.ts",
   "types/state/selectors/brushSelectors.d.ts",
   "types/state/selectors/axisSelectors.d.ts",
+  "types/state/selectors/areaSelectors.d.ts",
   "types/shape/Trapezoid.d.ts",
   "types/shape/Symbols.d.ts",
   "types/shape/Sector.d.ts",

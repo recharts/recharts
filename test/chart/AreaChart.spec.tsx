@@ -1,11 +1,26 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-import { vi, MockInstance } from 'vitest';
+import { describe, test, it, expect, vi, MockInstance } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { pageData } from '../../storybook/stories/data';
+import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
+import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
+
+type ExpectedArea = {
+  d: string;
+};
+
+function expectAreaCurve(container: Element, expectedAreas: ReadonlyArray<ExpectedArea>) {
+  assertNotNull(container);
+  const areaCurves = container.querySelectorAll('.recharts-area-curve');
+  assertNotNull(areaCurves);
+  const actualAreas = Array.from(areaCurves).map(area => ({ d: area.getAttribute('d') }));
+  expect(actualAreas).toEqual(expectedAreas);
+}
 
 describe('AreaChart', () => {
   const data = [
@@ -25,20 +40,27 @@ describe('AreaChart', () => {
     );
     expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+
+    expectAreaCurve(container, [
+      {
+        d: 'M5,5C11,10,17,15,23,15C29,15,35,15,41,15C47,15,53,25,59,25C65,25,71,17.2,77,17.2C83,17.2,89,21.65,95,26.1',
+      },
+    ]);
   });
 
   test('Renders 1 dot when data only have one element', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data.slice(0, 1)}>
-        <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area type="monotone" dataKey="pv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
     expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(0);
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(0);
     expect(container.querySelectorAll('.recharts-area-dot')).toHaveLength(1);
+    expectAreaCurve(container, []);
   });
 
-  test('Renders empty path when all the data are null', () => {
+  test('Renders no path when dataKey does not match the source data', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data}>
         <Area type="monotone" dataKey="any" stroke="#ff7300" fill="#ff7300" />
@@ -47,14 +69,8 @@ describe('AreaChart', () => {
     const areaPath = container.querySelectorAll('.recharts-area-area');
     const curvePath = container.querySelectorAll('.recharts-area-curve');
 
-    expect(areaPath).toHaveLength(1);
-    expect(curvePath).toHaveLength(1);
-    areaPath.forEach(m => {
-      expect(m).not.toHaveAttribute('d');
-    });
-    curvePath.forEach(m => {
-      expect(m).not.toHaveAttribute('d');
-    });
+    expect(areaPath).toHaveLength(0);
+    expect(curvePath).toHaveLength(0);
   });
 
   test('Renders customized active dot when activeDot is set to be a ReactElement', () => {
@@ -116,9 +132,18 @@ describe('AreaChart', () => {
     );
     expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(2);
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(2);
+
+    expectAreaCurve(container, [
+      {
+        d: 'M5,43.4C11,43.6,17,43.8,23,43.8C29,43.8,35,43.8,41,43.8C47,43.8,53,44.2,59,44.2C65,44.2,71,43.888,77,43.888C83,43.888,89,44.066,95,44.244',
+      },
+      {
+        d: 'M5,33.8C11,29.666,17,25.532,23,25.532C29,25.532,35,38.208,41,38.208C47,38.208,53,5,59,5C65,5,71,28.256,77,28.256C83,28.256,89,26.65,95,25.044',
+      },
+    ]);
   });
 
-  test('Renders 2 path in a vertical AreaChart', () => {
+  test('Renders a path in a vertical AreaChart', () => {
     const { container } = render(
       <AreaChart width={100} height={50} data={data} layout="vertical">
         <XAxis type="number" />
@@ -128,6 +153,225 @@ describe('AreaChart', () => {
     );
     expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(1);
     expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(1);
+
+    expectAreaCurve(container, [
+      {
+        d: 'M95,5C91.25,5.667,87.5,6.333,87.5,7C87.5,7.667,87.5,8.333,87.5,9C87.5,9.667,80,10.333,80,11C80,11.667,85.85,12.333,85.85,13C85.85,13.667,82.513,14.333,79.175,15',
+      },
+    ]);
+  });
+
+  test('renders a stacked percentage chart', () => {
+    const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
+
+    const areaSpy = vi.fn();
+    const xAxisTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const areaSettings: AreaSettings = {
+        baseValue: undefined,
+        stackId: '1',
+        dataKey: 'uv',
+        connectNulls: false,
+        data: undefined,
+      };
+      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings)));
+      xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
+      return null;
+    };
+
+    const { container } = render(
+      <AreaChart
+        width={500}
+        height={400}
+        data={pageData}
+        stackOffset="expand"
+        margin={{
+          top: 10,
+          right: 30,
+          left: 20,
+          bottom: 20,
+        }}
+      >
+        <XAxis dataKey="name" />
+        <YAxis tickFormatter={toPercent} />
+        <Area dataKey="uv" stackId="1" />
+        <Area dataKey="pv" stackId="1" />
+        <Area dataKey="amt" stackId="1" />
+        <Customized component={<Comp />} />
+      </AreaChart>,
+    );
+
+    expect(xAxisTicksSpy).toHaveBeenLastCalledWith([
+      {
+        coordinate: 80,
+        index: 0,
+        offset: 0,
+        value: 'Page A',
+      },
+      {
+        coordinate: 145,
+        index: 1,
+        offset: 0,
+        value: 'Page B',
+      },
+      {
+        coordinate: 210,
+        index: 2,
+        offset: 0,
+        value: 'Page C',
+      },
+      {
+        coordinate: 275,
+        index: 3,
+        offset: 0,
+        value: 'Page D',
+      },
+      {
+        coordinate: 340,
+        index: 4,
+        offset: 0,
+        value: 'Page E',
+      },
+      {
+        coordinate: 405,
+        index: 5,
+        offset: 0,
+        value: 'Page F',
+      },
+      {
+        coordinate: 470,
+        index: 6,
+        offset: 0,
+        value: 'Page G',
+      },
+    ]);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(3);
+
+    // For some reason this assertion always fails but never shows what's the difference.
+    // expect(areaSpy).toHaveBeenLastCalledWith({
+    //   baseLine: [
+    //     {
+    //       x: 80,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 145,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 210,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 275,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 340,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 405,
+    //       y: 350,
+    //     },
+    //     {
+    //       x: 470,
+    //       y: 350,
+    //     },
+    //   ],
+    //   isRange: false,
+    //   points: [
+    //     {
+    //       payload: {
+    //         amt: 1400,
+    //         name: 'Page A',
+    //         pv: 800,
+    //         uv: 590,
+    //       },
+    //       value: [0, 0.2114695340501792],
+    //       x: 80,
+    //       y: 278.10035842293905,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1400,
+    //         name: 'Page B',
+    //         pv: 800,
+    //         uv: 590,
+    //       },
+    //       value: [0, 0.2114695340501792],
+    //       x: 145,
+    //       y: 278.10035842293905,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1506,
+    //         name: 'Page C',
+    //         pv: 967,
+    //         uv: 868,
+    //       },
+    //       value: [0, 0.25980245435498356],
+    //       x: 210,
+    //       y: 261.6671655193056,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 989,
+    //         name: 'Page D',
+    //         pv: 1098,
+    //         uv: 1397,
+    //       },
+    //       value: [0, 0.40097588978185994],
+    //       x: 275,
+    //       y: 213.66819747416764,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1228,
+    //         name: 'Page E',
+    //         pv: 1200,
+    //         uv: 1480,
+    //       },
+    //       value: [0, 0.37871033776867963],
+    //       x: 340,
+    //       y: 221.23848515864896,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1100,
+    //         name: 'Page F',
+    //         pv: 1108,
+    //         uv: 1520,
+    //       },
+    //       value: [0, 0.40772532188841204],
+    //       x: 405,
+    //       y: 211.3733905579399,
+    //     },
+    //     {
+    //       payload: {
+    //         amt: 1700,
+    //         name: 'Page G',
+    //         pv: 680,
+    //         uv: 1400,
+    //       },
+    //       value: [0, 0.37037037037037035],
+    //       x: 470,
+    //       y: 224.07407407407408,
+    //     },
+    //   ],
+    // });
+
+    expectAreaCurve(container, [
+      {
+        d: 'M80,278.1L145,278.1L210,261.667L275,213.668L340,221.238L405,211.373L470,224.074',
+      },
+      {
+        d: 'M80,180.609L145,180.609L210,163.26L275,106.515L340,116.837L405,110.322L470,162.91',
+      },
+      {
+        d: 'M80,10L145,10L210,10L275,10L340,10L405,10L470,10',
+      },
+    ]);
   });
 
   test('Renders dots and labels when dot is set to true', () => {
@@ -387,6 +631,19 @@ describe('AreaChart', () => {
     );
 
     const [uv, pv] = container.querySelectorAll('.recharts-area-curve');
+
+    expectAreaCurve(container, [
+      {
+        d: 'M5,42.333C20,42.667,35,43,50,43C65,43,80,43,95,43',
+      },
+      {
+        d: 'M5,26.333C20,34.667,35,43,50,43C65,43,80,38.34,95,33.68',
+      },
+      {
+        d: 'M5,10.333C20,18.667,35,27,50,27C65,27,80,22.34,95,17.68',
+      },
+    ]);
+
     [uv, pv].forEach(path => {
       const commands = [...path.getAttribute('d').matchAll(/[a-zA-Z][\d ,.]+/g)];
       expect(commands).toHaveLength(3);

@@ -1454,7 +1454,12 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
   },
 );
 
-export const selectTicksOfAxis = createSelector(
+export const selectTicksOfAxis: (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
   [
     selectChartLayout,
     selectAxisSettings,
@@ -1478,7 +1483,7 @@ export const selectTicksOfAxis = createSelector(
     axisType,
   ): ReadonlyArray<CartesianTickItem> | null => {
     if (axis == null || scale == null) {
-      return null;
+      return undefined;
     }
 
     const isCategorical = isCategoricalAxis(layout, axisType);
