@@ -557,7 +557,13 @@ export class Bar extends PureComponent<Props> {
     offset,
   }: {
     props: Props;
+    /**
+     * @deprecated do not use - depends on passing around DOM elements
+     */
     item: ReactElement;
+    /**
+     * @deprecated do not use - depends on passing around DOM elements
+     */
     barPosition: ReadonlyArray<BarPosition>;
     bandSize: number;
     xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
