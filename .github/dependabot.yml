@@ -30,7 +30,7 @@ updates:
           - '@babel*'
       stryker:
         patterns:
-          - 'stryker*'
+          - '@stryker*'
       typescript-eslint:
         patterns:
           - '@typescript-eslint*'
