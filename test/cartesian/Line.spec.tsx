@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Surface, Line, ErrorBar, LineChart, Customized, XAxis } from '../../src';
+import { Line, ErrorBar, LineChart, Customized, XAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 
@@ -88,9 +88,9 @@ describe('<Line />', () => {
 
   it("Don't render any path when data is empty", () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Line points={[]} />
-      </Surface>,
+      <LineChart width={500} height={500}>
+        <Line data={[]} />
+      </LineChart>,
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);

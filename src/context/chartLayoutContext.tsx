@@ -229,7 +229,9 @@ export const useMargin = (): Margin => {
   return useAppSelector(state => state.layout.margin) ?? manyComponentsThrowErrorsIfMarginIsUndefined;
 };
 
-export const useUpdateId = () => `brush-${useContext(UpdateIdContext)}`;
+export type UpdateId = string;
+
+export const useUpdateId = (): UpdateId => `brush-${useContext(UpdateIdContext)}`;
 
 export const selectChartLayout = (state: RechartsRootState): LayoutType => state.layout.layoutType;
 

@@ -37,60 +37,97 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
+import { AxisId } from '../state/axisMapSlice';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
   readonly payload?: any;
 }
 
+/**
+ * Internal props, combination of external props + defaultProps + private Recharts state
+ */
 interface InternalLineProps {
-  needClip: boolean;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-  points: ReadonlyArray<LinePointItem>;
-  layout: 'horizontal' | 'vertical';
-}
+  activeDot: ActiveDotType;
+  animateNewValues: boolean;
+  animationBegin: number;
+  animationDuration: AnimationDuration;
+  animationEasing: AnimationTiming;
+  animationId: UpdateId;
 
-interface LineProps {
   className?: string;
+  connectNulls: boolean;
   data?: any;
+  dataKey?: DataKey<any>;
+  dot: ActiveDotType;
+  height?: number;
+  hide: boolean;
+  id?: string;
+  isAnimationActive: boolean;
+  label: ImplicitLabelType;
+  layout: 'horizontal' | 'vertical';
+  left?: number;
+  legendType: LegendType;
+
+  name?: string | number;
+  needClip?: boolean;
+
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+
+  points: ReadonlyArray<LinePointItem>;
+  tooltipType?: TooltipType;
+  top?: number;
   type?: CurveType;
   unit?: string | number;
-  name?: string | number;
-  yAxisId?: string | number;
-  xAxisId?: string | number;
-  dataKey?: DataKey<any>;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  connectNulls?: boolean;
-  hide?: boolean;
+  width?: number;
+  xAxisId: AxisId;
+  yAxisId: AxisId;
+}
 
+/**
+ * External props, intended for end users to fill in
+ */
+interface LineProps {
   activeDot?: ActiveDotType;
-  dot?: ActiveDotType;
-
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
-
-  isAnimationActive?: boolean;
   animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
-  animationId?: number;
+  className?: string;
+  connectNulls?: boolean;
+  data?: any;
+  dataKey?: DataKey<any>;
+  dot?: ActiveDotType;
+  hide?: boolean;
+
   id?: string;
+  isAnimationActive?: boolean;
+
   label?: ImplicitLabelType;
+  legendType?: LegendType;
+
+  name?: string | number;
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+  tooltipType?: TooltipType;
+  type?: CurveType;
+  unit?: string | number;
+  xAxisId?: AxisId;
+  yAxisId?: AxisId;
 }
 
+/**
+ * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
+ */
 type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef'>;
 
-type InternalProps = LineSvgProps & InternalLineProps & LineProps;
+type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props = LineSvgProps & LineProps;
 
@@ -99,7 +136,7 @@ interface State {
   totalLength?: number;
   prevPoints?: ReadonlyArray<LinePointItem>;
   curPoints?: ReadonlyArray<LinePointItem>;
-  prevAnimationId?: number;
+  prevAnimationId?: UpdateId;
 }
 
 type LineComposedData = ChartOffset & {
@@ -507,22 +544,74 @@ class LineWithState extends Component<InternalProps, State> {
   }
 }
 
+const defaultLineProps: Partial<Props> = {
+  activeDot: true,
+  animateNewValues: true,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  connectNulls: false,
+  dot: true,
+  fill: '#fff',
+  hide: false,
+  isAnimationActive: !Global.isSsr,
+  label: false,
+  legendType: 'line',
+  stroke: '#3182bd',
+  strokeWidth: 1,
+  xAxisId: 0,
+  yAxisId: 0,
+};
+
 function LineImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const { ref, ...everythingElse } = props;
   const { height, width, left, top } = useOffset();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
-  const points = useAppSelector(state =>
+  const points: ReadonlyArray<LinePointItem> = useAppSelector(state =>
     selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, { dataKey: props.dataKey, data: props.data }),
   );
+  const updateId = useUpdateId();
   if (layout !== 'horizontal' && layout !== 'vertical') {
     // Cannot render Line in an unsupported layout
     return null;
   }
+
+  const {
+    ref,
+    activeDot = defaultLineProps.activeDot,
+    animateNewValues = defaultLineProps.animateNewValues,
+    animationBegin = defaultLineProps.animationBegin,
+    animationDuration = defaultLineProps.animationDuration,
+    animationEasing = defaultLineProps.animationEasing,
+    connectNulls = defaultLineProps.connectNulls,
+    dot = defaultLineProps.dot,
+    hide = defaultLineProps.hide,
+    isAnimationActive = defaultLineProps.isAnimationActive,
+    label = defaultLineProps.label,
+    legendType = defaultLineProps.legendType,
+    xAxisId = defaultLineProps.xAxisId,
+    yAxisId = defaultLineProps.yAxisId,
+    ...everythingElse
+  } = props;
+
   return (
     <LineWithState
       {...everythingElse}
+      connectNulls={connectNulls}
+      dot={dot}
+      activeDot={activeDot}
+      animateNewValues={animateNewValues}
+      animationBegin={animationBegin}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
+      isAnimationActive={isAnimationActive}
+      hide={hide}
+      label={label}
+      legendType={legendType}
+      xAxisId={xAxisId}
+      yAxisId={yAxisId}
+      animationId={updateId}
       points={points}
       layout={layout}
       height={height}
@@ -578,25 +667,7 @@ export function computeLinePoints({
 export class Line extends PureComponent<Props> {
   static displayName = 'Line';
 
-  static defaultProps = {
-    xAxisId: 0,
-    yAxisId: 0,
-    connectNulls: false,
-    activeDot: true,
-    dot: true,
-    legendType: 'line',
-    stroke: '#3182bd',
-    strokeWidth: 1,
-    fill: '#fff',
-    points: [] as ReadonlyArray<LinePointItem>,
-    isAnimationActive: !Global.isSsr,
-    animateNewValues: true,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-    hide: false,
-    label: false,
-  };
+  static defaultProps = defaultLineProps;
 
   /**
    * Compose the data of each group

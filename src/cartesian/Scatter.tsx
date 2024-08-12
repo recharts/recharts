@@ -49,7 +49,7 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
-import { useUpdateId } from '../context/chartLayoutContext';
+import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 interface ScatterPointNode {
@@ -95,7 +95,7 @@ interface ScatterInternalProps {
   label?: ImplicitLabelListType<any>;
 
   isAnimationActive: boolean;
-  animationId: string;
+  animationId: UpdateId;
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
@@ -585,25 +585,40 @@ function ScatterImpl(props: Props) {
   const points = useAppSelector(state => {
     return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells, isPanorama);
   });
-  const { ref, xAxisId, ...everythingElse } = props;
+  const {
+    animationBegin = defaultScatterProps.animationBegin,
+    animationDuration = defaultScatterProps.animationDuration,
+    animationEasing = defaultScatterProps.animationEasing,
+    hide = defaultScatterProps.hide,
+    isAnimationActive = defaultScatterProps.isAnimationActive,
+    legendType = defaultScatterProps.legendType,
+    lineJointType = defaultScatterProps.lineJointType,
+    lineType = defaultScatterProps.lineType,
+    ref,
+    shape = defaultScatterProps.shape,
+    xAxisId = defaultScatterProps.xAxisId,
+    yAxisId = defaultScatterProps.yAxisId,
+    zAxisId = defaultScatterProps.zAxisId,
+    ...everythingElse
+  } = props;
 
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
       <ScatterWithState
         {...everythingElse}
-        xAxisId={props.xAxisId ?? defaultScatterProps.xAxisId}
-        yAxisId={props.yAxisId ?? defaultScatterProps.yAxisId}
-        zAxisId={props.zAxisId ?? defaultScatterProps.zAxisId}
-        lineType={props.lineType ?? defaultScatterProps.lineType}
-        lineJointType={props.lineJointType ?? defaultScatterProps.lineJointType}
-        legendType={props.legendType ?? defaultScatterProps.legendType}
-        shape={props.shape ?? defaultScatterProps.shape}
-        hide={props.hide ?? defaultScatterProps.hide}
-        isAnimationActive={props.isAnimationActive ?? defaultScatterProps.isAnimationActive}
-        animationBegin={props.animationBegin ?? defaultScatterProps.animationBegin}
-        animationDuration={props.animationDuration ?? defaultScatterProps.animationDuration}
-        animationEasing={props.animationEasing ?? defaultScatterProps.animationEasing}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
+        zAxisId={zAxisId}
+        lineType={lineType}
+        lineJointType={lineJointType}
+        legendType={legendType}
+        shape={shape}
+        hide={hide}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
         points={points}
         needClip={needClip}
         animationId={updateId}

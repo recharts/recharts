@@ -6,7 +6,7 @@ import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
+import { data, General as GeneralProps } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
 
 export default {
@@ -15,17 +15,11 @@ export default {
     ...AnimationProps,
     legendType,
     ...GeneralProps,
-    ...Internal,
+    data,
     ...ResponsiveProps,
     ...LineStyle,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    // Other
-    baseLine: { table: { category: 'Other' } },
-    left: { table: { category: 'Other' } },
-    top: { table: { category: 'Other' } },
-    xAxis: { table: { category: 'Other' } },
-    yAxis: { table: { category: 'Other' } },
   },
   component: Line,
 };

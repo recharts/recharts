@@ -165,13 +165,7 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import {
-  animationBegin,
-  animationDuration,
-  animationEasing,
-  animationId,
-  isAnimationActive,
-} from '../props/AnimationProps';
+import { animationBegin, animationDuration, animationEasing, isAnimationActive } from '../props/AnimationProps';
 import { hide } from '../props/Styles';
 import { legendType } from '../props/Legend';
 import { StorybookArgs } from '../../../StorybookArgs';
@@ -343,7 +337,6 @@ const AnimationProps = {
   animationBegin,
   animationDuration,
   animationEasing,
-  animationId,
   isAnimationActive,
 };
 
