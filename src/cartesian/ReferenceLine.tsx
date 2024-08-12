@@ -10,20 +10,25 @@ import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';
 import { isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
-import { CartesianViewBox, D3Scale } from '../util/types';
+import { CartesianViewBox } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
 import { useClipPathId, useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { selectAxisScale, selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
+import {
+  BaseAxisWithScale,
+  selectAxisScale,
+  selectXAxisSettings,
+  selectYAxisSettings,
+} from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: BaseAxisWithScale;
+  yAxis?: BaseAxisWithScale;
   clipPathId?: number | string;
 }
 

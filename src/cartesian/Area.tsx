@@ -17,15 +17,12 @@ import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolateNumber, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
-import { Props as XAxisProps } from './XAxis';
-import { Props as YAxisProps } from './YAxis';
 import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
   Coordinate,
-  D3Scale,
   DataKey,
   LayoutType,
   LegendType,
@@ -40,6 +37,8 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
+import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { ChartData } from '../state/chartDataSlice';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -106,12 +105,16 @@ interface State {
   totalLength?: number;
 }
 
-type AreaComposedData = ChartOffset & {
-  points?: ReadonlyArray<AreaPointItem>;
-  baseLine?: number | Coordinate[];
-  layout: LayoutType;
+type ComputedArea = {
+  points: ReadonlyArray<AreaPointItem>;
+  baseLine: number | Coordinate[];
   isRange: boolean;
 };
+
+type AreaComposedData = ComputedArea &
+  ChartOffset & {
+    layout: LayoutType;
+  };
 
 function getLegendItemColor(stroke: string | undefined, fill: string): string {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -537,8 +540,8 @@ export const getBaseValue = (
   layout: 'horizontal' | 'vertical',
   chartBaseValue: BaseValue | undefined,
   itemBaseValue: BaseValue | undefined,
-  xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
-  yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+  xAxis: BaseAxisWithScale,
+  yAxis: BaseAxisWithScale,
 ): number => {
   // The baseValue can be defined both on the AreaChart as well as on the Area.
   // The value for the item takes precedence.
@@ -549,7 +552,8 @@ export const getBaseValue = (
   }
 
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-  const domain = numericAxis.scale.domain();
+  // @ts-expect-error d3scale .domain() returns unknown, Math.max expects number
+  const domain: [number, number] = numericAxis.scale.domain();
 
   if (numericAxis.type === 'number') {
     const domainMax = Math.max(domain[0], domain[1]);
@@ -574,6 +578,104 @@ export const getBaseValue = (
 
   return domain[0];
 };
+
+type AreaSettings = {
+  connectNulls: boolean;
+  baseValue: BaseValue | undefined;
+  dataKey: DataKey<any>;
+};
+
+export function computeArea({
+  areaSettings: { connectNulls, baseValue: itemBaseValue, dataKey },
+  stackedData,
+  layout,
+  chartBaseValue,
+  xAxis,
+  yAxis,
+  displayedData,
+  dataStartIndex,
+  xAxisTicks,
+  yAxisTicks,
+  bandSize,
+}: {
+  areaSettings: AreaSettings;
+  stackedData: number[][];
+  layout: 'horizontal' | 'vertical';
+  chartBaseValue: BaseValue | undefined;
+  xAxis: BaseAxisWithScale;
+  yAxis: BaseAxisWithScale;
+  displayedData: ChartData;
+  dataStartIndex: number;
+  xAxisTicks: TickItem[];
+  yAxisTicks: TickItem[];
+  bandSize: number;
+}): ComputedArea {
+  const hasStack = stackedData && stackedData.length;
+  const baseValue = getBaseValue(layout, chartBaseValue, itemBaseValue, xAxis, yAxis);
+  const isHorizontalLayout = layout === 'horizontal';
+  let isRange = false;
+
+  const points = displayedData.map((entry, index) => {
+    let value;
+
+    if (hasStack) {
+      value = stackedData[dataStartIndex + index];
+    } else {
+      value = getValueByDataKey(entry, dataKey);
+
+      if (!Array.isArray(value)) {
+        value = [baseValue, value];
+      } else {
+        isRange = true;
+      }
+    }
+
+    const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
+
+    if (isHorizontalLayout) {
+      return {
+        // @ts-expect-error getCateCoordinateOfLine expects chart data to be an object, we allow unknown
+        x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
+        y: isBreakPoint ? null : yAxis.scale(value[1]),
+        value,
+        payload: entry,
+      };
+    }
+
+    return {
+      x: isBreakPoint ? null : xAxis.scale(value[1]),
+      // @ts-expect-error getCateCoordinateOfLine expects chart data to be an object, we allow unknown
+      y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
+      value,
+      payload: entry,
+    };
+  });
+
+  let baseLine;
+  if (hasStack || isRange) {
+    baseLine = points.map((entry: AreaPointItem) => {
+      const x = Array.isArray(entry.value) ? entry.value[0] : null;
+      if (isHorizontalLayout) {
+        return {
+          x: entry.x,
+          y: x != null && entry.y != null ? yAxis.scale(x) : null,
+        };
+      }
+      return {
+        x: x != null ? xAxis.scale(x) : null,
+        y: entry.y,
+      };
+    });
+  } else {
+    baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
+  }
+
+  return {
+    points,
+    baseLine,
+    isRange,
+  };
+}
 
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
@@ -606,7 +708,6 @@ export class Area extends PureComponent<Props, State> {
     xAxisTicks,
     yAxisTicks,
     bandSize,
-    dataKey,
     stackedData,
     dataStartIndex,
     displayedData,
@@ -615,76 +716,29 @@ export class Area extends PureComponent<Props, State> {
     props: Props;
     item: Area;
     bandSize: number;
-    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+    xAxis: BaseAxisWithScale;
+    yAxis: BaseAxisWithScale;
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
     stackedData: number[][];
     dataStartIndex: number;
     offset: ChartOffset;
     displayedData: any[];
-    dataKey: Props['dataKey'];
   }): AreaComposedData => {
     const { layout } = props;
-    const { connectNulls } = item.props;
-    const hasStack = stackedData && stackedData.length;
-    const baseValue = getBaseValue(layout, props.baseValue, item.props.baseValue, xAxis, yAxis);
-    const isHorizontalLayout = layout === 'horizontal';
-    let isRange = false;
-
-    const points = displayedData.map((entry, index) => {
-      let value;
-
-      if (hasStack) {
-        value = stackedData[dataStartIndex + index];
-      } else {
-        value = getValueByDataKey(entry, dataKey);
-
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
-        } else {
-          isRange = true;
-        }
-      }
-
-      const isBreakPoint = value[1] == null || (hasStack && !connectNulls && getValueByDataKey(entry, dataKey) == null);
-
-      if (isHorizontalLayout) {
-        return {
-          x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-          y: isBreakPoint ? null : yAxis.scale(value[1]),
-          value,
-          payload: entry,
-        };
-      }
-
-      return {
-        x: isBreakPoint ? null : xAxis.scale(value[1]),
-        y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
-        value,
-        payload: entry,
-      };
+    const { points, baseLine, isRange } = computeArea({
+      // @ts-expect-error some properties are marked as optional even though defaultProps would have filled it in by now
+      areaSettings: item.props,
+      xAxis,
+      yAxis,
+      xAxisTicks,
+      yAxisTicks,
+      displayedData,
+      layout,
+      stackedData,
+      dataStartIndex,
+      bandSize,
     });
-
-    let baseLine;
-    if (hasStack || isRange) {
-      baseLine = points.map((entry: AreaPointItem) => {
-        const x = Array.isArray(entry.value) ? entry.value[0] : null;
-        if (isHorizontalLayout) {
-          return {
-            x: entry.x,
-            y: x != null && entry.y != null ? yAxis.scale(x) : null,
-          };
-        }
-        return {
-          x: x != null ? xAxis.scale(x) : null,
-          y: entry.y,
-        };
-      });
-    } else {
-      baseLine = isHorizontalLayout ? yAxis.scale(baseValue) : xAxis.scale(baseValue);
-    }
-
     return { points, baseLine, layout, isRange, ...offset };
   };
 

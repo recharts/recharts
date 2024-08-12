@@ -1,19 +1,19 @@
 import React, { ComponentType, FC, ReactNode } from 'react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Area, Customized, XAxis, YAxis } from '../../src';
 import { getBaseValue, Props } from '../../src/cartesian/Area';
-import { D3Scale, LayoutType } from '../../src/util/types';
+import { LayoutType } from '../../src/util/types';
 import {
+  allCategoricalsChartsExcept,
   AreaChartCase,
   ComposedChartCase,
-  allCategoricalsChartsExcept,
   includingCompact,
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { Props as YAxisProps } from '../../src/cartesian/YAxis';
-import { Props as XAxisProps } from '../../src/cartesian/XAxis';
+import { BaseAxisWithScale, implicitYAxis } from '../../src/state/selectors/axisSelectors';
+import { mockXAxisWithScale, mockYAxisWithScale } from '../helper/mockAxes';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -548,42 +548,29 @@ describe.each(chartsThatDoNotSupportArea)('<Area /> as a child of $testName', ({
 describe('getBaseValue', () => {
   describe('when defined explicitly in props', () => {
     it('should return number if baseValue is a number', () => {
-      // @ts-expect-error incomplete mock
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      // @ts-expect-error incomplete mock
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue('horizontal', undefined, 8, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', undefined, 8, mockXAxisWithScale, mockYAxisWithScale);
       expect(actual).toBe(8);
     });
 
     it('should read baseValue from chart props, if item.props.baseValue is undefined', () => {
-      // @ts-expect-error incomplete mock
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      // @ts-expect-error incomplete mock
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue('horizontal', 9, undefined, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', 9, undefined, mockXAxisWithScale, mockYAxisWithScale);
       expect(actual).toBe(9);
     });
 
     it('should prefer baseValue from Area props, if both are provided', () => {
-      // @ts-expect-error incomplete mock
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      // @ts-expect-error incomplete mock
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const actual = getBaseValue('horizontal', 9, 10, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', 9, 10, mockXAxisWithScale, mockYAxisWithScale);
       expect(actual).toBe(10);
     });
 
     it('should return number from domain when baseValue is NaN', () => {
-      // @ts-expect-error incomplete mock
-      const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-      const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+      const yAxis: BaseAxisWithScale = {
+        ...implicitYAxis,
         scale: {
           // @ts-expect-error incomplete mock
           domain: () => [30, 40],
         },
       };
-      const actual = getBaseValue('horizontal', undefined, NaN, xAxis, yAxis);
+      const actual = getBaseValue('horizontal', undefined, NaN, mockXAxisWithScale, yAxis);
       expect(actual).toBe(30);
     });
   });
@@ -625,38 +612,36 @@ describe('getBaseValue', () => {
         axisType: undefined,
       },
     ];
+
     describe('in horizontal layout uses Y axis', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const yAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          const actual = getBaseValue('horizontal', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
           expect(actual).toBe(expected);
         },
       );
     });
+
     describe('in vertical layout behaves the same but uses X axis instead of Y', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const xAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          // @ts-expect-error incomplete mock
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
           expect(actual).toBe(expected);
         },
       );
@@ -705,16 +690,14 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const yAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          const actual = getBaseValue('horizontal', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -723,16 +706,14 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const xAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          // @ts-expect-error incomplete mock
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
           expect(actual).toBe(expected);
         },
       );
@@ -784,16 +765,14 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          // @ts-expect-error incomplete mock
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const yAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          const actual = getBaseValue('horizontal', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('horizontal', baseValue, baseValue, mockXAxisWithScale, yAxis);
           expect(actual).toBe(expected);
         },
       );
@@ -802,16 +781,14 @@ describe('getBaseValue', () => {
       test.each(testCases)(
         'should return $expected when $axisType axis domain is $domain',
         ({ domain, axisType, expected }) => {
-          const xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {
+          const xAxis: BaseAxisWithScale = {
             scale: {
               // @ts-expect-error incomplete mock
               domain: () => domain,
             },
             type: axisType,
           };
-          // @ts-expect-error incomplete mock
-          const yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> } = {};
-          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, yAxis);
+          const actual = getBaseValue('vertical', baseValue, baseValue, xAxis, mockYAxisWithScale);
           expect(actual).toBe(expected);
         },
       );
@@ -825,305 +802,255 @@ describe('getComposedData', () => {
   const mockScale2 = (n: number) => n * 3;
   mockScale2.domain = () => [0, 'auto'];
 
-  describe('points generator', () => {
-    it('should return empty points if displayedData is empty array', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [],
-        // @ts-expect-error incomplete mock
-        props: { layout: 'horizontal' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale },
-      });
-      expect(points).toEqual([]);
+  it('should return empty points if displayedData is empty array', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [],
+      // @ts-expect-error incomplete mock
+      props: { layout: 'horizontal' },
+      // @ts-expect-error incomplete mock
+      item: { props: {} },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
     });
+    expect(points).toEqual([]);
+  });
 
-    it('should return displayedData mapped with getCateCoordinateOfLine in horizontal layout', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-        dataKey: 'v',
-        // @ts-expect-error incomplete mock
-        props: { layout: 'horizontal' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale },
-        // @ts-expect-error incomplete mock
-        xAxis: { scale: mockScale2, dataKey: 'v' },
-      });
-      expect(points).toMatchInlineSnapshot(`
-      [
-        {
-          "payload": {
-            "v": 1,
-          },
-          "value": [
-            0,
-            1,
-          ],
-          "x": 3,
-          "y": 2,
-        },
-        {
-          "payload": {
-            "v": 2,
-          },
-          "value": [
-            0,
-            2,
-          ],
-          "x": 6,
-          "y": 4,
-        },
-        {
-          "payload": {
-            "v": 3,
-          },
-          "value": [
-            0,
-            3,
-          ],
-          "x": 9,
-          "y": 6,
-        },
-      ]
-    `);
+  it('should return displayedData mapped with getCateCoordinateOfLine in horizontal layout', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      // @ts-expect-error incomplete mock
+      props: { layout: 'horizontal' },
+      // @ts-expect-error incomplete mock
+      item: { props: { dataKey: 'v' } },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2, dataKey: 'v' },
     });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [0, 1],
+        x: 3,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [0, 2],
+        x: 6,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [0, 3],
+        x: 9,
+        y: 6,
+      },
+    ]);
+  });
 
-    it('should return displayedData mapped with getCateCoordinateOfLine in vertical layout', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-        dataKey: 'v',
-        // @ts-expect-error incomplete mock
-        props: { layout: 'vertical' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale, dataKey: 'v' },
-        // @ts-expect-error incomplete mock
-        xAxis: { scale: mockScale2 },
-      });
-      expect(points).toMatchInlineSnapshot(`
-      [
-        {
-          "payload": {
-            "v": 1,
-          },
-          "value": [
-            0,
-            1,
-          ],
-          "x": 3,
-          "y": 2,
+  it('should return displayedData mapped with getCateCoordinateOfLine in vertical layout', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      // @ts-expect-error incomplete mock
+      props: { layout: 'vertical' },
+      // @ts-expect-error incomplete mock
+      item: { props: { dataKey: 'v' } },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale, dataKey: 'v' },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
         },
-        {
-          "payload": {
-            "v": 2,
-          },
-          "value": [
-            0,
-            2,
-          ],
-          "x": 6,
-          "y": 4,
+        value: [0, 1],
+        x: 3,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
         },
-        {
-          "payload": {
-            "v": 3,
-          },
-          "value": [
-            0,
-            3,
-          ],
-          "x": 9,
-          "y": 6,
+        value: [0, 2],
+        x: 6,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
         },
-      ]
-    `);
-    });
+        value: [0, 3],
+        x: 9,
+        y: 6,
+      },
+    ]);
+  });
 
-    it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in horizontal chart', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-        stackedData: [
-          [1, 2],
-          [2, 4],
-          [3, 6],
-          [4, 8],
-          [5, 10],
-          [6, 12],
-        ],
-        dataKey: 'v',
-        dataStartIndex: 0,
-        // @ts-expect-error incomplete mock
-        props: { layout: 'horizontal' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale },
-        // @ts-expect-error incomplete mock
-        xAxis: { scale: mockScale2, dataKey: 'v' },
-      });
-      expect(points).toMatchInlineSnapshot(`
-        [
-          {
-            "payload": {
-              "v": 1,
-            },
-            "value": [
-              1,
-              2,
-            ],
-            "x": 3,
-            "y": 4,
-          },
-          {
-            "payload": {
-              "v": 2,
-            },
-            "value": [
-              2,
-              4,
-            ],
-            "x": 6,
-            "y": 8,
-          },
-          {
-            "payload": {
-              "v": 3,
-            },
-            "value": [
-              3,
-              6,
-            ],
-            "x": 9,
-            "y": 12,
-          },
-        ]
-      `);
+  it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in horizontal chart', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      // @ts-expect-error incomplete mock
+      props: { layout: 'horizontal' },
+      // @ts-expect-error incomplete mock
+      item: {
+        props: {
+          dataKey: 'v',
+        },
+      },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2, dataKey: 'v' },
     });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 3,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 6,
+        y: 8,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 9,
+        y: 12,
+      },
+    ]);
+  });
 
-    it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in vertical chart', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-        stackedData: [
-          [1, 2],
-          [2, 4],
-          [3, 6],
-          [4, 8],
-          [5, 10],
-          [6, 12],
-        ],
-        dataKey: 'v',
-        dataStartIndex: 0,
-        // @ts-expect-error incomplete mock
-        props: { layout: 'vertical' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale, dataKey: 'v' },
-        // @ts-expect-error incomplete mock
-        xAxis: { scale: mockScale2 },
-      });
-      expect(points).toMatchInlineSnapshot(`
-        [
-          {
-            "payload": {
-              "v": 1,
-            },
-            "value": [
-              1,
-              2,
-            ],
-            "x": 6,
-            "y": 2,
-          },
-          {
-            "payload": {
-              "v": 2,
-            },
-            "value": [
-              2,
-              4,
-            ],
-            "x": 12,
-            "y": 4,
-          },
-          {
-            "payload": {
-              "v": 3,
-            },
-            "value": [
-              3,
-              6,
-            ],
-            "x": 18,
-            "y": 6,
-          },
-        ]
-      `);
+  it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in vertical chart', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      // @ts-expect-error incomplete mock
+      props: { layout: 'vertical' },
+      // @ts-expect-error incomplete mock
+      item: {
+        props: {
+          dataKey: 'v',
+        },
+      },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale, dataKey: 'v' },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
     });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 6,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 12,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 18,
+        y: 6,
+      },
+    ]);
+  });
 
-    it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
-      const { points } = Area.getComposedData({
-        displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-        stackedData: [
-          [1, 2],
-          [2, 4],
-          [3, 6],
-          [4, 8],
-          [5, 10],
-          [6, 12],
-        ],
-        dataKey: 'v',
-        dataStartIndex: 0,
-        // @ts-expect-error incomplete mock
-        props: { layout: 'vertical' },
-        // @ts-expect-error incomplete mock
-        item: { props: {} },
-        // @ts-expect-error incomplete mock
-        yAxis: { scale: mockScale },
-        // @ts-expect-error incomplete mock
-        xAxis: { scale: mockScale2 },
-      });
-      expect(points).toMatchInlineSnapshot(`
-        [
-          {
-            "payload": {
-              "v": 1,
-            },
-            "value": [
-              1,
-              2,
-            ],
-            "x": 6,
-            "y": null,
-          },
-          {
-            "payload": {
-              "v": 2,
-            },
-            "value": [
-              2,
-              4,
-            ],
-            "x": 12,
-            "y": null,
-          },
-          {
-            "payload": {
-              "v": 3,
-            },
-            "value": [
-              3,
-              6,
-            ],
-            "x": 18,
-            "y": null,
-          },
-        ]
-      `);
+  it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
+    const { points } = Area.getComposedData({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      // @ts-expect-error incomplete mock
+      props: { layout: 'vertical' },
+      // @ts-expect-error incomplete mock
+      item: {
+        props: {
+          dataKey: 'v',
+        },
+      },
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
     });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 6,
+        y: null,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 12,
+        y: null,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 18,
+        y: null,
+      },
+    ]);
   });
 });
