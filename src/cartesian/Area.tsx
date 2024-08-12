@@ -41,6 +41,8 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 
+export type BaseValue = number | 'dataMin' | 'dataMax';
+
 interface AreaPointItem extends CurvePoint {
   value?: number | number[];
   payload?: any;
@@ -52,7 +54,7 @@ interface InternalAreaProps {
   left?: number;
   width?: number;
   height?: number;
-  points?: AreaPointItem[];
+  points?: ReadonlyArray<AreaPointItem>;
   baseLine?: number | Coordinate[];
 }
 
@@ -77,7 +79,7 @@ interface AreaProps extends InternalAreaProps {
   label?: any;
   layout?: 'horizontal' | 'vertical';
   hide?: boolean;
-  baseValue?: number | 'dataMin' | 'dataMax';
+  baseValue?: BaseValue;
   isRange?: boolean;
 
   onAnimationStart?: () => void;
@@ -96,16 +98,16 @@ export type Props = Omit<SVGProps<SVGElement>, 'type' | 'points'> & AreaProps;
 
 interface State {
   prevAnimationId?: number;
-  prevPoints?: AreaPointItem[];
+  prevPoints?: ReadonlyArray<AreaPointItem>;
   prevBaseLine?: number | Coordinate[];
-  curPoints?: AreaPointItem[];
+  curPoints?: ReadonlyArray<AreaPointItem>;
   curBaseLine?: number | Coordinate[];
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
 
 type AreaComposedData = ChartOffset & {
-  points?: AreaPointItem[];
+  points?: ReadonlyArray<AreaPointItem>;
   baseLine?: number | Coordinate[];
   layout: LayoutType;
   isRange: boolean;
@@ -152,6 +154,21 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
     },
   };
 }
+
+const renderDotItem = (option: ActiveDotType, props: any) => {
+  let dotItem;
+
+  if (React.isValidElement(option)) {
+    dotItem = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dotItem = option(props);
+  } else {
+    const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
+    dotItem = <Dot {...props} className={className} />;
+  }
+
+  return dotItem;
+};
 
 class AreaWithState extends PureComponent<Props, State> {
   state: State = {
@@ -226,8 +243,7 @@ class AreaWithState extends PureComponent<Props, State> {
         points,
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      return Area.renderDotItem(dot, dotProps);
+      return renderDotItem(dot, dotProps);
     });
     const dotsProps = {
       clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
@@ -303,7 +319,12 @@ class AreaWithState extends PureComponent<Props, State> {
     return this.renderHorizontalRect(alpha);
   }
 
-  renderAreaStatically(points: AreaPointItem[], baseLine: Props['baseLine'], needClip: boolean, clipPathId: string) {
+  renderAreaStatically(
+    points: ReadonlyArray<AreaPointItem>,
+    baseLine: Props['baseLine'],
+    needClip: boolean,
+    clipPathId: string,
+  ) {
     const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
 
     return (
@@ -512,6 +533,48 @@ function AreaImpl(props: Props) {
   return <AreaWithState {...everythingElse} needClip={needClip} />;
 }
 
+export const getBaseValue = (
+  layout: 'horizontal' | 'vertical',
+  chartBaseValue: BaseValue | undefined,
+  itemBaseValue: BaseValue | undefined,
+  xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+  yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
+): number => {
+  // The baseValue can be defined both on the AreaChart as well as on the Area.
+  // The value for the item takes precedence.
+  const baseValue = itemBaseValue ?? chartBaseValue;
+
+  if (isNumber(baseValue) && typeof baseValue === 'number') {
+    return baseValue;
+  }
+
+  const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+  const domain = numericAxis.scale.domain();
+
+  if (numericAxis.type === 'number') {
+    const domainMax = Math.max(domain[0], domain[1]);
+    const domainMin = Math.min(domain[0], domain[1]);
+
+    if (baseValue === 'dataMin') {
+      return domainMin;
+    }
+    if (baseValue === 'dataMax') {
+      return domainMax;
+    }
+
+    return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
+  }
+
+  if (baseValue === 'dataMin') {
+    return domain[0];
+  }
+  if (baseValue === 'dataMax') {
+    return domain[1];
+  }
+
+  return domain[0];
+};
+
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
@@ -524,7 +587,7 @@ export class Area extends PureComponent<Props, State> {
     legendType: 'line',
     connectNulls: false,
     // points of area
-    points: [] as AreaPointItem[],
+    points: [] as ReadonlyArray<AreaPointItem>,
     dot: false,
     activeDot: true,
     hide: false,
@@ -533,50 +596,6 @@ export class Area extends PureComponent<Props, State> {
     animationBegin: 0,
     animationDuration: 1500,
     animationEasing: 'ease',
-  };
-
-  static getBaseValue = (
-    props: Props,
-    item: Area,
-    xAxis: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> },
-    yAxis: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> },
-  ): number => {
-    const { layout, baseValue: chartBaseValue } = props;
-    const { baseValue: itemBaseValue } = item.props;
-
-    // The baseValue can be defined both on the AreaChart as well as on the Area.
-    // The value for the item takes precedence.
-    const baseValue = itemBaseValue ?? chartBaseValue;
-
-    if (isNumber(baseValue) && typeof baseValue === 'number') {
-      return baseValue;
-    }
-
-    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-    const domain = numericAxis.scale.domain();
-
-    if (numericAxis.type === 'number') {
-      const domainMax = Math.max(domain[0], domain[1]);
-      const domainMin = Math.min(domain[0], domain[1]);
-
-      if (baseValue === 'dataMin') {
-        return domainMin;
-      }
-      if (baseValue === 'dataMax') {
-        return domainMax;
-      }
-
-      return domainMax < 0 ? domainMax : Math.max(Math.min(domain[0], domain[1]), 0);
-    }
-
-    if (baseValue === 'dataMin') {
-      return domain[0];
-    }
-    if (baseValue === 'dataMax') {
-      return domain[1];
-    }
-
-    return domain[0];
   };
 
   static getComposedData = ({
@@ -609,7 +628,7 @@ export class Area extends PureComponent<Props, State> {
     const { layout } = props;
     const { connectNulls } = item.props;
     const hasStack = stackedData && stackedData.length;
-    const baseValue = Area.getBaseValue(props, item, xAxis, yAxis);
+    const baseValue = getBaseValue(layout, props.baseValue, item.props.baseValue, xAxis, yAxis);
     const isHorizontalLayout = layout === 'horizontal';
     let isRange = false;
 
@@ -667,21 +686,6 @@ export class Area extends PureComponent<Props, State> {
     }
 
     return { points, baseLine, layout, isRange, ...offset };
-  };
-
-  static renderDotItem = (option: ActiveDotType, props: any) => {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
-      dotItem = <Dot {...props} className={className} />;
-    }
-
-    return dotItem;
   };
 
   render() {
