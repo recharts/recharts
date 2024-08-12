@@ -81,6 +81,7 @@
   "lib/state/selectors/containerSelectors.js",
   "lib/state/selectors/brushSelectors.js",
   "lib/state/selectors/axisSelectors.js",
+  "lib/state/selectors/areaSelectors.js",
   "lib/shape/Trapezoid.js",
   "lib/shape/Symbols.js",
   "lib/shape/Sector.js",
