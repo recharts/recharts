@@ -267,7 +267,7 @@ function BarRectangles(props: BarRectanglesProps) {
 
   return (
     <>
-      {data.map((entry, i) => {
+      {data.map((entry: BarRectangleItem, i: number) => {
         const isActive = isTooltipActive && activeBar && i === activeIndex;
         const option = isActive ? activeBar : shape;
         const barRectangleProps = {
