@@ -822,7 +822,7 @@ describe('<BarChart />', () => {
     // expect nothing to render because height and width are 0
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
 
-    const clipPath = container.querySelector('#recharts56-clip');
+    const clipPath = container.querySelector('defs clipPath');
     assertNotNull(clipPath);
     expect(clipPath.children[0]).not.toBeNull();
 
