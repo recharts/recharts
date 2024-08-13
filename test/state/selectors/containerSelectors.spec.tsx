@@ -1,13 +1,13 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { getMockDomRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
 import { RechartsHTMLContainer, setContainer } from '../../../src/state/layoutSlice';
 import {
-  selectRootContainerDomRect,
   selectContainerScale,
   selectMargin,
+  selectRootContainerDomRect,
 } from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import { BarChart, Customized } from '../../../src';

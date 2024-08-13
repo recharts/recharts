@@ -220,6 +220,9 @@ export const getMainColorOfGraphicItem = (item: {
   return result;
 };
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type BarSetup = {
   barSize: number | string;
   stackList: ReadonlyArray<ReactElement>;
@@ -227,6 +230,8 @@ export type BarSetup = {
 };
 
 /**
+ * @deprecated do not use - depends on passing around DOM elements
+ *
  * Calculate the size of all groups for stacked bar graph
  * @param  {Object} stackGroups The items grouped by axisId and stackId
  * @return {Object} The size of all groups
@@ -237,6 +242,9 @@ export const getBarSizeList = ({
   stackGroups = {},
 }: {
   barSize: number | string;
+  /**
+   * @deprecated do not use - depends on passing around DOM elements
+   */
   stackGroups: AxisStackGroups;
   totalSize: number;
 }): Record<string, ReadonlyArray<BarSetup>> => {
@@ -289,11 +297,14 @@ export type BarPositionPosition = {
   /**
    * Size of the bar.
    * This will be usually a number.
-   * But if the input data is not well formed, undefined or NaN will be on the output too.
+   * But if the input data is not well-formed, undefined or NaN will be on the output too.
    */
   size: number | undefined | typeof NaN;
 };
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type BarPosition = {
   item: ReactElement;
   position: BarPositionPosition;
@@ -716,6 +727,10 @@ export const checkDomainOfScale = (scale: any) => {
   }
 };
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export const findPositionOfBar = (
   barPosition: ReadonlyArray<BarPosition>,
   child: ReactNode,
@@ -886,11 +901,17 @@ export const getStackedData = (
 type AxisId = string;
 export type StackId = string | number | symbol;
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type ParentStackGroup = {
   hasStack: boolean;
   stackGroups: Record<StackId, ChildStackGroup>;
 };
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type GenericChildStackGroup<T> = {
   numericAxisId: string;
   cateAxisId: string;
@@ -898,10 +919,20 @@ export type GenericChildStackGroup<T> = {
   stackedData?: ReadonlyArray<T>;
 };
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
 
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export type AxisStackGroups = Record<AxisId, ParentStackGroup>;
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export const getStackGroupsByAxisId = (
   data: ReadonlyArray<Record<string, unknown>> | undefined,
   _items: Array<ReactElement>,
@@ -1387,6 +1418,10 @@ export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxi
   return undefined;
 };
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @deprecated do not use - depends on passing around DOM elements
+ */
 export function getBarPositions({
   axisObj,
   hasBar,
