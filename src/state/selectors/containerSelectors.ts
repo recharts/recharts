@@ -8,6 +8,21 @@ import { Margin } from '../../util/types';
 export const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined =>
   state.layout.container;
 
+/**
+ * This selector is not stable, and it is important that it is not stable
+ * - because browser will return different instances of getBoundingClientRect() even if the element is the same.
+ *
+ * This results in Reselect showing this error:
+ * An input selector returned a different result when passed same arguments.
+ * This means your output selector will likely run more frequently than intended
+ *
+ * Which is correct and unfortunate but good enough for now.
+ * The fix is to listen for resize events in the container element,
+ * and store only the resulting DOMRect instead of the whole container in Redux store.
+ *
+ * @param state RechartsRootState
+ * @return DOMRect
+ */
 export const selectRootContainerDomRect: (state: RechartsRootState) => DOMRect | undefined = (
   state: RechartsRootState,
 ) => selectRootContainer(state)?.getBoundingClientRect();

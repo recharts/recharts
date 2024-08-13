@@ -131,7 +131,7 @@ export type TooltipState = {
    * This is the state of interaction with the bar background - which will get mapped
    * to the axis index.
    *
-   * Axis interaction is independent from item interaction so the state must also be independent.
+   * Axis interaction is independent of item interaction so the state must also be independent.
    */
   axisInteraction: {
     activeClick: boolean;

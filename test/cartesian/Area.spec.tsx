@@ -1,7 +1,7 @@
 import React, { ComponentType, FC, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Area, Customized, XAxis, YAxis } from '../../src';
+import { Area, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { getBaseValue, Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
 import {
@@ -14,6 +14,8 @@ import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { BaseAxisWithScale, implicitYAxis } from '../../src/state/selectors/axisSelectors';
 import { mockXAxisWithScale, mockYAxisWithScale } from '../helper/mockAxes';
+import { useLegendPayload } from '../../src/context/legendPayloadContext';
+import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -22,6 +24,7 @@ type TestCase = {
     height?: number;
     data?: any[];
     layout?: LayoutType;
+    className?: string;
   }>;
   testName: string;
 };
@@ -501,6 +504,214 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
+    });
+
+    it('should add a record to Legend and Tooltip payloads', () => {
+      const legendSpy = vi.fn();
+      const tooltipSpy = vi.fn();
+
+      const Comp = (): null => {
+        legendSpy(useLegendPayload());
+        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover')));
+        return null;
+      };
+
+      render(
+        <ChartElement data={data}>
+          <Area dataKey="value" />
+          <Tooltip />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'value',
+          inactive: false,
+          payload: {
+            activeDot: true,
+            animationBegin: 0,
+            animationDuration: 1500,
+            animationEasing: 'ease',
+            animationId: 0,
+            baseLine: 495,
+            bottom: 5,
+            brushBottom: 5,
+            connectNulls: false,
+            dataKey: 'value',
+            dot: false,
+            fill: '#3182bd',
+            fillOpacity: 0.6,
+            height: 490,
+            hide: false,
+            isAnimationActive: true,
+            isRange: false,
+            layout: 'horizontal',
+            left: 5,
+            legendType: 'line',
+            points: [
+              {
+                payload: {
+                  value: 100,
+                  x: 10,
+                  y: 50,
+                },
+                value: [0, 100],
+                x: 5,
+                y: 5,
+              },
+              {
+                payload: {
+                  value: 100,
+                  x: 50,
+                  y: 50,
+                },
+                value: [0, 100],
+                x: 127.5,
+                y: 5,
+              },
+              {
+                payload: {
+                  value: 100,
+                  x: 90,
+                  y: 50,
+                },
+                value: [0, 100],
+                x: 250,
+                y: 5,
+              },
+              {
+                payload: {
+                  value: 100,
+                  x: 130,
+                  y: 50,
+                },
+                value: [0, 100],
+                x: 372.5,
+                y: 5,
+              },
+              {
+                payload: {
+                  value: 100,
+                  x: 170,
+                  y: 50,
+                },
+                value: [0, 100],
+                x: 495,
+                y: 5,
+              },
+            ],
+            right: 5,
+            stroke: '#3182bd',
+            top: 5,
+            width: 490,
+            xAxis: {
+              allowDataOverflow: false,
+              allowDecimals: true,
+              allowDuplicatedCategory: true,
+              axisType: 'xAxis',
+              bandSize: 0,
+              domain: [0, 1, 2, 3, 4],
+              height: 30,
+              hide: true,
+              isCategorical: true,
+              layout: 'horizontal',
+              mirror: false,
+              orientation: 'bottom',
+              originalDomain: [0, 'auto'],
+              padding: {
+                left: 0,
+                right: 0,
+              },
+              realScaleType: 'point',
+              reversed: false,
+              scale: expect.any(Function),
+              tickCount: 5,
+              type: 'category',
+              width: 490,
+              x: 5,
+              xAxisId: 0,
+              y: 495,
+            },
+            xAxisId: 0,
+            yAxis: {
+              allowDataOverflow: false,
+              allowDecimals: true,
+              allowDuplicatedCategory: true,
+              axisType: 'yAxis',
+              bandSize: 0,
+              domain: [0, 100],
+              height: 490,
+              hide: true,
+              isCategorical: false,
+              layout: 'horizontal',
+              mirror: false,
+              niceTicks: [0, 25, 50, 75, 100],
+              orientation: 'left',
+              originalDomain: [0, 'auto'],
+              padding: {
+                bottom: 0,
+                top: 0,
+              },
+              realScaleType: 'linear',
+              reversed: false,
+              scale: expect.any(Function),
+              tickCount: 5,
+              type: 'number',
+              width: 60,
+              x: -55,
+              y: 5,
+              yAxisId: 0,
+            },
+            yAxisId: 0,
+          },
+          type: 'line',
+          value: 'value',
+        },
+      ]);
+      expect(tooltipSpy).toHaveBeenLastCalledWith([
+        {
+          dataDefinedOnItem: undefined,
+          settings: {
+            color: '#3182bd',
+            dataKey: 'value',
+            fill: '#3182bd',
+            hide: false,
+            name: 'value',
+            nameKey: undefined,
+            stroke: '#3182bd',
+            strokeWidth: undefined,
+            type: undefined,
+            unit: undefined,
+          },
+        },
+      ]);
+    });
+
+    it('should add no record to Legend and Tooltip payloads when inside Brush Panorama', () => {
+      const legendSpy = vi.fn();
+      const tooltipSpy = vi.fn();
+
+      const Comp = (): null => {
+        legendSpy(useLegendPayload());
+        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover')));
+        return null;
+      };
+
+      render(
+        <ChartElement data={data} className="my-unique-classname">
+          <Customized component={<Comp />} />
+          <Brush>
+            <ChartElement>
+              <Area dataKey="value" />
+            </ChartElement>
+          </Brush>
+        </ChartElement>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith([]);
+      expect(tooltipSpy).toHaveBeenLastCalledWith([]);
     });
   });
 

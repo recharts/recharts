@@ -40,8 +40,10 @@ import { TooltipTrigger } from '../../../src/chart/types';
 import { produceState } from '../produceState';
 import { arrayTooltipSearcher } from '../../../src/state/optionsSlice';
 import { MousePointer } from '../../../src/chart/generateCategoricalChart';
-import { Area, BarChart, ComposedChart, Customized, Line, Pie, PieChart, Scatter } from '../../../src';
+import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
 import { PageData } from '../../_data';
+import { pageData } from '../../../storybook/stories/data';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -792,8 +794,8 @@ describe('selectIsTooltipActive', () => {
 
 describe('selectActiveIndexFromMousePointer', () => {
   const exampleMousePointer: MousePointer = {
-    pageX: 0,
-    pageY: 0,
+    pageX: 10,
+    pageY: 10,
   };
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
@@ -808,6 +810,46 @@ describe('selectActiveIndexFromMousePointer', () => {
   it('should return undefined for initial state', () => {
     const store = createRechartsStore();
     expect(selectActivePropsFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
+  });
+
+  it('should return active props after mouse hover', () => {
+    const tooltipActiveSpy = vi.fn();
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+    const Comp = (): null => {
+      tooltipActiveSpy(useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer)));
+      return null;
+    };
+    render(
+      <LineChart data={pageData} width={100} height={100}>
+        <Line dataKey="pv" />
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
+
+    expect(tooltipActiveSpy).toHaveBeenLastCalledWith({
+      activeCoordinate: {
+        x: 5,
+        y: 10,
+      },
+      activeIndex: '0',
+    });
+  });
+
+  it('should be stable', () => {
+    expect.assertions(3);
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+    const Comp = (): null => {
+      const result1 = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
+      const result2 = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
+      expect(result1).toBe(result2);
+      return null;
+    };
+    render(
+      <LineChart data={pageData} width={100} height={100}>
+        <Line dataKey="pv" />
+        <Customized component={<Comp />} />
+      </LineChart>,
+    );
   });
 });
 
