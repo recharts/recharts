@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent, SVGProps } from 'react';
+import React, { PureComponent } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
@@ -7,7 +7,7 @@ import max from 'lodash/max';
 import isNil from 'lodash/isNil';
 import isNan from 'lodash/isNaN';
 import isEqual from 'lodash/isEqual';
-import { Curve, CurveType, Point as CurvePoint } from '../shape/Curve';
+import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
@@ -39,59 +39,105 @@ import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { useAppSelector } from '../state/hooks';
+import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
+/**
+ * Internal props, combination of external props + defaultProps + private Recharts state
+ */
 interface InternalAreaProps {
-  needClip?: boolean;
-  top?: number;
-  left?: number;
-  width?: number;
-  height?: number;
-  points?: ReadonlyArray<AreaPointItem>;
+  activeDot: ActiveDotType;
+  animateNewValues?: boolean;
+  animationBegin: number;
+  animationDuration: AnimationDuration;
+  animationEasing: AnimationTiming;
+  animationId: UpdateId;
   baseLine?: number | Coordinate[];
-}
 
-interface AreaProps extends InternalAreaProps {
+  baseValue?: BaseValue;
   className?: string;
-  dataKey: DataKey<any>;
+  connectNulls: boolean;
   data?: any[];
-  type?: CurveType;
-  unit?: string | number;
-  name?: string | number;
-  xAxisId?: string | number;
-  yAxisId?: string | number;
+  dataKey: DataKey<any>;
+  dot: ActiveDotType;
+  height?: number;
+  hide: boolean;
 
-  stackId?: string | number;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  connectNulls?: boolean;
-  // whether have dot in line
-  activeDot?: ActiveDotType;
-  dot?: ActiveDotType;
-
+  id?: string;
+  isAnimationActive: boolean;
+  isRange?: boolean;
   label?: any;
   layout?: 'horizontal' | 'vertical';
-  hide?: boolean;
-  baseValue?: BaseValue;
-  isRange?: boolean;
+  left: number;
 
-  onAnimationStart?: () => void;
+  legendType: LegendType;
+  name?: string | number;
+  needClip?: boolean;
   onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
 
-  isAnimationActive?: boolean;
+  points?: ReadonlyArray<AreaPointItem>;
+  stackId?: string | number;
+
+  tooltipType?: TooltipType;
+  top: number;
+  type?: CurveType;
+  unit?: string | number;
+  width?: number;
+  xAxisId: string | number;
+  yAxisId: string | number;
+}
+
+/**
+ * External props, intended for end users to fill in
+ */
+interface AreaProps {
+  activeDot?: ActiveDotType;
   animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   animationId?: number;
+  baseValue?: BaseValue;
+  className?: string;
+
+  connectNulls?: boolean;
+  data?: any[];
+  dataKey: DataKey<any>;
+  dot?: ActiveDotType;
+  hide?: boolean;
   id?: string;
+
+  isAnimationActive?: boolean;
+  isRange?: boolean;
+  label?: any;
+  layout?: 'horizontal' | 'vertical';
+  legendType?: LegendType;
+
+  name?: string | number;
+  onAnimationEnd?: () => void;
+
+  onAnimationStart?: () => void;
+  stackId?: string | number;
+  tooltipType?: TooltipType;
+  type?: CurveType;
+  unit?: string | number;
+  xAxisId?: string | number;
+  yAxisId?: string | number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'type' | 'points'> & AreaProps;
+/**
+ * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
+ */
+type AreaSvgProps = Omit<CurveProps, 'type' | 'points'>;
+
+type InternalProps = AreaSvgProps & InternalAreaProps;
+
+export type Props = AreaSvgProps & AreaProps;
 
 interface State {
-  prevAnimationId?: number;
+  prevAnimationId?: UpdateId;
   prevPoints?: ReadonlyArray<AreaPointItem>;
   prevBaseLine?: number | Coordinate[];
   curPoints?: ReadonlyArray<AreaPointItem>;
@@ -162,12 +208,12 @@ const renderDotItem = (option: ActiveDotType, props: any) => {
   return dotItem;
 };
 
-class AreaWithState extends PureComponent<Props, State> {
+class AreaWithState extends PureComponent<InternalProps, State> {
   state: State = {
     isAnimationFinished: true,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -519,9 +565,43 @@ class AreaWithState extends PureComponent<Props, State> {
   }
 }
 
+const defaultAreaProps: Partial<Props> = {
+  activeDot: true,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  connectNulls: false,
+  dot: false,
+  fill: '#3182bd',
+  fillOpacity: 0.6,
+  hide: false,
+  isAnimationActive: !Global.isSsr,
+  legendType: 'line',
+  stroke: '#3182bd',
+  xAxisId: 0,
+  yAxisId: 0,
+};
+
 function AreaImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const { ref, ...everythingElse } = props;
+  const {
+    activeDot = defaultAreaProps.activeDot,
+    animationBegin = defaultAreaProps.animationBegin,
+    animationDuration = defaultAreaProps.animationDuration,
+    animationEasing = defaultAreaProps.animationEasing,
+    connectNulls = defaultAreaProps.connectNulls,
+    dot = defaultAreaProps.dot,
+    fill = defaultAreaProps.fill,
+    fillOpacity = defaultAreaProps.fillOpacity,
+    hide = defaultAreaProps.hide,
+    isAnimationActive = defaultAreaProps.isAnimationActive,
+    legendType = defaultAreaProps.legendType,
+    ref,
+    stroke = defaultAreaProps.stroke,
+    xAxisId = defaultAreaProps.xAxisId,
+    yAxisId = defaultAreaProps.yAxisId,
+    ...everythingElse
+  } = props;
   const isPanorama = useIsPanorama();
   const { points, isRange, baseLine } =
     useAppSelector(state =>
@@ -533,8 +613,35 @@ function AreaImpl(props: Props) {
         dataKey: props.dataKey,
       }),
     ) ?? {};
+  const { height, width, left, top } = useOffset();
+  const updateId = useUpdateId();
   return (
-    <AreaWithState {...everythingElse} points={points} isRange={isRange} baseLine={baseLine} needClip={needClip} />
+    <AreaWithState
+      {...everythingElse}
+      activeDot={activeDot}
+      animationBegin={animationBegin}
+      animationDuration={animationDuration}
+      animationEasing={animationEasing}
+      animationId={updateId}
+      baseLine={baseLine}
+      connectNulls={connectNulls}
+      dot={dot}
+      fill={fill}
+      fillOpacity={fillOpacity}
+      height={height}
+      hide={hide}
+      isAnimationActive={isAnimationActive}
+      isRange={isRange}
+      legendType={legendType}
+      needClip={needClip}
+      points={points}
+      stroke={stroke}
+      width={width}
+      left={left}
+      top={top}
+      xAxisId={xAxisId}
+      yAxisId={yAxisId}
+    />
   );
 }
 
@@ -545,7 +652,7 @@ export const getBaseValue = (
   xAxis: BaseAxisWithScale,
   yAxis: BaseAxisWithScale,
 ): number => {
-  // The baseValue can be defined both on the AreaChart as well as on the Area.
+  // The baseValue can be defined both on the AreaChart, and on the Area.
   // The value for the item takes precedence.
   const baseValue = itemBaseValue ?? chartBaseValue;
 
@@ -676,23 +783,7 @@ export function computeArea({
 export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
-  static defaultProps = {
-    stroke: '#3182bd',
-    fill: '#3182bd',
-    fillOpacity: 0.6,
-    xAxisId: 0,
-    yAxisId: 0,
-    legendType: 'line',
-    connectNulls: false,
-    dot: false,
-    activeDot: true,
-    hide: false,
-
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-  };
+  static defaultProps = defaultAreaProps;
 
   static getComposedData = ({
     props,
