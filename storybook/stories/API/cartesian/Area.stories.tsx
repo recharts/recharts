@@ -4,7 +4,7 @@ import { pageData } from '../../data';
 import { LineStyle } from '../props/Styles';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
-import { General as GeneralProps, Internal } from '../props/CartesianComponentShared';
+import { General as GeneralProps, data } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
@@ -33,14 +33,10 @@ export default {
     ...AnimationProps,
     legendType,
     ...GeneralProps,
-    ...Internal,
+    data,
     ...ResponsiveProps,
     // Other
     baseLine: { table: { category: 'Other' } },
-    left: { table: { category: 'Other' } },
-    top: { table: { category: 'Other' } },
-    xAxis: { table: { category: 'Other' } },
-    yAxis: { table: { category: 'Other' } },
   },
 };
 
