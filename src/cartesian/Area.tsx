@@ -39,7 +39,8 @@ import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { useAppSelector } from '../state/hooks';
-import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { useChartName } from '../state/selectors/selectors';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -68,7 +69,7 @@ interface InternalAreaProps {
   isAnimationActive: boolean;
   isRange?: boolean;
   label?: any;
-  layout?: 'horizontal' | 'vertical';
+  layout: 'horizontal' | 'vertical';
   left: number;
 
   legendType: LegendType;
@@ -583,6 +584,8 @@ const defaultAreaProps: Partial<Props> = {
 };
 
 function AreaImpl(props: Props) {
+  const layout = useChartLayout();
+  const chartName = useChartName();
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const {
     activeDot = defaultAreaProps.activeDot,
@@ -615,6 +618,17 @@ function AreaImpl(props: Props) {
     ) ?? {};
   const { height, width, left, top } = useOffset();
   const updateId = useUpdateId();
+
+  if (layout !== 'horizontal' && layout !== 'vertical') {
+    // Can't render Area in an unsupported layout
+    return null;
+  }
+
+  if (chartName !== 'AreaChart' && chartName !== 'ComposedChart') {
+    // There is nothing stopping us from rendering Area in other charts, except for historical reasons. Do we want to allow that?
+    return null;
+  }
+
   return (
     <AreaWithState
       {...everythingElse}
@@ -630,6 +644,7 @@ function AreaImpl(props: Props) {
       fillOpacity={fillOpacity}
       height={height}
       hide={hide}
+      layout={layout}
       isAnimationActive={isAnimationActive}
       isRange={isRange}
       legendType={legendType}
