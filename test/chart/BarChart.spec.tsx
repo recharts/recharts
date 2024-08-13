@@ -625,7 +625,38 @@ describe('<BarChart />', () => {
       expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
     });
 
-    test('renders a bar if size is specified', () => {
+    test('renders nothing if barSize is not specified in a numerical XAxis', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" type="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, []);
+    });
+
+    test('renders bars of default size if barSize is not set in categorical XAxis', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 14,5 h 72 v 10 h -72 Z',
+          height: '10',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('renders a bar of custom width if size is specified', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData} barSize={20}>
           <XAxis dataKey="number" type="number" />
@@ -645,7 +676,47 @@ describe('<BarChart />', () => {
       ]);
     });
 
-    test('renders a bar if size is limited', () => {
+    test('renders bar when barSize is set in %', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData} barSize="40%">
+          <XAxis dataKey="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 32,5 h 36 v 10 h -36 Z',
+          height: '10',
+          radius: '0',
+          width: '36',
+          x: '32',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('prefers child item barSize if both child and global barSize are set', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData} barSize={20}>
+          <XAxis dataKey="number" type="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} barSize={40} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 75,5 h 40 v 10 h -40 Z',
+          height: '10',
+          radius: '0',
+          width: '40',
+          x: '75',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('renders a smaller bar if maxBarSize is set, even in a numerical XAxis', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData}>
           <XAxis dataKey="number" type="number" />
@@ -658,8 +729,69 @@ describe('<BarChart />', () => {
           d: 'M 79,5 h 32 v 10 h -32 Z',
           height: '10',
           radius: '0',
+          // the maxBarSize is 40 but here it only renders 32, why?
           width: '32',
           x: '79',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('renders a smaller bar if maxBarSize is set with categorical XAxis', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} maxBarSize={40} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 30,5 h 40 v 10 h -40 Z',
+          height: '10',
+          radius: '0',
+          width: '40',
+          x: '30',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('if graphical item barSize is larger than maxBarSize then the barSize should win', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData}>
+          <XAxis dataKey="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} barSize={60} maxBarSize={40} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 20,5 h 60 v 10 h -60 Z',
+          height: '10',
+          radius: '0',
+          width: '60',
+          x: '20',
+          y: '5',
+        },
+      ]);
+    });
+
+    test('if chart root barSize is larger than maxBarSize then the barSize should win', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={onePointData} barSize={60}>
+          <XAxis dataKey="number" />
+          <Bar dataKey="uv" name="uv" isAnimationActive={false} maxBarSize={40} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 20,5 h 60 v 10 h -60 Z',
+          height: '10',
+          radius: '0',
+          width: '60',
+          x: '20',
           y: '5',
         },
       ]);
