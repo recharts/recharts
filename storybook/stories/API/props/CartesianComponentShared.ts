@@ -76,18 +76,6 @@ export const General: StorybookArgs = {
   yAxisId,
 };
 
-const points: StorybookArg = {
-  description:
-    'The coordinates of points in the line, usually calculated internally. In most cases this should not be used.',
-  table: {
-    type: {
-      summary: 'array',
-      detail: '[{x: 12, y: 12, value: 240}]',
-    },
-    category: 'Internal',
-  },
-};
-
 export const data: StorybookArg = {
   description: `The source data, in which each element is an object.
     This can be defined either on the chart element (ScatterChart, LineChart, etc) or on the graphical item (Scatter, Line).
@@ -100,6 +88,7 @@ export const data: StorybookArg = {
     },
   },
 };
+
 export const layout: StorybookArg = {
   description: 'The layout of line, usually inherited from parent.',
   table: {
@@ -108,9 +97,4 @@ export const layout: StorybookArg = {
     },
     category: 'Internal',
   },
-};
-export const Internal: StorybookArgs = {
-  points,
-  data,
-  layout,
 };
