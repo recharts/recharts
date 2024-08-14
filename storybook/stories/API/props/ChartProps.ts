@@ -14,6 +14,9 @@ export const data: StorybookArg = {
 export const ChartSizeProps: StorybookArgs = {
   height: {
     description: 'The height of chart container.',
+    control: {
+      type: 'number',
+    },
     table: {
       type: {
         summary: 'number',
@@ -23,6 +26,9 @@ export const ChartSizeProps: StorybookArgs = {
   },
   width: {
     description: 'The width of chart container.',
+    control: {
+      type: 'number',
+    },
     table: {
       type: {
         summary: 'number',
@@ -108,16 +114,6 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
-  barCategoryGap: {
-    description: 'The gap between two bar categories, which can be a percent value or a fixed value.',
-    table: {
-      type: {
-        summary: 'Percentage | number',
-      },
-      defaultValue: '10%',
-      category: 'Bar',
-    },
-  },
   style: {
     description: 'The style of chart.',
     table: {
@@ -134,26 +130,6 @@ toggling between multiple dataKey.`,
         summary: 'String',
       },
       category: 'General',
-    },
-  },
-  barGap: {
-    description: 'The gap between two bars in the same category.',
-    table: {
-      type: {
-        summary: 'number',
-      },
-      defaultValue: 4,
-      category: 'Bar',
-    },
-  },
-  barSize: {
-    description: `The width or height of each bar. If the barSize is not specified, the size of the bar
-      will be calculated by the barCategoryGap, barGap and the quantity of bar groups.`,
-    table: {
-      type: {
-        summary: 'number | Percentage',
-      },
-      category: 'Bar',
     },
   },
   baseValue: {
@@ -181,24 +157,7 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
-  cx: {
-    description: 'The x-coordinate of the center of the circle.',
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'Polar',
-    },
-  },
-  cy: {
-    description: 'The y-coordinate of the center of the circle.',
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'Polar',
-    },
-  },
+
   defaultShowTooltip: {
     description: 'If true set, the tooltip will be displayed when the chart is rendered.',
     table: {
@@ -209,8 +168,6 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
-  endAngle: { description: 'The end angle of polar chart.', table: { type: { summary: 'Number' }, category: 'Polar' } },
-
   id: {
     description: 'The unique id of chart.',
     table: {
@@ -218,15 +175,6 @@ toggling between multiple dataKey.`,
         summary: 'String',
       },
       category: 'General',
-    },
-  },
-  innerRadius: {
-    description: 'The inner radius of polar chart.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Polar',
     },
   },
   layout: {
@@ -243,30 +191,12 @@ toggling between multiple dataKey.`,
       category: 'General',
     },
   },
-  maxBarSize: {
-    description: 'The maximum size of bar.',
-    table: {
-      type: {
-        summary: 'number',
-      },
-      category: 'Bar',
-    },
-  },
   onClick,
   onMouseDown,
   onMouseEnter,
   onMouseLeave,
   onMouseMove,
   onMouseUp,
-  outerRadius: {
-    description: 'The outer radius of polar chart.',
-    table: {
-      type: {
-        summary: 'Number',
-      },
-      category: 'Polar',
-    },
-  },
   reverseStackOrder: {
     description: `If \`false\`, stacked items will be rendered left to right. If \`true\`, stacked items
       will be rendered right to left. (Render direction affects SVG layering, not x position.)`,
@@ -301,10 +231,6 @@ Also see https://d3js.org/d3-shape/stack#stack-offsets
       defaultValue: 'none',
       category: 'General',
     },
-  },
-  startAngle: {
-    description: 'The start angle of polar chart.',
-    table: { type: { summary: 'Number' }, category: 'Polar' },
   },
   syncId: {
     description: `If any two categorical charts(LineChart, AreaChart, BarChart, ComposedChart) have the same syncId,
