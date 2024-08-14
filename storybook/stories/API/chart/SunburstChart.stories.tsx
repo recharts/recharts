@@ -2,9 +2,11 @@ import React from 'react';
 import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
 import { SunburstData } from '../../../../src/chart/SunburstChart';
 import { CategoricalChartProps, ChartSizeProps, data, dataKey, margin } from '../props/ChartProps';
+import { PolarChartProps } from '../props/PolarChartProps';
 
-const { innerRadius, outerRadius, cx, cy, startAngle, endAngle, onClick, onMouseEnter, onMouseLeave, className } =
-  CategoricalChartProps;
+const { innerRadius, outerRadius, cx, cy, startAngle, endAngle } = PolarChartProps;
+
+const { onClick, onMouseEnter, onMouseLeave, className } = CategoricalChartProps;
 
 export default {
   argTypes: {

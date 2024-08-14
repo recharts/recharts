@@ -1,6 +1,6 @@
 import React from 'react';
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
-import { solarSystem } from '../../data/solarSystem';
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
+import { solarSystem } from '../../../data/solarSystem';
 
 export default { Component: XAxis };
 
