@@ -73,7 +73,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.6",
-    "@storybook/test": "^8.2.6",
     "clsx": "^2.1.1",
     "decimal.js-light": "^2.5.1",
     "eventemitter3": "^5.0.1",
@@ -105,6 +104,7 @@
     "@storybook/react": "^8.2.6",
     "@storybook/react-webpack5": "^8.2.6",
     "@storybook/source-loader": "^8.2.6",
+    "@storybook/test": "^8.2.6",
     "@storybook/test-runner": "^0.19.1",
     "@storybook/theming": "^8.2.6",
     "@stryker-mutator/typescript-checker": "^8.2.6",
