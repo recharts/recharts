@@ -64,10 +64,10 @@ export const MouseClickItemDispatchContext = createContext<ActivateTooltipAction
 export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
   onMouseEnterFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any>,
-): ActivateTooltipAction<T> => {
+) => {
   const dispatch = useAppDispatch();
   const onMouseEnterFromContext: undefined | ActivateTooltipAction<T> = useContext(MouseEnterItemDispatchContext);
-  return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
+  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
     onMouseEnterFromProps?.(data, index, event);
     onMouseEnterFromContext?.(data, index, event);
     dispatch(
@@ -82,10 +82,10 @@ export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
 
 export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
   onMouseLeaveFromProps: undefined | ActivateTooltipAction<T>,
-): ActivateTooltipAction<T> => {
+) => {
   const dispatch = useAppDispatch();
   const onMouseLeaveFromContext: undefined | ActivateTooltipAction<T> = useContext(MouseLeaveItemDispatchContext);
-  return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
+  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
     onMouseLeaveFromProps?.(data, index, event);
     onMouseLeaveFromContext?.(data, index, event);
     dispatch(mouseLeaveItem());
@@ -95,10 +95,10 @@ export const useMouseLeaveItemDispatch = <T extends TooltipPayloadType>(
 export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
   onMouseClickFromProps: ActivateTooltipAction<T> | undefined,
   dataKey: DataKey<any>,
-): ActivateTooltipAction<T> | undefined => {
+) => {
   const dispatch = useAppDispatch();
   const onMouseClickFromContext: undefined | ActivateTooltipAction<T> = useContext(MouseClickItemDispatchContext);
-  return (data: TooltipTriggerInfo<T>, index: number, event: React.MouseEvent<SVGElement>) => {
+  return (data: TooltipTriggerInfo<T>, index: number) => (event: React.MouseEvent<SVGElement>) => {
     onMouseClickFromProps?.(data, index, event);
     onMouseClickFromContext?.(data, index, event);
     dispatch(

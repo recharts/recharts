@@ -279,18 +279,7 @@ function PieSectors(props: PieSectorsProps) {
       stroke: blendStroke ? entry.fill : entry.stroke,
       tabIndex: -1,
     };
-    const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-      // @ts-expect-error the types need a bit of attention
-      onMouseEnterFromContext(entry, i, e);
-    };
-    const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-      // @ts-expect-error the types need a bit of attention
-      onMouseLeaveFromContext(entry, i, e);
-    };
-    const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-      // @ts-expect-error the types need a bit of attention
-      onClickFromContext(entry, i, e);
-    };
+
     return (
       <Layer
         ref={(ref: SVGGElement) => {
@@ -301,9 +290,12 @@ function PieSectors(props: PieSectorsProps) {
         tabIndex={-1}
         className="recharts-pie-sector"
         {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
+        // @ts-expect-error the types need a bit of attention
+        onMouseEnter={onMouseEnterFromContext(entry, i)}
+        // @ts-expect-error the types need a bit of attention
+        onMouseLeave={onMouseLeaveFromContext(entry, i)}
+        // @ts-expect-error the types need a bit of attention
+        onClick={onClickFromContext(entry, i)}
         // eslint-disable-next-line react/no-array-index-key
         key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
       >

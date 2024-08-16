@@ -201,18 +201,13 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseEnterFromContext(entry, i, e);
-        };
-        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseLeaveFromContext(entry, i, e);
-        };
-        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onClickFromContext(entry, i, e);
-        };
+        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+        const onMouseEnter = onMouseEnterFromContext(entry, i);
+        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+        const onMouseLeave = onMouseLeaveFromContext(entry, i);
+        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+        const onClick = onClickFromContext(entry, i);
+
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: i === activeIndex,
@@ -280,25 +275,17 @@ function BarRectangles(props: BarRectanglesProps) {
           onAnimationStart,
           onAnimationEnd,
         };
-        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseEnterFromContext(entry, i, e);
-        };
-        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onMouseLeaveFromContext(entry, i, e);
-        };
-        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-          onClickFromContext(entry, i, e);
-        };
+
         return (
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            onClick={onClick}
+            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+            onMouseEnter={onMouseEnterFromContext(entry, i)}
+            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+            onMouseLeave={onMouseLeaveFromContext(entry, i)}
+            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
+            onClick={onClickFromContext(entry, i)}
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
           >
             <BarRectangle {...barRectangleProps} />
