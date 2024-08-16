@@ -54,6 +54,22 @@ export type CartesianGraphicalItemSettings = {
   hide: boolean;
 };
 
+export type PolarGraphicalItemSettings = {
+  data: ChartData;
+  /**
+   * Each of the graphical items explicitly says which axis it uses;
+   * this property is optional for users but every graphical item must have a default,
+   * and it is required here.
+   */
+  dataKey: DataKey<any> | undefined;
+  /**
+   * Why not just stop pushing the graphical items to state when they are hidden?
+   * Well some components decide to continue showing them anyway.
+   * Legend for example will keep showing a record for hidden graphical items.
+   */
+  hide: boolean;
+};
+
 export type GraphicalItemsState = {
   /**
    * Axis scale selector behaves differently if one of the child elements is a bar
@@ -63,18 +79,27 @@ export type GraphicalItemsState = {
    */
   countOfBars: number;
   /**
-   * This is an array of all graphical items and their settings.
+   * This is an array of all cartesian graphical items and their settings.
    * Graphical item is a visual representation of data on the chart.
-   * Some examples are: Pie, Line, Bar.
+   * Some examples are: Line, Bar.
    *
    * The order is arbitrary; do not expect that indexes here will be the same as indexes elsewhere.
    */
   cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>;
+  /**
+   * This is an array of all polar graphical items and their settings.
+   * Graphical item is a visual representation of data on the chart.
+   * Some examples are: Pie, Radar, RadialBar
+   *
+   * The order is arbitrary; do not expect that indexes here will be the same as indexes elsewhere.
+   */
+  polarItems: ReadonlyArray<PolarGraphicalItemSettings>;
 };
 
 const initialState: GraphicalItemsState = {
   countOfBars: 0,
   cartesianItems: [],
+  polarItems: [],
 };
 
 const graphicalItemsSlice = createSlice({
@@ -96,10 +121,25 @@ const graphicalItemsSlice = createSlice({
         state.cartesianItems.splice(index, 1);
       }
     },
+    addPolarGraphicalItem(state, action: PayloadAction<PolarGraphicalItemSettings>) {
+      state.polarItems.push(castDraft(action.payload));
+    },
+    removePolarGraphicalItem(state, action: PayloadAction<PolarGraphicalItemSettings>) {
+      const index = current(state).polarItems.indexOf(castDraft(action.payload));
+      if (index > -1) {
+        state.polarItems.splice(index, 1);
+      }
+    },
   },
 });
 
-export const { addBar, removeBar, addCartesianGraphicalItem, removeCartesianGraphicalItem } =
-  graphicalItemsSlice.actions;
+export const {
+  addBar,
+  removeBar,
+  addCartesianGraphicalItem,
+  removeCartesianGraphicalItem,
+  addPolarGraphicalItem,
+  removePolarGraphicalItem,
+} = graphicalItemsSlice.actions;
 
 export const graphicalItemsReducer = graphicalItemsSlice.reducer;

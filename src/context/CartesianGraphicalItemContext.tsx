@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
 import { ErrorBarsSettings } from '../state/graphicalItemsSlice';
-import { SetCartesianGraphicalItem } from '../state/SetCartesianGraphicalItem';
+import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/axisMapSlice';
 import { DataKey } from '../util/types';
