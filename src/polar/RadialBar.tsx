@@ -84,18 +84,12 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
     <>
       {sectors.map((entry, i) => {
         const isActive = isTooltipActive && activeShape && i === activeIndex;
-        const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error the types need a bit of attention
-          onMouseEnterFromContext(entry, i, e);
-        };
-        const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error the types need a bit of attention
-          onMouseLeaveFromContext(entry, i, e);
-        };
-        const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
-          // @ts-expect-error the types need a bit of attention
-          onClickFromContext(entry, i, e);
-        };
+        // @ts-expect-error the types need a bit of attention
+        const onMouseEnter = onMouseEnterFromContext(entry, i);
+        // @ts-expect-error the types need a bit of attention
+        const onMouseLeave = onMouseLeaveFromContext(entry, i);
+        // @ts-expect-error the types need a bit of attention
+        const onClick = onClickFromContext(entry, i);
 
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
