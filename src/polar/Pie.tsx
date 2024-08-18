@@ -1,10 +1,13 @@
-import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
+/* eslint-disable max-classes-per-file */
+import React, { PureComponent, ReactElement, ReactNode, SVGProps, useMemo } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
+import { ResolvedPieSettings, selectPieSectors } from '../state/selectors/pieSelectors';
+import { useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
@@ -18,7 +21,7 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+// import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
   TooltipType,
@@ -33,7 +36,7 @@ import {
   GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+// import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -42,7 +45,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { UpdateId } from '../context/chartLayoutContext';
+import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -112,7 +115,7 @@ interface InternalPieProps extends PieDef {
   hide?: boolean;
   /** the input data */
   data?: any[];
-  sectors?: PieSectorDataItem[];
+  sectors?: Readonly<PieSectorDataItem[]>;
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
@@ -190,7 +193,7 @@ export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & Pie
 
 type RealPieData = any;
 
-type PieCoordinate = {
+export type PieCoordinate = {
   cx: number;
   cy: number;
   innerRadius: number;
@@ -202,35 +205,35 @@ type PieComposedData = PieCoordinate & {
   sectors: PieSectorDataItem[];
   data: RealPieData[];
 };
-type PiePayloadInputProps = {
-  sectors: PieSectorDataItem[];
-  legendType?: LegendType;
-};
+// type PiePayloadInputProps = {
+//   sectors: Readonly<PieSectorDataItem[]>;
+//   legendType?: LegendType;
+// };
 
-const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
-  if (sectors == null) {
-    return [];
-  }
-  return sectors.map(
-    (entry: PieSectorDataItem): LegendPayload => ({
-      type: legendType,
-      value: entry.name,
-      color: entry.fill,
-      payload: entry,
-    }),
-  );
-};
+// const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
+//   if (sectors == null) {
+//     return [];
+//   }
+//   return sectors.map(
+//     (entry: PieSectorDataItem): LegendPayload => ({
+//       type: legendType,
+//       value: entry.name,
+//       color: entry.fill,
+//       payload: entry,
+//     }),
+//   );
+// };
 
-function SetPiePayloadLegend(props: PiePayloadInputProps): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
-  return null;
-}
+// function SetPiePayloadLegend(props: PiePayloadInputProps): null {
+//   useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
+//   return null;
+// }
 
 type PieSectorsProps = {
-  sectors: PieSectorDataItem[];
-  activeShape: ActiveShape<PieSectorDataItem>;
+  sectors: Readonly<PieSectorDataItem[]>;
+  activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   blendStroke: boolean;
-  inactiveShape: ActiveShape<PieSectorDataItem>;
+  inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: Props;
   sectorRefs: SVGGElement[];
 };
@@ -305,17 +308,15 @@ function PieSectors(props: PieSectorsProps) {
   });
 }
 
-const getRealPieData = (item: Pie): RealPieData[] => {
-  const { data, children } = item.props;
+const getRealPieData = (item: Pie, cells: ReactElement[]): RealPieData[] => {
+  const { data } = item.props;
   const presentationProps = filterProps(item.props, false);
-  const cells = findAllByType(children, Cell);
 
   if (data && data.length) {
-    return data.map((entry, index) => ({
+    return data.map(entry => ({
       payload: entry,
       ...presentationProps,
       ...entry,
-      ...(cells && cells[index] && cells[index].props),
     }));
   }
 
@@ -337,14 +338,23 @@ const getTextAnchor = (x: number, cx: number) => {
   return 'middle';
 };
 
-const parseCoordinateOfPie = (item: Pie, offset: ChartOffset): PieCoordinate => {
+const parseCoordinateOfPie = (
+  item: {
+    cx?: number | string;
+    cy?: number | string;
+    innerRadius?: number | string;
+    outerRadius?: number | string;
+    maxRadius?: number;
+  },
+  offset: ChartOffset,
+): PieCoordinate => {
   const { top, left, width, height } = offset;
   const maxPieRadius = getMaxRadius(width, height);
-  const cx = left + getPercentValue(item.props.cx, width, width / 2);
-  const cy = top + getPercentValue(item.props.cy, height, height / 2);
-  const innerRadius = getPercentValue(item.props.innerRadius, maxPieRadius, 0);
-  const outerRadius = getPercentValue(item.props.outerRadius, maxPieRadius, maxPieRadius * 0.8);
-  const maxRadius = item.props.maxRadius || Math.sqrt(width * width + height * height) / 2;
+  const cx = left + getPercentValue(item.cx, width, width / 2);
+  const cy = top + getPercentValue(item.cy, height, height / 2);
+  const innerRadius = getPercentValue(item.innerRadius, maxPieRadius, 0);
+  const outerRadius = getPercentValue(item.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+  const maxRadius = item.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
   return { cx, cy, innerRadius, outerRadius, maxRadius };
 };
@@ -391,117 +401,107 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
   );
 };
 
-export class Pie extends PureComponent<InternalProps, State> {
-  pieRef: SVGGElement = null;
-
-  sectorRefs: SVGGElement[] = [];
-
-  static displayName = 'Pie';
-
-  static defaultProps = {
-    stroke: '#fff',
-    fill: '#808080',
-    legendType: 'rect',
-    cx: '50%',
-    cy: '50%',
-    startAngle: 0,
-    endAngle: 360,
-    innerRadius: 0,
-    outerRadius: '80%',
-    paddingAngle: 0,
-    labelLine: true,
-    hide: false,
-    minAngle: 0,
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 400,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-    nameKey: 'name',
-    blendStroke: false,
-    rootTabIndex: 0,
+export function computePieSectors({
+  pieSettings,
+  displayedData,
+  cells,
+  offset,
+}: {
+  displayedData: any[];
+  cells: ReadonlyArray<ReactElement> | undefined;
+  pieSettings: {
+    dataKey: DataKey<any> | undefined;
+    tooltipType?: TooltipType;
+    name?: string | number;
+    nameKey?: DataKey<any>;
+    cx?: number | string;
+    cy?: number | string;
+    startAngle?: number;
+    endAngle?: number;
+    paddingAngle?: number;
+    minAngle?: number;
+    innerRadius?: number | string;
+    outerRadius?: number | string;
+    cornerRadius?: number | string;
   };
+  offset: ChartOffset;
+}): { sectors: PieSectorDataItem[]; coordinate: PieCoordinate } {
+  const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
+  const minAngle = Math.abs(pieSettings.minAngle);
+  const coordinate = parseCoordinateOfPie(pieSettings, offset);
+  const deltaAngle = parseDeltaAngle(startAngle, endAngle);
+  const absDeltaAngle = Math.abs(deltaAngle);
+  const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
 
-  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): PieComposedData => {
-    const pieData = getRealPieData(item);
-    if (!pieData || !pieData.length) {
-      return null;
-    }
+  const notZeroItemCount = displayedData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
+  const totalPaddingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
+  const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPaddingAngle;
 
-    const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = item.props;
-    const minAngle = Math.abs(item.props.minAngle);
-    const coordinate = parseCoordinateOfPie(item, offset);
-    const deltaAngle = parseDeltaAngle(startAngle, endAngle);
-    const absDeltaAngle = Math.abs(deltaAngle);
-    const paddingAngle = pieData.length <= 1 ? 0 : (item.props.paddingAngle ?? 0);
+  const sum = displayedData.reduce((result: number, entry: any) => {
+    const val = getValueByDataKey(entry, dataKey, 0);
+    return result + (isNumber(val) ? val : 0);
+  }, 0);
+  let sectors;
 
-    const notZeroItemCount = pieData.filter(entry => getValueByDataKey(entry, dataKey, 0) !== 0).length;
-    const totalPadingAngle = (absDeltaAngle >= 360 ? notZeroItemCount : notZeroItemCount - 1) * paddingAngle;
-    const realTotalAngle = absDeltaAngle - notZeroItemCount * minAngle - totalPadingAngle;
-
-    const sum = pieData.reduce((result: number, entry: any) => {
+  if (sum > 0) {
+    let prev: PieSectorDataItem;
+    sectors = displayedData.map((entry: any, i: number) => {
       const val = getValueByDataKey(entry, dataKey, 0);
-      return result + (isNumber(val) ? val : 0);
-    }, 0);
-    let sectors;
+      const name = getValueByDataKey(entry, nameKey, i);
+      const percent = (isNumber(val) ? val : 0) / sum;
+      let tempStartAngle;
 
-    if (sum > 0) {
-      let prev: PieSectorDataItem;
-      sectors = pieData.map((entry: any, i: number) => {
-        const val = getValueByDataKey(entry, dataKey, 0);
-        const name = getValueByDataKey(entry, nameKey, i);
-        const percent = (isNumber(val) ? val : 0) / sum;
-        let tempStartAngle;
+      const entryWithCellInfo = { ...entry, ...(cells && cells[i] && cells[i].props) };
 
-        if (i) {
-          tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
-        } else {
-          tempStartAngle = startAngle;
-        }
+      if (i) {
+        tempStartAngle = prev.endAngle + mathSign(deltaAngle) * paddingAngle * (val !== 0 ? 1 : 0);
+      } else {
+        tempStartAngle = startAngle;
+      }
 
-        const tempEndAngle =
-          tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
-        const midAngle = (tempStartAngle + tempEndAngle) / 2;
-        const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
-        const tooltipPayload: TooltipPayload = [
-          {
-            // @ts-expect-error getValueByDataKey does not validate the output type
-            name,
-            // @ts-expect-error getValueByDataKey does not validate the output type
-            value: val,
-            payload: entry,
-            dataKey,
-            type: tooltipType,
-          },
-        ];
-        const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
-
-        prev = {
-          percent,
-          cornerRadius,
+      const tempEndAngle =
+        tempStartAngle + mathSign(deltaAngle) * ((val !== 0 ? minAngle : 0) + percent * realTotalAngle);
+      const midAngle = (tempStartAngle + tempEndAngle) / 2;
+      const middleRadius = (coordinate.innerRadius + coordinate.outerRadius) / 2;
+      const tooltipPayload: TooltipPayload = [
+        {
+          // @ts-expect-error getValueByDataKey does not validate the output type
           name,
-          tooltipPayload,
-          midAngle,
-          middleRadius,
-          tooltipPosition,
-          ...entry,
-          ...coordinate,
-          value: getValueByDataKey(entry, dataKey),
-          startAngle: tempStartAngle,
-          endAngle: tempEndAngle,
-          payload: entry,
-          paddingAngle: mathSign(deltaAngle) * paddingAngle,
-        };
+          // @ts-expect-error getValueByDataKey does not validate the output type
+          value: val,
+          payload: entryWithCellInfo,
+          dataKey,
+          type: tooltipType,
+        },
+      ];
+      const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
 
-        return prev;
-      });
-    }
+      prev = {
+        percent,
+        cornerRadius,
+        name,
+        tooltipPayload,
+        midAngle,
+        middleRadius,
+        tooltipPosition,
+        ...entryWithCellInfo,
+        ...coordinate,
+        value: getValueByDataKey(entry, dataKey),
+        startAngle: tempStartAngle,
+        endAngle: tempEndAngle,
+        payload: entryWithCellInfo,
+        paddingAngle: mathSign(deltaAngle) * paddingAngle,
+      };
 
-    return {
-      ...coordinate,
-      sectors,
-      data: pieData,
-    };
-  };
+      return prev;
+    });
+  }
+
+  return { sectors, coordinate };
+}
+
+export class PieWithState extends PureComponent<InternalProps, State> {
+  pieRef: SVGGElement = null;
 
   constructor(props: InternalProps) {
     super(props);
@@ -516,12 +516,13 @@ export class Pie extends PureComponent<InternalProps, State> {
 
   state: State;
 
+  sectorRefs: SVGGElement[] = [];
+
   static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (prevState.prevIsAnimationActive !== nextProps.isAnimationActive) {
       return {
         prevIsAnimationActive: nextProps.isAnimationActive,
         prevAnimationId: nextProps.animationId,
-        curSectors: nextProps.sectors,
         prevSectors: [],
         isAnimationFinished: true,
       };
@@ -529,22 +530,16 @@ export class Pie extends PureComponent<InternalProps, State> {
     if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
-        curSectors: nextProps.sectors,
         prevSectors: prevState.curSectors,
         isAnimationFinished: true,
       };
     }
     if (nextProps.sectors !== prevState.curSectors) {
-      return {
-        curSectors: nextProps.sectors,
-        isAnimationFinished: true,
-      };
+      return { isAnimationFinished: true };
     }
 
     return null;
   }
-
-  id = uniqueId('recharts-pie-');
 
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
@@ -570,7 +565,7 @@ export class Pie extends PureComponent<InternalProps, State> {
     }
   };
 
-  renderLabels(sectors: PieSectorDataItem[]) {
+  renderLabels(sectors: Readonly<PieSectorDataItem[]>) {
     const { isAnimationActive } = this.props;
 
     if (isAnimationActive && !this.state.isAnimationFinished) {
@@ -617,7 +612,7 @@ export class Pie extends PureComponent<InternalProps, State> {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  renderSectorsStatically(sectors: PieSectorDataItem[]) {
+  renderSectorsStatically(sectors: Readonly<PieSectorDataItem[]>) {
     const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
     return (
       <PieSectors
@@ -737,32 +732,11 @@ export class Pie extends PureComponent<InternalProps, State> {
   }
 
   render() {
-    const { hide, sectors, className, label, cx, cy, innerRadius, outerRadius, isAnimationActive } = this.props;
+    const { hide, className, label, isAnimationActive, sectors } = this.props;
     const { isAnimationFinished } = this.state;
 
-    if (
-      hide ||
-      !sectors ||
-      !sectors.length ||
-      !isNumber(cx as number) ||
-      !isNumber(cy as number) ||
-      !isNumber(innerRadius as number) ||
-      !isNumber(outerRadius as number)
-    ) {
-      /*
-       * This used to render `null`, but it should still set the legend because:
-       * 1. Hidden pie still renders a legend item (albeit with inactive color)
-       * 2. if a dataKey does not match anything from props.data, then props.sectors are not defined.
-       * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
-       * But for now I will keep it as-is.
-       */
-      return (
-        <>
-          <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
-          <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+    if (hide || !sectors || !sectors.length) {
+      return null;
     }
 
     const layerClass = clsx('recharts-pie', className);
@@ -779,10 +753,149 @@ export class Pie extends PureComponent<InternalProps, State> {
         {label && this.renderLabels(sectors)}
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
-        <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
       </Layer>
+    );
+  }
+}
+
+const defaultPieProps: Partial<Props> = {
+  stroke: '#fff',
+  fill: '#808080',
+  legendType: 'rect',
+  cx: '50%',
+  cy: '50%',
+  startAngle: 0,
+  endAngle: 360,
+  innerRadius: 0,
+  outerRadius: '80%',
+  paddingAngle: 0,
+  labelLine: true,
+  hide: false,
+  minAngle: 0,
+  isAnimationActive: !Global.isSsr,
+  animationBegin: 400,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  nameKey: 'name',
+  blendStroke: false,
+  rootTabIndex: 0,
+};
+
+function PieImpl(props: Props) {
+  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+  const updateId = useUpdateId();
+  const pieSettings: ResolvedPieSettings = useMemo(
+    () => ({
+      name: props.name,
+      nameKey: props.nameKey,
+      tooltipType: props.tooltipType,
+      data: props.data,
+      dataKey: props.dataKey,
+      cx: props.cx,
+      cy: props.cy,
+      startAngle: props.startAngle,
+      endAngle: props.endAngle,
+      minAngle: props.minAngle,
+      paddingAngle: props.paddingAngle,
+      innerRadius: props.innerRadius,
+      outerRadius: props.outerRadius,
+      cornerRadius: props.cornerRadius,
+    }),
+    [
+      props.cornerRadius,
+      props.cx,
+      props.cy,
+      props.data,
+      props.dataKey,
+      props.endAngle,
+      props.innerRadius,
+      props.minAngle,
+      props.name,
+      props.nameKey,
+      props.outerRadius,
+      props.paddingAngle,
+      props.startAngle,
+      props.tooltipType,
+    ],
+  );
+
+  const presentationProps = filterProps(props, false);
+
+  const sectorsAndCoord = useAppSelector(state => {
+    // @ts-expect-error result of filterProps is not PieProps, but is treated as such
+    return selectPieSectors(state, pieSettings, presentationProps, cells) ?? {};
+  });
+  const sectors = sectorsAndCoord?.sectors;
+
+  // this causes way too many re-renders
+  // useLegendPayloadDispatch(computeLegendPayloadFromPieData, { ...props, sectors });
+
+  const {
+    animationBegin = defaultPieProps.animationBegin,
+    animationDuration = defaultPieProps.animationDuration,
+    animationEasing = defaultPieProps.animationEasing,
+    hide = defaultPieProps.hide,
+    isAnimationActive = defaultPieProps.isAnimationActive,
+    legendType = defaultPieProps.legendType,
+    ref,
+    ...everythingElse
+  } = props;
+
+  return (
+    <>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
+      <PieWithState
+        {...everythingElse}
+        legendType={legendType}
+        hide={hide}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
+        sectors={sectors}
+        animationId={updateId}
+      />
+    </>
+  );
+}
+
+export class Pie extends PureComponent<Props, State> {
+  static displayName = 'Pie';
+
+  static defaultProps = defaultPieProps;
+
+  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): PieComposedData => {
+    const cells = findAllByType(item.props.children, Cell);
+    const pieData = getRealPieData(item, cells);
+    if (!pieData || !pieData.length) {
+      return null;
+    }
+
+    const { sectors, coordinate } = computePieSectors({
+      pieSettings: item.props,
+      cells,
+      // TODO: why does passing offset in mess up assertions?
+      offset: { top: 0, left: 0, height: offset.height, width: offset.width },
+      displayedData: pieData,
+    });
+
+    return {
+      ...coordinate,
+      sectors,
+      data: pieData,
+    };
+  };
+
+  id = uniqueId('recharts-pie-');
+
+  render() {
+    return (
+      <>
+        <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
+        {/* Legend is broken because Legend relies on sectors to be computed, but adding legend items in PieImpl causes many re-renders */}
+        {/* <SetPiePayloadLegend legendType={this.props.legendType} /> */}
+        <PieImpl {...this.props} />
+      </>
     );
   }
 }
