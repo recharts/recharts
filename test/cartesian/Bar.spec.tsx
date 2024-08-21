@@ -11,6 +11,7 @@ import {
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
+import { expectBars } from '../helper/expectBars';
 
 type TestCase = {
   ChartElement: ComponentType<{ children?: ReactNode; width?: number; height?: number; data?: any[] }>;
@@ -311,26 +312,129 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
   });
 
   describe('minPointSize', () => {
+    const highLowData = [
+      { name: 'test1', value: 10000 },
+      { name: 'test2', value: 0 },
+      { name: 'test3', value: 1 },
+    ];
+
     it('should pass props to the minPointSize function', () => {
       const spy = vi.fn().mockImplementation(() => 5);
       render(
-        <ChartElement data={data}>
+        <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <YAxis />
           <Bar isAnimationActive={false} minPointSize={spy} dataKey="value" />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenCalledTimes(data.length);
+      expect(spy).toHaveBeenCalledTimes(highLowData.length);
       // expect it to be called with the value and the value's index
       expect(spy).toBeCalledWith(expect.any(Number), expect.any(Number));
     });
 
+    it('should ignore 0 value bars when minPointSize is undefined, and render the small bars really really small', () => {
+      const { container } = render(
+        <ChartElement data={highLowData}>
+          <XAxis dataKey="name" />
+          <Bar isAnimationActive={false} dataKey="value" />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 21.333333333333336,5 h 130 v 460 h -130 Z',
+          height: '460',
+          radius: '0',
+          width: '130',
+          x: '21.333333333333336',
+          y: '5',
+        },
+        {
+          d: 'M 348,464.954 h 130 v 0.04599999999999227 h -130 Z',
+          height: '0.04599999999999227',
+          radius: '0',
+          width: '130',
+          x: '348',
+          y: '464.954',
+        },
+      ]);
+    });
+
+    it('should assign minimum height to low value bars if minPointSize is a number', () => {
+      const { container } = render(
+        <ChartElement data={highLowData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar isAnimationActive={false} minPointSize={5} dataKey="value" />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 79.33333333333334,5 h 114 v 460 h -114 Z',
+          height: '460',
+          radius: '0',
+          width: '114',
+          x: '79.33333333333334',
+          y: '5',
+        },
+        {
+          d: 'M 222.66666666666669,460 h 114 v 5 h -114 Z',
+          height: '5',
+          radius: '0',
+          width: '114',
+          x: '222.66666666666669',
+          y: '460',
+        },
+        {
+          d: 'M 366,460 h 114 v 5 h -114 Z',
+          height: '5',
+          radius: '0',
+          width: '114',
+          x: '366',
+          y: '460',
+        },
+      ]);
+    });
+
+    it('should assign minimum width, in a vertical chart', () => {
+      const { container } = render(
+        <ChartElement data={highLowData} layout="vertical">
+          <XAxis dataKey="value" type="number" />
+          <YAxis dataKey="name" type="category" />
+          <Bar isAnimationActive={false} minPointSize={5} dataKey="value" />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,20.333333333333336 h 430 v 122 h -430 Z',
+          height: '122',
+          radius: '0',
+          width: '430',
+          x: '65',
+          y: '20.333333333333336',
+        },
+        {
+          d: 'M 65,173.66666666666669 h 5 v 122 h -5 Z',
+          height: '122',
+          radius: '0',
+          width: '5',
+          x: '65',
+          y: '173.66666666666669',
+        },
+        {
+          d: 'M 65,327 h 5 v 122 h -5 Z',
+          height: '122',
+          radius: '0',
+          width: '5',
+          x: '65',
+          y: '327',
+        },
+      ]);
+    });
+
     it('should render with varying minPointSize as per function results', () => {
-      const highLowData = [
-        { name: 'test1', value: 100 },
-        { name: 'test2', value: 0 },
-        { name: 'test3', value: 1 },
-      ];
       const { container } = render(
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
@@ -338,14 +442,29 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           <Bar isAnimationActive={false} minPointSize={(value: number) => (value > 0 ? 2 : 0)} dataKey="value" />
         </ChartElement>,
       );
-      const rects = container.querySelectorAll<SVGPathElement>('.recharts-bar-rectangle > .recharts-rectangle');
-      // expect only 2 rects, the one with 0 value does not render
-      expect(rects).toHaveLength(2);
-
-      // value of 100 should have height greater than 1
-      expect(Number(rects[0].getAttribute('height'))).toBeGreaterThan(1);
-      // value of 1 should have height greater than 0 due to minPointSize
-      expect(Number(rects[1].getAttribute('height'))).toBeGreaterThan(0);
+      /*
+       expect only 2 rects, the one with 0 value does not render
+       value of 100 should have height greater than 1
+       value of 1 should have height greater than 0 due to minPointSize
+      */
+      expectBars(container, [
+        {
+          d: 'M 79.33333333333334,5 h 114 v 460 h -114 Z',
+          height: '460',
+          radius: '0',
+          width: '114',
+          x: '79.33333333333334',
+          y: '5',
+        },
+        {
+          d: 'M 366,463 h 114 v 2 h -114 Z',
+          height: '2',
+          radius: '0',
+          width: '114',
+          x: '366',
+          y: '463',
+        },
+      ]);
     });
   });
 
