@@ -113,7 +113,7 @@ interface InternalPieProps extends PieDef {
   hide?: boolean;
   /** the input data */
   data?: any[];
-  sectors?: Readonly<PieSectorDataItem[]>;
+  sectors?: ReadonlyArray<PieSectorDataItem>;
   activeShape?: ActiveShape<PieSectorDataItem>;
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
@@ -200,8 +200,8 @@ export type PieCoordinate = {
 };
 
 type PieComposedData = PieCoordinate & {
-  sectors: PieSectorDataItem[];
-  data: RealPieData[];
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  data: ReadonlyArray<RealPieData>;
 };
 
 type PiePayloadInputProps = {
@@ -307,7 +307,7 @@ function PieSectors(props: PieSectorsProps) {
   });
 }
 
-const getRealPieData = (item: Pie, cells: ReactElement[]): RealPieData[] => {
+const getRealPieData = (item: Pie, cells: ReadonlyArray<ReactElement>): ReadonlyArray<RealPieData> => {
   const { data } = item.props;
   const presentationProps = filterProps(item.props, false);
 
@@ -406,7 +406,7 @@ export function computePieSectors({
   cells,
   offset,
 }: {
-  displayedData: any[];
+  displayedData: ReadonlyArray<RealPieData>;
   cells: ReadonlyArray<ReactElement> | undefined;
   pieSettings: {
     dataKey: DataKey<any> | undefined;
@@ -424,7 +424,7 @@ export function computePieSectors({
     cornerRadius?: number | string;
   };
   offset: ChartOffset;
-}): { sectors: PieSectorDataItem[]; coordinate: PieCoordinate } {
+}): { sectors: ReadonlyArray<PieSectorDataItem>; coordinate: PieCoordinate } {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
   const coordinate = parseCoordinateOfPie(pieSettings, offset);
