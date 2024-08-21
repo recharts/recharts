@@ -517,7 +517,6 @@ function computeBarRectangles({
   stackedData,
   dataStartIndex,
   displayedData,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   offset,
   cells,
 }: {
@@ -525,8 +524,8 @@ function computeBarRectangles({
   barSettings: BarSettings;
   pos: BarPositionPosition;
   bandSize: number;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Array<[number, number]>;
@@ -568,7 +567,7 @@ function computeBarRectangles({
       width = pos.size;
       const computedHeight = baseValueScale - currentValueScale;
       height = Number.isNaN(computedHeight) ? 0 : computedHeight;
-      background = { x, y: yAxis.y, width, height: yAxis.height };
+      background = { x, y: offset.top, width, height: offset.height };
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
         const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
@@ -589,7 +588,7 @@ function computeBarRectangles({
       });
       width = currentValueScale - baseValueScale;
       height = pos.size;
-      background = { x: xAxis.x, y, width: xAxis.width, height };
+      background = { x: offset.left, y, width: offset.width, height };
 
       if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
         const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
