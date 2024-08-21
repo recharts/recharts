@@ -1,13 +1,14 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, BarProps, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { useClipPathId, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
+import { expectBars } from '../helper/expectBars';
 
 type DataType = {
   name: string;
@@ -24,29 +25,6 @@ function assertActiveBarInteractions(container: HTMLElement) {
 
   fireEvent.mouseOut(chart);
   expect(container.querySelectorAll('.recharts-active-bar')).toHaveLength(0);
-}
-
-type ExpectedBar = {
-  x: string;
-  y: string;
-  width: string;
-  height: string;
-  radius: string;
-  d: string;
-};
-
-function expectBars(container: Element, expectedBars: ReadonlyArray<ExpectedBar>) {
-  assertNotNull(container);
-  const allBars = container.querySelectorAll('.recharts-bar .recharts-bar-rectangle path.recharts-rectangle');
-  const actualBars = Array.from(allBars).map(bar => ({
-    x: bar.getAttribute('x'),
-    y: bar.getAttribute('y'),
-    width: bar.getAttribute('width'),
-    height: bar.getAttribute('height'),
-    radius: bar.getAttribute('radius'),
-    d: bar.getAttribute('d'),
-  }));
-  expect(actualBars).toEqual(expectedBars);
 }
 
 describe('<BarChart />', () => {
