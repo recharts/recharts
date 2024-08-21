@@ -502,7 +502,7 @@ function BarImpl(props: Props) {
 }
 
 function computeBarRectangles({
-  props,
+  layout,
   item,
   pos,
   bandSize,
@@ -516,7 +516,7 @@ function computeBarRectangles({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   offset,
 }: {
-  props: Props;
+  layout: 'horizontal' | 'vertical';
   /**
    * @deprecated do not use - depends on passing around DOM elements
    */
@@ -532,7 +532,6 @@ function computeBarRectangles({
   offset: ChartOffset;
   displayedData: any[];
 }): ReadonlyArray<BarRectangleItem> | undefined {
-  const { layout } = props;
   const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
   const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
@@ -682,7 +681,7 @@ export class Bar extends PureComponent<Props> {
 
     const { layout } = props;
     const rects = computeBarRectangles({
-      props,
+      layout,
       item,
       pos,
       bandSize,
