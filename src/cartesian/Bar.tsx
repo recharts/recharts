@@ -504,7 +504,7 @@ function BarImpl(props: Props) {
 function computeBarRectangles({
   props,
   item,
-  barPosition,
+  pos,
   bandSize,
   xAxis,
   yAxis,
@@ -521,10 +521,7 @@ function computeBarRectangles({
    * @deprecated do not use - depends on passing around DOM elements
    */
   item: ReactElement;
-  /**
-   * @deprecated do not use - depends on passing around DOM elements
-   */
-  barPosition: ReadonlyArray<BarPosition>;
+  pos: BarPositionPosition;
   bandSize: number;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
   yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
@@ -535,11 +532,6 @@ function computeBarRectangles({
   offset: ChartOffset;
   displayedData: any[];
 }): ReadonlyArray<BarRectangleItem> | undefined {
-  const pos: BarPositionPosition | null = findPositionOfBar(barPosition, item);
-  if (!pos) {
-    return null;
-  }
-
   const { layout } = props;
   const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
@@ -692,7 +684,7 @@ export class Bar extends PureComponent<Props> {
     const rects = computeBarRectangles({
       props,
       item,
-      barPosition,
+      pos,
       bandSize,
       xAxis,
       yAxis,
