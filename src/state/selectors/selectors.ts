@@ -50,9 +50,7 @@ import { selectChartOffset } from './selectChartOffset';
 
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
 
-export const selectBarCategoryGap = (state: RechartsRootState) => state.options.barCategoryGap;
-
-export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.options.stackOffset;
+export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);

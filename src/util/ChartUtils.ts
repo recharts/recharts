@@ -55,6 +55,7 @@ import { ValueType } from '../component/DefaultTooltipContent';
 import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendState } from '../state/legendSlice';
+import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNil(obj) || isNil(dataKey)) {
@@ -230,13 +231,13 @@ export type BarSetup = {
 };
 
 /**
- * @deprecated do not use - depends on passing around DOM elements
+ * @deprecated do not use - depends on passing around DOM elements. Instead, use {@link selectBarSize}
  *
  * Calculate the size of all groups for stacked bar graph
  * @param  {Object} stackGroups The items grouped by axisId and stackId
  * @return {Object} The size of all groups
  */
-export const getBarSizeList = ({
+const getBarSizeList = ({
   barSize: globalSize,
   totalSize,
   stackGroups = {},
@@ -311,6 +312,8 @@ export type BarPosition = {
 };
 
 /**
+ * @deprecated do not use - depends on passing around DOM elements
+ *
  * Calculate the size of each bar and offset between start of band and the bar
  *
  * @param  {number} bandSize is the size of area where bars can render
@@ -755,7 +758,7 @@ export const findPositionOfBar = (
  * @param {Array} domain boundaries
  * @returns {Array} tuple of two numbers
  */
-export const truncateByDomain = (value: [number, number], domain: number[]) => {
+export const truncateByDomain = (value: [number, number], domain: ReadonlyArray<number>) => {
   if (!domain || domain.length !== 2 || !isNumber(domain[0]) || !isNumber(domain[1])) {
     return value;
   }
@@ -1103,9 +1106,9 @@ export const getCateCoordinateOfBar = ({
   entry,
   index,
 }: {
-  axis: any; // RadiusAxisProps & { dataKey?: any }; // TODO: should dataKey be included in RadiusAxisProps?
+  axis: BaseAxisWithScale;
   ticks: Array<TickItem>;
-  offset: any;
+  offset: number;
   bandSize: number;
   entry: any;
   index: number;
@@ -1113,7 +1116,7 @@ export const getCateCoordinateOfBar = ({
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }
-  const value = getValueByDataKey(entry, axis.dataKey, axis.domain[index]);
+  const value = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
   return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
@@ -1262,13 +1265,11 @@ export const parseSpecifiedDomain = (
  * @return {Number} Size
  */
 export const getBandSizeOfAxis = (
-  axis?: BaseAxisProps,
+  axis?: BaseAxisWithScale,
   ticks?: ReadonlyArray<TickItem>,
   isBar?: boolean,
 ): number | undefined => {
-  // @ts-expect-error we need to rethink scale type
   if (axis && axis.scale && axis.scale.bandwidth) {
-    // @ts-expect-error we need to rethink scale type
     const bandWidth = axis.scale.bandwidth();
 
     if (!isBar || bandWidth > 0) {
@@ -1406,7 +1407,11 @@ export const isAxisLTR = (axisMap: { [key: string]: Reversible }) => {
   return !axes.some(({ reversed }) => reversed);
 };
 
-// Determine the size of the axis, used for calculation of relative bar sizes
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @deprecated do not use, depends (indirectly) on DOM access. Instead, use {@link selectCartesianAxisSize}
+ * Determine the size of the axis, used for calculation of relative bar sizes
+ */
 export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
   if (axisName === 'xAxis') {
     return axisObj[axisName].width;
@@ -1444,7 +1449,7 @@ export function getBarPositions({
   itemIsBar: boolean;
   childMaxBarSize: any;
   globalMaxBarSize: number;
-  cateAxis: BaseAxisProps;
+  cateAxis: BaseAxisWithScale;
   cateTicks: ReadonlyArray<TickItem>;
   cateAxisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
   barSize: number | string | undefined;

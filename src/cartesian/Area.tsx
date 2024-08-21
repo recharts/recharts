@@ -846,6 +846,7 @@ export class Area extends PureComponent<Props, State> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        type="area"
         data={this.props.data}
         dataKey={this.props.dataKey}
         xAxisId={this.props.xAxisId}
@@ -853,6 +854,7 @@ export class Area extends PureComponent<Props, State> {
         zAxisId={0}
         stackId={this.props.stackId}
         hide={this.props.hide}
+        barSize={undefined}
       >
         <SetAreaLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

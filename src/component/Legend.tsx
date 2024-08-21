@@ -110,6 +110,9 @@ function LegendSizeDispatcher(props: Size): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setLegendSize(props));
+    return () => {
+      dispatch(setLegendSize({ width: 0, height: 0 }));
+    };
   }, [dispatch, props]);
   return null;
 }

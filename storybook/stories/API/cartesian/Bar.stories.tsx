@@ -508,7 +508,7 @@ export const API = {
     },
     dataKey: 'uv',
     unit: ' Visitors',
-    stackId: 1,
+    stackId: '1',
     stroke: 'red',
     fill: 'teal',
     background: true,

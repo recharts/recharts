@@ -17,8 +17,9 @@ import {
   AxisPropsNeededForTicksGenerator,
   isCategoricalAxis,
 } from '../../src/util/ChartUtils';
-import { AxisType, BaseAxisProps, DataKey, LayoutType } from '../../src/util/types';
+import { AxisType, DataKey, LayoutType } from '../../src/util/types';
 import { getDomainOfErrorBars } from '../../src/util/getDomainOfErrorBars';
+import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
 
 describe('getTicksForAxis', () => {
   const Y_AXIS_EXAMPLE: AxisPropsNeededForTicksGenerator = {
@@ -180,8 +181,8 @@ describe('getBandSizeOfAxis', () => {
     expect(getBandSizeOfAxis()).toBe(0);
   });
 
-  it('DataUtils.getBandSizeOfAxis({ type: "category", scale }) should return 0 ', () => {
-    const axis: BaseAxisProps = {
+  it('should return band size of scale, if available', () => {
+    const axis: BaseAxisWithScale = {
       type: 'category',
       // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleBand().domain(['0', '1', '2', '3']).range([0, 100]),
@@ -189,8 +190,12 @@ describe('getBandSizeOfAxis', () => {
     expect(getBandSizeOfAxis(axis)).toBe(25);
   });
 
-  it('DataUtils.getBandSizeOfAxis({ type: "number", scale }, ticks) should return 0 ', () => {
-    const axis: BaseAxisProps = { type: 'number' };
+  it('should compute band size from data if scale does not return explicit band size', () => {
+    const axis: BaseAxisWithScale = {
+      type: 'number',
+      // @ts-expect-error we need to wrap the d3 scales in unified interface
+      scale: scaleLinear(),
+    };
     const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
     expect(getBandSizeOfAxis(axis, ticks)).toBe(2);
   });

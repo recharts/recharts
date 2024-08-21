@@ -18,7 +18,7 @@ export const WithLeftAndRightAxes = {
           <ResponsiveContainer width="100%" height={500}>
             <ComposedChart data={pageData}>
               <Bar dataKey="pv" fill="red" yAxisId="right" />
-              <Bar dataKey="pv" fill="red" yAxisId="right-mirror" />
+              <Bar dataKey="uv" fill="red" yAxisId="right-mirror" />
               <Line dataKey="amt" fill="green" yAxisId="left" />
               <Line dataKey="amt" fill="green" yAxisId="left-mirror" />
 

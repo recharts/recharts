@@ -42,5 +42,6 @@ export const useTooltipAxis = (): AxisPropsWithExtraComputedData => useAppSelect
 export const useTooltipAxisBandSize = (): number | undefined => {
   const tooltipAxis = useTooltipAxis();
   const tooltipTicks = getTicksOfAxis(tooltipAxis, false, true);
+  // @ts-expect-error Property id is missing in type AxisPropsWithExtraComputedData but required in type BaseAxis
   return getBandSizeOfAxis(tooltipAxis, tooltipTicks);
 };
