@@ -284,43 +284,6 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           expect.soft(l).not.toHaveAttribute('fill');
         });
       });
-
-      it('should pass props to the minPointSize function', () => {
-        const spy = vi.fn().mockImplementation(() => 5);
-        render(
-          <ChartElement data={data}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Bar isAnimationActive={false} minPointSize={spy} dataKey="value" />
-          </ChartElement>,
-        );
-        expect(spy).toHaveBeenCalledTimes(data.length);
-        // expect it to be called with the value and the value's index
-        expect(spy).toBeCalledWith(expect.any(Number), expect.any(Number));
-      });
-
-      it('should render with varying minPointSize as per function results', () => {
-        const highLowData = [
-          { name: 'test1', value: 100 },
-          { name: 'test2', value: 0 },
-          { name: 'test3', value: 1 },
-        ];
-        const { container } = render(
-          <ChartElement data={highLowData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Bar isAnimationActive={false} minPointSize={(value: number) => (value > 0 ? 2 : 0)} dataKey="value" />
-          </ChartElement>,
-        );
-        const rects = container.querySelectorAll<SVGPathElement>('.recharts-bar-rectangle > .recharts-rectangle');
-        // expect only 2 rects, the one with 0 value does not render
-        expect(rects).toHaveLength(2);
-
-        // value of 100 should have height greater than 1
-        expect(Number(rects[0].getAttribute('height'))).toBeGreaterThan(1);
-        // value of 1 should have height greater than 0 due to minPointSize
-        expect(Number(rects[1].getAttribute('height'))).toBeGreaterThan(0);
-      });
     });
 
     describe('as a custom Element', () => {
@@ -344,6 +307,45 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           expect.soft(l).not.toHaveAttribute('fill', '#808080');
         });
       });
+    });
+  });
+
+  describe('minPointSize', () => {
+    it('should pass props to the minPointSize function', () => {
+      const spy = vi.fn().mockImplementation(() => 5);
+      render(
+        <ChartElement data={data}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar isAnimationActive={false} minPointSize={spy} dataKey="value" />
+        </ChartElement>,
+      );
+      expect(spy).toHaveBeenCalledTimes(data.length);
+      // expect it to be called with the value and the value's index
+      expect(spy).toBeCalledWith(expect.any(Number), expect.any(Number));
+    });
+
+    it('should render with varying minPointSize as per function results', () => {
+      const highLowData = [
+        { name: 'test1', value: 100 },
+        { name: 'test2', value: 0 },
+        { name: 'test3', value: 1 },
+      ];
+      const { container } = render(
+        <ChartElement data={highLowData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Bar isAnimationActive={false} minPointSize={(value: number) => (value > 0 ? 2 : 0)} dataKey="value" />
+        </ChartElement>,
+      );
+      const rects = container.querySelectorAll<SVGPathElement>('.recharts-bar-rectangle > .recharts-rectangle');
+      // expect only 2 rects, the one with 0 value does not render
+      expect(rects).toHaveLength(2);
+
+      // value of 100 should have height greater than 1
+      expect(Number(rects[0].getAttribute('height'))).toBeGreaterThan(1);
+      // value of 1 should have height greater than 0 due to minPointSize
+      expect(Number(rects[1].getAttribute('height'))).toBeGreaterThan(0);
     });
   });
 
