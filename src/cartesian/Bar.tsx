@@ -21,7 +21,6 @@ import {
   findPositionOfBar,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
-  getTooltipItem,
   getTooltipNameProp,
   getValueByDataKey,
   truncateByDomain,
@@ -501,6 +500,116 @@ function BarImpl(props: Props) {
   );
 }
 
+type BarSettings = {
+  dataKey: DataKey<any> | undefined;
+  minPointSize: MinPointSize | undefined;
+};
+
+function computeBarRectangles({
+  layout,
+  barSettings: { dataKey, minPointSize: minPointSizeProp },
+  pos,
+  bandSize,
+  xAxis,
+  yAxis,
+  xAxisTicks,
+  yAxisTicks,
+  stackedData,
+  dataStartIndex,
+  displayedData,
+  offset,
+  cells,
+}: {
+  layout: 'horizontal' | 'vertical';
+  barSettings: BarSettings;
+  pos: BarPositionPosition;
+  bandSize: number;
+  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxisTicks: TickItem[];
+  yAxisTicks: TickItem[];
+  stackedData: Array<[number, number]>;
+  dataStartIndex: number;
+  offset: ChartOffset;
+  displayedData: any[];
+  cells: ReadonlyArray<ReactElement> | undefined;
+}): ReadonlyArray<BarRectangleItem> | undefined {
+  const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
+  const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+  const baseValue = getBaseValueOfBar({ numericAxis });
+
+  return displayedData.map((entry, index) => {
+    let value, x, y, width, height, background;
+
+    if (stackedData) {
+      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+    } else {
+      value = getValueByDataKey(entry, dataKey);
+
+      if (!Array.isArray(value)) {
+        value = [baseValue, value];
+      }
+    }
+
+    const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
+
+    if (layout === 'horizontal') {
+      const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
+      x = getCateCoordinateOfBar({
+        axis: xAxis,
+        ticks: xAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
+      y = currentValueScale ?? baseValueScale ?? undefined;
+      width = pos.size;
+      const computedHeight = baseValueScale - currentValueScale;
+      height = Number.isNaN(computedHeight) ? 0 : computedHeight;
+      background = { x, y: offset.top, width, height: offset.height };
+
+      if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
+        const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
+
+        y -= delta;
+        height += delta;
+      }
+    } else {
+      const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
+      x = baseValueScale;
+      y = getCateCoordinateOfBar({
+        axis: yAxis,
+        ticks: yAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
+      width = currentValueScale - baseValueScale;
+      height = pos.size;
+      background = { x: offset.left, y, width: offset.width, height };
+
+      if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
+        const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
+        width += delta;
+      }
+    }
+
+    return {
+      ...entry,
+      x,
+      y,
+      width,
+      height,
+      value: stackedData ? value : value[1],
+      payload: entry,
+      background,
+      ...(cells && cells[index] && cells[index].props),
+    };
+  });
+}
+
 export class Bar extends PureComponent<Props> {
   static displayName = 'Bar';
 
@@ -567,84 +676,23 @@ export class Bar extends PureComponent<Props> {
       return null;
     }
 
+    const { dataKey, children, minPointSize } = item.props;
     const { layout } = props;
-    const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
-    const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
-    const rects = displayedData.map((entry, index) => {
-      let value, x, y, width, height, background;
-
-      if (stackedData) {
-        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
-      } else {
-        value = getValueByDataKey(entry, dataKey);
-
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
-        }
-      }
-
-      const minPointSize = minPointSizeCallback(minPointSizeProp, defaultMinPointSize)(value[1], index);
-
-      if (layout === 'horizontal') {
-        const [baseValueScale, currentValueScale] = [yAxis.scale(value[0]), yAxis.scale(value[1])];
-        x = getCateCoordinateOfBar({
-          axis: xAxis,
-          ticks: xAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        y = currentValueScale ?? baseValueScale ?? undefined;
-        width = pos.size;
-        const computedHeight = baseValueScale - currentValueScale;
-        height = Number.isNaN(computedHeight) ? 0 : computedHeight;
-        background = { x, y: yAxis.y, width, height: yAxis.height };
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {
-          const delta = mathSign(height || minPointSize) * (Math.abs(minPointSize) - Math.abs(height));
-
-          y -= delta;
-          height += delta;
-        }
-      } else {
-        const [baseValueScale, currentValueScale] = [xAxis.scale(value[0]), xAxis.scale(value[1])];
-        x = baseValueScale;
-        y = getCateCoordinateOfBar({
-          axis: yAxis,
-          ticks: yAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        width = currentValueScale - baseValueScale;
-        height = pos.size;
-        background = { x: xAxis.x, y, width: xAxis.width, height };
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(width) < Math.abs(minPointSize)) {
-          const delta = mathSign(width || minPointSize) * (Math.abs(minPointSize) - Math.abs(width));
-          width += delta;
-        }
-      }
-
-      return {
-        ...entry,
-        x,
-        y,
-        width,
-        height,
-        value: stackedData ? value : value[1],
-        payload: entry,
-        background,
-        ...(cells && cells[index] && cells[index].props),
-        // @ts-expect-error missing types
-        tooltipPayload: [getTooltipItem(item, entry)],
-        tooltipPosition: { x: x + width / 2, y: y + height / 2 },
-      };
+    const rects = computeBarRectangles({
+      layout,
+      barSettings: { dataKey, minPointSize },
+      pos,
+      bandSize,
+      xAxis,
+      yAxis,
+      xAxisTicks,
+      yAxisTicks,
+      stackedData,
+      dataStartIndex,
+      displayedData,
+      offset,
+      cells,
     });
 
     return { data: rects, layout, ...offset };
