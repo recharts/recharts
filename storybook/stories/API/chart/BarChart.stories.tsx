@@ -2,11 +2,11 @@ import React from 'react';
 import { Args } from '@storybook/react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
-import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { BarChartProps } from '../props/BarChartProps';
 
 export default {
-  argTypes: CategoricalChartProps,
+  argTypes: BarChartProps,
   component: BarChart,
 };
 
@@ -21,7 +21,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
     data: pageData,
     margin: {
       top: 0,
@@ -47,7 +47,7 @@ export const BarInBar = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
     data: pageData,
     margin: {
       top: 0,
@@ -75,7 +75,7 @@ export const Stacked = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
     data: pageDataWithNegativeNumbers,
     stackOffset: 'none',
     id: 'BarChart-Stacked',

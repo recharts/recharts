@@ -46,7 +46,7 @@ describe('<BarChart />', () => {
   });
 
   describe('labels', () => {
-    test('Render 4 labels when label is setted to be true', () => {
+    test('Render 4 labels when label=true', () => {
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
           <Bar isAnimationActive={false} dataKey="uv" label fill="#ff7300" />
@@ -773,6 +773,555 @@ describe('<BarChart />', () => {
           y: '5',
         },
       ]);
+    });
+  });
+
+  describe('bar categories', () => {
+    it('should render bars grouped in a category if they share the same xAxis tick', () => {
+      const { container } = render(
+        <BarChart width={500} height={300} data={data}>
+          <XAxis dataKey="name" />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Bar dataKey="pv" isAnimationActive={false} />
+        </BarChart>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 17.25,254.59999999999997 h 47 v 10.400000000000034 h -47 Z',
+          height: '10.400000000000034',
+          radius: '0',
+          width: '47',
+          x: '17.25',
+          y: '254.59999999999997',
+        },
+        {
+          d: 'M 139.75,257.2 h 47 v 7.800000000000011 h -47 Z',
+          height: '7.800000000000011',
+          radius: '0',
+          width: '47',
+          x: '139.75',
+          y: '257.2',
+        },
+        {
+          d: 'M 262.25,257.2 h 47 v 7.800000000000011 h -47 Z',
+          height: '7.800000000000011',
+          radius: '0',
+          width: '47',
+          x: '262.25',
+          y: '257.2',
+        },
+        {
+          d: 'M 384.75,259.8 h 47 v 5.199999999999989 h -47 Z',
+          height: '5.199999999999989',
+          radius: '0',
+          width: '47',
+          x: '384.75',
+          y: '259.8',
+        },
+        {
+          d: 'M 68.25,202.6 h 47 v 62.400000000000006 h -47 Z',
+          height: '62.400000000000006',
+          radius: '0',
+          width: '47',
+          x: '68.25',
+          y: '202.6',
+        },
+        {
+          d: 'M 190.75,146.258 h 47 v 118.74199999999999 h -47 Z',
+          height: '118.74199999999999',
+          radius: '0',
+          width: '47',
+          x: '190.75',
+          y: '146.258',
+        },
+        {
+          d: 'M 313.25,228.65200000000002 h 47 v 36.347999999999985 h -47 Z',
+          height: '36.347999999999985',
+          radius: '0',
+          width: '47',
+          x: '313.25',
+          y: '228.65200000000002',
+        },
+        {
+          d: 'M 435.75,10.200000000000005 h 47 v 254.79999999999998 h -47 Z',
+          height: '254.79999999999998',
+          radius: '0',
+          width: '47',
+          x: '435.75',
+          y: '10.200000000000005',
+        },
+      ]);
+    });
+
+    describe('barGap as a number', () => {
+      it('should increase the gap between bars in a category', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barGap={9}>
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 17.25,254.59999999999997 h 44 v 10.400000000000034 h -44 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '44',
+            x: '17.25',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 139.75,257.2 h 44 v 7.800000000000011 h -44 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '44',
+            x: '139.75',
+            y: '257.2',
+          },
+          {
+            d: 'M 262.25,257.2 h 44 v 7.800000000000011 h -44 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '44',
+            x: '262.25',
+            y: '257.2',
+          },
+          {
+            d: 'M 384.75,259.8 h 44 v 5.199999999999989 h -44 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '44',
+            x: '384.75',
+            y: '259.8',
+          },
+          {
+            d: 'M 70.25,202.6 h 44 v 62.400000000000006 h -44 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '44',
+            x: '70.25',
+            y: '202.6',
+          },
+          {
+            d: 'M 192.75,146.258 h 44 v 118.74199999999999 h -44 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '44',
+            x: '192.75',
+            y: '146.258',
+          },
+          {
+            d: 'M 315.25,228.65200000000002 h 44 v 36.347999999999985 h -44 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '44',
+            x: '315.25',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 437.75,10.200000000000005 h 44 v 254.79999999999998 h -44 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '44',
+            x: '437.75',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
+
+      it('should decrease the gap between bars in a category', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barGap={2}>
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 17.25,254.59999999999997 h 48 v 10.400000000000034 h -48 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '48',
+            x: '17.25',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 139.75,257.2 h 48 v 7.800000000000011 h -48 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '48',
+            x: '139.75',
+            y: '257.2',
+          },
+          {
+            d: 'M 262.25,257.2 h 48 v 7.800000000000011 h -48 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '48',
+            x: '262.25',
+            y: '257.2',
+          },
+          {
+            d: 'M 384.75,259.8 h 48 v 5.199999999999989 h -48 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '48',
+            x: '384.75',
+            y: '259.8',
+          },
+          {
+            d: 'M 67.25,202.6 h 48 v 62.400000000000006 h -48 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '48',
+            x: '67.25',
+            y: '202.6',
+          },
+          {
+            d: 'M 189.75,146.258 h 48 v 118.74199999999999 h -48 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '48',
+            x: '189.75',
+            y: '146.258',
+          },
+          {
+            d: 'M 312.25,228.65200000000002 h 48 v 36.347999999999985 h -48 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '48',
+            x: '312.25',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 434.75,10.200000000000005 h 48 v 254.79999999999998 h -48 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '48',
+            x: '434.75',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
+    });
+
+    describe('barGap as a percentage', () => {
+      it('should set the gap between bars in a category', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barGap="15%">
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 17.25,254.59999999999997 h 39 v 10.400000000000034 h -39 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '39',
+            x: '17.25',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 139.75,257.2 h 39 v 7.800000000000011 h -39 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '39',
+            x: '139.75',
+            y: '257.2',
+          },
+          {
+            d: 'M 262.25,257.2 h 39 v 7.800000000000011 h -39 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '39',
+            x: '262.25',
+            y: '257.2',
+          },
+          {
+            d: 'M 384.75,259.8 h 39 v 5.199999999999989 h -39 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '39',
+            x: '384.75',
+            y: '259.8',
+          },
+          {
+            d: 'M 74.625,202.6 h 39 v 62.400000000000006 h -39 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '39',
+            x: '74.625',
+            y: '202.6',
+          },
+          {
+            d: 'M 197.125,146.258 h 39 v 118.74199999999999 h -39 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '39',
+            x: '197.125',
+            y: '146.258',
+          },
+          {
+            d: 'M 319.625,228.65200000000002 h 39 v 36.347999999999985 h -39 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '39',
+            x: '319.625',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 442.125,10.200000000000005 h 39 v 254.79999999999998 h -39 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '39',
+            x: '442.125',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
+    });
+
+    describe('barCategoryGap as a number', () => {
+      it('should set the gap between bar categories', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barCategoryGap={9}>
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 14,254.59999999999997 h 50 v 10.400000000000034 h -50 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '50',
+            x: '14',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 136.5,257.2 h 50 v 7.800000000000011 h -50 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '50',
+            x: '136.5',
+            y: '257.2',
+          },
+          {
+            d: 'M 259,257.2 h 50 v 7.800000000000011 h -50 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '50',
+            x: '259',
+            y: '257.2',
+          },
+          {
+            d: 'M 381.5,259.8 h 50 v 5.199999999999989 h -50 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '50',
+            x: '381.5',
+            y: '259.8',
+          },
+          {
+            d: 'M 68,202.6 h 50 v 62.400000000000006 h -50 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '50',
+            x: '68',
+            y: '202.6',
+          },
+          {
+            d: 'M 190.5,146.258 h 50 v 118.74199999999999 h -50 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '50',
+            x: '190.5',
+            y: '146.258',
+          },
+          {
+            d: 'M 313,228.65200000000002 h 50 v 36.347999999999985 h -50 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '50',
+            x: '313',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 435.5,10.200000000000005 h 50 v 254.79999999999998 h -50 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '50',
+            x: '435.5',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
+    });
+
+    describe('barCategoryGap as a percentage', () => {
+      it('should increase the gap between bar categories', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barCategoryGap="25%">
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 35.625,254.59999999999997 h 28 v 10.400000000000034 h -28 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '28',
+            x: '35.625',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 158.125,257.2 h 28 v 7.800000000000011 h -28 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '28',
+            x: '158.125',
+            y: '257.2',
+          },
+          {
+            d: 'M 280.625,257.2 h 28 v 7.800000000000011 h -28 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '28',
+            x: '280.625',
+            y: '257.2',
+          },
+          {
+            d: 'M 403.125,259.8 h 28 v 5.199999999999989 h -28 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '28',
+            x: '403.125',
+            y: '259.8',
+          },
+          {
+            d: 'M 67.625,202.6 h 28 v 62.400000000000006 h -28 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '28',
+            x: '67.625',
+            y: '202.6',
+          },
+          {
+            d: 'M 190.125,146.258 h 28 v 118.74199999999999 h -28 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '28',
+            x: '190.125',
+            y: '146.258',
+          },
+          {
+            d: 'M 312.625,228.65200000000002 h 28 v 36.347999999999985 h -28 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '28',
+            x: '312.625',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 435.125,10.200000000000005 h 28 v 254.79999999999998 h -28 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '28',
+            x: '435.125',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
+
+      it('should decrease the gap between bar categories', () => {
+        const { container } = render(
+          <BarChart width={500} height={300} data={data} barCategoryGap="3%">
+            <XAxis dataKey="name" />
+            <Bar dataKey="uv" isAnimationActive={false} />
+            <Bar dataKey="pv" isAnimationActive={false} />
+          </BarChart>,
+        );
+
+        expectBars(container, [
+          {
+            d: 'M 8.675,254.59999999999997 h 55 v 10.400000000000034 h -55 Z',
+            height: '10.400000000000034',
+            radius: '0',
+            width: '55',
+            x: '8.675',
+            y: '254.59999999999997',
+          },
+          {
+            d: 'M 131.175,257.2 h 55 v 7.800000000000011 h -55 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '55',
+            x: '131.175',
+            y: '257.2',
+          },
+          {
+            d: 'M 253.675,257.2 h 55 v 7.800000000000011 h -55 Z',
+            height: '7.800000000000011',
+            radius: '0',
+            width: '55',
+            x: '253.675',
+            y: '257.2',
+          },
+          {
+            d: 'M 376.175,259.8 h 55 v 5.199999999999989 h -55 Z',
+            height: '5.199999999999989',
+            radius: '0',
+            width: '55',
+            x: '376.175',
+            y: '259.8',
+          },
+          {
+            d: 'M 67.675,202.6 h 55 v 62.400000000000006 h -55 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '55',
+            x: '67.675',
+            y: '202.6',
+          },
+          {
+            d: 'M 190.175,146.258 h 55 v 118.74199999999999 h -55 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '55',
+            x: '190.175',
+            y: '146.258',
+          },
+          {
+            d: 'M 312.675,228.65200000000002 h 55 v 36.347999999999985 h -55 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '55',
+            x: '312.675',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 435.175,10.200000000000005 h 55 v 254.79999999999998 h -55 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '55',
+            x: '435.175',
+            y: '10.200000000000005',
+          },
+        ]);
+      });
     });
   });
 
