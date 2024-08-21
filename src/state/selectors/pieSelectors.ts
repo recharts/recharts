@@ -29,33 +29,32 @@ export type ResolvedPieSettings = {
 
 const pickPieSettings = (_state: RechartsRootState, pieSettings: ResolvedPieSettings) => pieSettings;
 
-const pickPresentationProps = (
-  _state: RechartsRootState,
-  _pieSettings: ResolvedPieSettings,
-  presentationProps: Props,
-) => presentationProps;
-
 const pickCells = (
   _state: RechartsRootState,
   _pieSettings: ResolvedPieSettings,
-  _presentationProps: Props,
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => cells;
 
-export const selectPieSectors: (
+const pickPresentationProps = (
+  _state: RechartsRootState,
+  _pieSettings: ResolvedPieSettings,
+  _cells: ReadonlyArray<ReactElement> | undefined,
+  presentationProps: Props,
+) => presentationProps;
+
+export const selectDisplayedData: (
   state: RechartsRootState,
   pieSettings: ResolvedPieSettings,
-  presentationProps: Props,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined = createSelector(
-  [selectChartDataWithIndexes, pickPieSettings, pickPresentationProps, pickCells, selectChartOffset],
+  presentationProps: Props,
+) => ChartData | undefined = createSelector(
+  [selectChartDataWithIndexes, pickPieSettings, pickCells, pickPresentationProps],
   (
     { chartData }: ChartDataState,
     pieSettings: ResolvedPieSettings,
-    presentationProps: Props,
     cells,
-    offset: ChartOffset,
-  ): { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined => {
+    presentationProps: Props,
+  ): ChartData | undefined => {
     let displayedData: ChartData | undefined;
     if (pieSettings?.data?.length > 0) {
       displayedData = pieSettings.data;
@@ -71,6 +70,23 @@ export const selectPieSectors: (
       return undefined;
     }
 
+    return displayedData;
+  },
+);
+
+export const selectPieSectors: (
+  state: RechartsRootState,
+  pieSettings: ResolvedPieSettings,
+  cells: ReadonlyArray<ReactElement> | undefined,
+  presentationProps: Props,
+) => { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined = createSelector(
+  [selectDisplayedData, pickPieSettings, pickCells, selectChartOffset],
+  (
+    displayedData: ChartData | undefined,
+    pieSettings: ResolvedPieSettings,
+    cells,
+    offset: ChartOffset,
+  ): { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined => {
     return computePieSectors({
       offset,
       pieSettings,

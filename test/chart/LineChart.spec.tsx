@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-
 import { describe, MockInstance, test, vi } from 'vitest';
 import {
   Brush,

@@ -1,13 +1,11 @@
 /* eslint-disable max-classes-per-file */
-import React, { PureComponent, ReactElement, ReactNode, SVGProps, useMemo } from 'react';
+import React, { PureComponent, ReactElement, ReactNode, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
-import { ResolvedPieSettings, selectPieSectors } from '../state/selectors/pieSelectors';
-import { useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
@@ -21,7 +19,7 @@ import { Global } from '../util/Global';
 import { polarToCartesian, getMaxRadius } from '../util/PolarUtils';
 import { isNumber, getPercentValue, mathSign, interpolateNumber, uniqueId } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
-// import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import {
   LegendType,
   TooltipType,
@@ -36,7 +34,7 @@ import {
   GeometrySector,
 } from '../util/types';
 import { Shape } from '../util/ActiveShapeUtils';
-// import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -205,29 +203,30 @@ type PieComposedData = PieCoordinate & {
   sectors: PieSectorDataItem[];
   data: RealPieData[];
 };
-// type PiePayloadInputProps = {
-//   sectors: Readonly<PieSectorDataItem[]>;
-//   legendType?: LegendType;
-// };
 
-// const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
-//   if (sectors == null) {
-//     return [];
-//   }
-//   return sectors.map(
-//     (entry: PieSectorDataItem): LegendPayload => ({
-//       type: legendType,
-//       value: entry.name,
-//       color: entry.fill,
-//       payload: entry,
-//     }),
-//   );
-// };
+type PiePayloadInputProps = {
+  sectors: Readonly<PieSectorDataItem[]>;
+  legendType?: LegendType;
+};
 
-// function SetPiePayloadLegend(props: PiePayloadInputProps): null {
-//   useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
-//   return null;
-// }
+const computeLegendPayloadFromPieData = ({ sectors, legendType }: PiePayloadInputProps): Array<LegendPayload> => {
+  if (sectors == null) {
+    return [];
+  }
+  return sectors.map(
+    (entry: PieSectorDataItem): LegendPayload => ({
+      type: legendType,
+      value: entry.name,
+      color: entry.fill,
+      payload: entry,
+    }),
+  );
+};
+
+function SetPiePayloadLegend(props: PiePayloadInputProps): null {
+  useLegendPayloadDispatch(computeLegendPayloadFromPieData, props);
+  return null;
+}
 
 type PieSectorsProps = {
   sectors: Readonly<PieSectorDataItem[]>;
@@ -781,54 +780,8 @@ const defaultPieProps: Partial<Props> = {
   rootTabIndex: 0,
 };
 
-function PieImpl(props: Props) {
-  const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+function PieImpl(props: InternalProps) {
   const updateId = useUpdateId();
-  const pieSettings: ResolvedPieSettings = useMemo(
-    () => ({
-      name: props.name,
-      nameKey: props.nameKey,
-      tooltipType: props.tooltipType,
-      data: props.data,
-      dataKey: props.dataKey,
-      cx: props.cx,
-      cy: props.cy,
-      startAngle: props.startAngle,
-      endAngle: props.endAngle,
-      minAngle: props.minAngle,
-      paddingAngle: props.paddingAngle,
-      innerRadius: props.innerRadius,
-      outerRadius: props.outerRadius,
-      cornerRadius: props.cornerRadius,
-    }),
-    [
-      props.cornerRadius,
-      props.cx,
-      props.cy,
-      props.data,
-      props.dataKey,
-      props.endAngle,
-      props.innerRadius,
-      props.minAngle,
-      props.name,
-      props.nameKey,
-      props.outerRadius,
-      props.paddingAngle,
-      props.startAngle,
-      props.tooltipType,
-    ],
-  );
-
-  const presentationProps = filterProps(props, false);
-
-  const sectorsAndCoord = useAppSelector(state => {
-    // @ts-expect-error result of filterProps is not PieProps, but is treated as such
-    return selectPieSectors(state, pieSettings, presentationProps, cells) ?? {};
-  });
-  const sectors = sectorsAndCoord?.sectors;
-
-  // this causes way too many re-renders
-  // useLegendPayloadDispatch(computeLegendPayloadFromPieData, { ...props, sectors });
 
   const {
     animationBegin = defaultPieProps.animationBegin,
@@ -843,7 +796,7 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors: props.sectors }} />
       <PieWithState
         {...everythingElse}
         legendType={legendType}
@@ -852,14 +805,14 @@ function PieImpl(props: Props) {
         animationBegin={animationBegin}
         animationDuration={animationDuration}
         animationEasing={animationEasing}
-        sectors={sectors}
+        sectors={props.sectors}
         animationId={updateId}
       />
     </>
   );
 }
 
-export class Pie extends PureComponent<Props, State> {
+export class Pie extends PureComponent<InternalProps, State> {
   static displayName = 'Pie';
 
   static defaultProps = defaultPieProps;
@@ -874,8 +827,7 @@ export class Pie extends PureComponent<Props, State> {
     const { sectors, coordinate } = computePieSectors({
       pieSettings: item.props,
       cells,
-      // TODO: why does passing offset in mess up assertions?
-      offset: { top: 0, left: 0, height: offset.height, width: offset.width },
+      offset,
       displayedData: pieData,
     });
 
@@ -889,11 +841,36 @@ export class Pie extends PureComponent<Props, State> {
   id = uniqueId('recharts-pie-');
 
   render() {
+    const { hide, sectors, cx, cy, innerRadius, outerRadius } = this.props;
+    if (
+      hide ||
+      !sectors ||
+      !sectors.length ||
+      !isNumber(cx as number) ||
+      !isNumber(cy as number) ||
+      !isNumber(innerRadius as number) ||
+      !isNumber(outerRadius as number)
+    ) {
+      /*
+       * This used to render `null`, but it should still set the legend because:
+       * 1. Hidden pie still renders a legend item (albeit with inactive color)
+       * 2. if a dataKey does not match anything from props.data, then props.sectors are not defined.
+       * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
+       * But for now I will keep it as-is.
+       */
+      return (
+        <>
+          <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
+          <SetPiePayloadLegend sectors={this.props.sectors || this.props.data} legendType={this.props.legendType} />
+          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        </>
+      );
+    }
+
     return (
       <>
         <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
-        {/* Legend is broken because Legend relies on sectors to be computed, but adding legend items in PieImpl causes many re-renders */}
-        {/* <SetPiePayloadLegend legendType={this.props.legendType} /> */}
+        <SetPiePayloadLegend sectors={this.props.sectors} legendType={this.props.legendType} />
         <PieImpl {...this.props} />
       </>
     );
