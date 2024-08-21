@@ -21,7 +21,6 @@ import {
   findPositionOfBar,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
-  getTooltipItem,
   getTooltipNameProp,
   getValueByDataKey,
   truncateByDomain,
@@ -501,9 +500,14 @@ function BarImpl(props: Props) {
   );
 }
 
+type BarSettings = {
+  dataKey: DataKey<any> | undefined;
+  minPointSize: MinPointSize | undefined;
+};
+
 function computeBarRectangles({
   layout,
-  item,
+  barSettings: { dataKey, minPointSize: minPointSizeProp },
   pos,
   bandSize,
   xAxis,
@@ -515,12 +519,10 @@ function computeBarRectangles({
   displayedData,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   offset,
+  cells,
 }: {
   layout: 'horizontal' | 'vertical';
-  /**
-   * @deprecated do not use - depends on passing around DOM elements
-   */
-  item: ReactElement;
+  barSettings: BarSettings;
   pos: BarPositionPosition;
   bandSize: number;
   xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
@@ -531,12 +533,11 @@ function computeBarRectangles({
   dataStartIndex: number;
   offset: ChartOffset;
   displayedData: any[];
+  cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<BarRectangleItem> | undefined {
-  const { dataKey, children, minPointSize: minPointSizeProp } = item.props;
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
   const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
-  const cells = findAllByType(children, Cell);
 
   return displayedData.map((entry, index) => {
     let value, x, y, width, height, background;
@@ -606,9 +607,6 @@ function computeBarRectangles({
       payload: entry,
       background,
       ...(cells && cells[index] && cells[index].props),
-      // @ts-expect-error missing types
-      tooltipPayload: [getTooltipItem(item, entry)],
-      tooltipPosition: { x: x + width / 2, y: y + height / 2 },
     };
   });
 }
@@ -679,10 +677,12 @@ export class Bar extends PureComponent<Props> {
       return null;
     }
 
+    const { dataKey, children, minPointSize } = item.props;
     const { layout } = props;
+    const cells = findAllByType(children, Cell);
     const rects = computeBarRectangles({
       layout,
-      item,
+      barSettings: { dataKey, minPointSize },
       pos,
       bandSize,
       xAxis,
@@ -693,6 +693,7 @@ export class Bar extends PureComponent<Props> {
       dataStartIndex,
       displayedData,
       offset,
+      cells,
     });
 
     return { data: rects, layout, ...offset };
