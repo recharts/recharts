@@ -33,24 +33,108 @@ const data = [
 ];
 
 describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $testName', ({ ChartElement }) => {
-  it(`Render ${data.length} rectangles in horizontal Bar`, () => {
+  it(`should render rectangles in horizontal Bar`, () => {
     const { container } = render(
-      <ChartElement>
-        <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" />
+      <ChartElement layout="horizontal" data={data}>
+        <Bar isAnimationActive={false} dataKey="value" />
       </ChartElement>,
     );
 
-    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
+    expectBars(container, [
+      {
+        d: 'M 14.8,413.3333333333333 h 78 v 81.66666666666669 h -78 Z',
+        height: '81.66666666666669',
+        radius: '0',
+        width: '78',
+        x: '14.8',
+        y: '413.3333333333333',
+      },
+      {
+        d: 'M 112.8,331.66666666666674 h 78 v 163.33333333333326 h -78 Z',
+        height: '163.33333333333326',
+        radius: '0',
+        width: '78',
+        x: '112.8',
+        y: '331.66666666666674',
+      },
+      {
+        d: 'M 210.8,250 h 78 v 245 h -78 Z',
+        height: '245',
+        radius: '0',
+        width: '78',
+        x: '210.8',
+        y: '250',
+      },
+      {
+        d: 'M 308.8,168.33333333333337 h 78 v 326.66666666666663 h -78 Z',
+        height: '326.66666666666663',
+        radius: '0',
+        width: '78',
+        x: '308.8',
+        y: '168.33333333333337',
+      },
+      {
+        d: 'M 406.8,86.66666666666666 h 78 v 408.33333333333337 h -78 Z',
+        height: '408.33333333333337',
+        radius: '0',
+        width: '78',
+        x: '406.8',
+        y: '86.66666666666666',
+      },
+    ]);
   });
 
-  it(`Render ${data.length} rectangles in vertical Bar`, () => {
+  it(`should render rectangles in vertical Bar`, () => {
     const { container } = render(
-      <ChartElement>
-        <Bar isAnimationActive={false} layout="vertical" data={data} dataKey="value" />
+      <ChartElement layout="vertical" data={data}>
+        <YAxis type="category" />
+        <XAxis type="number" />
+        <Bar isAnimationActive={false} dataKey="value" />
       </ChartElement>,
     );
 
-    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(data.length);
+    expectBars(container, [
+      {
+        d: 'M 65,14.2 h 71.66666666666669 v 73 h -71.66666666666669 Z',
+        height: '73',
+        radius: '0',
+        width: '71.66666666666669',
+        x: '65',
+        y: '14.2',
+      },
+      {
+        d: 'M 65,106.2 h 143.33333333333334 v 73 h -143.33333333333334 Z',
+        height: '73',
+        radius: '0',
+        width: '143.33333333333334',
+        x: '65',
+        y: '106.2',
+      },
+      {
+        d: 'M 65,198.2 h 215 v 73 h -215 Z',
+        height: '73',
+        radius: '0',
+        width: '215',
+        x: '65',
+        y: '198.2',
+      },
+      {
+        d: 'M 65,290.2 h 286.6666666666667 v 73 h -286.6666666666667 Z',
+        height: '73',
+        radius: '0',
+        width: '286.6666666666667',
+        x: '65',
+        y: '290.2',
+      },
+      {
+        d: 'M 65,382.2 h 358.3333333333333 v 73 h -358.3333333333333 Z',
+        height: '73',
+        radius: '0',
+        width: '358.3333333333333',
+        x: '65',
+        y: '382.2',
+      },
+    ]);
   });
 
   it("Don't render any rectangle when data is empty", () => {
@@ -60,7 +144,539 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       </ChartElement>,
     );
 
-    expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
+    expectBars(container, []);
+  });
+
+  describe('barSize', () => {
+    it('should make bars wider in horizontal chart', () => {
+      const barSize = 79;
+      const { container } = render(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 14,413.3333333333333 h 79 v 81.66666666666669 h -79 Z',
+          height: '81.66666666666669',
+          radius: '0',
+          width: '79',
+          x: '14',
+          y: '413.3333333333333',
+        },
+        {
+          d: 'M 112,331.66666666666674 h 79 v 163.33333333333326 h -79 Z',
+          height: '163.33333333333326',
+          radius: '0',
+          width: '79',
+          x: '112',
+          y: '331.66666666666674',
+        },
+        {
+          d: 'M 210,250 h 79 v 245 h -79 Z',
+          height: '245',
+          radius: '0',
+          width: '79',
+          x: '210',
+          y: '250',
+        },
+        {
+          d: 'M 308,168.33333333333337 h 79 v 326.66666666666663 h -79 Z',
+          height: '326.66666666666663',
+          radius: '0',
+          width: '79',
+          x: '308',
+          y: '168.33333333333337',
+        },
+        {
+          d: 'M 406,86.66666666666666 h 79 v 408.33333333333337 h -79 Z',
+          height: '408.33333333333337',
+          radius: '0',
+          width: '79',
+          x: '406',
+          y: '86.66666666666666',
+        },
+      ]);
+    });
+
+    it('should make bars narrower in horizontal chart', () => {
+      const barSize = 77;
+      const { container } = render(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 15,413.3333333333333 h 77 v 81.66666666666669 h -77 Z',
+          height: '81.66666666666669',
+          radius: '0',
+          width: '77',
+          x: '15',
+          y: '413.3333333333333',
+        },
+        {
+          d: 'M 113,331.66666666666674 h 77 v 163.33333333333326 h -77 Z',
+          height: '163.33333333333326',
+          radius: '0',
+          width: '77',
+          x: '113',
+          y: '331.66666666666674',
+        },
+        {
+          d: 'M 211,250 h 77 v 245 h -77 Z',
+          height: '245',
+          radius: '0',
+          width: '77',
+          x: '211',
+          y: '250',
+        },
+        {
+          d: 'M 309,168.33333333333337 h 77 v 326.66666666666663 h -77 Z',
+          height: '326.66666666666663',
+          radius: '0',
+          width: '77',
+          x: '309',
+          y: '168.33333333333337',
+        },
+        {
+          d: 'M 407,86.66666666666666 h 77 v 408.33333333333337 h -77 Z',
+          height: '408.33333333333337',
+          radius: '0',
+          width: '77',
+          x: '407',
+          y: '86.66666666666666',
+        },
+      ]);
+    });
+
+    it('should make bars taller in vertical chart', () => {
+      const barSize = 74;
+      const { container } = render(
+        <ChartElement layout="vertical" data={data}>
+          <YAxis type="category" />
+          <XAxis type="number" />
+          <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,14 h 71.66666666666669 v 74 h -71.66666666666669 Z',
+          height: '74',
+          radius: '0',
+          width: '71.66666666666669',
+          x: '65',
+          y: '14',
+        },
+        {
+          d: 'M 65,106 h 143.33333333333334 v 74 h -143.33333333333334 Z',
+          height: '74',
+          radius: '0',
+          width: '143.33333333333334',
+          x: '65',
+          y: '106',
+        },
+        {
+          d: 'M 65,198 h 215 v 74 h -215 Z',
+          height: '74',
+          radius: '0',
+          width: '215',
+          x: '65',
+          y: '198',
+        },
+        {
+          d: 'M 65,290 h 286.6666666666667 v 74 h -286.6666666666667 Z',
+          height: '74',
+          radius: '0',
+          width: '286.6666666666667',
+          x: '65',
+          y: '290',
+        },
+        {
+          d: 'M 65,382 h 358.3333333333333 v 74 h -358.3333333333333 Z',
+          height: '74',
+          radius: '0',
+          width: '358.3333333333333',
+          x: '65',
+          y: '382',
+        },
+      ]);
+    });
+
+    it('should make bars shorter in vertical chart', () => {
+      const barSize = 72;
+      const { container } = render(
+        <ChartElement layout="vertical" data={data}>
+          <YAxis type="category" />
+          <XAxis type="number" />
+          <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,15 h 71.66666666666669 v 72 h -71.66666666666669 Z',
+          height: '72',
+          radius: '0',
+          width: '71.66666666666669',
+          x: '65',
+          y: '15',
+        },
+        {
+          d: 'M 65,107 h 143.33333333333334 v 72 h -143.33333333333334 Z',
+          height: '72',
+          radius: '0',
+          width: '143.33333333333334',
+          x: '65',
+          y: '107',
+        },
+        {
+          d: 'M 65,199 h 215 v 72 h -215 Z',
+          height: '72',
+          radius: '0',
+          width: '215',
+          x: '65',
+          y: '199',
+        },
+        {
+          d: 'M 65,291 h 286.6666666666667 v 72 h -286.6666666666667 Z',
+          height: '72',
+          radius: '0',
+          width: '286.6666666666667',
+          x: '65',
+          y: '291',
+        },
+        {
+          d: 'M 65,383 h 358.3333333333333 v 72 h -358.3333333333333 Z',
+          height: '72',
+          radius: '0',
+          width: '358.3333333333333',
+          x: '65',
+          y: '383',
+        },
+      ]);
+    });
+  });
+
+  describe('maxBarSize', () => {
+    it('should do nothing if bars are already smaller than the maxBarSize', () => {
+      const { container } = render(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={79} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 14.8,413.3333333333333 h 78 v 81.66666666666669 h -78 Z',
+          height: '81.66666666666669',
+          radius: '0',
+          width: '78',
+          x: '14.8',
+          y: '413.3333333333333',
+        },
+        {
+          d: 'M 112.8,331.66666666666674 h 78 v 163.33333333333326 h -78 Z',
+          height: '163.33333333333326',
+          radius: '0',
+          width: '78',
+          x: '112.8',
+          y: '331.66666666666674',
+        },
+        {
+          d: 'M 210.8,250 h 78 v 245 h -78 Z',
+          height: '245',
+          radius: '0',
+          width: '78',
+          x: '210.8',
+          y: '250',
+        },
+        {
+          d: 'M 308.8,168.33333333333337 h 78 v 326.66666666666663 h -78 Z',
+          height: '326.66666666666663',
+          radius: '0',
+          width: '78',
+          x: '308.8',
+          y: '168.33333333333337',
+        },
+        {
+          d: 'M 406.8,86.66666666666666 h 78 v 408.33333333333337 h -78 Z',
+          height: '408.33333333333337',
+          radius: '0',
+          width: '78',
+          x: '406.8',
+          y: '86.66666666666666',
+        },
+      ]);
+    });
+
+    it('should change all bars width when bars are larger than the maxBarSize', () => {
+      const maxBarSize = 77;
+      const { container } = render(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 15.3,413.3333333333333 h 77 v 81.66666666666669 h -77 Z',
+          height: '81.66666666666669',
+          radius: '0',
+          width: String(maxBarSize),
+          x: '15.3',
+          y: '413.3333333333333',
+        },
+        {
+          d: 'M 113.3,331.66666666666674 h 77 v 163.33333333333326 h -77 Z',
+          height: '163.33333333333326',
+          radius: '0',
+          width: String(maxBarSize),
+          x: '113.3',
+          y: '331.66666666666674',
+        },
+        {
+          d: 'M 211.3,250 h 77 v 245 h -77 Z',
+          height: '245',
+          radius: '0',
+          width: String(maxBarSize),
+          x: '211.3',
+          y: '250',
+        },
+        {
+          d: 'M 309.3,168.33333333333337 h 77 v 326.66666666666663 h -77 Z',
+          height: '326.66666666666663',
+          radius: '0',
+          width: String(maxBarSize),
+          x: '309.3',
+          y: '168.33333333333337',
+        },
+        {
+          d: 'M 407.3,86.66666666666666 h 77 v 408.33333333333337 h -77 Z',
+          height: '408.33333333333337',
+          radius: '0',
+          width: String(maxBarSize),
+          x: '407.3',
+          y: '86.66666666666666',
+        },
+      ]);
+    });
+
+    it('should should do nothing if barSize is set', () => {
+      const maxBarSize = 77;
+      const { container } = render(
+        <ChartElement layout="horizontal" data={data}>
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} barSize={maxBarSize + 5} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 13,413.3333333333333 h 82 v 81.66666666666669 h -82 Z',
+          height: '81.66666666666669',
+          radius: '0',
+          width: '82',
+          x: '13',
+          y: '413.3333333333333',
+        },
+        {
+          d: 'M 111,331.66666666666674 h 82 v 163.33333333333326 h -82 Z',
+          height: '163.33333333333326',
+          radius: '0',
+          width: '82',
+          x: '111',
+          y: '331.66666666666674',
+        },
+        {
+          d: 'M 209,250 h 82 v 245 h -82 Z',
+          height: '245',
+          radius: '0',
+          width: '82',
+          x: '209',
+          y: '250',
+        },
+        {
+          d: 'M 307,168.33333333333337 h 82 v 326.66666666666663 h -82 Z',
+          height: '326.66666666666663',
+          radius: '0',
+          width: '82',
+          x: '307',
+          y: '168.33333333333337',
+        },
+        {
+          d: 'M 405,86.66666666666666 h 82 v 408.33333333333337 h -82 Z',
+          height: '408.33333333333337',
+          radius: '0',
+          width: '82',
+          x: '405',
+          y: '86.66666666666666',
+        },
+      ]);
+    });
+
+    it('should do nothing in vertical chart if all bars are smaller than the maxBarSize', () => {
+      const { container } = render(
+        <ChartElement layout="vertical" data={data}>
+          <YAxis type="category" />
+          <XAxis type="number" />
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={74} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,14.2 h 71.66666666666669 v 73 h -71.66666666666669 Z',
+          height: '73',
+          radius: '0',
+          width: '71.66666666666669',
+          x: '65',
+          y: '14.2',
+        },
+        {
+          d: 'M 65,106.2 h 143.33333333333334 v 73 h -143.33333333333334 Z',
+          height: '73',
+          radius: '0',
+          width: '143.33333333333334',
+          x: '65',
+          y: '106.2',
+        },
+        {
+          d: 'M 65,198.2 h 215 v 73 h -215 Z',
+          height: '73',
+          radius: '0',
+          width: '215',
+          x: '65',
+          y: '198.2',
+        },
+        {
+          d: 'M 65,290.2 h 286.6666666666667 v 73 h -286.6666666666667 Z',
+          height: '73',
+          radius: '0',
+          width: '286.6666666666667',
+          x: '65',
+          y: '290.2',
+        },
+        {
+          d: 'M 65,382.2 h 358.3333333333333 v 73 h -358.3333333333333 Z',
+          height: '73',
+          radius: '0',
+          width: '358.3333333333333',
+          x: '65',
+          y: '382.2',
+        },
+      ]);
+    });
+
+    it('should change all bars height in vertical chart if all bars are larger than the maxBarSize', () => {
+      const maxBarSize = 72;
+      const { container } = render(
+        <ChartElement layout="vertical" data={data}>
+          <YAxis type="category" />
+          <XAxis type="number" />
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,14.7 h 71.66666666666669 v 72 h -71.66666666666669 Z',
+          height: String(maxBarSize),
+          radius: '0',
+          width: '71.66666666666669',
+          x: '65',
+          y: '14.7',
+        },
+        {
+          d: 'M 65,106.7 h 143.33333333333334 v 72 h -143.33333333333334 Z',
+          height: String(maxBarSize),
+          radius: '0',
+          width: '143.33333333333334',
+          x: '65',
+          y: '106.7',
+        },
+        {
+          d: 'M 65,198.7 h 215 v 72 h -215 Z',
+          height: String(maxBarSize),
+          radius: '0',
+          width: '215',
+          x: '65',
+          y: '198.7',
+        },
+        {
+          d: 'M 65,290.7 h 286.6666666666667 v 72 h -286.6666666666667 Z',
+          height: String(maxBarSize),
+          radius: '0',
+          width: '286.6666666666667',
+          x: '65',
+          y: '290.7',
+        },
+        {
+          d: 'M 65,382.7 h 358.3333333333333 v 72 h -358.3333333333333 Z',
+          height: String(maxBarSize),
+          radius: '0',
+          width: '358.3333333333333',
+          x: '65',
+          y: '382.7',
+        },
+      ]);
+    });
+
+    it('should do nothing if barSize is set in vertical chart', () => {
+      const maxBarSize = 72;
+      const { container } = render(
+        <ChartElement layout="vertical" data={data}>
+          <YAxis type="category" />
+          <XAxis type="number" />
+          <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} barSize={maxBarSize + 7} />
+        </ChartElement>,
+      );
+
+      expectBars(container, [
+        {
+          d: 'M 65,11 h 71.66666666666669 v 79 h -71.66666666666669 Z',
+          height: '79',
+          radius: '0',
+          width: '71.66666666666669',
+          x: '65',
+          y: '11',
+        },
+        {
+          d: 'M 65,103 h 143.33333333333334 v 79 h -143.33333333333334 Z',
+          height: '79',
+          radius: '0',
+          width: '143.33333333333334',
+          x: '65',
+          y: '103',
+        },
+        {
+          d: 'M 65,195 h 215 v 79 h -215 Z',
+          height: '79',
+          radius: '0',
+          width: '215',
+          x: '65',
+          y: '195',
+        },
+        {
+          d: 'M 65,287 h 286.6666666666667 v 79 h -286.6666666666667 Z',
+          height: '79',
+          radius: '0',
+          width: '286.6666666666667',
+          x: '65',
+          y: '287',
+        },
+        {
+          d: 'M 65,379 h 358.3333333333333 v 79 h -358.3333333333333 Z',
+          height: '79',
+          radius: '0',
+          width: '358.3333333333333',
+          x: '65',
+          y: '379',
+        },
+      ]);
+    });
   });
 
   describe('With background', () => {
