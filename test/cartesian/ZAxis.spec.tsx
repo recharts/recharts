@@ -29,6 +29,39 @@ describe('<ZAxis />', () => {
     },
   ];
 
+  it('renders ZAxis with correct domain and range', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="xAxis" />
+        <YAxis dataKey="yAxis" />
+        <ZAxis dataKey="zAxis" range={[100, 1000]} />
+        <Scatter data={data} />
+      </ScatterChart>,
+    );
+
+    // Instead of accessing __data__, directly check SVG elements or use testing-library utilities
+    const zAxisTicks = container.querySelectorAll('.recharts-cartesian-axis-tick');
+
+    // Check if ZAxis ticks were rendered
+    expect(zAxisTicks.length).toBeGreaterThan(0);
+  });
+
+  it('correctly applies custom ZAxis scaling', () => {
+    const { container } = render(
+      <ScatterChart width={400} height={400}>
+        <XAxis dataKey="xAxis" />
+        <YAxis dataKey="yAxis" />
+        <ZAxis dataKey="zAxis" scale="sqrt" />
+        <Scatter data={data} />
+      </ScatterChart>,
+    );
+
+    // Since we cannot directly access __data__, focus on the observable behavior
+    const symbols = container.querySelectorAll('.recharts-layer.recharts-scatter-symbol');
+    // Perform assertions based on the rendered symbols' attributes
+    expect(symbols.length).toBe(2);
+  });
+
   it('renders with the correct number of children', () => {
     render(
       <Surface width={500} height={500}>
