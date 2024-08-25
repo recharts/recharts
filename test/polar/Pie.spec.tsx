@@ -2,7 +2,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LabelProps, Pie, PieChart, Sector, SectorProps, Surface, Tooltip } from '../../src';
+import { LabelProps, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
@@ -14,7 +14,7 @@ import { PageData } from '../_data';
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
 describe('<Pie />', () => {
-  const sectors = [
+  const sectorsData = [
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 0, endAngle: 72, name: 'A', value: 40 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216 },
@@ -194,9 +194,9 @@ describe('<Pie />', () => {
     expect(renderedSectors2[0].getAttributeNames()).toEqual([
       'cx',
       'cy',
-      'name',
       'fill',
       'stroke',
+      'name',
       'tabindex',
       'class',
       'd',
@@ -245,7 +245,6 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
           dataKey="y"
           data={generateMockData(5, 0.603)}
         />
@@ -272,17 +271,7 @@ describe('<Pie />', () => {
       outerRadius: 200,
       paddingAngle: 0,
       payload: {
-        cx: 250,
-        cy: 250,
-        fill: '#808080',
         label: 'Iter: 0',
-        payload: {
-          label: 'Iter: 0',
-          x: 199,
-          y: 712,
-          z: 1643,
-        },
-        stroke: '#fff',
         x: 199,
         y: 712,
         z: 1643,
@@ -296,17 +285,7 @@ describe('<Pie />', () => {
           dataKey: 'y',
           name: 0,
           payload: {
-            cx: 250,
-            cy: 250,
-            fill: '#808080',
             label: 'Iter: 0',
-            payload: {
-              label: 'Iter: 0',
-              x: 199,
-              y: 712,
-              z: 1643,
-            },
-            stroke: '#fff',
             x: 199,
             y: 712,
             z: 1643,
@@ -364,7 +343,7 @@ describe('<Pie />', () => {
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
+          data={sectorsData}
           dataKey="cy"
         />
       </PieChart>,
@@ -383,7 +362,7 @@ describe('<Pie />', () => {
         );
       };
       const { container } = render(
-        <Surface width={500} height={500}>
+        <PieChart width={500} height={500}>
           <Pie
             isAnimationActive={false}
             cx={250}
@@ -391,13 +370,13 @@ describe('<Pie />', () => {
             label={<Label />}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
+            data={sectorsData}
             dataKey="cy"
           />
-        </Surface>,
+        </PieChart>,
       );
 
-      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectorsData.length);
     });
 
     test('Render customized label when label is set to be a function that returns the label text', () => {
@@ -406,7 +385,7 @@ describe('<Pie />', () => {
         return `${name}: ${value}`;
       };
       const { container } = render(
-        <Surface width={500} height={500}>
+        <PieChart width={500} height={500}>
           <Pie
             isAnimationActive={false}
             cx={250}
@@ -414,13 +393,13 @@ describe('<Pie />', () => {
             label={Label}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
-            dataKey="cy"
+            data={sectorsData}
+            dataKey="value"
           />
-        </Surface>,
+        </PieChart>,
       );
 
-      expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.recharts-pie-label-text')).toHaveLength(sectorsData.length);
       expect(container.querySelectorAll('.recharts-pie-label-text')[0].textContent).toBe('A: 40');
     });
 
@@ -434,7 +413,7 @@ describe('<Pie />', () => {
         );
       };
       const { container } = render(
-        <Surface width={500} height={500}>
+        <PieChart width={500} height={500}>
           <Pie
             isAnimationActive={false}
             cx={250}
@@ -442,13 +421,13 @@ describe('<Pie />', () => {
             label={renderLabel}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
+            data={sectorsData}
             dataKey="cy"
           />
-        </Surface>,
+        </PieChart>,
       );
 
-      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.customized-label')).toHaveLength(sectorsData.length);
     });
 
     test('Render customized label line when labelLine is set to be a react element', () => {
@@ -461,7 +440,7 @@ describe('<Pie />', () => {
         );
       };
       const { container } = render(
-        <Surface width={500} height={500}>
+        <PieChart width={500} height={500}>
           <Pie
             isAnimationActive={false}
             cx={250}
@@ -470,13 +449,13 @@ describe('<Pie />', () => {
             labelLine={<LabelLine />}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
+            data={sectorsData}
             dataKey="cy"
           />
-        </Surface>,
+        </PieChart>,
       );
 
-      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectorsData.length);
     });
 
     test('Render customized label line when labelLine is set to be a function', () => {
@@ -489,7 +468,7 @@ describe('<Pie />', () => {
         );
       };
       const { container } = render(
-        <Surface width={500} height={500}>
+        <PieChart width={500} height={500}>
           <Pie
             isAnimationActive={false}
             cx={250}
@@ -498,21 +477,21 @@ describe('<Pie />', () => {
             labelLine={renderLabelLine}
             innerRadius={0}
             outerRadius={200}
-            sectors={sectors}
+            data={sectorsData}
             dataKey="cy"
           />
-        </Surface>,
+        </PieChart>,
       );
 
-      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectors.length);
+      expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectorsData.length);
     });
   });
 
   test("Don't render any sector when data is empty", () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Pie sectors={[]} dataKey="cy" />
-      </Surface>,
+      <PieChart width={500} height={500}>
+        <Pie data={[]} dataKey="cy" />
+      </PieChart>,
     );
 
     expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
@@ -524,20 +503,20 @@ describe('<Pie />', () => {
     const onMouseLeave = vi.fn();
     const onClick = vi.fn();
     const { container } = render(
-      <Surface width={500} height={500}>
+      <PieChart width={500} height={500}>
         <Pie
           isAnimationActive={false}
           cx={250}
           cy={250}
           innerRadius={0}
           outerRadius={200}
-          sectors={sectors}
+          data={sectorsData}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
           dataKey="cy"
         />
-      </Surface>,
+      </PieChart>,
     );
 
     const sector = container.querySelectorAll('.recharts-layer')[4];
@@ -561,7 +540,7 @@ describe('<Pie />', () => {
       const timeout = 2000;
       const { container } = render(
         <div role="button" tabIndex={0} className="container">
-          <Surface width={500} height={500}>
+          <PieChart width={500} height={500}>
             <Pie
               isAnimationActive={false}
               cx={250}
@@ -569,10 +548,10 @@ describe('<Pie />', () => {
               label
               innerRadius={0}
               outerRadius={200}
-              sectors={sectors}
+              data={sectorsData}
               dataKey="cy"
             />
-          </Surface>
+          </PieChart>
         </div>,
       );
       const pie = container.getElementsByClassName('recharts-pie')[0];
@@ -586,7 +565,9 @@ describe('<Pie />', () => {
         { timeout },
       );
 
-      // Testing that pressing tab goes into pie chart
+      // recharts-surface also has a default tabIndex of 0 so tab has to be pressed twice
+      await userEvent.tab();
+      // Pressing tab another time goes into pie
       await userEvent.tab();
       await waitFor(
         () => {
@@ -610,7 +591,7 @@ describe('<Pie />', () => {
       const timeout = 2000;
       const { container } = render(
         <div role="button" tabIndex={0} className="container">
-          <Surface width={500} height={500}>
+          <PieChart width={500} height={500}>
             <Pie
               isAnimationActive={false}
               cx={250}
@@ -618,11 +599,11 @@ describe('<Pie />', () => {
               label
               innerRadius={0}
               outerRadius={200}
-              sectors={sectors}
+              data={sectorsData}
               dataKey="cy"
               rootTabIndex={-1}
             />
-          </Surface>
+          </PieChart>
         </div>,
       );
       const pie = container.getElementsByClassName('recharts-pie')[0];
@@ -649,7 +630,7 @@ describe('<Pie />', () => {
       await userEvent.tab();
       await waitFor(
         () => {
-          expect(document.activeElement).not.toBe(document.body);
+          expect(document.activeElement).toBe(document.body);
         },
         { timeout },
       );
@@ -658,7 +639,7 @@ describe('<Pie />', () => {
     test('Arrows move between sectors, wrap around, and escape blurs', async () => {
       const { container, debug } = render(
         <div role="button" tabIndex={0} className="container">
-          <Surface width={500} height={500}>
+          <PieChart width={500} height={500}>
             <Pie
               isAnimationActive={false}
               cx={250}
@@ -666,10 +647,10 @@ describe('<Pie />', () => {
               label
               innerRadius={0}
               outerRadius={200}
-              sectors={sectors}
               dataKey="cy"
+              data={sectorsData}
             />
-          </Surface>
+          </PieChart>
         </div>,
       );
 

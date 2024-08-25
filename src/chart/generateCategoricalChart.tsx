@@ -1821,7 +1821,7 @@ export const generateCategoricalChart = ({
       Radar: { handler: this.renderGraphicChild },
       RadialBar: { handler: this.renderGraphicChild },
       Scatter: { handler: renderAsIs },
-      Pie: { handler: this.renderGraphicChild },
+      Pie: { handler: renderAsIs },
       Funnel: { handler: this.renderGraphicChild },
       Tooltip: { handler: renderAsIs },
       PolarGrid: { handler: renderAsIs, once: true },

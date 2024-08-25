@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ReactElement } from 'react';
 import { CellProps } from '../..';
-import { computePieSectors, PieCoordinate, PieSectorDataItem, Props } from '../../polar/Pie';
+import { computePieSectors, PieCoordinate, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
@@ -25,6 +25,7 @@ export type ResolvedPieSettings = {
   innerRadius?: number | string;
   outerRadius?: number | string;
   cornerRadius?: number | string;
+  presentationProps?: Record<string, string>;
 };
 
 const pickPieSettings = (_state: RechartsRootState, pieSettings: ResolvedPieSettings) => pieSettings;
@@ -35,26 +36,13 @@ const pickCells = (
   cells: ReadonlyArray<ReactElement> | undefined,
 ): ReadonlyArray<ReactElement> | undefined => cells;
 
-const pickPresentationProps = (
-  _state: RechartsRootState,
-  _pieSettings: ResolvedPieSettings,
-  _cells: ReadonlyArray<ReactElement> | undefined,
-  presentationProps: Props,
-) => presentationProps;
-
 export const selectDisplayedData: (
   state: RechartsRootState,
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-  presentationProps: Props,
 ) => ChartData | undefined = createSelector(
-  [selectChartDataWithIndexes, pickPieSettings, pickCells, pickPresentationProps],
-  (
-    { chartData }: ChartDataState,
-    pieSettings: ResolvedPieSettings,
-    cells,
-    presentationProps: Props,
-  ): ChartData | undefined => {
+  [selectChartDataWithIndexes, pickPieSettings, pickCells],
+  ({ chartData }: ChartDataState, pieSettings: ResolvedPieSettings, cells): ChartData | undefined => {
     let displayedData: ChartData | undefined;
     if (pieSettings?.data?.length > 0) {
       displayedData = pieSettings.data;
@@ -63,7 +51,10 @@ export const selectDisplayedData: (
     }
 
     if (!displayedData || !displayedData.length) {
-      displayedData = cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
+      displayedData = cells.map((cell: ReactElement<CellProps>) => ({
+        ...pieSettings.presentationProps,
+        ...cell.props,
+      }));
     }
 
     if (displayedData == null) {
@@ -78,7 +69,6 @@ export const selectPieSectors: (
   state: RechartsRootState,
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-  presentationProps: Props,
 ) => { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined = createSelector(
   [selectDisplayedData, pickPieSettings, pickCells, selectChartOffset],
   (
