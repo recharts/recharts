@@ -168,6 +168,7 @@ describe('<Scatter />', () => {
       );
 
       const expected: CartesianGraphicalItemSettings = {
+        isPanorama: false,
         type: 'scatter',
         data,
         dataKey: 'cx',

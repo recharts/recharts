@@ -6,6 +6,7 @@ import { AxisId } from '../state/axisMapSlice';
 import { DataKey } from '../util/types';
 import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
+import { useIsPanorama } from './PanoramaContext';
 
 const noop = () => {};
 
@@ -83,6 +84,7 @@ export const CartesianGraphicalItemContext = ({
     },
     [updateErrorBars],
   );
+  const isPanorama = useIsPanorama();
   return (
     <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
       <SetCartesianGraphicalItem
@@ -96,6 +98,7 @@ export const CartesianGraphicalItemContext = ({
         stackId={stackId}
         hide={hide}
         barSize={barSize}
+        isPanorama={isPanorama}
       />
       {children}
     </ErrorBarDirectionDispatchContext.Provider>

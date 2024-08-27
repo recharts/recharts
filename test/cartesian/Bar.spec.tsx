@@ -1177,6 +1177,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
           type: 'bar',
           data: null,
           dataKey: 'value',
@@ -1215,6 +1216,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
           type: 'bar',
           data: null,
           dataKey: 'value',

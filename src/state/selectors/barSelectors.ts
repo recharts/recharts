@@ -38,6 +38,9 @@ const pickXAxisId = (_state: RechartsRootState, xAxisId: AxisId): AxisId => xAxi
 
 const pickYAxisId = (_state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId): AxisId => yAxisId;
 
+const pickIsPanorama = (_state: RechartsRootState, _xAxisId: AxisId, _yAxisId: AxisId, isPanorama: boolean): boolean =>
+  isPanorama;
+
 const pickBarSettings = (
   _state: RechartsRootState,
   _xAxisId: AxisId,
@@ -69,9 +72,10 @@ export const selectAllVisibleBars: (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
+  isPanorama: boolean,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
-  [selectChartLayout, selectUnfilteredCartesianItems, pickXAxisId, pickYAxisId],
-  (layout: LayoutType, allItems, xAxisId, yAxisId) =>
+  [selectChartLayout, selectUnfilteredCartesianItems, pickXAxisId, pickYAxisId, pickIsPanorama],
+  (layout: LayoutType, allItems, xAxisId, yAxisId, isPanorama) =>
     allItems
       .filter(i => {
         if (layout === 'horizontal') {
@@ -79,6 +83,7 @@ export const selectAllVisibleBars: (
         }
         return i.yAxisId === yAxisId;
       })
+      .filter(i => i.isPanorama === isPanorama)
       .filter(i => i.hide === false)
       .filter(i => i.type === 'bar'),
 );
