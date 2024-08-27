@@ -1,5 +1,5 @@
 import { generateCategoricalChart } from './generateCategoricalChart';
-import { Funnel } from '../numberAxis/Funnel';
+import { Funnel } from '../cartesian/Funnel';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const FunnelChart = generateCategoricalChart({
