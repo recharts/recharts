@@ -670,6 +670,7 @@ export class Scatter extends Component<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        type="scatter"
         data={this.props.data}
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
@@ -678,6 +679,7 @@ export class Scatter extends Component<Props> {
         // scatter doesn't stack
         stackId={undefined}
         hide={this.props.hide}
+        barSize={undefined}
       >
         <SetScatterLegend {...this.props} />
         <ScatterImpl {...this.props} />

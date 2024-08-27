@@ -104,6 +104,7 @@ import {
 import { RechartsWrapper } from './RechartsWrapper';
 import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
 import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
+import { ReportChartProps } from '../state/ReportChartProps';
 
 export interface MousePointer {
   pageX: number;
@@ -673,6 +674,8 @@ const getAxisNameByLayout = (layout: LayoutType) => {
 };
 
 /**
+ * @deprecated do not use; this depends on reading DOM elements directly. Instead, use {@link selectChartOffset}
+ *
  * Calculate the offset of main part in the svg element
  * @param  {Object} params.props          Latest props
  * @param  {Array}  params.graphicalItems The instances of item
@@ -863,6 +866,7 @@ export const generateCategoricalChart = ({
         stackGroups[numericAxisId].hasStack &&
         getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
       const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
+      // @ts-expect-error generator axis has optional ID
       const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
       const barPosition: ReadonlyArray<BarPosition> = getBarPositions({
         axisObj,
@@ -871,6 +875,7 @@ export const generateCategoricalChart = ({
         childMaxBarSize,
         globalMaxBarSize,
         cateTicks,
+        // @ts-expect-error generator axis has optional ID
         cateAxis,
         barSize,
         barGap,
@@ -1953,11 +1958,16 @@ export const generateCategoricalChart = ({
       defaultTooltipEventType,
       validateTooltipEventTypes,
       tooltipPayloadSearcher,
-      barCategoryGap: props.barCategoryGap ?? '10%',
-      stackOffset: props.stackOffset ?? 'none',
     };
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.id ?? chartName}>
+        <ReportChartProps
+          barCategoryGap={props.barCategoryGap ?? '10%'}
+          maxBarSize={props.maxBarSize}
+          stackOffset={props.stackOffset ?? 'none'}
+          barGap={props.barGap}
+          barSize={props.barSize}
+        />
         <CategoricalChartWrapper {...props} />
       </RechartsStoreProvider>
     );

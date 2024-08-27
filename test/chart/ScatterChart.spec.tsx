@@ -30,6 +30,7 @@ import {
   selectTicksOfGraphicalItem,
   selectZAxisWithScale,
 } from '../../src/state/selectors/axisSelectors';
+import { boxPlotData } from '../_data';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -834,36 +835,6 @@ describe('ScatterChart of two dimension data', () => {
   });
 
   test('renders points in Composed chart when there are stacks but the stacks are smaller than the ZAxis dataKey', () => {
-    const boxPlotData = [
-      {
-        min: 100,
-        bottomWhisker: 100,
-        bottomBox: 50,
-        topBox: 200,
-        topWhisker: 200,
-        average: 150,
-        size: 150,
-      },
-      {
-        min: 200,
-        bottomWhisker: 200,
-        bottomBox: 200,
-        topBox: 100,
-        topWhisker: 100,
-        average: 550,
-        size: 250,
-      },
-      {
-        min: 0,
-        bottomWhisker: 200,
-        bottomBox: 200,
-        topBox: 200,
-        topWhisker: 200,
-        average: 400,
-        size: 350,
-      },
-    ];
-
     const yAxisDomainSpy = vi.fn();
     const yAxisDataSpy = vi.fn();
     const yAxisTicksSpy = vi.fn();
@@ -1010,36 +981,6 @@ describe('ScatterChart of two dimension data', () => {
   });
 
   test('renders points in Composed chart when stacks are bigger than ZAxis dataKey', () => {
-    const boxPlotData = [
-      {
-        min: 100,
-        bottomWhisker: 100,
-        bottomBox: 50,
-        topBox: 200,
-        topWhisker: 200,
-        average: 150,
-        size: 150,
-      },
-      {
-        min: 200,
-        bottomWhisker: 200,
-        bottomBox: 200,
-        topBox: 100,
-        topWhisker: 100,
-        average: 550,
-        size: 250,
-      },
-      {
-        min: 0,
-        bottomWhisker: 200,
-        bottomBox: 200,
-        topBox: 200,
-        topWhisker: 200,
-        average: 400,
-        size: 350,
-      },
-    ];
-
     const yAxisDomainSpy = vi.fn();
     const yAxisDataSpy = vi.fn();
     const yAxisTicksSpy = vi.fn();

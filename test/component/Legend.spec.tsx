@@ -8,6 +8,7 @@ import {
   Bar,
   BarChart,
   ComposedChart,
+  Customized,
   Legend,
   LegendProps,
   LegendType,
@@ -28,6 +29,10 @@ import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
 import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
 import { LegendBoundingBoxContext } from '../../src/context/legendBoundingBoxContext';
 import { assertNotNull } from '../helper/assertNotNull';
+import { expectBars } from '../helper/expectBars';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
+import { selectLegendState } from '../../src/state/selectors/legendSelectors';
 
 function assertHasLegend(container: HTMLElement) {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -1028,36 +1033,137 @@ describe('<Legend />', () => {
 
     it('should push away Bars to make space', () => {
       mockGetBoundingClientRect({ width: 0, height: 10 });
+      const yAxisRangeSpy = vi.fn();
+      const Comp = (): null => {
+        yAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
+        return null;
+      };
 
       const { container, rerender } = render(
         <BarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Bar isAnimationActive={false} dataKey="percent" />
+          <Customized component={Comp} />
         </BarChart>,
       );
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-      const bars1 = container.querySelectorAll('.recharts-bar-rectangle path');
-      expect.soft(bars1).toHaveLength(numericalData.length);
-      const bar1 = bars1[0];
-      expect(bar1).toBeInTheDocument();
-      expect.soft(bar1.getAttribute('d')).toBe('M 13.166666666666668,437 h 65 v 48 h -65 Z');
-      expect.soft(bar1.getAttribute('height')).toBe('48');
-      expect.soft(bar1.getAttribute('y')).toBe('437');
+
+      expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
+
+      expectBars(container, [
+        {
+          d: 'M 13.166666666666668,437 h 65 v 48 h -65 Z',
+          height: '48',
+          radius: '0',
+          width: '65',
+          x: '13.166666666666668',
+          y: '437',
+        },
+        {
+          d: 'M 94.83333333333334,389 h 65 v 96 h -65 Z',
+          height: '96',
+          radius: '0',
+          width: '65',
+          x: '94.83333333333334',
+          y: '389',
+        },
+        {
+          d: 'M 176.5,413 h 65 v 72 h -65 Z',
+          height: '72',
+          radius: '0',
+          width: '65',
+          x: '176.5',
+          y: '413',
+        },
+        {
+          d: 'M 258.1666666666667,245 h 65 v 240 h -65 Z',
+          height: '240',
+          radius: '0',
+          width: '65',
+          x: '258.1666666666667',
+          y: '245',
+        },
+        {
+          d: 'M 339.83333333333337,245 h 65 v 240 h -65 Z',
+          height: '240',
+          radius: '0',
+          width: '65',
+          x: '339.83333333333337',
+          y: '245',
+        },
+        {
+          d: 'M 421.50000000000006,5 h 65 v 480 h -65 Z',
+          height: '480',
+          radius: '0',
+          width: '65',
+          x: '421.50000000000006',
+          y: '5',
+        },
+      ]);
 
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
           <Bar isAnimationActive={false} dataKey="percent" />
+          <Customized component={Comp} />
         </BarChart>,
       );
-      // debug();
+
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
-      const bars2 = container.querySelectorAll('.recharts-bar-rectangle path');
-      expect.soft(bars2).toHaveLength(numericalData.length);
-      const bar2 = bars2[0];
-      expect.soft(bar2).toBeInTheDocument();
-      expect.soft(bar2.getAttribute('d')).toBe('M 13.166666666666668,446 h 65 v 49 h -65 Z');
-      expect.soft(bar2.getAttribute('height')).toBe('49');
-      expect.soft(bar2.getAttribute('y')).toBe('446');
+
+      expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(6);
+
+      expectBars(container, [
+        {
+          d: 'M 13.166666666666668,446 h 65 v 49 h -65 Z',
+          height: '49',
+          radius: '0',
+          width: '65',
+          x: '13.166666666666668',
+          y: '446',
+        },
+        {
+          d: 'M 94.83333333333334,397 h 65 v 98 h -65 Z',
+          height: '98',
+          radius: '0',
+          width: '65',
+          x: '94.83333333333334',
+          y: '397',
+        },
+        {
+          d: 'M 176.5,421.5 h 65 v 73.5 h -65 Z',
+          height: '73.5',
+          radius: '0',
+          width: '65',
+          x: '176.5',
+          y: '421.5',
+        },
+        {
+          d: 'M 258.1666666666667,250 h 65 v 245 h -65 Z',
+          height: '245',
+          radius: '0',
+          width: '65',
+          x: '258.1666666666667',
+          y: '250',
+        },
+        {
+          d: 'M 339.83333333333337,250 h 65 v 245 h -65 Z',
+          height: '245',
+          radius: '0',
+          width: '65',
+          x: '339.83333333333337',
+          y: '250',
+        },
+        {
+          d: 'M 421.50000000000006,5 h 65 v 490 h -65 Z',
+          height: '490',
+          radius: '0',
+          width: '65',
+          x: '421.50000000000006',
+          y: '5',
+        },
+      ]);
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
@@ -1546,7 +1652,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1575,7 +1681,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1604,7 +1710,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1633,7 +1739,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(4);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -2789,6 +2895,48 @@ describe('<Legend />', () => {
       assertNotNull(legend);
       fireEvent.click(legend);
       expect(onClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('state integration', () => {
+    it('should publish its size, and then update it when removed from DOM', () => {
+      mockGetBoundingClientRect({ width: 3, height: 11 });
+      const legendSpy = vi.fn();
+      const Comp = (): null => {
+        legendSpy(useAppSelector(selectLegendState));
+        return null;
+      };
+
+      const { rerender } = render(
+        <BarChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith({
+        align: 'center',
+        height: 11,
+        layout: 'horizontal',
+        verticalAlign: 'bottom',
+        width: 3,
+      });
+      expect(legendSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <BarChart width={500} height={500} data={numericalData}>
+          <Customized component={Comp} />
+        </BarChart>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith({
+        align: 'center',
+        height: 0,
+        layout: 'horizontal',
+        verticalAlign: 'bottom',
+        width: 0,
+      });
+      expect(legendSpy).toHaveBeenCalledTimes(5);
     });
   });
 });

@@ -228,3 +228,33 @@ export const misbehavedData: ChartData = [
   { x: 'Aug' },
   { x: new Promise(() => {}) },
 ];
+
+export const boxPlotData = [
+  {
+    min: 100,
+    bottomWhisker: 100,
+    bottomBox: 50,
+    topBox: 200,
+    topWhisker: 200,
+    average: 150,
+    size: 150,
+  },
+  {
+    min: 200,
+    bottomWhisker: 200,
+    bottomBox: 200,
+    topBox: 100,
+    topWhisker: 100,
+    average: 550,
+    size: 250,
+  },
+  {
+    min: 0,
+    bottomWhisker: 200,
+    bottomBox: 200,
+    topBox: 200,
+    topWhisker: 200,
+    average: 400,
+    size: 350,
+  },
+];

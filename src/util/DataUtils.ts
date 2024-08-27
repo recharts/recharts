@@ -37,7 +37,7 @@ export const uniqueId = (prefix?: string) => {
  * @return {number} value
  */
 export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
-  if (!isNumber(percent as number) && !isString(percent)) {
+  if (!isNumber(percent) && !isString(percent)) {
     return defaultValue;
   }
 

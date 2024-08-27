@@ -168,6 +168,7 @@ describe('<Scatter />', () => {
       );
 
       const expected: CartesianGraphicalItemSettings = {
+        type: 'scatter',
         data,
         dataKey: 'cx',
         errorBars: [],
@@ -176,6 +177,7 @@ describe('<Scatter />', () => {
         xAxisId: 'xaxis id',
         yAxisId: 'yaxis id',
         zAxisId: 'zaxis id',
+        barSize: undefined,
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
       expect(settingsSpy).toHaveBeenCalledTimes(3);

@@ -11,7 +11,7 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
-export const selectChartOffset = createSelector(
+export const selectChartOffset: (state: RechartsRootState) => ChartOffset | undefined = createSelector(
   selectChartWidth,
   selectChartHeight,
   selectMargin,

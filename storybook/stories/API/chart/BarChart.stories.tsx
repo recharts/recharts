@@ -87,3 +87,24 @@ export const Stacked = {
     },
   },
 };
+
+export const VerticalWithMultipleAxes = {
+  render(args: Args) {
+    return (
+      <BarChart {...args}>
+        <Bar dataKey="uv" xAxisId={2} fill="blue" barSize={40} />
+        <Bar dataKey="pv" xAxisId={1} fill="green" barSize={30} />
+        <XAxis xAxisId={1} type="number" />
+        <XAxis xAxisId={2} type="number" orientation="top" />
+        <YAxis type="category" />
+      </BarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    data: pageData,
+    width: 500,
+    height: 300,
+    layout: 'vertical',
+  },
+};

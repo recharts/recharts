@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
-import { ErrorBarsSettings } from '../state/graphicalItemsSlice';
+import { CartesianGraphicalItemType, ErrorBarsSettings } from '../state/graphicalItemsSlice';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/axisMapSlice';
@@ -45,6 +45,7 @@ export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children
 export const useErrorBarContext = () => useContext(ErrorBarContext);
 
 type GraphicalItemContextProps = {
+  type: CartesianGraphicalItemType;
   data: ChartData;
   xAxisId: AxisId;
   yAxisId: AxisId;
@@ -53,6 +54,7 @@ type GraphicalItemContextProps = {
   children: React.ReactNode;
   stackId: StackId | undefined;
   hide: boolean;
+  barSize: string | number | undefined;
 };
 
 export const CartesianGraphicalItemContext = ({
@@ -64,6 +66,8 @@ export const CartesianGraphicalItemContext = ({
   data,
   stackId,
   hide,
+  type,
+  barSize,
 }: GraphicalItemContextProps) => {
   const [errorBars, updateErrorBars] = React.useState<ReadonlyArray<ErrorBarsSettings>>([]);
   // useCallback is necessary in these two because without it, the new function reference causes an infinite render loop
@@ -82,6 +86,7 @@ export const CartesianGraphicalItemContext = ({
   return (
     <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
       <SetCartesianGraphicalItem
+        type={type}
         data={data}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
@@ -90,6 +95,7 @@ export const CartesianGraphicalItemContext = ({
         errorBars={errorBars}
         stackId={stackId}
         hide={hide}
+        barSize={barSize}
       />
       {children}
     </ErrorBarDirectionDispatchContext.Provider>

@@ -66,6 +66,7 @@ const pickScatterSettings = (
   _zAxisId: AxisId,
   scatterSettings: ResolvedScatterSettings,
 ) => scatterSettings;
+
 const pickCells = (
   _state: RechartsRootState,
   _xAxisId: AxisId,

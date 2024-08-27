@@ -37,7 +37,7 @@ import {
   YAxisSettings,
   ZAxisSettings,
 } from '../axisMapSlice';
-import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './selectors';
+import { selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import {
@@ -56,6 +56,7 @@ import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
+import { selectBarCategoryGap } from './rootPropsSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -68,7 +69,7 @@ type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis';
  * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
  * and tick settings.
  */
-type XorYType = 'xAxis' | 'yAxis';
+export type XorYType = 'xAxis' | 'yAxis';
 
 /**
  * If an axis is not explicitly defined as an element,
@@ -242,7 +243,7 @@ function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
 
 export const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
 
-const selectCartesianItemsSettings: (
+export const selectCartesianItemsSettings: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
@@ -444,13 +445,21 @@ export function getErrorDomainByDataKey(
   );
 }
 
-export type StackGroup = { readonly stackedData: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> };
+export type StackGroup = {
+  readonly stackedData: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>>;
+  readonly graphicalItems: ReadonlyArray<CartesianGraphicalItemSettings>;
+};
 
+/**
+ * Stack groups are groups of graphical items that stack on each other.
+ * Stack is a function of axis type (X, Y), axis ID, and stack ID.
+ * Graphical items that do not have a stack ID are not going to be present in stack groups.
+ */
 export const selectStackGroups: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => Record<StackId, StackGroup> = createSelector(
+) => Record<StackId, StackGroup> | undefined = createSelector(
   selectDisplayedData,
   selectCartesianItemsSettings,
   selectStackOffsetType,
@@ -459,25 +468,32 @@ export const selectStackGroups: (
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
     stackOffsetType: StackOffsetType,
   ): Record<StackId, StackGroup> => {
-    const initialItemsGroups: Record<StackId, Array<DataKey<any>>> = {};
-    const itemsGroup: Record<StackId, ReadonlyArray<DataKey<any>>> = items.reduce(
-      (acc: Record<StackId, Array<DataKey<any>>>, item: CartesianGraphicalItemSettings) => {
+    const initialItemsGroups: Record<StackId, Array<CartesianGraphicalItemSettings>> = {};
+    const itemsGroup: Record<StackId, ReadonlyArray<CartesianGraphicalItemSettings>> = items.reduce(
+      (acc: Record<StackId, Array<CartesianGraphicalItemSettings>>, item: CartesianGraphicalItemSettings) => {
         if (item.stackId == null) {
           return acc;
         }
         if (acc[item.stackId] == null) {
           acc[item.stackId] = [];
         }
-        acc[item.stackId].push(item.dataKey);
+        acc[item.stackId].push(item);
         return acc;
       },
       initialItemsGroups,
     );
 
     return Object.fromEntries(
-      Object.entries(itemsGroup).map(([stackId, dataKeys]) => {
-        // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
-        return [stackId, { stackedData: getStackedData(displayedData, dataKeys, stackOffsetType) }];
+      Object.entries(itemsGroup).map(([stackId, graphicalItems]): [StackId, StackGroup] => {
+        const dataKeys = graphicalItems.map(i => i.dataKey);
+        return [
+          stackId,
+          {
+            // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
+            stackedData: getStackedData(displayedData, dataKeys, stackOffsetType),
+            graphicalItems,
+          },
+        ];
       }),
     );
   },
@@ -1028,6 +1044,14 @@ export const selectCalculatedXAxisPadding: (state: RechartsRootState, axisId: Ax
   return selectCalculatedPadding(state, 'xAxis', axisId, xAxisSettings.padding);
 };
 
+export const selectCalculatedYAxisPadding: (state: RechartsRootState, axisId: AxisId) => number = (state, axisId) => {
+  const yAxisSettings = selectYAxisSettings(state, axisId);
+  if (yAxisSettings == null || typeof yAxisSettings.padding !== 'string') {
+    return 0;
+  }
+  return selectCalculatedPadding(state, 'yAxis', axisId, yAxisSettings.padding);
+};
+
 const selectXAxisPadding: (state: RechartsRootState, axisId: AxisId) => { left: number; right: number } =
   createSelector(
     selectXAxisSettings,
@@ -1050,7 +1074,7 @@ const selectXAxisPadding: (state: RechartsRootState, axisId: AxisId) => { left: 
 const selectYAxisPadding: (state: RechartsRootState, axisId: AxisId) => { top: number; bottom: number } =
   createSelector(
     selectYAxisSettings,
-    selectCalculatedXAxisPadding,
+    selectCalculatedYAxisPadding,
     (yAxisSettings: YAxisSettings, calculated: number) => {
       if (yAxisSettings == null) {
         return { top: 0, bottom: 0 };
@@ -1249,7 +1273,11 @@ const getYAxisSize = (offset: ChartOffset, axisSettings: YAxisSettings | undefin
   };
 };
 
-export const selectXAxisSize = createSelector(selectChartOffset, selectXAxisSettings, getXAxisSize);
+export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Size | undefined = createSelector(
+  selectChartOffset,
+  selectXAxisSettings,
+  getXAxisSize,
+);
 
 type AxisOffsetSteps = Record<AxisId, number>;
 
@@ -1355,7 +1383,7 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
   return { x: stepOfThisAxis, y: offset.top };
 };
 
-export const selectYAxisSize = createSelector(
+export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size | undefined = createSelector(
   selectChartOffset,
   selectYAxisSettings,
   (offset: ChartOffset, axisSettings: YAxisSettings): Size | undefined => {
@@ -1368,6 +1396,24 @@ export const selectYAxisSize = createSelector(
     };
   },
 );
+
+export const selectCartesianAxisSize = (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+): number | undefined => {
+  switch (axisType) {
+    case 'xAxis': {
+      return selectXAxisSize(state, axisId).width;
+    }
+    case 'yAxis': {
+      return selectYAxisSize(state, axisId).height;
+    }
+    default: {
+      return undefined;
+    }
+  }
+};
 
 export const selectDuplicateDomain = createSelector(
   selectChartLayout,
@@ -1550,19 +1596,22 @@ export const selectTicksOfAxis: (
   },
 );
 
-export const selectTicksOfGraphicalItem = createSelector(
+export const selectTicksOfGraphicalItem: (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => TickItem[] | null = createSelector(
   [
     selectChartLayout,
     selectAxisSettings,
-    selectRealScaleType,
     selectAxisScale,
-    selectNiceTicks,
     selectAxisRange,
     selectDuplicateDomain,
     selectCategoricalDomain,
     pickAxisType,
   ],
-  (layout, axis, realScaleType, scale, niceTicks, axisRange, duplicateDomain, categoricalDomain, axisType) => {
+  (layout, axis, scale, axisRange, duplicateDomain, categoricalDomain, axisType) => {
     if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
       return null;
     }
@@ -1612,7 +1661,12 @@ export const selectTicksOfGraphicalItem = createSelector(
 
 export type BaseAxisWithScale = BaseAxis & { scale: RechartsScale };
 
-export const selectAxisWithScale = createSelector(
+export const selectAxisWithScale: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => BaseAxisWithScale | undefined = createSelector(
   selectBaseAxis,
   selectAxisScale,
   (axis, scale): BaseAxisWithScale | undefined => {
