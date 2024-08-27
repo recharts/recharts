@@ -1,6 +1,3 @@
-/**
- * @fileOverview Radar Chart
- */
 import { generateCategoricalChart } from './generateCategoricalChart';
 import { Radar } from '../polar/Radar';
 import { PolarAngleAxis } from '../polar/PolarAngleAxis';

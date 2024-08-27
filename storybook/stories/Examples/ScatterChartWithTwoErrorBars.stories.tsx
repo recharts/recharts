@@ -1,14 +1,14 @@
 import React from 'react';
 import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar } from '../../../src';
-import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
 import { XAxisProps } from '../API/props/XAxisProps';
+import { CartesianChartProps } from '../API/props/CartesianChartProps';
 
 const bespokeArgTypes = {
   layout: {
-    ...CategoricalChartProps.layout,
-    table: { ...CategoricalChartProps.layout.table, category: 'ScatterChart props' },
+    ...CartesianChartProps.layout,
+    table: { ...CartesianChartProps.layout.table, category: 'ScatterChart props' },
   },
   allowDataOverflow: {
     ...XAxisProps.allowDataOverflow,
