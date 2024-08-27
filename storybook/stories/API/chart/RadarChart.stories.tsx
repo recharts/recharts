@@ -1,11 +1,11 @@
 import React from 'react';
 import { pageData } from '../../data';
 import { Radar, RadarChart } from '../../../../src';
-import { PolarChartProps } from '../props/PolarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RadarChartProps } from '../props/RadarChartProps';
 
 export default {
-  argTypes: PolarChartProps,
+  argTypes: RadarChartProps,
   component: RadarChart,
 };
 
@@ -18,7 +18,7 @@ export const Simple = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: pageData,
     width: 800,
     height: 300,

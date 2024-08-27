@@ -127,6 +127,41 @@ describe('<RadarChart />', () => {
     expectRadarPolygons(container, expectedPolygons);
   });
 
+  test('startAngle and endAngle props do not do anything', () => {
+    const commonProps = {
+      width: 600,
+      height: 500,
+      data: exampleRadarData,
+    };
+
+    const { container, rerender } = render(
+      <RadarChart startAngle={20} endAngle={70} {...commonProps}>
+        <Radar dataKey="value" />
+      </RadarChart>,
+    );
+
+    expectRadarPolygons(container, [
+      {
+        d: 'M300,250L300,250L300,250L300,250L300,250L300,250L300,250L300,250L300,250Z',
+        fill: null,
+        fillOpacity: null,
+      },
+    ]);
+
+    rerender(
+      <RadarChart startAngle={90} endAngle={270} {...commonProps}>
+        <Radar dataKey="value" />
+      </RadarChart>,
+    );
+    expectRadarPolygons(container, [
+      {
+        d: 'M300,250L300,250L300,250L300,250L300,250L300,250L300,250L300,250L300,250Z',
+        fill: null,
+        fillOpacity: null,
+      },
+    ]);
+  });
+
   test('renders multiple polygons with different dataKeys', () => {
     const { container } = render(
       <RadarChart cx={300} cy={250} outerRadius={150} width={600} height={500} data={exampleRadarData}>

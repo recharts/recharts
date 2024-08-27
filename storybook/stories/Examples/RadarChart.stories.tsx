@@ -1,11 +1,11 @@
 import React from 'react';
 import { StoryObj } from '@storybook/react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
-import { PolarChartProps } from '../API/props/PolarChartProps';
+import { RadarChartProps } from '../API/props/RadarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 
 export default {
-  argTypes: PolarChartProps,
+  argTypes: RadarChartProps,
   component: RadarChart,
   docs: {
     autodocs: false,
@@ -27,7 +27,7 @@ export const NumberAngleType: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: [
       { angle: 0, r: 11 },
       { angle: 90, r: 22 },
@@ -54,7 +54,7 @@ export const CategoryAngleType: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: [
       { angle: 0, r: 11 },
       { angle: 90, r: 22 },
@@ -80,7 +80,7 @@ export const ShouldBeCorrectAngle: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: [
       { angle: 0, value: 5 },
       { angle: 45, value: 5 },
@@ -114,7 +114,7 @@ export const RadarWithLegend: StoryObj = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: [
       { angle: 0, r: 1 },
       { angle: 90, r: 2 },
