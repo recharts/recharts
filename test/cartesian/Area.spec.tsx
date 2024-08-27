@@ -456,6 +456,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
           type: 'area',
           data: data2,
           dataKey: 'value',
@@ -495,6 +496,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
           type: 'area',
           data: data2,
           dataKey: 'value',

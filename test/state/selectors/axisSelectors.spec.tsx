@@ -1616,6 +1616,7 @@ describe('selectCartesianGraphicalItemsData', () => {
   it('should be stable', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
+      isPanorama: false,
       type: 'bar',
       hide: false,
       stackId: 's-id',
@@ -2751,6 +2752,7 @@ describe('selectErrorBarsSettings', () => {
   it('should be stable with data', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
+      isPanorama: false,
       barSize: undefined,
       type: 'bar',
       hide: false,

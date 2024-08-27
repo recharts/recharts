@@ -20,6 +20,7 @@ import {
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
+import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 type DataType = {
   name: string;
@@ -267,7 +268,7 @@ describe('<BarChart />', () => {
       const barSpy = vi.fn();
       const sizeListSpy = vi.fn();
       const Comp = (): null => {
-        barSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 0)));
+        barSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 0, false)));
         sizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
         return null;
       };
@@ -278,20 +279,20 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expect(barSpy).toHaveBeenLastCalledWith([
-        {
-          barSize: undefined,
-          data: null,
-          dataKey: 'uv',
-          errorBars: [],
-          hide: false,
-          stackId: undefined,
-          type: 'bar',
-          xAxisId: 0,
-          yAxisId: 0,
-          zAxisId: 0,
-        },
-      ]);
+      const expectedBar: CartesianGraphicalItemSettings = {
+        isPanorama: false,
+        barSize: undefined,
+        data: null,
+        dataKey: 'uv',
+        errorBars: [],
+        hide: false,
+        stackId: undefined,
+        type: 'bar',
+        xAxisId: 0,
+        yAxisId: 0,
+        zAxisId: 0,
+      };
+      expect(barSpy).toHaveBeenLastCalledWith([expectedBar]);
       expect(barSpy).toHaveBeenCalledTimes(3);
 
       expect(sizeListSpy).toHaveBeenLastCalledWith([
@@ -923,8 +924,8 @@ describe('<BarChart />', () => {
 
         const Comp = (): null => {
           allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
-          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0)));
-          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0)));
+          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0, false)));
+          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0, false)));
           return null;
         };
 
@@ -940,8 +941,9 @@ describe('<BarChart />', () => {
           </BarChart>,
         );
 
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith([
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            isPanorama: false,
             barSize: 50,
             data: null,
             dataKey: 'uv',
@@ -954,6 +956,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'pv',
@@ -965,11 +968,13 @@ describe('<BarChart />', () => {
             yAxisId: 0,
             zAxisId: 0,
           },
-        ]);
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
         expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 50,
             data: null,
             dataKey: 'uv',
@@ -985,6 +990,7 @@ describe('<BarChart />', () => {
         expect(axisOneBarsSpy).toHaveBeenCalledTimes(3);
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'pv',
@@ -1097,8 +1103,8 @@ describe('<BarChart />', () => {
 
         const Comp = (): null => {
           allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
-          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left')));
-          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right')));
+          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left', false)));
+          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right', false)));
           barSizeListLeftSpy(useAppSelector(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings)));
           barSizeListRightSpy(useAppSelector(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings)));
           barPositionsLeftSpy(useAppSelector(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings)));
@@ -1119,8 +1125,9 @@ describe('<BarChart />', () => {
           </BarChart>,
         );
 
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith([
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'pv',
@@ -1133,6 +1140,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'uv',
@@ -1144,11 +1152,13 @@ describe('<BarChart />', () => {
             yAxisId: 'right',
             zAxisId: 0,
           },
-        ]);
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
         expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'pv',
@@ -1161,6 +1171,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'uv',
@@ -1177,6 +1188,7 @@ describe('<BarChart />', () => {
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'pv',
@@ -1189,6 +1201,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: undefined,
             data: null,
             dataKey: 'uv',
@@ -1351,8 +1364,8 @@ describe('<BarChart />', () => {
 
         const Comp = (): null => {
           allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
-          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0)));
-          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0)));
+          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0, false)));
+          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0, false)));
           return null;
         };
 
@@ -1367,8 +1380,9 @@ describe('<BarChart />', () => {
           </BarChart>,
         );
 
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith([
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            isPanorama: false,
             barSize: 40,
             data: null,
             dataKey: 'uv',
@@ -1381,6 +1395,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'pv',
@@ -1392,11 +1407,13 @@ describe('<BarChart />', () => {
             yAxisId: 0,
             zAxisId: 0,
           },
-        ]);
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
         expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 40,
             data: null,
             dataKey: 'uv',
@@ -1409,6 +1426,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'pv',
@@ -1425,6 +1443,7 @@ describe('<BarChart />', () => {
 
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 40,
             data: null,
             dataKey: 'uv',
@@ -1437,6 +1456,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'pv',
@@ -1549,8 +1569,8 @@ describe('<BarChart />', () => {
 
         const Comp = (): null => {
           allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
-          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left')));
-          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right')));
+          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left', false)));
+          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right', false)));
           barSizeListLeftSpy(useAppSelector(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings)));
           barSizeListRightSpy(useAppSelector(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings)));
           barPositionsLeftSpy(useAppSelector(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings)));
@@ -1571,8 +1591,9 @@ describe('<BarChart />', () => {
           </BarChart>,
         );
 
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith([
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'uv',
@@ -1585,6 +1606,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            isPanorama: false,
             barSize: 20,
             data: null,
             dataKey: 'pv',
@@ -1596,11 +1618,13 @@ describe('<BarChart />', () => {
             yAxisId: 'right',
             zAxisId: 0,
           },
-        ]);
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
         expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 30,
             data: null,
             dataKey: 'uv',
@@ -1617,6 +1641,7 @@ describe('<BarChart />', () => {
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
+            isPanorama: false,
             barSize: 20,
             data: null,
             dataKey: 'pv',
@@ -1742,8 +1767,7 @@ describe('<BarChart />', () => {
       });
     });
 
-    // this test requires that all graphical items report if they are in the brush panorama or outside; I will fix in separate PR.
-    test.fails('renders bars in Brush panorama', () => {
+    test('renders bars in Brush panorama', () => {
       const barPositionsSpy = vi.fn();
 
       const barSettings: BarSettings = {
@@ -1777,13 +1801,13 @@ describe('<BarChart />', () => {
         {
           dataKeys: ['uv'],
           position: {
-            offset: 32.785714285714285,
+            offset: 56.285714285714285,
             size: 0,
           },
           stackId: undefined,
         },
       ]);
-      expect(barPositionsSpy).toHaveBeenCalledTimes(2);
+      expect(barPositionsSpy).toHaveBeenCalledTimes(3);
 
       expectBars(container, [
         {
