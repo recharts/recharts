@@ -36,6 +36,9 @@ export type ErrorBarDataPointFormatter = (
   direction: ErrorBarDirection,
 ) => ErrorBarDataItem;
 
+/**
+ * External ErrorBar props, visible for users of the library
+ */
 interface ErrorBarProps {
   dataKey: DataKey<any>;
   /** the width of the error bar ends */
@@ -53,7 +56,25 @@ interface ErrorBarProps {
 
 export type Props = SVGProps<SVGLineElement> & ErrorBarProps;
 
-function ErrorBarImpl(props: Props) {
+/**
+ * Props after defaults, and required props have been applied.
+ */
+type ErrorBarInternalProps = SVGProps<SVGLineElement> & {
+  dataKey: DataKey<any>;
+  /** the width of the error bar ends */
+  width: number;
+  /**
+   * Only used for ScatterChart with error bars in two directions.
+   * Only accepts a value of "x" or "y" and makes the error bars lie in that direction.
+   */
+  direction: ErrorBarDirection;
+  isAnimationActive: boolean;
+  animationBegin: number;
+  animationDuration: number;
+  animationEasing: AnimationTiming;
+};
+
+function ErrorBarImpl(props: ErrorBarInternalProps) {
   const {
     direction,
     width,
@@ -189,29 +210,47 @@ export function SetErrorBarPreferredDirection({
   return <ErrorBarPreferredDirection.Provider value={direction}>{children}</ErrorBarPreferredDirection.Provider>;
 }
 
+const errorBarDefaultProps: Partial<Props> = {
+  stroke: 'black',
+  strokeWidth: 1.5,
+  width: 5,
+  offset: 0,
+  isAnimationActive: true,
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'ease-in-out',
+};
+
 function ErrorBarInternal(props: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
+
+  const {
+    width = errorBarDefaultProps.width,
+    isAnimationActive = errorBarDefaultProps.isAnimationActive,
+    animationBegin = errorBarDefaultProps.animationBegin,
+    animationDuration = errorBarDefaultProps.animationDuration,
+    animationEasing = errorBarDefaultProps.animationEasing,
+  } = props;
 
   return (
     <>
       <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
-      <ErrorBarImpl {...props} direction={realDirection} />
+      <ErrorBarImpl
+        {...props}
+        direction={realDirection}
+        width={width}
+        isAnimationActive={isAnimationActive}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
+      />
     </>
   );
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
 export class ErrorBar extends Component<Props> {
-  static defaultProps = {
-    stroke: 'black',
-    strokeWidth: 1.5,
-    width: 5,
-    offset: 0,
-    isAnimationActive: true,
-    animationBegin: 0,
-    animationDuration: 400,
-    animationEasing: 'ease-in-out',
-  };
+  static defaultProps = errorBarDefaultProps;
 
   static displayName = 'ErrorBar';
 
