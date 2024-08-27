@@ -1,27 +1,26 @@
 import React from 'react';
 import { pageData } from '../../data';
-import { Radar, RadarChart, ResponsiveContainer } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
+import { Radar, RadarChart } from '../../../../src';
+import { PolarChartProps } from '../props/PolarChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-  },
+  argTypes: PolarChartProps,
   component: RadarChart,
 };
 
 export const Simple = {
   render: (args: Record<string, any>) => {
-    const { data } = args;
     return (
-      <ResponsiveContainer width="100%" height={300}>
-        <RadarChart data={data}>
-          <Radar dataKey="uv" />
-        </RadarChart>
-      </ResponsiveContainer>
+      <RadarChart {...args}>
+        <Radar dataKey="uv" />
+      </RadarChart>
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(PolarChartProps),
     data: pageData,
+    width: 800,
+    height: 300,
   },
 };
