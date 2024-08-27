@@ -195,7 +195,7 @@ function ErrorBarInternal(props: Props) {
   return (
     <>
       <ReportErrorBarSettings dataKey={props.dataKey} direction={realDirection} />
-      <ErrorBarImpl {...props} />
+      <ErrorBarImpl {...props} direction={realDirection} />
     </>
   );
 }
