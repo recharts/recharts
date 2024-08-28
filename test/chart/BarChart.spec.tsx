@@ -2,13 +2,25 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { describe, expect, it, test, vi } from 'vitest';
-import { Bar, BarChart, BarProps, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { useClipPathId, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
+import {
+  BarSettings,
+  selectAllBarPositions,
+  selectAllVisibleBars,
+  selectBarCartesianAxisSize,
+  selectBarRectangles,
+  selectBarSizeList,
+} from '../../src/state/selectors/barSelectors';
+import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
+import { pageData } from '../../storybook/stories/data';
+import { boxPlotData } from '../_data';
+import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 type DataType = {
   name: string;
@@ -244,11 +256,95 @@ describe('<BarChart />', () => {
   describe('rendering bar rectangles', () => {
     const onePointData = [{ number: 1, name: 'food', uv: 400, pv: 2400 }];
 
-    test('Renders 8 bars in simple BarChart', () => {
+    test('renders simple BarChart', () => {
+      const barSettings: BarSettings = {
+        barSize: undefined,
+        data: undefined,
+        dataKey: 'uv',
+        maxBarSize: undefined,
+        minPointSize: undefined,
+        stackId: undefined,
+      };
+      const barSpy = vi.fn();
+      const sizeListSpy = vi.fn();
+      const Comp = (): null => {
+        barSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 0, false)));
+        sizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
+        return null;
+      };
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
-          <Bar dataKey="uv" fill="#ff7300" isAnimationActive={false} />
-          <Bar dataKey="pv" fill="#387908" isAnimationActive={false} />
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Customized component={<Comp />} />
+        </BarChart>,
+      );
+
+      const expectedBar: CartesianGraphicalItemSettings = {
+        isPanorama: false,
+        barSize: undefined,
+        data: null,
+        dataKey: 'uv',
+        errorBars: [],
+        hide: false,
+        stackId: undefined,
+        type: 'bar',
+        xAxisId: 0,
+        yAxisId: 0,
+        zAxisId: 0,
+      };
+      expect(barSpy).toHaveBeenLastCalledWith([expectedBar]);
+      expect(barSpy).toHaveBeenCalledTimes(3);
+
+      expect(sizeListSpy).toHaveBeenLastCalledWith([
+        {
+          barSize: undefined,
+          dataKeys: ['uv'],
+          stackId: undefined,
+        },
+      ]);
+      expect(sizeListSpy).toHaveBeenCalledTimes(3);
+
+      expectBars(container, [
+        {
+          d: 'M 7.25,5 h 18 v 40 h -18 Z',
+          height: '40',
+          radius: '0',
+          width: '18',
+          x: '7.25',
+          y: '5',
+        },
+        {
+          d: 'M 29.75,15 h 18 v 30 h -18 Z',
+          height: '30',
+          radius: '0',
+          width: '18',
+          x: '29.75',
+          y: '15',
+        },
+        {
+          d: 'M 52.25,15 h 18 v 30 h -18 Z',
+          height: '30',
+          radius: '0',
+          width: '18',
+          x: '52.25',
+          y: '15',
+        },
+        {
+          d: 'M 74.75,25 h 18 v 20 h -18 Z',
+          height: '20',
+          radius: '0',
+          width: '18',
+          x: '74.75',
+          y: '25',
+        },
+      ]);
+    });
+
+    test('Renders BarChart with two Bars', () => {
+      const { container } = render(
+        <BarChart width={100} height={50} data={data}>
+          <Bar dataKey="uv" isAnimationActive={false} />
+          <Bar dataKey="pv" isAnimationActive={false} />
         </BarChart>,
       );
 
@@ -695,21 +791,63 @@ describe('<BarChart />', () => {
     });
 
     test('renders a smaller bar if maxBarSize is set, even in a numerical XAxis', () => {
+      const barSizeListSpy = vi.fn();
+      const barPositionsSpy = vi.fn();
+      const totalAxisSizeSpy = vi.fn();
+
+      const barSettings: BarSettings = {
+        barSize: undefined,
+        data: undefined,
+        dataKey: 'uv',
+        maxBarSize: 30,
+        minPointSize: undefined,
+        stackId: undefined,
+      };
+
+      const Comp = (): null => {
+        barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
+        totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
+        return null;
+      };
+
       const { container } = render(
         <BarChart width={100} height={50} data={onePointData}>
           <XAxis dataKey="number" type="number" />
-          <Bar dataKey="uv" name="uv" isAnimationActive={false} maxBarSize={40} />
+          <Bar dataKey={barSettings.dataKey} name="uv" isAnimationActive={false} maxBarSize={barSettings.maxBarSize} />
+          <Customized component={<Comp />} />
         </BarChart>,
       );
 
+      expect(barSizeListSpy).toHaveBeenLastCalledWith([
+        {
+          barSize: undefined,
+          dataKeys: ['uv'],
+          stackId: undefined,
+        },
+      ]);
+
+      expect(totalAxisSizeSpy).toHaveBeenLastCalledWith(90);
+
+      expect(barPositionsSpy).toHaveBeenLastCalledWith([
+        {
+          position: {
+            offset: -12,
+            size: 24,
+          },
+          dataKeys: ['uv'],
+          stackId: undefined,
+        },
+      ]);
+
       expectBars(container, [
         {
-          d: 'M 79,5 h 32 v 10 h -32 Z',
+          d: 'M 83,5 h 24 v 10 h -24 Z',
           height: '10',
           radius: '0',
-          // the maxBarSize is 40 but here it only renders 32, why?
-          width: '32',
-          x: '79',
+          // Why does maxBarSize 30 produce width 24 bar?
+          width: '24',
+          x: '83',
           y: '5',
         },
       ]);
@@ -774,6 +912,1273 @@ describe('<BarChart />', () => {
         },
       ]);
     });
+
+    /**
+     * https://codesandbox.io/p/sandbox/barchart-with-multiple-bars-and-multiple-axes-hjfjdt
+     */
+    describe('in horizontal chart', () => {
+      test('renders overlapping bars when there are multiple XAxes', () => {
+        const allCartesianGraphicalItemsSpy = vi.fn();
+        const axisOneBarsSpy = vi.fn();
+        const axisTwoBarsSpy = vi.fn();
+
+        const Comp = (): null => {
+          allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
+          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0, false)));
+          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0, false)));
+          return null;
+        };
+
+        const { container } = render(
+          <BarChart width={800} height={400} data={data}>
+            <Bar dataKey="uv" fill="green" xAxisId="one" barSize={50} isAnimationActive={false} />
+            <XAxis xAxisId="one" />
+            {/* The smaller bar must be rendered in front of the larger one to be visible. */}
+            <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} isAnimationActive={false} />
+            <XAxis xAxisId="two" hide />
+
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
+          {
+            isPanorama: false,
+            barSize: 50,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 'one',
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 'two',
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 50,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 'one',
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisOneBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 'two',
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(3);
+
+        expectBars(container, [
+          {
+            d: 'M 78,350.59999999999997 h 50 v 14.400000000000034 h -50 Z',
+            height: '14.400000000000034',
+            radius: '0',
+            width: '50',
+            x: '78',
+            y: '350.59999999999997',
+          },
+          {
+            d: 'M 275.5,354.2 h 50 v 10.800000000000011 h -50 Z',
+            height: '10.800000000000011',
+            radius: '0',
+            width: '50',
+            x: '275.5',
+            y: '354.2',
+          },
+          {
+            d: 'M 473,354.2 h 50 v 10.800000000000011 h -50 Z',
+            height: '10.800000000000011',
+            radius: '0',
+            width: '50',
+            x: '473',
+            y: '354.2',
+          },
+          {
+            d: 'M 670.5,357.8 h 50 v 7.199999999999989 h -50 Z',
+            height: '7.199999999999989',
+            radius: '0',
+            width: '50',
+            x: '670.5',
+            y: '357.8',
+          },
+          {
+            d: 'M 88,278.59999999999997 h 30 v 86.40000000000003 h -30 Z',
+            height: '86.40000000000003',
+            radius: '0',
+            width: '30',
+            x: '88',
+            y: '278.59999999999997',
+          },
+          {
+            d: 'M 285.5,200.588 h 30 v 164.412 h -30 Z',
+            height: '164.412',
+            radius: '0',
+            width: '30',
+            x: '285.5',
+            y: '200.588',
+          },
+          {
+            d: 'M 483,314.672 h 30 v 50.327999999999975 h -30 Z',
+            height: '50.327999999999975',
+            radius: '0',
+            width: '30',
+            x: '483',
+            y: '314.672',
+          },
+          {
+            d: 'M 680.5,12.200000000000006 h 30 v 352.8 h -30 Z',
+            height: '352.8',
+            radius: '0',
+            width: '30',
+            x: '680.5',
+            y: '12.200000000000006',
+          },
+        ]);
+      });
+
+      test('renders bars as neighbours when there are multiple YAxes', () => {
+        const allCartesianGraphicalItemsSpy = vi.fn();
+        const axisLeftBarsSpy = vi.fn();
+        const axisRightBarsSpy = vi.fn();
+        const barSizeListLeftSpy = vi.fn();
+        const barSizeListRightSpy = vi.fn();
+
+        const barPositionsLeftSpy = vi.fn();
+        const barPositionsRightSpy = vi.fn();
+
+        const leftBarSettings: BarSettings = {
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'pv',
+          maxBarSize: undefined,
+          minPointSize: undefined,
+          stackId: undefined,
+        };
+
+        const rightBarSettings: BarSettings = {
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'uv',
+          maxBarSize: undefined,
+          minPointSize: undefined,
+          stackId: undefined,
+        };
+
+        const Comp = (): null => {
+          allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
+          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left', false)));
+          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right', false)));
+          barSizeListLeftSpy(useAppSelector(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings)));
+          barSizeListRightSpy(useAppSelector(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings)));
+          barPositionsLeftSpy(useAppSelector(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings)));
+          barPositionsRightSpy(
+            useAppSelector(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings)),
+          );
+          return null;
+        };
+
+        const { container } = render(
+          <BarChart width={500} height={300} data={data}>
+            <XAxis dataKey="name" />
+            <YAxis yAxisId="left" orientation="left" />
+            <YAxis yAxisId="right" orientation="right" />
+            <Bar yAxisId="left" dataKey={leftBarSettings.dataKey} isAnimationActive={false} />
+            <Bar yAxisId="right" dataKey={rightBarSettings.dataKey} isAnimationActive={false} />
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'left',
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'right',
+            zAxisId: 0,
+          },
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'left',
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'right',
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'left',
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: undefined,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'right',
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisRightBarsSpy).toHaveBeenCalledTimes(3);
+
+        expect(barSizeListLeftSpy).toHaveBeenLastCalledWith([
+          {
+            barSize: undefined,
+            dataKeys: ['pv'],
+            stackId: undefined,
+          },
+          {
+            barSize: undefined,
+            dataKeys: ['uv'],
+            stackId: undefined,
+          },
+        ]);
+        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(3);
+
+        expect(barSizeListRightSpy).toHaveBeenLastCalledWith([
+          {
+            barSize: undefined,
+            dataKeys: ['pv'],
+            stackId: undefined,
+          },
+          {
+            barSize: undefined,
+            dataKeys: ['uv'],
+            stackId: undefined,
+          },
+        ]);
+        expect(barSizeListRightSpy).toHaveBeenCalledTimes(3);
+
+        expect(barPositionsLeftSpy).toHaveBeenLastCalledWith([
+          {
+            dataKeys: ['pv'],
+            position: {
+              offset: 9.25,
+              size: 35,
+            },
+            stackId: undefined,
+          },
+          {
+            dataKeys: ['uv'],
+            position: {
+              offset: 48.25,
+              size: 35,
+            },
+            stackId: undefined,
+          },
+        ]);
+        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(3);
+
+        expect(barPositionsRightSpy).toHaveBeenLastCalledWith([
+          {
+            dataKeys: ['pv'],
+            position: {
+              offset: 9.25,
+              size: 35,
+            },
+            stackId: undefined,
+          },
+          {
+            dataKeys: ['uv'],
+            position: {
+              offset: 48.25,
+              size: 35,
+            },
+            stackId: undefined,
+          },
+        ]);
+        expect(barPositionsRightSpy).toHaveBeenCalledTimes(3);
+
+        expectBars(container, [
+          {
+            d: 'M 74.25,202.6 h 35 v 62.400000000000006 h -35 Z',
+            height: '62.400000000000006',
+            radius: '0',
+            width: '35',
+            x: '74.25',
+            y: '202.6',
+          },
+          {
+            d: 'M 166.75,146.258 h 35 v 118.74199999999999 h -35 Z',
+            height: '118.74199999999999',
+            radius: '0',
+            width: '35',
+            x: '166.75',
+            y: '146.258',
+          },
+          {
+            d: 'M 259.25,228.65200000000002 h 35 v 36.347999999999985 h -35 Z',
+            height: '36.347999999999985',
+            radius: '0',
+            width: '35',
+            x: '259.25',
+            y: '228.65200000000002',
+          },
+          {
+            d: 'M 351.75,10.200000000000005 h 35 v 254.79999999999998 h -35 Z',
+            height: '254.79999999999998',
+            radius: '0',
+            width: '35',
+            x: '351.75',
+            y: '10.200000000000005',
+          },
+          {
+            d: 'M 113.25,5 h 35 v 260 h -35 Z',
+            height: '260',
+            radius: '0',
+            width: '35',
+            x: '113.25',
+            y: '5',
+          },
+          {
+            d: 'M 205.75,70 h 35 v 195 h -35 Z',
+            height: '195',
+            radius: '0',
+            width: '35',
+            x: '205.75',
+            y: '70',
+          },
+          {
+            d: 'M 298.25,70 h 35 v 195 h -35 Z',
+            height: '195',
+            radius: '0',
+            width: '35',
+            x: '298.25',
+            y: '70',
+          },
+          {
+            d: 'M 390.75,135 h 35 v 130 h -35 Z',
+            height: '130',
+            radius: '0',
+            width: '35',
+            x: '390.75',
+            y: '135',
+          },
+        ]);
+      });
+    });
+
+    /**
+     * https://codesandbox.io/p/sandbox/barchart-with-multiple-bars-and-multiple-axes-hjfjdt
+     */
+    describe('in vertical chart', () => {
+      test('renders bars as neighbours when there are multiple XAxes', () => {
+        const allCartesianGraphicalItemsSpy = vi.fn();
+        const axisOneBarsSpy = vi.fn();
+        const axisTwoBarsSpy = vi.fn();
+
+        const Comp = (): null => {
+          allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
+          axisOneBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'one', 0, false)));
+          axisTwoBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 'two', 0, false)));
+          return null;
+        };
+
+        const { container } = render(
+          <BarChart width={300} height={300} data={data} layout="vertical">
+            <Bar dataKey="uv" xAxisId={2} fill="blue" barSize={40} isAnimationActive={false} />
+            <Bar dataKey="pv" xAxisId={1} fill="green" barSize={30} isAnimationActive={false} />
+            <XAxis xAxisId={1} type="number" />
+            <XAxis xAxisId={2} type="number" orientation="top" />
+            <YAxis type="category" />
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
+          {
+            isPanorama: false,
+            barSize: 40,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 2,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 1,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 40,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 2,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 1,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisOneBarsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 40,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 2,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 1,
+            yAxisId: 0,
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(3);
+
+        expectBars(container, [
+          {
+            d: 'M 65,37 h 230 v 25.875 h -230 Z',
+            height: '25.875',
+            radius: '0',
+            width: '230',
+            x: '65',
+            y: '37',
+          },
+          {
+            d: 'M 65,94.5 h 172.5 v 25.875 h -172.5 Z',
+            height: '25.875',
+            radius: '0',
+            width: '172.5',
+            x: '65',
+            y: '94.5',
+          },
+          {
+            d: 'M 65,152 h 172.5 v 25.875 h -172.5 Z',
+            height: '25.875',
+            radius: '0',
+            width: '172.5',
+            x: '65',
+            y: '152',
+          },
+          {
+            d: 'M 65,209.5 h 115 v 25.875 h -115 Z',
+            height: '25.875',
+            radius: '0',
+            width: '115',
+            x: '65',
+            y: '209.5',
+          },
+          {
+            d: 'M 65,62.875 h 55.19999999999999 v 25.875 h -55.19999999999999 Z',
+            height: '25.875',
+            radius: '0',
+            width: '55.19999999999999',
+            x: '65',
+            y: '62.875',
+          },
+          {
+            d: 'M 65,120.375 h 105.041 v 25.875 h -105.041 Z',
+            height: '25.875',
+            radius: '0',
+            width: '105.041',
+            x: '65',
+            y: '120.375',
+          },
+          {
+            d: 'M 65,177.875 h 32.153999999999996 v 25.875 h -32.153999999999996 Z',
+            height: '25.875',
+            radius: '0',
+            width: '32.153999999999996',
+            x: '65',
+            y: '177.875',
+          },
+          {
+            d: 'M 65,235.375 h 225.40000000000003 v 25.875 h -225.40000000000003 Z',
+            height: '25.875',
+            radius: '0',
+            width: '225.40000000000003',
+            x: '65',
+            y: '235.375',
+          },
+        ]);
+      });
+
+      test('renders overlapping bars when there are multiple YAxes', () => {
+        const allCartesianGraphicalItemsSpy = vi.fn();
+        const axisLeftBarsSpy = vi.fn();
+        const axisRightBarsSpy = vi.fn();
+        const barSizeListLeftSpy = vi.fn();
+        const barSizeListRightSpy = vi.fn();
+
+        const barPositionsLeftSpy = vi.fn();
+        const barPositionsRightSpy = vi.fn();
+
+        const leftBarSettings: BarSettings = {
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'pv',
+          maxBarSize: undefined,
+          minPointSize: undefined,
+          stackId: undefined,
+        };
+
+        const rightBarSettings: BarSettings = {
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'uv',
+          maxBarSize: undefined,
+          minPointSize: undefined,
+          stackId: undefined,
+        };
+
+        const Comp = (): null => {
+          allCartesianGraphicalItemsSpy(useAppSelector(selectUnfilteredCartesianItems));
+          axisLeftBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'left', false)));
+          axisRightBarsSpy(useAppSelector(state => selectAllVisibleBars(state, 0, 'right', false)));
+          barSizeListLeftSpy(useAppSelector(state => selectBarSizeList(state, 0, 'left', false, leftBarSettings)));
+          barSizeListRightSpy(useAppSelector(state => selectBarSizeList(state, 0, 'right', false, rightBarSettings)));
+          barPositionsLeftSpy(useAppSelector(state => selectAllBarPositions(state, 0, 'left', false, leftBarSettings)));
+          barPositionsRightSpy(
+            useAppSelector(state => selectAllBarPositions(state, 0, 'right', false, rightBarSettings)),
+          );
+          return null;
+        };
+
+        const { container } = render(
+          <BarChart width={300} height={300} data={data} layout="vertical">
+            <Bar dataKey="uv" yAxisId="left" fill="blue" barSize={30} isAnimationActive={false} />
+            <Bar dataKey="pv" yAxisId="right" fill="green" barSize={20} isAnimationActive={false} />
+            <YAxis yAxisId="left" orientation="left" type="category" />
+            <YAxis yAxisId="right" orientation="right" hide type="category" />
+            <XAxis type="number" />
+            <Customized component={<Comp />} />
+          </BarChart>,
+        );
+
+        const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'left',
+            zAxisId: 0,
+          },
+          {
+            isPanorama: false,
+            barSize: 20,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'right',
+            zAxisId: 0,
+          },
+        ];
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 30,
+            data: null,
+            dataKey: 'uv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'left',
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(3);
+
+        expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
+          {
+            isPanorama: false,
+            barSize: 20,
+            data: null,
+            dataKey: 'pv',
+            errorBars: [],
+            hide: false,
+            stackId: undefined,
+            type: 'bar',
+            xAxisId: 0,
+            yAxisId: 'right',
+            zAxisId: 0,
+          },
+        ]);
+        expect(axisRightBarsSpy).toHaveBeenCalledTimes(3);
+
+        expect(barSizeListLeftSpy).toHaveBeenLastCalledWith([
+          {
+            barSize: 30,
+            dataKeys: ['uv'],
+            stackId: undefined,
+          },
+        ]);
+        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(3);
+
+        expect(barSizeListRightSpy).toHaveBeenLastCalledWith([
+          {
+            barSize: 20,
+            dataKeys: ['pv'],
+            stackId: undefined,
+          },
+        ]);
+        expect(barSizeListRightSpy).toHaveBeenCalledTimes(3);
+
+        expect(barPositionsLeftSpy).toHaveBeenLastCalledWith([
+          {
+            dataKeys: ['uv'],
+            position: {
+              offset: 17,
+              size: 30,
+            },
+            stackId: undefined,
+          },
+        ]);
+        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(3);
+
+        expect(barPositionsRightSpy).toHaveBeenLastCalledWith([
+          {
+            dataKeys: ['pv'],
+            position: {
+              offset: 22,
+              size: 20,
+            },
+            stackId: undefined,
+          },
+        ]);
+        expect(barPositionsRightSpy).toHaveBeenCalledTimes(3);
+
+        expectBars(container, [
+          {
+            d: 'M 65,22 h 9.200000000000003 v 30 h -9.200000000000003 Z',
+            height: '30',
+            radius: '0',
+            width: '9.200000000000003',
+            x: '65',
+            y: '22',
+          },
+          {
+            d: 'M 65,87 h 6.8999999999999915 v 30 h -6.8999999999999915 Z',
+            height: '30',
+            radius: '0',
+            width: '6.8999999999999915',
+            x: '65',
+            y: '87',
+          },
+          {
+            d: 'M 65,152 h 6.8999999999999915 v 30 h -6.8999999999999915 Z',
+            height: '30',
+            radius: '0',
+            width: '6.8999999999999915',
+            x: '65',
+            y: '152',
+          },
+          {
+            d: 'M 65,217 h 4.599999999999994 v 30 h -4.599999999999994 Z',
+            height: '30',
+            radius: '0',
+            width: '4.599999999999994',
+            x: '65',
+            y: '217',
+          },
+          {
+            d: 'M 65,27 h 55.19999999999999 v 20 h -55.19999999999999 Z',
+            height: '20',
+            radius: '0',
+            width: '55.19999999999999',
+            x: '65',
+            y: '27',
+          },
+          {
+            d: 'M 65,92 h 105.041 v 20 h -105.041 Z',
+            height: '20',
+            radius: '0',
+            width: '105.041',
+            x: '65',
+            y: '92',
+          },
+          {
+            d: 'M 65,157 h 32.153999999999996 v 20 h -32.153999999999996 Z',
+            height: '20',
+            radius: '0',
+            width: '32.153999999999996',
+            x: '65',
+            y: '157',
+          },
+          {
+            d: 'M 65,222 h 225.40000000000003 v 20 h -225.40000000000003 Z',
+            height: '20',
+            radius: '0',
+            width: '225.40000000000003',
+            x: '65',
+            y: '222',
+          },
+        ]);
+      });
+    });
+
+    test('renders bars in Brush panorama', () => {
+      const barPositionsSpy = vi.fn();
+
+      const barSettings: BarSettings = {
+        barSize: undefined,
+        data: undefined,
+        dataKey: 'uv',
+        maxBarSize: 0,
+        minPointSize: undefined,
+        stackId: undefined,
+      };
+
+      const Comp = (): null => {
+        barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
+        return null;
+      };
+
+      const { container } = render(
+        <ComposedChart width={800} height={400} data={pageData}>
+          <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+          <Customized component={<Comp />} />
+
+          <Brush>
+            <ComposedChart data={pageData}>
+              <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
+            </ComposedChart>
+          </Brush>
+        </ComposedChart>,
+      );
+
+      expect(barPositionsSpy).toHaveBeenLastCalledWith([
+        {
+          dataKeys: ['uv'],
+          position: {
+            offset: 56.285714285714285,
+            size: 0,
+          },
+          stackId: undefined,
+        },
+      ]);
+      expect(barPositionsSpy).toHaveBeenCalledTimes(3);
+
+      expectBars(container, [
+        {
+          d: 'M 16.285714285714285,225.9375 h 90 v 129.0625 h -90 Z',
+          height: '129.0625',
+          radius: '0',
+          width: '90',
+          x: '16.285714285714285',
+          y: '225.9375',
+        },
+        {
+          d: 'M 129.14285714285714,225.9375 h 90 v 129.0625 h -90 Z',
+          height: '129.0625',
+          radius: '0',
+          width: '90',
+          x: '129.14285714285714',
+          y: '225.9375',
+        },
+        {
+          d: 'M 242,165.125 h 90 v 189.875 h -90 Z',
+          height: '189.875',
+          radius: '0',
+          width: '90',
+          x: '242',
+          y: '165.125',
+        },
+        {
+          d: 'M 354.85714285714283,49.406249999999986 h 90 v 305.59375 h -90 Z',
+          height: '305.59375',
+          radius: '0',
+          width: '90',
+          x: '354.85714285714283',
+          y: '49.406249999999986',
+        },
+        {
+          d: 'M 467.7142857142857,31.249999999999986 h 90 v 323.75 h -90 Z',
+          height: '323.75',
+          radius: '0',
+          width: '90',
+          x: '467.7142857142857',
+          y: '31.249999999999986',
+        },
+        {
+          d: 'M 580.5714285714287,22.500000000000014 h 90 v 332.5 h -90 Z',
+          height: '332.5',
+          radius: '0',
+          width: '90',
+          x: '580.5714285714287',
+          y: '22.500000000000014',
+        },
+        {
+          d: 'M 693.4285714285714,48.75 h 90 v 306.25 h -90 Z',
+          height: '306.25',
+          radius: '0',
+          width: '90',
+          x: '693.4285714285714',
+          y: '48.75',
+        },
+        {
+          d: 'M 12.257142857142858,24.987499999999997 h 90 v 14.012500000000003 h -90 Z',
+          height: '14.012500000000003',
+          radius: '0',
+          width: '90',
+          x: '12.257142857142858',
+          y: '24.987499999999997',
+        },
+        {
+          d: 'M 124.82857142857142,24.987499999999997 h 90 v 14.012500000000003 h -90 Z',
+          height: '14.012500000000003',
+          radius: '0',
+          width: '90',
+          x: '124.82857142857142',
+          y: '24.987499999999997',
+        },
+        {
+          d: 'M 237.4,18.385 h 90 v 20.615 h -90 Z',
+          height: '20.615',
+          radius: '0',
+          width: '90',
+          x: '237.4',
+          y: '18.385',
+        },
+        {
+          d: 'M 349.9714285714286,5.821249999999998 h 90 v 33.17875 h -90 Z',
+          height: '33.17875',
+          radius: '0',
+          width: '90',
+          x: '349.9714285714286',
+          y: '5.821249999999998',
+        },
+        {
+          d: 'M 462.54285714285714,3.849999999999998 h 90 v 35.150000000000006 h -90 Z',
+          height: '35.150000000000006',
+          radius: '0',
+          width: '90',
+          x: '462.54285714285714',
+          y: '3.849999999999998',
+        },
+        {
+          d: 'M 575.1142857142858,2.9000000000000017 h 90 v 36.1 h -90 Z',
+          height: '36.1',
+          radius: '0',
+          width: '90',
+          x: '575.1142857142858',
+          y: '2.9000000000000017',
+        },
+        {
+          d: 'M 687.6857142857143,5.75 h 90 v 33.25 h -90 Z',
+          height: '33.25',
+          radius: '0',
+          width: '90',
+          x: '687.6857142857143',
+          y: '5.75',
+        },
+      ]);
+    });
+  });
+
+  test('should render whiskers in boxplot simulation', () => {
+    const barPositionsSpy = vi.fn();
+    const barRectanglesSpy = vi.fn();
+
+    const topWhiskerBarSettings: BarSettings = {
+      barSize: undefined,
+      data: undefined,
+      dataKey: 'topWhisker',
+      maxBarSize: undefined,
+      minPointSize: 0,
+      stackId: 'a',
+    };
+
+    const Comp = (): null => {
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, topWhiskerBarSettings)));
+      barRectanglesSpy(
+        useAppSelector(state => selectBarRectangles(state, 0, 0, false, topWhiskerBarSettings, undefined)),
+      );
+      return null;
+    };
+
+    const { container } = render(
+      <ComposedChart width={400} height={200} data={boxPlotData}>
+        <Bar stackId="a" dataKey="min" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="bar-min" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="bottomWhisker" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="bottomBox" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="bar-avg" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="topBox" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="topWhisker" isAnimationActive={false} />
+        <Bar stackId="a" dataKey="bar-max" isAnimationActive={false} />
+
+        <XAxis />
+        <YAxis />
+
+        <Customized component={<Comp />} />
+      </ComposedChart>,
+    );
+
+    expect(barPositionsSpy).toHaveBeenLastCalledWith([
+      {
+        dataKeys: ['min', 'bar-min', 'bottomWhisker', 'bottomBox', 'bar-avg', 'topBox', 'topWhisker', 'bar-max'],
+        position: {
+          offset: 11,
+          size: 88,
+        },
+        stackId: 'a',
+      },
+    ]);
+    expect(barRectanglesSpy).toHaveBeenLastCalledWith([
+      {
+        average: 150,
+        background: {
+          height: 160,
+          width: 88,
+          x: 76,
+          y: 5,
+        },
+        bottomBox: 50,
+        bottomWhisker: 100,
+        height: 40,
+        min: 100,
+        payload: {
+          average: 150,
+          bottomBox: 50,
+          bottomWhisker: 100,
+          min: 100,
+          size: 150,
+          topBox: 200,
+          topWhisker: 200,
+        },
+        size: 150,
+        topBox: 200,
+        topWhisker: 200,
+        value: [450, 650],
+        width: 88,
+        x: 76,
+        y: 35,
+      },
+      {
+        average: 550,
+        background: {
+          height: 160,
+          width: 88,
+          x: 186,
+          y: 5,
+        },
+        bottomBox: 200,
+        bottomWhisker: 200,
+        height: 20,
+        min: 200,
+        payload: {
+          average: 550,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 200,
+          size: 250,
+          topBox: 100,
+          topWhisker: 100,
+        },
+        size: 250,
+        topBox: 100,
+        topWhisker: 100,
+        value: [700, 800],
+        width: 88,
+        x: 186,
+        y: 5,
+      },
+      {
+        average: 400,
+        background: {
+          height: 160,
+          width: 88,
+          x: 296,
+          y: 5,
+        },
+        bottomBox: 200,
+        bottomWhisker: 200,
+        height: 40,
+        min: 0,
+        payload: {
+          average: 400,
+          bottomBox: 200,
+          bottomWhisker: 200,
+          min: 0,
+          size: 350,
+          topBox: 200,
+          topWhisker: 200,
+        },
+        size: 350,
+        topBox: 200,
+        topWhisker: 200,
+        value: [600, 800],
+        width: 88,
+        x: 296,
+        y: 5,
+      },
+    ]);
+
+    expectBars(container, [
+      {
+        d: 'M 76,145 h 88 v 20 h -88 Z',
+        height: '20',
+        radius: '0',
+        width: '88',
+        x: '76',
+        y: '145',
+      },
+      {
+        d: 'M 186,125 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '186',
+        y: '125',
+      },
+      {
+        d: 'M 76,125 h 88 v 20 h -88 Z',
+        height: '20',
+        radius: '0',
+        width: '88',
+        x: '76',
+        y: '125',
+      },
+      {
+        d: 'M 186,85 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '186',
+        y: '85',
+      },
+      {
+        d: 'M 296,125 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '296',
+        y: '125',
+      },
+      {
+        d: 'M 76,115 h 88 v 10 h -88 Z',
+        height: '10',
+        radius: '0',
+        width: '88',
+        x: '76',
+        y: '115',
+      },
+      {
+        d: 'M 186,45 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '186',
+        y: '45',
+      },
+      {
+        d: 'M 296,85 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '296',
+        y: '85',
+      },
+      {
+        d: 'M 76,75 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '76',
+        y: '75',
+      },
+      {
+        d: 'M 186,25 h 88 v 20 h -88 Z',
+        height: '20',
+        radius: '0',
+        width: '88',
+        x: '186',
+        y: '25',
+      },
+      {
+        d: 'M 296,45 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '296',
+        y: '45',
+      },
+      {
+        d: 'M 76,35 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '76',
+        y: '35',
+      },
+      {
+        d: 'M 186,5 h 88 v 20 h -88 Z',
+        height: '20',
+        radius: '0',
+        width: '88',
+        x: '186',
+        y: '5',
+      },
+      {
+        d: 'M 296,5 h 88 v 40 h -88 Z',
+        height: '40',
+        radius: '0',
+        width: '88',
+        x: '296',
+        y: '5',
+      },
+    ]);
   });
 
   describe('bar categories', () => {

@@ -718,6 +718,7 @@ export class Line extends PureComponent<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        type="line"
         data={this.props.data}
         xAxisId={this.props.xAxisId}
         yAxisId={this.props.yAxisId}
@@ -726,6 +727,7 @@ export class Line extends PureComponent<Props> {
         // line doesn't stack
         stackId={undefined}
         hide={this.props.hide}
+        barSize={undefined}
       >
         <SetLineLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

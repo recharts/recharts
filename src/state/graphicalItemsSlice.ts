@@ -28,7 +28,15 @@ export type ErrorBarsSettings = {
    */
 };
 
+export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
+
 export type CartesianGraphicalItemSettings = {
+  type: CartesianGraphicalItemType;
+  /**
+   * Graphical items that are inside Brush panorama should not interact with the main area graphical items
+   * and vice versa.
+   */
+  isPanorama: boolean;
   data: ChartData;
   /**
    * Each of the graphical items explicitly says which axis it uses;
@@ -52,6 +60,10 @@ export type CartesianGraphicalItemSettings = {
    * Stacks for example will ignore them.
    */
   hide: boolean;
+  /**
+   * This property is only used in Bar and RadialBar items
+   */
+  barSize: number | string | undefined;
 };
 
 export type PolarGraphicalItemSettings = {

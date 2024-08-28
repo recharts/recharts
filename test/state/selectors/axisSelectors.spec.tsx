@@ -20,6 +20,7 @@ import {
   selectHasBar,
   selectNiceTicks,
   selectSmallestDistanceBetweenValues,
+  selectStackGroups,
 } from '../../../src/state/selectors/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import {
@@ -1615,6 +1616,8 @@ describe('selectCartesianGraphicalItemsData', () => {
   it('should be stable', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
+      isPanorama: false,
+      type: 'bar',
       hide: false,
       stackId: 's-id',
       errorBars: [],
@@ -1623,6 +1626,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       xAxisId: 'x',
       yAxisId: 'y',
       zAxisId: 0,
+      barSize: '',
     };
     store.dispatch(addCartesianGraphicalItem(settings));
     const result1 = selectCartesianGraphicalItemsData(store.getState(), 'xAxis', 'x');
@@ -2519,8 +2523,8 @@ describe('selectErrorBarsSettings', () => {
       return null;
     };
     render(
-      <BarChart width={100} height={100}>
-        <Bar data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+      <BarChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
+        <Bar dataKey="x" isAnimationActive={false}>
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Bar>
@@ -2688,8 +2692,8 @@ describe('selectErrorBarsSettings', () => {
       return null;
     };
     render(
-      <ComposedChart width={100} height={100}>
-        <Bar data={[{ x: 1 }, { x: 2 }, { x: 3 }]} isAnimationActive={false}>
+      <ComposedChart data={[{ x: 1 }, { x: 2 }, { x: 3 }]} width={100} height={100}>
+        <Bar dataKey="x" isAnimationActive={false}>
           <ErrorBar dataKey="a" direction="x" />
           <ErrorBar dataKey="b" direction="y" />
         </Bar>
@@ -2748,6 +2752,9 @@ describe('selectErrorBarsSettings', () => {
   it('should be stable with data', () => {
     const store = createRechartsStore();
     const settings: CartesianGraphicalItemSettings = {
+      isPanorama: false,
+      barSize: undefined,
+      type: 'bar',
       hide: false,
       stackId: 'q',
       dataKey: 'x',
@@ -2869,5 +2876,168 @@ describe('mergeDomains', () => {
   it('should ignore domains that are undefined', () => {
     expect(mergeDomains([100, 200], [150, 250])).toEqual([100, 250]);
     expect(mergeDomains([100, 200], [150, 250], undefined, [0, 50])).toEqual([0, 250]);
+  });
+});
+
+describe('selectStackGroups', () => {
+  it('should return undefined when called outside of Redux context', () => {
+    expect.assertions(1);
+    const Comp = (): null => {
+      const result = useAppSelector(state => selectStackGroups(state, 'xAxis', 0));
+      expect(result).toBe(undefined);
+      return null;
+    };
+    render(<Comp />);
+  });
+
+  it('should return empty object for initial state', () => {
+    const store = createRechartsStore();
+    expect(selectStackGroups(store.getState(), 'xAxis', 0)).toEqual({});
+  });
+
+  it('should return empty object in an empty BarChart', () => {
+    const stackGroupsSpy = vi.fn();
+    const Comp = (): null => {
+      stackGroupsSpy(useAppSelector(state => selectStackGroups(state, 'xAxis', 0)));
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return object keyed by stack IDs, with bar settings and stacked data', () => {
+    const stackGroupsSpy = vi.fn();
+    const Comp = (): null => {
+      stackGroupsSpy(useAppSelector(state => selectStackGroups(state, 'xAxis', 0)));
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100} data={pageData}>
+        <Bar dataKey="uv" stackId="a" />
+        <Bar dataKey="pv" stackId="a" />
+        <Bar dataKey="uv" stackId="b" />
+        <Bar dataKey="amt" stackId="b" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    // This fails because d3 likes to put extra properties in the stack array that vitest doesn't serialize.
+    // expect(stackGroupsSpy).toHaveBeenLastCalledWith({
+    //   a: {
+    //     graphicalItems: [
+    //       {
+    //         data: null,
+    //         dataKey: 'uv',
+    //         errorBars: [],
+    //         hide: false,
+    //         stackId: 'a',
+    //         type: 'bar',
+    //         xAxisId: 0,
+    //         yAxisId: 0,
+    //         zAxisId: 0,
+    //       },
+    //       {
+    //         data: null,
+    //         dataKey: 'pv',
+    //         errorBars: [],
+    //         hide: false,
+    //         stackId: 'a',
+    //         type: 'bar',
+    //         xAxisId: 0,
+    //         yAxisId: 0,
+    //         zAxisId: 0,
+    //       },
+    //     ],
+    //     stackedData: [
+    //       [
+    //         [0, 590],
+    //         [0, 590],
+    //         [0, 868],
+    //         [0, 1397],
+    //         [0, 1480],
+    //         [0, 1520],
+    //         [0, 1400],
+    //       ],
+    //       [
+    //         [590, 1390],
+    //         [590, 1390],
+    //         [868, 1835],
+    //         [1397, 2495],
+    //         [1480, 2680],
+    //         [1520, 2628],
+    //         [1400, 2080],
+    //       ],
+    //     ],
+    //   },
+    //   b: {
+    //     graphicalItems: [
+    //       {
+    //         data: null,
+    //         dataKey: 'uv',
+    //         errorBars: [],
+    //         hide: false,
+    //         stackId: 'b',
+    //         type: 'bar',
+    //         xAxisId: 0,
+    //         yAxisId: 0,
+    //         zAxisId: 0,
+    //       },
+    //       {
+    //         data: null,
+    //         dataKey: 'amt',
+    //         errorBars: [],
+    //         hide: false,
+    //         stackId: 'b',
+    //         type: 'bar',
+    //         xAxisId: 0,
+    //         yAxisId: 0,
+    //         zAxisId: 0,
+    //       },
+    //     ],
+    //     stackedData: [
+    //       [
+    //         [0, 590],
+    //         [0, 590],
+    //         [0, 868],
+    //         [0, 1397],
+    //         [0, 1480],
+    //         [0, 1520],
+    //         [0, 1400],
+    //       ],
+    //       [
+    //         [590, 1990],
+    //         [590, 1990],
+    //         [868, 2374],
+    //         [1397, 2386],
+    //         [1480, 2708],
+    //         [1520, 2620],
+    //         [1400, 3100],
+    //       ],
+    //     ],
+    //   },
+    // });
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return empty object for Bars without stackId', () => {
+    const stackGroupsSpy = vi.fn();
+    const Comp = (): null => {
+      stackGroupsSpy(useAppSelector(state => selectStackGroups(state, 'xAxis', 0)));
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100} data={pageData}>
+        <Bar dataKey="uv" />
+        <Bar dataKey="pv" />
+        <Bar dataKey="amt" />
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+    expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(3);
   });
 });

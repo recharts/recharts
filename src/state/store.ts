@@ -11,6 +11,7 @@ import { graphicalItemsReducer } from './graphicalItemsSlice';
 import { referenceElementsReducer } from './referenceElementsSlice';
 import { brushReducer } from './brushSlice';
 import { legendReducer } from './legendSlice';
+import { rootPropsReducer } from './rootPropsSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   options: optionsReducer,
   referenceElements: referenceElementsReducer,
   tooltip: tooltipReducer,
+  rootProps: rootPropsReducer,
 });
 
 export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {

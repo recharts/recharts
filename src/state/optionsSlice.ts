@@ -1,15 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { StackOffsetType, TooltipEventType } from '../util/types';
+import { TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from './tooltipSlice';
 
+/**
+ * These chart options are decided internally, by Recharts,
+ * and will not change during the lifetime of the chart.
+ *
+ * Changing these options can be done by swapping the root element
+ * which will make a brand-new Redux store.
+ */
 export type ChartOptions = {
   chartName: string;
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   // Should this instead be a property of a graphical item? Do we want to mix items with different data types in one chart?
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined;
-  barCategoryGap: number | string;
-  stackOffset: StackOffsetType;
 };
 
 export const arrayTooltipSearcher: TooltipPayloadSearcher = (
@@ -24,10 +29,8 @@ export const arrayTooltipSearcher: TooltipPayloadSearcher = (
 };
 
 const initialState: ChartOptions = {
-  stackOffset: 'none',
   chartName: '',
   tooltipPayloadSearcher: undefined,
-  barCategoryGap: '10%',
 };
 
 const optionsSlice = createSlice({

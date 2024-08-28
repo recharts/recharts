@@ -21,11 +21,13 @@ import {
 import {
   implicitXAxis,
   selectAllXAxesOffsetSteps,
+  selectAxisRangeWithReverse,
   selectAxisSettings,
   selectCartesianGraphicalItemsData,
   selectDisplayedData,
   selectRealScaleType,
   selectTicksOfAxis,
+  selectTicksOfGraphicalItem,
   selectXAxisPosition,
 } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
@@ -35,6 +37,16 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { AxisDomainType } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';
 import { Props as XAxisProps } from '../../src/cartesian/XAxis';
+import { expectBars } from '../helper/expectBars';
+import {
+  BarSettings,
+  selectAllBarPositions,
+  selectBarBandSize,
+  selectBarCartesianAxisSize,
+  selectBarSizeList,
+} from '../../src/state/selectors/barSelectors';
+import { selectChartOffset } from '../../src/state/selectors/selectChartOffset';
+import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 
 describe('<XAxis />', () => {
   const data = [
@@ -452,20 +464,147 @@ describe('<XAxis />', () => {
   });
 
   it('Render Bars with gap', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
+    const yAxisRangeSpy = vi.fn();
+    const barTicksSpy = vi.fn();
+    const barBandSizeSpy = vi.fn();
+    const offsetSpy = vi.fn();
+
+    const barSettings: BarSettings = {
+      barSize: undefined,
+      data: undefined,
+      dataKey: 'y',
+      maxBarSize: undefined,
+      minPointSize: undefined,
+      stackId: undefined,
+    };
+
+    const Comp = (): null => {
+      yAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
+      barTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'xAxis', 0, false)));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, barSettings)));
+      offsetSpy(useAppSelector(selectChartOffset));
+      return null;
+    };
+
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
-        <Bar dataKey="y" isAnimationActive={false} />
+        <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <Customized component={<Comp />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('70.16326530612245');
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expect(barBandSizeSpy).toHaveBeenLastCalledWith(28.16326530612244);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
+
+    expect(offsetSpy).toHaveBeenLastCalledWith({
+      brushBottom: 35,
+      top: 5,
+      bottom: 35,
+      left: 65,
+      right: 5,
+      width: 230,
+      height: 260,
+    });
+    expect(offsetSpy).toHaveBeenCalledTimes(3);
+
+    expect(yAxisRangeSpy).toHaveBeenLastCalledWith([265, 5]);
+    expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
+
+    expect(barTicksSpy).toHaveBeenLastCalledWith([
+      {
+        coordinate: 81.42857142857143,
+        index: 0,
+        offset: 0,
+        value: 100,
+      },
+      {
+        coordinate: 137.75510204081633,
+        index: 1,
+        offset: 0,
+        value: 120,
+      },
+      {
+        coordinate: 278.57142857142856,
+        index: 2,
+        offset: 0,
+        value: 170,
+      },
+      {
+        coordinate: 194.0816326530612,
+        index: 3,
+        offset: 0,
+        value: 140,
+      },
+      {
+        coordinate: 222.24489795918367,
+        index: 4,
+        offset: 0,
+        value: 150,
+      },
+      {
+        coordinate: 109.59183673469389,
+        index: 5,
+        offset: 0,
+        value: 110,
+      },
+    ]);
+    expect(barTicksSpy).toHaveBeenCalledTimes(3);
+
+    expectBars(container, [
+      {
+        d: 'M 70.16326530612245,135 h 22 v 130 h -22 Z',
+        height: '130',
+        radius: '0',
+        width: '22',
+        x: '70.16326530612245',
+        y: '135',
+      },
+      {
+        d: 'M 126.48979591836735,200 h 22 v 65 h -22 Z',
+        height: '65',
+        radius: '0',
+        width: '22',
+        x: '126.48979591836735',
+        y: '200',
+      },
+      {
+        d: 'M 267.3061224489796,70 h 22 v 195 h -22 Z',
+        height: '195',
+        radius: '0',
+        width: '22',
+        x: '267.3061224489796',
+        y: '70',
+      },
+      {
+        d: 'M 182.81632653061223,102.5 h 22 v 162.5 h -22 Z',
+        height: '162.5',
+        radius: '0',
+        width: '22',
+        x: '182.81632653061223',
+        y: '102.5',
+      },
+      {
+        d: 'M 210.9795918367347,5 h 22 v 260 h -22 Z',
+        height: '260',
+        radius: '0',
+        width: '22',
+        x: '210.9795918367347',
+        y: '5',
+      },
+      {
+        d: 'M 98.32653061224491,83.00000000000001 h 22 v 182 h -22 Z',
+        height: '182',
+        radius: '0',
+        width: '22',
+        x: '98.32653061224491',
+        y: '83.00000000000001',
+      },
+    ]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -491,20 +630,67 @@ describe('<XAxis />', () => {
   });
 
   it('Render Bars with gap in 10000 width chart and somehow is still decides to render 4 ticks instead of the default 5', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={10000} height={300} data={data}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('287.9183673469387');
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expectBars(container, [
+      {
+        d: 'M 287.9183673469387,135 h 972 v 130 h -972 Z',
+        height: '130',
+        radius: '0',
+        width: '972',
+        x: '287.9183673469387',
+        y: '135',
+      },
+      {
+        d: 'M 2719.755102040817,200 h 972 v 65 h -972 Z',
+        height: '65',
+        radius: '0',
+        width: '972',
+        x: '2719.755102040817',
+        y: '200',
+      },
+      {
+        d: 'M 8799.34693877551,70 h 972 v 195 h -972 Z',
+        height: '195',
+        radius: '0',
+        width: '972',
+        x: '8799.34693877551',
+        y: '70',
+      },
+      {
+        d: 'M 5151.591836734694,102.5 h 972 v 162.5 h -972 Z',
+        height: '162.5',
+        radius: '0',
+        width: '972',
+        x: '5151.591836734694',
+        y: '102.5',
+      },
+      {
+        d: 'M 6367.510204081634,5 h 972 v 260 h -972 Z',
+        height: '260',
+        radius: '0',
+        width: '972',
+        x: '6367.510204081634',
+        y: '5',
+      },
+      {
+        d: 'M 1503.8367346938776,83.00000000000001 h 972 v 182 h -972 Z',
+        height: '182',
+        radius: '0',
+        width: '972',
+        x: '1503.8367346938776',
+        y: '83.00000000000001',
+      },
+    ]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -567,19 +753,67 @@ describe('<XAxis />', () => {
   });
 
   it('Render Bars with gap when there are duplicate values in the data', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
         <Bar dataKey="x" isAnimationActive={false} />
         <XAxis dataKey="y" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="x" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('138.49777777777777');
-    expect(spy).toHaveBeenLastCalledWith([100, 400]);
+
+    expectBars(container, [
+      {
+        d: 'M 138.49777777777777,120.55555555555554 h 11 v 144.44444444444446 h -11 Z',
+        height: '144.44444444444446',
+        radius: '0',
+        width: '11',
+        x: '138.49777777777777',
+        y: '120.55555555555554',
+      },
+      {
+        d: 'M 66.94222222222221,91.66666666666667 h 11 v 173.33333333333331 h -11 Z',
+        height: '173.33333333333331',
+        radius: '0',
+        width: '11',
+        x: '66.94222222222221',
+        y: '91.66666666666667',
+      },
+      {
+        d: 'M 210.0533333333333,19.44444444444445 h 11 v 245.55555555555554 h -11 Z',
+        height: '245.55555555555554',
+        radius: '0',
+        width: '11',
+        x: '210.0533333333333',
+        y: '19.44444444444445',
+      },
+      {
+        d: 'M 174.27555555555554,62.77777777777777 h 11 v 202.22222222222223 h -11 Z',
+        height: '202.22222222222223',
+        radius: '0',
+        width: '11',
+        x: '174.27555555555554',
+        y: '62.77777777777777',
+      },
+      {
+        d: 'M 281.6088888888889,48.33333333333332 h 11 v 216.66666666666669 h -11 Z',
+        height: '216.66666666666669',
+        radius: '0',
+        width: '11',
+        x: '281.6088888888889',
+        y: '48.33333333333332',
+      },
+      {
+        d: 'M 195.74222222222218,106.1111111111111 h 11 v 158.8888888888889 h -11 Z',
+        height: '158.8888888888889',
+        radius: '0',
+        width: '11',
+        x: '195.74222222222218',
+        y: '106.1111111111111',
+      },
+    ]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 400]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -610,19 +844,66 @@ describe('<XAxis />', () => {
   });
 
   it('Render Bars with no gap', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="no-gap" />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('66.2928279883382');
+    expectBars(container, [
+      {
+        d: 'M 66.2928279883382,135 h 23 v 130 h -23 Z',
+        height: '130',
+        radius: '0',
+        width: '23',
+        x: '66.2928279883382',
+        y: '135',
+      },
+      {
+        d: 'M 124.60419825072887,200 h 23 v 65 h -23 Z',
+        height: '65',
+        radius: '0',
+        width: '23',
+        x: '124.60419825072887',
+        y: '200',
+      },
+      {
+        d: 'M 270.38262390670553,70 h 23 v 195 h -23 Z',
+        height: '195',
+        radius: '0',
+        width: '23',
+        x: '270.38262390670553',
+        y: '70',
+      },
+      {
+        d: 'M 182.91556851311952,102.5 h 23 v 162.5 h -23 Z',
+        height: '162.5',
+        radius: '0',
+        width: '23',
+        x: '182.91556851311952',
+        y: '102.5',
+      },
+      {
+        d: 'M 212.07125364431488,5 h 23 v 260 h -23 Z',
+        height: '260',
+        radius: '0',
+        width: '23',
+        x: '212.07125364431488',
+        y: '5',
+      },
+      {
+        d: 'M 95.44851311953354,83.00000000000001 h 23 v 182 h -23 Z',
+        height: '182',
+        radius: '0',
+        width: '23',
+        x: '95.44851311953354',
+        y: '83.00000000000001',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -645,23 +926,70 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
   });
 
   it('Render Bars with custom gap', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 11, right: 17 }} />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('64.45714285714286');
+    expectBars(container, [
+      {
+        d: 'M 64.45714285714286,135 h 23 v 130 h -23 Z',
+        height: '130',
+        radius: '0',
+        width: '23',
+        x: '64.45714285714286',
+        y: '135',
+      },
+      {
+        d: 'M 122.17142857142858,200 h 23 v 65 h -23 Z',
+        height: '65',
+        radius: '0',
+        width: '23',
+        x: '122.17142857142858',
+        y: '200',
+      },
+      {
+        d: 'M 266.45714285714286,70 h 23 v 195 h -23 Z',
+        height: '195',
+        radius: '0',
+        width: '23',
+        x: '266.45714285714286',
+        y: '70',
+      },
+      {
+        d: 'M 179.8857142857143,102.5 h 23 v 162.5 h -23 Z',
+        height: '162.5',
+        radius: '0',
+        width: '23',
+        x: '179.8857142857143',
+        y: '102.5',
+      },
+      {
+        d: 'M 208.7428571428572,5 h 23 v 260 h -23 Z',
+        height: '260',
+        radius: '0',
+        width: '23',
+        x: '208.7428571428572',
+        y: '5',
+      },
+      {
+        d: 'M 93.31428571428572,83.00000000000001 h 23 v 182 h -23 Z',
+        height: '182',
+        radius: '0',
+        width: '23',
+        x: '93.31428571428572',
+        y: '83.00000000000001',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -684,23 +1012,70 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
   });
 
   it('Render Bars with padding on the left', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ left: 19 }} />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('71.94285714285715');
+    expectBars(container, [
+      {
+        d: 'M 71.94285714285715,135 h 24 v 130 h -24 Z',
+        height: '130',
+        radius: '0',
+        width: '24',
+        x: '71.94285714285715',
+        y: '135',
+      },
+      {
+        d: 'M 132.22857142857143,200 h 24 v 65 h -24 Z',
+        height: '65',
+        radius: '0',
+        width: '24',
+        x: '132.22857142857143',
+        y: '200',
+      },
+      {
+        d: 'M 282.9428571428572,70 h 24 v 195 h -24 Z',
+        height: '195',
+        radius: '0',
+        width: '24',
+        x: '282.9428571428572',
+        y: '70',
+      },
+      {
+        d: 'M 192.5142857142857,102.5 h 24 v 162.5 h -24 Z',
+        height: '162.5',
+        radius: '0',
+        width: '24',
+        x: '192.5142857142857',
+        y: '102.5',
+      },
+      {
+        d: 'M 222.65714285714287,5 h 24 v 260 h -24 Z',
+        height: '260',
+        radius: '0',
+        width: '24',
+        x: '222.65714285714287',
+        y: '5',
+      },
+      {
+        d: 'M 102.08571428571429,83.00000000000001 h 24 v 182 h -24 Z',
+        height: '182',
+        radius: '0',
+        width: '24',
+        x: '102.08571428571429',
+        y: '83.00000000000001',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -723,23 +1098,70 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
   });
 
   it('Render Bars with padding on the right', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data}>
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding={{ right: 23 }} />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar.getAttribute('x')).toEqual('53.17142857142858');
+    expectBars(container, [
+      {
+        d: 'M 53.17142857142858,135 h 23 v 130 h -23 Z',
+        height: '130',
+        radius: '0',
+        width: '23',
+        x: '53.17142857142858',
+        y: '135',
+      },
+      {
+        d: 'M 112.31428571428572,200 h 23 v 65 h -23 Z',
+        height: '65',
+        radius: '0',
+        width: '23',
+        x: '112.31428571428572',
+        y: '200',
+      },
+      {
+        d: 'M 260.1714285714286,70 h 23 v 195 h -23 Z',
+        height: '195',
+        radius: '0',
+        width: '23',
+        x: '260.1714285714286',
+        y: '70',
+      },
+      {
+        d: 'M 171.45714285714286,102.5 h 23 v 162.5 h -23 Z',
+        height: '162.5',
+        radius: '0',
+        width: '23',
+        x: '171.45714285714286',
+        y: '102.5',
+      },
+      {
+        d: 'M 201.0285714285714,5 h 23 v 260 h -23 Z',
+        height: '260',
+        radius: '0',
+        width: '23',
+        x: '201.0285714285714',
+        y: '5',
+      },
+      {
+        d: 'M 82.74285714285715,83.00000000000001 h 23 v 182 h -23 Z',
+        height: '182',
+        radius: '0',
+        width: '23',
+        x: '82.74285714285715',
+        y: '83.00000000000001',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -762,7 +1184,7 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([100, 170]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 170]);
   });
 
   it('Render axis with tick for a single data point', () => {
@@ -816,21 +1238,121 @@ describe('<XAxis />', () => {
   });
 
   it('Render Bars for a single data point with barSize=50%', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
+    const chartDataSpy = vi.fn();
+    const yAxisTicksSpy = vi.fn();
+    const barBandSizeSpy = vi.fn();
+    const barPositionsSpy = vi.fn();
+    const barSizeListSpy = vi.fn();
+    const totalAxisSizeSpy = vi.fn();
+
+    const barSettings: BarSettings = {
+      barSize: undefined,
+      data: [],
+      dataKey: 'y',
+      maxBarSize: undefined,
+      minPointSize: undefined,
+      stackId: undefined,
+    };
+
+    const Comp = (): null => {
+      chartDataSpy(useAppSelector(selectChartDataWithIndexes));
+      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
+      barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, barSettings)));
+      barPositionsSpy(useAppSelector(state => selectAllBarPositions(state, 0, 0, false, barSettings)));
+      barSizeListSpy(useAppSelector(state => selectBarSizeList(state, 0, 0, false, barSettings)));
+      totalAxisSizeSpy(useAppSelector(state => selectBarCartesianAxisSize(state, 0, 0)));
+      return null;
+    };
+
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="50%">
-        <Bar dataKey="y" isAnimationActive={false} />
+        <Bar dataKey={barSettings.dataKey} isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={[50, 150]} />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
+        <Customized component={<Comp />} />
       </BarChart>,
     );
 
-    const bar = container.querySelector('.recharts-rectangle');
-    assertNotNull(bar);
-    expect(bar).toBeInTheDocument();
-    expect(bar.getAttribute('x')).toEqual('123');
-    expect(bar.getAttribute('width')).toEqual('115');
+    expect(totalAxisSizeSpy).toHaveBeenLastCalledWith(230);
+
+    expect(barSizeListSpy).toHaveBeenLastCalledWith([
+      {
+        barSize: 115,
+        dataKeys: ['y'],
+        stackId: undefined,
+      },
+    ]);
+    expect(barSizeListSpy).toHaveBeenCalledTimes(3);
+
+    expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
+      {
+        coordinate: 265,
+        offset: 0,
+        value: 0,
+      },
+      {
+        coordinate: 200,
+        offset: 0,
+        value: 50,
+      },
+      {
+        coordinate: 135,
+        offset: 0,
+        value: 100,
+      },
+      {
+        coordinate: 70,
+        offset: 0,
+        value: 150,
+      },
+      {
+        coordinate: 5,
+        offset: 0,
+        value: 200,
+      },
+    ]);
+    expect(yAxisTicksSpy).toHaveBeenCalledTimes(3);
+
+    expect(barBandSizeSpy).toHaveBeenLastCalledWith(0);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
+
+    expect(barPositionsSpy).toHaveBeenLastCalledWith([
+      {
+        dataKeys: ['y'],
+        position: {
+          offset: -57,
+          size: 115,
+        },
+        stackId: undefined,
+      },
+    ]);
+    expect(barPositionsSpy).toHaveBeenCalledTimes(3);
+
+    expect(chartDataSpy).toHaveBeenLastCalledWith({
+      chartData: [
+        {
+          x: 100,
+          y: 200,
+          z: 200,
+        },
+      ],
+      dataEndIndex: 0,
+      dataStartIndex: 0,
+    });
+    expect(chartDataSpy).toHaveBeenCalledTimes(3);
+
+    expectBars(container, [
+      {
+        d: 'M 123,5 h 115 v 260 h -115 Z',
+        height: '260',
+        radius: '0',
+        width: '115',
+        x: '123',
+        y: '5',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '50',
@@ -858,17 +1380,17 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([50, 150]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([50, 150]);
   });
 
   it('Render Bars for a single data point with barSize=20% and no-gap', () => {
-    const spy = vi.fn();
+    const axisDomainSpy = vi.fn();
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="20%">
         <Bar dataKey="y" isAnimationActive={false} />
         <XAxis dataKey="x" type="number" domain={[100, 150]} padding="no-gap" />
         <YAxis dataKey="y" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+        <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
       </BarChart>,
     );
 
@@ -877,6 +1399,16 @@ describe('<XAxis />', () => {
     expect(bar).toBeInTheDocument();
     expect(bar.getAttribute('x')).toEqual('42');
     expect(bar.getAttribute('width')).toEqual('46');
+    expectBars(container, [
+      {
+        d: 'M 42,5 h 46 v 260 h -46 Z',
+        height: '260',
+        radius: '0',
+        width: '46',
+        x: '42',
+        y: '5',
+      },
+    ]);
     expectXAxisTicks(container, [
       {
         textContent: '100',
@@ -899,7 +1431,7 @@ describe('<XAxis />', () => {
         y: '273',
       },
     ]);
-    expect(spy).toHaveBeenLastCalledWith([100, 150]);
+    expect(axisDomainSpy).toHaveBeenLastCalledWith([100, 150]);
   });
 
   test('Render no ticks if type is category and data is empty', () => {
@@ -4213,7 +4745,7 @@ describe('<XAxis />', () => {
       expect(itemDataSpy).toHaveBeenCalledTimes(3);
       expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);
       // oof
-      expect(axisDomainSpy).toHaveBeenCalledTimes(15);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(16);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
     });
   });

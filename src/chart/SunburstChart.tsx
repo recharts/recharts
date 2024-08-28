@@ -137,8 +137,6 @@ const preloadedState: Partial<RechartsRootState> = {
     defaultTooltipEventType: 'item',
     chartName: 'Sunburst',
     tooltipPayloadSearcher: undefined,
-    barCategoryGap: '',
-    stackOffset: 'none',
   },
 };
 

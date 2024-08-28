@@ -13,6 +13,8 @@ describe('graphicalItemsSlice', () => {
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(0);
 
     const item: CartesianGraphicalItemSettings = {
+      isPanorama: false,
+      type: 'bar',
       stackId: undefined,
       errorBars: undefined,
       dataKey: undefined,
@@ -21,6 +23,7 @@ describe('graphicalItemsSlice', () => {
       yAxisId: 'y',
       zAxisId: 0,
       hide: false,
+      barSize: undefined,
     };
     store.dispatch(addCartesianGraphicalItem(item));
     expect(store.getState().graphicalItems.cartesianItems).toHaveLength(1);

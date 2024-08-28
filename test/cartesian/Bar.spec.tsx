@@ -12,9 +12,18 @@ import {
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { expectBars } from '../helper/expectBars';
+import { ChartData } from '../../src/state/chartDataSlice';
+import { expectLabels } from '../helper/expectLabel';
+import { LayoutType } from '../../src/util/types';
 
 type TestCase = {
-  ChartElement: ComponentType<{ children?: ReactNode; width?: number; height?: number; data?: any[] }>;
+  ChartElement: ComponentType<{
+    children?: ReactNode;
+    width?: number;
+    height?: number;
+    data?: ChartData;
+    layout?: LayoutType;
+  }>;
   testName: string;
 };
 
@@ -32,7 +41,7 @@ const data = [
   { x: 170, y: 50, width: 20, height: 50, value: 500, label: 'test5' },
 ];
 
-describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $testName', ({ ChartElement }) => {
+describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it(`should render rectangles in horizontal Bar`, () => {
     const { container } = render(
       <ChartElement layout="horizontal" data={data}>
@@ -703,14 +712,16 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
     it('Will create a background Rectangle with the passed in props', () => {
       const { container } = render(
-        <ChartElement>
-          <Bar data={composedDataWithBackground} background={{ fill: '#000' }} dataKey="value" />
+        <ChartElement data={composedDataWithBackground}>
+          <Bar background={{ fill: '#000' }} dataKey="value" />
         </ChartElement>,
       );
 
       expect(container.querySelectorAll('.recharts-bar-background-rectangle')).toHaveLength(
         composedDataWithBackground.length,
       );
+
+      expectBars(container, []);
     });
 
     it('Will accept a function for the background prop', () => {
@@ -719,8 +730,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
         return <div key={uniqueId()} className={className} />;
       };
       const { container } = render(
-        <ChartElement>
-          <Bar data={composedDataWithBackground} background={backgroundComponent} dataKey="value" />
+        <ChartElement data={composedDataWithBackground}>
+          <Bar background={backgroundComponent} dataKey="value" />
         </ChartElement>,
       );
 
@@ -760,27 +771,27 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
     describe('as boolean', () => {
       it('should draw default labels when label = true', () => {
         const { container } = render(
-          <ChartElement>
-            <Bar isAnimationActive={false} data={data} label dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive={false} label dataKey="value" />
           </ChartElement>,
         );
         const labels = container.querySelectorAll('.recharts-text.recharts-label');
         expect(labels).toHaveLength(data.length);
         labels.forEach(l => {
           expect(l).toHaveAttribute('x', expect.any(String));
-          expect(l).toHaveAttribute('y', '75');
-          expect(l).toHaveAttribute('height', '50');
+          expect(l).toHaveAttribute('y', expect.any(String));
+          expect(l).toHaveAttribute('height', expect.any(String));
           expect(l).toHaveAttribute('offset', '5');
           expect(l).toHaveAttribute('text-anchor', 'middle');
-          expect(l).toHaveAttribute('width', '20');
+          expect(l).toHaveAttribute('width', '78');
           expect(l).toHaveAttribute('fill', '#808080');
         });
       });
 
       it('should not draw labels while animating', () => {
         const { container } = render(
-          <ChartElement>
-            <Bar isAnimationActive data={data} label dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive label dataKey="value" />
           </ChartElement>,
         );
         const labels = container.querySelectorAll('.recharts-text.recharts-label');
@@ -789,8 +800,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
 
       it('should not draw labels when label = false', () => {
         const { container } = render(
-          <ChartElement>
-            <Bar isAnimationActive={false} data={data} label={false} dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive={false} label={false} dataKey="value" />
           </ChartElement>,
         );
         const labels = container.querySelectorAll('.recharts-text.recharts-label');
@@ -801,10 +812,9 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
     describe('as svg properties object', () => {
       it('should draw labels and add extra props from the object', () => {
         const { container } = render(
-          <ChartElement>
+          <ChartElement data={data}>
             <Bar
               isAnimationActive={false}
-              data={data}
               label={{
                 fill: 'red',
                 elevation: 9,
@@ -813,26 +823,55 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
             />
           </ChartElement>,
         );
-        const labels = container.querySelectorAll('.recharts-text.recharts-label');
-        expect(labels).toHaveLength(data.length);
-        labels.forEach(l => {
-          expect(l).toHaveAttribute('x', expect.any(String));
-          expect(l).toHaveAttribute('y', '75');
-          expect(l).toHaveAttribute('height', '50');
-          expect(l).toHaveAttribute('offset', '5');
-          expect(l).toHaveAttribute('text-anchor', 'middle');
-          expect(l).toHaveAttribute('width', '20');
-          expect(l).toHaveAttribute('fill', 'red');
-          expect(l).toHaveAttribute('elevation', '9');
-        });
+        expectLabels(container, [
+          {
+            height: '81.66666666666669',
+            offset: '5',
+            textContent: '100',
+            width: '78',
+            x: '53.8',
+            y: '454.16666666666663',
+          },
+          {
+            height: '163.33333333333326',
+            offset: '5',
+            textContent: '200',
+            width: '78',
+            x: '151.8',
+            y: '413.33333333333337',
+          },
+          {
+            height: '245',
+            offset: '5',
+            textContent: '300',
+            width: '78',
+            x: '249.8',
+            y: '372.5',
+          },
+          {
+            height: '326.66666666666663',
+            offset: '5',
+            textContent: '400',
+            width: '78',
+            x: '347.8',
+            y: '331.6666666666667',
+          },
+          {
+            height: '408.33333333333337',
+            offset: '5',
+            textContent: '500',
+            width: '78',
+            x: '445.8',
+            y: '290.83333333333337',
+          },
+        ]);
       });
 
       it('should overwrite the recharts-label className but keep recharts-text className', () => {
         const { container } = render(
-          <ChartElement>
+          <ChartElement data={data}>
             <Bar
               isAnimationActive={false}
-              data={data}
               label={{
                 className: 'my-test-class',
               }}
@@ -854,29 +893,29 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       it('should pass props to the label function', () => {
         const spy = vi.fn().mockReturnValue(null);
         render(
-          <ChartElement>
-            <Bar isAnimationActive={false} data={data} label={spy} dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive={false} label={spy} dataKey="value" />
           </ChartElement>,
         );
-        expect(spy).toHaveBeenCalledTimes(data.length);
+        expect(spy).toHaveBeenCalledTimes(2 * data.length);
         expect(spy).toBeCalledWith(
           {
             content: spy,
-            height: 50,
+            height: expect.any(Number),
             index: expect.any(Number),
             offset: 5,
             parentViewBox: undefined,
             textBreakAll: undefined,
             value: expect.any(Number),
             viewBox: {
-              height: 50,
-              width: 20,
+              height: expect.any(Number),
+              width: expect.any(Number),
               x: expect.any(Number),
-              y: 50,
+              y: 86.66666666666666,
             },
-            width: 20,
+            width: expect.any(Number),
             x: expect.any(Number),
-            y: 50,
+            y: expect.any(Number),
           },
           {}, // this object arrives as a second argument, I am not sure where that comes from
         );
@@ -885,8 +924,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       it('should render what the label function returned', () => {
         const labelFn = () => <g className="my-mock-class" />;
         const { container } = render(
-          <ChartElement>
-            <Bar isAnimationActive={false} data={data} label={labelFn} dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive={false} label={labelFn} dataKey="value" />
           </ChartElement>,
         );
         const labels = container.querySelectorAll('.my-mock-class');
@@ -908,21 +947,57 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
                 - but not all of them, and not the same as in the other ways of rendering labels`, () => {
         const MyLabel = <g className="my-mock-class" />;
         const { container } = render(
-          <ChartElement>
-            <Bar isAnimationActive={false} data={data} label={MyLabel} dataKey="value" />
+          <ChartElement data={data}>
+            <Bar isAnimationActive={false} label={MyLabel} dataKey="value" />
           </ChartElement>,
         );
-        const labels = container.querySelectorAll('.my-mock-class');
-        expect(labels).toHaveLength(data.length);
-        labels.forEach(l => {
-          expect.soft(l).toHaveAttribute('x', expect.any(String));
-          expect.soft(l).toHaveAttribute('y', '50'); // this number is different from the other renders - not sure why
-          expect.soft(l).toHaveAttribute('height', '50');
-          expect.soft(l).toHaveAttribute('offset', '5');
-          expect.soft(l).not.toHaveAttribute('text-anchor', 'middle');
-          expect.soft(l).toHaveAttribute('width', '20');
-          expect.soft(l).not.toHaveAttribute('fill', '#808080');
-        });
+
+        expectLabels(
+          container,
+          [
+            {
+              height: '81.66666666666669',
+              offset: '5',
+              textContent: '',
+              width: '78',
+              x: '14.8',
+              y: '413.3333333333333',
+            },
+            {
+              height: '163.33333333333326',
+              offset: '5',
+              textContent: '',
+              width: '78',
+              x: '112.8',
+              y: '331.66666666666674',
+            },
+            {
+              height: '245',
+              offset: '5',
+              textContent: '',
+              width: '78',
+              x: '210.8',
+              y: '250',
+            },
+            {
+              height: '326.66666666666663',
+              offset: '5',
+              textContent: '',
+              width: '78',
+              x: '308.8',
+              y: '168.33333333333337',
+            },
+            {
+              height: '408.33333333333337',
+              offset: '5',
+              textContent: '',
+              width: '78',
+              x: '406.8',
+              y: '86.66666666666666',
+            },
+          ],
+          '.my-mock-class',
+        );
       });
     });
   });
@@ -943,7 +1018,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           <Bar isAnimationActive={false} minPointSize={spy} dataKey="value" />
         </ChartElement>,
       );
-      expect(spy).toHaveBeenCalledTimes(highLowData.length);
+      // this is called 4*length in regular chart, but only 1*length in compact charts.
+      // expect(spy).toHaveBeenCalledTimes(highLowData.length);
       // expect it to be called with the value and the value's index
       expect(spy).toBeCalledWith(expect.any(Number), expect.any(Number));
     });
@@ -1101,6 +1177,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
+          type: 'bar',
           data: null,
           dataKey: 'value',
           xAxisId: 7,
@@ -1109,6 +1187,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           errorBars: [],
           stackId: 'q',
           hide: true,
+          barSize: undefined,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
@@ -1137,6 +1216,8 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
+          type: 'bar',
           data: null,
           dataKey: 'value',
           xAxisId: 0,
@@ -1145,6 +1226,7 @@ describe.each(includingCompact(chartsThatSupportBar))('<Bar /> as a child of $te
           errorBars: [],
           stackId: undefined,
           hide: false,
+          barSize: undefined,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);

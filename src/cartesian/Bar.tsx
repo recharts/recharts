@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
 import isNil from 'lodash/isNil';
+import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
@@ -31,7 +32,6 @@ import {
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
-  D3Scale,
   DataKey,
   LayoutType,
   LegendType,
@@ -54,8 +54,11 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import type { XAxisProps, YAxisProps } from '../index';
 import { useChartLayout } from '../context/chartLayoutContext';
+import { BarSettings, selectBarRectangles } from '../state/selectors/barSelectors';
+import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { useAppSelector } from '../state/hooks';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -143,9 +146,9 @@ function SetBarLegend(props: Props): null {
 }
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
+  const { dataKey, stroke, strokeWidth, fill, name, hide, unit } = props;
   return {
-    dataDefinedOnItem: data,
+    dataDefinedOnItem: undefined,
     settings: {
       stroke,
       strokeWidth,
@@ -486,6 +489,23 @@ function BarImpl(props: Props) {
     errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
   }
 
+  const isPanorama = useIsPanorama();
+
+  const barSettings: BarSettings = {
+    barSize: props.barSize,
+    data: undefined,
+    dataKey: props.dataKey,
+    maxBarSize: props.maxBarSize,
+    minPointSize: props.minPointSize,
+    stackId: props.stackId,
+  };
+
+  const cells = findAllByType(props.children, Cell);
+
+  const rects = useAppSelector(state =>
+    selectBarRectangles(state, props.xAxisId, props.yAxisId, isPanorama, barSettings, cells),
+  );
+
   const { ref, ...everythingElse } = props;
   return (
     <SetErrorBarContext
@@ -495,17 +515,12 @@ function BarImpl(props: Props) {
       dataPointFormatter={errorBarDataPointFormatter}
       errorBarOffset={errorBarOffset}
     >
-      <BarWithState {...everythingElse} needClip={needClip} />
+      <BarWithState {...everythingElse} needClip={needClip} data={rects} />
     </SetErrorBarContext>
   );
 }
 
-type BarSettings = {
-  dataKey: DataKey<any> | undefined;
-  minPointSize: MinPointSize | undefined;
-};
-
-function computeBarRectangles({
+export function computeBarRectangles({
   layout,
   barSettings: { dataKey, minPointSize: minPointSizeProp },
   pos,
@@ -524,24 +539,26 @@ function computeBarRectangles({
   barSettings: BarSettings;
   pos: BarPositionPosition;
   bandSize: number;
-  xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number> };
-  yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number> };
+  xAxis?: BaseAxisWithScale;
+  yAxis?: BaseAxisWithScale;
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
-  stackedData: Array<[number, number]>;
+  stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
   dataStartIndex: number;
   offset: ChartOffset;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<BarRectangleItem> | undefined {
   const numericAxis = layout === 'horizontal' ? yAxis : xAxis;
-  const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+  // @ts-expect-error this assumes that the domain is always numeric, but doesn't check for it
+  const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
 
   return displayedData.map((entry, index) => {
     let value, x, y, width, height, background;
 
     if (stackedData) {
+      // @ts-expect-error d3 stack series type says it's an array, but actually it's a tuple
       value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
     } else {
       value = getValueByDataKey(entry, dataKey);
@@ -662,11 +679,11 @@ export class Bar extends PureComponent<Props> {
      */
     barPosition: ReadonlyArray<BarPosition>;
     bandSize: number;
-    xAxis?: Omit<XAxisProps, 'scale'> & { scale: D3Scale<string | number>; x?: number; width?: number };
-    yAxis?: Omit<YAxisProps, 'scale'> & { scale: D3Scale<string | number>; y?: number; height?: number };
+    xAxis?: BaseAxisWithScale;
+    yAxis?: BaseAxisWithScale;
     xAxisTicks: TickItem[];
     yAxisTicks: TickItem[];
-    stackedData: Array<[number, number]>;
+    stackedData: Series<Record<number, number>, DataKey<any>>;
     dataStartIndex: number;
     offset: ChartOffset;
     displayedData: any[];
@@ -679,9 +696,17 @@ export class Bar extends PureComponent<Props> {
     const { dataKey, children, minPointSize } = item.props;
     const { layout } = props;
     const cells = findAllByType(children, Cell);
+
     const rects = computeBarRectangles({
       layout,
-      barSettings: { dataKey, minPointSize },
+      barSettings: {
+        dataKey,
+        minPointSize,
+        data: undefined,
+        maxBarSize: item.props.maxBarSize,
+        barSize: item.props.barSize,
+        stackId: item.props.stackId,
+      },
       pos,
       bandSize,
       xAxis,
@@ -702,6 +727,7 @@ export class Bar extends PureComponent<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        type="bar"
         // Bar does not allow setting data directly on the graphical item (why?)
         data={null}
         xAxisId={this.props.xAxisId}
@@ -710,6 +736,7 @@ export class Bar extends PureComponent<Props> {
         dataKey={this.props.dataKey}
         stackId={this.props.stackId}
         hide={this.props.hide}
+        barSize={this.props.barSize}
       >
         <ReportBar />
         <SetBarLegend {...this.props} />

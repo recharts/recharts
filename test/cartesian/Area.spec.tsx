@@ -456,6 +456,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
+          type: 'area',
           data: data2,
           dataKey: 'value',
           xAxisId: 7,
@@ -464,6 +466,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           errorBars: [],
           stackId: 'q',
           hide: true,
+          barSize: undefined,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
@@ -493,6 +496,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          isPanorama: false,
+          type: 'area',
           data: data2,
           dataKey: 'value',
           xAxisId: 0,
@@ -501,6 +506,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           errorBars: [],
           stackId: undefined,
           hide: false,
+          barSize: undefined,
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
