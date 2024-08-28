@@ -1069,13 +1069,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'x',
             name: 0,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                x: 1,
-              },
-              stroke: '#fff',
               x: 1,
             },
             type: undefined,
@@ -1087,13 +1080,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'x',
             name: 1,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                x: 2,
-              },
-              stroke: '#fff',
               x: 2,
             },
             type: undefined,
@@ -1105,13 +1091,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'x',
             name: 2,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                x: 3,
-              },
-              stroke: '#fff',
               x: 3,
             },
             type: undefined,
@@ -1125,13 +1104,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'y',
             name: 0,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                y: 10,
-              },
-              stroke: '#fff',
               y: 10,
             },
             type: undefined,
@@ -1143,13 +1115,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'y',
             name: 1,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                y: 20,
-              },
-              stroke: '#fff',
               y: 20,
             },
             type: undefined,
@@ -1161,13 +1126,6 @@ describe('selectTooltipState.tooltipItemPayloads', () => {
             dataKey: 'y',
             name: 2,
             payload: {
-              cx: '50%',
-              cy: '50%',
-              fill: '#808080',
-              payload: {
-                y: 30,
-              },
-              stroke: '#fff',
               y: 30,
             },
             type: undefined,
