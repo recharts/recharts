@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, test, expect, vi } from 'vitest';
-import { Bar, BarChart, Line, LineChart, ErrorBar, XAxis, YAxis, ScatterChart, Scatter, Customized } from '../../src';
-import { mockAnimation, cleanupMockAnimation } from '../helper/animation-frame-helper';
+import { describe, expect, test, vi } from 'vitest';
+import { Bar, BarChart, Customized, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
@@ -10,6 +10,7 @@ import {
   selectAllAppliedNumericalValuesIncludingErrorValues,
   selectAxisDomainIncludingNiceTicks,
 } from '../../src/state/selectors/axisSelectors';
+import { expectBars } from '../helper/expectBars';
 
 type ExpectedErrorBarLine = {
   x1: string;
@@ -1891,15 +1892,16 @@ describe('<ErrorBar />', () => {
     });
 
     it('should extend XAxis domain', () => {
-      const xAxisSpy = vi.fn();
+      const xAxisDomainSpy = vi.fn();
       const Comp = (): null => {
-        xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        xAxisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
         return null;
       };
       const { container, rerender } = render(
-        <BarChart data={dataWithError} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500} layout="vertical">
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv" />
+          <YAxis type="category" />
           <Customized component={<Comp />} />
         </BarChart>,
       );
@@ -1908,22 +1910,22 @@ describe('<ErrorBar />', () => {
       expectXAxisTicks(container, [
         {
           textContent: '0',
-          x: '5',
+          x: '65',
           y: '473',
         },
         {
           textContent: '850',
-          x: '127.5',
+          x: '172.5',
           y: '473',
         },
         {
           textContent: '1700',
-          x: '250',
+          x: '280',
           y: '473',
         },
         {
           textContent: '2550',
-          x: '372.5',
+          x: '387.5',
           y: '473',
         },
         {
@@ -1932,111 +1934,146 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(3);
+      expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(3);
+      expectBars(container, [
+        {
+          d: 'M 65,16.5 h 252.94117647058823 v 92 h -252.94117647058823 Z',
+          height: '92',
+          radius: '0',
+          width: '252.94117647058823',
+          x: '65',
+          y: '16.5',
+        },
+        {
+          d: 'M 65,131.5 h 417.3529411764706 v 92 h -417.3529411764706 Z',
+          height: '92',
+          radius: '0',
+          width: '417.3529411764706',
+          x: '65',
+          y: '131.5',
+        },
+        {
+          d: 'M 65,246.5 h 404.70588235294116 v 92 h -404.70588235294116 Z',
+          height: '92',
+          radius: '0',
+          width: '404.70588235294116',
+          x: '65',
+          y: '246.5',
+        },
+        {
+          d: 'M 65,361.5 h 354.11764705882354 v 92 h -354.11764705882354 Z',
+          height: '92',
+          radius: '0',
+          width: '354.11764705882354',
+          x: '65',
+          y: '361.5',
+        },
+      ]);
 
       rerender(
-        <BarChart data={dataWithError} width={500} height={500}>
+        <BarChart data={dataWithError} width={500} height={500} layout="vertical">
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv">
-            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" direction="x" />
+            <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
           </Bar>
+          <YAxis type="category" />
           <Customized component={<Comp />} />
         </BarChart>,
       );
       expectErrorBars(container, [
         {
-          x1: '284.02777777777777',
-          x2: '284.02777777777777',
-          y1: '219.94444444444443',
-          y2: '209.94444444444443',
+          x1: '309.8611111111111',
+          x2: '309.8611111111111',
+          y1: '67.5',
+          y2: '57.5',
         },
         {
-          x1: '263.6111111111111',
-          x2: '284.02777777777777',
-          y1: '214.94444444444443',
-          y2: '214.94444444444443',
+          x1: '291.94444444444446',
+          x2: '309.8611111111111',
+          y1: '62.5',
+          y2: '62.5',
         },
         {
-          x1: '263.6111111111111',
-          x2: '263.6111111111111',
-          y1: '219.94444444444443',
-          y2: '209.94444444444443',
+          x1: '291.94444444444446',
+          x2: '291.94444444444446',
+          y1: '67.5',
+          y2: '57.5',
         },
         {
-          x1: '473.22222222222223',
-          x2: '473.22222222222223',
-          y1: '53.83333333333335',
-          y2: '43.83333333333335',
+          x1: '475.8888888888889',
+          x2: '475.8888888888889',
+          y1: '182.5',
+          y2: '172.5',
         },
         {
-          x1: '437.8333333333333',
-          x2: '473.22222222222223',
-          y1: '48.83333333333335',
-          y2: '48.83333333333335',
+          x1: '444.8333333333333',
+          x2: '475.8888888888889',
+          y1: '177.5',
+          y2: '177.5',
         },
         {
-          x1: '437.8333333333333',
-          x2: '437.8333333333333',
-          y1: '53.83333333333335',
-          y2: '43.83333333333335',
+          x1: '444.8333333333333',
+          x2: '444.8333333333333',
+          y1: '182.5',
+          y2: '172.5',
         },
         {
-          x1: '451.44444444444446',
-          x2: '451.44444444444446',
-          y1: '66.61111111111114',
-          y2: '56.611111111111136',
+          x1: '456.77777777777777',
+          x2: '456.77777777777777',
+          y1: '297.5',
+          y2: '287.5',
         },
         {
-          x1: '424.22222222222223',
-          x2: '451.44444444444446',
-          y1: '61.611111111111136',
-          y2: '61.611111111111136',
+          x1: '432.8888888888889',
+          x2: '456.77777777777777',
+          y1: '292.5',
+          y2: '292.5',
         },
         {
-          x1: '424.22222222222223',
-          x2: '424.22222222222223',
-          y1: '66.61111111111114',
-          y2: '56.611111111111136',
+          x1: '432.8888888888889',
+          x2: '432.8888888888889',
+          y1: '297.5',
+          y2: '287.5',
         },
         {
-          x1: '413.3333333333333',
-          x2: '413.3333333333333',
-          y1: '117.72222222222221',
-          y2: '107.72222222222221',
+          x1: '423.3333333333333',
+          x2: '423.3333333333333',
+          y1: '412.5',
+          y2: '402.5',
         },
         {
-          x1: '372.5',
-          x2: '413.3333333333333',
-          y1: '112.72222222222221',
-          y2: '112.72222222222221',
+          x1: '387.5',
+          x2: '423.3333333333333',
+          y1: '407.5',
+          y2: '407.5',
         },
         {
-          x1: '372.5',
-          x2: '372.5',
-          y1: '117.72222222222221',
-          y2: '107.72222222222221',
+          x1: '387.5',
+          x2: '387.5',
+          y1: '412.5',
+          y2: '402.5',
         },
       ]);
       expectXAxisTicks(container, [
         {
           textContent: '0',
-          x: '5',
+          x: '65',
           y: '473',
         },
         {
           textContent: '900',
-          x: '127.5',
+          x: '172.5',
           y: '473',
         },
         {
           textContent: '1800',
-          x: '250',
+          x: '280',
           y: '473',
         },
         {
           textContent: '2700',
-          x: '372.5',
+          x: '387.5',
           y: '473',
         },
         {
@@ -2045,8 +2082,42 @@ describe('<ErrorBar />', () => {
           y: '473',
         },
       ]);
-      expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(6);
+      expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(6);
+      expectBars(container, [
+        {
+          d: 'M 65,16.5 h 238.8888888888889 v 92 h -238.8888888888889 Z',
+          height: '92',
+          radius: '0',
+          width: '238.8888888888889',
+          x: '65',
+          y: '16.5',
+        },
+        {
+          d: 'M 65,131.5 h 394.1666666666667 v 92 h -394.1666666666667 Z',
+          height: '92',
+          radius: '0',
+          width: '394.1666666666667',
+          x: '65',
+          y: '131.5',
+        },
+        {
+          d: 'M 65,246.5 h 382.22222222222223 v 92 h -382.22222222222223 Z',
+          height: '92',
+          radius: '0',
+          width: '382.22222222222223',
+          x: '65',
+          y: '246.5',
+        },
+        {
+          d: 'M 65,361.5 h 334.44444444444446 v 92 h -334.44444444444446 Z',
+          height: '92',
+          radius: '0',
+          width: '334.44444444444446',
+          x: '65',
+          y: '361.5',
+        },
+      ]);
     });
 
     it('should extend XAxis domain when data is defined on the graphical item', () => {

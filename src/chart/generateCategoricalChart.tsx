@@ -1820,7 +1820,7 @@ export const generateCategoricalChart = ({
       YAxis: { handler: renderAsIs },
       ZAxis: { handler: renderAsIs },
       Brush: { handler: renderAsIs },
-      Bar: { handler: this.renderGraphicChild },
+      Bar: { handler: renderAsIs },
       Line: { handler: renderAsIs },
       Area: { handler: renderAsIs },
       Radar: { handler: this.renderGraphicChild },

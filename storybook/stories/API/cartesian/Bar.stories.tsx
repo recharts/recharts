@@ -1,6 +1,6 @@
 import React from 'react';
 import { Args } from '@storybook/react';
-import { data as dataProp, General as GeneralProps, layout as layoutProp } from '../props/CartesianComponentShared';
+import { General as GeneralProps } from '../props/CartesianComponentShared';
 import {
   ComposedChart,
   Bar,
@@ -437,11 +437,6 @@ const GeneralBarProps: Args = {
   },
 };
 
-const InternalProps: Args = {
-  layout: layoutProp,
-  data: dataProp,
-};
-
 const AnimationPropsForBar: Args = {
   animationBegin,
   animationEasing,
@@ -455,15 +450,9 @@ export default {
     ...GeneralBarProps,
     ...StyleProps,
     ...EventHandlersForBar,
-    ...InternalProps,
     ...AnimationPropsForBar,
     // Deprecated
     dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    // Other
-    left: { table: { category: 'Other' } },
-    top: { table: { category: 'Other' } },
-    xAxis: { table: { category: 'Other' } },
-    yAxis: { table: { category: 'Other' } },
   },
 };
 
