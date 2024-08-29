@@ -80,3 +80,14 @@ export function useLegendPayloadDispatch<Input>(
   }, [input, addSupplier, removeSupplier, computeLegendPayload]);
   return null;
 }
+
+export function useSetLegendPayload(legendPayload: Array<LegendPayload>): void {
+  const { addSupplier, removeSupplier } = useContext(LegendPayloadDispatchContext);
+  useEffect(() => {
+    const supplier = () => legendPayload;
+    addSupplier(supplier);
+    return () => {
+      removeSupplier(supplier);
+    };
+  }, [addSupplier, removeSupplier, legendPayload]);
+}

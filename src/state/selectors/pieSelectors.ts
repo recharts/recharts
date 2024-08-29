@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ReactElement } from 'react';
-import { CellProps } from '../..';
+import { CellProps, LegendType } from '../..';
 import { computePieSectors, PieCoordinate, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -8,13 +8,18 @@ import { ChartData, ChartDataState } from '../chartDataSlice';
 import { ChartOffset, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
 import { selectChartOffset } from './selectChartOffset';
+import type { Payload as LegendPayload } from '../../component/DefaultLegendContent';
+import { getValueByDataKey } from '../../util/ChartUtils';
 
 export type ResolvedPieSettings = {
-  name?: string | number;
-  nameKey?: DataKey<any>;
+  name: string | number | undefined;
+  nameKey: DataKey<any>;
   data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   tooltipType?: TooltipType | undefined;
+
+  legendType: LegendType;
+  fill: string;
 
   cx?: number | string;
   cy?: number | string;
@@ -62,6 +67,28 @@ export const selectDisplayedData: (
     }
 
     return displayedData;
+  },
+);
+
+export const selectPieLegend: (
+  state: RechartsRootState,
+  pieSettings: ResolvedPieSettings,
+  cells: ReadonlyArray<ReactElement> | undefined,
+) => Array<LegendPayload> | undefined = createSelector(
+  [selectDisplayedData, pickPieSettings, pickCells],
+  (displayedData, pieSettings: ResolvedPieSettings, cells: ReadonlyArray<ReactElement>) => {
+    return displayedData.map((entry, i) => {
+      const name = getValueByDataKey(entry, pieSettings.nameKey, pieSettings.name);
+      let color;
+      if (cells?.[i]?.props?.fill) {
+        color = cells[i].props.fill;
+      } else if (typeof entry === 'object' && entry != null && 'fill' in entry) {
+        color = entry.fill;
+      } else {
+        color = pieSettings.fill;
+      }
+      return { value: name, color, payload: entry, type: pieSettings.legendType };
+    });
   },
 );
 
