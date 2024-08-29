@@ -12,7 +12,7 @@ import { Shape } from './ActiveShapeUtils';
 // along with x, y, height as numbers, name as a string, and radius as number | [number, number, number, number]
 function typeguardBarRectangleProps(
   { x: xProp, y: yProp, ...option }: SVGProps<SVGPathElement>,
-  props: BarProps,
+  props: BarRectangleProps,
 ): RectangleProps {
   const xValue = `${xProp}`;
   const x = parseInt(xValue, 10);
@@ -40,6 +40,8 @@ export type BarRectangleProps = {
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  width?: number;
+  height?: number;
 } & BarProps;
 
 export function BarRectangle(props: BarRectangleProps) {

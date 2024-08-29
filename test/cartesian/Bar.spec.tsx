@@ -5,9 +5,11 @@ import uniqueId from 'lodash/uniqueId';
 import { Bar, Customized, Legend, LegendType, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,
+  AreaChartCase,
   BarChartCase,
   ComposedChartCase,
   includingCompact,
+  LineChartCase,
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
@@ -30,7 +32,8 @@ type TestCase = {
 const chartsThatSupportBar: ReadonlyArray<TestCase> = [ComposedChartCase, BarChartCase];
 
 const chartsThatDoNotSupportBar: ReadonlyArray<TestCase> = includingCompact(
-  allCategoricalsChartsExcept(chartsThatSupportBar),
+  // both AreaChart and LineChart will now render Bar but ... differently.
+  allCategoricalsChartsExcept([...chartsThatSupportBar, LineChartCase, AreaChartCase]),
 );
 
 const data = [
@@ -148,8 +151,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
   it("Don't render any rectangle when data is empty", () => {
     const { container } = render(
-      <ChartElement>
-        <Bar data={[]} dataKey="value" />
+      <ChartElement data={[]}>
+        <Bar dataKey="value" />
       </ChartElement>,
     );
 
@@ -743,7 +746,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         className: 'recharts-bar-background-rectangle',
         dataKey: 'value',
         fill: '#eee',
-        height: 50,
+        height: 490,
         index: expect.any(Number),
         label: 'test',
         onAnimationEnd: expect.any(Function),
@@ -751,17 +754,31 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         onMouseEnter: expect.any(Function),
         onMouseLeave: expect.any(Function),
         onClick: expect.any(Function),
-        width: 20,
+        payload: {
+          background: {
+            height: 50,
+            width: 20,
+            x: expect.any(Number),
+            y: 50,
+          },
+          height: expect.any(Number),
+          label: 'test',
+          value: expect.any(Number),
+          width: 20,
+          x: expect.any(Number),
+          y: 50,
+        },
+        width: 196,
         x: expect.any(Number),
-        y: 50,
+        y: 5,
       };
       const backgroundComponent = (props: unknown) => {
         expect.soft(props).toEqual(expectedProps);
         return <></>;
       };
       render(
-        <ChartElement>
-          <Bar data={composedDataWithBackground} background={backgroundComponent} dataKey="value" />
+        <ChartElement data={composedDataWithBackground}>
+          <Bar background={backgroundComponent} dataKey="value" />
         </ChartElement>,
       );
     });
@@ -1254,8 +1271,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     test.each(allLegendTypesExceptNone)('should render legendType %s', legendType => {
       const { container } = render(
-        <ChartElement>
-          <Bar data={data} dataKey="value" legendType={legendType} />
+        <ChartElement data={data}>
+          <Bar dataKey="value" legendType={legendType} />
           <Legend />
         </ChartElement>,
       );
@@ -1265,8 +1282,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should not render any legend if legendType = none', () => {
       const { container } = render(
-        <ChartElement>
-          <Bar data={data} dataKey="value" legendType="none" />
+        <ChartElement data={data}>
+          <Bar dataKey="value" legendType="none" />
           <Legend />
         </ChartElement>,
       );
@@ -1279,8 +1296,8 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 describe.each(chartsThatDoNotSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it('should not render anything', () => {
     const { container } = render(
-      <ChartElement>
-        <Bar isAnimationActive={false} layout="horizontal" data={data} dataKey="value" data-testid="customized-bar" />
+      <ChartElement data={data}>
+        <Bar isAnimationActive={false} dataKey="value" data-testid="customized-bar" />
       </ChartElement>,
     );
 

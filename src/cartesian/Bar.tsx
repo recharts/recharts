@@ -71,17 +71,9 @@ export interface BarRectangleItem extends RectangleProps {
   };
 }
 
-interface InternalBarProps {
-  data?: ReadonlyArray<BarRectangleItem>;
-  needClip?: boolean;
-  width?: number;
-  height?: number;
-}
-
-export interface BarProps extends InternalBarProps {
+export interface BarProps {
   className?: string;
   index?: Key;
-  layout?: 'horizontal' | 'vertical';
   xAxisId?: string | number;
   yAxisId?: string | number;
   stackId?: string | number;
@@ -111,8 +103,57 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'> &
-  BarProps;
+type InternalBarProps = {
+  /*
+   * Injected from Redux store
+   */
+  layout: 'horizontal' | 'vertical';
+  data: ReadonlyArray<BarRectangleItem>;
+
+  /*
+   * Provided by user, has defaults
+   */
+  xAxisId: string | number;
+  yAxisId: string | number;
+  hide: boolean;
+  legendType: LegendType;
+  minPointSize: MinPointSize;
+  activeBar: ActiveShape<BarProps, SVGPathElement>;
+  isAnimationActive: boolean;
+  animationBegin: number;
+  animationDuration: AnimationDuration;
+  animationEasing: AnimationTiming;
+
+  /*
+   * Provided by user
+   */
+  needClip?: boolean;
+  className?: string;
+  index?: Key;
+  stackId?: string | number;
+  barSize?: string | number;
+  unit?: string | number;
+  name?: string | number;
+  dataKey: DataKey<any>;
+  tooltipType?: TooltipType;
+  maxBarSize?: number;
+  shape?: ActiveShape<BarProps, SVGPathElement>;
+  background?: ActiveShape<BarProps, SVGPathElement>;
+  radius?: number | [number, number, number, number];
+
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+
+  animationId?: number;
+  id?: string;
+  label?: ImplicitLabelType;
+};
+
+type BarSvgProps = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'>;
+
+export type Props = BarSvgProps & BarProps;
+
+type InternalProps = BarSvgProps & InternalBarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -318,10 +359,10 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class BarWithState extends PureComponent<Props, State> {
+class BarWithState extends PureComponent<InternalProps, State> {
   state: State = { isAnimationFinished: false };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -477,17 +518,22 @@ class BarWithState extends PureComponent<Props, State> {
   }
 }
 
+const defaultBarProps: Partial<Props> = {
+  activeBar: false,
+  animationBegin: 0,
+  animationDuration: 400,
+  animationEasing: 'ease',
+  hide: false,
+  isAnimationActive: !Global.isSsr,
+  legendType: 'rect',
+  minPointSize: defaultMinPointSize,
+  xAxisId: 0,
+  yAxisId: 0,
+};
+
 function BarImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const layout = useChartLayout();
-
-  let errorBarOffset: number;
-  const firstDataPoint = props.data?.[0];
-  if (firstDataPoint == null) {
-    errorBarOffset = 0;
-  } else {
-    errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
-  }
 
   const isPanorama = useIsPanorama();
 
@@ -506,16 +552,56 @@ function BarImpl(props: Props) {
     selectBarRectangles(state, props.xAxisId, props.yAxisId, isPanorama, barSettings, cells),
   );
 
+  if (layout !== 'vertical' && layout !== 'horizontal') {
+    return null;
+  }
+
+  let errorBarOffset: number;
+  const firstDataPoint = rects?.[0];
+  if (firstDataPoint == null) {
+    errorBarOffset = 0;
+  } else {
+    errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
+  }
+
+  const {
+    xAxisId = defaultBarProps.xAxisId,
+    yAxisId = defaultBarProps.yAxisId,
+    hide = defaultBarProps.hide,
+    legendType = defaultBarProps.legendType,
+    minPointSize = defaultBarProps.minPointSize,
+    activeBar = defaultBarProps.activeBar,
+    animationBegin = defaultBarProps.animationBegin,
+    animationDuration = defaultBarProps.animationDuration,
+    animationEasing = defaultBarProps.animationEasing,
+    isAnimationActive = defaultBarProps.isAnimationActive,
+  } = props;
+
   const { ref, ...everythingElse } = props;
   return (
     <SetErrorBarContext
-      xAxisId={props.xAxisId}
-      yAxisId={props.yAxisId}
-      data={props.data}
+      xAxisId={xAxisId}
+      yAxisId={yAxisId}
+      data={rects}
       dataPointFormatter={errorBarDataPointFormatter}
       errorBarOffset={errorBarOffset}
     >
-      <BarWithState {...everythingElse} needClip={needClip} data={rects} />
+      <BarWithState
+        {...everythingElse}
+        layout={layout}
+        needClip={needClip}
+        data={rects}
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
+        hide={hide}
+        legendType={legendType}
+        minPointSize={minPointSize}
+        activeBar={activeBar}
+        animationBegin={animationBegin}
+        animationDuration={animationDuration}
+        animationEasing={animationEasing}
+        isAnimationActive={isAnimationActive}
+      />
     </SetErrorBarContext>
   );
 }
@@ -630,20 +716,7 @@ export function computeBarRectangles({
 export class Bar extends PureComponent<Props> {
   static displayName = 'Bar';
 
-  static defaultProps: Partial<Props> = {
-    xAxisId: 0,
-    yAxisId: 0,
-    legendType: 'rect',
-    minPointSize: defaultMinPointSize,
-    hide: false,
-    data: null,
-    layout: 'vertical',
-    activeBar: false,
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 400,
-    animationEasing: 'ease',
-  };
+  static defaultProps: Partial<Props> = defaultBarProps;
 
   /**
    * Compose the data of each group
@@ -669,7 +742,7 @@ export class Bar extends PureComponent<Props> {
     displayedData,
     offset,
   }: {
-    props: Props;
+    props: InternalProps;
     /**
      * @deprecated do not use - depends on passing around DOM elements
      */
