@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
 import isNil from 'lodash/isNil';
@@ -134,86 +135,101 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   };
 }
 
-export class Radar extends PureComponent<Props, State> {
-  static displayName = 'Radar';
+function renderDotItem(option: RadarDot, props: DotProps) {
+  let dotItem;
 
-  static defaultProps = {
-    angleAxisId: 0,
-    radiusAxisId: 0,
-    hide: false,
-    activeDot: true,
-    dot: false,
-    legendType: 'rect',
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-  };
+  if (React.isValidElement(option)) {
+    // @ts-expect-error typescript is unhappy with cloned props type
+    dotItem = React.cloneElement(option, props);
+  } else if (isFunction(option)) {
+    dotItem = option(props);
+  } else {
+    dotItem = (
+      <Dot {...props} className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')} />
+    );
+  }
 
-  static getComposedData = ({
-    radiusAxis,
-    angleAxis,
-    displayedData,
-    dataKey,
-    bandSize,
-  }: {
-    radiusAxis: RadiusAxis;
-    angleAxis: AngleAxis;
-    displayedData: any[];
-    dataKey: RadarProps['dataKey'];
-    bandSize: number;
-  }): RadarComposedData => {
-    const { cx, cy } = angleAxis;
-    let isRange = false;
-    const points: RadarPoint[] = [];
-    const angleBandSize = angleAxis.type !== 'number' ? (bandSize ?? 0) : 0;
+  return dotItem;
+}
 
-    displayedData.forEach((entry, i) => {
-      const name = getValueByDataKey(entry, angleAxis.dataKey, i);
-      const value = getValueByDataKey(entry, dataKey);
-      const angle = angleAxis.scale(name) + angleBandSize;
-      const pointValue = Array.isArray(value) ? last(value) : value;
-      const radius = isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
+export function computeRadarPoints({
+  radiusAxis,
+  angleAxis,
+  displayedData,
+  dataKey,
+  bandSize,
+}: {
+  radiusAxis: RadiusAxis;
+  angleAxis: AngleAxis;
+  displayedData: any[];
+  dataKey: RadarProps['dataKey'];
+  bandSize: number;
+}): RadarComposedData {
+  const { cx, cy } = angleAxis;
+  let isRange = false;
+  const points: RadarPoint[] = [];
+  const angleBandSize = angleAxis.type !== 'number' ? (bandSize ?? 0) : 0;
 
-      if (Array.isArray(value) && value.length >= 2) {
-        isRange = true;
-      }
+  displayedData.forEach((entry, i) => {
+    const name = getValueByDataKey(entry, angleAxis.dataKey, i);
+    const value = getValueByDataKey(entry, dataKey);
+    const angle = angleAxis.scale(name) + angleBandSize;
+    const pointValue = Array.isArray(value) ? last(value) : value;
+    const radius = isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
 
-      points.push({
-        ...polarToCartesian(cx, cy, radius, angle),
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        name,
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        value,
-        cx,
-        cy,
-        radius,
-        angle,
-        payload: entry,
-      });
-    });
-    const baseLinePoints: RadarPoint[] = [];
-
-    if (isRange) {
-      points.forEach(point => {
-        if (Array.isArray(point.value)) {
-          const baseValue = first(point.value);
-          const radius = isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
-
-          baseLinePoints.push({
-            ...point,
-            radius,
-            ...polarToCartesian(cx, cy, radius, point.angle),
-          });
-        } else {
-          baseLinePoints.push(point);
-        }
-      });
+    if (Array.isArray(value) && value.length >= 2) {
+      isRange = true;
     }
 
-    return { points, isRange, baseLinePoints };
-  };
+    points.push({
+      ...polarToCartesian(cx, cy, radius, angle),
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      name,
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      value,
+      cx,
+      cy,
+      radius,
+      angle,
+      payload: entry,
+    });
+  });
+  const baseLinePoints: RadarPoint[] = [];
 
+  if (isRange) {
+    points.forEach(point => {
+      if (Array.isArray(point.value)) {
+        const baseValue = first(point.value);
+        const radius = isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
+
+        baseLinePoints.push({
+          ...point,
+          radius,
+          ...polarToCartesian(cx, cy, radius, point.angle),
+        });
+      } else {
+        baseLinePoints.push(point);
+      }
+    });
+  }
+
+  return { points, isRange, baseLinePoints };
+}
+
+const defaultRadarProps: Partial<Props> = {
+  angleAxisId: 0,
+  radiusAxisId: 0,
+  hide: false,
+  activeDot: true,
+  dot: false,
+  legendType: 'rect',
+  isAnimationActive: !Global.isSsr,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+};
+
+class RadarWithState extends PureComponent<Props, State> {
   state: State = { isAnimationFinished: false };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
@@ -268,22 +284,6 @@ export class Radar extends PureComponent<Props, State> {
     }
   };
 
-  static renderDotItem(option: RadarDot, props: any) {
-    let dotItem;
-
-    if (React.isValidElement(option)) {
-      dotItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
-      dotItem = option(props);
-    } else {
-      dotItem = (
-        <Dot {...props} className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')} />
-      );
-    }
-
-    return dotItem;
-  }
-
   renderDots(points: RadarPoint[]) {
     const { dot, dataKey } = this.props;
     const baseProps = filterProps(this.props, false);
@@ -302,7 +302,7 @@ export class Radar extends PureComponent<Props, State> {
         payload: entry,
       };
 
-      return Radar.renderDotItem(dot, dotProps);
+      return renderDotItem(dot, dotProps);
     });
 
     return <Layer className="recharts-radar-dots">{dots}</Layer>;
@@ -434,5 +434,36 @@ export class Radar extends PureComponent<Props, State> {
         />
       </>
     );
+  }
+}
+
+function RadarImpl(props: Props) {
+  const { ref, ...everythingElse } = props;
+  return <RadarWithState {...everythingElse} />;
+}
+
+export class Radar extends PureComponent<Props> {
+  static displayName = 'Radar';
+
+  static defaultProps = defaultRadarProps;
+
+  static getComposedData = ({
+    radiusAxis,
+    angleAxis,
+    displayedData,
+    dataKey,
+    bandSize,
+  }: {
+    radiusAxis: RadiusAxis;
+    angleAxis: AngleAxis;
+    displayedData: any[];
+    dataKey: RadarProps['dataKey'];
+    bandSize: number;
+  }): RadarComposedData => {
+    return computeRadarPoints({ radiusAxis, angleAxis, displayedData, dataKey, bandSize });
+  };
+
+  render() {
+    return <RadarImpl {...this.props} />;
   }
 }
