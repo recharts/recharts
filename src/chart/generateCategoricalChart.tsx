@@ -9,6 +9,7 @@ import throttle from 'lodash/throttle';
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
 import invariant from 'tiny-invariant';
+import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 import { Tooltip } from '../component/Tooltip';
 import { Legend } from '../component/Legend';
@@ -1894,54 +1895,59 @@ export const generateCategoricalChart = ({
               <MouseClickItemDispatchContext.Provider value={onItemClick}>
                 <CursorPortalContext.Provider value={this.state.cursorPortal}>
                   <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-                    <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-                      <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                        <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-                          <ChartLayoutContextProvider
-                            state={this.state}
-                            width={this.props.width}
-                            height={this.props.height}
-                            clipPathId={this.clipPathId}
-                            margin={this.props.margin}
-                            layout={this.props.layout}
-                          >
-                            <RechartsWrapper
-                              className={className}
-                              style={style}
-                              wrapperEvents={wrapperEvents}
-                              width={width}
-                              height={height}
-                              ref={(node: HTMLDivElement) => {
-                                this.container = node;
-                                if (this.state.tooltipPortal == null) {
-                                  this.setState({ tooltipPortal: node });
-                                }
-                              }}
+                    <LegendPortalContext.Provider value={this.state.legendPortal}>
+                      <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
+                        <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+                          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
+                            <ChartLayoutContextProvider
+                              state={this.state}
+                              width={this.props.width}
+                              height={this.props.height}
+                              clipPathId={this.clipPathId}
+                              margin={this.props.margin}
+                              layout={this.props.layout}
                             >
-                              <Surface
-                                {...attrs}
+                              <RechartsWrapper
+                                className={className}
+                                style={style}
+                                wrapperEvents={wrapperEvents}
                                 width={width}
                                 height={height}
-                                title={title}
-                                desc={desc}
-                                style={FULL_WIDTH_AND_HEIGHT}
+                                ref={(node: HTMLDivElement) => {
+                                  this.container = node;
+                                  if (this.state.tooltipPortal == null) {
+                                    this.setState({ tooltipPortal: node });
+                                  }
+                                  if (this.state.legendPortal == null) {
+                                    this.setState({ legendPortal: node });
+                                  }
+                                }}
                               >
-                                <ClipPath clipPathId={this.clipPathId} />
-                                <g
-                                  className="recharts-cursor-portal"
-                                  ref={(node: SVGElement) => {
-                                    if (this.state.cursorPortal == null) {
-                                      this.setState({ cursorPortal: node });
-                                    }
-                                  }}
-                                />
-                                {renderByOrder(children, this.renderMap)}
-                              </Surface>
-                            </RechartsWrapper>
-                          </ChartLayoutContextProvider>
-                        </AccessibilityContextProvider>
-                      </BrushUpdateDispatchContext.Provider>
-                    </LegendBoundingBoxContext.Provider>
+                                <Surface
+                                  {...attrs}
+                                  width={width}
+                                  height={height}
+                                  title={title}
+                                  desc={desc}
+                                  style={FULL_WIDTH_AND_HEIGHT}
+                                >
+                                  <ClipPath clipPathId={this.clipPathId} />
+                                  <g
+                                    className="recharts-cursor-portal"
+                                    ref={(node: SVGElement) => {
+                                      if (this.state.cursorPortal == null) {
+                                        this.setState({ cursorPortal: node });
+                                      }
+                                    }}
+                                  />
+                                  {renderByOrder(children, this.renderMap)}
+                                </Surface>
+                              </RechartsWrapper>
+                            </ChartLayoutContextProvider>
+                          </AccessibilityContextProvider>
+                        </BrushUpdateDispatchContext.Provider>
+                      </LegendBoundingBoxContext.Provider>
+                    </LegendPortalContext.Provider>
                   </TooltipPortalContext.Provider>
                 </CursorPortalContext.Provider>
               </MouseClickItemDispatchContext.Provider>
