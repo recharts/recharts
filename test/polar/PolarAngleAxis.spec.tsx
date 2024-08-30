@@ -2,8 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Surface, PolarAngleAxis, RadarChart, Radar, RadialBarChart, RadialBar } from '../../src';
 import { TickItem } from '../../src/util/types';
-import { exampleRadarData } from '../_data';
-import { pageData } from '../../storybook/stories/data/Page';
+import { exampleRadarData, PageData } from '../_data';
 
 describe('<PolarAngleAxis />', () => {
   const ticks: ReadonlyArray<TickItem> = [
@@ -85,7 +84,7 @@ describe('<PolarAngleAxis />', () => {
 
     test('Renders polar angle axis with RadialBarChart', () => {
       const { container } = render(
-        <RadialBarChart width={500} height={500} data={pageData}>
+        <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
           <PolarAngleAxis />
         </RadialBarChart>,

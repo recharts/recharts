@@ -50,13 +50,13 @@ const GeneralProps: Args = {
     table: { type: { summary: 'left | right | middle', defaultValue: 'right' }, category: 'General' },
   },
   axisLine: {
-    description: `If false set, axis line will not be drawn. 
+    description: `If false set, axis line will not be drawn.
     If true set, axis line will be drawn which have the props calculated internally.
     If object set, axis line will be drawn which have the props merged by the internal calculated props and the option.`,
     table: { type: { summary: 'Bool | Object', defaultValue: true }, category: 'General' },
   },
   tick: {
-    description: `If false set, ticks will not be drawn. If true set, 
+    description: `If false set, ticks will not be drawn. If true set,
     ticks will be drawn which have the props calculated internally.
     If object set, ticks will be drawn which have the props mergered by the internal calculated props and the option.
     If ReactElement set, the option can be the custom tick element. If set a function, the function will be called to render customized ticks.`,
@@ -74,83 +74,11 @@ const GeneralProps: Args = {
     description: 'The function to formatting tick.',
     table: {
       type: {
-        summary: `auto | linear | pow | sqrt | log | identity 
+        summary: `auto | linear | pow | sqrt | log | identity
           | time | band | point | ordinal | quantile | quantize | utc | sequential | threshold | Function`,
         defaultValue: 'auto',
         category: 'General',
       },
-    },
-  },
-  onClick: {
-    description: 'The customized event handler of click on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseDown: {
-    description: 'The customized event handler of mousedown on the the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseUp: {
-    description: 'The customized event handler of mouseup on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseMove: {
-    description: 'The customized event handler of mousemove on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOver: {
-    description: 'The customized event handler of mouseover on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseOut: {
-    description: 'The customized event handler of mouseout on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseEnter: {
-    description: 'The customized event handler of mouseenter on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
-    },
-  },
-  onMouseLeave: {
-    description: 'The customized event handler of mouseleave on the ticks of this axis',
-    table: {
-      type: {
-        summary: 'Function',
-      },
-      category: 'General',
     },
   },
 };
@@ -178,7 +106,7 @@ export const API = {
             height: surfaceHeight,
           }}
         >
-          <PolarRadiusAxis cx={-30} cy={400} angle={30} cursor="pointer" {...args}>
+          <PolarRadiusAxis {...args}>
             <Label position="outside" offset={20}>
               PolarRadiusAxis
             </Label>
@@ -196,5 +124,9 @@ export const API = {
       { value: '500', coordinate: 500 },
       { value: '600', coordinate: 550 },
     ],
+    cx: -30,
+    cy: 400,
+    cursor: 'pointer',
+    angle: 30,
   },
 };

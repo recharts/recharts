@@ -1,11 +1,11 @@
-import React, { FunctionComponent, PureComponent, ReactElement } from 'react';
+import React, { FunctionComponent, PureComponent, ReactElement, SVGProps } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
-import { BaseAxisProps, TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent } from '../util/types';
+import { TickItem, adaptEventsOfChild, PresentationAttributesAdaptChildEvent, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import { getTicksOfAxis } from '../util/ChartUtils';
@@ -14,17 +14,32 @@ import { useMaybePolarAngleAxis } from '../context/chartLayoutContext';
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
 
-export interface PolarAngleAxisProps extends BaseAxisProps {
+export interface PolarAngleAxisProps {
   angleAxisId?: string | number;
-  cx?: number;
-  cy?: number;
-  radius?: number;
   axisLineType?: 'polygon' | 'circle';
   ticks?: ReadonlyArray<TickItem>;
   orientation?: 'inner' | 'outer';
+  axisLine?: boolean | SVGProps<SVGLineElement>;
+  tickSize?: number;
+  tickLine?: boolean | SVGProps<SVGLineElement>;
+  tickFormatter?: (value: any, index: number) => string;
+  reversed: boolean;
+  dataKey?: DataKey<any>;
+  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
 }
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> & PolarAngleAxisProps;
+/**
+ * These are injected from Redux, are required, but cannot be set by user.
+ */
+type PropsInjectedFromRedux = {
+  cx?: number;
+  cy?: number;
+  radius?: number;
+};
+
+export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> &
+  PolarAngleAxisProps &
+  PropsInjectedFromRedux;
 
 const AXIS_TYPE = 'angleAxis';
 
@@ -177,7 +192,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   static axisType = AXIS_TYPE;
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     type: 'category',
     angleAxisId: 0,
     scale: 'auto',
@@ -188,13 +203,10 @@ export class PolarAngleAxis extends PureComponent<Props> {
     tickLine: true,
     tickSize: 8,
     tick: true,
-    hide: false,
-    allowDuplicatedCategory: true,
+    reversed: false,
   };
 
   render(): React.ReactNode {
-    if (this.props.radius <= 0) return null;
-
     return <PolarAngleAxisWrapper {...this.props} />;
   }
 }
