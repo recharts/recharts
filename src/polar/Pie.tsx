@@ -15,7 +15,7 @@ import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { LabelList } from '../component/LabelList';
-import { Cell, Props as CellProps } from '../component/Cell';
+import { Cell } from '../component/Cell';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
@@ -200,11 +200,6 @@ export type PieCoordinate = {
   maxRadius: number;
 };
 
-type PieComposedData = PieCoordinate & {
-  sectors: ReadonlyArray<PieSectorDataItem>;
-  data: ReadonlyArray<RealPieData>;
-};
-
 function SetPiePayloadLegend(props: Props): null {
   const presentationProps = useMemo(() => filterProps(props, false), [props]);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
@@ -333,25 +328,6 @@ function PieSectors(props: PieSectorsProps) {
     );
   });
 }
-
-const getRealPieData = (item: Pie, cells: ReadonlyArray<ReactElement>): ReadonlyArray<RealPieData> => {
-  const { data } = item.props;
-  const presentationProps = filterProps(item.props, false);
-
-  if (data && data.length) {
-    return data.map(entry => ({
-      payload: entry,
-      ...presentationProps,
-      ...entry,
-    }));
-  }
-
-  if (cells && cells.length) {
-    return cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
-  }
-
-  return [];
-};
 
 const getTextAnchor = (x: number, cx: number) => {
   if (x > cx) {
@@ -891,27 +867,6 @@ export class Pie extends PureComponent<Props, State> {
   static displayName = 'Pie';
 
   static defaultProps = defaultPieProps;
-
-  static getComposedData = ({ item, offset }: { item: Pie; offset: ChartOffset }): PieComposedData => {
-    const cells = findAllByType(item.props.children, Cell);
-    const pieData = getRealPieData(item, cells);
-    if (!pieData || !pieData.length) {
-      return null;
-    }
-
-    const { sectors, coordinate } = computePieSectors({
-      pieSettings: item.props,
-      cells,
-      offset,
-      displayedData: pieData,
-    });
-
-    return {
-      ...coordinate,
-      sectors,
-      data: pieData,
-    };
-  };
 
   id = uniqueId('recharts-pie-');
 

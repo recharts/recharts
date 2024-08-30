@@ -53,6 +53,7 @@ export const Simple: Meta<ScatterProps> = {
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
           <Scatter activeShape={args.activeShape} name="A school" data={data} fill="#8884d8" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+          <Legend />
         </ScatterChart>
       </ResponsiveContainer>
     );
