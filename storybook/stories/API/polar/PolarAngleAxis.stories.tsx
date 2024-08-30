@@ -55,11 +55,6 @@ const GeneralProps: StorybookArgs = {
     description: 'The function to formatting tick.',
     table: { type: { summary: 'number' }, category: 'General' },
   },
-  tickCount: {
-    description: `The count of axis ticks. Not used if 'type' is 'category'.`,
-    control: 'number',
-    table: { type: { summary: 'number' }, category: 'General' },
-  },
   scale: {
     description: 'The function to formatting tick.',
     options: ['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'point'],
