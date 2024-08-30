@@ -15,6 +15,7 @@ const RADIAN = Math.PI / 180;
 const eps = 1e-5;
 
 export interface PolarAngleAxisProps {
+  allowDuplicatedCategory?: boolean;
   angleAxisId?: string | number;
   axisLineType?: 'polygon' | 'circle';
   ticks?: ReadonlyArray<TickItem>;
@@ -204,9 +205,12 @@ export class PolarAngleAxis extends PureComponent<Props> {
     tickSize: 8,
     tick: true,
     reversed: false,
+    allowDuplicatedCategory: true,
   };
 
   render(): React.ReactNode {
+    if (this.props.radius <= 0) return null;
+
     return <PolarAngleAxisWrapper {...this.props} />;
   }
 }
