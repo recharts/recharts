@@ -104,6 +104,7 @@
   "types/context/useTooltipAxis.d.ts",
   "types/context/tooltipPortalContext.d.ts",
   "types/context/tooltipContext.d.ts",
+  "types/context/legendPortalContext.d.ts",
   "types/context/legendPayloadContext.d.ts",
   "types/context/legendBoundingBoxContext.d.ts",
   "types/context/chartLayoutContext.d.ts",

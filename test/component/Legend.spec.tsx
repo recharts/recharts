@@ -22,6 +22,7 @@ import {
   RadialBarChart,
   Scatter,
   ScatterChart,
+  Surface,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -2993,6 +2994,17 @@ describe('<Legend />', () => {
   });
 
   describe('legend portal', () => {
+    it('nothing is rendered if legend portal is undefined and there is no chart context', () => {
+      const { container } = render(
+        <Surface height={100} width={100}>
+          <Legend portal={undefined} />
+          <Scatter data={numericalData} dataKey="percent" />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-legend-wrapper')).toHaveLength(0);
+    });
+
     it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
       const { container } = render(
         <ScatterChart width={500} height={500} data={numericalData}>

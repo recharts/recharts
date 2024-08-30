@@ -14,12 +14,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "es6",
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals"]
   },
-  "include": [
-    "./src/**/*",
-    "types.d.ts"
-  ]
+  "include": ["./src/**/*", "types.d.ts"]
 }

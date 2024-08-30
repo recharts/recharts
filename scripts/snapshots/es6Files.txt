@@ -104,6 +104,7 @@
   "es6/context/useTooltipAxis.js",
   "es6/context/tooltipPortalContext.js",
   "es6/context/tooltipContext.js",
+  "es6/context/legendPortalContext.js",
   "es6/context/legendPayloadContext.js",
   "es6/context/legendBoundingBoxContext.js",
   "es6/context/chartLayoutContext.js",
