@@ -1,9 +1,57 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { exampleRadarData } from '../_data';
-import { Surface, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
+import { render } from '@testing-library/react';
+import { exampleRadarData, PageData } from '../_data';
+import { PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
-import { pageData } from '../../storybook/stories/data/Page';
+import { assertNotNull } from '../helper/assertNotNull';
+
+type ExpectedRadiusAxisTick = {
+  x: string;
+  y: string;
+  transform: string;
+  textContent: string;
+};
+
+function expectRadiusAxisTicks(container: Element, expectedTicks: ReadonlyArray<ExpectedRadiusAxisTick>) {
+  assertNotNull(container);
+  const allTicks = container.querySelectorAll('.recharts-polar-radius-axis-tick-value');
+
+  const actualTicks = Array.from(allTicks).map(tick => {
+    return {
+      x: tick.getAttribute('x'),
+      y: tick.getAttribute('y'),
+      transform: tick.getAttribute('transform'),
+      textContent: tick.textContent,
+    };
+  });
+
+  expect(actualTicks).toEqual(expectedTicks);
+}
+
+type ExpectedLabel = {
+  x: string;
+  y: string;
+  textContent: string;
+};
+
+function expectRadiusAxisLabel(container: Element, expectedLabel: ExpectedLabel | undefined) {
+  assertNotNull(container);
+  const allLabels = container.querySelectorAll('.recharts-label');
+
+  const actualLabels = Array.from(allLabels).map(label => {
+    return {
+      x: label.getAttribute('x'),
+      y: label.getAttribute('y'),
+      textContent: label.textContent,
+    };
+  });
+
+  if (expectedLabel == null) {
+    expect(actualLabels).toEqual([]);
+  } else {
+    expect(actualLabels).toEqual([expectedLabel]);
+  }
+}
 
 describe('<PolarRadiusAxis />', () => {
   const ticks: TickItem[] = [
@@ -21,8 +69,44 @@ describe('<PolarRadiusAxis />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(5);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
+    expectRadiusAxisTicks(container, [
+      {
+        textContent: '',
+        transform: 'rotate(90, 260, 250)',
+        x: '260',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 1250, 250)',
+        x: '1250',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 270, 250)',
+        x: '270',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 290, 250)',
+        x: '290',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 340, 250)',
+        x: '340',
+        y: '250',
+      },
+    ]);
+
+    expectRadiusAxisLabel(container, {
+      textContent: 'test',
+      x: '755',
+      y: '250',
+    });
   });
 
   test('Renders 5 ticks when orientation is set to be left', () => {
@@ -32,8 +116,44 @@ describe('<PolarRadiusAxis />', () => {
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(5);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(1);
+    expectRadiusAxisTicks(container, [
+      {
+        textContent: '',
+        transform: 'rotate(90, 260, 250)',
+        x: '260',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 1250, 250)',
+        x: '1250',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 270, 250)',
+        x: '270',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 290, 250)',
+        x: '290',
+        y: '250',
+      },
+      {
+        textContent: '',
+        transform: 'rotate(90, 340, 250)',
+        x: '340',
+        y: '250',
+      },
+    ]);
+
+    expectRadiusAxisLabel(container, {
+      textContent: 'test',
+      x: '755',
+      y: '250',
+    });
   });
 
   test('Renders 5 ticks when tick is set to be a function', () => {
@@ -128,19 +248,20 @@ describe('<PolarRadiusAxis />', () => {
     expect(container.querySelectorAll('.customized-label')).toHaveLength(1);
   });
 
-  test("Don't Renders any ticks in when ticks is empty", () => {
+  test("Don't Renders any ticks or label in when ticks is empty", () => {
     const { container } = render(
       <Surface width={500} height={500}>
         <PolarRadiusAxis orientation="left" cx={250} cy={250} ticks={[]} label="test" />
       </Surface>,
     );
 
-    expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(0);
-    expect(container.querySelectorAll('.recharts-label')).toHaveLength(0);
+    expectRadiusAxisTicks(container, []);
+
+    expectRadiusAxisLabel(container, undefined);
   });
 
-  describe('Compatible charts', () => {
-    test('Renders polar radius axis with RadarChart', () => {
+  describe('in RadarChart', () => {
+    test('Renders polar radius axis', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <Radar dataKey="value" />
@@ -148,21 +269,178 @@ describe('<PolarRadiusAxis />', () => {
         </RadarChart>,
       );
 
-      expect(screen.getByText('1000')).toBeInTheDocument();
-      expect(screen.getByText('test')).toBeInTheDocument();
-      expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(5);
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: '0',
+          transform: 'rotate(90, 250, 250)',
+          x: '250',
+          y: '250',
+        },
+        {
+          textContent: '250',
+          transform: 'rotate(90, 299, 250)',
+          x: '299',
+          y: '250',
+        },
+        {
+          textContent: '500',
+          transform: 'rotate(90, 348, 250)',
+          x: '348',
+          y: '250',
+        },
+        {
+          textContent: '750',
+          transform: 'rotate(90, 397, 250)',
+          x: '397',
+          y: '250',
+        },
+        {
+          textContent: '1000',
+          transform: 'rotate(90, 446, 250)',
+          x: '446',
+          y: '250',
+        },
+      ]);
+
+      expectRadiusAxisLabel(container, {
+        textContent: 'test',
+        x: '348',
+        y: '250',
+      });
     });
 
-    test('Renders polar radius axis with RadialBarChart', () => {
+    test('tickCount', () => {
       const { container } = render(
-        <RadialBarChart width={500} height={500} data={pageData}>
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" />
+          <PolarRadiusAxis dataKey="value" tickCount={3} />
+        </RadarChart>,
+      );
+
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: '0',
+          transform: 'rotate(90, 250, 250)',
+          x: '250',
+          y: '250',
+        },
+        {
+          textContent: '500',
+          transform: 'rotate(90, 348, 250)',
+          x: '348',
+          y: '250',
+        },
+        {
+          textContent: '1000',
+          transform: 'rotate(90, 446, 250)',
+          x: '446',
+          y: '250',
+        },
+      ]);
+    });
+
+    test('Renders categorical polar radius axis', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
-          <PolarRadiusAxis type="number" dataKey="uv" />
+          <PolarRadiusAxis dataKey="name" type="category" label="test" />
         </RadialBarChart>,
       );
 
-      expect(screen.getByText('1520')).toBeInTheDocument();
-      expect(container.querySelectorAll('.recharts-polar-radius-axis-tick')).toHaveLength(7);
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: 'Page A',
+          transform: 'rotate(90, 266.3333333333333, 250)',
+          x: '266.3333333333333',
+          y: '250',
+        },
+        {
+          textContent: 'Page B',
+          transform: 'rotate(90, 299, 250)',
+          x: '299',
+          y: '250',
+        },
+        {
+          textContent: 'Page C',
+          transform: 'rotate(90, 331.66666666666663, 250)',
+          x: '331.66666666666663',
+          y: '250',
+        },
+        {
+          textContent: 'Page D',
+          transform: 'rotate(90, 364.3333333333333, 250)',
+          x: '364.3333333333333',
+          y: '250',
+        },
+        {
+          textContent: 'Page E',
+          transform: 'rotate(90, 397, 250)',
+          x: '397',
+          y: '250',
+        },
+        {
+          textContent: 'Page F',
+          transform: 'rotate(90, 429.66666666666663, 250)',
+          x: '429.66666666666663',
+          y: '250',
+        },
+      ]);
+
+      expectRadiusAxisLabel(container, {
+        textContent: 'test',
+        x: '348',
+        y: '250',
+      });
+    });
+  });
+
+  describe('in RadialBarChart', () => {
+    test('Renders numerical polar radius axis', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" />
+          <PolarRadiusAxis dataKey="uv" type="number" label="test" />
+        </RadialBarChart>,
+      );
+
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: '400',
+          transform: 'rotate(90, 348, 250)',
+          x: '348',
+          y: '250',
+        },
+      ]);
+
+      expectRadiusAxisLabel(container, {
+        textContent: 'test',
+        x: '299',
+        y: '250',
+      });
+    });
+
+    test('ignores tickCount', () => {
+      const { container } = render(
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" />
+          <PolarRadiusAxis dataKey="uv" type="number" label="test" tickCount={3} />
+        </RadialBarChart>,
+      );
+
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: '400',
+          transform: 'rotate(90, 348, 250)',
+          x: '348',
+          y: '250',
+        },
+      ]);
+
+      expectRadiusAxisLabel(container, {
+        textContent: 'test',
+        x: '299',
+        y: '250',
+      });
     });
   });
 });
