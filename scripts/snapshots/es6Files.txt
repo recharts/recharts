@@ -79,6 +79,7 @@
   "es6/state/selectors/selectAllAxes.js",
   "es6/state/selectors/scatterSelectors.js",
   "es6/state/selectors/rootPropsSelectors.js",
+  "es6/state/selectors/radarSelectors.js",
   "es6/state/selectors/polarSelectors.js",
   "es6/state/selectors/polarScaleSelectors.js",
   "es6/state/selectors/polarAxisSelectors.js",

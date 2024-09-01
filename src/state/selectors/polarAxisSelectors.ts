@@ -22,7 +22,7 @@ export const implicitAngleAxis: AngleAxisSettings = {
   includeHidden: false,
   name: undefined,
   reversed: false,
-  scale: undefined,
+  scale: 'auto',
   type: 'category',
   unit: undefined,
 };
@@ -40,7 +40,7 @@ export const implicitRadiusAxis: RadiusAxisSettings = {
   includeHidden: false,
   name: undefined,
   reversed: false,
-  scale: undefined,
+  scale: 'auto',
   type: 'number',
   unit: undefined,
 };
@@ -51,7 +51,7 @@ export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): 
 export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings | undefined =>
   state.polarAxis.radiusAxis[radiusAxisId] ?? implicitRadiusAxis;
 
-const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | undefined => state.polarOptions;
+export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | undefined => state.polarOptions;
 
 const selectMaxRadius: (state: RechartsRootState) => number = createSelector(
   [selectChartWidth, selectChartHeight, selectChartOffset],

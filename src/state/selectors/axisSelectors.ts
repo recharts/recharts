@@ -890,7 +890,11 @@ export const selectAxisDomain: (
   combineAxisDomain,
 );
 
-export const selectRealScaleType = createSelector(
+export const selectRealScaleType: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => string | undefined = createSelector(
   [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
   (
     axisConfig: BaseCartesianAxis | undefined,
