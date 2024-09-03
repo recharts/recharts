@@ -130,7 +130,7 @@ function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
-  const { width: widthFromProps, height: heightFromProps, wrapperStyle } = props;
+  const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
   const onBBoxUpdate = useContext(LegendBoundingBoxContext);
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
@@ -140,15 +140,18 @@ function LegendWrapper(props: Props) {
   const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const widthOrHeight = Legend.getWidthOrHeight(props.layout, heightFromProps, widthFromProps, maxWidth);
-  const outerStyle: CSSProperties = {
-    position: 'absolute',
-    width: widthOrHeight?.width || widthFromProps || 'auto',
-    height: widthOrHeight?.height || heightFromProps || 'auto',
-    ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
-    ...wrapperStyle,
-  };
+  // if the user supplies their own portal, only use their defined wrapper styles
+  const outerStyle: CSSProperties = portalFromProps
+    ? wrapperStyle
+    : {
+        position: 'absolute',
+        width: widthOrHeight?.width || widthFromProps || 'auto',
+        height: widthOrHeight?.height || heightFromProps || 'auto',
+        ...getDefaultPosition(wrapperStyle, props, margin, chartWidth, chartHeight, lastBoundingBox),
+        ...wrapperStyle,
+      };
 
-  const legendPortal = props.portal ?? legendPortalFromContext;
+  const legendPortal = portalFromProps ?? legendPortalFromContext;
 
   if (legendPortal == null) {
     return null;

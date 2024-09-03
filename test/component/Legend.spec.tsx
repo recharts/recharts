@@ -3024,7 +3024,7 @@ describe('<Legend />', () => {
         return (
           <>
             <ScatterChart width={500} height={500} data={numericalData}>
-              <Legend portal={portalRef} />
+              <Legend portal={portalRef} wrapperStyle={{ margin: '20px' }} />
               <Scatter dataKey="percent" />
             </ScatterChart>
             <div
@@ -3040,7 +3040,12 @@ describe('<Legend />', () => {
       }
       const { container } = render(<Example />);
 
+      const legendWrapper = container.querySelector('.recharts-legend-wrapper');
+
       expect(container.querySelector('.recharts-wrapper .recharts-legend-wrapper')).not.toBeInTheDocument();
+      // assert we've removed internal recharts legend wrapper styles and those that the user adds are included
+      expect(legendWrapper).not.toHaveStyle({ position: 'absolute' });
+      expect(legendWrapper).toHaveStyle({ margin: '20px' });
       expect(
         container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-legend-wrapper'),
       ).toBeVisible();
