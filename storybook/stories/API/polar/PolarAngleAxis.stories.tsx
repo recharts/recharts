@@ -58,6 +58,7 @@ const GeneralProps: StorybookArgs = {
   scale: {
     description: 'The function to formatting tick.',
     options: ['auto', 'linear', 'pow', 'sqrt', 'log', 'identity', 'point'],
+    control: 'select',
     table: {
       type: {
         summary: `auto | linear | pow | sqrt | log | identity
