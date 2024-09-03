@@ -71,8 +71,7 @@ export const LegendPortal = {
               {legendPortal && (
                 <Legend
                   {...args}
-                  // TODO: when a portal is passed remove absolute positioning and other styles
-                  wrapperStyle={{ position: 'relative', top: 'none', left: 'none', width: 'inherit', marginTop: 20 }}
+                  wrapperStyle={{ marginTop: 20 }}
                   formatter={() => 'Recharts Downloads'}
                   portal={legendPortal}
                 />
