@@ -221,8 +221,8 @@ export class Radar extends PureComponent<Props, State> {
       const { key, ...dotProps } = props;
       dotItem = (
         <Dot
-          key={key}
           {...dotProps}
+          key={key}
           className={clsx('recharts-radar-dot', typeof option !== 'boolean' ? option.className : '')}
         />
       );
