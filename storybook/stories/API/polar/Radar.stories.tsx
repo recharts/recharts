@@ -16,9 +16,9 @@ const GeneralProps: Args = {
     table: { type: { summary: 'Array' }, category: 'General' },
   },
   dot: {
-    description: `If false set, dots will not be drawn. If true set, dots will be drawn which have 
-    the props calculated internally. If object set, dots will be drawn which have the props merged 
-    by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element. 
+    description: `If false set, dots will not be drawn. If true set, dots will be drawn which have
+    the props calculated internally. If object set, dots will be drawn which have the props merged
+    by the internal calculated props and the option. If ReactElement set, the option can be the custom dot element.
     If set a function, the function will be called to render customized dot.`,
     table: { type: { summary: 'Bool | Object | Element | Function' }, category: 'General' },
   },
@@ -26,8 +26,8 @@ const GeneralProps: Args = {
 
 const LabelProps: Args = {
   label: {
-    description: `If set a string or a number, default label will be drawn, and the option is content. 
-    If set a React element, the option is the custom react element of drawing label. If set a function, 
+    description: `If set a string or a number, default label will be drawn, and the option is content.
+    If set a React element, the option is the custom react element of drawing label. If set a function,
     the function will be called to render customized label.`,
     table: { type: { summary: 'string | number | ReactElement | Function' }, category: 'Label' },
   },
@@ -35,7 +35,7 @@ const LabelProps: Args = {
 
 const StyleProps: Args = {
   shape: {
-    description: `If set a ReactElement, the shape of dot can be customized. If set a function, 
+    description: `If set a ReactElement, the shape of dot can be customized. If set a function,
     the function will be called to render customized shape.`,
     table: {
       type: {
