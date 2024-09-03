@@ -413,7 +413,7 @@ export class Pie extends PureComponent<Props, State> {
     }
 
     const className = clsx('recharts-pie-label-line', typeof option !== 'boolean' ? option.className : '');
-    return <Curve key={key} {...props} type="linear" className={className} />;
+    return <Curve {...props} key={key} type="linear" className={className} />;
   }
 
   static renderLabelItem(option: PieLabel, props: any, value: any) {

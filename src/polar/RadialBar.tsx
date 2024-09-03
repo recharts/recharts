@@ -289,7 +289,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         option: isActive ? activeShape : shape,
       };
 
-      return <RadialBarSector key={`sector-${i}`} {...props} />;
+      return <RadialBarSector {...props} key={`sector-${i}`} />;
     });
   }
 
@@ -370,7 +370,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
         isActive: false,
       };
 
-      return <RadialBarSector key={`sector-${i}`} {...props} />;
+      return <RadialBarSector {...props} key={`sector-${i}`} />;
     });
   }
 
