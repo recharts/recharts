@@ -104,6 +104,7 @@
   "lib/context/useTooltipAxis.js",
   "lib/context/tooltipPortalContext.js",
   "lib/context/tooltipContext.js",
+  "lib/context/legendPortalContext.js",
   "lib/context/legendPayloadContext.js",
   "lib/context/legendBoundingBoxContext.js",
   "lib/context/chartLayoutContext.js",

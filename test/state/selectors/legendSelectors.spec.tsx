@@ -54,6 +54,6 @@ describe('selectLegendState', () => {
       verticalAlign: 'top',
     };
     expect(legendSettingsSpy).toHaveBeenLastCalledWith(expected);
-    expect(legendSettingsSpy).toHaveBeenCalledTimes(3);
+    expect(legendSettingsSpy).toHaveBeenCalledTimes(4);
   });
 });

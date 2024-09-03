@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
@@ -22,6 +22,7 @@ import {
   RadialBarChart,
   Scatter,
   ScatterChart,
+  Surface,
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -33,6 +34,7 @@ import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendState } from '../../src/state/selectors/legendSelectors';
+import { LegendPortalContext } from '../../src/context/legendPortalContext';
 
 function assertHasLegend(container: Element): ReadonlyArray<Element> {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -369,6 +371,25 @@ describe('<Legend />', () => {
   });
 
   describe('onBBoxUpdate', () => {
+    function LegendPortalWrapper({ children }: { children: React.ReactElement }) {
+      const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+      return (
+        <>
+          <LegendPortalContext.Provider value={portalRef}>{children}</LegendPortalContext.Provider>
+          <div
+            data-testid="my-custom-portal-target"
+            style={{ height: 30, width: 300 }}
+            ref={node => {
+              if (portalRef == null && node != null) {
+                setPortalRef(node);
+              }
+            }}
+          />
+        </>
+      );
+    }
+
     it('should call onBBoxUpdate once on mount', () => {
       const onBBoxUpdate = vi.fn();
       mockGetBoundingClientRect({ width: 50, height: 15 });
@@ -376,6 +397,7 @@ describe('<Legend />', () => {
         <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
           <Legend />
         </LegendBoundingBoxContext.Provider>,
+        { wrapper: LegendPortalWrapper },
       );
       expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
       expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
@@ -384,12 +406,14 @@ describe('<Legend />', () => {
     it('should call onBBoxUpdate if the payload changes', () => {
       const onBBoxUpdate = vi.fn();
       mockGetBoundingClientRect({ width: 50, height: 15 });
+
       const { rerender } = render(
         <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
           <LegendPayloadProvider>
             <Legend />
           </LegendPayloadProvider>
         </LegendBoundingBoxContext.Provider>,
+        { wrapper: LegendPortalWrapper },
       );
 
       expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
@@ -421,9 +445,28 @@ describe('<Legend />', () => {
   describe('custom content as a react element', () => {
     it('should render result', () => {
       const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
-      const { container } = render(
-        <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
-      );
+
+      function Example() {
+        const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+        return (
+          <>
+            <LegendPortalContext.Provider value={portalRef}>
+              <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
+            </LegendPortalContext.Provider>
+            <div
+              data-testid="my-custom-portal-target"
+              ref={node => {
+                if (portalRef == null && node != null) {
+                  setPortalRef(node);
+                }
+              }}
+            />
+          </>
+        );
+      }
+
+      const { container } = render(<Example />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
       expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
@@ -676,13 +719,33 @@ describe('<Legend />', () => {
         mockGetBoundingClientRect(mockRect, false);
         mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
         mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
-
         const handleUpdate = vi.fn();
-        render(
-          <LegendBoundingBoxContext.Provider value={handleUpdate}>
-            <Legend height={30} width={300} />
-          </LegendBoundingBoxContext.Provider>,
-        );
+
+        function Example() {
+          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+          return (
+            <>
+              <LegendPortalContext.Provider value={portalRef}>
+                <LegendBoundingBoxContext.Provider value={handleUpdate}>
+                  <Legend height={30} width={300} />
+                </LegendBoundingBoxContext.Provider>
+              </LegendPortalContext.Provider>
+              <div
+                data-testid="my-custom-portal-target"
+                style={{ height: 30, width: 300 }}
+                ref={node => {
+                  if (portalRef == null && node != null) {
+                    setPortalRef(node);
+                  }
+                }}
+              />
+            </>
+          );
+        }
+
+        render(<Example />);
+
         expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
         expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
       });
@@ -1056,7 +1119,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(5);
 
       expectBars(container, [
         {
@@ -1119,7 +1182,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(6);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(7);
 
       expectBars(container, [
         {
@@ -1659,7 +1722,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1688,7 +1751,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1717,7 +1780,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1746,7 +1809,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -2930,6 +2993,60 @@ describe('<Legend />', () => {
     });
   });
 
+  describe('legend portal', () => {
+    it('nothing is rendered if legend portal is undefined and there is no chart context', () => {
+      const { container } = render(
+        <Surface height={100} width={100}>
+          <Legend portal={undefined} />
+          <Scatter data={numericalData} dataKey="percent" />
+        </Surface>,
+      );
+
+      expect(container.querySelectorAll('.recharts-legend-wrapper')).toHaveLength(0);
+    });
+
+    it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
+      const { container } = render(
+        <ScatterChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Scatter dataKey="percent" />
+        </ScatterChart>,
+      );
+
+      expect(container.querySelectorAll('.recharts-wrapper svg .recharts-legend-wrapper')).toHaveLength(0);
+      expect(container.querySelector('.recharts-wrapper > .recharts-legend-wrapper')).toBeVisible();
+    });
+
+    it('should render in a custom portal if "portal" prop is set', () => {
+      function Example() {
+        const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+        return (
+          <>
+            <ScatterChart width={500} height={500} data={numericalData}>
+              <Legend portal={portalRef} />
+              <Scatter dataKey="percent" />
+            </ScatterChart>
+            <div
+              data-testid="my-custom-portal-target"
+              ref={node => {
+                if (portalRef == null && node != null) {
+                  setPortalRef(node);
+                }
+              }}
+            />
+          </>
+        );
+      }
+      const { container } = render(<Example />);
+
+      expect(container.querySelector('.recharts-wrapper .recharts-legend-wrapper')).not.toBeInTheDocument();
+      expect(
+        container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-legend-wrapper'),
+      ).toBeVisible();
+    });
+  });
+
   describe('state integration', () => {
     it('should publish its size, and then update it when removed from DOM', () => {
       mockGetBoundingClientRect({ width: 3, height: 11 });
@@ -2953,7 +3070,7 @@ describe('<Legend />', () => {
         verticalAlign: 'bottom',
         width: 3,
       });
-      expect(legendSpy).toHaveBeenCalledTimes(3);
+      expect(legendSpy).toHaveBeenCalledTimes(4);
 
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
@@ -2968,7 +3085,7 @@ describe('<Legend />', () => {
         verticalAlign: 'bottom',
         width: 0,
       });
-      expect(legendSpy).toHaveBeenCalledTimes(5);
+      expect(legendSpy).toHaveBeenCalledTimes(6);
     });
   });
 });

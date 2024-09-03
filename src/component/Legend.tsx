@@ -1,4 +1,6 @@
 import React, { CSSProperties, PureComponent, useContext, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { useLegendPortal } from '../context/legendPortalContext';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
@@ -91,6 +93,13 @@ export type Props = DefaultProps & {
   height?: number;
   payloadUniqBy?: UniqueOption<Payload>;
   onBBoxUpdate?: (box: BoundingBox | null) => void;
+  /**
+   * If portal is defined, then Legend will use this element as a target
+   * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal
+   *
+   * If this is undefined then Legendd renders inside the recharts-wrapper element.
+   */
+  portal?: HTMLElement | null;
 };
 
 interface State {
@@ -119,6 +128,7 @@ function LegendSizeDispatcher(props: Size): null {
 
 function LegendWrapper(props: Props) {
   const contextPayload = useLegendPayload();
+  const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
   const { width: widthFromProps, height: heightFromProps, wrapperStyle } = props;
   const onBBoxUpdate = useContext(LegendBoundingBoxContext);
@@ -138,7 +148,13 @@ function LegendWrapper(props: Props) {
     ...wrapperStyle,
   };
 
-  return (
+  const legendPortal = props.portal ?? legendPortalFromContext;
+
+  if (legendPortal == null) {
+    return null;
+  }
+
+  const legendElement = (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
       <LegendSettingsDispatcher layout={props.layout} align={props.align} verticalAlign={props.verticalAlign} />
       <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />
@@ -154,6 +170,8 @@ function LegendWrapper(props: Props) {
       />
     </div>
   );
+
+  return createPortal(legendElement, legendPortal);
 }
 
 export class Legend extends PureComponent<Props, State> {
@@ -187,10 +205,6 @@ export class Legend extends PureComponent<Props, State> {
   }
 
   public render() {
-    return (
-      <foreignObject x="0" y="0" width="100%" height="100%">
-        <LegendWrapper {...this.props} />
-      </foreignObject>
-    );
+    return <LegendWrapper {...this.props} />;
   }
 }
