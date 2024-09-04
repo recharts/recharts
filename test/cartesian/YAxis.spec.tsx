@@ -445,9 +445,10 @@ describe('<YAxis />', () => {
   });
 
   it('Renders evenly distributed ticks when domain={[0, 1000]} and dataKey is "noExist", and allowDataOverflow', () => {
+    const domain = [0, 1000] as const;
     const { container } = render(
       <AreaChart width={600} height={400} data={data}>
-        <YAxis stroke="#ff7300" domain={[0, 1000]} allowDataOverflow />
+        <YAxis stroke="#ff7300" domain={domain} allowDataOverflow />
         <Area dataKey="noExist" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
