@@ -15,7 +15,7 @@ import { rootPropsReducer } from './rootPropsSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
-  axisMap: cartesianAxisReducer,
+  cartesianAxis: cartesianAxisReducer,
   brush: brushReducer,
   chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,

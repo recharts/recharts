@@ -104,7 +104,7 @@ export const implicitXAxis: XAxisSettings = {
 };
 
 export const selectXAxisSettings = (state: RechartsRootState, axisId: AxisId): XAxisSettings => {
-  const axis = state.axisMap.xAxis[axisId];
+  const axis = state.cartesianAxis.xAxis[axisId];
   if (axis == null) {
     return implicitXAxis;
   }
@@ -144,7 +144,7 @@ export const implicitYAxis: YAxisSettings = {
 };
 
 export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
-  const axis = state.axisMap.yAxis[axisId];
+  const axis = state.cartesianAxis.yAxis[axisId];
   if (axis == null) {
     return implicitYAxis;
   }
@@ -166,7 +166,7 @@ export const implicitZAxis: ZAxisSettings = {
 };
 
 export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): ZAxisSettings => {
-  const axis = state.axisMap.zAxis[axisId];
+  const axis = state.cartesianAxis.zAxis[axisId];
   if (axis == null) {
     return implicitZAxis;
   }
