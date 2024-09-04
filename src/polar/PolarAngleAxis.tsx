@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PureComponent, ReactElement, SVGProps } from 'react';
+import React, { FunctionComponent, PureComponent, ReactElement, SVGProps, useEffect } from 'react';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -16,6 +16,8 @@ import { filterProps } from '../util/ReactUtils';
 import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import { getTicksOfAxis } from '../util/ChartUtils';
 import { useMaybePolarAngleAxis } from '../context/chartLayoutContext';
+import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
+import { useAppDispatch } from '../state/hooks';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -49,6 +51,17 @@ export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> & PolarAngleAxisProps;
 
 const AXIS_TYPE = 'angleAxis';
+
+function SetAngleAxisSettings(settings: AngleAxisSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(addAngleAxis(settings));
+    return () => {
+      dispatch(removeAngleAxis(settings));
+    };
+  });
+  return null;
+}
 
 export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { angleAxisId } = defaultsAndInputs;
@@ -217,6 +230,11 @@ export class PolarAngleAxis extends PureComponent<Props> {
   render(): React.ReactNode {
     if (this.props.radius <= 0) return null;
 
-    return <PolarAngleAxisWrapper {...this.props} />;
+    return (
+      <>
+        <SetAngleAxisSettings id={this.props.angleAxisId} />
+        <PolarAngleAxisWrapper {...this.props} />
+      </>
+    );
   }
 }
