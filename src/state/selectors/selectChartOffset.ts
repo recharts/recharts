@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { selectLegendState } from './legendSelectors';
 import { CartesianViewBox, ChartOffset, Margin } from '../../util/types';
-import { XAxisSettings, YAxisSettings } from '../axisMapSlice';
+import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
 import { LegendState } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';

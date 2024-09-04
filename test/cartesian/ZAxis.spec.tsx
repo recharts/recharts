@@ -11,7 +11,7 @@ import {
   selectZAxisSettings,
   selectZAxisWithScale,
 } from '../../src/state/selectors/axisSelectors';
-import { ZAxisSettings } from '../../src/state/axisMapSlice';
+import { ZAxisSettings } from '../../src/state/cartesianAxisSlice';
 
 describe('<ZAxis />', () => {
   const data = [

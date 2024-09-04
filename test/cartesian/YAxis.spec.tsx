@@ -22,7 +22,7 @@ import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '..
 import { pageData, rangeData } from '../../storybook/stories/data';
 import { useAppSelector } from '../../src/state/hooks';
 import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
-import { YAxisSettings } from '../../src/state/axisMapSlice';
+import { YAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { IfOverflow } from '../../src/util/IfOverflow';
 

@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice, current } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { ChartData } from './chartDataSlice';
-import { AxisId } from './axisMapSlice';
+import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
 import { ErrorBarDirection } from '../cartesian/ErrorBar';
 import { StackId } from '../util/ChartUtils';

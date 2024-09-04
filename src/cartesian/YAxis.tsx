@@ -2,7 +2,7 @@ import React, { Component, FunctionComponent, SVGProps, useEffect } from 'react'
 import clsx from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
-import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/axisMapSlice';
+import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   implicitYAxis,

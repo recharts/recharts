@@ -12,7 +12,7 @@ import {
   selectUnfilteredCartesianItems,
   StackGroup,
 } from './axisSelectors';
-import { AxisId } from '../axisMapSlice';
+import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';

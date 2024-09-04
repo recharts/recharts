@@ -1,5 +1,5 @@
 import React from 'react';
-import { AxisId } from '../state/axisMapSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 import { useOffset } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import { selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';

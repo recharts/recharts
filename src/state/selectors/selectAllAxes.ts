@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RechartsRootState } from '../store';
-import { XAxisSettings, YAxisSettings } from '../axisMapSlice';
+import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
 
 export const selectAllXAxes: (state: RechartsRootState) => ReadonlyArray<XAxisSettings> = createSelector(
   (state: RechartsRootState) => state.axisMap.xAxis,

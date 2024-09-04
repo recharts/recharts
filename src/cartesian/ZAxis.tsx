@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
-import { addZAxis, removeZAxis, ZAxisSettings } from '../state/axisMapSlice';
+import { addZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsScale } from '../util/ChartUtils';
 import { AxisRange, implicitZAxis } from '../state/selectors/axisSelectors';

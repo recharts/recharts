@@ -13,7 +13,7 @@ import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis 
 import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
-import { AxisId } from '../state/axisMapSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';

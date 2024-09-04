@@ -44,7 +44,7 @@ import {
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
-import { AxisId } from '../state/axisMapSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';

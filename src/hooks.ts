@@ -1,4 +1,4 @@
-import type { AxisId } from './state/axisMapSlice';
+import type { AxisId } from './state/cartesianAxisSlice';
 import { BaseAxisWithScale, selectAxisWithScale } from './state/selectors/axisSelectors';
 import { useAppSelector } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';

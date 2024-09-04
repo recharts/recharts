@@ -49,7 +49,7 @@ import { misbehavedData, PageData } from '../../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
 import { generateMockData } from '../../helper/generateMockData';
-import { AxisId } from '../../../src/state/axisMapSlice';
+import { AxisId } from '../../../src/state/cartesianAxisSlice';
 import { pageData } from '../../../storybook/stories/data';
 import { AxisDomain } from '../../../src/util/types';
 import { ChartData } from '../../../src/state/chartDataSlice';

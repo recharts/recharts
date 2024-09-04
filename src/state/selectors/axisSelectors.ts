@@ -29,14 +29,14 @@ import {
 } from '../../util/types';
 import {
   AxisId,
-  AxisSettings,
-  BaseAxis,
+  CartesianAxisSettings,
+  BaseCartesianAxis,
   XAxisOrientation,
   XAxisSettings,
   YAxisOrientation,
   YAxisSettings,
   ZAxisSettings,
-} from '../axisMapSlice';
+} from '../cartesianAxisSlice';
 import { selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -173,7 +173,7 @@ export const selectZAxisSettings = (state: RechartsRootState, axisId: AxisId): Z
   return axis;
 };
 
-export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId): BaseAxis => {
+export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId): BaseCartesianAxis => {
   switch (axisType) {
     case 'xAxis': {
       return selectXAxisSettings(state, axisId);
@@ -249,7 +249,7 @@ export const selectCartesianItemsSettings: (
   axisId: AxisId,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
   [selectUnfilteredCartesianItems, selectBaseAxis, pickAxisType, pickAxisId],
-  (cartesianItems, axisSettings: BaseAxis, axisType: XorYorZType, axisId: AxisId) =>
+  (cartesianItems, axisSettings: BaseCartesianAxis, axisType: XorYorZType, axisId: AxisId) =>
     cartesianItems.filter(itemAxisPredicate(axisType, axisId)).filter(item => {
       if (axisSettings?.includeHidden === true) {
         return true;
@@ -334,7 +334,7 @@ export const selectAllAppliedValues = createSelector(
   selectCartesianItemsSettings,
   (
     data: ChartData,
-    axisSettings: AxisSettings,
+    axisSettings: CartesianAxisSettings,
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
   ): AppliedChartData => {
     if (axisSettings?.dataKey != null) {
@@ -524,7 +524,7 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelecto
   pickAxisType,
   (
     data: ChartData,
-    axisSettings: BaseAxis,
+    axisSettings: BaseCartesianAxis,
     items: ReadonlyArray<CartesianGraphicalItemSettings>,
     axisType: XorYorZType,
   ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
@@ -585,7 +585,7 @@ const computeNumericalDomain = (
 
 const computeCategoricalDomain = (
   allDataSquished: AppliedChartData,
-  axisSettings: BaseAxis,
+  axisSettings: BaseCartesianAxis,
   isCategorical: boolean,
 ): CategoricalDomain => {
   const categoricalDomain = allDataSquished.map(onlyAllowNumbersAndStringsAndDates).filter(v => v != null);
@@ -605,7 +605,7 @@ const computeCategoricalDomain = (
   return Array.from(new Set(categoricalDomain));
 };
 
-const getDomainDefinition = (axisSettings: AxisSettings | BaseAxis): AxisDomain => {
+const getDomainDefinition = (axisSettings: CartesianAxisSettings | BaseCartesianAxis): AxisDomain => {
   if (axisSettings == null || !('domain' in axisSettings)) {
     return defaultNumericDomain;
   }
@@ -835,7 +835,7 @@ export const selectAxisDomain: (
 export const selectRealScaleType = createSelector(
   [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
   (
-    axisConfig: BaseAxis | undefined,
+    axisConfig: BaseCartesianAxis | undefined,
     layout: LayoutType,
     hasBar: boolean,
     chartType: string,
@@ -895,7 +895,7 @@ function getD3ScaleFromType(realScaleType: string | undefined) {
 }
 
 function combineScaleFunction(
-  axis: BaseAxis,
+  axis: BaseCartesianAxis,
   realScaleType: string | undefined,
   axisDomain: NumberDomain | CategoricalDomain,
   axisRange: [number, number],
@@ -976,7 +976,7 @@ export const selectSmallestDistanceBetweenValues: (
 ) => number | undefined = createSelector(
   selectAllAppliedValues,
   selectAxisSettings,
-  (allDataSquished: AppliedChartData, axisSettings: AxisSettings): number | undefined => {
+  (allDataSquished: AppliedChartData, axisSettings: CartesianAxisSettings): number | undefined => {
     if (!axisSettings || axisSettings.type !== 'number') {
       return undefined;
     }
@@ -1174,7 +1174,7 @@ export const selectAxisRangeWithReverse: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector(
   [selectBaseAxis, selectAxisRange],
-  (axisSettings: BaseAxis | undefined, axisRange: AxisRange): AxisRange | undefined => {
+  (axisSettings: BaseCartesianAxis | undefined, axisRange: AxisRange): AxisRange | undefined => {
     if (axisSettings?.reversed) {
       return [axisRange[1], axisRange[0]];
     }
@@ -1209,7 +1209,7 @@ export const selectErrorBarsSettings = createSelector(
   },
 );
 
-function compareIds(a: AxisSettings, b: AxisSettings) {
+function compareIds(a: CartesianAxisSettings, b: CartesianAxisSettings) {
   if (a.id < b.id) {
     return -1;
   }
@@ -1659,7 +1659,7 @@ export const selectTicksOfGraphicalItem: (
   },
 );
 
-export type BaseAxisWithScale = BaseAxis & { scale: RechartsScale };
+export type BaseAxisWithScale = BaseCartesianAxis & { scale: RechartsScale };
 
 export const selectAxisWithScale: (
   state: RechartsRootState,
