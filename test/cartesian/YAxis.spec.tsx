@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, test, it, expect, vi } from 'vitest';
 import {
   AreaChart,
@@ -543,6 +543,36 @@ describe('<YAxis />', () => {
         y: '5',
       },
     ]);
+  });
+
+  it('Should pass data, index, and event to the onClick event handler', () => {
+    const onClickFn = vi.fn();
+    const { container } = render(
+      <AreaChart width={600} height={400} data={data}>
+        <YAxis type="number" stroke="#ff7300" ticks={[0, 400, 800, 1200]} onClick={onClickFn} />
+        <Area dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      </AreaChart>,
+    );
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    expect(ticksGroup).toHaveLength(4);
+
+    const firstTick = ticksGroup[0];
+
+    const eventData = {
+      coordinate: 395,
+      isShow: true,
+      offset: 0,
+      tickCoord: 395,
+      value: 0,
+    };
+    const eventIndex = 0;
+    const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
+
+    // click
+    fireEvent.click(firstTick);
+    expect(onClickFn).toHaveBeenCalledWith(eventData, eventIndex, eventExpect);
+
+    // onMouseEnter/onMouseLeave cause vitest to exit unexpectedly, why?
   });
 
   it('Renders axis based on specified domain when data overflow is allowed', () => {

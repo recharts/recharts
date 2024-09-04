@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { timeFormat } from 'd3-time-format';
 import { scaleTime } from 'victory-vendor/d3-scale';
@@ -126,6 +126,35 @@ describe('<XAxis />', () => {
       },
     ]);
     expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+  });
+
+  it('Should pass data, index, and event to the onClick event handler', () => {
+    const onClickFn = vi.fn();
+    const { container } = render(
+      <LineChart width={400} height={400} data={lineData}>
+        <XAxis ticks={[0, 4]} onClick={onClickFn} />
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+      </LineChart>,
+    );
+
+    const ticksGroup = container.getElementsByClassName('recharts-cartesian-axis-tick');
+    expect(ticksGroup).toHaveLength(2);
+
+    const firstTick = ticksGroup[0];
+
+    const eventData = {
+      coordinate: 5,
+      isShow: true,
+      offset: 0,
+      tickCoord: 5,
+      value: 0,
+    };
+    const eventIndex = 0;
+    const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
+
+    // click
+    fireEvent.click(firstTick);
+    expect(onClickFn).toHaveBeenCalledWith(eventData, eventIndex, eventExpect);
   });
 
   it('Render ticks with tickFormatter', () => {
