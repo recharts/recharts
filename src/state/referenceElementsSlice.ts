@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
-import { AxisId } from './axisMapSlice';
+import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
 
 type ReferenceElementSettings = {

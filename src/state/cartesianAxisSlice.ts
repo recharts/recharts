@@ -16,7 +16,7 @@ export type YAxisOrientation = 'left' | 'right';
 /**
  * Properties shared in X, Y, and Z axes
  */
-export type BaseAxis = {
+export type BaseCartesianAxis = {
   id: AxisId;
   scale: ScaleType | RechartsScale | undefined;
   type: AxisDomainType;
@@ -41,7 +41,7 @@ export type BaseAxis = {
  *
  * Properties shared between X and Y axes
  */
-export type AxisSettings = BaseAxis & {
+export type CartesianAxisSettings = BaseCartesianAxis & {
   domain: AxisDomain | undefined;
   allowDecimals: boolean;
   tickCount: number;
@@ -59,13 +59,13 @@ export type AxisSettings = BaseAxis & {
   tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
 };
 
-export type XAxisSettings = AxisSettings & {
+export type XAxisSettings = CartesianAxisSettings & {
   padding: XAxisPadding;
   height: number;
   orientation: XAxisOrientation;
 };
 
-export type YAxisSettings = AxisSettings & {
+export type YAxisSettings = CartesianAxisSettings & {
   padding: YAxisPadding;
   width: number;
   orientation: YAxisOrientation;
@@ -75,7 +75,7 @@ export type YAxisSettings = AxisSettings & {
  * Z axis is special because it's never displayed. It controls the size of Scatter dots,
  * but it never displays ticks anywhere.
  */
-export type ZAxisSettings = BaseAxis & {
+export type ZAxisSettings = BaseCartesianAxis & {
   range: AxisRange;
 };
 
@@ -95,8 +95,8 @@ const initialState: AxisMapState = {
  * This is the slice where each individual Axis element pushes its own configuration.
  * Prefer to use this one instead of axisSlice.
  */
-const axisMapSlice = createSlice({
-  name: 'axisMap',
+const cartesianAxisSlice = createSlice({
+  name: 'cartesianAxis',
   initialState,
   reducers: {
     addXAxis(state, action: PayloadAction<XAxisSettings>) {
@@ -120,6 +120,6 @@ const axisMapSlice = createSlice({
   },
 });
 
-export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis } = axisMapSlice.actions;
+export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis } = cartesianAxisSlice.actions;
 
-export const axisMapReducer = axisMapSlice.reducer;
+export const cartesianAxisReducer = cartesianAxisSlice.reducer;

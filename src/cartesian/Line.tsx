@@ -42,7 +42,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
-import { AxisId } from '../state/axisMapSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;

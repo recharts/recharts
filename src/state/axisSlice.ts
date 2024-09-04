@@ -20,7 +20,7 @@ const initialState: AxisState = {
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 const axisSlice = createSlice({
   name: 'axis',
@@ -44,7 +44,7 @@ const axisSlice = createSlice({
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const { setXAxisMap, setYAxisMap, setPolarAngleAxisMap, setPolarRadiusAxisMap } = axisSlice.actions;
 
@@ -52,6 +52,6 @@ export const { setXAxisMap, setYAxisMap, setPolarAngleAxisMap, setPolarRadiusAxi
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const axisReducer = axisSlice.reducer;

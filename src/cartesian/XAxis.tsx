@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/axisMapSlice';
+import { addXAxis, removeXAxis, XAxisOrientation, XAxisPadding, XAxisSettings } from '../state/cartesianAxisSlice';
 import {
   implicitXAxis,
   selectAxisScale,

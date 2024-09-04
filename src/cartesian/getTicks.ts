@@ -5,7 +5,7 @@ import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { isVisible, getTickBoundaries, getNumberIntervalTicks, getAngledTickWidth } from '../util/TickUtils';
 import { getEquidistantTicks } from './getEquidistantTicks';
-import { AxisSettings, XAxisOrientation, YAxisOrientation } from '../state/axisMapSlice';
+import { CartesianAxisSettings, XAxisOrientation, YAxisOrientation } from '../state/cartesianAxisSlice';
 
 export type Sign = 0 | 1 | -1;
 
@@ -121,13 +121,13 @@ function getTicksStart(
 
 export type GetTicksInput = {
   angle: number;
-  interval: AxisSettings['interval'];
+  interval: CartesianAxisSettings['interval'];
   minTickGap: number;
   orientation: XAxisOrientation | YAxisOrientation;
-  tick: AxisSettings['tick'];
-  tickFormatter: AxisSettings['tickFormatter'];
+  tick: CartesianAxisSettings['tick'];
+  tickFormatter: CartesianAxisSettings['tickFormatter'];
   ticks: ReadonlyArray<CartesianTickItem>;
-  unit: AxisSettings['unit'];
+  unit: CartesianAxisSettings['unit'];
   viewBox: CartesianViewBox;
 };
 

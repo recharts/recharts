@@ -32,7 +32,7 @@ import {
 } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { ExpectAxisDomain, expectXAxisTicks } from '../helper/expectAxisTicks';
-import { XAxisSettings } from '../../src/state/axisMapSlice';
+import { XAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { assertNotNull } from '../helper/assertNotNull';
 import { AxisDomainType } from '../../src/util/types';
 import { pageData } from '../../storybook/stories/data';

@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect } from 'react'
 import { CartesianGraphicalItemType, ErrorBarsSettings } from '../state/graphicalItemsSlice';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
-import { AxisId } from '../state/axisMapSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 import { DataKey } from '../util/types';
 import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';

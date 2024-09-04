@@ -1,5 +1,5 @@
 import { assertNotNull } from './assertNotNull';
-import { AxisId } from '../../src/state/axisMapSlice';
+import { AxisId } from '../../src/state/cartesianAxisSlice';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 

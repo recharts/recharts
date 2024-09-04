@@ -133,7 +133,7 @@ export const useClipPathId = (): string | undefined => {
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
 
@@ -142,7 +142,7 @@ export const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined =
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
 
@@ -170,7 +170,7 @@ export const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusA
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const selectArbitraryXAxis: (state: RechartsRootState) => XAxisWithExtraData | undefined = createSelector(
   selectXAxisMap,
@@ -181,7 +181,7 @@ export const selectArbitraryXAxis: (state: RechartsRootState) => XAxisWithExtraD
  * @deprecated this is a temporary Redux slice for storing axismaps.
  * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
  * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
+ * Instead use `cartesianAxisSlice`
  */
 export const selectArbitraryYAxis: (state: RechartsRootState) => YAxisWithExtraData | undefined = createSelector(
   selectYAxisMap,

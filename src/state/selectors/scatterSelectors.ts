@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { ReactElement } from 'react';
 import { computeScatterPoints, ScatterPointItem } from '../../cartesian/Scatter';
 import { RechartsRootState } from '../store';
-import { AxisId } from '../axisMapSlice';
+import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import { selectAxisWithScale, selectZAxisWithScale, selectTicksOfGraphicalItem, ZAxisWithScale } from './axisSelectors';

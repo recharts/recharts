@@ -6,7 +6,7 @@ import { axisReducer } from './axisSlice';
 import { chartLayoutReducer } from './layoutSlice';
 import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
 import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
-import { axisMapReducer } from './axisMapSlice';
+import { cartesianAxisReducer } from './cartesianAxisSlice';
 import { graphicalItemsReducer } from './graphicalItemsSlice';
 import { referenceElementsReducer } from './referenceElementsSlice';
 import { brushReducer } from './brushSlice';
@@ -15,7 +15,7 @@ import { rootPropsReducer } from './rootPropsSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
-  axisMap: axisMapReducer,
+  cartesianAxis: cartesianAxisReducer,
   brush: brushReducer,
   chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,

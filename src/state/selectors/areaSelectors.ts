@@ -4,7 +4,7 @@ import { Coordinate, DataKey } from '../../util/types';
 import { BaseValue, computeArea } from '../../cartesian/Area';
 import { selectAxisWithScale, selectStackGroups, selectTicksOfGraphicalItem, StackGroup } from './axisSelectors';
 import { RechartsRootState } from '../store';
-import { AxisId } from '../axisMapSlice';
+import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
