@@ -1097,7 +1097,7 @@ export const generateCategoricalChart = ({
     };
   };
 
-  return class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
+  class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
     readonly eventEmitterSymbol: Symbol = Symbol('rechartsEventEmitter');
@@ -2355,5 +2355,9 @@ export const generateCategoricalChart = ({
         </ChartLayoutContextProvider>
       );
     }
+  }
+
+  return function CategoricalChart(props: CategoricalChartProps) {
+    return <CategoricalChartWrapper {...props} />;
   };
 };
