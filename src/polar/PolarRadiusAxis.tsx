@@ -202,7 +202,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
   static axisType = AXIS_TYPE;
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     type: 'number',
     radiusAxisId: 0,
     cx: 0,
@@ -221,7 +221,18 @@ export class PolarRadiusAxis extends PureComponent<Props> {
   render() {
     return (
       <>
-        <SetRadiusAxisSettings id={this.props.radiusAxisId} />
+        <SetRadiusAxisSettings
+          id={this.props.radiusAxisId}
+          scale={this.props.scale}
+          type={this.props.type}
+          dataKey={this.props.dataKey}
+          unit={undefined}
+          name={this.props.name}
+          allowDuplicatedCategory={this.props.allowDuplicatedCategory}
+          allowDataOverflow={this.props.allowDataOverflow}
+          reversed={this.props.reversed}
+          includeHidden={this.props.includeHidden}
+        />
         <PolarRadiusAxisWrapper {...this.props} />
       </>
     );

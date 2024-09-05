@@ -8,6 +8,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
 import { RadiusAxisSettings } from '../../src/state/polarAxisSlice';
+import { selectBaseAxis } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -462,6 +463,15 @@ describe('<PolarRadiusAxis />', () => {
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        includeHidden: undefined,
+        name: undefined,
+        reversed: undefined,
+        scale: 'auto',
+        type: 'number',
+        unit: undefined,
         id: 0,
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
@@ -473,6 +483,42 @@ describe('<PolarRadiusAxis />', () => {
       );
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(undefined);
       expect(radiusAxisSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it('should select angle axis settings', () => {
+      const radiusAxisSpy = vi.fn();
+      const Comp = (): null => {
+        radiusAxisSpy(useAppSelector(state => selectBaseAxis(state, 'radiusAxis', 'radius-id')));
+        return null;
+      };
+      render(
+        <RadarChart width={1} height={2}>
+          <PolarRadiusAxis
+            allowDuplicatedCategory={false}
+            type="category"
+            radiusAxisId="radius-id"
+            allowDataOverflow
+            scale="log"
+            reversed
+            name="radius-name"
+            dataKey="value"
+          />
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+      const expectedAxis: RadiusAxisSettings = {
+        allowDataOverflow: true,
+        allowDuplicatedCategory: false,
+        dataKey: 'value',
+        includeHidden: undefined,
+        name: 'radius-name',
+        reversed: true,
+        scale: 'log',
+        type: 'category',
+        unit: undefined,
+        id: 'radius-id',
+      };
+      expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
     });
   });
 });

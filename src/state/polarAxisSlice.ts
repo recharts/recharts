@@ -2,9 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { AxisId, BaseCartesianAxis } from './cartesianAxisSlice';
 
-export interface RadiusAxisSettings {
-  id: AxisId;
-}
+export type RadiusAxisSettings = BaseCartesianAxis;
 
 export type AngleAxisSettings = BaseCartesianAxis;
 
@@ -29,11 +27,9 @@ const polarAxisSlice = createSlice({
       delete state.radiusAxis[action.payload.id];
     },
     addAngleAxis(state, action: PayloadAction<AngleAxisSettings>) {
-      console.log('addAngleAxis');
       state.angleAxis[action.payload.id] = castDraft(action.payload);
     },
     removeAngleAxis(state, action: PayloadAction<AngleAxisSettings>) {
-      console.log('removeAngleAxis');
       delete state.angleAxis[action.payload.id];
     },
   },

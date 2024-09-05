@@ -57,7 +57,7 @@ import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap } from './rootPropsSelectors';
-import { selectAngleAxis } from './polarAxisSelectors';
+import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -187,6 +187,9 @@ export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, 
     }
     case 'angleAxis': {
       return selectAngleAxis(state, axisId);
+    }
+    case 'radiusAxis': {
+      return selectRadiusAxis(state, axisId);
     }
     default:
       throw new Error(`Unexpected axis type: ${axisType}`);
