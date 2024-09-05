@@ -1,6 +1,6 @@
-import React, { Component, FunctionComponent, SVGProps, useEffect } from 'react';
+import React, { Component, FunctionComponent, useEffect } from 'react';
 import clsx from 'clsx';
-import { AxisInterval, AxisTick, BaseAxisProps } from '../util/types';
+import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
 import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -35,7 +35,7 @@ interface YAxisProps extends BaseAxisProps {
   angle?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & YAxisProps;
 
 function SetYAxisSettings(settings: YAxisSettings): null {
   const dispatch = useAppDispatch();
