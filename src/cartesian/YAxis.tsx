@@ -2,9 +2,8 @@
  * @fileOverview Y Axis
  */
 import React from 'react';
-import type { SVGProps } from 'react';
 import clsx from 'clsx';
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
 import { getTicksOfAxis } from '../util/ChartUtils';
@@ -34,7 +33,7 @@ interface YAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & YAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & YAxisProps;
 
 const YAxisImpl = ({ yAxisId }: Props) => {
   const width = useChartWidth();

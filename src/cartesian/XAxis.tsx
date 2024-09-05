@@ -1,12 +1,11 @@
 /**
  * @fileOverview X Axis
  */
-import type { SVGProps } from 'react';
 import React from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
-import { BaseAxisProps, AxisInterval } from '../util/types';
+import { BaseAxisProps, AxisInterval, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { getTicksOfAxis } from '../util/ChartUtils';
 
 /** Define of XAxis props */
@@ -34,7 +33,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & XAxisProps;
 
 function XAxisImpl({ xAxisId }: Props) {
   const width = useChartWidth();
