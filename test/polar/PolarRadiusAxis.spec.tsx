@@ -1,9 +1,13 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { exampleRadarData, PageData } from '../_data';
-import { PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
+import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
 import { assertNotNull } from '../helper/assertNotNull';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
+import { RadiusAxisSettings } from '../../src/state/polarAxisSlice';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -441,6 +445,34 @@ describe('<PolarRadiusAxis />', () => {
         x: '299',
         y: '250',
       });
+    });
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux store, and remove it when component is removed', () => {
+      const radiusAxisSpy = vi.fn();
+      const Comp = (): null => {
+        radiusAxisSpy(useAppSelector(state => selectRadiusAxis(state, 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <RadarChart width={1} height={2}>
+          <PolarRadiusAxis />
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+      const expectedAxis: RadiusAxisSettings = {
+        id: 0,
+      };
+      expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
+
+      rerender(
+        <RadarChart width={1} height={2}>
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+      expect(radiusAxisSpy).toHaveBeenLastCalledWith(undefined);
+      expect(radiusAxisSpy).toHaveBeenCalledTimes(5);
     });
   });
 });
