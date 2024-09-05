@@ -1,4 +1,4 @@
-import React, { FunctionComponent, PureComponent, ReactElement } from 'react';
+import React, { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
@@ -7,16 +7,18 @@ import { useMaybePolarRadiusAxis } from '../context/chartLayoutContext';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
-import { polarToCartesian, getTickClassName } from '../util/PolarUtils';
+import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
 import {
-  BaseAxisProps,
-  TickItem,
   adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
+  BaseAxisProps,
   Coordinate,
+  PresentationAttributesAdaptChildEvent,
+  TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicksOfAxis } from '../util/ChartUtils';
+import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
+import { useAppDispatch } from '../state/hooks';
 
 type PolarRadiusViewBox = {
   cx: number;
@@ -40,6 +42,17 @@ export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
 export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PolarRadiusAxisProps;
 
 const AXIS_TYPE = 'radiusAxis';
+
+function SetRadiusAxisSettings(settings: RadiusAxisSettings): null {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(addRadiusAxis(settings));
+    return () => {
+      dispatch(removeRadiusAxis(settings));
+    };
+  });
+  return null;
+}
 
 export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { radiusAxisId } = defaultsAndInputs;
@@ -189,7 +202,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
   static axisType = AXIS_TYPE;
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     type: 'number',
     radiusAxisId: 0,
     cx: 0,
@@ -206,6 +219,22 @@ export class PolarRadiusAxis extends PureComponent<Props> {
   };
 
   render() {
-    return <PolarRadiusAxisWrapper {...this.props} />;
+    return (
+      <>
+        <SetRadiusAxisSettings
+          id={this.props.radiusAxisId}
+          scale={this.props.scale}
+          type={this.props.type}
+          dataKey={this.props.dataKey}
+          unit={undefined}
+          name={this.props.name}
+          allowDuplicatedCategory={this.props.allowDuplicatedCategory}
+          allowDataOverflow={this.props.allowDataOverflow}
+          reversed={this.props.reversed}
+          includeHidden={this.props.includeHidden}
+        />
+        <PolarRadiusAxisWrapper {...this.props} />
+      </>
+    );
   }
 }

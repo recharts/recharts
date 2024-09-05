@@ -29,8 +29,8 @@ import {
 } from '../../util/types';
 import {
   AxisId,
-  CartesianAxisSettings,
   BaseCartesianAxis,
+  CartesianAxisSettings,
   XAxisOrientation,
   XAxisSettings,
   YAxisOrientation,
@@ -57,13 +57,14 @@ import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap } from './rootPropsSelectors';
+import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
 /**
- * X, Y, and Z axes all have domain and range and scale and associated settings
+ * angle, radius, X, Y, and Z axes all have domain and range and scale and associated settings
  */
-type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis';
+type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis';
 
 /**
  * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
@@ -183,6 +184,12 @@ export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, 
     }
     case 'zAxis': {
       return selectZAxisSettings(state, axisId);
+    }
+    case 'angleAxis': {
+      return selectAngleAxis(state, axisId);
+    }
+    case 'radiusAxis': {
+      return selectRadiusAxis(state, axisId);
     }
     default:
       throw new Error(`Unexpected axis type: ${axisType}`);

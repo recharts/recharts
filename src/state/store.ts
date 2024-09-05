@@ -12,10 +12,12 @@ import { referenceElementsReducer } from './referenceElementsSlice';
 import { brushReducer } from './brushSlice';
 import { legendReducer } from './legendSlice';
 import { rootPropsReducer } from './rootPropsSlice';
+import { polarAxisReducer } from './polarAxisSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
   cartesianAxis: cartesianAxisReducer,
+  polarAxis: polarAxisReducer,
   brush: brushReducer,
   chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,

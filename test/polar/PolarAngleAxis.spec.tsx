@@ -1,9 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { PolarAngleAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
+import { describe, expect, it, test, vi } from 'vitest';
+import { Customized, PolarAngleAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
 import { TickItem } from '../../src/util/types';
 import { exampleRadarData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
+import { useAppSelector } from '../../src/state/hooks';
+import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
+import { selectAngleAxis } from '../../src/state/selectors/polarAxisSelectors';
+import { selectBaseAxis } from '../../src/state/selectors/axisSelectors';
+import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -579,6 +585,83 @@ describe('<PolarAngleAxis />', () => {
           y: '315.6335681081149',
         },
       ]);
+    });
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux store, and remove it when component is removed', () => {
+      const angleAxisSpy = vi.fn();
+      const Comp = (): null => {
+        angleAxisSpy(useAppSelector(state => selectAngleAxis(state, 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <RadarChart width={1} height={2}>
+          <PolarAngleAxis />
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+      const expectedAxis: AngleAxisSettings = {
+        allowDataOverflow: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        type: 'category',
+        unit: undefined,
+        id: 0,
+      };
+      expect(angleAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
+
+      rerender(
+        <RadarChart width={1} height={2}>
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+      expect(angleAxisSpy).toHaveBeenLastCalledWith(undefined);
+      expect(angleAxisSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it('should select angle axis settings', () => {
+      const axisSettingsSpy = vi.fn();
+      const Comp = (): null => {
+        axisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'angleAxis', 'angle-id')));
+        return null;
+      };
+      render(
+        <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" angleAxisId="angle-id" />
+          <PolarAngleAxis
+            dataKey="value"
+            allowDuplicatedCategory={false}
+            angleAxisId="angle-id"
+            id="html-id"
+            name="angle-name"
+            reversed
+            scale="log"
+            // why does AngleAxis not support unit?
+            // unit="cm"
+          />
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      const expectedSettings: BaseCartesianAxis = {
+        allowDataOverflow: false,
+        allowDuplicatedCategory: false,
+        dataKey: 'value',
+        id: 'angle-id',
+        includeHidden: false,
+        name: 'angle-name',
+        reversed: true,
+        scale: 'log',
+        type: 'category',
+        unit: undefined,
+      };
+      expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
+      expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
