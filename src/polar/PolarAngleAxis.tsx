@@ -6,15 +6,16 @@ import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
 import { Text } from '../component/Text';
 import {
-  TickItem,
   adaptEventsOfChild,
-  PresentationAttributesAdaptChildEvent,
-  DataKey,
   AxisDomain,
+  DataKey,
+  PresentationAttributesAdaptChildEvent,
+  ScaleType,
+  TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
-import { getTicksOfAxis } from '../util/ChartUtils';
+import { getTicksOfAxis, RechartsScale } from '../util/ChartUtils';
 import { useMaybePolarAngleAxis } from '../context/chartLayoutContext';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
 import { useAppDispatch } from '../state/hooks';
@@ -46,9 +47,13 @@ export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
   reversed: boolean;
   dataKey?: DataKey<any>;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  scale: ScaleType | RechartsScale;
+  type?: 'category';
 }
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGTextElement> & PolarAngleAxisProps;
+type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
+
+export type Props = AxisSvgProps & PolarAngleAxisProps;
 
 const AXIS_TYPE = 'angleAxis';
 
@@ -232,7 +237,19 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
     return (
       <>
-        <SetAngleAxisSettings id={this.props.angleAxisId} />
+        <SetAngleAxisSettings
+          id={this.props.angleAxisId}
+          scale={this.props.scale}
+          // AngleAxis is never numerical
+          type="category"
+          dataKey={this.props.dataKey}
+          unit={undefined}
+          name={this.props.name}
+          allowDuplicatedCategory={this.props.allowDuplicatedCategory}
+          allowDataOverflow={false}
+          reversed={this.props.reversed}
+          includeHidden={false}
+        />
         <PolarAngleAxisWrapper {...this.props} />
       </>
     );
