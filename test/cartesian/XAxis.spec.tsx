@@ -2314,10 +2314,11 @@ describe('<XAxis />', () => {
         });
 
         it('should render ticks from number, auto', () => {
+          const domain = [-55, 'auto'] as const;
           const spy = vi.fn();
           const { container } = render(
             <Component>
-              <XAxis dataKey="x" type="number" domain={[-55, 'auto']} allowDataOverflow={allowDataOverflow} />
+              <XAxis dataKey="x" type="number" domain={domain} allowDataOverflow={allowDataOverflow} />
               <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
             </Component>,
           );
