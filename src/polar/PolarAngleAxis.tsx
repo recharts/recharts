@@ -48,7 +48,7 @@ export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
   dataKey?: DataKey<any>;
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
   scale: ScaleType | RechartsScale;
-  type?: 'category';
+  type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number but it actually never behaves as a number
 }
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
