@@ -68,146 +68,156 @@ function SetAngleAxisSettings(settings: AngleAxisSettings): null {
   return null;
 }
 
+/**
+ * Calculate the coordinate of line endpoint
+ * @param data The data if there are ticks
+ * @param props axis settings
+ * @return (x1, y1): The point close to text,
+ *         (x2, y2): The point close to axis
+ */
+const getTickLineCoord = (
+  data: TickItem,
+  props: Props,
+): {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+} => {
+  const { cx, cy, radius, orientation, tickSize } = props;
+  const tickLineSize = tickSize || 8;
+  const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
+  const p2 = polarToCartesian(cx, cy, radius + (orientation === 'inner' ? -1 : 1) * tickLineSize, data.coordinate);
+
+  return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
+};
+
+/**
+ * Get the text-anchor of each tick
+ * @param data Data of ticks
+ * @param orientation of the axis ticks
+ * @return text-anchor
+ */
+const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): string => {
+  const cos = Math.cos(-data.coordinate * RADIAN);
+
+  if (cos > eps) {
+    return orientation === 'outer' ? 'start' : 'end';
+  }
+  if (cos < -eps) {
+    return orientation === 'outer' ? 'end' : 'start';
+  }
+  return 'middle';
+};
+
+type PropsWithTicks = Props & { ticks: ReadonlyArray<TickItem> };
+
+const AxisLine = (props: PropsWithTicks): ReactElement => {
+  const { cx, cy, radius, axisLineType, axisLine, ticks } = props;
+  if (!axisLine) {
+    return null;
+  }
+  const axisLineProps = {
+    ...filterProps(props, false),
+    fill: 'none',
+    ...filterProps(axisLine, false),
+  };
+
+  if (axisLineType === 'circle') {
+    return <Dot className="recharts-polar-angle-axis-line" {...axisLineProps} cx={cx} cy={cy} r={radius} />;
+  }
+  const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.coordinate));
+
+  return <Polygon className="recharts-polar-angle-axis-line" {...axisLineProps} points={points} />;
+};
+
+type TickItemProps = {
+  tick: PolarAngleAxisProps['tick'];
+  tickProps: any;
+  value: string | number;
+  allAxisProps: Props;
+};
+
+const TickItemText = ({ tick, allAxisProps, tickProps, value }: TickItemProps): ReactElement => {
+  if (!tick) {
+    return null;
+  }
+  if (React.isValidElement(tick)) {
+    return React.cloneElement(tick, tickProps);
+  }
+  if (isFunction(tick)) {
+    return tick(allAxisProps);
+  }
+  return (
+    <Text {...tickProps} className="recharts-polar-angle-axis-tick-value">
+      {value}
+    </Text>
+  );
+};
+
+const Ticks = (props: PropsWithTicks) => {
+  const { tick, tickLine, tickFormatter, stroke, ticks } = props;
+  const axisProps = filterProps(props, false);
+  const customTickProps = filterProps(tick, false);
+  const tickLineProps = {
+    ...axisProps,
+    fill: 'none',
+    ...filterProps(tickLine, false),
+  };
+
+  const items = ticks.map((entry, i) => {
+    const lineCoord = getTickLineCoord(entry, props);
+    const textAnchor = getTickTextAnchor(entry, props.orientation);
+    const tickProps = {
+      textAnchor,
+      ...axisProps,
+      stroke: 'none',
+      fill: stroke,
+      ...customTickProps,
+      index: i,
+      payload: entry,
+      x: lineCoord.x2,
+      y: lineCoord.y2,
+    };
+
+    return (
+      <Layer
+        className={clsx('recharts-polar-angle-axis-tick', getTickClassName(tick))}
+        key={`tick-${entry.coordinate}`}
+        {...adaptEventsOfChild(props, entry, i)}
+      >
+        {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
+        <TickItemText
+          tick={tick}
+          tickProps={tickProps}
+          value={tickFormatter ? tickFormatter(entry.value, i) : entry.value}
+          allAxisProps={props}
+        />
+      </Layer>
+    );
+  });
+
+  return <Layer className="recharts-polar-angle-axis-ticks">{items}</Layer>;
+};
+
 export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { angleAxisId } = defaultsAndInputs;
 
   const axisOptions = useMaybePolarAngleAxis(angleAxisId);
 
-  const props = { ...defaultsAndInputs, ...axisOptions };
-  const { axisLine } = props;
+  const props: Props = { ...defaultsAndInputs, ...axisOptions };
 
   // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
-  const ticks = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
+  const ticks: ReadonlyArray<TickItem> = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
 
   if (!ticks || !ticks.length) {
     return null;
   }
 
-  /**
-   * Calculate the coordinate of line endpoint
-   * @param data The data if there are ticks
-   * @return (x1, y1): The point close to text,
-   *         (x2, y2): The point close to axis
-   */
-  const getTickLineCoord = (
-    data: TickItem,
-  ): {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  } => {
-    const { cx, cy, radius, orientation, tickSize } = props;
-    const tickLineSize = tickSize || 8;
-    const p1 = polarToCartesian(cx, cy, radius, data.coordinate);
-    const p2 = polarToCartesian(cx, cy, radius + (orientation === 'inner' ? -1 : 1) * tickLineSize, data.coordinate);
-
-    return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y };
-  };
-
-  /**
-   * Get the text-anchor of each tick
-   * @param data Data of ticks
-   * @return text-anchor
-   */
-  const getTickTextAnchor = (data: TickItem): string => {
-    const { orientation } = props;
-    const cos = Math.cos(-data.coordinate * RADIAN);
-    let textAnchor;
-
-    if (cos > eps) {
-      textAnchor = orientation === 'outer' ? 'start' : 'end';
-    } else if (cos < -eps) {
-      textAnchor = orientation === 'outer' ? 'end' : 'start';
-    } else {
-      textAnchor = 'middle';
-    }
-
-    return textAnchor;
-  };
-
-  const renderAxisLine = (): ReactElement => {
-    const { cx, cy, radius, axisLineType } = props;
-    const axisLineProps = {
-      ...filterProps(props, false),
-      fill: 'none',
-      ...filterProps(axisLine, false),
-    };
-
-    if (axisLineType === 'circle') {
-      return <Dot className="recharts-polar-angle-axis-line" {...axisLineProps} cx={cx} cy={cy} r={radius} />;
-    }
-    const points = ticks.map(entry => polarToCartesian(cx, cy, radius, entry.coordinate));
-
-    return <Polygon className="recharts-polar-angle-axis-line" {...axisLineProps} points={points} />;
-  };
-
-  const renderTickItem = (
-    option: PolarAngleAxisProps['tick'],
-    tickProps: any,
-    value: string | number,
-  ): ReactElement => {
-    let tickItem;
-
-    if (React.isValidElement(option)) {
-      tickItem = React.cloneElement(option, tickProps);
-    } else if (isFunction(option)) {
-      tickItem = option(props);
-    } else {
-      tickItem = (
-        <Text {...tickProps} className="recharts-polar-angle-axis-tick-value">
-          {value}
-        </Text>
-      );
-    }
-
-    return tickItem;
-  };
-
-  const renderTicks = () => {
-    const { tick, tickLine, tickFormatter, stroke } = props;
-    const axisProps = filterProps(props, false);
-    const customTickProps = filterProps(tick, false);
-    const tickLineProps = {
-      ...axisProps,
-      fill: 'none',
-      ...filterProps(tickLine, false),
-    };
-
-    const items = ticks.map((entry, i) => {
-      const lineCoord = getTickLineCoord(entry);
-      const textAnchor = getTickTextAnchor(entry);
-      const tickProps = {
-        textAnchor,
-        ...axisProps,
-        stroke: 'none',
-        fill: stroke,
-        ...customTickProps,
-        index: i,
-        payload: entry,
-        x: lineCoord.x2,
-        y: lineCoord.y2,
-      };
-
-      return (
-        <Layer
-          className={clsx('recharts-polar-angle-axis-tick', getTickClassName(tick))}
-          key={`tick-${entry.coordinate}`}
-          {...adaptEventsOfChild(props, entry, i)}
-        >
-          {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
-          {tick && renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
-        </Layer>
-      );
-    });
-
-    return <Layer className="recharts-polar-angle-axis-ticks">{items}</Layer>;
-  };
-
   return (
     <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
-      {axisLine && renderAxisLine()}
-      {renderTicks()}
+      <AxisLine {...props} ticks={ticks} />
+      <Ticks {...props} ticks={ticks} />
     </Layer>
   );
 };
