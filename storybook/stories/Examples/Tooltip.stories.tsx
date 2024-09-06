@@ -379,7 +379,7 @@ export const TooltipWithPortal = {
           <LineChart data={pageData}>
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
-            {portalRef && <Tooltip {...args} portal={portalRef} />}
+            {portalRef && <Tooltip {...args} portal={portalRef} wrapperStyle={{ width: '25%', marginLeft: 10 }} />}
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -390,6 +390,10 @@ export const TooltipWithPortal = {
           }}
         >
           <p>Inspect the resulting HTML to see that the Tooltip element is rendered according to the portal ref.</p>
+          <p>
+            You now control the container the Tooltip renders in, as well as style attributes such as width, height,
+            etc. Those can be managed via the Tooltip wrapperStyle prop.
+          </p>
           {/* The Tooltip will render here */}
         </div>
       </>

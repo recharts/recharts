@@ -432,6 +432,44 @@ describe('Tooltip visibility', () => {
           container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
         ).toBeVisible();
       });
+
+      it('should keep custom portal visible when active is true after mouseOut, should no longer have absolute styles', () => {
+        function Example() {
+          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+          return (
+            <>
+              <Wrapper>
+                <Tooltip portal={portalRef} active />
+              </Wrapper>
+              <div
+                data-testid="my-custom-portal-target"
+                ref={node => {
+                  if (portalRef == null && node != null) {
+                    setPortalRef(node);
+                  }
+                }}
+              />
+            </>
+          );
+        }
+        const { container } = render(<Example />);
+        showTooltip(container, mouseHoverSelector);
+
+        const tooltipWrapper = container.querySelector('.recharts-tooltip-wrapper');
+
+        expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
+        expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+
+        fireEvent.mouseLeave(container, mouseHoverSelector);
+
+        expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
+        expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+
+        expect(
+          container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
+        ).toBeVisible();
+      });
     });
 
     describe('active prop', () => {

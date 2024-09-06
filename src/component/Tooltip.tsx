@@ -207,6 +207,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       wrapperStyle={wrapperStyle}
       lastBoundingBox={lastBoundingBox}
       innerRef={updateBoundingBox}
+      hasPortalFromProps={Boolean(portalFromProps)}
     >
       {renderContent(content, {
         ...props,
