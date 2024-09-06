@@ -113,8 +113,13 @@ const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): s
   return textAnchor;
 };
 
-const renderAxisLine = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
-  const { cx, cy, radius, axisLineType, axisLine } = props;
+type PropsWithTicks = Props & { ticks: ReadonlyArray<TickItem> };
+
+const AxisLine = (props: PropsWithTicks): ReactElement => {
+  const { cx, cy, radius, axisLineType, axisLine, ticks } = props;
+  if (!axisLine) {
+    return null;
+  }
   const axisLineProps = {
     ...filterProps(props, false),
     fill: 'none',
@@ -152,8 +157,8 @@ const renderTickItem = (
   return tickItem;
 };
 
-const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>) => {
-  const { tick, tickLine, tickFormatter, stroke } = props;
+const Ticks = (props: PropsWithTicks) => {
+  const { tick, tickLine, tickFormatter, stroke, ticks } = props;
   const axisProps = filterProps(props, false);
   const customTickProps = filterProps(tick, false);
   const tickLineProps = {
@@ -198,7 +203,6 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
   const axisOptions = useMaybePolarAngleAxis(angleAxisId);
 
   const props: Props = { ...defaultsAndInputs, ...axisOptions };
-  const { axisLine } = props;
 
   // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
   const ticks: ReadonlyArray<TickItem> = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
@@ -209,8 +213,8 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
 
   return (
     <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
-      {axisLine && renderAxisLine(props, ticks)}
-      {renderTicks(props, ticks)}
+      <AxisLine {...props} ticks={ticks} />
+      <Ticks {...props} ticks={ticks} />
     </Layer>
   );
 };
