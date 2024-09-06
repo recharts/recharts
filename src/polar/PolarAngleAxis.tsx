@@ -100,17 +100,14 @@ const getTickLineCoord = (
  */
 const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): string => {
   const cos = Math.cos(-data.coordinate * RADIAN);
-  let textAnchor;
 
   if (cos > eps) {
-    textAnchor = orientation === 'outer' ? 'start' : 'end';
-  } else if (cos < -eps) {
-    textAnchor = orientation === 'outer' ? 'end' : 'start';
-  } else {
-    textAnchor = 'middle';
+    return orientation === 'outer' ? 'start' : 'end';
   }
-
-  return textAnchor;
+  if (cos < -eps) {
+    return orientation === 'outer' ? 'end' : 'start';
+  }
+  return 'middle';
 };
 
 type PropsWithTicks = Props & { ticks: ReadonlyArray<TickItem> };
@@ -134,27 +131,28 @@ const AxisLine = (props: PropsWithTicks): ReactElement => {
   return <Polygon className="recharts-polar-angle-axis-line" {...axisLineProps} points={points} />;
 };
 
-const renderTickItem = (
-  option: PolarAngleAxisProps['tick'],
-  tickProps: any,
-  value: string | number,
-  props: Props,
-): ReactElement => {
-  let tickItem;
+type TickItemProps = {
+  tick: PolarAngleAxisProps['tick'];
+  tickProps: any;
+  value: string | number;
+  allAxisProps: Props;
+};
 
-  if (React.isValidElement(option)) {
-    tickItem = React.cloneElement(option, tickProps);
-  } else if (isFunction(option)) {
-    tickItem = option(props);
-  } else {
-    tickItem = (
-      <Text {...tickProps} className="recharts-polar-angle-axis-tick-value">
-        {value}
-      </Text>
-    );
+const TickItemText = ({ tick, allAxisProps, tickProps, value }: TickItemProps): ReactElement => {
+  if (!tick) {
+    return null;
   }
-
-  return tickItem;
+  if (React.isValidElement(tick)) {
+    return React.cloneElement(tick, tickProps);
+  }
+  if (isFunction(tick)) {
+    return tick(allAxisProps);
+  }
+  return (
+    <Text {...tickProps} className="recharts-polar-angle-axis-tick-value">
+      {value}
+    </Text>
+  );
 };
 
 const Ticks = (props: PropsWithTicks) => {
@@ -189,7 +187,12 @@ const Ticks = (props: PropsWithTicks) => {
         {...adaptEventsOfChild(props, entry, i)}
       >
         {tickLine && <line className="recharts-polar-angle-axis-tick-line" {...tickLineProps} {...lineCoord} />}
-        {tick && renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value, props)}
+        <TickItemText
+          tick={tick}
+          tickProps={tickProps}
+          value={tickFormatter ? tickFormatter(entry.value, i) : entry.value}
+          allAxisProps={props}
+        />
       </Layer>
     );
   });
