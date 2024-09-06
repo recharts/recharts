@@ -13,7 +13,7 @@ import {
   selectAngleAxisRangeWithReversed,
 } from '../../src/state/selectors/polarAxisSelectors';
 import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
-import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { selectAxisDomain, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -679,9 +679,11 @@ describe('<PolarAngleAxis />', () => {
     it('should select angle axis settings', () => {
       const axisSettingsSpy = vi.fn();
       const angleAxisRangeSpy = vi.fn();
+      const angleAxisDomainSpy = vi.fn();
       const Comp = (): null => {
         axisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 'angle-id')));
         angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
+        angleAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'angleAxis', 'angle-id')));
         return null;
       };
       render(
@@ -719,6 +721,9 @@ describe('<PolarAngleAxis />', () => {
 
       expect(angleAxisRangeSpy).toHaveBeenLastCalledWith([-270, 90]);
       expect(angleAxisRangeSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
+      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
