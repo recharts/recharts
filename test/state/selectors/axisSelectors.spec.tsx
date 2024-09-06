@@ -5,6 +5,8 @@ import { useAppSelector } from '../../../src/state/hooks';
 import {
   combineXAxisRange,
   implicitXAxis,
+  implicitYAxis,
+  implicitZAxis,
   mergeDomains,
   selectAllAppliedValues,
   selectAxisDomain,
@@ -55,6 +57,7 @@ import { AxisDomain } from '../../../src/util/types';
 import { ChartData } from '../../../src/state/chartDataSlice';
 import { setLegendSize } from '../../../src/state/legendSlice';
 import { setActiveMouseOverItemIndex } from '../../../src/state/tooltipSlice';
+import { implicitAngleAxis, implicitRadiusAxis } from '../../../src/state/selectors/polarAxisSelectors';
 
 const defaultAxisId: AxisId = 0;
 
@@ -208,10 +211,34 @@ describe('selectBaseAxis', () => {
     render(<Customized component={Comp} />);
   });
 
-  it('should return implicit axis when called with initial state', () => {
+  it('should return implicit XAxis when called with initial state', () => {
     const initialState: RechartsRootState = createRechartsStore().getState();
     const result = selectBaseAxis(initialState, 'xAxis', '0');
     expect(result).toBe(implicitXAxis);
+  });
+
+  it('should return implicit YAxis when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectBaseAxis(initialState, 'yAxis', '0');
+    expect(result).toBe(implicitYAxis);
+  });
+
+  it('should return implicit ZAxis when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectBaseAxis(initialState, 'zAxis', '0');
+    expect(result).toBe(implicitZAxis);
+  });
+
+  it('should return implicit PolarAngleAxis when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectBaseAxis(initialState, 'angleAxis', '0');
+    expect(result).toBe(implicitAngleAxis);
+  });
+
+  it('should return implicit RadiusAxis when called with initial state', () => {
+    const initialState: RechartsRootState = createRechartsStore().getState();
+    const result = selectBaseAxis(initialState, 'radiusAxis', '0');
+    expect(result).toBe(implicitRadiusAxis);
   });
 
   it('should be stable', () => {
