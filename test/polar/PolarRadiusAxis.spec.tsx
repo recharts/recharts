@@ -6,9 +6,12 @@ import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarCha
 import { TickItem } from '../../src/util/types';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
-import { selectRadiusAxis } from '../../src/state/selectors/polarAxisSelectors';
+import {
+  implicitRadiusAxis,
+  selectRadiusAxis,
+  selectRadiusAxisRangeWithReversed,
+} from '../../src/state/selectors/polarAxisSelectors';
 import { RadiusAxisSettings } from '../../src/state/polarAxisSlice';
-import { selectBaseAxis } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -481,18 +484,21 @@ describe('<PolarRadiusAxis />', () => {
           <Customized component={Comp} />
         </RadarChart>,
       );
-      expect(radiusAxisSpy).toHaveBeenLastCalledWith(undefined);
+      expect(radiusAxisSpy).toHaveBeenLastCalledWith(implicitRadiusAxis);
       expect(radiusAxisSpy).toHaveBeenCalledTimes(5);
     });
 
-    it('should select angle axis settings', () => {
+    it('should select radius axis settings', () => {
       const radiusAxisSpy = vi.fn();
+      const radiusAxisRangeSpy = vi.fn();
       const Comp = (): null => {
-        radiusAxisSpy(useAppSelector(state => selectBaseAxis(state, 'radiusAxis', 'radius-id')));
+        radiusAxisSpy(useAppSelector(state => selectRadiusAxis(state, 'radius-id')));
+        radiusAxisRangeSpy(useAppSelector(state => selectRadiusAxisRangeWithReversed(state, 'radius-id')));
         return null;
       };
       render(
-        <RadarChart width={1} height={2}>
+        <RadarChart width={300} height={200} data={exampleRadarData}>
+          <Radar dataKey="value" radiusAxisId="radius-id" />
           <PolarRadiusAxis
             allowDuplicatedCategory={false}
             type="category"
@@ -519,6 +525,8 @@ describe('<PolarRadiusAxis />', () => {
         id: 'radius-id',
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
+
+      expect(radiusAxisRangeSpy).toHaveBeenLastCalledWith([76, 0]);
     });
   });
 });

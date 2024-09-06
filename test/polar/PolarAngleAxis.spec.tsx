@@ -7,8 +7,11 @@ import { exampleRadarData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
-import { selectAngleAxis } from '../../src/state/selectors/polarAxisSelectors';
-import { selectBaseAxis } from '../../src/state/selectors/axisSelectors';
+import {
+  implicitAngleAxis,
+  selectAngleAxis,
+  selectAngleAxisRangeWithReversed,
+} from '../../src/state/selectors/polarAxisSelectors';
 import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
 
 type ExpectedAngleAxisTick = {
@@ -620,14 +623,16 @@ describe('<PolarAngleAxis />', () => {
           <Customized component={Comp} />
         </RadarChart>,
       );
-      expect(angleAxisSpy).toHaveBeenLastCalledWith(undefined);
+      expect(angleAxisSpy).toHaveBeenLastCalledWith(implicitAngleAxis);
       expect(angleAxisSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should select angle axis settings', () => {
       const axisSettingsSpy = vi.fn();
+      const angleAxisRangeSpy = vi.fn();
       const Comp = (): null => {
-        axisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'angleAxis', 'angle-id')));
+        axisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 'angle-id')));
+        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
         return null;
       };
       render(
@@ -662,6 +667,9 @@ describe('<PolarAngleAxis />', () => {
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
       expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisRangeSpy).toHaveBeenLastCalledWith([-270, 90]);
+      expect(angleAxisRangeSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
