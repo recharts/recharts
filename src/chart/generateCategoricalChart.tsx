@@ -106,6 +106,7 @@ import { RechartsWrapper } from './RechartsWrapper';
 import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
 import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
 import { ReportChartProps } from '../state/ReportChartProps';
+import { PolarChartOptions } from '../state/polarOptionsSlice';
 
 export interface MousePointer {
   pageX: number;
@@ -1965,8 +1966,17 @@ export const generateCategoricalChart = ({
       validateTooltipEventTypes,
       tooltipPayloadSearcher,
     };
+    let polarOptions: PolarChartOptions;
+    if (defaultProps?.startAngle != null) {
+      polarOptions = {
+        startAngle: defaultProps.startAngle,
+        endAngle: defaultProps.endAngle,
+        innerRadius: defaultProps.innerRadius,
+        outerRadius: defaultProps.outerRadius,
+      };
+    }
     return (
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.id ?? chartName}>
+      <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
         <ReportChartProps
           barCategoryGap={props.barCategoryGap ?? '10%'}
           maxBarSize={props.maxBarSize}

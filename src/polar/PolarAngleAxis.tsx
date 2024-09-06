@@ -240,8 +240,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
         <SetAngleAxisSettings
           id={this.props.angleAxisId}
           scale={this.props.scale}
-          // AngleAxis is never numerical
-          type="category"
+          type={this.props.type}
           dataKey={this.props.dataKey}
           unit={undefined}
           name={this.props.name}

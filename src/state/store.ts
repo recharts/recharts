@@ -13,6 +13,7 @@ import { brushReducer } from './brushSlice';
 import { legendReducer } from './legendSlice';
 import { rootPropsReducer } from './rootPropsSlice';
 import { polarAxisReducer } from './polarAxisSlice';
+import { polarOptionsReducer } from './polarOptionsSlice';
 
 const rootReducer = combineReducers({
   axis: axisReducer,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   layout: chartLayoutReducer,
   legend: legendReducer,
   options: optionsReducer,
+  polarOptions: polarOptionsReducer,
   referenceElements: referenceElementsReducer,
   tooltip: tooltipReducer,
   rootProps: rootPropsReducer,

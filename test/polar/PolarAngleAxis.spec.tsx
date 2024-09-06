@@ -7,9 +7,13 @@ import { exampleRadarData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
-import { selectAngleAxis } from '../../src/state/selectors/polarAxisSelectors';
-import { selectBaseAxis } from '../../src/state/selectors/axisSelectors';
+import {
+  implicitAngleAxis,
+  selectAngleAxis,
+  selectAngleAxisRangeWithReversed,
+} from '../../src/state/selectors/polarAxisSelectors';
 import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
+import { selectAxisDomain, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -151,8 +155,8 @@ describe('<PolarAngleAxis />', () => {
     expectAngleAxisTicks(container, []);
   });
 
-  describe('Compatible charts', () => {
-    test('Renders polar angle axis with RadarChart', () => {
+  describe('in RadarChart', () => {
+    test('Renders ticks', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <Radar dataKey="value" />
@@ -452,6 +456,31 @@ describe('<PolarAngleAxis />', () => {
       ]);
     });
 
+    test.each([
+      { axisType: 'number', expectedScale: 'linear' },
+      { axisType: 'category', expectedScale: 'band' },
+      { axisType: undefined, expectedScale: 'band' },
+    ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        return null;
+      };
+
+      render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="uv" />
+          <PolarAngleAxis dataKey="uv" type={axisType} />
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('in RadialBarChart', () => {
     test('Renders polar angle axis with RadialBarChart', () => {
       const { container } = render(
         <RadialBarChart width={500} height={500} data={PageData}>
@@ -586,6 +615,29 @@ describe('<PolarAngleAxis />', () => {
         },
       ]);
     });
+
+    test.each([
+      { axisType: 'number', expectedScale: 'linear' },
+      { axisType: 'category', expectedScale: 'linear' },
+      { axisType: undefined, expectedScale: 'linear' },
+    ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" />
+          <PolarAngleAxis dataKey="uv" type={axisType} />
+          <Customized component={<Comp />} />
+        </RadialBarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+    });
   });
 
   describe('state integration', () => {
@@ -620,14 +672,18 @@ describe('<PolarAngleAxis />', () => {
           <Customized component={Comp} />
         </RadarChart>,
       );
-      expect(angleAxisSpy).toHaveBeenLastCalledWith(undefined);
+      expect(angleAxisSpy).toHaveBeenLastCalledWith(implicitAngleAxis);
       expect(angleAxisSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should select angle axis settings', () => {
       const axisSettingsSpy = vi.fn();
+      const angleAxisRangeSpy = vi.fn();
+      const angleAxisDomainSpy = vi.fn();
       const Comp = (): null => {
-        axisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'angleAxis', 'angle-id')));
+        axisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 'angle-id')));
+        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
+        angleAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'angleAxis', 'angle-id')));
         return null;
       };
       render(
@@ -662,6 +718,12 @@ describe('<PolarAngleAxis />', () => {
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
       expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisRangeSpy).toHaveBeenLastCalledWith([-270, 90]);
+      expect(angleAxisRangeSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
+      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

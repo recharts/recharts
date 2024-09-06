@@ -57,6 +57,7 @@
   "es6/state/rootPropsSlice.js",
   "es6/state/referenceElementsSlice.js",
   "es6/state/reduxDevtoolsJsonStringifyReplacer.js",
+  "es6/state/polarOptionsSlice.js",
   "es6/state/polarAxisSlice.js",
   "es6/state/optionsSlice.js",
   "es6/state/mouseEventsMiddleware.js",

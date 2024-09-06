@@ -57,6 +57,7 @@
   "lib/state/rootPropsSlice.js",
   "lib/state/referenceElementsSlice.js",
   "lib/state/reduxDevtoolsJsonStringifyReplacer.js",
+  "lib/state/polarOptionsSlice.js",
   "lib/state/polarAxisSlice.js",
   "lib/state/optionsSlice.js",
   "lib/state/mouseEventsMiddleware.js",

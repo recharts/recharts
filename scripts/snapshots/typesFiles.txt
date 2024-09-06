@@ -57,6 +57,7 @@
   "types/state/rootPropsSlice.d.ts",
   "types/state/referenceElementsSlice.d.ts",
   "types/state/reduxDevtoolsJsonStringifyReplacer.d.ts",
+  "types/state/polarOptionsSlice.d.ts",
   "types/state/polarAxisSlice.d.ts",
   "types/state/optionsSlice.d.ts",
   "types/state/mouseEventsMiddleware.d.ts",
