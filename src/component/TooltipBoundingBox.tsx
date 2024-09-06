@@ -102,7 +102,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       viewBox,
     });
 
-    // only
+    // do not use absolute styles if the user has passed a custom portal prop
     const positionStyles: CSSProperties = hasPortalFromProps
       ? {}
       : {
