@@ -846,20 +846,19 @@ export const selectRealScaleType = createSelector(
     layout: LayoutType,
     hasBar: boolean,
     chartType: string,
-    // axisType: XorYorZType,
+    axisType: XorYorZType,
   ): string | undefined => {
     if (axisConfig == null) {
       return undefined;
     }
     const { scale, type } = axisConfig;
     if (scale === 'auto') {
-      // TODO add support for polar charts
-      // if (layout === 'radial' && axisType === 'radiusAxis') {
-      //   return 'band';
-      // }
-      // if (layout === 'radial' && axisType === 'angleAxis') {
-      //   return 'linear';
-      // }
+      if (layout === 'radial' && axisType === 'radiusAxis') {
+        return 'band';
+      }
+      if (layout === 'radial' && axisType === 'angleAxis') {
+        return 'linear';
+      }
 
       if (
         type === 'category' &&

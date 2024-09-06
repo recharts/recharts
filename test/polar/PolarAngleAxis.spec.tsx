@@ -13,6 +13,7 @@ import {
   selectAngleAxisRangeWithReversed,
 } from '../../src/state/selectors/polarAxisSelectors';
 import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
+import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -154,8 +155,8 @@ describe('<PolarAngleAxis />', () => {
     expectAngleAxisTicks(container, []);
   });
 
-  describe('Compatible charts', () => {
-    test('Renders polar angle axis with RadarChart', () => {
+  describe('in RadarChart', () => {
+    test('Renders ticks', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <Radar dataKey="value" />
@@ -455,6 +456,31 @@ describe('<PolarAngleAxis />', () => {
       ]);
     });
 
+    test.each([
+      { axisType: 'number', expectedScale: 'linear' },
+      { axisType: 'category', expectedScale: 'band' },
+      { axisType: undefined, expectedScale: 'band' },
+    ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        return null;
+      };
+
+      render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="uv" />
+          <PolarAngleAxis dataKey="uv" type={axisType} />
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('in RadialBarChart', () => {
     test('Renders polar angle axis with RadialBarChart', () => {
       const { container } = render(
         <RadialBarChart width={500} height={500} data={PageData}>
@@ -588,6 +614,29 @@ describe('<PolarAngleAxis />', () => {
           y: '315.6335681081149',
         },
       ]);
+    });
+
+    test.each([
+      { axisType: 'number', expectedScale: 'linear' },
+      { axisType: 'category', expectedScale: 'linear' },
+      { axisType: undefined, expectedScale: 'linear' },
+    ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" />
+          <PolarAngleAxis dataKey="uv" type={axisType} />
+          <Customized component={<Comp />} />
+        </RadialBarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
     });
   });
 

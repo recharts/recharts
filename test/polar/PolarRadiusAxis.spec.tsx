@@ -12,6 +12,7 @@ import {
   selectRadiusAxisRangeWithReversed,
 } from '../../src/state/selectors/polarAxisSelectors';
 import { RadiusAxisSettings } from '../../src/state/polarAxisSlice';
+import { selectAxisDomain, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -349,47 +350,59 @@ describe('<PolarRadiusAxis />', () => {
 
     test('Renders categorical polar radius axis', () => {
       const { container } = render(
-        <RadialBarChart width={500} height={500} data={PageData}>
-          <RadialBar dataKey="uv" />
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="uv" />
           <PolarRadiusAxis dataKey="name" type="category" label="test" />
-        </RadialBarChart>,
+        </RadarChart>,
       );
 
       expectRadiusAxisTicks(container, [
         {
-          textContent: 'Page A',
-          transform: 'rotate(90, 266.3333333333333, 250)',
-          x: '266.3333333333333',
+          textContent: 'iPhone 3GS',
+          transform: 'rotate(90, 262.25, 250)',
+          x: '262.25',
           y: '250',
         },
         {
-          textContent: 'Page B',
-          transform: 'rotate(90, 299, 250)',
-          x: '299',
+          textContent: 'iPhone 4',
+          transform: 'rotate(90, 286.75, 250)',
+          x: '286.75',
           y: '250',
         },
         {
-          textContent: 'Page C',
-          transform: 'rotate(90, 331.66666666666663, 250)',
-          x: '331.66666666666663',
+          textContent: 'iPhone 4s',
+          transform: 'rotate(90, 311.25, 250)',
+          x: '311.25',
           y: '250',
         },
         {
-          textContent: 'Page D',
-          transform: 'rotate(90, 364.3333333333333, 250)',
-          x: '364.3333333333333',
+          textContent: 'iPhone 5',
+          transform: 'rotate(90, 335.75, 250)',
+          x: '335.75',
           y: '250',
         },
         {
-          textContent: 'Page E',
-          transform: 'rotate(90, 397, 250)',
-          x: '397',
+          textContent: 'iPhone 5s',
+          transform: 'rotate(90, 360.25, 250)',
+          x: '360.25',
           y: '250',
         },
         {
-          textContent: 'Page F',
-          transform: 'rotate(90, 429.66666666666663, 250)',
-          x: '429.66666666666663',
+          textContent: 'iPhone 6',
+          transform: 'rotate(90, 384.75, 250)',
+          x: '384.75',
+          y: '250',
+        },
+        {
+          textContent: 'iPhone 6s',
+          transform: 'rotate(90, 409.25, 250)',
+          x: '409.25',
+          y: '250',
+        },
+        {
+          textContent: 'iPhone 5se',
+          transform: 'rotate(90, 433.75, 250)',
+          x: '433.75',
           y: '250',
         },
       ]);
@@ -399,6 +412,25 @@ describe('<PolarRadiusAxis />', () => {
         x: '348',
         y: '250',
       });
+    });
+
+    it('defaults to linear scale', () => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
+        return null;
+      };
+
+      render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="uv" radiusAxisId="radius-id" />
+          <PolarRadiusAxis dataKey="uv" radiusAxisId="radius-id" />
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('linear');
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -450,6 +482,25 @@ describe('<PolarRadiusAxis />', () => {
         y: '250',
       });
     });
+
+    it('defaults to band scale', () => {
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="uv" radiusAxisId="radius-id" />
+          <PolarRadiusAxis dataKey="uv" radiusAxisId="radius-id" />
+          <Customized component={Comp} />
+        </RadialBarChart>,
+      );
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('band');
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+    });
   });
 
   describe('state integration', () => {
@@ -491,9 +542,11 @@ describe('<PolarRadiusAxis />', () => {
     it('should select radius axis settings', () => {
       const radiusAxisSpy = vi.fn();
       const radiusAxisRangeSpy = vi.fn();
+      const radiusAxisDomainSpy = vi.fn();
       const Comp = (): null => {
         radiusAxisSpy(useAppSelector(state => selectRadiusAxis(state, 'radius-id')));
         radiusAxisRangeSpy(useAppSelector(state => selectRadiusAxisRangeWithReversed(state, 'radius-id')));
+        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id')));
         return null;
       };
       render(
@@ -525,8 +578,37 @@ describe('<PolarRadiusAxis />', () => {
         id: 'radius-id',
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
+      expect(radiusAxisSpy).toHaveBeenCalledTimes(3);
 
       expect(radiusAxisRangeSpy).toHaveBeenLastCalledWith([76, 0]);
+      expect(radiusAxisRangeSpy).toHaveBeenCalledTimes(3);
+
+      expect(radiusAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
+      expect(radiusAxisDomainSpy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should select numerical radius axis domain', () => {
+      const radiusAxisDomainSpy = vi.fn();
+      const realScaleTypeSpy = vi.fn();
+      const Comp = (): null => {
+        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id')));
+        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
+        return null;
+      };
+
+      render(
+        <RadarChart width={300} height={200} data={exampleRadarData}>
+          <Radar dataKey="value" radiusAxisId="radius-id" />
+          <PolarRadiusAxis dataKey="value" radiusAxisId="radius-id" />
+          <Customized component={Comp} />
+        </RadarChart>,
+      );
+
+      expect(radiusAxisDomainSpy).toHaveBeenLastCalledWith([0, 999]);
+      expect(radiusAxisDomainSpy).toHaveBeenCalledTimes(3);
+
+      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('linear');
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
     });
   });
 });
