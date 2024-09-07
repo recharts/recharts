@@ -20,6 +20,7 @@ export type TooltipBoundingBoxProps = {
   wrapperStyle: CSSProperties;
   lastBoundingBox: BoundingBox;
   innerRef: SetBoundingBox;
+  hasPortalFromProps: boolean;
 };
 
 type State = {
@@ -84,6 +85,7 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       wrapperStyle,
       lastBoundingBox,
       innerRef,
+      hasPortalFromProps,
     } = this.props;
 
     const { cssClasses, cssProperties } = getTooltipTranslate({
@@ -100,14 +102,22 @@ export class TooltipBoundingBox extends PureComponent<TooltipBoundingBoxProps, S
       viewBox,
     });
 
+    // do not use absolute styles if the user has passed a custom portal prop
+    const positionStyles: CSSProperties = hasPortalFromProps
+      ? {}
+      : {
+          transition: isAnimationActive && active ? `transform ${animationDuration}ms ${animationEasing}` : undefined,
+          ...cssProperties,
+          pointerEvents: 'none',
+          visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        };
+
     const outerStyle: CSSProperties = {
-      transition: isAnimationActive && active ? `transform ${animationDuration}ms ${animationEasing}` : undefined,
-      ...cssProperties,
-      pointerEvents: 'none',
+      ...positionStyles,
       visibility: !this.state.dismissed && active && hasPayload ? 'visible' : 'hidden',
-      position: 'absolute',
-      top: 0,
-      left: 0,
       ...wrapperStyle,
     };
 

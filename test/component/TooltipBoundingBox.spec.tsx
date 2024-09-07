@@ -28,6 +28,7 @@ describe('TooltipBoundingBox', () => {
     useTranslate3d: false,
     viewBox: {},
     wrapperStyle: {},
+    hasPortalFromProps: false,
   };
   it('should render children when active prop is true', () => {
     render(<TooltipBoundingBox {...defaultProps} />);
