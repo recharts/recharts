@@ -95,6 +95,7 @@ const getNodesTree = (
   { nodes, links }: SankeyData,
   width: number,
   nodeWidth: number,
+  allowCutoff: boolean,
 ): { tree: SankeyNode[]; maxDepth: number } => {
   const tree = nodes.map((entry: SankeyNode, index: number) => {
     const result = searchTargetsAndSources(links, index);
@@ -121,7 +122,7 @@ const getNodesTree = (
     for (let i = 0, len = tree.length; i < len; i++) {
       const node = tree[i];
 
-      if (!node.targetNodes.length) {
+      if (!node.targetNodes.length && !allowCutoff) {
         node.depth = maxDepth;
       }
       node.x = node.depth * childWidth;
@@ -279,6 +280,7 @@ const computeData = ({
   nodeWidth,
   nodePadding,
   sort,
+  allowCutoff,
 }: {
   data: SankeyData;
   width: number;
@@ -287,12 +289,13 @@ const computeData = ({
   nodeWidth: number;
   nodePadding: number;
   sort: boolean;
+  allowCutoff: boolean;
 }): {
   nodes: SankeyNode[];
   links: SankeyLink[];
 } => {
   const { links } = data;
-  const { tree } = getNodesTree(data, width, nodeWidth);
+  const { tree } = getNodesTree(data, width, nodeWidth, allowCutoff);
   const depthTree = getDepthTree(tree);
   const newLinks = updateYOfTree(depthTree, height, nodePadding, links);
 
@@ -421,6 +424,7 @@ interface SankeyProps {
   onMouseEnter?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   onMouseLeave?: (item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) => void;
   sort?: boolean;
+  allowCutoff?: boolean;
 }
 
 type Props = SVGProps<SVGElement> & SankeyProps;
@@ -747,6 +751,7 @@ export class Sankey extends PureComponent<Props, State> {
     iterations: 32,
     margin: { top: 5, right: 5, bottom: 5, left: 5 },
     sort: true,
+    allowCutoff: false,
   };
 
   state: State = {
@@ -758,7 +763,7 @@ export class Sankey extends PureComponent<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort } = nextProps;
+    const { data, width, height, margin, iterations, nodeWidth, nodePadding, sort, allowCutoff } = nextProps;
 
     if (
       data !== prevState.prevData ||
@@ -780,6 +785,7 @@ export class Sankey extends PureComponent<Props, State> {
         nodeWidth,
         nodePadding,
         sort,
+        allowCutoff,
       });
 
       return {
