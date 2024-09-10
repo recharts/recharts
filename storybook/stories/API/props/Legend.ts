@@ -141,4 +141,15 @@ The exact behavior changes depending on \`align\` prop.`,
       category: 'General',
     },
   },
+  portal: {
+    description: `If portal is defined, then Legend will use this element as a target
+    for rendering using React Portal: https://react.dev/reference/react-dom/createPortal.
+    If this is undefined then Legend renders inside the recharts-wrapper element with absolute positioning.`,
+    table: {
+      category: 'Position',
+      type: {
+        summary: 'HTMLElement | null',
+      },
+    },
+  },
 };

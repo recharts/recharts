@@ -221,7 +221,7 @@ const TooltipProps: StorybookArgs = {
   portal: {
     description: `If portal is defined, then Tooltip will use this element as a target
     for rendering using React Portal: https://react.dev/reference/react-dom/createPortal.
-    If this is undefined then Tooltip renders inside the recharts-wrapper element.`,
+    If this is undefined then Tooltip renders inside the recharts-wrapper element with absolute positioning.`,
     table: {
       category: 'Position',
       type: {
