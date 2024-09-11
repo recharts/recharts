@@ -58,6 +58,7 @@ import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/Cartes
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap } from './rootPropsSelectors';
 import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
+import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -70,7 +71,9 @@ type XorYorZType = 'xAxis' | 'yAxis' | 'zAxis' | 'radiusAxis' | 'angleAxis';
  * X and Y axes have ticks. Z axis is never displayed and so it lacks ticks
  * and tick settings.
  */
-export type XorYType = 'xAxis' | 'yAxis';
+export type XorYType = 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
+
+export type AxisWithTicksSettings = XAxisSettings | YAxisSettings | AngleAxisSettings | RadiusAxisSettings;
 
 /**
  * If an axis is not explicitly defined as an element,
@@ -196,16 +199,9 @@ export const selectBaseAxis = (state: RechartsRootState, axisType: XorYorZType, 
   }
 };
 
-/**
- * Selects either an X or Y axis. Doesn't work with Z axis - for that, instead use selectBaseAxis.
- * @param state Root state
- * @param axisType xAxis | yAxis
- * @param axisId xAxisId | yAxisId
- * @returns axis settings object
- */
-export const selectAxisSettings = (
+const selectCartesianAxisSettings = (
   state: RechartsRootState,
-  axisType: XorYType,
+  axisType: 'xAxis' | 'yAxis',
   axisId: AxisId,
 ): XAxisSettings | YAxisSettings => {
   switch (axisType) {
@@ -220,9 +216,39 @@ export const selectAxisSettings = (
   }
 };
 
+/**
+ * Selects either an X or Y axis. Doesn't work with Z axis - for that, instead use selectBaseAxis.
+ * @param state Root state
+ * @param axisType xAxis | yAxis
+ * @param axisId xAxisId | yAxisId
+ * @returns axis settings object
+ */
+export const selectAxisSettings = (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+): AxisWithTicksSettings => {
+  switch (axisType) {
+    case 'xAxis': {
+      return selectXAxisSettings(state, axisId);
+    }
+    case 'yAxis': {
+      return selectYAxisSettings(state, axisId);
+    }
+    case 'angleAxis': {
+      return selectAngleAxis(state, axisId);
+    }
+    case 'radiusAxis': {
+      return selectRadiusAxis(state, axisId);
+    }
+    default:
+      throw new Error(`Unexpected axis type: ${axisType}`);
+  }
+};
+
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
-const pickAxisType = <T>(_state: RechartsRootState, axisType: T): T => axisType;
+export const pickAxisType = <T>(_state: RechartsRootState, axisType: T): T => axisType;
 const pickAxisId = (_state: RechartsRootState, _axisType: unknown, axisId: AxisId): AxisId => axisId;
 
 /**
@@ -797,7 +823,7 @@ export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => NumberDomain | CategoricalDomain = createSelector(
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
   [
     selectBaseAxis,
     selectChartLayout,
@@ -900,7 +926,7 @@ function getD3ScaleFromType(realScaleType: string | undefined) {
   return undefined;
 }
 
-function combineScaleFunction(
+export function combineScaleFunction(
   axis: BaseCartesianAxis,
   realScaleType: string | undefined,
   axisDomain: NumberDomain | CategoricalDomain,
@@ -920,35 +946,51 @@ function combineScaleFunction(
   return d3ScaleFunction.domain(axisDomain).range(axisRange);
 }
 
-export const selectNiceTicks = createSelector(
-  selectAxisDomain,
-  selectAxisSettings,
-  selectRealScaleType,
-  (axisDomain, axisSettings, realScaleType): ReadonlyArray<number> | undefined => {
-    const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
+const combineNiceTicks = (
+  axisDomain: NumberDomain | CategoricalDomain | undefined,
+  axisSettings: AxisWithTicksSettings,
+  realScaleType: string,
+  axisType: XorYType,
+): ReadonlyArray<number> | undefined => {
+  const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
 
-    if (realScaleType !== 'auto' && realScaleType !== 'linear') {
-      return undefined;
-    }
-
-    if (
-      axisSettings != null &&
-      Array.isArray(domainDefinition) &&
-      (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
-      isWellFormedNumberDomain(axisDomain)
-    ) {
-      return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
-    }
-
-    if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number' && axisDomain != null) {
-      return getTickValuesFixedDomain(axisDomain as NumberDomain, axisSettings.tickCount, axisSettings.allowDecimals);
-    }
-
+  if (
+    (realScaleType !== 'auto' && realScaleType !== 'linear') ||
+    axisType === 'angleAxis' ||
+    axisType === 'radiusAxis'
+  ) {
     return undefined;
-  },
+  }
+
+  if (
+    axisSettings != null &&
+    Array.isArray(domainDefinition) &&
+    (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
+    isWellFormedNumberDomain(axisDomain)
+  ) {
+    return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
+  }
+
+  if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number' && axisDomain != null) {
+    return getTickValuesFixedDomain(axisDomain as NumberDomain, axisSettings.tickCount, axisSettings.allowDecimals);
+  }
+
+  return undefined;
+};
+export const selectNiceTicks: (
+  state: RechartsRootState,
+  axisType: XorYType,
+  axisId: AxisId,
+) => ReadonlyArray<number> | undefined = createSelector(
+  [selectAxisDomain, selectAxisSettings, selectRealScaleType, pickAxisType],
+  combineNiceTicks,
 );
 
-export const selectAxisDomainIncludingNiceTicks = createSelector(
+export const selectAxisDomainIncludingNiceTicks: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => NumberDomain | CategoricalDomain = createSelector(
   selectBaseAxis,
   selectAxisDomain,
   selectNiceTicks,
@@ -981,8 +1023,8 @@ export const selectSmallestDistanceBetweenValues: (
   axisId: AxisId,
 ) => number | undefined = createSelector(
   selectAllAppliedValues,
-  selectAxisSettings,
-  (allDataSquished: AppliedChartData, axisSettings: CartesianAxisSettings): number | undefined => {
+  selectBaseAxis,
+  (allDataSquished: AppliedChartData, axisSettings: BaseCartesianAxis): number | undefined => {
     if (!axisSettings || axisSettings.type !== 'number') {
       return undefined;
     }
@@ -1424,9 +1466,9 @@ export const selectCartesianAxisSize = (
 export const selectDuplicateDomain = createSelector(
   selectChartLayout,
   selectAllAppliedValues,
-  selectAxisSettings,
+  selectBaseAxis,
   pickAxisType,
-  (chartLayout, appliedValues, axis, axisType) => {
+  (chartLayout, appliedValues, axis: BaseCartesianAxis, axisType): ReadonlyArray<unknown> | undefined => {
     if (axis == null) {
       return undefined;
     }
@@ -1445,7 +1487,7 @@ export const selectCategoricalDomain = createSelector(
   selectAllAppliedValues,
   selectAxisSettings,
   pickAxisType,
-  (layout, displayedData, axis, axisType) => {
+  (layout, displayedData, axis, axisType): ReadonlyArray<unknown> | undefined => {
     if (axis == null) {
       return undefined;
     }
@@ -1460,7 +1502,7 @@ export const selectCategoricalDomain = createSelector(
 
 export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(
   selectChartLayout,
-  selectAxisSettings,
+  selectCartesianAxisSettings,
   selectRealScaleType,
   selectAxisScale,
   selectDuplicateDomain,
@@ -1469,10 +1511,10 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
   selectNiceTicks,
   pickAxisType,
   (
-    layout,
-    axis,
-    realScaleType,
-    scale,
+    layout: LayoutType,
+    axis: XAxisSettings | YAxisSettings,
+    realScaleType: string,
+    scale: RechartsScale | undefined,
     duplicateDomain,
     categoricalDomain,
     axisRange,
@@ -1506,6 +1548,83 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
   },
 );
 
+export const combineAxisTicks = (
+  layout: LayoutType,
+  axis: AxisWithTicksSettings,
+  realScaleType: string,
+  scale: RechartsScale | undefined,
+  niceTicks: ReadonlyArray<number> | undefined,
+  axisRange: AxisRange | undefined,
+  duplicateDomain: ReadonlyArray<unknown> | undefined,
+  categoricalDomain: ReadonlyArray<unknown> | undefined,
+  axisType: XorYType,
+): ReadonlyArray<CartesianTickItem> | null => {
+  if (axis == null || scale == null) {
+    return undefined;
+  }
+
+  const isCategorical = isCategoricalAxis(layout, axisType);
+
+  const { type, ticks, tickCount } = axis;
+
+  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+
+  let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
+
+  offset =
+    axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
+
+  // The ticks set by user should only affect the ticks adjacent to axis line
+  if (ticks || niceTicks) {
+    const result = (ticks || niceTicks).map((entry: AxisTick): CartesianTickItem => {
+      const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
+
+      return {
+        // If the scaleContent is not a number, the coordinate will be NaN.
+        // That could be the case for example with a PointScale and a string as domain.
+        coordinate: scale(scaleContent) + offset,
+        value: entry,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      };
+    });
+
+    return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
+  }
+
+  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
+  if (isCategorical && categoricalDomain) {
+    return categoricalDomain.map(
+      (entry: any, index: number): CartesianTickItem => ({
+        coordinate: scale(entry) + offset,
+        value: entry,
+        index,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      }),
+    );
+  }
+
+  if (scale.ticks) {
+    return (
+      scale
+        .ticks(tickCount)
+        // @ts-expect-error why does the offset go here? The type does not require it
+        .map((entry: any): CartesianTickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+    );
+  }
+
+  // When axis has duplicated text, serial numbers are used to generate scale
+  return scale.domain().map(
+    (entry: any, index: number): CartesianTickItem => ({
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
+      // @ts-expect-error why does the offset go here? The type does not require it
+      offset,
+    }),
+  );
+};
 export const selectTicksOfAxis: (
   state: RechartsRootState,
   axisType: XorYType,
@@ -1523,83 +1642,7 @@ export const selectTicksOfAxis: (
     selectCategoricalDomain,
     pickAxisType,
   ],
-  (
-    layout,
-    axis,
-    realScaleType,
-    scale,
-    niceTicks,
-    axisRange,
-    duplicateDomain,
-    categoricalDomain,
-    axisType,
-  ): ReadonlyArray<CartesianTickItem> | null => {
-    if (axis == null || scale == null) {
-      return undefined;
-    }
-
-    const isCategorical = isCategoricalAxis(layout, axisType);
-
-    const { type, ticks, tickCount } = axis;
-
-    const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
-
-    let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
-
-    offset =
-      axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
-
-    // The ticks set by user should only affect the ticks adjacent to axis line
-    if (ticks || niceTicks) {
-      const result = (ticks || niceTicks).map((entry: AxisTick): CartesianTickItem => {
-        const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
-
-        return {
-          // If the scaleContent is not a number, the coordinate will be NaN.
-          // That could be the case for example with a PointScale and a string as domain.
-          coordinate: scale(scaleContent) + offset,
-          value: entry,
-          // @ts-expect-error why does the offset go here? The type does not require it
-          offset,
-        };
-      });
-
-      return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
-    }
-
-    // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-    if (isCategorical && categoricalDomain) {
-      return categoricalDomain.map(
-        (entry: any, index: number): CartesianTickItem => ({
-          coordinate: scale(entry) + offset,
-          value: entry,
-          index,
-          // @ts-expect-error why does the offset go here? The type does not require it
-          offset,
-        }),
-      );
-    }
-
-    if (scale.ticks) {
-      return (
-        scale
-          .ticks(tickCount)
-          // @ts-expect-error why does the offset go here? The type does not require it
-          .map((entry: any): CartesianTickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-      );
-    }
-
-    // When axis has duplicated text, serial numbers are used to generate scale
-    return scale.domain().map(
-      (entry: any, index: number): CartesianTickItem => ({
-        coordinate: scale(entry) + offset,
-        value: duplicateDomain ? duplicateDomain[entry] : entry,
-        index,
-        // @ts-expect-error why does the offset go here? The type does not require it
-        offset,
-      }),
-    );
-  },
+  combineAxisTicks,
 );
 
 export const selectTicksOfGraphicalItem: (
@@ -1617,7 +1660,7 @@ export const selectTicksOfGraphicalItem: (
     selectCategoricalDomain,
     pickAxisType,
   ],
-  (layout, axis, scale, axisRange, duplicateDomain, categoricalDomain, axisType) => {
+  (layout: LayoutType, axis, scale, axisRange, duplicateDomain, categoricalDomain, axisType) => {
     if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
       return null;
     }

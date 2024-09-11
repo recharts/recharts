@@ -9,6 +9,10 @@ import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
 
 export const implicitAngleAxis: AngleAxisSettings = {
+  allowDecimals: false,
+  tick: true,
+  tickCount: 5,
+  ticks: undefined,
   allowDataOverflow: false,
   allowDuplicatedCategory: true,
   dataKey: undefined,
@@ -22,6 +26,10 @@ export const implicitAngleAxis: AngleAxisSettings = {
 };
 
 export const implicitRadiusAxis: RadiusAxisSettings = {
+  allowDecimals: false,
+  tick: true,
+  tickCount: 5,
+  ticks: undefined,
   allowDataOverflow: false,
   allowDuplicatedCategory: true,
   dataKey: undefined,

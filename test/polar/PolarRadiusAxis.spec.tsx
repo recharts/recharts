@@ -518,15 +518,19 @@ describe('<PolarRadiusAxis />', () => {
       );
       const expectedAxis: RadiusAxisSettings = {
         allowDataOverflow: false,
+        allowDecimals: undefined,
         allowDuplicatedCategory: true,
         dataKey: undefined,
+        id: 0,
         includeHidden: undefined,
         name: undefined,
         reversed: undefined,
         scale: 'auto',
+        tick: true,
+        tickCount: 5,
+        ticks: undefined,
         type: 'number',
         unit: undefined,
-        id: 0,
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
 
@@ -549,6 +553,7 @@ describe('<PolarRadiusAxis />', () => {
         radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id')));
         return null;
       };
+      const exampleTicks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       render(
         <RadarChart width={300} height={200} data={exampleRadarData}>
           <Radar dataKey="value" radiusAxisId="radius-id" />
@@ -561,21 +566,30 @@ describe('<PolarRadiusAxis />', () => {
             reversed
             name="radius-name"
             dataKey="value"
+            tick={false}
+            // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+            ticks={exampleTicks}
+            tickCount={9}
+            allowDecimals
           />
           <Customized component={Comp} />
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
         allowDataOverflow: true,
+        allowDecimals: true,
         allowDuplicatedCategory: false,
         dataKey: 'value',
+        id: 'radius-id',
         includeHidden: undefined,
         name: 'radius-name',
         reversed: true,
         scale: 'log',
+        tick: false,
+        tickCount: 9,
+        ticks: exampleTicks,
         type: 'category',
         unit: undefined,
-        id: 'radius-id',
       };
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
       expect(radiusAxisSpy).toHaveBeenCalledTimes(3);
