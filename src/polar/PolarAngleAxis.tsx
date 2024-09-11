@@ -15,10 +15,11 @@ import {
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTickClassName, polarToCartesian } from '../util/PolarUtils';
-import { getTicksOfAxis, RechartsScale } from '../util/ChartUtils';
-import { useMaybePolarAngleAxis } from '../context/chartLayoutContext';
+import { RechartsScale } from '../util/ChartUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
+import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -204,12 +205,16 @@ const Ticks = (props: PropsWithTicks) => {
 export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { angleAxisId } = defaultsAndInputs;
 
-  const axisOptions = useMaybePolarAngleAxis(angleAxisId);
+  const viewBox = useAppSelector(selectPolarViewBox);
+  const scale = useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', angleAxisId));
+  const props: Props = {
+    ...defaultsAndInputs,
+    scale,
+    ...viewBox,
+    radius: viewBox.outerRadius,
+  };
 
-  const props: Props = { ...defaultsAndInputs, ...axisOptions };
-
-  // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
-  const ticks: ReadonlyArray<TickItem> = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId));
 
   if (!ticks || !ticks.length) {
     return null;
@@ -264,6 +269,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
           // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
           ticks={this.props.ticks}
           tick={this.props.tick}
+          domain={this.props.domain}
         />
         <PolarAngleAxisWrapper {...this.props} />
       </>

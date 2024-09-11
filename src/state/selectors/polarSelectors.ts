@@ -22,7 +22,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectStackOffsetType } from './selectors';
 import { getValueByDataKey } from '../../util/ChartUtils';
 
-type PolarAxisType = 'angleAxis' | 'radiusAxis';
+export type PolarAxisType = 'angleAxis' | 'radiusAxis';
 
 export const selectUnfilteredPolarItems = (state: RechartsRootState) => state.graphicalItems.polarItems;
 

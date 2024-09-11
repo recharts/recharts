@@ -115,6 +115,7 @@ describe('<ZAxis />', () => {
         </ScatterChart>,
       );
       const expected: ZAxisSettings = {
+        domain: undefined,
         allowDataOverflow: false,
         allowDuplicatedCategory: false,
         includeHidden: false,

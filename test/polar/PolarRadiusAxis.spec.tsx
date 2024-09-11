@@ -517,6 +517,7 @@ describe('<PolarRadiusAxis />', () => {
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
+        domain: undefined,
         allowDataOverflow: false,
         allowDecimals: undefined,
         allowDuplicatedCategory: true,
@@ -571,11 +572,13 @@ describe('<PolarRadiusAxis />', () => {
             ticks={exampleTicks}
             tickCount={9}
             allowDecimals
+            domain={[100, 500]}
           />
           <Customized component={Comp} />
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
+        domain: [100, 500],
         allowDataOverflow: true,
         allowDecimals: true,
         allowDuplicatedCategory: false,
