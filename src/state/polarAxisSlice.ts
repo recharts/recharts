@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import { AxisId, BaseCartesianAxis } from './cartesianAxisSlice';
+import { AxisId, BaseCartesianAxis, TicksSettings } from './cartesianAxisSlice';
 
-export type RadiusAxisSettings = BaseCartesianAxis;
+export type RadiusAxisSettings = BaseCartesianAxis & TicksSettings;
 
-export type AngleAxisSettings = BaseCartesianAxis;
+export type AngleAxisSettings = BaseCartesianAxis & TicksSettings;
 
 type PolarAxisState = {
   radiusAxis: Record<AxisId, RadiusAxisSettings>;

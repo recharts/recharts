@@ -35,29 +35,33 @@ export type BaseCartesianAxis = {
   includeHidden: boolean;
 };
 
+export type TicksSettings = {
+  allowDecimals: boolean;
+  tickCount: number;
+  /**
+   * Ticks can be any type when the axis is the type of category
+   * Ticks must be numbers when the axis is the type of number
+   */
+  ticks: ReadonlyArray<AxisTick> | undefined;
+  tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+};
+
 /**
  * These are the external props, visible for users as they set them using our public API.
  * There is all sorts of internal computed things based on these, but they will come through selectors.
  *
  * Properties shared between X and Y axes
  */
-export type CartesianAxisSettings = BaseCartesianAxis & {
-  domain: AxisDomain | undefined;
-  allowDecimals: boolean;
-  tickCount: number;
-  interval: AxisInterval;
-  mirror: boolean;
-  minTickGap: number;
-  angle: number;
-  /**
-   * Ticks can be any type when the axis is the type of category
-   * Ticks must be numbers when the axis is the type of number
-   */
-  ticks: ReadonlyArray<AxisTick> | undefined;
-  hide: boolean;
-  tickFormatter: TickFormatter | undefined;
-  tick: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
-};
+export type CartesianAxisSettings = BaseCartesianAxis &
+  TicksSettings & {
+    domain: AxisDomain | undefined;
+    interval: AxisInterval;
+    mirror: boolean;
+    minTickGap: number;
+    angle: number;
+    hide: boolean;
+    tickFormatter: TickFormatter | undefined;
+  };
 
 export type XAxisSettings = CartesianAxisSettings & {
   padding: XAxisPadding;

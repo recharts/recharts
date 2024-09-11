@@ -33,6 +33,7 @@ interface PropsInjectedFromRedux {
 }
 
 export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
+  allowDecimals?: boolean;
   domain?: AxisDomain;
   allowDuplicatedCategory?: boolean;
   angleAxisId?: string | number;
@@ -258,6 +259,11 @@ export class PolarAngleAxis extends PureComponent<Props> {
           allowDataOverflow={false}
           reversed={this.props.reversed}
           includeHidden={false}
+          allowDecimals={this.props.allowDecimals}
+          tickCount={this.props.tickCount}
+          // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+          ticks={this.props.ticks}
+          tick={this.props.tick}
         />
         <PolarAngleAxisWrapper {...this.props} />
       </>

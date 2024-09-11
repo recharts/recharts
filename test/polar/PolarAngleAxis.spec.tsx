@@ -12,8 +12,8 @@ import {
   selectAngleAxis,
   selectAngleAxisRangeWithReversed,
 } from '../../src/state/selectors/polarAxisSelectors';
-import { BaseCartesianAxis } from '../../src/state/cartesianAxisSlice';
-import { selectAxisDomain, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { selectAxisDomain, selectNiceTicks, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -456,6 +456,25 @@ describe('<PolarAngleAxis />', () => {
       ]);
     });
 
+    test('linear scale should produce niceTicks=undefined too because that is what the generator does', () => {
+      const niceTicksSpy = vi.fn();
+      const Comp = (): null => {
+        niceTicksSpy(useAppSelector(state => selectNiceTicks(state, 'angleAxis', 0)));
+        return null;
+      };
+
+      render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" />
+          <PolarAngleAxis dataKey="value" type="number" />
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      expect(niceTicksSpy).toHaveBeenLastCalledWith(undefined);
+      expect(niceTicksSpy).toHaveBeenCalledTimes(2);
+    });
+
     test.each([
       { axisType: 'number', expectedScale: 'linear' },
       { axisType: 'category', expectedScale: 'band' },
@@ -482,12 +501,22 @@ describe('<PolarAngleAxis />', () => {
 
   describe('in RadialBarChart', () => {
     test('Renders polar angle axis with RadialBarChart', () => {
+      const angleAxisDomainSpy = vi.fn();
+      const Comp = (): null => {
+        angleAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'angleAxis', 0)));
+        return null;
+      };
       const { container } = render(
         <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
           <PolarAngleAxis />
+          <Customized component={<Comp />} />
         </RadialBarChart>,
       );
+
+      // This fails because selectCartesianItemsSettings only works with cartesian items and not polar. TODO write a new selector
+      // expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
+      // expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
 
       expectAngleAxisTicks(container, [
         {
@@ -655,15 +684,19 @@ describe('<PolarAngleAxis />', () => {
       );
       const expectedAxis: AngleAxisSettings = {
         allowDataOverflow: false,
+        allowDecimals: undefined,
         allowDuplicatedCategory: true,
         dataKey: undefined,
+        id: 0,
         includeHidden: false,
         name: undefined,
         reversed: false,
         scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
         type: 'category',
         unit: undefined,
-        id: 0,
       };
       expect(angleAxisSpy).toHaveBeenLastCalledWith(expectedAxis);
 
@@ -680,12 +713,19 @@ describe('<PolarAngleAxis />', () => {
       const axisSettingsSpy = vi.fn();
       const angleAxisRangeSpy = vi.fn();
       const angleAxisDomainSpy = vi.fn();
+      const angleAxisScaleSpy = vi.fn();
+      const angleAxisTicksSpy = vi.fn();
+      const angleAxisNiceTicksSpy = vi.fn();
       const Comp = (): null => {
         axisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 'angle-id')));
         angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
         angleAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'angleAxis', 'angle-id')));
+        angleAxisScaleSpy(useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', 'angle-id')));
+        angleAxisTicksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 'angle-id')));
+        angleAxisNiceTicksSpy(useAppSelector(state => selectNiceTicks(state, 'angleAxis', 'angle-id')));
         return null;
       };
+      const exampleTicks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       render(
         <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
           <Radar dataKey="value" angleAxisId="angle-id" />
@@ -699,13 +739,19 @@ describe('<PolarAngleAxis />', () => {
             scale="log"
             // why does AngleAxis not support unit?
             // unit="cm"
+            // @ts-expect-error the type does not match. Is PolarAxis really expecting what it says?
+            ticks={exampleTicks}
+            tick={false}
+            allowDecimals
+            tickCount={19}
           />
           <Customized component={<Comp />} />
         </RadarChart>,
       );
 
-      const expectedSettings: BaseCartesianAxis = {
+      const expectedSettings: AngleAxisSettings = {
         allowDataOverflow: false,
+        allowDecimals: true,
         allowDuplicatedCategory: false,
         dataKey: 'value',
         id: 'angle-id',
@@ -713,6 +759,9 @@ describe('<PolarAngleAxis />', () => {
         name: 'angle-name',
         reversed: true,
         scale: 'log',
+        tick: false,
+        tickCount: 19,
+        ticks: exampleTicks,
         type: 'category',
         unit: undefined,
       };
@@ -724,6 +773,29 @@ describe('<PolarAngleAxis />', () => {
 
       expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
       expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisScaleSpy).toHaveBeenLastCalledWith(expect.any(Function));
+      expect(angleAxisScaleSpy).toHaveBeenCalledTimes(3);
+      // TODO this fails because PolarUtils calls checkDomainOfScale but selectors do not, fix
+      // const lastKnownScale = angleAxisScaleSpy.mock.calls[angleAxisScaleSpy.mock.calls.length - 1][0];
+      // expect(lastKnownScale.domain()).toEqual([420, 365]);
+
+      // expect(angleAxisTicksSpy).toHaveBeenLastCalledWith([
+      //   { coordinate: 15222.537988541328, value: 1, offset: -0 },
+      //   { coordinate: 13444.697559655799, value: 2, offset: -0 },
+      //   { coordinate: 12404.727576491747, value: 3, offset: -0 },
+      //   { coordinate: 11666.857130770273, value: 4, offset: -0 },
+      //   { coordinate: 11094.520348485423, value: 5, offset: -0 },
+      //   { coordinate: 10626.887147606221, value: 6, offset: -0 },
+      //   { coordinate: 10231.508909876538, value: 7, offset: -0 },
+      //   { coordinate: 9889.016701884744, value: 8, offset: -0 },
+      //   { coordinate: 9586.91716444217, value: 9, offset: -0 },
+      //   { coordinate: 9316.679919599894, value: 10, offset: -0 },
+      // ]);
+      // expect(angleAxisTicksSpy).toHaveBeenCalledTimes(3);
+
+      expect(angleAxisNiceTicksSpy).toHaveBeenLastCalledWith(undefined);
+      expect(angleAxisNiceTicksSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

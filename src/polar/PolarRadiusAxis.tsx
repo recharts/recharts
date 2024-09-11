@@ -232,6 +232,11 @@ export class PolarRadiusAxis extends PureComponent<Props> {
           allowDataOverflow={this.props.allowDataOverflow}
           reversed={this.props.reversed}
           includeHidden={this.props.includeHidden}
+          allowDecimals={this.props.allowDecimals}
+          tickCount={this.props.tickCount}
+          // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+          ticks={this.props.ticks}
+          tick={this.props.tick}
         />
         <PolarRadiusAxisWrapper {...this.props} />
       </>
