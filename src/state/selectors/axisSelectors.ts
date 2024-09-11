@@ -325,35 +325,32 @@ export const selectCartesianGraphicalItemsData: (
  *
  * This function will discard the original indexes, so it is also not useful for anything that depends on ordering.
  */
-export const selectDisplayedData: (
-  state: RechartsRootState,
-  axisType: XorYorZType,
-  axisId: AxisId,
-) => ChartData | undefined = createSelector(
-  selectCartesianGraphicalItemsData,
-  selectChartDataWithIndexes,
-  (graphicalItemsData: ChartData, { chartData = [], dataStartIndex, dataEndIndex }): ChartData | undefined => {
-    if (graphicalItemsData.length > 0) {
-      /*
-       * There is no slicing when data is defined on graphical items. Why?
-       * Because Brush ignores data defined on graphical items,
-       * and does not render.
-       * So Brush will never show up in a Scatter chart for example.
-       * This is something we will need to fix.
-       *
-       * Now, when the root chart data is not defined, the dataEndIndex is 0,
-       * which means the itemsData will be sliced to an empty array anyway.
-       * But that's an implementation detail, and we can fix that too.
-       *
-       * Also, in absence of Axis dataKey, we use the dataKey from each item, respectively.
-       * This is the usual pattern for numerical axis, that is the one where bars go up:
-       * users don't specify any dataKey by default and expect the axis to "just match the data".
-       */
-      return graphicalItemsData;
-    }
-    return chartData.slice(dataStartIndex, dataEndIndex + 1);
-  },
-);
+export const selectDisplayedData: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => ChartData =
+  createSelector(
+    selectCartesianGraphicalItemsData,
+    selectChartDataWithIndexes,
+    (graphicalItemsData: ChartData, { chartData = [], dataStartIndex, dataEndIndex }): ChartData => {
+      if (graphicalItemsData.length > 0) {
+        /*
+         * There is no slicing when data is defined on graphical items. Why?
+         * Because Brush ignores data defined on graphical items,
+         * and does not render.
+         * So Brush will never show up in a Scatter chart for example.
+         * This is something we will need to fix.
+         *
+         * Now, when the root chart data is not defined, the dataEndIndex is 0,
+         * which means the itemsData will be sliced to an empty array anyway.
+         * But that's an implementation detail, and we can fix that too.
+         *
+         * Also, in absence of Axis dataKey, we use the dataKey from each item, respectively.
+         * This is the usual pattern for numerical axis, that is the one where bars go up:
+         * users don't specify any dataKey by default and expect the axis to "just match the data".
+         */
+        return graphicalItemsData;
+      }
+      return chartData.slice(dataStartIndex, dataEndIndex + 1);
+    },
+  );
 
 /**
  * This selector will return all values with the appropriate dataKey applied on them.
@@ -361,10 +358,12 @@ export const selectDisplayedData: (
  *
  * This is an expensive selector - it will iterate all data and compute their value using the provided dataKey.
  */
-export const selectAllAppliedValues = createSelector(
-  selectDisplayedData,
-  selectBaseAxis,
-  selectCartesianItemsSettings,
+export const selectAllAppliedValues: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => AppliedChartData = createSelector(
+  [selectDisplayedData, selectBaseAxis, selectCartesianItemsSettings],
   (
     data: ChartData,
     axisSettings: CartesianAxisSettings,
@@ -779,38 +778,41 @@ const selectDomainDefinition: (
   axisId: AxisId,
 ) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
 
-const selectNumericalDomain: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => NumberDomain =
-  createSelector(
-    [
-      selectBaseAxis,
-      selectDomainDefinition,
-      selectDomainOfStackGroups,
-      selectAllAppliedNumericalValuesIncludingErrorValues,
-      selectReferenceElementsDomain,
-    ],
-    (
-      axisSettings,
+const selectNumericalDomain: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => NumberDomain | undefined = createSelector(
+  [
+    selectBaseAxis,
+    selectDomainDefinition,
+    selectDomainOfStackGroups,
+    selectAllAppliedNumericalValuesIncludingErrorValues,
+    selectReferenceElementsDomain,
+  ],
+  (
+    axisSettings,
+    domainDefinition,
+    domainOfStackGroups,
+    allDataWithErrorDomains,
+    referenceElementsDomain,
+  ): NumberDomain | undefined => {
+    const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
       domainDefinition,
-      domainOfStackGroups,
-      allDataWithErrorDomains,
-      referenceElementsDomain,
-    ): NumberDomain => {
-      const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
-        domainDefinition,
-        axisSettings.allowDataOverflow,
-      );
-      if (domainFromUserPreference != null) {
-        // We're done! No need to compute anything else.
-        return domainFromUserPreference;
-      }
+      axisSettings.allowDataOverflow,
+    );
+    if (domainFromUserPreference != null) {
+      // We're done! No need to compute anything else.
+      return domainFromUserPreference;
+    }
 
-      return parseNumericalUserDomain(
-        domainDefinition,
-        mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
-        axisSettings.allowDataOverflow,
-      );
-    },
-  );
+    return parseNumericalUserDomain(
+      domainDefinition,
+      mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
+      axisSettings.allowDataOverflow,
+    );
+  },
+);
 
 /**
  * Expand by design maps everything between 0 and 1,
@@ -834,14 +836,14 @@ export const selectAxisDomain: (
     selectNumericalDomain,
   ],
   (
-    axisSettings,
-    layout,
-    displayedData,
-    allAppliedValues,
-    stackOffsetType,
-    axisType,
-    numericalDomain,
-  ): NumberDomain | CategoricalDomain => {
+    axisSettings: BaseCartesianAxis,
+    layout: LayoutType,
+    displayedData: ChartData | undefined,
+    allAppliedValues: AppliedChartData,
+    stackOffsetType: StackOffsetType,
+    axisType: XorYorZType,
+    numericalDomain: NumberDomain | undefined,
+  ): NumberDomain | CategoricalDomain | undefined => {
     if (axisSettings == null) {
       return undefined;
     }
