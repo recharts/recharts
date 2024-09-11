@@ -39,6 +39,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { UpdateId } from '../context/chartLayoutContext';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -46,7 +47,12 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
   isActive: boolean;
 }
 
+/**
+ * Internal props, combination of external props + defaultProps + private Recharts state
+ */
 interface InternalFunnelProps {
+  animationId?: UpdateId;
+  trapezoids?: FunnelTrapezoidItem[];
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
@@ -58,26 +64,51 @@ interface InternalFunnelProps {
   tooltipType?: TooltipType;
   lastShapeType?: 'triangle' | 'rectangle';
   reversed?: boolean;
-
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-
   isAnimationActive?: boolean;
+  // TODO: this isn't used
   animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
   id?: string;
-  trapezoids?: FunnelTrapezoidItem[];
-  animationId?: number;
 }
 
-export type FunnelProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps & InternalFunnelProps;
+/**
+ * External props, intended for end users to fill in
+ */
+interface FunnelProps {
+  className?: string;
+  dataKey: DataKey<any>;
+  nameKey?: DataKey<any>;
+  data?: any[];
+  hide?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  legendType?: LegendType;
+  tooltipType?: TooltipType;
+  lastShapeType?: 'triangle' | 'rectangle';
+  reversed?: boolean;
+  onAnimationStart?: () => void;
+  onAnimationEnd?: () => void;
+  isAnimationActive?: boolean;
+  // TODO: this isn't used
+  animateNewValues?: boolean;
+  animationBegin?: number;
+  animationDuration?: AnimationDuration;
+  animationEasing?: AnimationTiming;
+  id?: string;
+}
+
+type FunnelSvgProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps;
+
+export type Props = FunnelSvgProps & FunnelProps & InternalFunnelProps;
 
 interface State {
   readonly prevTrapezoids?: FunnelTrapezoidItem[];
   readonly curTrapezoids?: FunnelTrapezoidItem[];
-  readonly prevAnimationId?: number;
+  readonly prevAnimationId?: UpdateId;
   readonly isAnimationFinished?: boolean;
 }
 
@@ -92,10 +123,10 @@ type FunnelTrapezoidsProps = {
   trapezoids: FunnelTrapezoidItem[];
   shape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  allOtherFunnelProps: FunnelProps;
+  allOtherFunnelProps: Props;
 };
 
-function getTooltipEntrySettings(props: FunnelProps): TooltipPayloadConfiguration {
+function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   const { dataKey, nameKey, trapezoids, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: trapezoids,
@@ -159,7 +190,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   });
 }
 
-export class Funnel extends PureComponent<FunnelProps, State> {
+export class Funnel extends PureComponent<Props, State> {
   static displayName = 'Funnel';
 
   static defaultProps = {
@@ -313,7 +344,7 @@ export class Funnel extends PureComponent<FunnelProps, State> {
 
   state: State = { isAnimationFinished: false };
 
-  static getDerivedStateFromProps(nextProps: FunnelProps, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,

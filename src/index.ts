@@ -100,7 +100,7 @@ export { ComposedChart } from './chart/ComposedChart';
 export { SunburstChart } from './chart/SunburstChart';
 
 export { Funnel } from './cartesian/Funnel';
-export type { FunnelProps } from './cartesian/Funnel';
+export type { Props as FunnelProps } from './cartesian/Funnel';
 export { FunnelChart } from './chart/FunnelChart';
 export { Trapezoid } from './shape/Trapezoid';
 export type { Props as TrapezoidProps } from './shape/Trapezoid';

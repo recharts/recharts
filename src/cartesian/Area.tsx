@@ -49,6 +49,7 @@ export type BaseValue = number | 'dataMin' | 'dataMax';
  */
 interface InternalAreaProps {
   activeDot: ActiveDotType;
+  // TODO: this isn't used
   animateNewValues?: boolean;
   animationBegin: number;
   animationDuration: AnimationDuration;
@@ -95,6 +96,7 @@ interface InternalAreaProps {
  */
 interface AreaProps {
   activeDot?: ActiveDotType;
+  // TODO: this isn't used
   animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
