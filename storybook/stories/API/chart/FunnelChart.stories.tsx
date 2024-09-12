@@ -24,7 +24,6 @@ export const Simple: Meta<FunnelProps> = {
             dataKey="value"
             stroke="#424242"
             isAnimationActive
-            labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
             shape={args.shape}

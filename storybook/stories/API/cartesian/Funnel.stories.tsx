@@ -60,7 +60,6 @@ export const API = {
             dataKey="value"
             stroke="#424242"
             isAnimationActive
-            labelLine
             lastShapeType="rectangle"
             orientation="horizontal"
           >
