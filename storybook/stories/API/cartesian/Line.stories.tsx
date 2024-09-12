@@ -2,7 +2,7 @@ import React from 'react';
 import { Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
+import { animateNewValues, AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
 import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -12,6 +12,7 @@ import { ResponsiveProps } from '../props/Tooltip';
 export default {
   argTypes: {
     ...EventHandlers,
+    animateNewValues,
     ...AnimationProps,
     legendType,
     ...GeneralProps,

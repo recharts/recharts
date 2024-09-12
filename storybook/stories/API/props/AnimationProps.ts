@@ -41,7 +41,6 @@ export const isAnimationActive: StorybookArg = {
  * use all of them.
  * */
 export const AnimationProps: StorybookArgs = {
-  animateNewValues,
   animationBegin,
   animationEasing,
   animationDuration,
