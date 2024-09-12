@@ -67,8 +67,6 @@ interface InternalFunnelProps {
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
   isAnimationActive?: boolean;
-  // TODO: this isn't used
-  animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
@@ -93,8 +91,6 @@ interface FunnelProps {
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
   isAnimationActive?: boolean;
-  // TODO: this isn't used
-  animateNewValues?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
