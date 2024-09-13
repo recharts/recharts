@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
@@ -14,43 +14,43 @@ const data = [
 
 describe('<Funnel />', () => {
   it('Render 5 Trapezoid in a simple funnel', () => {
-    render(
+    const { container } = render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} />
       </FunnelChart>,
     );
 
-    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
   it('Render 5 Trapezoid with animation in a simple funnel', () => {
-    render(
+    const { container } = render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} isAnimationActive />
       </FunnelChart>,
     );
 
-    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
   it("Don't render any Trapezoid when data is empty", () => {
-    render(
+    const { container } = render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={[]} />
       </FunnelChart>,
     );
 
-    expect(screen.queryAllByRole('img')).toHaveLength(0);
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(0);
   });
 
   it("Don't render any Trapezoid when set hide", () => {
-    render(
+    const { container } = render(
       <FunnelChart width={500} height={500}>
         <Funnel dataKey="value" data={data} hide />
       </FunnelChart>,
     );
 
-    expect(screen.queryAllByRole('img')).toHaveLength(0);
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(0);
   });
 
   it('active shape in simple funnel', () => {
@@ -85,10 +85,12 @@ describe('<Funnel />', () => {
     showTooltip(container, funnelChartMouseHoverTooltipSelector, debug);
 
     expect(container.querySelectorAll('.custom-active-shape')).toHaveLength(1);
+
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
   it('Renders funnel custom cell in simple FunnelChart', () => {
-    render(
+    const { container } = render(
       <FunnelChart width={500} height={300}>
         <Funnel dataKey="value" data={data} isAnimationActive={false}>
           {data.map(entry => (
@@ -98,7 +100,7 @@ describe('<Funnel />', () => {
       </FunnelChart>,
     );
 
-    expect(screen.queryAllByRole('img')).toHaveLength(data.length);
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
   it('Renders funnel custom label in simple FunnelChart', () => {
@@ -110,6 +112,32 @@ describe('<Funnel />', () => {
       </FunnelChart>,
     );
 
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
     expect(container.querySelectorAll('.custom-label')).toHaveLength(data.length);
+  });
+
+  it('should assert the differences between a normal and reversed Funnel', () => {
+    const { container, rerender } = render(
+      <FunnelChart width={500} height={300}>
+        <Funnel dataKey="value" data={data} isAnimationActive={false} />
+      </FunnelChart>,
+    );
+
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
+    const firstTrapezoid = container.getElementsByClassName('recharts-trapezoid')[0];
+    expect(firstTrapezoid.getAttribute('x')).toEqual('30');
+    expect(firstTrapezoid.getAttribute('y')).toEqual('5');
+
+    rerender(
+      <FunnelChart width={500} height={300}>
+        {/* add the reversed prop */}
+        <Funnel dataKey="value" data={data} isAnimationActive={false} reversed />
+      </FunnelChart>,
+    );
+
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
+    const firstTrapezoidReversed = container.getElementsByClassName('recharts-trapezoid')[0];
+    expect(firstTrapezoidReversed.getAttribute('x')).toEqual('73');
+    expect(firstTrapezoidReversed.getAttribute('y')).toEqual('229');
   });
 });
