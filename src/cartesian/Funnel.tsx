@@ -184,8 +184,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   });
 }
 
-const getRealWidthHeight = (item: Funnel, offset: ChartOffset) => {
-  const customWidth = item.props.width;
+const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, offset: ChartOffset) => {
   const { width, height, left, right, top, bottom } = offset;
   const realHeight = height;
   let realWidth = width;
@@ -420,6 +419,116 @@ function FunnelImpl(props: Props) {
   );
 }
 
+export function computeFunnelTrapezoids({
+  dataKey,
+  nameKey,
+  displayedData,
+  tooltipType,
+  lastShapeType,
+  reversed,
+  offset,
+  customWidth,
+}: {
+  dataKey: Props['dataKey'];
+  nameKey: Props['nameKey'];
+  offset: ChartOffset;
+  displayedData: RealFunnelData[];
+  tooltipType?: TooltipType;
+  lastShapeType?: Props['lastShapeType'];
+  reversed?: boolean;
+  customWidth?: number;
+}): FunnelComposedData {
+  const { left, top } = offset;
+  const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight({ customWidth }, offset);
+  const maxValue = Math.max.apply(
+    null,
+    displayedData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),
+  );
+  const len = displayedData.length;
+  const rowHeight = realHeight / len;
+  const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
+
+  let trapezoids = displayedData.map((entry: any, i: number): FunnelTrapezoidItem => {
+    const rawVal = getValueByDataKey(entry, dataKey, 0);
+    const name = getValueByDataKey(entry, nameKey, i);
+    let val = rawVal;
+    let nextVal;
+
+    if (i !== len - 1) {
+      nextVal = getValueByDataKey(displayedData[i + 1], dataKey, 0);
+
+      if (nextVal instanceof Array) {
+        [nextVal] = nextVal;
+      }
+    } else if (rawVal instanceof Array && rawVal.length === 2) {
+      [val, nextVal] = rawVal;
+    } else if (lastShapeType === 'rectangle') {
+      nextVal = val;
+    } else {
+      nextVal = 0;
+    }
+
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
+    const y = rowHeight * i + left + offsetY;
+    // @ts-expect-error getValueByDataKey does not validate the output type
+    const upperWidth = (val / maxValue) * realWidth;
+    const lowerWidth = (nextVal / maxValue) * realWidth;
+
+    const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
+    const tooltipPosition = {
+      x: x + upperWidth / 2,
+      y: y + rowHeight / 2,
+    };
+
+    return {
+      x,
+      y,
+      width: Math.max(upperWidth, lowerWidth),
+      upperWidth,
+      lowerWidth,
+      height: rowHeight,
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      name,
+      val,
+      tooltipPayload,
+      tooltipPosition,
+      ...omit(entry, 'width'),
+      payload: entry,
+      parentViewBox,
+      labelViewBox: {
+        x: x + (upperWidth - lowerWidth) / 4,
+        y,
+        width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
+        height: rowHeight,
+      },
+    };
+  });
+
+  if (reversed) {
+    trapezoids = trapezoids.map((entry: any, index: number) => {
+      const newY = entry.y - index * rowHeight + (len - 1 - index) * rowHeight;
+      return {
+        ...entry,
+        upperWidth: entry.lowerWidth,
+        lowerWidth: entry.upperWidth,
+        x: entry.x - (entry.lowerWidth - entry.upperWidth) / 2,
+        y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
+        tooltipPosition: { ...entry.tooltipPosition, y: newY + rowHeight / 2 },
+        labelViewBox: {
+          ...entry.labelViewBox,
+          y: newY,
+        },
+      };
+    });
+  }
+
+  return {
+    trapezoids,
+    data: displayedData,
+  };
+}
+
 export class Funnel extends PureComponent<Props> {
   static displayName = 'Funnel';
 
@@ -428,95 +537,16 @@ export class Funnel extends PureComponent<Props> {
   static getComposedData = ({ item, offset }: { item: Funnel; offset: ChartOffset }): FunnelComposedData => {
     const funnelData = getRealFunnelData(item);
     const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
-    const { left, top } = offset;
-    const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(item, offset);
-    const maxValue = Math.max.apply(
-      null,
-      funnelData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),
-    );
-    const len = funnelData.length;
-    const rowHeight = realHeight / len;
-    const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
-    let trapezoids = funnelData.map((entry: any, i: number): FunnelTrapezoidItem => {
-      const rawVal = getValueByDataKey(entry, dataKey, 0);
-      const name = getValueByDataKey(entry, nameKey, i);
-      let val = rawVal;
-      let nextVal;
-
-      if (i !== len - 1) {
-        nextVal = getValueByDataKey(funnelData[i + 1], dataKey, 0);
-
-        if (nextVal instanceof Array) {
-          [nextVal] = nextVal;
-        }
-      } else if (rawVal instanceof Array && rawVal.length === 2) {
-        [val, nextVal] = rawVal;
-      } else if (lastShapeType === 'rectangle') {
-        nextVal = val;
-      } else {
-        nextVal = 0;
-      }
-
-      // @ts-expect-error getValueByDataKey does not validate the output type
-      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
-      const y = rowHeight * i + left + offsetY;
-      // @ts-expect-error getValueByDataKey does not validate the output type
-      const upperWidth = (val / maxValue) * realWidth;
-      const lowerWidth = (nextVal / maxValue) * realWidth;
-
-      const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
-      const tooltipPosition = {
-        x: x + upperWidth / 2,
-        y: y + rowHeight / 2,
-      };
-
-      return {
-        x,
-        y,
-        width: Math.max(upperWidth, lowerWidth),
-        upperWidth,
-        lowerWidth,
-        height: rowHeight,
-        // @ts-expect-error getValueByDataKey does not validate the output type
-        name,
-        val,
-        tooltipPayload,
-        tooltipPosition,
-        ...omit(entry, 'width'),
-        payload: entry,
-        parentViewBox,
-        labelViewBox: {
-          x: x + (upperWidth - lowerWidth) / 4,
-          y,
-          width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
-          height: rowHeight,
-        },
-      };
+    return computeFunnelTrapezoids({
+      dataKey,
+      nameKey,
+      displayedData: funnelData,
+      tooltipType,
+      lastShapeType,
+      reversed,
+      offset,
     });
-
-    if (reversed) {
-      trapezoids = trapezoids.map((entry: any, index: number) => {
-        const newY = entry.y - index * rowHeight + (len - 1 - index) * rowHeight;
-        return {
-          ...entry,
-          upperWidth: entry.lowerWidth,
-          lowerWidth: entry.upperWidth,
-          x: entry.x - (entry.lowerWidth - entry.upperWidth) / 2,
-          y: entry.y - index * rowHeight + (len - 1 - index) * rowHeight,
-          tooltipPosition: { ...entry.tooltipPosition, y: newY + rowHeight / 2 },
-          labelViewBox: {
-            ...entry.labelViewBox,
-            y: newY,
-          },
-        };
-      });
-    }
-
-    return {
-      trapezoids,
-      data: funnelData,
-    };
   };
 
   render() {
