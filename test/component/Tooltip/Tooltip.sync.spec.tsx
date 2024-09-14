@@ -311,7 +311,7 @@ describe('Tooltip synchronization', () => {
         // target the first chart to show the tooltip
         showTooltip(wrapperOne, mouseHoverSelector, debug);
 
-        // target the second chart to see if it has the synchonized tooltip showing
+        // target the second chart to see if it has the synchronized tooltip showing
         const tooltip = getTooltip(wrapperTwo);
         expect(tooltip).toBeVisible();
 

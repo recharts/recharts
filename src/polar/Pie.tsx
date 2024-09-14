@@ -873,7 +873,13 @@ export class Pie extends PureComponent<Props, State> {
   render() {
     return (
       <>
-        <SetPolarGraphicalItem data={this.props.data} dataKey={this.props.dataKey} hide={this.props.hide} />
+        <SetPolarGraphicalItem
+          data={this.props.data}
+          dataKey={this.props.dataKey}
+          hide={this.props.hide}
+          angleAxisId={0}
+          radiusAxisId={0}
+        />
         <SetPiePayloadLegend {...this.props} />
         <PieImpl {...this.props} />
       </>

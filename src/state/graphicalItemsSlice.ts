@@ -30,14 +30,25 @@ export type ErrorBarsSettings = {
 
 export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
 
-export type CartesianGraphicalItemSettings = {
+export interface GraphicalItemSettings {
+  data: ChartData;
+  dataKey: DataKey<any> | undefined;
+  /**
+   * Why not just stop pushing the graphical items to state when they are hidden?
+   * Well some components decide to continue showing them anyway.
+   * Legend for example will keep showing a record for hidden graphical items.
+   * Stacks for example will ignore them.
+   */
+  hide: boolean;
+}
+
+export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
   type: CartesianGraphicalItemType;
   /**
    * Graphical items that are inside Brush panorama should not interact with the main area graphical items
    * and vice versa.
    */
   isPanorama: boolean;
-  data: ChartData;
   /**
    * Each of the graphical items explicitly says which axis it uses;
    * this property is optional for users but every graphical item must have a default,
@@ -46,7 +57,6 @@ export type CartesianGraphicalItemSettings = {
   xAxisId: AxisId;
   yAxisId: AxisId;
   zAxisId: AxisId;
-  dataKey: DataKey<any> | undefined;
   /**
    * ErrorBars are only rendered if they are explicitly set in the React tree, otherwise this will be an empty array.
    * One graphical item can have multiple error bars. This probably only makes sense in Scatter.
@@ -54,32 +64,14 @@ export type CartesianGraphicalItemSettings = {
   errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
   stackId: StackId | undefined;
   /**
-   * Why not just stop pushing the graphical items to state when they are hidden?
-   * Well some components decide to continue showing them anyway.
-   * Legend for example will keep showing a record for hidden graphical items.
-   * Stacks for example will ignore them.
-   */
-  hide: boolean;
-  /**
    * This property is only used in Bar and RadialBar items
    */
   barSize: number | string | undefined;
 };
 
-export type PolarGraphicalItemSettings = {
-  data: ChartData;
-  /**
-   * Each of the graphical items explicitly says which axis it uses;
-   * this property is optional for users but every graphical item must have a default,
-   * and it is required here.
-   */
-  dataKey: DataKey<any> | undefined;
-  /**
-   * Why not just stop pushing the graphical items to state when they are hidden?
-   * Well some components decide to continue showing them anyway.
-   * Legend for example will keep showing a record for hidden graphical items.
-   */
-  hide: boolean;
+export type PolarGraphicalItemSettings = GraphicalItemSettings & {
+  angleAxisId: AxisId;
+  radiusAxisId: AxisId;
 };
 
 export type GraphicalItemsState = {

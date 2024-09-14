@@ -1,8 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { vi } from 'vitest';
+import { describe, it, test, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { Surface, RadialBar } from '../../src';
+import { Customized, Surface, RadialBar, RadialBarChart } from '../../src';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
+import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 describe('<RadialBar />', () => {
   const data = [
@@ -60,5 +63,40 @@ describe('<RadialBar />', () => {
     expect(onMouseLeave).toHaveBeenCalled();
     await userEvent.click(sector);
     expect(onClick).toHaveBeenCalled();
+  });
+
+  describe('state integration', () => {
+    it('should reports its settings to Redux state, and remove it when removed from DOM', () => {
+      const polarItemsSpy = vi.fn();
+      const Comp = (): null => {
+        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <RadialBarChart width={100} height={100} data={data}>
+          <RadialBar dataKey="value" />
+          <Customized component={<Comp />} />
+        </RadialBarChart>,
+      );
+
+      const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        angleAxisId: 0,
+        data: undefined,
+        dataKey: 'value',
+        hide: false,
+        radiusAxisId: 0,
+      };
+      expect(polarItemsSpy).toHaveBeenLastCalledWith([expectedPolarItemsSettings]);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <RadialBarChart width={100} height={100} data={data}>
+          <Customized component={<Comp />} />
+        </RadialBarChart>,
+      );
+
+      expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
+    });
   });
 });

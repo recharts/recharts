@@ -240,7 +240,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
     tickSize: 8,
     tick: true,
     reversed: false,
-    allowDuplicatedCategory: true,
+    allowDuplicatedCategory: true, // if I set this to false then Tooltip synchronisation stops working in Radar, wtf
   };
 
   render(): React.ReactNode {
@@ -255,7 +255,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
           dataKey={this.props.dataKey}
           unit={undefined}
           name={this.props.name}
-          allowDuplicatedCategory={this.props.allowDuplicatedCategory}
+          allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
           allowDataOverflow={false}
           reversed={this.props.reversed}
           includeHidden={false}

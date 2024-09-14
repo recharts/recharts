@@ -45,9 +45,9 @@ import {
   numericalDomainSpecifiedWithoutRequiringData,
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
-import { AppliedChartData, ChartData } from '../chartDataSlice';
+import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
 import { getPercentValue, hasDuplicate, mathSign } from '../../util/DataUtils';
-import { CartesianGraphicalItemSettings, ErrorBarsSettings } from '../graphicalItemsSlice';
+import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
@@ -246,10 +246,15 @@ export const selectAxisSettings = (
   }
 };
 
+/**
+ * @deprecated - we can now read graphicalitems.type property instead of maintaining separate reducer. TODO replace
+ * @param state RechartsRootState
+ * @return boolean true if there is at least one Bar or RadialBar
+ */
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
 
 export const pickAxisType = <T>(_state: RechartsRootState, axisType: T): T => axisType;
-const pickAxisId = (_state: RechartsRootState, _axisType: unknown, axisId: AxisId): AxisId => axisId;
+export const pickAxisId = (_state: RechartsRootState, _axisType: unknown, axisId: AxisId): AxisId => axisId;
 
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID
@@ -276,19 +281,31 @@ function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
 
 export const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
 
+const selectAxisPredicate: (
+  _state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => (item: CartesianGraphicalItemSettings) => boolean = createSelector([pickAxisType, pickAxisId], itemAxisPredicate);
+
+export const combineGraphicalItemsSettings = <T extends GraphicalItemSettings>(
+  graphicalItems: ReadonlyArray<T>,
+  axisSettings: BaseCartesianAxis,
+  axisPredicate: (item: T) => boolean,
+) =>
+  graphicalItems.filter(axisPredicate).filter(item => {
+    if (axisSettings?.includeHidden === true) {
+      return true;
+    }
+    return !item.hide;
+  });
+
 export const selectCartesianItemsSettings: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
-  [selectUnfilteredCartesianItems, selectBaseAxis, pickAxisType, pickAxisId],
-  (cartesianItems, axisSettings: BaseCartesianAxis, axisType: XorYorZType, axisId: AxisId) =>
-    cartesianItems.filter(itemAxisPredicate(axisType, axisId)).filter(item => {
-      if (axisSettings?.includeHidden === true) {
-        return true;
-      }
-      return !item.hide;
-    }),
+  [selectUnfilteredCartesianItems, selectBaseAxis, selectAxisPredicate],
+  combineGraphicalItemsSettings,
 );
 
 const selectCartesianItemsSettingsExceptStacked: (
@@ -298,6 +315,12 @@ const selectCartesianItemsSettingsExceptStacked: (
 ) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(selectCartesianItemsSettings, cartesianItems =>
   cartesianItems.filter(item => item.stackId === undefined),
 );
+
+export const combineGraphicalItemsData = (cartesianItems: ReadonlyArray<GraphicalItemSettings>) =>
+  cartesianItems
+    .map(item => item.data)
+    .filter(Boolean)
+    .flat(1);
 
 /**
  * This is a "cheap" selector - it returns the data but doesn't iterate them, so it is not sensitive on the array length.
@@ -309,14 +332,32 @@ export const selectCartesianGraphicalItemsData: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => ChartData = createSelector(
-  selectCartesianItemsSettings,
-  (cartesianItems: ReadonlyArray<CartesianGraphicalItemSettings>) =>
-    cartesianItems
-      .map(item => item.data)
-      .filter(Boolean)
-      .flat(1),
-);
+) => ChartData = createSelector([selectCartesianItemsSettings], combineGraphicalItemsData);
+
+export const combineDisplayedData = (
+  graphicalItemsData: ChartData,
+  { chartData = [], dataStartIndex, dataEndIndex }: ChartDataState,
+): ChartData => {
+  if (graphicalItemsData.length > 0) {
+    /*
+     * There is no slicing when data is defined on graphical items. Why?
+     * Because Brush ignores data defined on graphical items,
+     * and does not render.
+     * So Brush will never show up in a Scatter chart for example.
+     * This is something we will need to fix.
+     *
+     * Now, when the root chart data is not defined, the dataEndIndex is 0,
+     * which means the itemsData will be sliced to an empty array anyway.
+     * But that's an implementation detail, and we can fix that too.
+     *
+     * Also, in absence of Axis dataKey, we use the dataKey from each item, respectively.
+     * This is the usual pattern for numerical axis, that is the one where bars go up:
+     * users don't specify any dataKey by default and expect the axis to "just match the data".
+     */
+    return graphicalItemsData;
+  }
+  return chartData.slice(dataStartIndex, dataEndIndex + 1);
+};
 
 /**
  * This selector will return all data there is in the chart: graphical items, chart root, all together.
@@ -326,32 +367,23 @@ export const selectCartesianGraphicalItemsData: (
  * This function will discard the original indexes, so it is also not useful for anything that depends on ordering.
  */
 export const selectDisplayedData: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => ChartData =
-  createSelector(
-    selectCartesianGraphicalItemsData,
-    selectChartDataWithIndexes,
-    (graphicalItemsData: ChartData, { chartData = [], dataStartIndex, dataEndIndex }): ChartData => {
-      if (graphicalItemsData.length > 0) {
-        /*
-         * There is no slicing when data is defined on graphical items. Why?
-         * Because Brush ignores data defined on graphical items,
-         * and does not render.
-         * So Brush will never show up in a Scatter chart for example.
-         * This is something we will need to fix.
-         *
-         * Now, when the root chart data is not defined, the dataEndIndex is 0,
-         * which means the itemsData will be sliced to an empty array anyway.
-         * But that's an implementation detail, and we can fix that too.
-         *
-         * Also, in absence of Axis dataKey, we use the dataKey from each item, respectively.
-         * This is the usual pattern for numerical axis, that is the one where bars go up:
-         * users don't specify any dataKey by default and expect the axis to "just match the data".
-         */
-        return graphicalItemsData;
-      }
-      return chartData.slice(dataStartIndex, dataEndIndex + 1);
-    },
-  );
+  createSelector([selectCartesianGraphicalItemsData, selectChartDataWithIndexes], combineDisplayedData);
 
+export const combineAppliedValues = (
+  data: ChartData,
+  axisSettings: BaseCartesianAxis,
+  items: ReadonlyArray<GraphicalItemSettings>,
+): AppliedChartData => {
+  if (axisSettings?.dataKey != null) {
+    return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
+  }
+  if (items.length > 0) {
+    return items
+      .map(item => item.dataKey)
+      .flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
+  }
+  return data.map(entry => ({ value: entry }));
+};
 /**
  * This selector will return all values with the appropriate dataKey applied on them.
  * Which dataKey is appropriate depends on where it is defined.
@@ -364,21 +396,7 @@ export const selectAllAppliedValues: (
   axisId: AxisId,
 ) => AppliedChartData = createSelector(
   [selectDisplayedData, selectBaseAxis, selectCartesianItemsSettings],
-  (
-    data: ChartData,
-    axisSettings: CartesianAxisSettings,
-    items: ReadonlyArray<CartesianGraphicalItemSettings>,
-  ): AppliedChartData => {
-    if (axisSettings?.dataKey != null) {
-      return data.map(item => ({ value: getValueByDataKey(item, axisSettings.dataKey) }));
-    }
-    if (items.length > 0) {
-      return items
-        .map(item => item.dataKey)
-        .flatMap(dataKey => data.map(entry => ({ value: getValueByDataKey(entry, dataKey) })));
-    }
-    return data.map(entry => ({ value: entry }));
-  },
+  combineAppliedValues,
 );
 
 export function isErrorBarRelevantForAxisType(axisType: XorYorZType, errorBar: ErrorBarsSettings): boolean {
@@ -392,7 +410,7 @@ export function isErrorBarRelevantForAxisType(axisType: XorYorZType, errorBar: E
   }
 }
 
-type AppliedChartDataWithErrorDomain = {
+export type AppliedChartDataWithErrorDomain = {
   /**
    * This is the value after the dataKey has been applied. Presumably a number? But no guarantees.
    */
@@ -535,7 +553,7 @@ export const selectDomainOfStackGroups = createSelector(
   selectStackGroups,
   selectChartDataWithIndexes,
   pickAxisType,
-  (stackGroups, { dataStartIndex, dataEndIndex }, axisType): NumberDomain => {
+  (stackGroups, { dataStartIndex, dataEndIndex }, axisType): NumberDomain | undefined => {
     if (axisType === 'zAxis') {
       // ZAxis ignores stacks
       return undefined;
@@ -767,17 +785,39 @@ const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
   selectReferenceLinesDomain,
   selectReferenceAreasDomain,
-  (dotsDomain, linesDomain, areasDomain): NumberDomain => {
+  (dotsDomain, linesDomain, areasDomain): NumberDomain | undefined => {
     return mergeDomains(dotsDomain, areasDomain, linesDomain);
   },
 );
 
-const selectDomainDefinition: (
+export const selectDomainDefinition: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
 ) => AxisDomain | undefined = createSelector([selectBaseAxis], getDomainDefinition);
 
+export const combineNumericalDomain = (
+  axisSettings: BaseCartesianAxis,
+  domainDefinition: AxisDomain | undefined,
+  domainOfStackGroups: NumberDomain | undefined,
+  allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
+  referenceElementsDomain: NumberDomain | undefined,
+): NumberDomain | undefined => {
+  const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
+    domainDefinition,
+    axisSettings.allowDataOverflow,
+  );
+  if (domainFromUserPreference != null) {
+    // We're done! No need to compute anything else.
+    return domainFromUserPreference;
+  }
+
+  return parseNumericalUserDomain(
+    domainDefinition,
+    mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
+    axisSettings.allowDataOverflow,
+  );
+};
 const selectNumericalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
@@ -790,28 +830,7 @@ const selectNumericalDomain: (
     selectAllAppliedNumericalValuesIncludingErrorValues,
     selectReferenceElementsDomain,
   ],
-  (
-    axisSettings,
-    domainDefinition,
-    domainOfStackGroups,
-    allDataWithErrorDomains,
-    referenceElementsDomain,
-  ): NumberDomain | undefined => {
-    const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
-      domainDefinition,
-      axisSettings.allowDataOverflow,
-    );
-    if (domainFromUserPreference != null) {
-      // We're done! No need to compute anything else.
-      return domainFromUserPreference;
-    }
-
-    return parseNumericalUserDomain(
-      domainDefinition,
-      mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
-      axisSettings.allowDataOverflow,
-    );
-  },
+  combineNumericalDomain,
 );
 
 /**
@@ -820,6 +839,37 @@ const selectNumericalDomain: (
  * See https://d3js.org/d3-shape/stack#stack-offsets
  */
 const expandDomain: NumberDomain = [0, 1];
+
+export const combineAxisDomain = (
+  axisSettings: BaseCartesianAxis,
+  layout: LayoutType,
+  displayedData: ChartData | undefined,
+  allAppliedValues: AppliedChartData,
+  stackOffsetType: StackOffsetType,
+  axisType: XorYorZType,
+  numericalDomain: NumberDomain | undefined,
+): NumberDomain | CategoricalDomain | undefined => {
+  if (axisSettings == null) {
+    return undefined;
+  }
+
+  const { dataKey, type } = axisSettings;
+  const isCategorical = isCategoricalAxis(layout, axisType);
+
+  if (isCategorical && dataKey == null) {
+    return range(0, displayedData.length);
+  }
+
+  if (type === 'category') {
+    return computeCategoricalDomain(allAppliedValues, axisSettings, isCategorical);
+  }
+
+  if (stackOffsetType === 'expand') {
+    return expandDomain;
+  }
+
+  return numericalDomain;
+};
 
 export const selectAxisDomain: (
   state: RechartsRootState,
@@ -835,36 +885,7 @@ export const selectAxisDomain: (
     pickAxisType,
     selectNumericalDomain,
   ],
-  (
-    axisSettings: BaseCartesianAxis,
-    layout: LayoutType,
-    displayedData: ChartData | undefined,
-    allAppliedValues: AppliedChartData,
-    stackOffsetType: StackOffsetType,
-    axisType: XorYorZType,
-    numericalDomain: NumberDomain | undefined,
-  ): NumberDomain | CategoricalDomain | undefined => {
-    if (axisSettings == null) {
-      return undefined;
-    }
-
-    const { dataKey, type } = axisSettings;
-    const isCategorical = isCategoricalAxis(layout, axisType);
-
-    if (isCategorical && dataKey == null) {
-      return range(0, displayedData.length);
-    }
-
-    if (type === 'category') {
-      return computeCategoricalDomain(allAppliedValues, axisSettings, isCategorical);
-    }
-
-    if (stackOffsetType === 'expand') {
-      return expandDomain;
-    }
-
-    return numericalDomain;
-  },
+  combineAxisDomain,
 );
 
 export const selectRealScaleType = createSelector(
