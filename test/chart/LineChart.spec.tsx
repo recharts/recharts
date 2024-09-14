@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import React, { FC, useState } from 'react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, MockInstance, test, vi } from 'vitest';
 import {
   Brush,
@@ -475,6 +475,41 @@ describe('<LineChart />', () => {
 
     const labels = container.querySelectorAll('.customized-label');
     expect(labels).toHaveLength(6);
+  });
+
+  test('Adds a tick and datapoint when adding values to data array in state', () => {
+    const Example = () => {
+      const [_data, setData] = useState(PageData);
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => {
+              setData(d => [...d, { name: 'Page X', uv: 23092, pv: 223, amt: 2322 }]);
+            }}
+          >
+            Click Me
+          </button>
+          <LineChart width={400} height={400} data={_data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <Line isAnimationActive={false} label dataKey="uv" stroke="#ff7300" />
+            <XAxis dataKey="name" />
+          </LineChart>
+        </>
+      );
+    };
+
+    const { container } = render(<Example />);
+
+    const labels = container.querySelectorAll('.recharts-label');
+    expect(labels).toHaveLength(6);
+
+    act(() => {
+      screen.getByText('Click Me').click();
+    });
+
+    expect(container.querySelectorAll('.recharts-label')).toHaveLength(7);
+
+    expect(screen.getByText('Page X')).toBeInTheDocument();
   });
 
   test('Renders 6 labels when label is a react element', () => {
