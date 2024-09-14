@@ -25,6 +25,7 @@ import type { Payload as LegendPayload } from '../component/DefaultLegendContent
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
+import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 
 interface RadarPoint {
   x: number;
@@ -400,19 +401,7 @@ class RadarWithState extends PureComponent<Props, State> {
     const { hide, className, points, isAnimationActive } = this.props;
 
     if (hide || !points || !points.length) {
-      /*
-       * This used to render `null`, but it should still set the legend because:
-       * 1. Hidden Radar still renders a legend item (albeit with inactive color)
-       * 2. if a dataKey does not match anything from props.data, then props.points are not defined.
-       * Legend still renders though! Behaviour (2) is arguably a bug - and we should be fixing it perhaps?
-       * But for now I will keep it as-is.
-       */
-      return (
-        <>
-          <SetRadarPayloadLegend {...this.props} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
 
     const { isAnimationFinished } = this.state;
@@ -421,8 +410,6 @@ class RadarWithState extends PureComponent<Props, State> {
     return (
       <>
         <Layer className={layerClass}>
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-          <SetRadarPayloadLegend {...this.props} />
           {this.renderPolygon()}
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
@@ -464,6 +451,19 @@ export class Radar extends PureComponent<Props> {
   };
 
   render() {
-    return <RadarImpl {...this.props} />;
+    return (
+      <>
+        <PolarGraphicalItemContext
+          data={undefined} // Radar does not have data prop, why?
+          dataKey={this.props.dataKey}
+          hide={this.props.hide}
+          angleAxisId={this.props.angleAxisId}
+          radiusAxisId={this.props.radiusAxisId}
+        />
+        <SetRadarPayloadLegend {...this.props} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <RadarImpl {...this.props} />
+      </>
+    );
   }
 }
