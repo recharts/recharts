@@ -1,6 +1,7 @@
 /**
  * @fileOverview Render a group of radial bar
  */
+// eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
@@ -47,6 +48,7 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
+import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 // TODO: Cause of circular dependency. Needs refactoring of functions that need them.
 // import { AngleAxisProps, RadiusAxisProps } from './types';
 
@@ -197,145 +199,7 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
   };
 }
 
-export class RadialBar extends PureComponent<RadialBarProps, State> {
-  static displayName = 'RadialBar';
-
-  static defaultProps = {
-    angleAxisId: 0,
-    radiusAxisId: 0,
-    minPointSize: 0,
-    hide: false,
-    legendType: 'rect',
-    data: [] as RadialBarDataItem[],
-    isAnimationActive: !Global.isSsr,
-    animationBegin: 0,
-    animationDuration: 1500,
-    animationEasing: 'ease',
-    forceCornerRadius: false,
-    cornerIsExternal: false,
-  };
-
-  static getComposedData = ({
-    item,
-    props,
-    radiusAxis,
-    radiusAxisTicks,
-    angleAxis,
-    angleAxisTicks,
-    displayedData,
-    dataKey,
-    stackedData,
-    barPosition,
-    bandSize,
-    dataStartIndex,
-  }: {
-    item: ReactElement;
-    props: any;
-    radiusAxis: any; // RadiusAxisProps;
-    radiusAxisTicks: Array<TickItem>;
-    angleAxis: any; // AngleAxisProps;
-    angleAxisTicks: Array<TickItem>;
-    displayedData: any[];
-    dataKey: RadialBarProps['dataKey'];
-    stackedData?: any[];
-    barPosition?: any[];
-    bandSize?: number;
-    dataStartIndex: number;
-  }): RadialBarComposedData => {
-    const pos = findPositionOfBar(barPosition, item);
-    if (!pos) {
-      return null;
-    }
-
-    const { cx, cy } = angleAxis;
-    const { layout } = props;
-    const { children, minPointSize } = item.props;
-    const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
-    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell);
-    const sectors = displayedData.map((entry: any, index: number) => {
-      let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
-
-      if (stackedData) {
-        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
-      } else {
-        value = getValueByDataKey(entry, dataKey);
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
-        }
-      }
-
-      if (layout === 'radial') {
-        innerRadius = getCateCoordinateOfBar({
-          axis: radiusAxis,
-          ticks: radiusAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        endAngle = angleAxis.scale(value[1]);
-        startAngle = angleAxis.scale(value[0]);
-        outerRadius = innerRadius + pos.size;
-        const deltaAngle = endAngle - startAngle;
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
-
-          endAngle += delta;
-        }
-        backgroundSector = {
-          background: {
-            cx,
-            cy,
-            innerRadius,
-            outerRadius,
-            startAngle: props.startAngle,
-            endAngle: props.endAngle,
-          },
-        };
-      } else {
-        innerRadius = radiusAxis.scale(value[0]);
-        outerRadius = radiusAxis.scale(value[1]);
-        startAngle = getCateCoordinateOfBar({
-          axis: angleAxis,
-          ticks: angleAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        endAngle = startAngle + pos.size;
-        const deltaRadius = outerRadius - innerRadius;
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
-          outerRadius += delta;
-        }
-      }
-
-      return {
-        ...entry,
-        ...backgroundSector,
-        payload: entry,
-        value: stackedData ? value : value[1],
-        cx,
-        cy,
-        innerRadius,
-        outerRadius,
-        startAngle,
-        endAngle,
-        ...(cells && cells[index] && cells[index].props),
-        // @ts-expect-error missing types
-        tooltipPayload: [getTooltipItem(item, entry)],
-        tooltipPosition: polarToCartesian(cx, cy, (innerRadius + outerRadius) / 2, (startAngle + endAngle) / 2),
-      };
-    });
-
-    return { data: sectors, layout };
-  };
-
+class RadialBarWithState extends PureComponent<RadialBarProps, State> {
   state: State = {
     isAnimationFinished: false,
   };
@@ -466,14 +330,7 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
     const { hide, data, className, background, isAnimationActive } = this.props;
 
     if (hide || !data || !data.length) {
-      // TODO this needs tests - for a while I was missing a `return` here and nothing failed!
-      return (
-        <>
-          <ReportBar />
-          <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
-          <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        </>
-      );
+      return null;
     }
 
     const { isAnimationFinished } = this.state;
@@ -481,15 +338,177 @@ export class RadialBar extends PureComponent<RadialBarProps, State> {
 
     return (
       <Layer className={layerClass}>
-        <ReportBar />
-        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
 
         <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>
 
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent({ ...this.props }, data)}
       </Layer>
+    );
+  }
+}
+
+function RadialBarImpl(props: RadialBarProps) {
+  const { ref, ...rest } = props;
+  return <RadialBarWithState {...rest} />;
+}
+
+const defaultRadialBarProps: Partial<RadialBarProps> = {
+  angleAxisId: 0,
+  radiusAxisId: 0,
+  minPointSize: 0,
+  hide: false,
+  legendType: 'rect',
+  data: [] as RadialBarDataItem[],
+  isAnimationActive: !Global.isSsr,
+  animationBegin: 0,
+  animationDuration: 1500,
+  animationEasing: 'ease',
+  forceCornerRadius: false,
+  cornerIsExternal: false,
+};
+
+export class RadialBar extends PureComponent<RadialBarProps> {
+  static displayName = 'RadialBar';
+
+  static defaultProps = defaultRadialBarProps;
+
+  static getComposedData = ({
+    item,
+    props,
+    radiusAxis,
+    radiusAxisTicks,
+    angleAxis,
+    angleAxisTicks,
+    displayedData,
+    dataKey,
+    stackedData,
+    barPosition,
+    bandSize,
+    dataStartIndex,
+  }: {
+    item: ReactElement;
+    props: any;
+    radiusAxis: any; // RadiusAxisProps;
+    radiusAxisTicks: Array<TickItem>;
+    angleAxis: any; // AngleAxisProps;
+    angleAxisTicks: Array<TickItem>;
+    displayedData: any[];
+    dataKey: RadialBarProps['dataKey'];
+    stackedData?: any[];
+    barPosition?: any[];
+    bandSize?: number;
+    dataStartIndex: number;
+  }): RadialBarComposedData => {
+    const pos = findPositionOfBar(barPosition, item);
+    if (!pos) {
+      return null;
+    }
+
+    const { cx, cy } = angleAxis;
+    const { layout } = props;
+    const { children, minPointSize } = item.props;
+    const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
+    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
+    const baseValue = getBaseValueOfBar({ numericAxis });
+    const cells = findAllByType(children, Cell);
+    const sectors = displayedData.map((entry: any, index: number) => {
+      let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
+
+      if (stackedData) {
+        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      } else {
+        value = getValueByDataKey(entry, dataKey);
+        if (!Array.isArray(value)) {
+          value = [baseValue, value];
+        }
+      }
+
+      if (layout === 'radial') {
+        innerRadius = getCateCoordinateOfBar({
+          axis: radiusAxis,
+          ticks: radiusAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        endAngle = angleAxis.scale(value[1]);
+        startAngle = angleAxis.scale(value[0]);
+        outerRadius = innerRadius + pos.size;
+        const deltaAngle = endAngle - startAngle;
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+          const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
+
+          endAngle += delta;
+        }
+        backgroundSector = {
+          background: {
+            cx,
+            cy,
+            innerRadius,
+            outerRadius,
+            startAngle: props.startAngle,
+            endAngle: props.endAngle,
+          },
+        };
+      } else {
+        innerRadius = radiusAxis.scale(value[0]);
+        outerRadius = radiusAxis.scale(value[1]);
+        startAngle = getCateCoordinateOfBar({
+          axis: angleAxis,
+          ticks: angleAxisTicks,
+          bandSize,
+          offset: pos.offset,
+          entry,
+          index,
+        });
+        endAngle = startAngle + pos.size;
+        const deltaRadius = outerRadius - innerRadius;
+
+        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
+          const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
+          outerRadius += delta;
+        }
+      }
+
+      return {
+        ...entry,
+        ...backgroundSector,
+        payload: entry,
+        value: stackedData ? value : value[1],
+        cx,
+        cy,
+        innerRadius,
+        outerRadius,
+        startAngle,
+        endAngle,
+        ...(cells && cells[index] && cells[index].props),
+        // @ts-expect-error missing types
+        tooltipPayload: [getTooltipItem(item, entry)],
+        tooltipPosition: polarToCartesian(cx, cy, (innerRadius + outerRadius) / 2, (startAngle + endAngle) / 2),
+      };
+    });
+
+    return { data: sectors, layout };
+  };
+
+  render() {
+    return (
+      <>
+        <ReportBar />
+        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
+        <PolarGraphicalItemContext
+          data={undefined} // data prop is injected through generator and overwrites what user passes in
+          dataKey={this.props.dataKey}
+          hide={this.props.hide}
+          angleAxisId={this.props.angleAxisId}
+          radiusAxisId={this.props.radiusAxisId}
+        />
+        <RadialBarImpl {...this.props} />
+      </>
     );
   }
 }

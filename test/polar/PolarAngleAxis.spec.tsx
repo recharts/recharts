@@ -14,6 +14,11 @@ import {
 } from '../../src/state/selectors/polarAxisSelectors';
 import { selectAxisDomain, selectNiceTicks, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
+import {
+  selectPolarAppliedValues,
+  selectPolarAxisDomain,
+  selectPolarItemsSettings,
+} from '../../src/state/selectors/polarSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -502,8 +507,12 @@ describe('<PolarAngleAxis />', () => {
   describe('in RadialBarChart', () => {
     test('Renders polar angle axis with RadialBarChart', () => {
       const angleAxisDomainSpy = vi.fn();
+      const angleAxisAppliedDataSpy = vi.fn();
+      const polarItemsSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'angleAxis', 0)));
+        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -514,9 +523,27 @@ describe('<PolarAngleAxis />', () => {
         </RadialBarChart>,
       );
 
-      // This fails because selectCartesianItemsSettings only works with cartesian items and not polar. TODO write a new selector
-      // expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
-      // expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(polarItemsSpy).toHaveBeenLastCalledWith([
+        {
+          angleAxisId: 0,
+          data: undefined,
+          dataKey: 'uv',
+          hide: false,
+          radiusAxisId: 0,
+        },
+      ]);
+
+      expect(angleAxisAppliedDataSpy).toHaveBeenLastCalledWith([
+        { value: 400 },
+        { value: 300 },
+        { value: 300 },
+        { value: 200 },
+        { value: 278 },
+        { value: 189 },
+      ]);
+
+      expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
+      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
 
       expectAngleAxisTicks(container, [
         {
@@ -685,7 +712,7 @@ describe('<PolarAngleAxis />', () => {
       const expectedAxis: AngleAxisSettings = {
         allowDataOverflow: false,
         allowDecimals: undefined,
-        allowDuplicatedCategory: true,
+        allowDuplicatedCategory: false,
         dataKey: undefined,
         id: 0,
         includeHidden: false,

@@ -79,6 +79,7 @@
   "types/state/selectors/selectAllAxes.d.ts",
   "types/state/selectors/scatterSelectors.d.ts",
   "types/state/selectors/rootPropsSelectors.d.ts",
+  "types/state/selectors/polarSelectors.d.ts",
   "types/state/selectors/polarScaleSelectors.d.ts",
   "types/state/selectors/polarAxisSelectors.d.ts",
   "types/state/selectors/pieSelectors.d.ts",

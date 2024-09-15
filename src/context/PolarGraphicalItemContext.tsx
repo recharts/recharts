@@ -1,15 +1,7 @@
 import React from 'react';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
-import { ChartData } from '../state/chartDataSlice';
-import { DataKey } from '../util/types';
+import { PolarGraphicalItemSettings } from '../state/graphicalItemsSlice';
 
-type GraphicalItemContextProps = {
-  data: ChartData;
-  dataKey: DataKey<any>;
-  children: React.ReactNode;
-  hide: boolean;
-};
-
-export const PolarGraphicalItemContext = ({ dataKey, data, hide }: GraphicalItemContextProps) => {
-  return <SetPolarGraphicalItem data={data} dataKey={dataKey} hide={hide} />;
+export const PolarGraphicalItemContext = (props: PolarGraphicalItemSettings) => {
+  return <SetPolarGraphicalItem {...props} />;
 };
