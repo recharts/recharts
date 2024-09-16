@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import React, { PureComponent, ReactElement } from 'react';
+import React, { PureComponent } from 'react';
 import Animate from 'react-smooth';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
@@ -13,8 +13,6 @@ import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
-import { Cell, Props as CellProps } from '../component/Cell';
-import { findAllByType, filterProps } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { interpolateNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -38,6 +36,7 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -50,7 +49,7 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
  */
 interface InternalFunnelProps {
   animationId?: UpdateId;
-  trapezoids?: FunnelTrapezoidItem[];
+  trapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
@@ -97,11 +96,13 @@ interface FunnelProps {
 
 type FunnelSvgProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps;
 
-export type Props = FunnelSvgProps & FunnelProps & InternalFunnelProps;
+type InternalProps = FunnelSvgProps & InternalFunnelProps;
+
+export type Props = FunnelSvgProps & FunnelProps;
 
 interface State {
-  readonly prevTrapezoids?: FunnelTrapezoidItem[];
-  readonly curTrapezoids?: FunnelTrapezoidItem[];
+  readonly prevTrapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
+  readonly curTrapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
   readonly prevAnimationId?: UpdateId;
   readonly isAnimationFinished?: boolean;
 }
@@ -109,21 +110,21 @@ interface State {
 type RealFunnelData = any;
 
 type FunnelComposedData = {
-  trapezoids: FunnelTrapezoidItem[];
+  trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   data: RealFunnelData[];
 };
 
 type FunnelTrapezoidsProps = {
-  trapezoids: FunnelTrapezoidItem[];
+  trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
   shape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   allOtherFunnelProps: Props;
 };
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
-  const { dataKey, nameKey, trapezoids, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
+  const { dataKey, nameKey, stroke, strokeWidth, fill, name, hide, tooltipType, data } = props;
   return {
-    dataDefinedOnItem: trapezoids,
+    dataDefinedOnItem: data,
     settings: {
       stroke,
       strokeWidth,
@@ -203,31 +204,10 @@ const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, o
   };
 };
 
-const getRealFunnelData = (item: Funnel): RealFunnelData[] => {
-  const { data, children } = item.props;
-  const presentationProps = filterProps(item.props, false);
-  const cells = findAllByType(children, Cell);
-
-  if (data && data.length) {
-    return data.map((entry: any, index: number) => ({
-      payload: entry,
-      ...presentationProps,
-      ...entry,
-      ...(cells && cells[index] && cells[index].props),
-    }));
-  }
-
-  if (cells && cells.length) {
-    return cells.map((cell: ReactElement<CellProps>) => ({ ...presentationProps, ...cell.props }));
-  }
-
-  return [];
-};
-
-export class FunnelWithState extends PureComponent<Props, State> {
+export class FunnelWithState extends PureComponent<InternalProps, State> {
   state: State = { isAnimationFinished: false };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
+  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
@@ -262,7 +242,7 @@ export class FunnelWithState extends PureComponent<Props, State> {
     }
   };
 
-  renderTrapezoidsStatically(trapezoids: FunnelTrapezoidItem[]) {
+  renderTrapezoidsStatically(trapezoids: ReadonlyArray<FunnelTrapezoidItem>) {
     const { shape, activeShape } = this.props;
 
     return (
@@ -388,7 +368,6 @@ function FunnelImpl(props: Props) {
     fill = defaultFunnelProps.fill,
     legendType = defaultFunnelProps.legendType,
     hide = defaultFunnelProps.hide,
-
     isAnimationActive = defaultFunnelProps.isAnimationActive,
     animationBegin = defaultFunnelProps.animationBegin,
     animationDuration = defaultFunnelProps.animationDuration,
@@ -397,6 +376,18 @@ function FunnelImpl(props: Props) {
     lastShapeType = defaultFunnelProps.lastShapeType,
     ...everythingElse
   } = props;
+
+  const { trapezoids } = useAppSelector(state =>
+    selectFunnelTrapezoids(state, {
+      dataKey: props.dataKey,
+      nameKey,
+      data: props.data,
+      tooltipType: props.tooltipType,
+      lastShapeType,
+      reversed: props.reversed,
+      customWidth: props.width,
+    }),
+  );
 
   return (
     <FunnelWithState
@@ -414,7 +405,7 @@ function FunnelImpl(props: Props) {
       legendType={legendType}
       height={height}
       width={width}
-      trapezoids={props.trapezoids}
+      trapezoids={trapezoids}
     />
   );
 }
@@ -436,7 +427,7 @@ export function computeFunnelTrapezoids({
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];
   reversed?: boolean;
-  customWidth?: number;
+  customWidth?: number | string;
 }): FunnelComposedData {
   const { left, top } = offset;
   const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight({ customWidth }, offset);
@@ -534,25 +525,10 @@ export class Funnel extends PureComponent<Props> {
 
   static defaultProps = defaultFunnelProps;
 
-  static getComposedData = ({ item, offset }: { item: Funnel; offset: ChartOffset }): FunnelComposedData => {
-    const funnelData = getRealFunnelData(item);
-    const { dataKey, nameKey, tooltipType, lastShapeType, reversed } = item.props;
-
-    return computeFunnelTrapezoids({
-      dataKey,
-      nameKey,
-      displayedData: funnelData,
-      tooltipType,
-      lastShapeType,
-      reversed,
-      offset,
-    });
-  };
-
   render() {
-    const { hide, trapezoids } = this.props;
+    const { hide } = this.props;
 
-    if (hide || !trapezoids || !trapezoids.length) {
+    if (hide) {
       return <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />;
     }
 
