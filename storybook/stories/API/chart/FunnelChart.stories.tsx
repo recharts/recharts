@@ -17,15 +17,13 @@ export const Simple: Meta<FunnelProps> = {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={200}>
-        <FunnelChart layout="horizontal">
+        <FunnelChart accessibilityLayer data={data}>
           <Funnel
             width={400}
-            data={data}
             dataKey="value"
             stroke="#424242"
             isAnimationActive
             lastShapeType="rectangle"
-            orientation="horizontal"
             shape={args.shape}
             activeShape={args.activeShape}
           >

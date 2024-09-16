@@ -85,6 +85,7 @@
   "types/state/selectors/pieSelectors.d.ts",
   "types/state/selectors/lineSelectors.d.ts",
   "types/state/selectors/legendSelectors.d.ts",
+  "types/state/selectors/funnelSelectors.d.ts",
   "types/state/selectors/dataSelectors.d.ts",
   "types/state/selectors/containerSelectors.d.ts",
   "types/state/selectors/brushSelectors.d.ts",
