@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
-import { Customized, PolarAngleAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
-import { TickItem } from '../../src/util/types';
+import { Customized, PolarAngleAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { exampleRadarData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -65,103 +64,8 @@ function expectAngleAxisTickLabels(container: Element, expectedLabels: ReadonlyA
 }
 
 describe('<PolarAngleAxis />', () => {
-  const ticks: ReadonlyArray<TickItem> = [
-    { coordinate: 10 },
-    { coordinate: 1000 },
-    { coordinate: 20 },
-    { coordinate: 40 },
-    { coordinate: 90 },
-  ];
-
-  test('Renders 5 ticks when ticks are not empty', () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} ticks={ticks} />
-      </Surface>,
-    );
-
-    expectAngleAxisTicks(container, [
-      {
-        x1: '299.2403876506104',
-        x2: '307.1188496747081',
-        y1: '241.3175911166535',
-        y2: '239.92840569531805',
-      },
-      {
-        x1: '258.68240888334657',
-        x2: '260.07159430468204',
-        y1: '299.2403876506104',
-        y2: '307.11884967470803',
-      },
-      {
-        x1: '296.98463103929544',
-        x2: '304.5021720055827',
-        y1: '232.89899283371656',
-        y2: '230.1628316871112',
-      },
-      {
-        x1: '288.3022221559489',
-        x2: '294.4305777009007',
-        y1: '217.86061951567302',
-        y2: '212.71831863818073',
-      },
-      {
-        x1: '250',
-        x2: '250',
-        y1: '200',
-        y2: '192',
-      },
-    ]);
-  });
-
-  test('Renders 5 ticks when tick is set to be a react element', () => {
-    const Tick = (props: any) => {
-      const { x, y } = props;
-      return (
-        <text x={x} y={y} className="customized-tick">
-          test
-        </text>
-      );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} tick={<Tick />} ticks={ticks} />
-      </Surface>,
-    );
-
-    expect(container.querySelectorAll('.customized-tick')).toHaveLength(ticks.length);
-  });
-
-  test('Renders 5 ticks when tick is set to be a function', () => {
-    const Tick = (props: any) => {
-      const { x, y } = props;
-      return (
-        <text x={x} y={y} className="customized-tick">
-          test
-        </text>
-      );
-    };
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} tick={Tick} ticks={ticks as TickItem[]} axisLineType="circle" />
-      </Surface>,
-    );
-
-    expect(container.querySelectorAll('.customized-tick')).toHaveLength(ticks.length);
-  });
-
-  test("Don't render any ticks in when ticks is empty", () => {
-    const { container } = render(
-      <Surface width={500} height={500}>
-        <PolarAngleAxis cx={250} cy={250} radius={50} ticks={[]} />
-      </Surface>,
-    );
-
-    expectAngleAxisTicks(container, []);
-  });
-
   describe('in RadarChart', () => {
-    test('Renders ticks', () => {
+    test('Renders ticks and labels', () => {
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <Radar dataKey="value" />
@@ -261,6 +165,42 @@ describe('<PolarAngleAxis />', () => {
           y: '105.7502166379443',
         },
       ]);
+    });
+
+    test('Renders ticks when tick is set to be a react element', () => {
+      const Tick = (props: any) => {
+        const { x, y } = props;
+        return (
+          <text x={x} y={y} className="customized-tick">
+            test
+          </text>
+        );
+      };
+      const { container } = render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <PolarAngleAxis tick={<Tick />} />
+        </RadarChart>,
+      );
+
+      expect(container.querySelectorAll('.customized-tick')).toHaveLength(exampleRadarData.length);
+    });
+
+    test('Renders ticks when tick is set to be a function', () => {
+      const Tick = (props: any) => {
+        const { x, y } = props;
+        return (
+          <text x={x} y={y} className="customized-tick">
+            test
+          </text>
+        );
+      };
+      const { container } = render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <PolarAngleAxis tick={Tick} axisLineType="circle" />
+        </RadarChart>,
+      );
+
+      expect(container.querySelectorAll('.customized-tick')).toHaveLength(exampleRadarData.length);
     });
 
     test('renders labels and ticks on the inside with orientation=inner', () => {
@@ -505,7 +445,7 @@ describe('<PolarAngleAxis />', () => {
   });
 
   describe('in RadialBarChart', () => {
-    test('Renders polar angle axis with RadialBarChart', () => {
+    test('Renders ticks and labels', () => {
       const angleAxisDomainSpy = vi.fn();
       const angleAxisAppliedDataSpy = vi.fn();
       const polarItemsSpy = vi.fn();
