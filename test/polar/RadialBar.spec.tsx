@@ -66,7 +66,7 @@ describe('<RadialBar />', () => {
   });
 
   describe('state integration', () => {
-    it('should reports its settings to Redux state, and remove it when removed from DOM', () => {
+    it('should report its settings to Redux state, and remove it when removed from DOM', () => {
       const polarItemsSpy = vi.fn();
       const Comp = (): null => {
         polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));

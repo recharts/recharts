@@ -2,7 +2,11 @@ import React from 'react';
 import uniqueId from 'lodash/uniqueId';
 import { render, screen } from '@testing-library/react';
 
-import { Surface, Radar } from '../../src';
+import { expect, it, vi } from 'vitest';
+import { Surface, Radar, Customized, RadarChart } from '../../src';
+import { useAppSelector } from '../../src/state/hooks';
+import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
+import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 
 type point = { x: number; y: number };
 const CustomizedShape = ({ points }: { points: point[] }) => {
@@ -112,5 +116,40 @@ describe('<Radar />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-radar-polygon')).toHaveLength(0);
+  });
+
+  describe('state integration', () => {
+    it('should report its settings to Redux state, and remove it when removed from DOM', () => {
+      const polarItemsSpy = vi.fn();
+      const Comp = (): null => {
+        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        return null;
+      };
+      const { rerender } = render(
+        <RadarChart width={100} height={100} data={data}>
+          <Radar dataKey="value" />
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        angleAxisId: 0,
+        data: undefined,
+        dataKey: 'value',
+        hide: false,
+        radiusAxisId: 0,
+      };
+      expect(polarItemsSpy).toHaveBeenLastCalledWith([expectedPolarItemsSettings]);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(3);
+
+      rerender(
+        <RadarChart width={100} height={100} data={data}>
+          <Customized component={<Comp />} />
+        </RadarChart>,
+      );
+
+      expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
+    });
   });
 });
