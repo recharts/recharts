@@ -37,6 +37,8 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
+import { filterProps, findAllByType } from '../util/ReactUtils';
+import { Cell } from '../component/Cell';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -377,6 +379,9 @@ function FunnelImpl(props: Props) {
     ...everythingElse
   } = props;
 
+  const presentationProps = filterProps(props, false);
+  const cells = findAllByType(props.children, Cell);
+
   const { trapezoids } = useAppSelector(state =>
     selectFunnelTrapezoids(state, {
       dataKey: props.dataKey,
@@ -386,6 +391,8 @@ function FunnelImpl(props: Props) {
       lastShapeType,
       reversed: props.reversed,
       customWidth: props.width,
+      cells,
+      presentationProps,
     }),
   );
 
