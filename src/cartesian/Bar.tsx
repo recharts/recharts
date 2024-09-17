@@ -17,9 +17,7 @@ import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
-  BarPosition,
   BarPositionPosition,
-  findPositionOfBar,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
   getTooltipNameProp,
@@ -33,7 +31,6 @@ import {
   AnimationTiming,
   ChartOffset,
   DataKey,
-  LayoutType,
   LegendType,
   PresentationAttributesAdaptChildEvent,
   TickItem,
@@ -161,11 +158,6 @@ interface State {
   readonly curData?: ReadonlyArray<BarRectangleItem>;
   readonly prevAnimationId?: number;
 }
-
-type BarComposedData = ChartOffset & {
-  layout: LayoutType;
-  data: ReadonlyArray<BarRectangleItem>;
-};
 
 const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -346,7 +338,7 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataKey,
 ): ErrorBarDataItem => {
   /**
-   * if the value coming from `getComposedData` is an array then this is a stacked bar chart.
+   * if the value coming from `selectBarRectangles` is an array then this is a stacked bar chart.
    * arr[1] represents end value of the bar since the data is in the form of [startValue, endValue].
    * */
   const value = Array.isArray(dataPoint.value) ? dataPoint.value[1] : dataPoint.value;
@@ -717,84 +709,6 @@ export class Bar extends PureComponent<Props> {
   static displayName = 'Bar';
 
   static defaultProps: Partial<Props> = defaultBarProps;
-
-  /**
-   * Compose the data of each group
-   * @param {Object} props Props for the component
-   * @param {Object} item        An instance of Bar
-   * @param {Array} barPosition  The offset and size of each bar
-   * @param {Object} xAxis       The configuration of x-axis
-   * @param {Object} yAxis       The configuration of y-axis
-   * @param {Array} stackedData  The stacked data of a bar item
-   * @return{Array} Composed data
-   */
-  static getComposedData = ({
-    props,
-    item,
-    barPosition,
-    bandSize,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    stackedData,
-    dataStartIndex,
-    displayedData,
-    offset,
-  }: {
-    props: InternalProps;
-    /**
-     * @deprecated do not use - depends on passing around DOM elements
-     */
-    item: ReactElement;
-    /**
-     * @deprecated do not use - depends on passing around DOM elements
-     */
-    barPosition: ReadonlyArray<BarPosition>;
-    bandSize: number;
-    xAxis?: BaseAxisWithScale;
-    yAxis?: BaseAxisWithScale;
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    stackedData: Series<Record<number, number>, DataKey<any>>;
-    dataStartIndex: number;
-    offset: ChartOffset;
-    displayedData: any[];
-  }): BarComposedData => {
-    const pos: BarPositionPosition | null = findPositionOfBar(barPosition, item);
-    if (!pos) {
-      return null;
-    }
-
-    const { dataKey, children, minPointSize } = item.props;
-    const { layout } = props;
-    const cells = findAllByType(children, Cell);
-
-    const rects = computeBarRectangles({
-      layout,
-      barSettings: {
-        dataKey,
-        minPointSize,
-        data: undefined,
-        maxBarSize: item.props.maxBarSize,
-        barSize: item.props.barSize,
-        stackId: item.props.stackId,
-      },
-      pos,
-      bandSize,
-      xAxis,
-      yAxis,
-      xAxisTicks,
-      yAxisTicks,
-      stackedData,
-      dataStartIndex,
-      displayedData,
-      offset,
-      cells,
-    });
-
-    return { data: rects, layout, ...offset };
-  };
 
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.

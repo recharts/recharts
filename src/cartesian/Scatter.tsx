@@ -1,6 +1,3 @@
-/**
- * @fileOverview Render a group of scatters
- */
 // eslint-disable-next-line max-classes-per-file
 import React, { Component, PureComponent, ReactElement, useMemo } from 'react';
 import Animate from 'react-smooth';
@@ -148,10 +145,6 @@ interface State {
   curPoints?: ReadonlyArray<ScatterPointItem>;
   prevAnimationId?: string;
 }
-
-type ScatterComposedData = {
-  points: ReadonlyArray<ScatterPointItem>;
-};
 
 const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -617,54 +610,11 @@ function ScatterImpl(props: Props) {
   );
 }
 
+// eslint-disable-next-line react/prefer-stateless-function
 export class Scatter extends Component<Props> {
   static displayName = 'Scatter';
 
   static defaultProps = defaultScatterProps;
-
-  /**
-   * Compose the data of each group
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({
-    xAxis,
-    yAxis,
-    zAxis,
-    item,
-    displayedData,
-    xAxisTicks,
-    yAxisTicks,
-  }: {
-    props: InternalProps;
-    xAxis?: BaseAxisWithScale;
-    yAxis?: BaseAxisWithScale;
-    zAxis?: ZAxisWithScale;
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    item: ScatterWithState;
-    bandSize: number;
-    displayedData: any[];
-  }): ScatterComposedData => {
-    const cells = findAllByType(item.props.children, Cell);
-    const points: ReadonlyArray<ScatterPointItem> = computeScatterPoints({
-      displayedData,
-      xAxis,
-      yAxis,
-      zAxis,
-      // @ts-expect-error getComposedData types are not matching, TODO switch this to redux
-      scatterSettings: item.props,
-      xAxisTicks,
-      yAxisTicks,
-      cells,
-    });
-
-    return {
-      points,
-    };
-  };
 
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
