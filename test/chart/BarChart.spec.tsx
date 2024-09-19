@@ -21,6 +21,7 @@ import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSe
 import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
+import { BarRectangleItem } from '../../src/cartesian/Bar';
 
 type DataType = {
   name: string;
@@ -599,26 +600,62 @@ describe('<BarChart />', () => {
     });
 
     test('Stacked bars are actually stacked', () => {
-      let seriesOneBarOneValue, seriesTwoBarOneValue;
-      const Spy = (props: { formattedGraphicalItems?: any }) => {
-        const { formattedGraphicalItems } = props;
-        const [seriesOneBarOne, seriesTwoBarOne] = formattedGraphicalItems;
-        seriesOneBarOneValue = seriesOneBarOne.props.data[0].value;
-        seriesTwoBarOneValue = seriesTwoBarOne.props.data[0].value;
+      let seriesOneBarOneEntry: BarRectangleItem, seriesTwoBarOneEntry: BarRectangleItem;
+      const Spy = () => {
+        const seriesOneResult = useAppSelector(state =>
+          selectBarRectangles(
+            state,
+            0,
+            0,
+            false,
+            {
+              barSize: '',
+              data,
+              dataKey: 'uv',
+              maxBarSize: 0,
+              minPointSize: 0,
+              stackId: 'test',
+            },
+            [],
+          ),
+        );
+        const seriesTwoResult = useAppSelector(state =>
+          selectBarRectangles(
+            state,
+            0,
+            0,
+            false,
+            {
+              barSize: '',
+              data,
+              dataKey: 'pv',
+              maxBarSize: 0,
+              minPointSize: 0,
+              stackId: 'test',
+            },
+            [],
+          ),
+        );
+        [seriesOneBarOneEntry] = seriesOneResult;
+        [seriesTwoBarOneEntry] = seriesTwoResult;
         return <></>;
       };
+
       const { container } = render(
         <BarChart width={100} height={50} data={data}>
           <YAxis />
           <Bar dataKey="uv" stackId="test" fill="#ff7300" isAnimationActive={false} />
-          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false} />
-          <Customized component={Spy} />
+          <Bar dataKey="pv" stackId="test" fill="#387908" isAnimationActive={false}>
+            <Spy />
+          </Bar>
         </BarChart>,
       );
 
       // stacked bars should have values which are arrays, if they are not then they are not stacked
-      expect(seriesOneBarOneValue).toEqual([0, 400]);
-      expect(seriesTwoBarOneValue).toEqual([400, 2800]);
+      expect(seriesOneBarOneEntry).toBeDefined();
+      expect(seriesTwoBarOneEntry).toBeDefined();
+      expect(seriesOneBarOneEntry.value).toEqual([0, 400]);
+      expect(seriesTwoBarOneEntry.value).toEqual([400, 2800]);
 
       expectBars(container, [
         {

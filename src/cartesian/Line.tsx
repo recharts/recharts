@@ -1,6 +1,3 @@
-/**
- * @fileOverview Line
- */
 // eslint-disable-next-line max-classes-per-file
 import React, { Component, PureComponent } from 'react';
 import Animate from 'react-smooth';
@@ -23,9 +20,7 @@ import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
   DataKey,
-  LayoutType,
   LegendType,
   TickItem,
   TooltipType,
@@ -138,11 +133,6 @@ interface State {
   curPoints?: ReadonlyArray<LinePointItem>;
   prevAnimationId?: UpdateId;
 }
-
-type LineComposedData = ChartOffset & {
-  points?: ReadonlyArray<LinePointItem>;
-  layout: LayoutType;
-};
 
 const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
@@ -668,51 +658,6 @@ export class Line extends PureComponent<Props> {
   static displayName = 'Line';
 
   static defaultProps = defaultLineProps;
-
-  /**
-   * Compose the data of each group
-   * @param {Object} props The props from the component
-   * @param  {Object} xAxis   The configuration of x-axis
-   * @param  {Object} yAxis   The configuration of y-axis
-   * @param  {String} dataKey The unique key of a group
-   * @return {Array}  Composed data
-   */
-  static getComposedData = ({
-    props,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    dataKey,
-    bandSize,
-    displayedData,
-    offset,
-  }: {
-    props: Props;
-    xAxis: BaseAxisWithScale;
-    yAxis: BaseAxisWithScale;
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    dataKey: Props['dataKey'];
-    bandSize: number;
-    displayedData: any[];
-    offset: ChartOffset;
-  }): LineComposedData => {
-    const { layout } = props;
-
-    const points = computeLinePoints({
-      layout: props.layout,
-      xAxis,
-      yAxis,
-      xAxisTicks,
-      yAxisTicks,
-      dataKey,
-      bandSize,
-      displayedData,
-    });
-
-    return { points, layout, ...offset };
-  };
 
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.

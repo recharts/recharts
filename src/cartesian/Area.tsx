@@ -18,10 +18,8 @@ import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
   Coordinate,
   DataKey,
-  LayoutType,
   LegendType,
   TickItem,
   TooltipType,
@@ -144,11 +142,6 @@ interface State {
   isAnimationFinished?: boolean;
   totalLength?: number;
 }
-
-type AreaComposedData = ComputedArea &
-  ChartOffset & {
-    layout: LayoutType;
-  };
 
 function getLegendItemColor(stroke: string | undefined, fill: string): string {
   return stroke && stroke !== 'none' ? stroke : fill;
@@ -797,48 +790,6 @@ export class Area extends PureComponent<Props, State> {
   static displayName = 'Area';
 
   static defaultProps = defaultAreaProps;
-
-  static getComposedData = ({
-    props,
-    item,
-    xAxis,
-    yAxis,
-    xAxisTicks,
-    yAxisTicks,
-    bandSize,
-    stackedData,
-    dataStartIndex,
-    displayedData,
-    offset,
-  }: {
-    props: Props;
-    item: Area;
-    bandSize: number;
-    xAxis: BaseAxisWithScale;
-    yAxis: BaseAxisWithScale;
-    xAxisTicks: TickItem[];
-    yAxisTicks: TickItem[];
-    stackedData: number[][];
-    dataStartIndex: number;
-    offset: ChartOffset;
-    displayedData: any[];
-  }): AreaComposedData => {
-    const { layout } = props;
-    const { points, baseLine, isRange } = computeArea({
-      // @ts-expect-error some properties are marked as optional even though defaultProps would have filled it in by now
-      areaSettings: item.props,
-      xAxis,
-      yAxis,
-      xAxisTicks,
-      yAxisTicks,
-      displayedData,
-      layout,
-      stackedData,
-      dataStartIndex,
-      bandSize,
-    });
-    return { points, baseLine, layout, isRange, ...offset };
-  };
 
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.

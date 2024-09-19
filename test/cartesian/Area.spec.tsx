@@ -2,7 +2,7 @@ import React, { ComponentType, FC, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Area, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
-import { getBaseValue, Props } from '../../src/cartesian/Area';
+import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
 import {
   allCategoricalsChartsExcept,
@@ -893,19 +893,23 @@ describe('getBaseValue', () => {
   });
 });
 
-describe('getComposedData', () => {
+describe('computeArea', () => {
   const mockScale = (n: number) => n * 2;
   mockScale.domain = () => [0, 'auto'];
   const mockScale2 = (n: number) => n * 3;
   mockScale2.domain = () => [0, 'auto'];
 
   it('should return empty points if displayedData is empty array', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: '',
+        stackId: '',
+        data: [],
+      },
       displayedData: [],
-      // @ts-expect-error incomplete mock
-      props: { layout: 'horizontal' },
-      // @ts-expect-error incomplete mock
-      item: { props: {} },
+      layout: 'horizontal',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
     });
@@ -913,12 +917,16 @@ describe('getComposedData', () => {
   });
 
   it('should return displayedData mapped with getCateCoordinateOfLine in horizontal layout', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-      // @ts-expect-error incomplete mock
-      props: { layout: 'horizontal' },
-      // @ts-expect-error incomplete mock
-      item: { props: { dataKey: 'v' } },
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'horizontal',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
       // @ts-expect-error incomplete mock
@@ -953,12 +961,16 @@ describe('getComposedData', () => {
   });
 
   it('should return displayedData mapped with getCateCoordinateOfLine in vertical layout', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
-      // @ts-expect-error incomplete mock
-      props: { layout: 'vertical' },
-      // @ts-expect-error incomplete mock
-      item: { props: { dataKey: 'v' } },
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale, dataKey: 'v' },
       // @ts-expect-error incomplete mock
@@ -993,7 +1005,7 @@ describe('getComposedData', () => {
   });
 
   it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in horizontal chart', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
         [1, 2],
@@ -1004,14 +1016,14 @@ describe('getComposedData', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      // @ts-expect-error incomplete mock
-      props: { layout: 'horizontal' },
-      // @ts-expect-error incomplete mock
-      item: {
-        props: {
-          dataKey: 'v',
-        },
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
       },
+      layout: 'horizontal',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
       // @ts-expect-error incomplete mock
@@ -1046,7 +1058,7 @@ describe('getComposedData', () => {
   });
 
   it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in vertical chart', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
         [1, 2],
@@ -1057,14 +1069,14 @@ describe('getComposedData', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      // @ts-expect-error incomplete mock
-      props: { layout: 'vertical' },
-      // @ts-expect-error incomplete mock
-      item: {
-        props: {
-          dataKey: 'v',
-        },
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
       },
+      layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale, dataKey: 'v' },
       // @ts-expect-error incomplete mock
@@ -1099,7 +1111,7 @@ describe('getComposedData', () => {
   });
 
   it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
-    const { points } = Area.getComposedData({
+    const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       stackedData: [
         [1, 2],
@@ -1110,14 +1122,14 @@ describe('getComposedData', () => {
         [6, 12],
       ],
       dataStartIndex: 0,
-      // @ts-expect-error incomplete mock
-      props: { layout: 'vertical' },
-      // @ts-expect-error incomplete mock
-      item: {
-        props: {
-          dataKey: 'v',
-        },
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
       },
+      layout: 'vertical',
       // @ts-expect-error incomplete mock
       yAxis: { scale: mockScale },
       // @ts-expect-error incomplete mock
