@@ -2,7 +2,7 @@ import React, { ComponentType, FC, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Area, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
-import { getBaseValue, Props } from '../../src/cartesian/Area';
+import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import { LayoutType } from '../../src/util/types';
 import {
   allCategoricalsChartsExcept,
@@ -890,5 +890,276 @@ describe('getBaseValue', () => {
         },
       );
     });
+  });
+});
+
+describe('computeArea', () => {
+  const mockScale = (n: number) => n * 2;
+  mockScale.domain = () => [0, 'auto'];
+  const mockScale2 = (n: number) => n * 3;
+  mockScale2.domain = () => [0, 'auto'];
+
+  it('should return empty points if displayedData is empty array', () => {
+    const { points } = computeArea({
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: '',
+        stackId: '',
+        data: [],
+      },
+      displayedData: [],
+      layout: 'horizontal',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+    });
+    expect(points).toEqual([]);
+  });
+
+  it('should return displayedData mapped with getCateCoordinateOfLine in horizontal layout', () => {
+    const { points } = computeArea({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'horizontal',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2, dataKey: 'v' },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [0, 1],
+        x: 3,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [0, 2],
+        x: 6,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [0, 3],
+        x: 9,
+        y: 6,
+      },
+    ]);
+  });
+
+  it('should return displayedData mapped with getCateCoordinateOfLine in vertical layout', () => {
+    const { points } = computeArea({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'vertical',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale, dataKey: 'v' },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [0, 1],
+        x: 3,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [0, 2],
+        x: 6,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [0, 3],
+        x: 9,
+        y: 6,
+      },
+    ]);
+  });
+
+  it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in horizontal chart', () => {
+    const { points } = computeArea({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'horizontal',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2, dataKey: 'v' },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 3,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 6,
+        y: 8,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 9,
+        y: 12,
+      },
+    ]);
+  });
+
+  it('should return displayedData mapped to stackedData mapped to getCateCoordinateOfLine in vertical chart', () => {
+    const { points } = computeArea({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'vertical',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale, dataKey: 'v' },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 6,
+        y: 2,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 12,
+        y: 4,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 18,
+        y: 6,
+      },
+    ]);
+  });
+
+  it('should return .y coordinate set to null in vertical chart when YAxis dataKey is undefined', () => {
+    const { points } = computeArea({
+      displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
+      stackedData: [
+        [1, 2],
+        [2, 4],
+        [3, 6],
+        [4, 8],
+        [5, 10],
+        [6, 12],
+      ],
+      dataStartIndex: 0,
+      areaSettings: {
+        connectNulls: false,
+        baseValue: 0,
+        dataKey: 'v',
+        stackId: '',
+        data: [],
+      },
+      layout: 'vertical',
+      // @ts-expect-error incomplete mock
+      yAxis: { scale: mockScale },
+      // @ts-expect-error incomplete mock
+      xAxis: { scale: mockScale2 },
+    });
+    expect(points).toEqual([
+      {
+        payload: {
+          v: 1,
+        },
+        value: [1, 2],
+        x: 6,
+        y: null,
+      },
+      {
+        payload: {
+          v: 2,
+        },
+        value: [2, 4],
+        x: 12,
+        y: null,
+      },
+      {
+        payload: {
+          v: 3,
+        },
+        value: [3, 6],
+        x: 18,
+        y: null,
+      },
+    ]);
   });
 });
