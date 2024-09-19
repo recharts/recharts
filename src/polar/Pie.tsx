@@ -882,6 +882,7 @@ export class Pie extends PureComponent<Props, State> {
         />
         <SetPiePayloadLegend {...this.props} />
         <PieImpl {...this.props} />
+        {this.props.children}
       </>
     );
   }
