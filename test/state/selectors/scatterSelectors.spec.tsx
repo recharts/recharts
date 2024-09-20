@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { useAppSelector } from '../../../src/state/hooks';
 import { ResolvedScatterSettings, selectScatterPoints } from '../../../src/state/selectors/scatterSelectors';
 import { createRechartsStore } from '../../../src/state/store';
-import { Pie, PieChart, Scatter, ScatterChart } from '../../../src';
+import { Customized, Pie, PieChart, Scatter, ScatterChart } from '../../../src';
 import { pageData } from '../../../storybook/stories/data';
 
 describe('selectScatterPoints', () => {
@@ -33,8 +33,7 @@ describe('selectScatterPoints', () => {
     expect(result).toEqual(undefined);
   });
 
-  // TODO: Pie/PieChart do not render their children (Pie only renders children if they include Cell components)
-  it.fails('should return undefined in a chart that does not support Scatter', async () => {
+  it('should return undefined in a chart that does not support Scatter', async () => {
     const scatterPointsSpy = vi.fn();
     const Comp = (): null => {
       const scatterPoints = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, [], false));
@@ -43,10 +42,8 @@ describe('selectScatterPoints', () => {
     };
     render(
       <PieChart width={100} height={200}>
-        <Comp />
-        <Pie data={pageData} dataKey="uv" isAnimationActive={false} cx="50%" cy="50%" outerRadius={80}>
-          <Comp />
-        </Pie>
+        <Pie data={pageData} dataKey="uv" isAnimationActive={false} cx="50%" cy="50%" outerRadius={80} />
+        <Customized component={<Comp />} />
       </PieChart>,
     );
     expect(scatterPointsSpy).toHaveBeenCalledWith(undefined);
