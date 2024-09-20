@@ -5,7 +5,6 @@ import { Cursor, CursorConnectedProps, CursorInternal, CursorProps } from '../..
 import { assertNotNull } from '../helper/assertNotNull';
 import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
-import { TooltipContextProvider, TooltipContextValue } from '../../src/context/tooltipContext';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { initialState as initialTooltipState } from '../../src/state/tooltipSlice';
 
@@ -14,17 +13,7 @@ const defaultProps: CursorProps = {
   tooltipEventType: 'axis',
   coordinate: undefined,
   payload: [],
-};
-
-const tooltipContext: TooltipContextValue = {
-  label: '',
-  payload: [],
-  coordinate: {
-    x: 0,
-    y: 0,
-  },
-  active: true,
-  index: 0,
+  index: '0',
 };
 
 const baseCoord = {
@@ -37,7 +26,6 @@ const connectedProps: CursorConnectedProps = {
   layout: undefined,
   offset: undefined,
   tooltipAxisBandSize: 0,
-  ...tooltipContext,
   ...defaultProps,
 };
 
@@ -78,11 +66,9 @@ describe('Cursor', () => {
         coordinate: baseCoord,
       };
       const { getByText } = render(
-        <TooltipContextProvider value={tooltipContext}>
-          <svg width={100} height={100}>
-            <CursorInternal {...props} />
-          </svg>
-        </TooltipContextProvider>,
+        <svg width={100} height={100}>
+          <CursorInternal {...props} />
+        </svg>,
       );
       expect(getByText('I am a cursor.')).toBeVisible();
     });
@@ -95,7 +81,6 @@ describe('Cursor', () => {
         chartName: 'BarChart',
         offset: { top: 0, height: 0 },
         coordinate: baseCoord,
-        ...tooltipContext,
       };
       const { container } = render(
         <svg width={100} height={100}>
@@ -122,7 +107,6 @@ describe('Cursor', () => {
           x: 0,
           y: 0,
         },
-        ...tooltipContext,
       };
       const { container } = render(
         <svg width={100} height={100}>
@@ -139,11 +123,9 @@ describe('Cursor', () => {
     it('should render curve cursor by default', () => {
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>
-          <TooltipContextProvider value={tooltipContext}>
-            <svg width={100} height={100}>
-              <Cursor {...defaultProps} coordinate={baseCoord} />
-            </svg>
-          </TooltipContextProvider>
+          <svg width={100} height={100}>
+            <Cursor {...defaultProps} coordinate={baseCoord} />
+          </svg>
         </RechartsStoreProvider>,
       );
       const cursor = container.querySelector('.recharts-curve');
@@ -162,11 +144,9 @@ describe('Cursor', () => {
       };
       const { getByText } = render(
         <RechartsStoreProvider preloadedState={preloadedState}>
-          <TooltipContextProvider value={tooltipContext}>
-            <svg width={100} height={100}>
-              <Cursor {...props} />
-            </svg>
-          </TooltipContextProvider>
+          <svg width={100} height={100}>
+            <Cursor {...props} />
+          </svg>
         </RechartsStoreProvider>,
       );
       expect(getByText('I am a cursor.')).toBeVisible();
@@ -189,11 +169,9 @@ describe('Cursor', () => {
       };
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedScatterState}>
-          <TooltipContextProvider value={tooltipContext}>
-            <svg width={100} height={100}>
-              <Cursor {...defaultProps} coordinate={baseCoord} />
-            </svg>
-          </TooltipContextProvider>
+          <svg width={100} height={100}>
+            <Cursor {...defaultProps} coordinate={baseCoord} />
+          </svg>
         </RechartsStoreProvider>,
       );
       const cursor = container.querySelector('.recharts-cross');
@@ -206,11 +184,9 @@ describe('Cursor', () => {
       const payload = [{ value: 'test', name: 'test' }];
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedRadialState}>
-          <TooltipContextProvider value={tooltipContext}>
-            <svg width={100} height={100}>
-              <Cursor {...defaultProps} coordinate={coordinate} payload={payload} />
-            </svg>
-          </TooltipContextProvider>
+          <svg width={100} height={100}>
+            <Cursor {...defaultProps} coordinate={coordinate} payload={payload} />
+          </svg>
         </RechartsStoreProvider>,
       );
       const cursor = container.querySelector('.recharts-sector');
