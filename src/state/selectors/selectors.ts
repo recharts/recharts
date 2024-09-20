@@ -282,7 +282,7 @@ export const selectIsTooltipActive: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex?: number | undefined,
-) => boolean = createSelector(
+) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
   (state: RechartsRootState) => state,
   (_state, tooltipEventType: TooltipEventType) => tooltipEventType,
   (_state, _tooltipEventType, trigger: TooltipTrigger) => trigger,
@@ -298,18 +298,30 @@ export const selectIsTooltipActive: (
     // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
     // we can change this later but not sure how else to maintain current functionality
     if (coordinate === undefined && defaultIndex != null) {
-      return true;
+      return { isActive: true, activeIndex: String(defaultIndex) };
     }
     if (tooltipEventType === 'axis') {
       if (trigger === 'hover') {
-        return state.tooltip.axisInteraction.activeHover;
+        return {
+          isActive: state.tooltip.axisInteraction.activeHover,
+          activeIndex: state.tooltip.axisInteraction.activeMouseOverAxisIndex,
+        };
       }
-      return state.tooltip.axisInteraction.activeClick;
+      return {
+        isActive: state.tooltip.axisInteraction.activeClick,
+        activeIndex: state.tooltip.axisInteraction.activeClickAxisIndex,
+      };
     }
     if (trigger === 'hover') {
-      return state.tooltip.itemInteraction.activeHover;
+      return {
+        isActive: state.tooltip.itemInteraction.activeHover,
+        activeIndex: state.tooltip.itemInteraction.activeMouseOverIndex,
+      };
     }
-    return state.tooltip.itemInteraction.activeClick;
+    return {
+      isActive: state.tooltip.itemInteraction.activeClick,
+      activeIndex: state.tooltip.itemInteraction.activeClickIndex,
+    };
   },
 );
 

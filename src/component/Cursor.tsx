@@ -9,7 +9,6 @@ import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
-import { useTooltipContext } from '../context/tooltipContext';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
@@ -27,6 +26,7 @@ export type CursorProps = {
   tooltipEventType: TooltipEventType;
   coordinate: ChartCoordinate;
   payload: TooltipPayload;
+  index: string;
 };
 
 export type CursorConnectedProps = CursorProps & {
@@ -35,7 +35,7 @@ export type CursorConnectedProps = CursorProps & {
   offset: ChartOffset;
   coordinate: ChartCoordinate;
   payload: TooltipPayload;
-  index: number;
+  index: string;
   chartName: string;
 };
 
@@ -101,8 +101,6 @@ export function CursorInternal(props: CursorConnectedProps) {
  */
 export function Cursor(props: CursorProps) {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
-  // TODO: select from redux
-  const { index } = useTooltipContext();
   const offset = useOffset();
   const layout = useChartLayout();
   const chartName = useChartName();
@@ -110,7 +108,7 @@ export function Cursor(props: CursorProps) {
     <CursorInternal
       {...props}
       coordinate={props.coordinate}
-      index={index}
+      index={props.index}
       payload={props.payload}
       offset={offset}
       layout={layout}
