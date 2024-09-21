@@ -7,14 +7,17 @@ import {
   AppliedChartDataWithErrorDomain,
   combineAppliedValues,
   combineAxisDomain,
+  combineAxisDomainWithNiceTicks,
   combineDisplayedData,
   combineGraphicalItemsData,
   combineGraphicalItemsSettings,
+  combineNiceTicks,
   combineNumericalDomain,
   pickAxisId,
   pickAxisType,
   selectBaseAxis,
   selectDomainDefinition,
+  selectRealScaleType,
 } from './axisSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import { CategoricalDomain, NumberDomain } from '../../util/types';
@@ -146,4 +149,18 @@ export const selectPolarAxisDomain: (
     selectPolarNumericalDomain,
   ],
   combineAxisDomain,
+);
+
+export const selectPolarNiceTicks = createSelector(
+  [selectPolarAxisDomain, selectBaseAxis, selectRealScaleType],
+  combineNiceTicks,
+);
+
+export const selectPolarAxisDomainIncludingNiceTicks: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
+  [selectBaseAxis, selectPolarAxisDomain, selectPolarNiceTicks],
+  combineAxisDomainWithNiceTicks,
 );

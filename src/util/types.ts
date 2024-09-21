@@ -1113,6 +1113,12 @@ export type NumberDomain = [min: number, max: number];
 
 export type CategoricalDomain = ReadonlyArray<number | string | Date>;
 
+export type TickProp =
+  | SVGProps<SVGTextElement>
+  | ReactElement<SVGElement>
+  | ((props: any) => ReactElement<SVGElement>)
+  | boolean;
+
 /** The props definition of base axis */
 export interface BaseAxisProps {
   /** The type of axis */
@@ -1124,7 +1130,7 @@ export interface BaseAxisProps {
   /** The scale type as a string, or scale function */
   scale?: ScaleType | RechartsScale;
   /** The option for tick */
-  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  tick?: TickProp;
   /** The count of ticks */
   tickCount?: number;
   /** The option for axisLine */

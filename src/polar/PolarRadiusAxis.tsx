@@ -3,7 +3,6 @@ import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
-import { useMaybePolarRadiusAxis } from '../context/chartLayoutContext';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -16,9 +15,10 @@ import {
   TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { getTicksOfAxis } from '../util/ChartUtils';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
+import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
 type PolarRadiusViewBox = {
   cx: number;
@@ -29,17 +29,21 @@ type PolarRadiusViewBox = {
   outerRadius: number;
 };
 
+type TickOrientation = 'left' | 'right' | 'middle';
+
 export interface PolarRadiusAxisProps extends Omit<BaseAxisProps, 'unit'> {
   cx?: number;
   cy?: number;
   radiusAxisId?: string | number;
   angle?: number;
-  orientation?: 'left' | 'right' | 'middle';
+  orientation?: TickOrientation;
   ticks?: ReadonlyArray<TickItem>;
   reversed?: boolean;
 }
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PolarRadiusAxisProps;
+type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
+
+export type Props = AxisSvgProps & PolarRadiusAxisProps;
 
 const AXIS_TYPE = 'radiusAxis';
 
@@ -54,145 +58,149 @@ function SetRadiusAxisSettings(settings: RadiusAxisSettings): null {
   return null;
 }
 
+/**
+ * Calculate the coordinate of tick
+ * @param coordinate The radius of tick
+ * @param angle from props
+ * @param cx from chart
+ * @param cy from chart
+ * @return (x, y)
+ */
+const getTickValueCoord = ({ coordinate }: TickItem, angle: number, cx: number, cy: number): Coordinate => {
+  return polarToCartesian(cx, cy, coordinate, angle);
+};
+
+const getTickTextAnchor = (orientation: TickOrientation): string => {
+  let textAnchor;
+
+  switch (orientation) {
+    case 'left':
+      textAnchor = 'end';
+      break;
+    case 'right':
+      textAnchor = 'start';
+      break;
+    default:
+      textAnchor = 'middle';
+      break;
+  }
+
+  return textAnchor;
+};
+
+const getViewBox = (angle: number, cx: number, cy: number, ticks: ReadonlyArray<TickItem>): PolarRadiusViewBox => {
+  const maxRadiusTick = maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
+  const minRadiusTick = minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
+
+  return {
+    cx,
+    cy,
+    startAngle: angle,
+    endAngle: angle,
+    innerRadius: minRadiusTick.coordinate || 0,
+    outerRadius: maxRadiusTick.coordinate || 0,
+  };
+};
+
+const renderAxisLine = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
+  const { cx, cy, angle, axisLine, ...others } = props;
+  const extent = ticks.reduce(
+    (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
+    [Infinity, -Infinity],
+  );
+  const point0 = polarToCartesian(cx, cy, extent[0], angle);
+  const point1 = polarToCartesian(cx, cy, extent[1], angle);
+
+  const axisLineProps = {
+    ...filterProps(others, false),
+    fill: 'none',
+    ...filterProps(axisLine, false),
+    x1: point0.x,
+    y1: point0.y,
+    x2: point1.x,
+    y2: point1.y,
+  };
+
+  return <line className="recharts-polar-radius-axis-line" {...axisLineProps} />;
+};
+
+const renderTickItem = (option: Props['tick'], tickProps: any, value: string | number): ReactElement => {
+  let tickItem;
+
+  if (React.isValidElement(option)) {
+    tickItem = React.cloneElement(option, tickProps);
+  } else if (isFunction(option)) {
+    tickItem = option(tickProps);
+  } else {
+    tickItem = (
+      <Text {...tickProps} className="recharts-polar-radius-axis-tick-value">
+        {value}
+      </Text>
+    );
+  }
+
+  return tickItem;
+};
+
+const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement => {
+  const { angle, tickFormatter, stroke, tick, ...others } = props;
+  const textAnchor = getTickTextAnchor(props.orientation);
+  const axisProps = filterProps(others, false);
+  const customTickProps = filterProps(tick, false);
+
+  const items = ticks.map((entry, i) => {
+    const coord = getTickValueCoord(entry, props.angle, props.cx, props.cy);
+    const tickProps = {
+      textAnchor,
+      transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
+      ...axisProps,
+      stroke: 'none',
+      fill: stroke,
+      ...customTickProps,
+      index: i,
+      ...coord,
+      payload: entry,
+    };
+
+    return (
+      <Layer
+        className={clsx('recharts-polar-radius-axis-tick', getTickClassName(tick))}
+        key={`tick-${entry.coordinate}`}
+        {...adaptEventsOfChild(props, entry, i)}
+      >
+        {renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
+      </Layer>
+    );
+  });
+
+  return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
+};
+
 export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { radiusAxisId } = defaultsAndInputs;
 
-  const axisOptions: PolarRadiusAxisProps = useMaybePolarRadiusAxis(radiusAxisId);
+  const viewBox = useAppSelector(selectPolarViewBox);
+  const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
+  const props: Props = {
+    ...defaultsAndInputs,
+    scale,
+    ...viewBox,
+    radius: viewBox.outerRadius,
+  };
 
-  const props = { ...defaultsAndInputs, ...axisOptions };
   const { tick, axisLine } = props;
 
-  // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
-  const ticks = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId));
 
   if (!ticks || !ticks.length) {
     return null;
   }
 
-  /**
-   * Calculate the coordinate of tick
-   * @param coordinate The radius of tick
-   * @return (x, y)
-   */
-  const getTickValueCoord = ({ coordinate }: TickItem): Coordinate => {
-    const { angle, cx, cy } = props;
-
-    return polarToCartesian(cx, cy, coordinate, angle);
-  };
-
-  const getTickTextAnchor = (): string => {
-    const { orientation } = props;
-    let textAnchor;
-
-    switch (orientation) {
-      case 'left':
-        textAnchor = 'end';
-        break;
-      case 'right':
-        textAnchor = 'start';
-        break;
-      default:
-        textAnchor = 'middle';
-        break;
-    }
-
-    return textAnchor;
-  };
-
-  const getViewBox = (): PolarRadiusViewBox => {
-    const { cx, cy, angle } = props;
-    const maxRadiusTick = maxBy(ticks, (entry: TickItem) => entry.coordinate || 0);
-    const minRadiusTick = minBy(ticks, (entry: TickItem) => entry.coordinate || 0);
-
-    return {
-      cx,
-      cy,
-      startAngle: angle,
-      endAngle: angle,
-      innerRadius: minRadiusTick.coordinate || 0,
-      outerRadius: maxRadiusTick.coordinate || 0,
-    };
-  };
-
-  const renderAxisLine = (): ReactElement => {
-    const { cx, cy, angle, ...others } = props;
-    const extent = ticks.reduce(
-      (result, entry) => [Math.min(result[0], entry.coordinate), Math.max(result[1], entry.coordinate)],
-      [Infinity, -Infinity],
-    );
-    const point0 = polarToCartesian(cx, cy, extent[0], angle);
-    const point1 = polarToCartesian(cx, cy, extent[1], angle);
-
-    const axisLineProps = {
-      ...filterProps(others, false),
-      fill: 'none',
-      ...filterProps(axisLine, false),
-      x1: point0.x,
-      y1: point0.y,
-      x2: point1.x,
-      y2: point1.y,
-    };
-
-    return <line className="recharts-polar-radius-axis-line" {...axisLineProps} />;
-  };
-
-  const renderTickItem = (option: Props['tick'], tickProps: any, value: string | number): ReactElement => {
-    let tickItem;
-
-    if (React.isValidElement(option)) {
-      tickItem = React.cloneElement(option, tickProps);
-    } else if (isFunction(option)) {
-      tickItem = option(tickProps);
-    } else {
-      tickItem = (
-        <Text {...tickProps} className="recharts-polar-radius-axis-tick-value">
-          {value}
-        </Text>
-      );
-    }
-
-    return tickItem;
-  };
-
-  const renderTicks = (): ReactElement => {
-    const { angle, tickFormatter, stroke, ...others } = props;
-    const textAnchor = getTickTextAnchor();
-    const axisProps = filterProps(others, false);
-    const customTickProps = filterProps(tick, false);
-
-    const items = ticks.map((entry, i) => {
-      const coord = getTickValueCoord(entry);
-      const tickProps = {
-        textAnchor,
-        transform: `rotate(${90 - angle}, ${coord.x}, ${coord.y})`,
-        ...axisProps,
-        stroke: 'none',
-        fill: stroke,
-        ...customTickProps,
-        index: i,
-        ...coord,
-        payload: entry,
-      };
-
-      return (
-        <Layer
-          className={clsx('recharts-polar-radius-axis-tick', getTickClassName(tick))}
-          key={`tick-${entry.coordinate}`}
-          {...adaptEventsOfChild(props, entry, i)}
-        >
-          {renderTickItem(tick, tickProps, tickFormatter ? tickFormatter(entry.value, i) : entry.value)}
-        </Layer>
-      );
-    });
-
-    return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
-  };
-
   return (
     <Layer className={clsx('recharts-polar-radius-axis', AXIS_TYPE, props.className)}>
-      {axisLine && renderAxisLine()}
-      {tick && renderTicks()}
-      {Label.renderCallByParent(props, getViewBox())}
+      {axisLine && renderAxisLine(props, ticks)}
+      {tick && renderTicks(props, ticks)}
+      {Label.renderCallByParent(props, getViewBox(props.angle, props.cx, props.cy, ticks))}
     </Layer>
   );
 };
