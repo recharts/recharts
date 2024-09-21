@@ -47,6 +47,7 @@ export class ZAxis extends Component<Props> {
   render() {
     return (
       <SetZAxisSettings
+        domain={this.props.domain}
         id={this.props.zAxisId}
         dataKey={this.props.dataKey}
         name={this.props.name}

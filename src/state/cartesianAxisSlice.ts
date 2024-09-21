@@ -33,6 +33,7 @@ export type BaseCartesianAxis = {
   allowDataOverflow: boolean;
   reversed: boolean;
   includeHidden: boolean;
+  domain: AxisDomain | undefined;
 };
 
 export type TicksSettings = {
@@ -54,7 +55,6 @@ export type TicksSettings = {
  */
 export type CartesianAxisSettings = BaseCartesianAxis &
   TicksSettings & {
-    domain: AxisDomain | undefined;
     interval: AxisInterval;
     mirror: boolean;
     minTickGap: number;

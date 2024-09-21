@@ -1969,6 +1969,8 @@ export const generateCategoricalChart = ({
     let polarOptions: PolarChartOptions;
     if (defaultProps?.startAngle != null) {
       polarOptions = {
+        cx: props.cx,
+        cy: props.cy,
         startAngle: defaultProps.startAngle,
         endAngle: defaultProps.endAngle,
         innerRadius: defaultProps.innerRadius,

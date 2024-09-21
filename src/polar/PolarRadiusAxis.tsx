@@ -222,6 +222,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
     return (
       <>
         <SetRadiusAxisSettings
+          domain={this.props.domain}
           id={this.props.radiusAxisId}
           scale={this.props.scale}
           type={this.props.type}

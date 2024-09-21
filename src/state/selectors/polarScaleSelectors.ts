@@ -4,9 +4,9 @@ import { AxisId } from '../cartesianAxisSlice';
 import { RechartsScale } from '../../util/ChartUtils';
 import {
   combineAxisTicks,
+  combineNiceTicks,
   combineScaleFunction,
   pickAxisType,
-  selectAxisDomain,
   selectCategoricalDomain,
   selectDuplicateDomain,
   selectRealScaleType,
@@ -19,6 +19,7 @@ import {
 } from './polarAxisSelectors';
 import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
+import { selectPolarAxisDomain } from './polarSelectors';
 
 const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {
@@ -53,11 +54,14 @@ export const selectPolarAxisScale: (
   axisType: 'angleAxis' | 'radiusAxis',
   polarAxisId: AxisId,
 ) => RechartsScale | undefined = createSelector(
-  [selectPolarAxis, selectRealScaleType, selectAxisDomain, selectPolarAxisRange],
+  [selectPolarAxis, selectRealScaleType, selectPolarAxisDomain, selectPolarAxisRange],
   combineScaleFunction,
 );
 
-const polarAxisNeverHasNiceTicks = (): undefined => undefined;
+export const selectPolarNiceTicks = createSelector(
+  [selectPolarAxisDomain, selectPolarAxis, selectRealScaleType],
+  combineNiceTicks,
+);
 
 export const selectPolarAxisTicks: (
   state: RechartsRootState,
@@ -69,7 +73,7 @@ export const selectPolarAxisTicks: (
     selectPolarAxis,
     selectRealScaleType,
     selectPolarAxisScale,
-    polarAxisNeverHasNiceTicks,
+    selectPolarNiceTicks,
     selectPolarAxisRange,
     selectDuplicateDomain,
     selectCategoricalDomain,

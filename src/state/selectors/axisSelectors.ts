@@ -6,6 +6,7 @@ import * as d3Scales from 'victory-vendor/d3-scale';
 import upperFirst from 'lodash/upperFirst';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
+  checkDomainOfScale,
   getDomainOfStackGroups,
   getStackedData,
   getValueByDataKey,
@@ -156,6 +157,7 @@ export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): Y
 };
 
 export const implicitZAxis: ZAxisSettings = {
+  domain: [0, 'auto'],
   includeHidden: false,
   reversed: false,
   allowDataOverflow: false,
@@ -655,7 +657,7 @@ const computeCategoricalDomain = (
   return Array.from(new Set(categoricalDomain));
 };
 
-const getDomainDefinition = (axisSettings: CartesianAxisSettings | BaseCartesianAxis): AxisDomain => {
+const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDomain => {
   if (axisSettings == null || !('domain' in axisSettings)) {
     return defaultNumericDomain;
   }
@@ -966,27 +968,26 @@ export function combineScaleFunction(
   if (d3ScaleFunction == null) {
     return undefined;
   }
-  return d3ScaleFunction.domain(axisDomain).range(axisRange);
+  const scale = d3ScaleFunction.domain(axisDomain).range(axisRange);
+  // I don't like this function because it mutates the scale. We should come up with a way to compute the domain up front.
+  checkDomainOfScale(scale);
+  return scale;
 }
 
-const combineNiceTicks = (
+export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
-  axisSettings: AxisWithTicksSettings,
+  axisSettings: CartesianAxisSettings,
   realScaleType: string,
-  axisType: XorYType,
 ): ReadonlyArray<number> | undefined => {
   const domainDefinition: AxisDomain = getDomainDefinition(axisSettings);
 
-  if (
-    (realScaleType !== 'auto' && realScaleType !== 'linear') ||
-    axisType === 'angleAxis' ||
-    axisType === 'radiusAxis'
-  ) {
+  if (realScaleType !== 'auto' && realScaleType !== 'linear') {
     return undefined;
   }
 
   if (
     axisSettings != null &&
+    axisSettings.tickCount &&
     Array.isArray(domainDefinition) &&
     (domainDefinition[0] === 'auto' || domainDefinition[1] === 'auto') &&
     isWellFormedNumberDomain(axisDomain)
@@ -1005,7 +1006,7 @@ export const selectNiceTicks: (
   axisType: XorYType,
   axisId: AxisId,
 ) => ReadonlyArray<number> | undefined = createSelector(
-  [selectAxisDomain, selectAxisSettings, selectRealScaleType, pickAxisType],
+  [selectAxisDomain, selectAxisSettings, selectRealScaleType],
   combineNiceTicks,
 );
 

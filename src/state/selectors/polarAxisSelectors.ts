@@ -7,8 +7,10 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
+import { PolarViewBox } from '../../util/types';
 
 export const implicitAngleAxis: AngleAxisSettings = {
+  domain: [0, 'auto'],
   allowDecimals: false,
   tick: true,
   tickCount: 5,
@@ -26,6 +28,7 @@ export const implicitAngleAxis: AngleAxisSettings = {
 };
 
 export const implicitRadiusAxis: RadiusAxisSettings = {
+  domain: [0, 'auto'],
   allowDecimals: false,
   tick: true,
   tickCount: 5,
@@ -102,3 +105,16 @@ export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiu
       return [innerRadius, outerRadius];
     },
   );
+
+export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox = createSelector(
+  [selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
+  ({ cx, cy, startAngle, endAngle }: PolarChartOptions, innerRadius, outerRadius, width, height): PolarViewBox => ({
+    cx: getPercentValue(cx, width, width / 2),
+    cy: getPercentValue(cy, height, height / 2),
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    clockWise: false,
+  }),
+);
