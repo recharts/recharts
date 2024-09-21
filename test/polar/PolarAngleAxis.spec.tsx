@@ -12,15 +12,12 @@ import {
   selectAngleAxisRangeWithReversed,
 } from '../../src/state/selectors/polarAxisSelectors';
 import { selectNiceTicks, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import {
-  selectPolarAxisScale,
-  selectPolarAxisTicks,
-  selectPolarNiceTicks,
-} from '../../src/state/selectors/polarScaleSelectors';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
 import {
   selectPolarAppliedValues,
   selectPolarAxisDomain,
   selectPolarItemsSettings,
+  selectPolarNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
 
 type ExpectedAngleAxisTick = {

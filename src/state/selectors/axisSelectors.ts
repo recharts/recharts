@@ -1010,29 +1010,33 @@ export const selectNiceTicks: (
   combineNiceTicks,
 );
 
+export const combineAxisDomainWithNiceTicks = (
+  axisSettings: BaseCartesianAxis,
+  domain: NumberDomain | CategoricalDomain | undefined,
+  niceTicks: ReadonlyArray<number> | undefined,
+) => {
+  if (
+    axisSettings?.type === 'number' &&
+    isWellFormedNumberDomain(domain) &&
+    Array.isArray(niceTicks) &&
+    niceTicks.length > 0
+  ) {
+    const minFromDomain = domain[0];
+    const minFromTicks = niceTicks[0];
+    const maxFromDomain = domain[1];
+    const maxFromTicks = niceTicks[niceTicks.length - 1];
+    return [Math.min(minFromDomain, minFromTicks), Math.max(maxFromDomain, maxFromTicks)];
+  }
+  return domain;
+};
+
 export const selectAxisDomainIncludingNiceTicks: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
 ) => NumberDomain | CategoricalDomain = createSelector(
-  selectBaseAxis,
-  selectAxisDomain,
-  selectNiceTicks,
-  (axisSettings, domain, niceTicks) => {
-    if (
-      axisSettings?.type === 'number' &&
-      isWellFormedNumberDomain(domain) &&
-      Array.isArray(niceTicks) &&
-      niceTicks.length > 0
-    ) {
-      const minFromDomain = domain[0];
-      const minFromTicks = niceTicks[0];
-      const maxFromDomain = domain[1];
-      const maxFromTicks = niceTicks[niceTicks.length - 1];
-      return [Math.min(minFromDomain, minFromTicks), Math.max(maxFromDomain, maxFromTicks)];
-    }
-    return domain;
-  },
+  [selectBaseAxis, selectAxisDomain, selectNiceTicks],
+  combineAxisDomainWithNiceTicks,
 );
 
 /**

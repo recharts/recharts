@@ -3,7 +3,6 @@ import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
 import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
-import { useMaybePolarRadiusAxis } from '../context/chartLayoutContext';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';
@@ -16,9 +15,10 @@ import {
   TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { getTicksOfAxis } from '../util/ChartUtils';
 import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/polarAxisSlice';
-import { useAppDispatch } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
+import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 
 type PolarRadiusViewBox = {
   cx: number;
@@ -179,13 +179,18 @@ const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement
 export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
   const { radiusAxisId } = defaultsAndInputs;
 
-  const axisOptions: PolarRadiusAxisProps = useMaybePolarRadiusAxis(radiusAxisId);
+  const viewBox = useAppSelector(selectPolarViewBox);
+  const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
+  const props: Props = {
+    ...defaultsAndInputs,
+    scale,
+    ...viewBox,
+    radius: viewBox.outerRadius,
+  };
 
-  const props: Props = { ...defaultsAndInputs, ...axisOptions };
   const { tick, axisLine } = props;
 
-  // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
-  const ticks = getTicksOfAxis(axisOptions, true) ?? defaultsAndInputs.ticks;
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId));
 
   if (!ticks || !ticks.length) {
     return null;

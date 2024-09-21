@@ -2,8 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { exampleRadarData, PageData } from '../_data';
-import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart, Surface } from '../../src';
-import { TickItem } from '../../src/util/types';
+import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
@@ -13,6 +12,10 @@ import {
 } from '../../src/state/selectors/polarAxisSelectors';
 import { RadiusAxisSettings } from '../../src/state/polarAxisSlice';
 import { selectAxisDomain, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import {
+  selectPolarAxisDomain,
+  selectPolarAxisDomainIncludingNiceTicks,
+} from '../../src/state/selectors/polarSelectors';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -63,21 +66,35 @@ function expectRadiusAxisLabel(container: Element, expectedLabel: ExpectedLabel 
 }
 
 describe('<PolarRadiusAxis />', () => {
-  const ticks: TickItem[] = [
-    { coordinate: 10 },
-    { coordinate: 1000 },
-    { coordinate: 20 },
-    { coordinate: 40 },
-    { coordinate: 90 },
-  ];
-
   describe('in RadarChart', () => {
     test('Renders ticks when orientation=middle', () => {
+      const domainSpy = vi.fn();
+      const domainWithNiceTicksSpy = vi.fn();
+      const rangeSpy = vi.fn();
+
+      const Comp = (): null => {
+        domainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'radiusAxis', 0)));
+        domainWithNiceTicksSpy(
+          useAppSelector(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0)),
+        );
+        rangeSpy(useAppSelector(state => selectRadiusAxisRangeWithReversed(state, 0)));
+        return null;
+      };
       const { container } = render(
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <PolarRadiusAxis orientation="middle" cx={250} cy={250} label="test" dataKey="value" />
+          <Customized component={<Comp />} />
         </RadarChart>,
       );
+
+      expect(domainSpy).toHaveBeenLastCalledWith([0, 999]);
+      expect(domainSpy).toHaveBeenCalledTimes(3);
+
+      expect(domainWithNiceTicksSpy).toHaveBeenLastCalledWith([0, 1000]);
+      expect(domainWithNiceTicksSpy).toHaveBeenCalledTimes(3);
+
+      expect(rangeSpy).toHaveBeenLastCalledWith([0, 196]);
+      expect(rangeSpy).toHaveBeenCalledTimes(3);
 
       expectRadiusAxisTicks(container, [
         {

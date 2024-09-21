@@ -6,16 +6,9 @@ import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
   useClipPathId,
-  useMaybePolarRadiusAxis,
   useOffset,
 } from '../../src/context/chartLayoutContext';
-import {
-  AxisMap,
-  AxisPropsWithExtraComputedData,
-  CategoricalChartState,
-  XAxisWithExtraData,
-  YAxisWithExtraData,
-} from '../../src/chart/types';
+import { CategoricalChartState, XAxisWithExtraData, YAxisWithExtraData } from '../../src/chart/types';
 import { XAxisMap, YAxisMap } from '../../src/util/types';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
@@ -453,53 +446,6 @@ describe('ChartLayoutContextProvider', () => {
         );
         expect(renderCount).toBe(1);
       });
-    });
-  });
-
-  describe('PolarRadiusAxis state', () => {
-    const exampleAxis: AxisPropsWithExtraComputedData = {
-      isCategorical: false,
-      x: 0,
-      y: 0,
-      mirror: false,
-      reversed: false,
-      scale: linear,
-      type: 'category',
-      axisType: 'radiusAxis',
-    };
-    const exampleBaseAxisMap: AxisMap = {
-      m: exampleAxis,
-    };
-
-    const mockState1: CategoricalChartState = {
-      ...minimalState,
-      radiusAxisMap: exampleBaseAxisMap,
-    };
-
-    it('should read polarRadiusAxis from context', () => {
-      expect.assertions(2);
-      const MockConsumer: ComponentType = () => {
-        const radiusAxis = useMaybePolarRadiusAxis('m');
-        expect(radiusAxis).toEqual({
-          x: 0,
-          y: 0,
-          isCategorical: false,
-          type: 'category',
-          axisType: 'radiusAxis',
-          mirror: false,
-          reversed: false,
-          scale: expect.any(Function),
-        });
-        expect(radiusAxis).toBe(exampleBaseAxisMap.m);
-        return null;
-      };
-      render(
-        <RechartsStoreProvider>
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>
-        </RechartsStoreProvider>,
-      );
     });
   });
 });
