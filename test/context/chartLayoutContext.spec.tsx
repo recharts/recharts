@@ -6,7 +6,6 @@ import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
   useClipPathId,
-  useMaybePolarAngleAxis,
   useMaybePolarRadiusAxis,
   useOffset,
 } from '../../src/context/chartLayoutContext';
@@ -454,53 +453,6 @@ describe('ChartLayoutContextProvider', () => {
         );
         expect(renderCount).toBe(1);
       });
-    });
-  });
-
-  describe('PolarAngleAxis state', () => {
-    const exampleAxis: AxisPropsWithExtraComputedData = {
-      isCategorical: false,
-      x: 0,
-      y: 0,
-      mirror: false,
-      reversed: false,
-      scale: linear,
-      type: 'category',
-      axisType: 'angleAxis',
-    };
-    const exampleBaseAxisMap: AxisMap = {
-      m: exampleAxis,
-    };
-
-    const mockState1: CategoricalChartState = {
-      ...minimalState,
-      angleAxisMap: exampleBaseAxisMap,
-    };
-
-    it('should read polarAngleAxis from context', () => {
-      expect.assertions(2);
-      const MockConsumer: ComponentType = () => {
-        const angleAxis = useMaybePolarAngleAxis('m');
-        expect(angleAxis).toEqual({
-          x: 0,
-          y: 0,
-          isCategorical: false,
-          type: 'category',
-          axisType: 'angleAxis',
-          mirror: false,
-          reversed: false,
-          scale: expect.any(Function),
-        });
-        expect(angleAxis).toBe(exampleBaseAxisMap.m);
-        return null;
-      };
-      render(
-        <RechartsStoreProvider>
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>
-        </RechartsStoreProvider>,
-      );
     });
   });
 
