@@ -145,8 +145,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const payloadFromRedux = useAppSelector(state =>
     selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
   );
+
   const labelFromRedux = useAppSelector(state => selectActiveLabel(state, tooltipEventType, trigger, defaultIndex));
-  const isTooltipActiveFromRedux = useAppSelector(state =>
+  const { isActive: isTooltipActiveFromRedux, activeIndex } = useAppSelector(state =>
     selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
   );
 
@@ -228,7 +229,13 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       {/* Cursor is an SVG element and renders in another portal, so that it renders _below_ the graphical elements */}
       {finalIsActive &&
         createPortal(
-          <Cursor cursor={cursor} tooltipEventType={tooltipEventType} coordinate={finalCoord} payload={payload} />,
+          <Cursor
+            cursor={cursor}
+            tooltipEventType={tooltipEventType}
+            coordinate={finalCoord}
+            payload={payload}
+            index={activeIndex}
+          />,
           cursorPortal,
         )}
     </>
