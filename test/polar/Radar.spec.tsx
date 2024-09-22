@@ -3,10 +3,12 @@ import uniqueId from 'lodash/uniqueId';
 import { render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';
-import { Surface, Radar, Customized, RadarChart } from '../../src';
+import { Radar, Customized, RadarChart } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
+import { exampleRadarData } from '../_data';
+import { expectRadarPolygons } from '../chart/expectRadarPolygons';
 
 type point = { x: number; y: number };
 const CustomizedShape = ({ points }: { points: point[] }) => {
@@ -31,28 +33,27 @@ const CustomizedDot = ({ x, y }: point) => (
 );
 
 describe('<Radar />', () => {
-  const data = [
-    { x: 200, y: 230, cx: 250, cy: 250, angle: 30, radius: 60, value: 4 },
-    { x: 300, y: 405, cx: 250, cy: 250, angle: 90, radius: 60, value: 4 },
-    { x: 100, y: 600, cx: 250, cy: 250, angle: 150, radius: 60, value: 4 },
-    { x: 90, y: 400, cx: 250, cy: 250, angle: 210, radius: 60, value: 4 },
-  ];
-
-  it('Render a polygon in a simple Radar', () => {
+  it('should render a polygon in a simple Radar', () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} />
+      </RadarChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-radar-polygon')).toHaveLength(1);
+    expectRadarPolygons(container, [
+      {
+        d: 'M250,167.68L313.75274739177917,186.2472526082209L445.804,250L319.29646455628165,319.29646455628165L250,419.344L159.91459607683385,340.08540392316615L100.06,250.00000000000003L199.41358087391438,199.41358087391438L250,167.68Z',
+        fill: null,
+        fillOpacity: null,
+      },
+    ]);
   });
 
   it('Render customized shape when shape is set to be a function', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} shape={CustomizedShape} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} shape={CustomizedShape} />
+      </RadarChart>,
     );
 
     expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
@@ -60,9 +61,9 @@ describe('<Radar />', () => {
 
   it('Render customized shape when shape is set to be a element', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} shape={props => <CustomizedShape {...props} />} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} shape={props => <CustomizedShape {...props} />} />
+      </RadarChart>,
     );
 
     expect(screen.getAllByTestId('customized-shape')).toHaveLength(1);
@@ -70,49 +71,49 @@ describe('<Radar />', () => {
 
   it('Render customized label when label is set to be a function', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} label={CustomizedLabel} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} label={CustomizedLabel} />
+      </RadarChart>,
     );
 
-    expect(screen.getAllByTestId('customized-label')).toHaveLength(data.length);
+    expect(screen.getAllByTestId('customized-label')).toHaveLength(exampleRadarData.length);
   });
 
   it('Render customized label when label is set to be a react element', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} label={<CustomizedLabel />} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} label={<CustomizedLabel />} />
+      </RadarChart>,
     );
 
-    expect(screen.getAllByTestId('customized-label')).toHaveLength(data.length);
+    expect(screen.getAllByTestId('customized-label')).toHaveLength(exampleRadarData.length);
   });
 
   it('Render customized dot when dot is set to be a function', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} dot={CustomizedDot} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} dot={CustomizedDot} />
+      </RadarChart>,
     );
 
-    expect(screen.getAllByTestId('customized-dot')).toHaveLength(data.length);
+    expect(screen.getAllByTestId('customized-dot')).toHaveLength(exampleRadarData.length);
   });
 
   it('Render customized dot when dot is set to be a react element', () => {
     render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={data} dot={props => <CustomizedDot {...props} />} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" isAnimationActive={false} dot={props => <CustomizedDot {...props} />} />
+      </RadarChart>,
     );
 
-    expect(screen.getAllByTestId('customized-dot')).toHaveLength(data.length);
+    expect(screen.getAllByTestId('customized-dot')).toHaveLength(exampleRadarData.length);
   });
 
-  it("Don't render polygon when points is empty", () => {
+  it("Don't render polygon when data is empty", () => {
     const { container } = render(
-      <Surface width={500} height={500}>
-        <Radar dataKey="y" isAnimationActive={false} points={[]} />
-      </Surface>,
+      <RadarChart width={500} height={500} data={[]}>
+        <Radar dataKey="value" isAnimationActive={false} />
+      </RadarChart>,
     );
 
     expect(container.querySelectorAll('.recharts-radar-polygon')).toHaveLength(0);
@@ -126,7 +127,7 @@ describe('<Radar />', () => {
         return null;
       };
       const { rerender } = render(
-        <RadarChart width={100} height={100} data={data}>
+        <RadarChart width={100} height={100} data={exampleRadarData}>
           <Radar dataKey="value" />
           <Customized component={<Comp />} />
         </RadarChart>,
@@ -143,7 +144,7 @@ describe('<Radar />', () => {
       expect(polarItemsSpy).toHaveBeenCalledTimes(3);
 
       rerender(
-        <RadarChart width={100} height={100} data={data}>
+        <RadarChart width={100} height={100} data={exampleRadarData}>
           <Customized component={<Comp />} />
         </RadarChart>,
       );

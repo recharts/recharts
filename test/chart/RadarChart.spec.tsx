@@ -1,37 +1,33 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, expect, it, test, vi } from 'vitest';
 import { exampleRadarData } from '../_data';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
+import { Customized, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { assertNotNull } from '../helper/assertNotNull';
-
-export type ExpectedRadarPolygon = {
-  d: string;
-  fill: string;
-  fillOpacity: string;
-};
-
-function expectRadarPolygons(container: HTMLElement, expected: ReadonlyArray<ExpectedRadarPolygon>) {
-  const polygons = container.querySelectorAll('.recharts-radar-polygon path.recharts-polygon');
-  assertNotNull(polygons);
-
-  const actualPolygons = Array.from(polygons).map(polygon => ({
-    d: polygon.getAttribute('d'),
-    fill: polygon.getAttribute('fill'),
-    fillOpacity: polygon.getAttribute('fill-opacity'),
-  }));
-
-  expect(actualPolygons).toEqual(expected);
-}
+import { useAppSelector } from '../../src/state/hooks';
+import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
+import { ExpectedRadarPolygon, expectRadarPolygons } from './expectRadarPolygons';
 
 describe('<RadarChart />', () => {
   test('Render 1 polygon in a simple Radar', () => {
+    const angleAxisRealScaleTypeSpy = vi.fn();
+    const radiusAxisRealScaleTypeSpy = vi.fn();
+    const Comp = (): null => {
+      angleAxisRealScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+      radiusAxisRealScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 0)));
+      return null;
+    };
     const { container } = render(
       <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
+        <Customized component={<Comp />} />
       </RadarChart>,
     );
+
+    expect(angleAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('band');
+    expect(radiusAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('linear');
+
     expectRadarPolygons(container, [
       {
         d: 'M100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150Z',
