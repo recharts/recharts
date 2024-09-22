@@ -889,7 +889,6 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -1299,7 +1298,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
 

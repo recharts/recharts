@@ -11,21 +11,21 @@ import clsx from 'clsx';
 import { interpolateNumber } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
-import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
 import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { Props as PolarAngleAxisProps } from './PolarAngleAxis';
-import { Props as PolarRadiusAxisProps } from './PolarRadiusAxis';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
+import { selectRadarPoints } from '../state/selectors/radarSelectors';
+import { useAppSelector } from '../state/hooks';
 
 interface RadarPoint {
   x: number;
@@ -70,8 +70,14 @@ interface RadarProps {
   onMouseLeave?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
 }
 
-type RadiusAxis = PolarRadiusAxisProps & { scale: (value: any) => number };
-type AngleAxis = PolarAngleAxisProps & { scale: (value: any) => number };
+export type RadiusAxisForRadar = { scale: RechartsScale };
+export type AngleAxisForRadar = {
+  scale: RechartsScale;
+  type: 'number' | 'category';
+  dataKey: DataKey<any>;
+  cx: number;
+  cy: number;
+};
 
 export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points'> & RadarProps;
 
@@ -82,7 +88,7 @@ interface State {
   prevAnimationId?: number;
 }
 
-type RadarComposedData = {
+export type RadarComposedData = {
   points: RadarPoint[];
   baseLinePoints: RadarPoint[];
   isRange: boolean;
@@ -160,8 +166,8 @@ export function computeRadarPoints({
   dataKey,
   bandSize,
 }: {
-  radiusAxis: RadiusAxis;
-  angleAxis: AngleAxis;
+  radiusAxis: RadiusAxisForRadar;
+  angleAxis: AngleAxisForRadar;
   displayedData: any[];
   dataKey: RadarProps['dataKey'];
   bandSize: number;
@@ -426,7 +432,19 @@ class RadarWithState extends PureComponent<Props, State> {
 
 function RadarImpl(props: Props) {
   const { ref, ...everythingElse } = props;
-  return <RadarWithState {...everythingElse} />;
+
+  const radarPoints = useAppSelector(state =>
+    selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, props.dataKey),
+  );
+
+  return (
+    <RadarWithState
+      {...everythingElse}
+      points={radarPoints?.points}
+      baseLinePoints={radarPoints?.baseLinePoints}
+      isRange={radarPoints?.isRange}
+    />
+  );
 }
 
 export class Radar extends PureComponent<Props> {
@@ -441,8 +459,8 @@ export class Radar extends PureComponent<Props> {
     dataKey,
     bandSize,
   }: {
-    radiusAxis: RadiusAxis;
-    angleAxis: AngleAxis;
+    radiusAxis: RadiusAxisForRadar;
+    angleAxis: AngleAxisForRadar;
     displayedData: any[];
     dataKey: RadarProps['dataKey'];
     bandSize: number;

@@ -446,7 +446,7 @@ describe('<PolarRadiusAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith('linear');
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -515,7 +515,7 @@ describe('<PolarRadiusAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith('band');
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
 
