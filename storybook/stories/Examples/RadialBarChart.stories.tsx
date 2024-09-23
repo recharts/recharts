@@ -66,3 +66,24 @@ export const RadialBarWithAxesAndGrid = {
     data: pageDataWithFillColor,
   },
 };
+
+export const StackedRadialBar = {
+  render: (args: Record<string, any>) => {
+    return (
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="pv" stackId="stack1" fill="gold" />
+        <RadialBar dataKey="uv" stackId="stack1" fill="purple" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
+        <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
+      </RadialBarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: pageData,
+  },
+};
