@@ -1,36 +1,11 @@
 import React from 'react';
 import { pageDataWithFillColor } from '../../data';
-import { ResponsiveContainer, RadialBarChart, RadialBar, Legend, Tooltip, PolarAngleAxis } from '../../../../src';
-import { EventHandlers } from '../props/EventHandlers';
-import { AnimationProps } from '../props/AnimationProps';
-import { legendType } from '../props/Legend';
-import { RadialBarStyle } from '../props/Styles';
-import { General as GeneralProps, Internal } from '../props/PolarComponentShared';
-import { tooltipType } from '../props/Tooltip';
+import { Legend, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RadialBarProps } from '../props/RadialBarProps';
 
 export default {
-  argTypes: {
-    ...EventHandlers,
-    ...AnimationProps,
-    tooltipType,
-    legendType,
-    ...GeneralProps,
-    ...Internal,
-    ...RadialBarStyle,
-    // Deprecated
-    dangerouslySetInnerHTML: { table: { category: 'Deprecated' }, hide: true, disable: true },
-    startAngle: {
-      table: { category: 'Deprecated' },
-      hide: true,
-      disable: true,
-    },
-    endAngle: {
-      table: { category: 'Deprecated' },
-      hide: true,
-      disable: true,
-    },
-  },
+  argTypes: RadialBarProps,
   component: RadialBar,
 };
 
@@ -48,9 +23,7 @@ export const API = {
     );
   },
   args: {
-    ...getStoryArgsFromArgsTypesObject(GeneralProps),
-    ...getStoryArgsFromArgsTypesObject(RadialBarStyle),
-    ...getStoryArgsFromArgsTypesObject(AnimationProps),
+    ...getStoryArgsFromArgsTypesObject(RadialBarProps),
     legendType: 'circle',
     label: { fill: '#333', fontSize: 15, position: 'insideStart' },
     background: true,

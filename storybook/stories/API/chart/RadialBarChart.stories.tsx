@@ -4,32 +4,28 @@ import { Meta } from '@storybook/react';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
 import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend, RadialBarProps } from '../../../../src';
-import { CategoricalChartProps } from '../props/ChartProps';
-import { ActiveShapeProps } from '../props/ActiveShapeProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RadialBarChartProps } from '../props/RadialBarChartProps';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-    ...ActiveShapeProps,
-  },
+  argTypes: RadialBarChartProps,
   component: RadialBarChart,
 };
 
 export const Simple: Meta<RadialBarProps> = {
   render: (args: Record<string, any>) => {
-    const { data } = args;
     return (
-      <ResponsiveContainer width="100%" height={400}>
-        <RadialBarChart data={data}>
-          <RadialBar dataKey="uv" activeShape={args.activeShape} />
-          <Tooltip />
-        </RadialBarChart>
-      </ResponsiveContainer>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="uv" />
+        <Tooltip />
+      </RadialBarChart>
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
     data: pageData,
-    activeShape: { fill: 'red' },
+    width: 800,
+    height: 400,
   },
 };
 
@@ -40,16 +36,7 @@ export const WithCustomizedClickLegendEvent = {
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <RadialBarChart
-          width={500}
-          height={300}
-          cx={150}
-          cy={150}
-          innerRadius={20}
-          outerRadius={140}
-          barSize={10}
-          data={data}
-        >
+        <RadialBarChart {...args}>
           <RadialBar background dataKey="uv">
             {data.map((entry: { name: string }) => (
               <Cell key={`cell-${entry.name}`} opacity={selectedRadialBar === entry.name ? 1 : 0.1} />
@@ -85,6 +72,14 @@ export const WithCustomizedClickLegendEvent = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
     data: pageDataWithFillColor,
+    width: 500,
+    height: 300,
+    cx: 150,
+    cy: 150,
+    innerRadius: 20,
+    outerRadius: 140,
+    barSize: 10,
   },
 };

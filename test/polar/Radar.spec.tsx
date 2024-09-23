@@ -8,7 +8,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { exampleRadarData } from '../_data';
-import { expectRadarPolygons } from '../chart/expectRadarPolygons';
+import { expectRadarPolygons } from '../helper/expectRadarPolygons';
 
 type point = { x: number; y: number };
 const CustomizedShape = ({ points }: { points: point[] }) => {

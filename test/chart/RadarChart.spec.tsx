@@ -7,7 +7,7 @@ import { testChartLayoutContext } from '../util/context';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import { ExpectedRadarPolygon, expectRadarPolygons } from './expectRadarPolygons';
+import { ExpectedRadarPolygon, expectRadarPolygons } from '../helper/expectRadarPolygons';
 
 describe('<RadarChart />', () => {
   test('Render 1 polygon in a simple Radar', () => {

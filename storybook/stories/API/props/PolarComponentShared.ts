@@ -14,11 +14,11 @@ export const General: StorybookArgs = {
     description: 'The id of radius axis which is corresponding to the data.',
     table: { type: { summary: 'string | number' }, category: 'General' },
   },
+  dataKey,
 };
 
 export const data: StorybookArg = { table: { category: 'Internal' } };
 
 export const Internal: StorybookArgs = {
   data,
-  dataKey,
 };
