@@ -1,5 +1,5 @@
 import { expect } from 'vitest';
-import { assertNotNull } from '../helper/assertNotNull';
+import { assertNotNull } from './assertNotNull';
 
 export type ExpectedRadarPolygon = {
   d: string;
@@ -7,7 +7,7 @@ export type ExpectedRadarPolygon = {
   fillOpacity: string;
 };
 
-export function expectRadarPolygons(container: HTMLElement, expected: ReadonlyArray<ExpectedRadarPolygon>) {
+export function expectRadarPolygons(container: Element, expected: ReadonlyArray<ExpectedRadarPolygon>) {
   const polygons = container.querySelectorAll('.recharts-radar-polygon path.recharts-polygon');
   assertNotNull(polygons);
 

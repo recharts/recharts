@@ -42,6 +42,8 @@ export type StorybookArg = {
     };
     category?: 'Content' | 'Styles' | 'Position' | 'Internal' | string;
   };
+  hide?: boolean;
+  disable?: boolean;
 };
 
 /**
