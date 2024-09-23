@@ -22,8 +22,8 @@ import {
   getValueByDataKey,
   truncateByDomain,
   getBaseValueOfBar,
-  getTooltipItem,
   getTooltipNameProp,
+  BarPositionPosition,
 } from '../util/ChartUtils';
 import {
   LegendType,
@@ -36,7 +36,6 @@ import {
   ActiveShape,
   LayoutType,
 } from '../util/types';
-import { polarToCartesian } from '../util/PolarUtils';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
@@ -61,7 +60,7 @@ type RadialBarDataItem = SectorProps & {
 type RadialBarBackground = ActiveShape<SectorProps>;
 
 type RadialBarSectorsProps = {
-  sectors: SectorProps[];
+  sectors: ReadonlyArray<SectorProps>;
   allOtherRadialBarProps: RadialBarProps;
 };
 
@@ -134,7 +133,7 @@ interface InternalRadialBarProps {
    */
   barSize?: number;
   maxBarSize?: number;
-  data?: RadialBarDataItem[];
+  data?: ReadonlyArray<RadialBarDataItem>;
   legendType?: LegendType;
   tooltipType?: TooltipType;
   hide?: boolean;
@@ -153,18 +152,18 @@ export type RadialBarProps = PresentationAttributesAdaptChildEvent<any, SVGEleme
 
 interface State {
   readonly isAnimationFinished?: boolean;
-  readonly prevData?: RadialBarDataItem[];
-  readonly curData?: RadialBarDataItem[];
+  readonly prevData?: ReadonlyArray<RadialBarDataItem>;
+  readonly curData?: ReadonlyArray<RadialBarDataItem>;
   readonly prevAnimationId?: string | number;
 }
 
 type RadialBarComposedData = {
-  data: RadialBarDataItem[];
+  data: ReadonlyArray<RadialBarDataItem>;
   layout: LayoutType;
 };
 
 type RadialBarPayloadInputProps = {
-  data: RadialBarDataItem[];
+  data: ReadonlyArray<RadialBarDataItem>;
   legendType?: LegendType;
 };
 
@@ -244,7 +243,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
     }
   };
 
-  renderSectorsStatically(sectors: SectorProps[]) {
+  renderSectorsStatically(sectors: ReadonlyArray<SectorProps>) {
     return <RadialBarSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
   }
 
@@ -301,7 +300,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
     return this.renderSectorsStatically(data);
   }
 
-  renderBackground(sectors?: RadialBarDataItem[]) {
+  renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
     const { cornerRadius } = this.props;
     const backgroundProps = filterProps(this.props.background, false);
 
@@ -363,7 +362,7 @@ const defaultRadialBarProps: Partial<RadialBarProps> = {
   minPointSize: 0,
   hide: false,
   legendType: 'rect',
-  data: [] as RadialBarDataItem[],
+  data: [] as ReadonlyArray<RadialBarDataItem>,
   isAnimationActive: !Global.isSsr,
   animationBegin: 0,
   animationDuration: 1500,
@@ -371,6 +370,124 @@ const defaultRadialBarProps: Partial<RadialBarProps> = {
   forceCornerRadius: false,
   cornerIsExternal: false,
 };
+
+function computeRadialBarDataItems({
+  displayedData,
+  stackedData,
+  dataStartIndex,
+  stackedDomain,
+  dataKey,
+  baseValue,
+  layout,
+  radiusAxis,
+  radiusAxisTicks,
+  bandSize,
+  pos,
+  angleAxis,
+  minPointSize,
+  cx,
+  cy,
+  angleAxisTicks,
+  cells,
+  startAngle: rootStartAngle,
+  endAngle: rootEndAngle,
+}: {
+  displayedData: any[];
+  stackedData: any[];
+  dataStartIndex: number;
+  stackedDomain: any;
+  dataKey: string | number | ((obj: any) => any);
+  baseValue: any;
+  layout: any;
+  radiusAxis: any;
+  radiusAxisTicks: Array<TickItem>;
+  bandSize: number;
+  pos: BarPositionPosition;
+  angleAxis: any;
+  minPointSize: any;
+  cx: number;
+  cy: number;
+  angleAxisTicks: Array<TickItem>;
+  cells: ReadonlyArray<ReactElement> | undefined;
+  startAngle: number;
+  endAngle: number;
+}) {
+  return displayedData.map((entry: any, index: number) => {
+    let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
+
+    if (stackedData) {
+      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+    } else {
+      value = getValueByDataKey(entry, dataKey);
+      if (!Array.isArray(value)) {
+        value = [baseValue, value];
+      }
+    }
+
+    if (layout === 'radial') {
+      innerRadius = getCateCoordinateOfBar({
+        axis: radiusAxis,
+        ticks: radiusAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
+      endAngle = angleAxis.scale(value[1]);
+      startAngle = angleAxis.scale(value[0]);
+      outerRadius = innerRadius + pos.size;
+      const deltaAngle = endAngle - startAngle;
+
+      if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
+        const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
+
+        endAngle += delta;
+      }
+      backgroundSector = {
+        background: {
+          cx,
+          cy,
+          innerRadius,
+          outerRadius,
+          startAngle: rootStartAngle,
+          endAngle: rootEndAngle,
+        },
+      };
+    } else {
+      innerRadius = radiusAxis.scale(value[0]);
+      outerRadius = radiusAxis.scale(value[1]);
+      startAngle = getCateCoordinateOfBar({
+        axis: angleAxis,
+        ticks: angleAxisTicks,
+        bandSize,
+        offset: pos.offset,
+        entry,
+        index,
+      });
+      endAngle = startAngle + pos.size;
+      const deltaRadius = outerRadius - innerRadius;
+
+      if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
+        const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
+        outerRadius += delta;
+      }
+    }
+
+    return {
+      ...entry,
+      ...backgroundSector,
+      payload: entry,
+      value: stackedData ? value : value[1],
+      cx,
+      cy,
+      innerRadius,
+      outerRadius,
+      startAngle,
+      endAngle,
+      ...(cells && cells[index] && cells[index].props),
+    };
+  });
+}
 
 export class RadialBar extends PureComponent<RadialBarProps> {
   static displayName = 'RadialBar';
@@ -416,83 +533,26 @@ export class RadialBar extends PureComponent<RadialBarProps> {
     const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
     const baseValue = getBaseValueOfBar({ numericAxis });
     const cells = findAllByType(children, Cell);
-    const sectors = displayedData.map((entry: any, index: number) => {
-      let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
-
-      if (stackedData) {
-        value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
-      } else {
-        value = getValueByDataKey(entry, dataKey);
-        if (!Array.isArray(value)) {
-          value = [baseValue, value];
-        }
-      }
-
-      if (layout === 'radial') {
-        innerRadius = getCateCoordinateOfBar({
-          axis: radiusAxis,
-          ticks: radiusAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        endAngle = angleAxis.scale(value[1]);
-        startAngle = angleAxis.scale(value[0]);
-        outerRadius = innerRadius + pos.size;
-        const deltaAngle = endAngle - startAngle;
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaAngle || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaAngle));
-
-          endAngle += delta;
-        }
-        backgroundSector = {
-          background: {
-            cx,
-            cy,
-            innerRadius,
-            outerRadius,
-            startAngle: props.startAngle,
-            endAngle: props.endAngle,
-          },
-        };
-      } else {
-        innerRadius = radiusAxis.scale(value[0]);
-        outerRadius = radiusAxis.scale(value[1]);
-        startAngle = getCateCoordinateOfBar({
-          axis: angleAxis,
-          ticks: angleAxisTicks,
-          bandSize,
-          offset: pos.offset,
-          entry,
-          index,
-        });
-        endAngle = startAngle + pos.size;
-        const deltaRadius = outerRadius - innerRadius;
-
-        if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
-          const delta = mathSign(deltaRadius || minPointSize) * (Math.abs(minPointSize) - Math.abs(deltaRadius));
-          outerRadius += delta;
-        }
-      }
-
-      return {
-        ...entry,
-        ...backgroundSector,
-        payload: entry,
-        value: stackedData ? value : value[1],
-        cx,
-        cy,
-        innerRadius,
-        outerRadius,
-        startAngle,
-        endAngle,
-        ...(cells && cells[index] && cells[index].props),
-        // @ts-expect-error missing types
-        tooltipPayload: [getTooltipItem(item, entry)],
-        tooltipPosition: polarToCartesian(cx, cy, (innerRadius + outerRadius) / 2, (startAngle + endAngle) / 2),
-      };
+    const sectors = computeRadialBarDataItems({
+      angleAxis,
+      angleAxisTicks,
+      bandSize,
+      baseValue,
+      cells,
+      cx,
+      cy,
+      dataKey,
+      dataStartIndex,
+      displayedData,
+      endAngle: props.endAngle,
+      layout,
+      minPointSize,
+      pos,
+      radiusAxis,
+      radiusAxisTicks,
+      stackedData,
+      stackedDomain,
+      startAngle: props.startAngle,
     });
 
     return { data: sectors, layout };
