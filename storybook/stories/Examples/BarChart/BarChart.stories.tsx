@@ -484,6 +484,42 @@ export const HasBackground = {
   },
 };
 
+export const HasLabelBasedOnSeparateDataKey = {
+  render: (args: Record<string, any>) => {
+    const dataWithLabel = pageData.map(({ name, uv, pv }) => ({
+      name,
+      uv,
+      pv,
+      label: uv > pv ? 'UV greater' : 'PV greater',
+    }));
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart {...args} data={dataWithLabel}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Legend />
+          <Bar dataKey="pv" fill="#8884d8" label={{ dataKey: 'label', position: 'top', fill: '#111' }} />
+          <Bar dataKey="uv" fill="#82ca9d" />
+          <Tooltip />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
+};
+
 const dataWithMultiXAxis = [
   {
     date: '2000-01',
