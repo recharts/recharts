@@ -7,7 +7,7 @@ import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
-import { ViewBox, PolarViewBox, CartesianViewBox } from '../util/types';
+import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -61,7 +61,8 @@ export type ImplicitLabelType =
   | number
   | ReactElement<SVGElement>
   | ((props: any) => ReactElement<SVGElement>)
-  | Props;
+  // dataKey is only applicable when label is used implicitly from graphical element props
+  | (Props & { dataKey?: DataKey<any> });
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
