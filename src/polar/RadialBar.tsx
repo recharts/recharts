@@ -1,6 +1,3 @@
-/**
- * @fileOverview Render a group of radial bar
- */
 // eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
@@ -8,6 +5,7 @@ import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
 import isFunction from 'lodash/isFunction';
 
+import { Series } from 'victory-vendor/d3-shape';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
@@ -35,6 +33,9 @@ import {
   AnimationDuration,
   ActiveShape,
   LayoutType,
+  DataKey,
+  NumberDomain,
+  CategoricalDomain,
 } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
@@ -48,8 +49,8 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ReportBar } from '../state/ReportBar';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
-// TODO: Cause of circular dependency. Needs refactoring of functions that need them.
-// import { AngleAxisProps, RadiusAxisProps } from './types';
+import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { ChartData } from '../state/chartDataSlice';
 
 type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -392,19 +393,19 @@ function computeRadialBarDataItems({
   startAngle: rootStartAngle,
   endAngle: rootEndAngle,
 }: {
-  displayedData: any[];
-  stackedData: any[];
+  displayedData: ChartData;
+  stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
   dataStartIndex: number;
-  stackedDomain: any;
-  dataKey: string | number | ((obj: any) => any);
-  baseValue: any;
-  layout: any;
-  radiusAxis: any;
+  stackedDomain: NumberDomain | CategoricalDomain | undefined;
+  dataKey: DataKey<any>;
+  baseValue: number | unknown;
+  layout: LayoutType;
+  radiusAxis: BaseAxisWithScale;
   radiusAxisTicks: Array<TickItem>;
   bandSize: number;
   pos: BarPositionPosition;
-  angleAxis: any;
-  minPointSize: any;
+  angleAxis: BaseAxisWithScale;
+  minPointSize: number;
   cx: number;
   cy: number;
   angleAxisTicks: Array<TickItem>;
@@ -412,10 +413,11 @@ function computeRadialBarDataItems({
   startAngle: number;
   endAngle: number;
 }) {
-  return displayedData.map((entry: any, index: number) => {
+  return displayedData.map((entry: unknown, index: number) => {
     let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
     if (stackedData) {
+      // @ts-expect-error truncateByDomain expects only numerical domain, but it can received categorical domain too
       value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
     } else {
       value = getValueByDataKey(entry, dataKey);
@@ -474,6 +476,7 @@ function computeRadialBarDataItems({
     }
 
     return {
+      // @ts-expect-error can't spread unknown
       ...entry,
       ...backgroundSector,
       payload: entry,
@@ -550,6 +553,7 @@ export class RadialBar extends PureComponent<RadialBarProps> {
       pos,
       radiusAxis,
       radiusAxisTicks,
+      // @ts-expect-error any
       stackedData,
       stackedDomain,
       startAngle: props.startAngle,

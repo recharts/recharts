@@ -18,6 +18,7 @@ import {
   stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
+  type SeriesPoint,
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement, ReactNode } from 'react';
@@ -754,11 +755,14 @@ export const findPositionOfBar = (
 /**
  * Both value and domain are tuples of two numbers
  * - but the type stays as array of numbers until we have better support in rest of the app
- * @param {Array} value input that will be truncated
- * @param {Array} domain boundaries
- * @returns {Array} tuple of two numbers
+ * @param value input that will be truncated
+ * @param domain boundaries
+ * @returns tuple of two numbers
  */
-export const truncateByDomain = (value: [number, number], domain: ReadonlyArray<number>) => {
+export const truncateByDomain = (
+  value: SeriesPoint<Record<number, number>>,
+  domain: ReadonlyArray<number>,
+): [number, number] | SeriesPoint<Record<number, number>> => {
   if (!domain || domain.length !== 2 || !isNumber(domain[0]) || !isNumber(domain[1])) {
     return value;
   }
@@ -766,7 +770,7 @@ export const truncateByDomain = (value: [number, number], domain: ReadonlyArray<
   const minValue = Math.min(domain[0], domain[1]);
   const maxValue = Math.max(domain[0], domain[1]);
 
-  const result = [value[0], value[1]];
+  const result: [number, number] = [value[0], value[1]];
   if (!isNumber(value[0]) || value[0] < minValue) {
     result[0] = minValue;
   }
@@ -1121,15 +1125,13 @@ export const getCateCoordinateOfBar = ({
   return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
-export const getBaseValueOfBar = ({
-  numericAxis,
-}: {
-  numericAxis: any; // AngleAxisProps | RadiusAxisProps
-}) => {
+export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithScale }): number | unknown => {
   const domain = numericAxis.scale.domain();
 
   if (numericAxis.type === 'number') {
+    // @ts-expect-error type number means the domain has numbers in it but this relationship is not known to typescript
     const minValue = Math.min(domain[0], domain[1]);
+    // @ts-expect-error type number means the domain has numbers in it but this relationship is not known to typescript
     const maxValue = Math.max(domain[0], domain[1]);
 
     if (minValue <= 0 && maxValue >= 0) {
