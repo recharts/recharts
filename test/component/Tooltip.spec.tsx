@@ -561,4 +561,19 @@ describe('<Tooltip />', () => {
     expect(tooltip).toBeInTheDocument();
     expect(tooltip).not.toBeVisible();
   });
+
+  test('defaultIndex of data.length should be ignored since defaultIndex is 0 based', () => {
+    const { container } = render(
+      <div role="main" style={{ width: '400px', height: '400px' }}>
+        <AreaChart width={400} height={400} data={data}>
+          <Area dataKey="uv" />
+          <Tooltip defaultIndex={data.length} />
+        </AreaChart>
+      </div>,
+    );
+
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip).not.toBeVisible();
+  });
 });
