@@ -638,6 +638,22 @@ describe('Tooltip visibility', () => {
         expect(tooltip).toBeInTheDocument();
         expect(tooltip).not.toBeVisible();
       });
+
+      it('should not fail when defaultIndex is data.length', context => {
+        if (name === 'FunnelChart') {
+          // FunnelChart throws an error when called with defaultIndex
+          context.skip();
+        }
+        const { container } = render(
+          <Wrapper>
+            <Tooltip defaultIndex={commonChartProps.data.length} />
+          </Wrapper>,
+        );
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).toBeInTheDocument();
+        expect(tooltip).not.toBeVisible();
+      });
     });
   });
 

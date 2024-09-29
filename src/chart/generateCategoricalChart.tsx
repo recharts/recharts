@@ -1091,7 +1091,7 @@ export const generateCategoricalChart = ({
       const { defaultIndex } = tooltipElem.props;
 
       // Protect against runtime errors
-      if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length) {
+      if (typeof defaultIndex !== 'number' || defaultIndex < 0 || defaultIndex > this.state.tooltipTicks.length - 1) {
         return;
       }
 
