@@ -6,7 +6,7 @@
     "outDir": "./build/",
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
     "preserveConstEnums": true,
-    "removeComments": true,
+    "removeComments": false,
     "esModuleInterop": true,
     "sourceMap": true,
     "skipLibCheck": true,
