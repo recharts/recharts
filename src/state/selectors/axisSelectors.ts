@@ -60,6 +60,8 @@ import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './b
 import { selectBarCategoryGap } from './rootPropsSelectors';
 import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
+import { pickAxisType } from './pickAxisType';
+import { pickAxisId } from './pickAxisId';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -254,9 +256,6 @@ export const selectAxisSettings = (
  * @return boolean true if there is at least one Bar or RadialBar
  */
 export const selectHasBar = (state: RechartsRootState): boolean => state.graphicalItems.countOfBars > 0;
-
-export const pickAxisType = <T>(_state: RechartsRootState, axisType: T): T => axisType;
-export const pickAxisId = (_state: RechartsRootState, _axisType: unknown, axisId: AxisId): AxisId => axisId;
 
 /**
  * Filters CartesianGraphicalItemSettings by the relevant axis ID

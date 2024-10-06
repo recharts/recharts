@@ -19,6 +19,7 @@ import { addRadiusAxis, RadiusAxisSettings, removeRadiusAxis } from '../state/po
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
+import { defaultPolarRadiusAxisProps } from './defaultPolarRadiusAxisProps';
 
 type PolarRadiusViewBox = {
   cx: number;
@@ -210,21 +211,7 @@ export class PolarRadiusAxis extends PureComponent<Props> {
 
   static axisType = AXIS_TYPE;
 
-  static defaultProps: Partial<Props> = {
-    type: 'number',
-    radiusAxisId: 0,
-    cx: 0,
-    cy: 0,
-    angle: 0,
-    orientation: 'right',
-    stroke: '#ccc',
-    axisLine: true,
-    tick: true,
-    tickCount: 5,
-    allowDataOverflow: false,
-    scale: 'auto',
-    allowDuplicatedCategory: true,
-  };
+  static defaultProps = defaultPolarRadiusAxisProps;
 
   render() {
     return (
