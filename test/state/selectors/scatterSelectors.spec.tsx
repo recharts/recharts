@@ -1,11 +1,16 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useAppSelector } from '../../../src/state/hooks';
 import { ResolvedScatterSettings, selectScatterPoints } from '../../../src/state/selectors/scatterSelectors';
-import { createRechartsStore } from '../../../src/state/store';
 import { Customized, Pie, PieChart, Scatter, ScatterChart } from '../../../src';
 import { pageData } from '../../../storybook/stories/data';
+import {
+  shouldReturnFromInitialState,
+  shouldReturnUndefinedOutOfContext,
+  useAppSelectorWithStableTest,
+} from '../../helper/selectorTestHelpers';
+import { RechartsRootState } from '../../../src/state/store';
 
 describe('selectScatterPoints', () => {
   const scatterSettings: ResolvedScatterSettings = {
@@ -14,29 +19,20 @@ describe('selectScatterPoints', () => {
     data: pageData,
     dataKey: 'uv',
   };
-  it('should return undefined when called out of Recharts context', () => {
-    const scatterPointsSpy = vi.fn();
-    const Comp = (): null => {
-      scatterPointsSpy(
-        useAppSelector(state => selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false)),
-      );
-      return null;
-    };
-    render(<Comp />);
-    expect(scatterPointsSpy).toHaveBeenCalledWith(undefined);
-    expect(scatterPointsSpy).toHaveBeenCalledTimes(1);
-  });
 
-  it('should return undefined when called with initial state', () => {
-    const store = createRechartsStore();
-    const result = selectScatterPoints(store.getState(), 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false);
-    expect(result).toEqual(undefined);
-  });
+  const selector = (state: RechartsRootState) => {
+    return selectScatterPoints(state, 'xAxis', 'yAxis', 'zAxis', scatterSettings, [], false);
+  };
+
+  shouldReturnUndefinedOutOfContext(selector);
+  shouldReturnFromInitialState(selector, undefined);
 
   it('should return undefined in a chart that does not support Scatter', async () => {
     const scatterPointsSpy = vi.fn();
     const Comp = (): null => {
-      const scatterPoints = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, [], false));
+      const scatterPoints = useAppSelectorWithStableTest(state =>
+        selectScatterPoints(state, 0, 0, 0, scatterSettings, [], false),
+      );
       scatterPointsSpy(scatterPoints);
       return null;
     };
@@ -420,7 +416,7 @@ describe('selectScatterPoints', () => {
       },
     ];
     const Comp = (): null => {
-      const scatterPoints = useAppSelector(state =>
+      const scatterPoints = useAppSelectorWithStableTest(state =>
         selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false),
       );
       scatterPointsSpy(scatterPoints);

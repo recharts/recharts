@@ -11,22 +11,11 @@ import {
 } from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import { BarChart, Customized } from '../../../src';
+import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 
 describe('selectRootContainerDomRect', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const rect = useAppSelector(selectRootContainerDomRect);
-      expect(rect).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return undefined for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectRootContainerDomRect(store.getState())).toBe(undefined);
-  });
+  shouldReturnUndefinedOutOfContext(selectRootContainerDomRect);
+  shouldReturnFromInitialState(selectRootContainerDomRect, undefined);
 
   it('should return DOM rect of root container if set', () => {
     const store = createRechartsStore();
@@ -72,20 +61,8 @@ describe('selectRootContainerDomRect', () => {
 });
 
 describe('selectContainerScale', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const scale = useAppSelector(selectContainerScale);
-      expect(scale).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return 1 for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectContainerScale(store.getState())).toBe(1);
-  });
+  shouldReturnUndefinedOutOfContext(selectContainerScale);
+  shouldReturnFromInitialState(selectContainerScale, 1);
 
   it('should return 1 when container is set and has width and DOMRect with matching widths', () => {
     const store = createRechartsStore();
@@ -159,24 +136,12 @@ describe('selectContainerScale', () => {
 });
 
 describe('selectMargin', () => {
-  it('should return undefined when called outside of Redux state', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const margin = useAppSelector(selectMargin);
-      expect(margin).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return initial margin when called with an initial state', () => {
-    const store = createRechartsStore();
-    expect(selectMargin(store.getState())).toEqual({
-      top: 5,
-      right: 5,
-      bottom: 5,
-      left: 5,
-    });
+  shouldReturnUndefinedOutOfContext(selectMargin);
+  shouldReturnFromInitialState(selectMargin, {
+    top: 5,
+    right: 5,
+    bottom: 5,
+    left: 5,
   });
 
   it('should return margin from root chart props, and update it when props change', () => {

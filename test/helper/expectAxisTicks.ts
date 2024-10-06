@@ -1,7 +1,7 @@
 import { assertNotNull } from './assertNotNull';
 import { AxisId } from '../../src/state/cartesianAxisSlice';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
-import { useAppSelector } from '../../src/state/hooks';
+import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 
 export type ExpectedTick = {
   textContent: string;
@@ -40,9 +40,7 @@ export function ExpectAxisDomain({
   axisId?: AxisId;
   assert: (domainFromRedux: ReadonlyArray<unknown>) => void;
 }): null {
-  useAppSelector(state => {
-    const scale = selectAxisScale(state, axisType, axisId, false);
-    assert(scale?.domain());
-  });
+  const scale = useAppSelectorWithStableTest(state => selectAxisScale(state, axisType, axisId, false));
+  assert(scale?.domain());
   return null;
 }

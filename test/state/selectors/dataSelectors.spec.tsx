@@ -1,35 +1,29 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useAppSelector } from '../../../src/state/hooks';
 import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
-import { createRechartsStore } from '../../../src/state/store';
 import { Area, BarChart, Brush, ComposedChart, Customized, Line, Scatter } from '../../../src';
 import { PageData } from '../../_data';
 import { ChartDataState } from '../../../src/state/chartDataSlice';
 import { pageData } from '../../../storybook/stories/data';
+import {
+  shouldReturnFromInitialState,
+  shouldReturnUndefinedOutOfContext,
+  useAppSelectorWithStableTest,
+} from '../../helper/selectorTestHelpers';
 
 describe('selectChartDataWithIndexes', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const payload = useAppSelector(selectChartDataWithIndexes);
-      expect(payload).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return undefined for initial state', () => {
-    const store = createRechartsStore();
-    const expected: ChartDataState = { chartData: undefined, dataEndIndex: 0, dataStartIndex: 0 };
-    expect(selectChartDataWithIndexes(store.getState())).toEqual(expected);
+  shouldReturnUndefinedOutOfContext(selectChartDataWithIndexes);
+  shouldReturnFromInitialState(selectChartDataWithIndexes, {
+    chartData: undefined,
+    dataEndIndex: 0,
+    dataStartIndex: 0,
   });
 
   it('should return undefined in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectChartDataWithIndexes);
+      const tooltipData = useAppSelectorWithStableTest(selectChartDataWithIndexes);
       spy(tooltipData);
       return null;
     };
@@ -46,7 +40,7 @@ describe('selectChartDataWithIndexes', () => {
   it('should return none of the data defined on graphical items', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectChartDataWithIndexes);
+      const tooltipData = useAppSelectorWithStableTest(selectChartDataWithIndexes);
       spy(tooltipData);
       return null;
     };
@@ -68,7 +62,7 @@ describe('selectChartDataWithIndexes', () => {
   it('should return all data defined on the root chart element, and set default endIndex based on the data length', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectChartDataWithIndexes);
+      const tooltipData = useAppSelectorWithStableTest(selectChartDataWithIndexes);
       spy(tooltipData);
       return null;
     };
@@ -85,7 +79,7 @@ describe('selectChartDataWithIndexes', () => {
   it('should return indexes from Brush element', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const tooltipData = useAppSelector(selectChartDataWithIndexes);
+      const tooltipData = useAppSelectorWithStableTest(selectChartDataWithIndexes);
       spy(tooltipData);
       return null;
     };
