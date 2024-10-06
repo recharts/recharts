@@ -129,6 +129,10 @@ interface InternalRadialBarProps {
   forceCornerRadius?: boolean;
   cornerIsExternal?: boolean;
   minPointSize?: number;
+  /**
+   * So in Bar, this can be a percent value - but that won't work in RadialBar. RadialBar: only numbers.
+   */
+  barSize?: number;
   maxBarSize?: number;
   data?: RadialBarDataItem[];
   legendType?: LegendType;
@@ -506,6 +510,9 @@ export class RadialBar extends PureComponent<RadialBarProps> {
           hide={this.props.hide}
           angleAxisId={this.props.angleAxisId}
           radiusAxisId={this.props.radiusAxisId}
+          stackId={this.props.stackId}
+          barSize={this.props.barSize}
+          type="radialBar"
         />
         <RadialBarImpl {...this.props} />
       </>

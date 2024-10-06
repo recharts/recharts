@@ -5,6 +5,7 @@ import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
 import { ErrorBarDirection } from '../cartesian/ErrorBar';
 import { StackId } from '../util/ChartUtils';
+import { MaybeStackedGraphicalItem } from './selectors/barSelectors';
 
 /**
  * ErrorBars have lot more settings but all the others are scoped to the component itself.
@@ -29,8 +30,9 @@ export type ErrorBarsSettings = {
 };
 
 export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
+export type PolarGraphicalItemType = 'pie' | 'radar' | 'radialBar';
 
-export interface GraphicalItemSettings {
+export interface GraphicalItemSettings extends MaybeStackedGraphicalItem {
   data: ChartData;
   dataKey: DataKey<any> | undefined;
   /**
@@ -70,6 +72,7 @@ export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
 };
 
 export type PolarGraphicalItemSettings = GraphicalItemSettings & {
+  type: PolarGraphicalItemType;
   angleAxisId: AxisId;
   radiusAxisId: AxisId;
 };

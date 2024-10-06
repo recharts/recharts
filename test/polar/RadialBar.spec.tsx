@@ -93,6 +93,9 @@ describe('<RadialBar />', () => {
       );
 
       const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        barSize: undefined,
+        stackId: undefined,
+        type: 'radialBar',
         angleAxisId: 0,
         data: undefined,
         dataKey: 'value',
