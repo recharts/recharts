@@ -477,6 +477,9 @@ export class Radar extends PureComponent<Props> {
           hide={this.props.hide}
           angleAxisId={this.props.angleAxisId}
           radiusAxisId={this.props.radiusAxisId}
+          stackId={undefined}
+          barSize={undefined}
+          type="radar"
         />
         <SetRadarPayloadLegend {...this.props} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />

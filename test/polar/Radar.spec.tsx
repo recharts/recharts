@@ -134,6 +134,9 @@ describe('<Radar />', () => {
       );
 
       const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        barSize: undefined,
+        stackId: undefined,
+        type: 'radar',
         angleAxisId: 0,
         data: undefined,
         dataKey: 'value',

@@ -879,6 +879,9 @@ export class Pie extends PureComponent<Props, State> {
           hide={this.props.hide}
           angleAxisId={0}
           radiusAxisId={0}
+          stackId={undefined}
+          barSize={undefined}
+          type="pie"
         />
         <SetPiePayloadLegend {...this.props} />
         <PieImpl {...this.props} />

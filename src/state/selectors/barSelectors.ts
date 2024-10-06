@@ -127,6 +127,16 @@ export const selectBarCartesianAxisSize = (state: RechartsRootState, xAxisId: Ax
   return selectCartesianAxisSize(state, 'yAxis', yAxisId);
 };
 
+/**
+ * Some graphical items allow data stacking. The stacks are optional,
+ * so all props here are optional too.
+ */
+export interface MaybeStackedGraphicalItem {
+  stackId: StackId | undefined;
+  dataKey: DataKey<any> | undefined;
+  barSize: number | string | undefined;
+}
+
 export const selectBarSizeList: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -135,13 +145,13 @@ export const selectBarSizeList: (
   barSettings: BarSettings,
 ) => SizeList | undefined = createSelector(
   [selectAllVisibleBars, selectRootBarSize, selectBarCartesianAxisSize],
-  (allBars: ReadonlyArray<CartesianGraphicalItemSettings>, globalSize: number | undefined, totalSize) => {
-    const initialValue: Record<StackId, Array<CartesianGraphicalItemSettings>> = {};
+  (allBars: ReadonlyArray<MaybeStackedGraphicalItem>, globalSize: number | undefined, totalSize) => {
+    const initialValue: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
 
     const stackedBars = allBars.filter(b => b.stackId != null);
     const unstackedBars = allBars.filter(b => b.stackId == null);
 
-    const groupByStack: Record<StackId, Array<CartesianGraphicalItemSettings>> = stackedBars.reduce((acc, bar) => {
+    const groupByStack: Record<StackId, Array<MaybeStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
       if (!acc[bar.stackId]) {
         acc[bar.stackId] = [];
       }
