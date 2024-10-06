@@ -3911,12 +3911,12 @@ describe('<XAxis />', () => {
       expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
     });
 
-    describe.each([true, false, undefined])('allowDecimals=%s', () => {
+    describe.each([true, false, undefined])('allowDecimals=%s', allowDecimals => {
       const spy = vi.fn();
       it('should have no effect whatsoever on small numbers', () => {
         const { container } = render(
           <BarChart width={300} height={300} data={dataWithSmallNumbers}>
-            <XAxis dataKey="x" type="category" allowDecimals={false} />
+            <XAxis dataKey="x" type="category" allowDecimals={allowDecimals} />
             <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
           </BarChart>,
         );

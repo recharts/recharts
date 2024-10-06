@@ -636,7 +636,6 @@ export function computeBarRectangles({
     let value, x, y, width, height, background;
 
     if (stackedData) {
-      // @ts-expect-error d3 stack series type says it's an array, but actually it's a tuple
       value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
     } else {
       value = getValueByDataKey(entry, dataKey);
