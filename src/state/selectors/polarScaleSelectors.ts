@@ -5,7 +5,6 @@ import { RechartsScale } from '../../util/ChartUtils';
 import {
   combineAxisTicks,
   combineScaleFunction,
-  pickAxisType,
   selectCategoricalDomain,
   selectDuplicateDomain,
   selectRealScaleType,
@@ -19,6 +18,7 @@ import {
 import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectPolarAxisDomainIncludingNiceTicks, selectPolarNiceTicks } from './polarSelectors';
+import { pickAxisType } from './pickAxisType';
 
 const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {

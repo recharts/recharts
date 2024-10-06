@@ -8,40 +8,42 @@ import { selectChartOffset } from './selectChartOffset';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
 import { PolarViewBox } from '../../util/types';
+import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
+import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
 
 export const implicitAngleAxis: AngleAxisSettings = {
-  domain: [0, 'auto'],
-  allowDecimals: false,
-  tick: true,
-  tickCount: 5,
-  ticks: undefined,
   allowDataOverflow: false,
-  allowDuplicatedCategory: true,
+  allowDecimals: false,
+  allowDuplicatedCategory: false, // defaultPolarAngleAxisProps.allowDuplicatedCategory has it set to true but the actual axis rendering ignores the prop because reasons,
   dataKey: undefined,
+  domain: defaultPolarAngleAxisProps.domain,
   id: undefined,
   includeHidden: false,
   name: undefined,
-  reversed: false,
-  scale: 'auto',
-  type: 'category',
+  reversed: defaultPolarAngleAxisProps.reversed,
+  scale: defaultPolarAngleAxisProps.scale,
+  tick: defaultPolarAngleAxisProps.tick,
+  tickCount: defaultPolarAngleAxisProps.tickCount,
+  ticks: undefined,
+  type: defaultPolarAngleAxisProps.type,
   unit: undefined,
 };
 
 export const implicitRadiusAxis: RadiusAxisSettings = {
-  domain: [0, 'auto'],
+  allowDataOverflow: defaultPolarRadiusAxisProps.allowDataOverflow,
   allowDecimals: false,
-  tick: true,
-  tickCount: 5,
-  ticks: undefined,
-  allowDataOverflow: false,
-  allowDuplicatedCategory: true,
+  allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
+  domain: defaultPolarRadiusAxisProps.domain,
   id: undefined,
   includeHidden: false,
   name: undefined,
   reversed: false,
-  scale: 'auto',
-  type: 'number',
+  scale: defaultPolarRadiusAxisProps.scale,
+  tick: defaultPolarRadiusAxisProps.tick,
+  tickCount: defaultPolarRadiusAxisProps.tickCount,
+  ticks: undefined,
+  type: defaultPolarRadiusAxisProps.type,
   unit: undefined,
 };
 

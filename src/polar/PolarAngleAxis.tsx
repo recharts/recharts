@@ -20,6 +20,7 @@ import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polar
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
+import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -233,20 +234,7 @@ export class PolarAngleAxis extends PureComponent<Props> {
 
   static axisType = AXIS_TYPE;
 
-  static defaultProps: Partial<Props> = {
-    type: 'category',
-    angleAxisId: 0,
-    scale: 'auto',
-    cx: 0,
-    cy: 0,
-    orientation: 'outer',
-    axisLine: true,
-    tickLine: true,
-    tickSize: 8,
-    tick: true,
-    reversed: false,
-    allowDuplicatedCategory: true, // if I set this to false then Tooltip synchronisation stops working in Radar, wtf
-  };
+  static defaultProps = defaultPolarAngleAxisProps;
 
   render(): React.ReactNode {
     if (this.props.radius <= 0) return null;
