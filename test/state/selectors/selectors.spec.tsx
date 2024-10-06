@@ -44,6 +44,11 @@ import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieCha
 import { PageData } from '../../_data';
 import { pageData } from '../../../storybook/stories/data';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import {
+  shouldReturnFromInitialState,
+  shouldReturnUndefinedOutOfContext,
+  useAppSelectorWithStableTest,
+} from '../../helper/selectorTestHelpers';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
@@ -222,7 +227,9 @@ describe('selectTooltipPayload', () => {
     ({ tooltipEventType, trigger }) => {
       expect.assertions(1);
       const Comp = (): null => {
-        const payload = useAppSelector(state => selectTooltipPayload(state, tooltipEventType, trigger, undefined));
+        const payload = useAppSelectorWithStableTest(state =>
+          selectTooltipPayload(state, tooltipEventType, trigger, undefined),
+        );
         expect(payload).toBe(undefined);
         return null;
       };
@@ -603,7 +610,9 @@ describe('selectTooltipPayloadConfigurations', () => {
       it('should return undefined when outside of Redux context', () => {
         expect.assertions(1);
         const Comp = (): null => {
-          const result = useAppSelector(state => selectTooltipPayloadConfigurations(state, tooltipEventType, trigger));
+          const result = useAppSelectorWithStableTest(state =>
+            selectTooltipPayloadConfigurations(state, tooltipEventType, trigger),
+          );
           expect(result).toBe(undefined);
           return null;
         };
@@ -660,7 +669,7 @@ describe('selectIsTooltipActive', () => {
       it('should return undefined when outside of Redux state', () => {
         expect.assertions(1);
         const Comp = (): null => {
-          const result = useAppSelector(state => selectIsTooltipActive(state, tooltipEventType, trigger));
+          const result = useAppSelectorWithStableTest(state => selectIsTooltipActive(state, tooltipEventType, trigger));
           expect(result).toBe(undefined);
           return null;
         };
@@ -859,20 +868,11 @@ describe('selectActiveIndexFromMousePointer', () => {
     pageX: 10,
     pageY: 10,
   };
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const coordinates = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
-      expect(coordinates).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
 
-  it('should return undefined for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectActivePropsFromMousePointer(store.getState(), exampleMousePointer)).toBe(undefined);
-  });
+  const selector = (state: RechartsRootState) => selectActivePropsFromMousePointer(state, exampleMousePointer);
+
+  shouldReturnUndefinedOutOfContext(selector);
+  shouldReturnFromInitialState(selector, undefined);
 
   it('should return active props after mouse hover', () => {
     const tooltipActiveSpy = vi.fn();

@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { useAppSelector } from '../../../src/state/hooks';
 import { createRechartsStore } from '../../../src/state/store';
 import { Bar, BarChart, Customized } from '../../../src';
 import {
@@ -10,27 +9,20 @@ import {
   selectRootBarSize,
   selectRootMaxBarSize,
 } from '../../../src/state/selectors/rootPropsSelectors';
+import {
+  shouldReturnFromInitialState,
+  shouldReturnUndefinedOutOfContext,
+  useAppSelectorWithStableTest,
+} from '../../helper/selectorTestHelpers';
 
 describe('selectRootMaxBarSize', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const result = useAppSelector(state => selectRootMaxBarSize(state));
-      expect(result).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return undefined for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectRootMaxBarSize(store.getState())).toBe(undefined);
-  });
+  shouldReturnUndefinedOutOfContext(selectRootMaxBarSize);
+  shouldReturnFromInitialState(selectRootMaxBarSize, undefined);
 
   it('should return undefined in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectRootMaxBarSize(state));
+      const result = useAppSelectorWithStableTest(state => selectRootMaxBarSize(state));
       spy(result);
       return null;
     };
@@ -45,7 +37,7 @@ describe('selectRootMaxBarSize', () => {
   it('should return and update maxBarSize defined on chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectRootMaxBarSize(state));
+      const result = useAppSelectorWithStableTest(state => selectRootMaxBarSize(state));
       spy(result);
       return null;
     };
@@ -71,25 +63,13 @@ describe('selectRootMaxBarSize', () => {
 });
 
 describe('selectBarGap', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const result = useAppSelector(state => selectBarGap(state));
-      expect(result).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return default value for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectBarGap(store.getState())).toBe(4);
-  });
+  shouldReturnUndefinedOutOfContext(selectBarGap);
+  shouldReturnFromInitialState(selectBarGap, 4);
 
   it('should return default value in a chart without barGap prop', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectBarGap(state));
+      const result = useAppSelectorWithStableTest(state => selectBarGap(state));
       spy(result);
       return null;
     };
@@ -104,7 +84,7 @@ describe('selectBarGap', () => {
   it('should return and update barGap defined on chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectBarGap(state));
+      const result = useAppSelectorWithStableTest(state => selectBarGap(state));
       spy(result);
       return null;
     };
@@ -128,10 +108,13 @@ describe('selectBarGap', () => {
 });
 
 describe('selectBarCategoryGap', () => {
+  shouldReturnUndefinedOutOfContext(selectBarCategoryGap);
+  shouldReturnFromInitialState(selectBarCategoryGap, '10%');
+
   it('should return undefined when called outside of Redux context', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const result = useAppSelector(state => selectBarCategoryGap(state));
+      const result = useAppSelectorWithStableTest(state => selectBarCategoryGap(state));
       expect(result).toBe(undefined);
       return null;
     };
@@ -146,7 +129,7 @@ describe('selectBarCategoryGap', () => {
   it('should return default value in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectBarCategoryGap(state));
+      const result = useAppSelectorWithStableTest(state => selectBarCategoryGap(state));
       spy(result);
       return null;
     };
@@ -161,7 +144,7 @@ describe('selectBarCategoryGap', () => {
   it('should return and update barCategoryGap defined on chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectBarCategoryGap(state));
+      const result = useAppSelectorWithStableTest(state => selectBarCategoryGap(state));
       spy(result);
       return null;
     };
@@ -185,25 +168,13 @@ describe('selectBarCategoryGap', () => {
 });
 
 describe('selectRootBarSize', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const result = useAppSelector(state => selectRootBarSize(state));
-      expect(result).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return undefined for initial state', () => {
-    const store = createRechartsStore();
-    expect(selectRootBarSize(store.getState())).toBe(undefined);
-  });
+  shouldReturnUndefinedOutOfContext(selectRootBarSize);
+  shouldReturnFromInitialState(selectRootBarSize, undefined);
 
   it('should return undefined in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectRootBarSize(state));
+      const result = useAppSelectorWithStableTest(state => selectRootBarSize(state));
       spy(result);
       return null;
     };
@@ -218,7 +189,7 @@ describe('selectRootBarSize', () => {
   it('should return and update barSize defined on chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelector(state => selectRootBarSize(state));
+      const result = useAppSelectorWithStableTest(state => selectRootBarSize(state));
       spy(result);
       return null;
     };

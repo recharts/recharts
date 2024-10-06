@@ -4,38 +4,28 @@ import { render } from '@testing-library/react';
 
 import { LegendState } from '../../../src/state/legendSlice';
 import { selectLegendState } from '../../../src/state/selectors/legendSelectors';
-import { useAppSelector } from '../../../src/state/hooks';
-import { createRechartsStore } from '../../../src/state/store';
 import { BarChart, Customized, Legend } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import {
+  shouldReturnFromInitialState,
+  shouldReturnUndefinedOutOfContext,
+  useAppSelectorWithStableTest,
+} from '../../helper/selectorTestHelpers';
 
 describe('selectLegendState', () => {
-  it('should return undefined when called outside of Redux context', () => {
-    expect.assertions(1);
-    const Comp = (): null => {
-      const legend = useAppSelector(selectLegendState);
-      expect(legend).toBe(undefined);
-      return null;
-    };
-    render(<Comp />);
-  });
-
-  it('should return initial state', () => {
-    const store = createRechartsStore();
-    const expected: LegendState = {
-      width: 0,
-      height: 0,
-      align: 'center',
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-    };
-    expect(selectLegendState(store.getState())).toEqual(expected);
+  shouldReturnUndefinedOutOfContext(selectLegendState);
+  shouldReturnFromInitialState(selectLegendState, {
+    width: 0,
+    height: 0,
+    align: 'center',
+    layout: 'horizontal',
+    verticalAlign: 'middle',
   });
 
   it('should return Legend settings', () => {
     const legendSettingsSpy = vi.fn();
     const Comp = (): null => {
-      const legend = useAppSelector(selectLegendState);
+      const legend = useAppSelectorWithStableTest(selectLegendState);
       legendSettingsSpy(legend);
       return null;
     };
