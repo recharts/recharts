@@ -110,13 +110,19 @@ export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiu
 
 export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox = createSelector(
   [selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
-  ({ cx, cy, startAngle, endAngle }: PolarChartOptions, innerRadius, outerRadius, width, height): PolarViewBox => ({
-    cx: getPercentValue(cx, width, width / 2),
-    cy: getPercentValue(cy, height, height / 2),
-    innerRadius,
-    outerRadius,
-    startAngle,
-    endAngle,
-    clockWise: false,
-  }),
+  (polarOptions: PolarChartOptions | undefined, innerRadius, outerRadius, width, height): PolarViewBox | undefined => {
+    if (polarOptions == null) {
+      return undefined;
+    }
+    const { cx, cy, startAngle, endAngle } = polarOptions;
+    return {
+      cx: getPercentValue(cx, width, width / 2),
+      cy: getPercentValue(cy, height, height / 2),
+      innerRadius,
+      outerRadius,
+      startAngle,
+      endAngle,
+      clockWise: false,
+    };
+  },
 );

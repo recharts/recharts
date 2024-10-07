@@ -34,10 +34,14 @@ export function shouldReturnFromInitialState<T>(
 }
 
 /**
- * Do not use in production code! This is a test utility
+ * Do not use in production code! This is a test utility.
  *
- * This function will call the selector twice, and fails the test if the results
- * are referencing a different result.
+ * If you see a test failing in this method, that means the selector passed in is not stable.
+ * Stable means that if it's called twice with the same argument, it should also return the same result.
+ * It's important that "Same result" is "triple equals same" for React rendering performance.
+ * One can achieve that by using memoization, for example with createSelector.
+ *
+ * This function will call the selector twice, and fails the test if the results are referencing a different result.
  *
  * This is generally what we want from all selectors so it's a good idea to run this on all selector functions.
  *
