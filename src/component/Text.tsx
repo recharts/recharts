@@ -261,7 +261,9 @@ export const Text = ({
       {wordsByLines.map((line, index) => {
         const words = line.words.join(breakAll ? '' : ' ');
         return (
-          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={words}>
+          // duplicate words will cause duplicate keys
+          // eslint-disable-next-line react/no-array-index-key
+          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
             {words}
           </tspan>
         );
