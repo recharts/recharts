@@ -4,7 +4,6 @@ import { describe, expect, it, test, vi } from 'vitest';
 import { Customized, PolarAngleAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { exampleRadarData, PageData } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
-import { useAppSelector } from '../../src/state/hooks';
 import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
 import {
   implicitAngleAxis,
@@ -19,6 +18,7 @@ import {
   selectPolarItemsSettings,
   selectPolarNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
+import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -75,13 +75,13 @@ describe('<PolarAngleAxis />', () => {
       const polarItemsSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelectorWithStableTest(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
+        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -239,13 +239,13 @@ describe('<PolarAngleAxis />', () => {
       const polarItemsSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelectorWithStableTest(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
+        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -403,13 +403,13 @@ describe('<PolarAngleAxis />', () => {
       const polarItemsSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelectorWithStableTest(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
+        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -479,9 +479,9 @@ describe('<PolarAngleAxis />', () => {
       const rangeSpy = vi.fn();
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        rangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        domainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        rangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        domainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
         return null;
       };
 
@@ -580,8 +580,8 @@ describe('<PolarAngleAxis />', () => {
       const niceTicksSpy = vi.fn();
 
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        niceTicksSpy(useAppSelector(state => selectPolarNiceTicks(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        niceTicksSpy(useAppSelectorWithStableTest(state => selectPolarNiceTicks(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -1020,7 +1020,7 @@ describe('<PolarAngleAxis />', () => {
     test('linear scale should produce niceTicks=undefined too because that is what the generator does', () => {
       const niceTicksSpy = vi.fn();
       const Comp = (): null => {
-        niceTicksSpy(useAppSelector(state => selectPolarNiceTicks(state, 'angleAxis', 0)));
+        niceTicksSpy(useAppSelectorWithStableTest(state => selectPolarNiceTicks(state, 'angleAxis', 0)));
         return null;
       };
 
@@ -1136,7 +1136,7 @@ describe('<PolarAngleAxis />', () => {
     ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
       const realScaleTypeSpy = vi.fn();
       const Comp = (): null => {
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
 
@@ -1162,13 +1162,13 @@ describe('<PolarAngleAxis />', () => {
       const polarItemsSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelectorWithStableTest(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
+        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -1379,13 +1379,13 @@ describe('<PolarAngleAxis />', () => {
       const polarItemsSpy = vi.fn();
       const ticksSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 0)));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 0)));
-        polarItemsSpy(useAppSelector(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        angleAxisAppliedDataSpy(useAppSelector(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
+        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
+        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
+        angleAxisAppliedDataSpy(useAppSelectorWithStableTest(state => selectPolarAppliedValues(state, 'angleAxis', 0)));
+        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
       const { container } = render(
@@ -1661,7 +1661,7 @@ describe('<PolarAngleAxis />', () => {
     ] as const)('uses $expectedScale scale when type=$axisType', ({ axisType, expectedScale }) => {
       const realScaleTypeSpy = vi.fn();
       const Comp = (): null => {
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
+        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
 
@@ -1682,7 +1682,7 @@ describe('<PolarAngleAxis />', () => {
     it('should report its settings to Redux store, and remove it when component is removed', () => {
       const angleAxisSpy = vi.fn();
       const Comp = (): null => {
-        angleAxisSpy(useAppSelector(state => selectAngleAxis(state, 0)));
+        angleAxisSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
         return null;
       };
       const { rerender } = render(
@@ -1727,12 +1727,14 @@ describe('<PolarAngleAxis />', () => {
       const angleAxisTicksSpy = vi.fn();
       const angleAxisNiceTicksSpy = vi.fn();
       const Comp = (): null => {
-        axisSettingsSpy(useAppSelector(state => selectAngleAxis(state, 'angle-id')));
-        angleAxisRangeSpy(useAppSelector(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
-        angleAxisDomainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'angleAxis', 'angle-id')));
-        angleAxisScaleSpy(useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', 'angle-id')));
-        angleAxisTicksSpy(useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', 'angle-id')));
-        angleAxisNiceTicksSpy(useAppSelector(state => selectNiceTicks(state, 'angleAxis', 'angle-id')));
+        axisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 'angle-id')));
+        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
+        angleAxisDomainSpy(
+          useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 'angle-id')),
+        );
+        angleAxisScaleSpy(useAppSelectorWithStableTest(state => selectPolarAxisScale(state, 'angleAxis', 'angle-id')));
+        angleAxisTicksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 'angle-id')));
+        angleAxisNiceTicksSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'angleAxis', 'angle-id')));
         return null;
       };
       const exampleTicks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
