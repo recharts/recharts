@@ -960,7 +960,7 @@ export function combineScaleFunction(
   axisDomain: NumberDomain | CategoricalDomain,
   axisRange: [number, number],
 ): RechartsScale | undefined {
-  if (axisDomain == null) {
+  if (axisDomain == null || axisRange == null) {
     return undefined;
   }
   if (typeof axis.scale === 'function') {

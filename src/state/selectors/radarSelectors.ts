@@ -1,55 +1,78 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RechartsRootState } from '../store';
 import { AngleAxisForRadar, computeRadarPoints, RadarComposedData, RadiusAxisForRadar } from '../../polar/Radar';
-import { BaseAxisWithScale, selectBaseAxis } from './axisSelectors';
+import { BaseAxisWithScale } from './axisSelectors';
 import { selectPolarAxisScale, selectPolarAxisTicks } from './polarScaleSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { ChartDataState } from '../chartDataSlice';
-import { DataKey, LayoutType, TickItem } from '../../util/types';
+import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { getBandSizeOfAxis, isCategoricalAxis } from '../../util/ChartUtils';
+import { getBandSizeOfAxis, isCategoricalAxis, RechartsScale } from '../../util/ChartUtils';
+import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 
-const selectRadiusAxisForRadar = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisForRadar => {
-  const scale = selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
-  if (scale == null) {
-    return undefined;
-  }
-  return { scale };
-};
+const selectRadiusAxisScale = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
+  selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
 
-const selectRadiusAxisForBandSize = (state: RechartsRootState, radiusAxisId: AxisId): BaseAxisWithScale | undefined => {
-  const axisSettings = selectRadiusAxis(state, radiusAxisId);
-  const scale = selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
-  if (axisSettings == null || scale == null) {
-    return undefined;
-  }
-  return {
-    ...axisSettings,
-    scale,
-  };
-};
+const selectRadiusAxisForRadar: (state: RechartsRootState, radiusAxisId: AxisId) => RadiusAxisForRadar = createSelector(
+  [selectRadiusAxisScale],
+  (scale: RechartsScale | undefined): RadiusAxisForRadar => {
+    if (scale == null) {
+      return undefined;
+    }
+    return { scale };
+  },
+);
+
+export const selectRadiusAxisForBandSize: (
+  state: RechartsRootState,
+  radiusAxisId: AxisId,
+) => BaseAxisWithScale | undefined = createSelector(
+  [selectRadiusAxis, selectRadiusAxisScale],
+  (axisSettings: RadiusAxisSettings | undefined, scale: RechartsScale | undefined): BaseAxisWithScale | undefined => {
+    if (axisSettings == null || scale == null) {
+      return undefined;
+    }
+    return {
+      ...axisSettings,
+      scale,
+    };
+  },
+);
 
 const selectRadiusAxisTicks = (state: RechartsRootState, radiusAxisId: AxisId): ReadonlyArray<TickItem> | undefined => {
   return selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId);
 };
 
-const selectAngleAxisForBandSize = (
+const selectAngleAxisForRadar = (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
-): BaseAxisWithScale | undefined => {
-  const axisSettings = selectAngleAxis(state, angleAxisId);
-  const scale = selectPolarAxisScale(state, 'angleAxis', angleAxisId);
-  if (axisSettings == null || scale == null) {
-    return undefined;
-  }
-  return {
-    ...axisSettings,
-    scale,
-  };
-};
+): AngleAxisSettings => selectAngleAxis(state, angleAxisId);
+
+const selectPolarAxisScaleForRadar = (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  angleAxisId: AxisId,
+): RechartsScale | undefined => selectPolarAxisScale(state, 'angleAxis', angleAxisId);
+
+export const selectAngleAxisForBandSize: (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  angleAxisId: AxisId,
+) => BaseAxisWithScale | undefined = createSelector(
+  [selectAngleAxisForRadar, selectPolarAxisScaleForRadar],
+  (axisSettings: AngleAxisSettings, scale: RechartsScale | undefined): BaseAxisWithScale | undefined => {
+    if (axisSettings == null || scale == null) {
+      return undefined;
+    }
+    return {
+      ...axisSettings,
+      scale,
+    };
+  },
+);
 
 const selectAngleAxisTicks = (
   state: RechartsRootState,
@@ -59,22 +82,25 @@ const selectAngleAxisTicks = (
   return selectPolarAxisTicks(state, 'angleAxis', angleAxisId);
 };
 
-const selectAngleAxisForRadar = (
+export const selectAngleAxisWithScaleAndViewport: (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
-): AngleAxisForRadar => {
-  const axisOptions = selectBaseAxis(state, 'angleAxis', angleAxisId);
-  const scale = selectPolarAxisScale(state, 'angleAxis', angleAxisId);
-  const { cx, cy } = selectPolarViewBox(state);
-  return {
-    scale,
-    type: axisOptions.type,
-    dataKey: axisOptions.dataKey,
-    cx,
-    cy,
-  };
-};
+) => AngleAxisForRadar = createSelector(
+  [selectAngleAxisForRadar, selectPolarAxisScaleForRadar, selectPolarViewBox],
+  (axisOptions: AngleAxisSettings, scale: RechartsScale | undefined, polarViewBox: PolarViewBox | undefined) => {
+    if (polarViewBox == null) {
+      return undefined;
+    }
+    return {
+      scale,
+      type: axisOptions.type,
+      dataKey: axisOptions.dataKey,
+      cx: polarViewBox.cx,
+      cy: polarViewBox.cy,
+    };
+  },
+);
 
 const pickDataKey = (
   _state: RechartsRootState,
@@ -116,7 +142,13 @@ export const selectRadarPoints: (
   angleAxisId: AxisId,
   radarDataKey: DataKey<any> | undefined,
 ) => RadarComposedData = createSelector(
-  [selectRadiusAxisForRadar, selectAngleAxisForRadar, selectChartDataWithIndexes, pickDataKey, selectBandSizeOfAxis],
+  [
+    selectRadiusAxisForRadar,
+    selectAngleAxisWithScaleAndViewport,
+    selectChartDataWithIndexes,
+    pickDataKey,
+    selectBandSizeOfAxis,
+  ],
   (
     radiusAxis: RadiusAxisForRadar,
     angleAxis: AngleAxisForRadar,
