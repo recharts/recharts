@@ -18,6 +18,7 @@ export default {
     margin,
     data,
     sort: { description: 'Whether to sort the data or not' },
+    allowCutoff: { description: 'Allow the node to be cut off before the last depth' },
   },
   component: Sankey,
 };
