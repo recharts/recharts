@@ -345,6 +345,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             <CartesianGrid
               {...exampleCartesianGridDimensions}
               fill="green"
+              ry={10}
               verticalPoints={verticalPoints}
               horizontalPoints={horizontalPoints}
             />
@@ -355,6 +356,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
         expect.soft(background).toHaveAttribute('y', '2');
         expect.soft(background).toHaveAttribute('width', '300');
         expect.soft(background).toHaveAttribute('height', '200');
+        expect.soft(background).toHaveAttribute('ry', '10');
       });
 
       it('should put x, y, width and height as coordinates to all lines', () => {
