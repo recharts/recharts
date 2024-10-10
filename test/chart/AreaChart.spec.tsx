@@ -1,3 +1,4 @@
+import { screen, waitFor } from '@testing-library/dom';
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
 import { vi, SpyInstance } from 'vitest';
@@ -147,6 +148,182 @@ describe('AreaChart', () => {
       </AreaChart>,
     );
     expect(container.querySelectorAll('.recharts-area')).toHaveLength(0);
+  });
+
+  test('Renders tooltip when Tooltip item is added', () => {
+    const { container } = render(
+      <AreaChart width={100} height={50} data={data}>
+        <Area type="monotone" dot label dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+        <Area type="monotone" dot label dataKey="pv" stroke="#ff7300" fill="#387908" />
+        <Tooltip />
+      </AreaChart>,
+    );
+    // Both the default Tooltip as well as the Tooltip wrapper are rendered even if not visible
+    expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-tooltip-wrapper')).toHaveLength(1);
+  });
+
+  describe('<AreaChart /> - Series data', () => {
+    const seriesData = [
+      {
+        name: '2021',
+        data: [
+          { month: 'Jan 21', Revenue: 4400, Cost: 0.1 },
+          { month: 'Feb 21', Revenue: 3612, Cost: 0.2 },
+          { month: 'Mar 21', Revenue: 145, Cost: 0.15 },
+        ],
+      },
+      {
+        name: '2022',
+        data: [
+          { month: 'Jan 22', Revenue: 571, Cost: 0.5 },
+          { month: 'Feb 22', Revenue: 234, Cost: 0.3 },
+          { month: 'Mar 22', Revenue: 2345, Cost: 0.7 },
+        ],
+      },
+    ];
+
+    test('Renders tooltip when Tooltip item is added and layout is horizontal', async () => {
+      const { container } = render(
+        <AreaChart width={100} height={50}>
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Revenue"
+            stroke="#ff7300"
+            fill="#ff7300"
+            data={seriesData[0].data}
+            yAxisId={0}
+            xAxisId={0}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Cost"
+            stroke="#387908"
+            fill="#387908"
+            data={seriesData[0].data}
+            yAxisId={1}
+            xAxisId={0}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Revenue"
+            stroke="#ff7300"
+            fill="#ff7300"
+            data={seriesData[1].data}
+            strokeDasharray="5 5"
+            yAxisId={0}
+            xAxisId={1}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Cost"
+            stroke="#387908"
+            fill="#387908"
+            data={seriesData[1].data}
+            strokeDasharray="5 5"
+            yAxisId={1}
+            xAxisId={1}
+          />
+
+          <XAxis type="number" xAxisId={0} />
+          <XAxis type="number" xAxisId={1} />
+          <YAxis type="category" dataKey="month" allowDuplicatedCategory={false} yAxisId={0} />
+          <YAxis type="category" dataKey="month" allowDuplicatedCategory={false} yAxisId={1} />
+          <Tooltip />
+        </AreaChart>,
+      );
+
+      const tooltipWrapper = container.querySelectorAll('.recharts-tooltip-wrapper');
+      const tooltip = container.querySelectorAll('.recharts-default-tooltip');
+      const area = container.querySelectorAll('.recharts-surface')[0];
+
+      expect(tooltip).toHaveLength(1);
+      expect(tooltipWrapper).toHaveLength(1);
+
+      await waitFor(() => {
+        fireEvent.mouseOver(area);
+        expect(tooltipWrapper).toBeVisible();
+        screen.debug();
+      });
+    });
+
+    test('Renders tooltip when Tooltip item is added and layout is vertical', async () => {
+      const { container } = render(
+        <AreaChart width={100} height={50} layout="vertical">
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Revenue"
+            stroke="#ff7300"
+            fill="#ff7300"
+            data={seriesData[0].data}
+            yAxisId={0}
+            xAxisId={0}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Cost"
+            stroke="#387908"
+            fill="#387908"
+            data={seriesData[0].data}
+            yAxisId={1}
+            xAxisId={0}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Revenue"
+            stroke="#ff7300"
+            fill="#ff7300"
+            data={seriesData[1].data}
+            strokeDasharray="5 5"
+            yAxisId={0}
+            xAxisId={1}
+          />
+          <Area
+            type="monotone"
+            dot
+            label
+            dataKey="Cost"
+            stroke="#387908"
+            fill="#387908"
+            data={seriesData[1].data}
+            strokeDasharray="5 5"
+            yAxisId={1}
+            xAxisId={1}
+          />
+          <XAxis type="number" xAxisId={0} />
+          <XAxis type="number" xAxisId={1} />
+          <YAxis type="category" dataKey="month" allowDuplicatedCategory={false} yAxisId={0} />
+          <YAxis type="category" dataKey="month" allowDuplicatedCategory={false} yAxisId={1} />
+          <Tooltip />
+        </AreaChart>,
+      );
+      const tooltipWrapper = container.querySelectorAll('.recharts-tooltip-wrapper');
+      const tooltip = container.querySelectorAll('.recharts-default-tooltip');
+      const area = container.querySelectorAll('.recharts-area')[0];
+
+      expect(tooltip).toHaveLength(1);
+      expect(tooltipWrapper).toHaveLength(1);
+
+      await waitFor(() => {
+        fireEvent.mouseOver(area);
+        expect(tooltipWrapper).toBeVisible();
+        screen.debug();
+      });
+    });
   });
 
   describe('<AreaChart /> - Pure Rendering', () => {
