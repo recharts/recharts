@@ -146,23 +146,24 @@ interface CartesianGridProps extends InternalCartesianGridProps {
   verticalValues?: number[] | string[];
 }
 
-type AcceptedSvgProps = Omit<SVGProps<SVGElement>, 'offset'>;
+type AcceptedSvgProps = Omit<SVGProps<SVGRectElement>, 'offset'>;
 
 export type Props = AcceptedSvgProps & CartesianGridProps;
 
-const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height'>) => {
+const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' | 'y' | 'width' | 'height' | 'ry'>) => {
   const { fill } = props;
 
   if (!fill || fill === 'none') {
     return null;
   }
 
-  const { fillOpacity, x, y, width, height } = props;
+  const { fillOpacity, x, y, width, height, ry } = props;
 
   return (
     <rect
       x={x}
       y={y}
+      ry={ry}
       width={width}
       height={height}
       stroke="none"
@@ -494,6 +495,7 @@ export function CartesianGrid(props: Props) {
         y={propsIncludingDefaults.y}
         width={propsIncludingDefaults.width}
         height={propsIncludingDefaults.height}
+        ry={propsIncludingDefaults.ry}
       />
       <HorizontalGridLines
         {...propsIncludingDefaults}
