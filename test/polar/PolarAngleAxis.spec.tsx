@@ -19,6 +19,7 @@ import {
   selectPolarNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
+import { expectScale } from '../helper/expectScale';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -1790,8 +1791,8 @@ describe('<PolarAngleAxis />', () => {
 
       expect(angleAxisScaleSpy).toHaveBeenLastCalledWith(expect.any(Function));
       expect(angleAxisScaleSpy).toHaveBeenCalledTimes(3);
-      const lastKnownScale = angleAxisScaleSpy.mock.calls[angleAxisScaleSpy.mock.calls.length - 1][0];
-      expect(lastKnownScale.domain()).toEqual([420, 365]);
+
+      expectScale(angleAxisScaleSpy, { domain: [420, 365], range: [-270, 90] });
 
       expect(angleAxisTicksSpy).toHaveBeenLastCalledWith([
         {
