@@ -76,7 +76,7 @@ export const General = {
           <PolarGrid />
           <PolarAngleAxis dataKey="subject" />
           <PolarRadiusAxis />
-          <Radar name="Mike" dataKey="A" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} {...args} />
+          <Radar {...args} />
         </RadarChart>
       </ResponsiveContainer>
     );
@@ -84,6 +84,10 @@ export const General = {
   args: {
     ...getStoryArgsFromArgsTypesObject(GeneralProps),
     dataKey: 'A',
+    name: 'Mike',
+    stroke: '#8884d8',
+    fill: '#8884d8',
+    fillOpacity: 0.6,
   },
   parameters: {
     controls: { include: Object.keys(GeneralProps) },
