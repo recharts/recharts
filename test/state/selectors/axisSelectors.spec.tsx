@@ -284,9 +284,9 @@ describe('selectAxisDomain', () => {
     selectAxisDomain(state, 'xAxis', '0');
 
   shouldReturnUndefinedOutOfContext(selector);
-  shouldReturnFromInitialState(selector, []);
+  shouldReturnFromInitialState(selector, undefined);
 
-  it('should return empty array if there is no data in the chart', () => {
+  it('should return undefined if there is no data in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
       const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
@@ -300,7 +300,7 @@ describe('selectAxisDomain', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledWith([]);
+    expect(spy).toHaveBeenCalledWith(undefined);
     expectXAxisTicks(container, []);
   });
 

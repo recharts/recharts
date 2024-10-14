@@ -850,7 +850,7 @@ export const combineAxisDomain = (
   axisType: XorYorZType,
   numericalDomain: NumberDomain | undefined,
 ): NumberDomain | CategoricalDomain | undefined => {
-  if (axisSettings == null) {
+  if (axisSettings == null || displayedData.length === 0) {
     return undefined;
   }
 
