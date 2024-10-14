@@ -1476,7 +1476,7 @@ describe('<XAxis />', () => {
 
     expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(0);
     expectXAxisTicks(container, []);
-    expect(spy).toHaveBeenLastCalledWith([]);
+    expect(spy).toHaveBeenLastCalledWith(undefined);
   });
 
   it('should render multiple axes', () => {
@@ -3190,7 +3190,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith([]);
+        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([0, 180]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([0, 160]);
       });
@@ -3261,7 +3261,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith([]);
+        expect(reduxDefaultDomainSpy).toHaveBeenLastCalledWith(undefined);
         expect(reduxDomainSpyA).toHaveBeenLastCalledWith([100, 170]);
         expect(reduxDomainSpyB).toHaveBeenLastCalledWith([110, 150]);
       });
@@ -4131,7 +4131,7 @@ describe('<XAxis />', () => {
               y: '273',
             },
           ]);
-          expect(defaultReduxDomainSpy).toHaveBeenLastCalledWith([]);
+          expect(defaultReduxDomainSpy).toHaveBeenLastCalledWith(undefined);
           expect(reduxDomainSpyA).toHaveBeenLastCalledWith([200, 260, 400]);
           expect(reduxDomainSpyB).toHaveBeenLastCalledWith([280, 500, 200]);
         },
