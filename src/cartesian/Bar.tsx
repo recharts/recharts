@@ -95,7 +95,8 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius' | 'name'> & BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'> &
+  BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
