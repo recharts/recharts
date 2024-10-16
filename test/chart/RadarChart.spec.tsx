@@ -5,17 +5,20 @@ import { exampleRadarData } from '../_data';
 import { Customized, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { assertNotNull } from '../helper/assertNotNull';
-import { useAppSelector } from '../../src/state/hooks';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { ExpectedRadarPolygon, expectRadarPolygons } from '../helper/expectRadarPolygons';
+import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
+import { selectAngleAxis } from '../../src/state/selectors/polarAxisSelectors';
 
 describe('<RadarChart />', () => {
-  test('Render 1 polygon in a simple Radar', () => {
+  test('Renders polygon with implicit axes', () => {
+    const angleAxisSettingsSpy = vi.fn();
     const angleAxisRealScaleTypeSpy = vi.fn();
     const radiusAxisRealScaleTypeSpy = vi.fn();
     const Comp = (): null => {
-      angleAxisRealScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'angleAxis', 0)));
-      radiusAxisRealScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 0)));
+      angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+      angleAxisRealScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
+      radiusAxisRealScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'radiusAxis', 0)));
       return null;
     };
     const { container } = render(
@@ -24,6 +27,73 @@ describe('<RadarChart />', () => {
         <Customized component={<Comp />} />
       </RadarChart>,
     );
+
+    expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: false,
+      allowDuplicatedCategory: false,
+      dataKey: undefined,
+      domain: undefined,
+      id: undefined,
+      includeHidden: false,
+      name: undefined,
+      reversed: false,
+      scale: 'auto',
+      tick: true,
+      tickCount: undefined,
+      ticks: undefined,
+      type: 'category',
+      unit: undefined,
+    });
+
+    expect(angleAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('band');
+    expect(radiusAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('linear');
+
+    expectRadarPolygons(container, [
+      {
+        d: 'M100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150Z',
+        fill: null,
+        fillOpacity: null,
+      },
+    ]);
+  });
+
+  test('Renders polygon with default axes', () => {
+    const angleAxisSettingsSpy = vi.fn();
+    const angleAxisRealScaleTypeSpy = vi.fn();
+    const radiusAxisRealScaleTypeSpy = vi.fn();
+    const Comp = (): null => {
+      angleAxisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 0)));
+      angleAxisRealScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
+      radiusAxisRealScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'radiusAxis', 0)));
+      return null;
+    };
+    const { container } = render(
+      <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
+        <PolarAngleAxis />
+        <PolarRadiusAxis />
+        <Radar dataKey="value" />
+        <Customized component={<Comp />} />
+      </RadarChart>,
+    );
+
+    expect(angleAxisSettingsSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: undefined,
+      allowDuplicatedCategory: false,
+      dataKey: undefined,
+      domain: undefined,
+      id: 0,
+      includeHidden: false,
+      name: undefined,
+      reversed: false,
+      scale: 'auto',
+      tick: true,
+      tickCount: undefined,
+      ticks: undefined,
+      type: 'category',
+      unit: undefined,
+    });
 
     expect(angleAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('band');
     expect(radiusAxisRealScaleTypeSpy).toHaveBeenLastCalledWith('linear');
