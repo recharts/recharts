@@ -2,7 +2,7 @@
 import { expect, userEvent, within } from '@storybook/test';
 import { StoryObj } from '@storybook/react';
 import React, { PureComponent, useState } from 'react';
-import { Impressions, impressionsData, pageData } from '../data';
+import { Impressions, impressionsData, pageData, finDataOverTime } from '../data';
 import {
   Line,
   LineChart,
@@ -982,6 +982,147 @@ export const HideOnLegendClick: StoryObj = {
 
           <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const MultipleXandYAxisLineChartHorizontalLayout = {
+  render: () => {
+    const dataKey = 'month';
+    const colors = ['green', 'red'];
+    const xAxisOrientations = ['top', 'bottom'] as const;
+    const yAxisOrientations = ['left', 'right'] as const;
+    const categories = ['Revenue', 'Cost'];
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart width={500} height={300} layout="horizontal">
+          <CartesianGrid strokeDasharray="3 3" />
+
+          <Tooltip />
+          <Legend />
+          {finDataOverTime.map((s, sIdx) => {
+            return (
+              <>
+                <XAxis
+                  key={s.name}
+                  dataKey={dataKey}
+                  orientation={xAxisOrientations[sIdx]}
+                  xAxisId={sIdx}
+                  allowDuplicatedCategory={false}
+                />
+                {categories.map((category, cIdx) => {
+                  const dataRange = [].concat(
+                    ...s.data.map(d =>
+                      d[category]
+                        ? [
+                            {
+                              [dataKey]: d[dataKey],
+                              [category]: d[category],
+                            },
+                          ]
+                        : [],
+                    ),
+                  );
+                  return (
+                    <>
+                      <YAxis
+                        key={`yaxis-${s.name}-${category}`}
+                        domain={['auto', 'auto']}
+                        orientation={yAxisOrientations[cIdx]}
+                        yAxisId={cIdx}
+                        stroke={colors[cIdx]}
+                      />
+                      <Line
+                        key={`line-${s.name}-${category}`}
+                        dataKey={category}
+                        data={dataRange}
+                        name={`${s.name}: ${category}`}
+                        xAxisId={sIdx}
+                        yAxisId={cIdx}
+                        stroke={colors[cIdx]}
+                        fill={colors[cIdx]}
+                        strokeDasharray={`5 ${sIdx > 0 ? 5 : ''}`}
+                      />
+                    </>
+                  );
+                })}
+              </>
+            );
+          })}
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+export const MultipleXandYAxisLineChartVerticalLayout = {
+  render: () => {
+    const dataKey = 'month';
+    const colors = ['green', 'red'];
+    const xAxisOrientations = ['top', 'bottom'] as const;
+    const yAxisOrientations = ['left', 'right'] as const;
+    const categories = ['Revenue', 'Cost'];
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart width={500} height={300} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+
+          <Tooltip />
+          <Legend />
+          {finDataOverTime.map((s, sIdx) => {
+            return (
+              <>
+                <YAxis
+                  key={`yaxis-${s.name}-`}
+                  // domain={['auto', 'auto']}
+                  orientation={yAxisOrientations[sIdx]}
+                  dataKey={dataKey}
+                  allowDuplicatedCategory={false}
+                  yAxisId={sIdx}
+                  type="category"
+                />
+                {categories.map((category, cIdx) => {
+                  const dataRange = [].concat(
+                    ...s.data.map(d =>
+                      d[category]
+                        ? [
+                            {
+                              [dataKey]: d[dataKey],
+                              [category]: d[category],
+                            },
+                          ]
+                        : [],
+                    ),
+                  );
+                  return (
+                    <>
+                      <XAxis
+                        key={s.name}
+                        // dataKey={dataKey}
+                        orientation={xAxisOrientations[cIdx]}
+                        xAxisId={cIdx}
+                        type="number"
+                        domain={['auto', 'auto']}
+                      />
+                      <Line
+                        key={`line-${s.name}-${category}`}
+                        dataKey={category}
+                        data={dataRange}
+                        name={`${s.name}: ${category}`}
+                        xAxisId={cIdx}
+                        yAxisId={sIdx}
+                        stroke={colors[cIdx]}
+                        fill={colors[cIdx]}
+                        strokeDasharray={`5 ${sIdx > 0 ? 5 : ''}`}
+                      />
+                    </>
+                  );
+                })}
+              </>
+            );
+          })}
         </LineChart>
       </ResponsiveContainer>
     );

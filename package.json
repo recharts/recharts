@@ -42,6 +42,7 @@
     "chromatic": "npx chromatic",
     "test-storybook": "test-storybook --config-dir storybook",
     "test-storybook:url": "test-storybook --url http://127.0.0.1:9009 --config-dir storybook",
+    "prettier": "prettier --write \"./{src,test}/**/*.{ts,tsx}\"",
     "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
   },
   "lint-staged": {
@@ -99,12 +100,14 @@
     "@storybook/source-loader": "^8.1.2",
     "@storybook/test-runner": "^0.18.0",
     "@storybook/theming": "^8.1.2",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
     "@testing-library/user-event": "^14.5.2",
     "@types/d3-interpolate": "^3.0.1",
     "@types/d3-shape": "^3.1.0",
     "@types/d3-time-format": "^4.0.0",
+    "@types/jest": "^29.5.12",
     "@types/lodash": "^4.14.144",
     "@types/node": "^14.18.34",
     "@types/react": "^18.3.3",
