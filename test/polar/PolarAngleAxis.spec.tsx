@@ -1240,7 +1240,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       describe('angle axis selectors', () => {
-        it('should return axis settings', () => {
+        it('should select axis settings', () => {
           const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
           expect(spy).toHaveBeenLastCalledWith({
             allowDataOverflow: false,
@@ -1261,7 +1261,7 @@ describe('<PolarAngleAxis />', () => {
           });
         });
 
-        it('should return applied values', () => {
+        it('should select applied values', () => {
           const { spy } = renderTestCase(state => selectPolarAppliedValues(state, 'angleAxis', 0));
           expect(spy).toHaveBeenLastCalledWith([
             { value: 400 },
@@ -1273,24 +1273,68 @@ describe('<PolarAngleAxis />', () => {
           ]);
           expect(spy).toHaveBeenCalledTimes(3);
         });
+
+        it('should select domain', () => {
+          const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+          expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
+          expect(spy).toHaveBeenCalledTimes(3);
+        });
+
+        it('should select range', () => {
+          const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
+          expect(spy).toHaveBeenLastCalledWith([0, 360]);
+          expect(spy).toHaveBeenCalledTimes(3);
+        });
+
+        it('should select scale', () => {
+          const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+          expectScale(spy, { domain: [400, 189], range: [0, 360] });
+        });
+
+        it('should select real scale type', () => {
+          const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
+          expect(spy).toHaveBeenLastCalledWith('linear');
+          expect(spy).toHaveBeenCalledTimes(2);
+        });
+
+        it('should select polarItemsSettings', () => {
+          const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
+          expect(spy).toHaveBeenLastCalledWith([
+            {
+              barSize: undefined,
+              stackId: undefined,
+              type: 'radialBar',
+              angleAxisId: 0,
+              data: undefined,
+              dataKey: 'uv',
+              hide: false,
+              radiusAxisId: 0,
+            },
+          ]);
+        });
+
+        it('should select ticks', () => {
+          const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+          expect(spy).toHaveBeenLastCalledWith([
+            { coordinate: 0, value: 400, offset: -0 },
+            { coordinate: 34.12322274881516, value: 380, offset: -0 },
+            { coordinate: 68.24644549763032, value: 360, offset: -0 },
+            { coordinate: 102.36966824644551, value: 340, offset: -0 },
+            { coordinate: 136.49289099526067, value: 320, offset: -0 },
+            { coordinate: 170.61611374407585, value: 300, offset: -0 },
+            { coordinate: 204.739336492891, value: 280, offset: -0 },
+            { coordinate: 238.86255924170615, value: 260, offset: -0 },
+            { coordinate: 272.98578199052133, value: 240, offset: -0 },
+            { coordinate: 307.1090047393365, value: 220, offset: -0 },
+            { coordinate: 341.2322274881517, value: 200, offset: -0 },
+          ]);
+          expect(spy).toHaveBeenCalledTimes(3);
+        });
       });
     });
 
     test('Renders ticks and labels with default axis', () => {
-      const angleAxisDomainSpy = vi.fn();
-      const angleAxisRangeSpy = vi.fn();
-      const angleAxisScaleSpy = vi.fn();
-      const realScaleTypeSpy = vi.fn();
-      const polarItemsSpy = vi.fn();
-      const ticksSpy = vi.fn();
-
       const Comp = (): null => {
-        angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 0)));
-        angleAxisScaleSpy(useAppSelectorWithStableTest(state => selectPolarAxisScale(state, 'angleAxis', 0)));
-        polarItemsSpy(useAppSelectorWithStableTest(state => selectPolarItemsSettings(state, 'angleAxis', 0)));
-        angleAxisDomainSpy(useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 0)));
-        ticksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 0)));
-        realScaleTypeSpy(useAppSelectorWithStableTest(state => selectRealScaleType(state, 'angleAxis', 0)));
         return null;
       };
 
@@ -1301,45 +1345,6 @@ describe('<PolarAngleAxis />', () => {
           <Customized component={<Comp />} />
         </RadialBarChart>,
       );
-
-      expect(polarItemsSpy).toHaveBeenLastCalledWith([
-        {
-          barSize: undefined,
-          stackId: undefined,
-          type: 'radialBar',
-          angleAxisId: 0,
-          data: undefined,
-          dataKey: 'uv',
-          hide: false,
-          radiusAxisId: 0,
-        },
-      ]);
-
-      expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
-      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
-
-      expect(angleAxisRangeSpy).toHaveBeenLastCalledWith([0, 360]);
-      expect(angleAxisRangeSpy).toHaveBeenCalledTimes(3);
-
-      expectScale(angleAxisScaleSpy, { domain: [400, 189], range: [0, 360] });
-
-      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('linear');
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
-
-      expect(ticksSpy).toHaveBeenLastCalledWith([
-        { coordinate: 0, value: 400, offset: -0 },
-        { coordinate: 34.12322274881516, value: 380, offset: -0 },
-        { coordinate: 68.24644549763032, value: 360, offset: -0 },
-        { coordinate: 102.36966824644551, value: 340, offset: -0 },
-        { coordinate: 136.49289099526067, value: 320, offset: -0 },
-        { coordinate: 170.61611374407585, value: 300, offset: -0 },
-        { coordinate: 204.739336492891, value: 280, offset: -0 },
-        { coordinate: 238.86255924170615, value: 260, offset: -0 },
-        { coordinate: 272.98578199052133, value: 240, offset: -0 },
-        { coordinate: 307.1090047393365, value: 220, offset: -0 },
-        { coordinate: 341.2322274881517, value: 200, offset: -0 },
-      ]);
-      expect(ticksSpy).toHaveBeenCalledTimes(3);
 
       expectAngleAxisTickLabels(container, [
         {
