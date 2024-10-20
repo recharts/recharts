@@ -16,6 +16,7 @@ import {
   selectPolarAxisDomain,
   selectPolarAxisDomainIncludingNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -67,72 +68,211 @@ function expectRadiusAxisLabel(container: Element, expectedLabel: ExpectedLabel 
 
 describe('<PolarRadiusAxis />', () => {
   describe('in RadarChart', () => {
-    test('Renders ticks when orientation=middle', () => {
-      const domainSpy = vi.fn();
-      const domainWithNiceTicksSpy = vi.fn();
-      const rangeSpy = vi.fn();
-
-      const Comp = (): null => {
-        domainSpy(useAppSelector(state => selectPolarAxisDomain(state, 'radiusAxis', 0)));
-        domainWithNiceTicksSpy(
-          useAppSelector(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0)),
-        );
-        rangeSpy(useAppSelector(state => selectRadiusAxisRangeWithReversed(state, 0)));
-        return null;
-      };
-      const { container } = render(
+    describe('with numerical dataKey', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadarChart width={500} height={500} data={exampleRadarData}>
           <PolarRadiusAxis orientation="middle" cx={250} cy={250} label="test" dataKey="value" />
-          <Customized component={<Comp />} />
-        </RadarChart>,
-      );
+          {children}
+        </RadarChart>
+      ));
 
-      expect(domainSpy).toHaveBeenLastCalledWith([0, 999]);
-      expect(domainSpy).toHaveBeenCalledTimes(3);
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 999]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
 
-      expect(domainWithNiceTicksSpy).toHaveBeenLastCalledWith([0, 1000]);
-      expect(domainWithNiceTicksSpy).toHaveBeenCalledTimes(3);
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('linear');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
 
-      expect(rangeSpy).toHaveBeenLastCalledWith([0, 196]);
-      expect(rangeSpy).toHaveBeenCalledTimes(3);
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1000]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
 
-      expectRadiusAxisTicks(container, [
-        {
-          textContent: '0',
-          transform: 'rotate(90, 250, 250)',
-          x: '250',
-          y: '250',
-        },
-        {
-          textContent: '250',
-          transform: 'rotate(90, 299, 250)',
-          x: '299',
-          y: '250',
-        },
-        {
-          textContent: '500',
-          transform: 'rotate(90, 348, 250)',
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: '0',
+            transform: 'rotate(90, 250, 250)',
+            x: '250',
+            y: '250',
+          },
+          {
+            textContent: '250',
+            transform: 'rotate(90, 299, 250)',
+            x: '299',
+            y: '250',
+          },
+          {
+            textContent: '500',
+            transform: 'rotate(90, 348, 250)',
+            x: '348',
+            y: '250',
+          },
+          {
+            textContent: '750',
+            transform: 'rotate(90, 397, 250)',
+            x: '397',
+            y: '250',
+          },
+          {
+            textContent: '1000',
+            transform: 'rotate(90, 446, 250)',
+            x: '446',
+            y: '250',
+          },
+        ]);
+
+        expectRadiusAxisLabel(container, {
+          textContent: 'test',
           x: '348',
           y: '250',
-        },
-        {
-          textContent: '750',
-          transform: 'rotate(90, 397, 250)',
-          x: '397',
-          y: '250',
-        },
-        {
-          textContent: '1000',
-          transform: 'rotate(90, 446, 250)',
-          x: '446',
-          y: '250',
-        },
-      ]);
+        });
+      });
 
-      expectRadiusAxisLabel(container, {
-        textContent: 'test',
-        x: '348',
-        y: '250',
+      it('should render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, {
+          textContent: 'test',
+          x: '348',
+          y: '250',
+        });
+      });
+    });
+
+    describe('with default axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <PolarRadiusAxis />
+          <Radar dataKey="value" />
+          {children}
+        </RadarChart>
+      ));
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 999]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('linear');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1000]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: '0',
+            transform: 'rotate(90, 250, 250)',
+            x: '250',
+            y: '250',
+          },
+          {
+            textContent: '250',
+            transform: 'rotate(90, 299, 250)',
+            x: '299',
+            y: '250',
+          },
+          {
+            textContent: '500',
+            transform: 'rotate(90, 348, 250)',
+            x: '348',
+            y: '250',
+          },
+          {
+            textContent: '750',
+            transform: 'rotate(90, 397, 250)',
+            x: '397',
+            y: '250',
+          },
+          {
+            textContent: '1000',
+            transform: 'rotate(90, 446, 250)',
+            x: '446',
+            y: '250',
+          },
+        ]);
+      });
+
+      it('should not render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, null);
+      });
+    });
+
+    describe('with implicit axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" />
+          {children}
+        </RadarChart>
+      ));
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 999]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('linear');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1000]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should not render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, []);
+      });
+
+      it('should not render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, null);
       });
     });
 
@@ -428,25 +568,6 @@ describe('<PolarRadiusAxis />', () => {
         x: '348',
         y: '250',
       });
-    });
-
-    it('defaults to linear scale', () => {
-      const realScaleTypeSpy = vi.fn();
-      const Comp = (): null => {
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
-        return null;
-      };
-
-      render(
-        <RadarChart width={500} height={500} data={exampleRadarData}>
-          <Radar dataKey="uv" radiusAxisId="radius-id" />
-          <PolarRadiusAxis dataKey="uv" radiusAxisId="radius-id" />
-          <Customized component={Comp} />
-        </RadarChart>,
-      );
-
-      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('linear');
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
 
