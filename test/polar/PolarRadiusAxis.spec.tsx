@@ -17,6 +17,8 @@ import {
   selectPolarAxisDomainIncludingNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
+import { expectScale } from '../helper/expectScale';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -76,6 +78,28 @@ describe('<PolarRadiusAxis />', () => {
         </RadarChart>
       ));
 
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: 'value',
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([0, 999]);
@@ -97,6 +121,15 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 1000],
+          range: [0, 196],
+        });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -154,6 +187,138 @@ describe('<PolarRadiusAxis />', () => {
       });
     });
 
+    describe('with categorical dataKey', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <PolarRadiusAxis label="test" dataKey="name" type="category" />
+          {children}
+        </RadarChart>
+      ));
+
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: 'name',
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'category',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([
+          'iPhone 3GS',
+          'iPhone 4',
+          'iPhone 4s',
+          'iPhone 5',
+          'iPhone 5s',
+          'iPhone 6',
+          'iPhone 6s',
+          'iPhone 5se',
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('band');
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([
+          'iPhone 3GS',
+          'iPhone 4',
+          'iPhone 4s',
+          'iPhone 5',
+          'iPhone 5s',
+          'iPhone 6',
+          'iPhone 6s',
+          'iPhone 5se',
+        ]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: 'iPhone 3GS',
+            transform: 'rotate(90, 262.25, 250)',
+            x: '262.25',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 4',
+            transform: 'rotate(90, 286.75, 250)',
+            x: '286.75',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 4s',
+            transform: 'rotate(90, 311.25, 250)',
+            x: '311.25',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 5',
+            transform: 'rotate(90, 335.75, 250)',
+            x: '335.75',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 5s',
+            transform: 'rotate(90, 360.25, 250)',
+            x: '360.25',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 6',
+            transform: 'rotate(90, 384.75, 250)',
+            x: '384.75',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 6s',
+            transform: 'rotate(90, 409.25, 250)',
+            x: '409.25',
+            y: '250',
+          },
+          {
+            textContent: 'iPhone 5se',
+            transform: 'rotate(90, 433.75, 250)',
+            x: '433.75',
+            y: '250',
+          },
+        ]);
+      });
+
+      it('should render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, {
+          textContent: 'test',
+          x: '348',
+          y: '250',
+        });
+      });
+    });
+
     describe('with default axis', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadarChart width={500} height={500} data={exampleRadarData}>
@@ -162,6 +327,28 @@ describe('<PolarRadiusAxis />', () => {
           {children}
         </RadarChart>
       ));
+
+      it('should select axis settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
@@ -184,6 +371,15 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 1000],
+          range: [0, 196],
+        });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -239,6 +435,12 @@ describe('<PolarRadiusAxis />', () => {
         </RadarChart>
       ));
 
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith(implicitRadiusAxis);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([0, 999]);
@@ -261,6 +463,15 @@ describe('<PolarRadiusAxis />', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
         expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 1000],
+          range: [0, 196],
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should not render ticks', () => {
@@ -503,96 +714,314 @@ describe('<PolarRadiusAxis />', () => {
         },
       ]);
     });
-
-    test('Renders categorical polar radius axis', () => {
-      const { container } = render(
-        <RadarChart width={500} height={500} data={exampleRadarData}>
-          <Radar dataKey="uv" />
-          <PolarRadiusAxis dataKey="name" type="category" label="test" />
-        </RadarChart>,
-      );
-
-      expectRadiusAxisTicks(container, [
-        {
-          textContent: 'iPhone 3GS',
-          transform: 'rotate(90, 262.25, 250)',
-          x: '262.25',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 4',
-          transform: 'rotate(90, 286.75, 250)',
-          x: '286.75',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 4s',
-          transform: 'rotate(90, 311.25, 250)',
-          x: '311.25',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 5',
-          transform: 'rotate(90, 335.75, 250)',
-          x: '335.75',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 5s',
-          transform: 'rotate(90, 360.25, 250)',
-          x: '360.25',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 6',
-          transform: 'rotate(90, 384.75, 250)',
-          x: '384.75',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 6s',
-          transform: 'rotate(90, 409.25, 250)',
-          x: '409.25',
-          y: '250',
-        },
-        {
-          textContent: 'iPhone 5se',
-          transform: 'rotate(90, 433.75, 250)',
-          x: '433.75',
-          y: '250',
-        },
-      ]);
-
-      expectRadiusAxisLabel(container, {
-        textContent: 'test',
-        x: '348',
-        y: '250',
-      });
-    });
   });
 
   describe('in RadialBarChart', () => {
-    test('Renders numerical polar radius axis', () => {
-      const { container } = render(
+    describe('with implicit axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <RadialBar dataKey="ov" />
+          {children}
+        </RadialBarChart>
+      ));
+
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith(implicitRadiusAxis);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('band');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 1, 2, 3, 4, 5],
+          range: [0, 196],
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should not render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, []);
+      });
+
+      it('should not render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, null);
+      });
+    });
+
+    describe('with default axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <PolarRadiusAxis />
+          <RadialBar dataKey="ov" />
+          {children}
+        </RadialBarChart>
+      ));
+
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: undefined,
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('band');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 1, 2, 3, 4, 5],
+          range: [0, 196],
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should not render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, []);
+      });
+
+      it('should not render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, null);
+      });
+    });
+
+    describe('with numerical axis', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={500} height={500} data={PageData}>
           <RadialBar dataKey="uv" />
           <PolarRadiusAxis dataKey="uv" type="number" label="test" />
-        </RadialBarChart>,
-      );
+          {children}
+        </RadialBarChart>
+      ));
 
-      expectRadiusAxisTicks(container, [
-        {
-          textContent: '400',
-          transform: 'rotate(90, 348, 250)',
-          x: '348',
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: 'uv',
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 400]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('band');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 400]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 400],
+          range: [0, 196],
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: '400',
+            transform: 'rotate(90, 348, 250)',
+            x: '348',
+            y: '250',
+          },
+        ]);
+      });
+
+      it('should render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, {
+          textContent: 'test',
+          x: '299',
           y: '250',
-        },
-      ]);
+        });
+      });
+    });
 
-      expectRadiusAxisLabel(container, {
-        textContent: 'test',
-        x: '299',
-        y: '250',
+    describe('axis alone without RadialBar sibling', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={PageData}>
+          <PolarRadiusAxis dataKey="uv" />
+          {children}
+        </RadialBarChart>
+      ));
+
+      it('should select angle settings', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: undefined,
+          allowDuplicatedCategory: true,
+          dataKey: 'uv',
+          domain: undefined,
+          id: 0,
+          includeHidden: undefined,
+          name: undefined,
+          reversed: undefined,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          ticks: undefined,
+          type: 'number',
+          unit: undefined,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 400]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select real scale type', () => {
+        const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith('band');
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select domain with nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomainIncludingNiceTicks(state, 'radiusAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 400]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select range', () => {
+        const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 196]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+        expectScale(spy, {
+          domain: [0, 400],
+          range: [0, 196],
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: '400',
+            transform: 'rotate(90, 348, 250)',
+            x: '348',
+            y: '250',
+          },
+        ]);
+      });
+
+      it('should not render label', () => {
+        const { container } = renderTestCase();
+
+        expectRadiusAxisLabel(container, null);
       });
     });
 
@@ -618,25 +1047,6 @@ describe('<PolarRadiusAxis />', () => {
         x: '299',
         y: '250',
       });
-    });
-
-    it('defaults to band scale', () => {
-      const realScaleTypeSpy = vi.fn();
-      const Comp = (): null => {
-        realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
-        return null;
-      };
-
-      render(
-        <RadialBarChart width={500} height={500} data={PageData}>
-          <RadialBar dataKey="uv" radiusAxisId="radius-id" />
-          <PolarRadiusAxis dataKey="uv" radiusAxisId="radius-id" />
-          <Customized component={Comp} />
-        </RadialBarChart>,
-      );
-
-      expect(realScaleTypeSpy).toHaveBeenLastCalledWith('band');
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
 
