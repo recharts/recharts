@@ -8,9 +8,131 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { ExpectedRadarPolygon, expectRadarPolygons } from '../helper/expectRadarPolygons';
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
-import { selectAngleAxis } from '../../src/state/selectors/polarAxisSelectors';
+import {
+  selectAngleAxis,
+  selectMaxRadius,
+  selectOuterRadius,
+  selectPolarOptions,
+  selectRadiusAxisRangeWithReversed,
+} from '../../src/state/selectors/polarAxisSelectors';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
+import { expectScale } from '../helper/expectScale';
 
 describe('<RadarChart />', () => {
+  describe('with implicit axes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
+        <Radar dataKey="value" />
+        {children}
+      </RadarChart>
+    ));
+
+    it('should select angle settings', () => {
+      const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: false,
+        allowDuplicatedCategory: false,
+        dataKey: undefined,
+        domain: undefined,
+        id: undefined,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+    });
+
+    it('should select angle axis scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+      expectScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+    });
+
+    it('should select angle axis scale type', () => {
+      const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith('band');
+    });
+
+    it('should select radius axis settings', () => {
+      const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: false,
+        allowDuplicatedCategory: false,
+        dataKey: undefined,
+        domain: undefined,
+        id: undefined,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+    });
+
+    it('should select max radius', () => {
+      const { spy } = renderTestCase(selectMaxRadius);
+      expect(spy).toHaveBeenLastCalledWith(245);
+    });
+
+    it('should select polar options', () => {
+      const { spy } = renderTestCase(selectPolarOptions);
+      expect(spy).toHaveBeenLastCalledWith({
+        cx: 100,
+        cy: 150,
+        endAngle: -270,
+        innerRadius: 0,
+        outerRadius: 150,
+        startAngle: 90,
+      });
+    });
+
+    it('should select outer radius', () => {
+      const { spy } = renderTestCase(selectOuterRadius);
+      expect(spy).toHaveBeenLastCalledWith(150); // TODO this returns 196, why?
+    });
+
+    it('should select radius axis range', () => {
+      const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
+      expect(spy).toHaveBeenLastCalledWith([0, 150]);
+    });
+
+    it('should select radius axis scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+      expectScale(spy, { domain: [0, 1000], range: [0, 150] }); // TODO this returns 0, 196, why?
+    });
+
+    it('should select radius axis scale type', () => {
+      const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith('linear');
+    });
+
+    it('should render polygon', () => {
+      const { container } = render(
+        <RadarChart cx={100} cy={150} outerRadius={150} width={600} height={500} data={exampleRadarData}>
+          <Radar dataKey="value" />
+        </RadarChart>,
+      );
+      expectRadarPolygons(container, [
+        {
+          d: 'M100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150L100,150Z',
+          fill: null,
+          fillOpacity: null,
+        },
+      ]);
+    });
+  });
+
   test('Renders polygon with implicit axes', () => {
     const angleAxisSettingsSpy = vi.fn();
     const angleAxisRealScaleTypeSpy = vi.fn();
@@ -294,8 +416,7 @@ describe('<RadarChart />', () => {
     ]);
   });
 
-  // TODO this appears to be broken, fix! It also means that storybook controls never updated the preview.
-  it.fails('should move polygons when cx and cy and outerRadius are updated', () => {
+  it('should move polygons when cx and cy and outerRadius are updated', () => {
     const { container, rerender } = render(
       <RadarChart cx={100} cy={120} outerRadius={150} width={600} height={500} data={exampleRadarData}>
         <Radar dataKey="value" fill="green" fillOpacity={0.3} />

@@ -574,7 +574,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select angle axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([90, -270]);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should select real scale type', () => {
@@ -1664,7 +1664,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 360]);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it('should select scale', () => {
