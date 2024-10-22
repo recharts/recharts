@@ -71,6 +71,7 @@
   "types/state/axisSlice.d.ts",
   "types/state/SetTooltipEntrySettings.d.ts",
   "types/state/SetGraphicalItem.d.ts",
+  "types/state/ReportPolarOptions.d.ts",
   "types/state/ReportChartProps.d.ts",
   "types/state/ReportBar.d.ts",
   "types/state/RechartsStoreProvider.d.ts",

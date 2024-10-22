@@ -107,6 +107,7 @@ import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
 import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
+import { ReportPolarOptions } from '../state/ReportPolarOptions';
 
 export interface MousePointer {
   pageX: number;
@@ -1985,6 +1986,14 @@ export const generateCategoricalChart = ({
           stackOffset={props.stackOffset ?? 'none'}
           barGap={props.barGap}
           barSize={props.barSize}
+        />
+        <ReportPolarOptions
+          cx={props.cx}
+          cy={props.cy}
+          startAngle={defaultProps?.startAngle}
+          endAngle={defaultProps?.endAngle}
+          innerRadius={props.innerRadius ?? defaultProps?.innerRadius}
+          outerRadius={props.outerRadius ?? defaultProps?.outerRadius}
         />
         <CategoricalChartWrapper {...props} />
       </RechartsStoreProvider>

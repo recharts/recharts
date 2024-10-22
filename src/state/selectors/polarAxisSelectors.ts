@@ -55,7 +55,7 @@ export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId)
 
 export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | undefined => state.polarOptions;
 
-const selectMaxRadius: (state: RechartsRootState) => number = createSelector(
+export const selectMaxRadius: (state: RechartsRootState) => number = createSelector(
   [selectChartWidth, selectChartHeight, selectChartOffset],
   getMaxRadius,
 );
@@ -70,7 +70,7 @@ const selectInnerRadius: (state: RechartsRootState) => number | undefined = crea
   },
 );
 
-const selectOuterRadius: (state: RechartsRootState) => number | undefined = createSelector(
+export const selectOuterRadius: (state: RechartsRootState) => number | undefined = createSelector(
   [selectPolarOptions, selectMaxRadius],
   (polarChartOptions: PolarChartOptions | undefined, maxRadius: number) => {
     if (polarChartOptions == null) {
