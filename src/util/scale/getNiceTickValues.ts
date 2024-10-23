@@ -160,7 +160,7 @@ export const calculateStep = (
 };
 
 /**
- * Calculate the ticks of an interval, the count of ticks will be guraranteed
+ * Calculate the ticks of an interval, the count of ticks will be guaranteed
  *
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
  * @param  {Integer} tickCount     The count of ticks
@@ -168,7 +168,7 @@ export const calculateStep = (
  * @return {Array}   ticks
  */
 function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true): number[] {
-  // More than two ticks should be return
+  // More than two ticks should be returned
   const count = Math.max(tickCount, 2);
   const [cormin, cormax] = getValidInterval([min, max]);
 
@@ -194,7 +194,7 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
 }
 
 /**
- * Calculate the ticks of an interval, the count of ticks won't be guraranteed,
+ * Calculate the ticks of an interval, the count of ticks won't be guaranteed,
  * but the domain will be guaranteed
  *
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
@@ -203,7 +203,7 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
  * @return {Array}   ticks
  */
 function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickCount: number, allowDecimals = true) {
-  // More than two ticks should be return
+  // More than two ticks should be returned
   const [cormin, cormax] = getValidInterval([min, max]);
 
   if (cormin === -Infinity || cormax === Infinity) {
