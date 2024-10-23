@@ -76,7 +76,7 @@ export type TooltipState = {
      * If user interaction with an item is in progress or not.
      * Why is this its own property? Why is this not computed from the index?
      * Certainly if index !== -1 then the tooltip is active, right?
-     * Well not so fast. Recharts allows Tooltips can be set to `active=true`
+     * Well not so fast. Recharts allows Tooltips to be set to `active=true`
      * which means the tooltip remains displayed after the user stops interacting.
      * - This implies that we cannot set index to -1 after interaction ends,
      *   because the chart must remember the last position just in case the `active` prop on Tooltip is set to true.
