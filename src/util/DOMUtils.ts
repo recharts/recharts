@@ -121,7 +121,7 @@ export const getStringSize = (text: string | number, style: CSSProperties = {}):
     }
 
     return result;
-  } catch(error) {
+  } catch{
     return { width: 0, height: 0 };
   }
 };
