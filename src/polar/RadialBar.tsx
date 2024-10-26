@@ -34,8 +34,6 @@ import {
   ActiveShape,
   LayoutType,
   DataKey,
-  NumberDomain,
-  CategoricalDomain,
 } from '../util/types';
 import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
@@ -52,7 +50,7 @@ import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext'
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 
-type RadialBarDataItem = SectorProps & {
+export type RadialBarDataItem = SectorProps & {
   value?: any;
   payload?: any;
   background?: SectorProps;
@@ -372,7 +370,7 @@ const defaultRadialBarProps: Partial<RadialBarProps> = {
   cornerIsExternal: false,
 };
 
-function computeRadialBarDataItems({
+export function computeRadialBarDataItems({
   displayedData,
   stackedData,
   dataStartIndex,
@@ -396,19 +394,19 @@ function computeRadialBarDataItems({
   displayedData: ChartData;
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
   dataStartIndex: number;
-  stackedDomain: NumberDomain | CategoricalDomain | undefined;
+  stackedDomain: ReadonlyArray<unknown> | null;
   dataKey: DataKey<any>;
   baseValue: number | unknown;
   layout: LayoutType;
   radiusAxis: BaseAxisWithScale;
-  radiusAxisTicks: Array<TickItem>;
+  radiusAxisTicks: ReadonlyArray<TickItem>;
   bandSize: number;
   pos: BarPositionPosition;
   angleAxis: BaseAxisWithScale;
   minPointSize: number;
   cx: number;
   cy: number;
-  angleAxisTicks: Array<TickItem>;
+  angleAxisTicks: ReadonlyArray<TickItem>;
   cells: ReadonlyArray<ReactElement> | undefined;
   startAngle: number;
   endAngle: number;

@@ -487,8 +487,8 @@ export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType) =>
 /**
  * Calculate the Coordinates of grid
  * @param  {Array} ticks           The ticks in axis
- * @param {Number} minValue        The minimun value of axis
- * @param {Number} maxValue        The maximun value of axis
+ * @param {Number} minValue        The minimum value of axis
+ * @param {Number} maxValue        The maximum value of axis
  * @param {boolean} syncWithTicks  Synchronize grid lines with ticks or not
  * @return {Array}                 Coordinates
  */
@@ -1111,7 +1111,7 @@ export const getCateCoordinateOfBar = ({
   index,
 }: {
   axis: BaseAxisWithScale;
-  ticks: Array<TickItem>;
+  ticks: ReadonlyArray<TickItem>;
   offset: number;
   bandSize: number;
   entry: any;
