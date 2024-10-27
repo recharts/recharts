@@ -63,7 +63,7 @@ const selectPolarGraphicalItemsData: (
   polarAxisId: AxisId,
 ) => ChartData = createSelector([selectPolarItemsSettings], combineGraphicalItemsData);
 
-const selectPolarDisplayedData: (
+export const selectPolarDisplayedData: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,

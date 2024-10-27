@@ -80,6 +80,7 @@
   "lib/state/selectors/selectAllAxes.js",
   "lib/state/selectors/scatterSelectors.js",
   "lib/state/selectors/rootPropsSelectors.js",
+  "lib/state/selectors/radialBarSelectors.js",
   "lib/state/selectors/radarSelectors.js",
   "lib/state/selectors/polarSelectors.js",
   "lib/state/selectors/polarScaleSelectors.js",

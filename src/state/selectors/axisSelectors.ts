@@ -62,6 +62,7 @@ import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
+import { MaybeStackedGraphicalItem } from './barSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -498,9 +499,43 @@ export function getErrorDomainByDataKey(
 
 export type StackGroup = {
   readonly stackedData: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>>;
-  readonly graphicalItems: ReadonlyArray<CartesianGraphicalItemSettings>;
+  readonly graphicalItems: ReadonlyArray<MaybeStackedGraphicalItem>;
 };
 
+export const combineStackGroups = (
+  displayedData: ChartData,
+  items: ReadonlyArray<MaybeStackedGraphicalItem>,
+  stackOffsetType: StackOffsetType,
+): Record<StackId, StackGroup> => {
+  const initialItemsGroups: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
+  const itemsGroup: Record<StackId, ReadonlyArray<MaybeStackedGraphicalItem>> = items.reduce(
+    (acc: Record<StackId, Array<MaybeStackedGraphicalItem>>, item: MaybeStackedGraphicalItem) => {
+      if (item.stackId == null) {
+        return acc;
+      }
+      if (acc[item.stackId] == null) {
+        acc[item.stackId] = [];
+      }
+      acc[item.stackId].push(item);
+      return acc;
+    },
+    initialItemsGroups,
+  );
+
+  return Object.fromEntries(
+    Object.entries(itemsGroup).map(([stackId, graphicalItems]): [StackId, StackGroup] => {
+      const dataKeys = graphicalItems.map(i => i.dataKey);
+      return [
+        stackId,
+        {
+          // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
+          stackedData: getStackedData(displayedData, dataKeys, stackOffsetType),
+          graphicalItems,
+        },
+      ];
+    }),
+  );
+};
 /**
  * Stack groups are groups of graphical items that stack on each other.
  * Stack is a function of axis type (X, Y), axis ID, and stack ID.
@@ -511,43 +546,8 @@ export const selectStackGroups: (
   axisType: XorYorZType,
   axisId: AxisId,
 ) => Record<StackId, StackGroup> | undefined = createSelector(
-  selectDisplayedData,
-  selectCartesianItemsSettings,
-  selectStackOffsetType,
-  (
-    displayedData,
-    items: ReadonlyArray<CartesianGraphicalItemSettings>,
-    stackOffsetType: StackOffsetType,
-  ): Record<StackId, StackGroup> => {
-    const initialItemsGroups: Record<StackId, Array<CartesianGraphicalItemSettings>> = {};
-    const itemsGroup: Record<StackId, ReadonlyArray<CartesianGraphicalItemSettings>> = items.reduce(
-      (acc: Record<StackId, Array<CartesianGraphicalItemSettings>>, item: CartesianGraphicalItemSettings) => {
-        if (item.stackId == null) {
-          return acc;
-        }
-        if (acc[item.stackId] == null) {
-          acc[item.stackId] = [];
-        }
-        acc[item.stackId].push(item);
-        return acc;
-      },
-      initialItemsGroups,
-    );
-
-    return Object.fromEntries(
-      Object.entries(itemsGroup).map(([stackId, graphicalItems]): [StackId, StackGroup] => {
-        const dataKeys = graphicalItems.map(i => i.dataKey);
-        return [
-          stackId,
-          {
-            // @ts-expect-error getStackedData requires that the input is array of objects, Recharts does not test for that
-            stackedData: getStackedData(displayedData, dataKeys, stackOffsetType),
-            graphicalItems,
-          },
-        ];
-      }),
-    );
-  },
+  [selectDisplayedData, selectCartesianItemsSettings, selectStackOffsetType],
+  combineStackGroups,
 );
 
 export const selectDomainOfStackGroups = createSelector(

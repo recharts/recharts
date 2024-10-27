@@ -49,6 +49,14 @@ const pickBarSettings = (
   barSettings: BarSettings,
 ): BarSettings => barSettings;
 
+const pickMaxBarSize = (
+  _state: RechartsRootState,
+  _xAxisId: AxisId,
+  _yAxisId: AxisId,
+  _isPanorama: boolean,
+  barSettings: BarSettings,
+): number | undefined => barSettings.maxBarSize;
+
 const pickCells = (
   _state: RechartsRootState,
   _xAxisId: AxisId,
@@ -105,7 +113,7 @@ type BarCategory = {
   barSize: number;
 };
 
-type SizeList = ReadonlyArray<BarCategory>;
+export type SizeList = ReadonlyArray<BarCategory>;
 
 const selectBarStackGroups = (
   state: RechartsRootState,
@@ -137,6 +145,38 @@ export interface MaybeStackedGraphicalItem {
   barSize: number | string | undefined;
 }
 
+export const combineBarSizeList = (
+  allBars: ReadonlyArray<MaybeStackedGraphicalItem>,
+  globalSize: number | undefined,
+  totalSize: number,
+): SizeList | undefined => {
+  const initialValue: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
+
+  const stackedBars = allBars.filter(b => b.stackId != null);
+  const unstackedBars = allBars.filter(b => b.stackId == null);
+
+  const groupByStack: Record<StackId, Array<MaybeStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
+    if (!acc[bar.stackId]) {
+      acc[bar.stackId] = [];
+    }
+    acc[bar.stackId].push(bar);
+    return acc;
+  }, initialValue);
+
+  const stackedSizeList: SizeList = Object.entries(groupByStack).map(([stackId, bars]): BarCategory => {
+    const dataKeys = bars.map(b => b.dataKey);
+    const barSize: number = getBarSize(globalSize, totalSize, bars[0].barSize);
+    return { stackId, dataKeys, barSize };
+  });
+
+  const unstackedSizeList: SizeList = unstackedBars.map((b): BarCategory => {
+    const dataKeys = [b.dataKey];
+    const barSize: number = getBarSize(globalSize, totalSize, b.barSize);
+    return { stackId: undefined, dataKeys, barSize };
+  });
+
+  return [...stackedSizeList, ...unstackedSizeList];
+};
 export const selectBarSizeList: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -145,34 +185,7 @@ export const selectBarSizeList: (
   barSettings: BarSettings,
 ) => SizeList | undefined = createSelector(
   [selectAllVisibleBars, selectRootBarSize, selectBarCartesianAxisSize],
-  (allBars: ReadonlyArray<MaybeStackedGraphicalItem>, globalSize: number | undefined, totalSize) => {
-    const initialValue: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
-
-    const stackedBars = allBars.filter(b => b.stackId != null);
-    const unstackedBars = allBars.filter(b => b.stackId == null);
-
-    const groupByStack: Record<StackId, Array<MaybeStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
-      if (!acc[bar.stackId]) {
-        acc[bar.stackId] = [];
-      }
-      acc[bar.stackId].push(bar);
-      return acc;
-    }, initialValue);
-
-    const stackedSizeList = Object.entries(groupByStack).map(([stackId, bars]) => {
-      const dataKeys = bars.map(b => b.dataKey);
-      const barSize = getBarSize(globalSize, totalSize, bars[0].barSize);
-      return { stackId, dataKeys, barSize };
-    });
-
-    const unstackedSizeList = unstackedBars.map(b => {
-      const dataKeys = [b.dataKey];
-      const barSize = getBarSize(globalSize, totalSize, b.barSize);
-      return { stackId: undefined, dataKeys, barSize };
-    });
-
-    return [...stackedSizeList, ...unstackedSizeList];
-  },
+  combineBarSizeList,
 );
 
 export const selectBarBandSize: (
@@ -189,7 +202,7 @@ export const selectBarBandSize: (
   barSettings: BarSettings,
 ): number | undefined => {
   const layout = selectChartLayout(state);
-  const globalMaxBarSize = selectRootMaxBarSize(state);
+  const globalMaxBarSize: number | undefined = selectRootMaxBarSize(state);
   const { maxBarSize: childMaxBarSize } = barSettings;
   const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
   let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
@@ -287,7 +300,6 @@ function getBarPositions(
       originalSize >>= 0;
     }
     const size = maxBarSize === +maxBarSize ? Math.min(originalSize, maxBarSize) : originalSize;
-
     result = sizeList.reduce(
       (res: ReadonlyArray<BarWithPosition>, entry: BarCategory, i): ReadonlyArray<BarWithPosition> => [
         ...res,
@@ -307,7 +319,7 @@ function getBarPositions(
   return result;
 }
 
-type BarWithPosition = {
+export type BarWithPosition = {
   stackId: StackId | undefined;
   /**
    * List of dataKeys of items stacked at this position.
@@ -324,6 +336,34 @@ type BarWithPosition = {
   position: BarPositionPosition;
 };
 
+export const combineAllBarPositions = (
+  sizeList: SizeList,
+  globalMaxBarSize: number,
+  barGap: string | number,
+  barCategoryGap: string | number,
+  barBandSize: number,
+  bandSize: number,
+  childMaxBarSize: number | undefined,
+): ReadonlyArray<BarWithPosition> | undefined => {
+  const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+
+  let allBarPositions = getBarPositions(
+    barGap,
+    barCategoryGap,
+    barBandSize !== bandSize ? barBandSize : bandSize,
+    sizeList,
+    maxBarSize,
+  );
+
+  if (barBandSize !== bandSize && allBarPositions != null) {
+    allBarPositions = allBarPositions.map(pos => ({
+      ...pos,
+      position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
+    }));
+  }
+
+  return allBarPositions;
+};
 export const selectAllBarPositions: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -338,37 +378,9 @@ export const selectAllBarPositions: (
     selectBarCategoryGap,
     selectBarBandSize,
     selectAxisBandSize,
-    pickBarSettings,
+    pickMaxBarSize,
   ],
-  (
-    sizeList: SizeList,
-    globalMaxBarSize,
-    barGap,
-    barCategoryGap,
-    barBandSize,
-    bandSize,
-    barSettings,
-  ): ReadonlyArray<BarWithPosition> | undefined => {
-    const childMaxBarSize = barSettings.maxBarSize;
-    const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-
-    let allBarPositions = getBarPositions(
-      barGap,
-      barCategoryGap,
-      barBandSize !== bandSize ? barBandSize : bandSize,
-      sizeList,
-      maxBarSize,
-    );
-
-    if (barBandSize !== bandSize && allBarPositions != null) {
-      allBarPositions = allBarPositions.map(pos => ({
-        ...pos,
-        position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
-      }));
-    }
-
-    return allBarPositions;
-  },
+  combineAllBarPositions,
 );
 
 const selectXAxisWithScale = (state: RechartsRootState, xAxisId: AxisId, _yAxisId: AxisId, isPanorama: boolean) =>
@@ -405,6 +417,27 @@ const selectBarPosition: (
   },
 );
 
+export const combineStackedData = (
+  stackGroups: Record<StackId, StackGroup> | undefined,
+  barSettings: MaybeStackedGraphicalItem,
+): Series<Record<number, number>, DataKey<any>> | undefined => {
+  if (!stackGroups || barSettings?.dataKey == null) {
+    return undefined;
+  }
+  const { stackId } = barSettings;
+  const stackGroup: StackGroup = stackGroups[stackId];
+  if (!stackGroup) {
+    return undefined;
+  }
+  const { stackedData }: StackGroup = stackGroup;
+  if (!stackedData) {
+    return undefined;
+  }
+  // @ts-expect-error bar assumes numeric stacks, d3 returns string, unknown
+  const stack: Series<Record<number, number>, DataKey<any>> = stackedData.find(sd => sd.key === barSettings.dataKey);
+  return stack;
+};
+
 const selectStackedDataOfItem: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -413,23 +446,7 @@ const selectStackedDataOfItem: (
   barSettings: BarSettings,
 ) => Series<Record<number, number>, DataKey<any>> | undefined = createSelector(
   [selectBarStackGroups, pickBarSettings],
-  (stackGroups, barSettings) => {
-    if (!stackGroups || barSettings?.dataKey == null) {
-      return undefined;
-    }
-    const { stackId } = barSettings;
-    const stackGroup: StackGroup = stackGroups[stackId];
-    if (!stackGroup) {
-      return undefined;
-    }
-    const { stackedData }: StackGroup = stackGroup;
-    if (!stackedData) {
-      return undefined;
-    }
-    // @ts-expect-error bar assumes numeric stacks, d3 returns string, unknown
-    const stack: Series<Record<number, number>, DataKey<any>> = stackedData.find(sd => sd.key === barSettings.dataKey);
-    return stack;
-  },
+  combineStackedData,
 );
 
 export const selectBarRectangles: (
