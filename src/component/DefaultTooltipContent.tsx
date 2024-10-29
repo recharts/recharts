@@ -82,13 +82,6 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
           return null;
         }
 
-        const finalItemStyle = {
-          display: 'block',
-          paddingTop: 4,
-          paddingBottom: 4,
-          color: entry.color || '#000',
-          ...itemStyle,
-        };
         const finalFormatter = entry.formatter || formatter || defaultFormatter;
         const { value, name } = entry;
         let finalValue: React.ReactNode = value;
@@ -97,10 +90,20 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
           const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
             [finalValue, finalName] = formatted;
-          } else {
+          } else if (formatted === null || formatted === undefined) {
+            return null;
+          } {
             finalValue = formatted;
           }
         }
+
+        const finalItemStyle = {
+          display: 'block',
+          paddingTop: 4,
+          paddingBottom: 4,
+          color: entry.color || '#000',
+          ...itemStyle,
+        };
 
         return (
           // eslint-disable-next-line react/no-array-index-key
