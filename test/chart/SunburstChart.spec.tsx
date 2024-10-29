@@ -131,7 +131,7 @@ describe('<Sunburst />', () => {
           y: 250,
         },
         activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'Child1',
+        activeMouseOverIndex: '[0]',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
@@ -144,14 +144,14 @@ describe('<Sunburst />', () => {
           y: 250,
         },
         activeClickDataKey: 'value',
-        activeClickIndex: 'Child1',
+        activeClickIndex: '[0]',
         activeHover: true,
         activeMouseOverCoordinate: {
           x: 583.3333333333334,
           y: 250,
         },
         activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'Child1',
+        activeMouseOverIndex: '[0]',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
@@ -164,7 +164,7 @@ describe('<Sunburst />', () => {
           y: 250,
         },
         activeClickDataKey: 'value',
-        activeClickIndex: 'Child1',
+        activeClickIndex: '[0]',
         activeHover: false,
         activeMouseOverCoordinate: {
           x: 583.3333333333334,
