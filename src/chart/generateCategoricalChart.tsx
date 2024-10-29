@@ -2357,7 +2357,11 @@ export const generateCategoricalChart = ({
     }
   }
 
-  return function CategoricalChart(props: CategoricalChartProps) {
+  const CategoricalChart = function CategoricalChart(props: CategoricalChartProps) {
     return <CategoricalChartWrapper {...props} />;
   };
+
+  CategoricalChart.displayName = CategoricalChartWrapper.displayName;
+
+  return CategoricalChart;
 };
