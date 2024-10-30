@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import clsx from 'clsx';
+import get from 'lodash/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
-import { doNotDisplayTooltip, TooltipContextProvider, TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
   mouseLeaveItem,
   setActiveClickItemIndex,
   setActiveMouseOverItemIndex,
+  TooltipIndex,
   TooltipPayloadConfiguration,
+  TooltipPayloadSearcher,
 } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { ChartCoordinate, Margin } from '../util/types';
+import { ChartCoordinate, DataKey, Margin } from '../util/types';
 import { useAppDispatch } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 
 export interface SunburstData {
   [key: string]: any;
-
   name: string;
   value?: number;
   fill?: string;
+  tooltipIndex?: TooltipIndex | undefined;
   children?: SunburstData[];
 }
 
@@ -48,6 +50,7 @@ export interface SunburstChartProps {
   height?: number;
   padding?: number;
   dataKey?: string;
+  nameKey?: DataKey<any>;
   /* Padding between each hierarchical level. */
   ringPadding?: number;
   /* The radius of the inner circle at the center of the chart. */
@@ -80,6 +83,7 @@ interface DrawArcOptions {
   innerR: number;
   initialAngle: number;
   childColor?: string;
+  nestedActiveTooltipIndex?: TooltipIndex | undefined;
 }
 
 const defaultTextProps = {
@@ -101,10 +105,11 @@ function getMaxDepthOf(node: SunburstData): number {
 
 function getTooltipEntrySettings({
   dataKey,
+  nameKey,
   data,
   stroke,
   fill,
-}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill'>): TooltipPayloadConfiguration {
+}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'>): TooltipPayloadConfiguration {
   return {
     dataDefinedOnItem: data.children,
     // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
@@ -112,9 +117,10 @@ function getTooltipEntrySettings({
       stroke,
       strokeWidth: undefined,
       fill,
-      nameKey: undefined,
+      nameKey,
       dataKey,
-      name: dataKey,
+      // if there is a nameKey use it, otherwise make the name of the tooltip the dataKey itself
+      name: nameKey ? undefined : dataKey,
       hide: false,
       type: undefined,
       color: fill,
@@ -131,12 +137,26 @@ const defaultSunburstMargin: Margin = {
   left: 0,
 };
 
+export const payloadSearcher: TooltipPayloadSearcher<SunburstData[], SunburstData> = (
+  data: SunburstData[],
+  activeIndex: TooltipIndex,
+): SunburstData | undefined => {
+  return get(data, activeIndex);
+};
+
+export const addToSunburstNodeIndex = (
+  indexInChildrenArr: number,
+  activeTooltipIndexSoFar: TooltipIndex | undefined = '',
+): TooltipIndex => {
+  return `${activeTooltipIndexSoFar}children[${indexInChildrenArr}]`;
+};
+
 const preloadedState: Partial<RechartsRootState> = {
   options: {
     validateTooltipEventTypes: ['item'],
     defaultTooltipEventType: 'item',
     chartName: 'Sunburst',
-    tooltipPayloadSearcher: undefined,
+    tooltipPayloadSearcher: payloadSearcher,
   },
 };
 
@@ -148,6 +168,7 @@ const SunburstChartImpl = ({
   height,
   padding = 2,
   dataKey = 'value',
+  nameKey = 'name',
   ringPadding = 2,
   innerRadius = 50,
   fill = '#333',
@@ -163,8 +184,6 @@ const SunburstChartImpl = ({
   onMouseLeave,
 }: SunburstChartProps) => {
   const dispatch = useAppDispatch();
-  const [isTooltipActive, setIsTooltipActive] = useState(false);
-  const [activeNode, setActiveNode] = useState<SunburstData | null>(null);
 
   const rScale = scaleLinear([0, data[dataKey]], [0, endAngle]);
   const treeDepth = getMaxDepthOf(data);
@@ -178,13 +197,10 @@ const SunburstChartImpl = ({
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
-    setActiveNode(node);
-
-    setIsTooltipActive(true);
 
     dispatch(
       setActiveMouseOverItemIndex({
-        activeIndex: node.name,
+        activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
         activeMouseOverCoordinate: positions.get(node.name),
       }),
@@ -193,8 +209,6 @@ const SunburstChartImpl = ({
 
   function handleMouseLeave(node: SunburstData, e: React.MouseEvent) {
     if (onMouseLeave) onMouseLeave(node, e);
-    setActiveNode(null);
-    setIsTooltipActive(false);
 
     dispatch(mouseLeaveItem());
   }
@@ -204,7 +218,7 @@ const SunburstChartImpl = ({
 
     dispatch(
       setActiveClickItemIndex({
-        activeIndex: node.name,
+        activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
         activeClickCoordinate: positions.get(node.name),
       }),
@@ -212,14 +226,17 @@ const SunburstChartImpl = ({
   }
 
   // recursively add nodes for each data point and its children
-  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions): any {
-    const { radius, innerR, initialAngle, childColor } = options;
+  function drawArcs(childNodes: SunburstData[] | undefined, options: DrawArcOptions, depth: number = 1): any {
+    const { radius, innerR, initialAngle, childColor, nestedActiveTooltipIndex } = options;
 
     let currentAngle = initialAngle;
 
     if (!childNodes) return; // base case: no children of this node
 
-    childNodes.forEach(d => {
+    childNodes.forEach((d, i) => {
+      const currentTooltipIndex = depth === 1 ? `[${i}]` : addToSunburstNodeIndex(i, nestedActiveTooltipIndex);
+      const nodeWithIndex = { ...d, tooltipIndex: currentTooltipIndex };
+
       const arcLength = rScale(d[dataKey]);
       const start = currentAngle;
       // color priority - if there's a color on the individual point use that, otherwise use parent color or default
@@ -227,11 +244,12 @@ const SunburstChartImpl = ({
       const { x: textX, y: textY } = polarToCartesian(0, 0, innerR + radius / 2, -(start + arcLength - arcLength / 2));
       currentAngle += arcLength;
       sectors.push(
-        <g>
+        // eslint-disable-next-line react/no-array-index-key
+        <g key={`sunburst-sector-${d.name}-${i}`}>
           <Sector
-            onClick={() => handleClick(d)}
-            onMouseEnter={e => handleMouseEnter(d, e)}
-            onMouseLeave={e => handleMouseLeave(d, e)}
+            onClick={() => handleClick(nodeWithIndex)}
+            onMouseEnter={e => handleMouseEnter(nodeWithIndex, e)}
+            onMouseLeave={e => handleMouseLeave(nodeWithIndex, e)}
             fill={fillColor}
             stroke={stroke}
             strokeWidth={padding}
@@ -251,61 +269,51 @@ const SunburstChartImpl = ({
       const { x: tooltipX, y: tooltipY } = polarToCartesian(cx, cy, innerR + radius / 2, start);
       positions.set(d.name, { x: tooltipX, y: tooltipY });
 
-      return drawArcs(d.children, {
-        radius,
-        innerR: innerR + radius + ringPadding,
-        initialAngle: start,
-        childColor: fillColor,
-      });
+      return drawArcs(
+        d.children,
+        {
+          radius,
+          innerR: innerR + radius + ringPadding,
+          initialAngle: start,
+          childColor: fillColor,
+          nestedActiveTooltipIndex: currentTooltipIndex,
+        },
+        depth + 1,
+      );
     });
   }
 
   drawArcs(data.children, { radius: thickness, innerR: innerRadius, initialAngle: startAngle });
 
   const layerClass = clsx('recharts-sunburst', className);
-  function getTooltipContext(): TooltipContextValue {
-    if (activeNode == null) {
-      return doNotDisplayTooltip;
-    }
-    return {
-      index: 0,
-      label: '',
-      coordinate: positions.get(activeNode.name),
-      payload: [activeNode],
-      active: isTooltipActive,
-    };
-  }
-
   return (
     <CursorPortalContext.Provider value={cursorPortal}>
       <TooltipPortalContext.Provider value={tooltipPortal}>
-        <TooltipContextProvider value={getTooltipContext()}>
-          <RechartsWrapper
-            className={className}
-            width={width}
-            // Sunburst doesn't support `style` property, why?
-            height={height}
-            ref={(node: HTMLDivElement) => {
-              if (tooltipPortal == null && node != null) {
-                setTooltipPortal(node);
-              }
-            }}
-          >
-            <Surface width={width} height={height}>
-              <g
-                className="recharts-cursor-portal"
-                ref={(node: SVGElement) => {
-                  if (cursorPortal == null && node != null) {
-                    setCursorPortal(node);
-                  }
-                }}
-              />
-              <Layer className={layerClass}>{sectors}</Layer>
-              <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill }} />
-              {children}
-            </Surface>
-          </RechartsWrapper>
-        </TooltipContextProvider>
+        <RechartsWrapper
+          className={className}
+          width={width}
+          // Sunburst doesn't support `style` property, why?
+          height={height}
+          ref={(node: HTMLDivElement) => {
+            if (tooltipPortal == null && node != null) {
+              setTooltipPortal(node);
+            }
+          }}
+        >
+          <Surface width={width} height={height}>
+            <g
+              className="recharts-cursor-portal"
+              ref={(node: SVGElement) => {
+                if (cursorPortal == null && node != null) {
+                  setCursorPortal(node);
+                }
+              }}
+            />
+            <Layer className={layerClass}>{sectors}</Layer>
+            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill, nameKey }} />
+            {children}
+          </Surface>
+        </RechartsWrapper>
       </TooltipPortalContext.Provider>
     </CursorPortalContext.Provider>
   );
