@@ -1,4 +1,4 @@
-import React, { Component, cloneElement, isValidElement, ReactElement } from 'react';
+import React, { Component, cloneElement, isValidElement, ReactElement, forwardRef } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -2357,9 +2357,12 @@ export const generateCategoricalChart = ({
     }
   }
 
-  const CategoricalChart = function CategoricalChart(props: CategoricalChartProps) {
-    return <CategoricalChartWrapper {...props} />;
-  };
+  const CategoricalChart = forwardRef<CategoricalChartWrapper, CategoricalChartProps>(function CategoricalChart(
+    props: CategoricalChartProps,
+    ref,
+  ) {
+    return <CategoricalChartWrapper {...props} ref={ref} />;
+  });
 
   CategoricalChart.displayName = CategoricalChartWrapper.displayName;
 
