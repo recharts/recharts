@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { pageData } from '../../data';
+import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
   Bar,
@@ -762,6 +762,36 @@ export const OneDataPointPercentSize = {
     width: 500,
     height: 300,
     data: [[4.5, 10]],
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+    /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
+    barSize: '30%',
+  },
+};
+
+export const RangedBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart {...args}>
+          <XAxis dataKey="day" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar dataKey="temperature" fill="violet" stroke="indigo" />
+          <Tooltip />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    data: rangeData,
     margin: {
       top: 5,
       right: 30,

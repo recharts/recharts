@@ -497,7 +497,7 @@ export const AreaChartFillByValue = {
   },
 };
 
-export const AreaChartRange = {
+export const RangedAreaChart = {
   render: () => {
     return (
       <ResponsiveContainer width="100%" height="100%">
