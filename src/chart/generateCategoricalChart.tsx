@@ -1990,8 +1990,8 @@ export const generateCategoricalChart = ({
         <ReportPolarOptions
           cx={props.cx}
           cy={props.cy}
-          startAngle={defaultProps?.startAngle}
-          endAngle={defaultProps?.endAngle}
+          startAngle={props.startAngle ?? defaultProps?.startAngle}
+          endAngle={props.endAngle ?? defaultProps?.endAngle}
           innerRadius={props.innerRadius ?? defaultProps?.innerRadius}
           outerRadius={props.outerRadius ?? defaultProps?.outerRadius}
         />

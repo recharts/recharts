@@ -271,3 +271,144 @@ export const RingsWithRadiusAxisVertically = {
     endAngle: -270,
   },
 };
+
+export const ReversedAngleAxis = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>Angle axis clockwise, starts on East</p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" reversed />
+        <PolarRadiusAxis type="category" stroke="black" />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+  },
+};
+
+export const ReversedRadiusAxis = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>Counter-clockwise, starts East, bars come in reversed order</p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" />
+        <PolarRadiusAxis type="category" stroke="black" reversed />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+  },
+};
+
+export const ReversedBothAxes = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>Counter-clockwise, starts East, bars come in reversed order</p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" reversed />
+        <PolarRadiusAxis type="category" stroke="black" reversed />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+  },
+};
+
+export const Angled = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>Both angles are positive, chart starts at East + startAngle, CCW</p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" />
+        <PolarRadiusAxis type="category" stroke="black" />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+    startAngle: 20,
+    endAngle: 220,
+  },
+};
+
+export const ChartReversedByAngles = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>If startAngle &gt; endAngle, the angle axis gets reversed too</p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" />
+        <PolarRadiusAxis type="category" stroke="black" />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+    startAngle: 145,
+    endAngle: 20,
+  },
+};
+
+export const ChartReversedByBothAnglesAndReverseAxis = {
+  render: (args: Record<string, any>) => (
+    <>
+      <p>
+        If the angle axis is reversed by making startAngle &gt; endAngle,
+        <i>and</i> reversed prop at the same time, it is double reversed back to CCW.
+      </p>
+      <RadialBarChart {...args}>
+        <RadialBar dataKey="rings" />
+        <Legend />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" />
+        <PolarRadiusAxis type="category" stroke="black" />
+        <Tooltip />
+      </RadialBarChart>
+    </>
+  ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadialBarChartProps),
+    width: 800,
+    height: 800,
+    data: ringsData,
+    startAngle: 145,
+    endAngle: 20,
+  },
+};
