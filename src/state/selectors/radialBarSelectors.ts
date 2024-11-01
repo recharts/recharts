@@ -211,7 +211,7 @@ const selectAllVisibleRadialBars: (
  */
 const selectPolarBarAxisSize = (): undefined => undefined;
 
-const selectPolarBarSizeList: (
+export const selectPolarBarSizeList: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,

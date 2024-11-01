@@ -812,7 +812,7 @@ export const generateCategoricalChart = ({
   validateTooltipEventTypes = ['axis'],
   axisComponents,
   formatAxisMap,
-  defaultProps,
+  defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
   const getFormatItems = (props: CategoricalChartProps, currentState: CategoricalChartState): any[] => {
@@ -1968,14 +1968,15 @@ export const generateCategoricalChart = ({
       tooltipPayloadSearcher,
     };
     let polarOptions: PolarChartOptions;
-    if (defaultProps?.startAngle != null) {
+    const { innerRadius = defaultProps.innerRadius, outerRadius = defaultProps.outerRadius } = props;
+    if (defaultProps.startAngle != null) {
       polarOptions = {
         cx: props.cx,
         cy: props.cy,
         startAngle: defaultProps.startAngle,
         endAngle: defaultProps.endAngle,
-        innerRadius: defaultProps.innerRadius,
-        outerRadius: defaultProps.outerRadius,
+        innerRadius,
+        outerRadius,
       };
     }
     return (
@@ -1990,10 +1991,10 @@ export const generateCategoricalChart = ({
         <ReportPolarOptions
           cx={props.cx}
           cy={props.cy}
-          startAngle={props.startAngle ?? defaultProps?.startAngle}
-          endAngle={props.endAngle ?? defaultProps?.endAngle}
-          innerRadius={props.innerRadius ?? defaultProps?.innerRadius}
-          outerRadius={props.outerRadius ?? defaultProps?.outerRadius}
+          startAngle={props.startAngle ?? defaultProps.startAngle}
+          endAngle={props.endAngle ?? defaultProps.endAngle}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius}
         />
         <CategoricalChartWrapper {...props} />
       </RechartsStoreProvider>
