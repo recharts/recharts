@@ -15,7 +15,6 @@ import React, {
   useCallback,
 } from 'react';
 import throttle from 'lodash/throttle';
-import { isElement } from 'react-is';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { getDisplayName } from '../util/ReactUtils';
@@ -174,7 +173,7 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement | { current: HTMLDi
       const isCharts = !Array.isArray(children) && getDisplayName(children.type).endsWith('Chart');
 
       return React.Children.map(children, child => {
-        if (isElement(child)) {
+        if (React.isValidElement<any>(child)) {
           return cloneElement(child, {
             width: calculatedWidth,
             height: calculatedHeight,
