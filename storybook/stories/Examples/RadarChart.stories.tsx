@@ -3,6 +3,7 @@ import { StoryObj } from '@storybook/react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
 import { RadarChartProps } from '../API/props/RadarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { rangeData } from '../data';
 
 export default {
   argTypes: RadarChartProps,
@@ -121,6 +122,26 @@ export const RadarWithLegend: StoryObj = {
       { angle: 180, r: 3 },
       { angle: 270, r: 4 },
     ],
+    width: 360,
+    height: 360,
+  },
+};
+
+export const RangedRadarChart: StoryObj = {
+  render: (args: Record<string, any>) => {
+    return (
+      <RadarChart {...args}>
+        <PolarGrid />
+        <Legend />
+        <PolarAngleAxis dataKey="day" />
+        <Radar type="number" name="Temperature" dataKey="temperature" fill="orange" fillOpacity={0.5} stroke="blue" />
+        <Tooltip defaultIndex={2} />
+      </RadarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    data: rangeData,
     width: 360,
     height: 360,
   },
