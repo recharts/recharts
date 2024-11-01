@@ -521,3 +521,41 @@ export const RangedAreaChart = {
     );
   },
 };
+
+const rangeData2 = [
+  { timeHorizon: 1, range: [-2.1, 12.6] },
+  { timeHorizon: 3, range: [1, 9.5] },
+  { timeHorizon: 5, range: [2, 8.5] },
+  { timeHorizon: 10, range: [2.9, 7.6] },
+  { timeHorizon: 15, range: [3.4, 7.1] },
+];
+
+export const RangedAreaChartWithGradient = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={rangeData2} width={1000} height={600} margin={{ top: 20, right: 200, bottom: 20, left: 20 }}>
+          <defs>
+            <linearGradient id="fill-gradient" gradientTransform="rotate(90)">
+              <stop offset="5%" stopColor="green" stopOpacity={1} />
+              <stop offset={0.86} stopColor="green" stopOpacity={0.1} />
+              <stop offset={0.86} stopColor="red" stopOpacity={0.1} />
+              <stop offset="95%" stopColor="red" stopOpacity={1} />
+            </linearGradient>
+          </defs>
+          <Area type="monotone" dataKey="range" fill="url(#fill-gradient)" stroke="none" />
+          <XAxis
+            dataKey="timeHorizon"
+            type="number"
+            domain={[1, 'dataMax']}
+            axisLine={false}
+            ticks={[1, 3, 5, 10, 15]}
+            unit=" yr"
+          />
+          <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
+          <Tooltip />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+};
