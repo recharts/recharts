@@ -1598,6 +1598,7 @@ export const combineAxisTicks = (
 
   const { type, ticks, tickCount } = axis;
 
+  // This is testing for `scaleBand` but for band axis the type is reported as `band` so this looks like a dead code with a workaround elsewhere?
   const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
@@ -1676,6 +1677,61 @@ export const selectTicksOfAxis: (
   combineAxisTicks,
 );
 
+export const combineGraphicalItemTicks = (
+  layout: LayoutType,
+  axis: AxisWithTicksSettings,
+  scale: RechartsScale | undefined,
+  axisRange: AxisRange | undefined,
+  duplicateDomain: ReadonlyArray<unknown> | undefined,
+  categoricalDomain: ReadonlyArray<unknown> | undefined,
+  axisType: XorYType,
+): TickItem[] | null => {
+  if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
+    return null;
+  }
+  const isCategorical = isCategoricalAxis(layout, axisType);
+
+  const { tickCount } = axis;
+
+  let offset = 0;
+
+  offset =
+    axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
+
+  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
+  if (isCategorical && categoricalDomain) {
+    return categoricalDomain.map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: entry,
+        index,
+        // @ts-expect-error why does the offset go here? The type does not require it
+        offset,
+      }),
+    );
+  }
+
+  if (scale.ticks) {
+    return (
+      scale
+        .ticks(tickCount)
+        // @ts-expect-error why does the offset go here? The type does not require it
+        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+    );
+  }
+
+  // When axis has duplicated text, serial numbers are used to generate scale
+  return scale.domain().map(
+    (entry: any, index: number): TickItem => ({
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
+      // @ts-expect-error why does the offset go here? The type does not require it
+      offset,
+    }),
+  );
+};
+
 export const selectTicksOfGraphicalItem: (
   state: RechartsRootState,
   axisType: XorYType,
@@ -1691,52 +1747,7 @@ export const selectTicksOfGraphicalItem: (
     selectCategoricalDomain,
     pickAxisType,
   ],
-  (layout: LayoutType, axis, scale, axisRange, duplicateDomain, categoricalDomain, axisType) => {
-    if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
-      return null;
-    }
-    const isCategorical = isCategoricalAxis(layout, axisType);
-
-    const { tickCount } = axis;
-
-    let offset = 0;
-
-    offset =
-      axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
-
-    // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-    if (isCategorical && categoricalDomain) {
-      return categoricalDomain.map(
-        (entry: any, index: number): TickItem => ({
-          coordinate: scale(entry) + offset,
-          value: entry,
-          index,
-          // @ts-expect-error why does the offset go here? The type does not require it
-          offset,
-        }),
-      );
-    }
-
-    if (scale.ticks) {
-      return (
-        scale
-          .ticks(tickCount)
-          // @ts-expect-error why does the offset go here? The type does not require it
-          .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-      );
-    }
-
-    // When axis has duplicated text, serial numbers are used to generate scale
-    return scale.domain().map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: duplicateDomain ? duplicateDomain[entry] : entry,
-        index,
-        // @ts-expect-error why does the offset go here? The type does not require it
-        offset,
-      }),
-    );
-  },
+  combineGraphicalItemTicks,
 );
 
 export type BaseAxisWithScale = BaseCartesianAxis & { scale: RechartsScale };

@@ -4,6 +4,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { RechartsScale } from '../../util/ChartUtils';
 import {
   combineAxisTicks,
+  combineGraphicalItemTicks,
   combineScaleFunction,
   selectCategoricalDomain,
   selectDuplicateDomain,
@@ -74,4 +75,21 @@ export const selectPolarAxisTicks: (
     pickAxisType,
   ],
   combineAxisTicks,
+);
+
+export const selectPolarGraphicalItemAxisTicks: (
+  state: RechartsRootState,
+  axisType: 'angleAxis' | 'radiusAxis',
+  polarAxisId: AxisId,
+) => ReadonlyArray<CartesianTickItem> | undefined = createSelector(
+  [
+    selectChartLayout,
+    selectPolarAxis,
+    selectPolarAxisScale,
+    selectPolarAxisRange,
+    selectDuplicateDomain,
+    selectCategoricalDomain,
+    pickAxisType,
+  ],
+  combineGraphicalItemTicks,
 );

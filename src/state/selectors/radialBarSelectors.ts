@@ -8,7 +8,7 @@ import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
 import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
-import { selectPolarAxisScale, selectPolarAxisTicks } from './polarScaleSelectors';
+import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
 import { BaseAxisWithScale, combineStackGroups, StackGroup } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -67,7 +67,7 @@ export const selectRadiusAxisTicks = (
   state: RechartsRootState,
   radiusAxisId: AxisId,
 ): ReadonlyArray<TickItem> | undefined => {
-  return selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId);
+  return selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', radiusAxisId);
 };
 
 const selectAngleAxisForRadialBar = (
