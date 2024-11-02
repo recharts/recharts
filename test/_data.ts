@@ -258,3 +258,38 @@ export const boxPlotData = [
     size: 350,
   },
 ];
+
+/**
+ * Three Rings for the Elven-kings under the sky,
+ * Seven for the Dwarf-lords in their halls of stone,
+ * Nine for Mortal Men doomed to die,
+ * One for the Dark Lord on his dark throne
+ * In the Land of Mordor where the Shadows lie.
+ * One Ring to rule them all, One Ring to find them,
+ * One Ring to bring them all and in the darkness bind them
+ * In the Land of Mordor where the Shadows lie.
+ *
+ * Lord of the Rings, J.R.R. Tolkien, 1954
+ */
+export const ringsData = [
+  {
+    name: 'Elves',
+    rings: 3,
+    fill: 'green',
+  },
+  {
+    name: 'Dwarves',
+    rings: 7,
+    fill: 'blue',
+  },
+  {
+    name: 'Humans',
+    rings: 9,
+    fill: 'red',
+  },
+  {
+    name: 'Sauron',
+    rings: 1,
+    fill: 'black',
+  },
+];

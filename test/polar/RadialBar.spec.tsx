@@ -2,15 +2,19 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { Customized, PolarAngleAxis, PolarRadiusAxis, RadialBar, RadialBarChart } from '../../src';
+import { Customized, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { PageData } from '../_data';
+import { PageData, ringsData } from '../_data';
 import { expectRadialBars } from '../helper/expectRadialBars';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { expectScale } from '../helper/expectScale';
-import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
+import {
+  selectPolarAxisScale,
+  selectPolarAxisTicks,
+  selectPolarGraphicalItemAxisTicks,
+} from '../../src/state/selectors/polarScaleSelectors';
 import {
   pickMaxBarSize,
   RadialBarSettings,
@@ -668,6 +672,239 @@ describe('<RadialBar />', () => {
         },
         {
           d: 'M 442.6,250 A 192.6,192.6,0, 0,0, 57.79571735628522,237.66007563171462 L 83.74229756779397,239.3259013512132 A 166.6,166.6,0, 0,1, 416.6,250 Z',
+        },
+      ]);
+    });
+  });
+
+  describe('RingsWithTypes', () => {
+    const radialBarSettings: RadialBarSettings = {
+      dataKey: 'rings',
+      minPointSize: 0,
+      stackId: undefined,
+      maxBarSize: undefined,
+      barSize: undefined,
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChart width={500} height={500} data={ringsData}>
+        <RadialBar isAnimationActive={false} dataKey={radialBarSettings.dataKey} />
+        <PolarGrid gridType="circle" />
+        <PolarAngleAxis type="number" />
+        <PolarRadiusAxis type="category" stroke="black" />
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('should select polar items', () => {
+      const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          angleAxisId: 0,
+          barSize: undefined,
+          data: undefined,
+          dataKey: 'rings',
+          hide: false,
+          radiusAxisId: 0,
+          stackId: undefined,
+          type: 'radialBar',
+        },
+      ]);
+    });
+
+    it('should select angle axis settings', () => {
+      const { spy } = renderTestCase(state => selectAngleAxis(state, 0));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: false,
+        dataKey: undefined,
+        domain: undefined,
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should select angle axis realScaleType', () => {
+      const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith('linear');
+    });
+
+    it('should select angle axis scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+      expectScale(spy, {
+        domain: [0, 9],
+        range: [0, 360],
+      });
+    });
+
+    it('should select radius axis settings', () => {
+      const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        id: 0,
+        includeHidden: undefined,
+        name: undefined,
+        reversed: undefined,
+        scale: 'auto',
+        tick: true,
+        tickCount: 5,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+    });
+
+    it('should select radius axis realScaleType', () => {
+      const { spy } = renderTestCase(state => selectRealScaleType(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith('band');
+    });
+
+    it('should select radius axis scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+      expectScale(spy, {
+        domain: [0, 1, 2, 3],
+        range: [0, 196],
+        bandwidth: 49,
+      });
+    });
+
+    it('should select radius axis ticks for axis', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        { coordinate: 24.5, index: 0, offset: 24.5, value: 0 },
+        { coordinate: 73.5, index: 1, offset: 24.5, value: 1 },
+        { coordinate: 122.5, index: 2, offset: 24.5, value: 2 },
+        { coordinate: 171.5, index: 3, offset: 24.5, value: 3 },
+      ]);
+    });
+
+    it('should select radius axis ticks for graphical item', () => {
+      const { spy } = renderTestCase(state => selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        { coordinate: 0, value: 0, index: 0, offset: 0 },
+        { coordinate: 49, value: 1, index: 1, offset: 0 },
+        { coordinate: 98, value: 2, index: 2, offset: 0 },
+        { coordinate: 147, value: 3, index: 3, offset: 0 },
+      ]);
+    });
+
+    it('should select radial bar sectors', () => {
+      const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          name: 'Elves',
+          rings: 3,
+          fill: 'green',
+          background: {
+            cx: 250,
+            cy: 250,
+            innerRadius: 4.9,
+            outerRadius: 43.9,
+            startAngle: 0,
+            endAngle: 360,
+          },
+          payload: { name: 'Elves', rings: 3, fill: 'green' },
+          value: 3,
+          cx: 250,
+          cy: 250,
+          innerRadius: 4.9,
+          outerRadius: 43.9,
+          startAngle: 0,
+          endAngle: 120,
+        },
+        {
+          name: 'Dwarves',
+          rings: 7,
+          fill: 'blue',
+          background: {
+            cx: 250,
+            cy: 250,
+            innerRadius: 53.9,
+            outerRadius: 92.9,
+            startAngle: 0,
+            endAngle: 360,
+          },
+          payload: { name: 'Dwarves', rings: 7, fill: 'blue' },
+          value: 7,
+          cx: 250,
+          cy: 250,
+          innerRadius: 53.9,
+          outerRadius: 92.9,
+          startAngle: 0,
+          endAngle: 280,
+        },
+        {
+          name: 'Humans',
+          rings: 9,
+          fill: 'red',
+          background: {
+            cx: 250,
+            cy: 250,
+            innerRadius: 102.9,
+            outerRadius: 141.9,
+            startAngle: 0,
+            endAngle: 360,
+          },
+          payload: { name: 'Humans', rings: 9, fill: 'red' },
+          value: 9,
+          cx: 250,
+          cy: 250,
+          innerRadius: 102.9,
+          outerRadius: 141.9,
+          startAngle: 0,
+          endAngle: 360,
+        },
+        {
+          name: 'Sauron',
+          rings: 1,
+          fill: 'black',
+          background: {
+            cx: 250,
+            cy: 250,
+            innerRadius: 151.9,
+            outerRadius: 190.9,
+            startAngle: 0,
+            endAngle: 360,
+          },
+          payload: { name: 'Sauron', rings: 1, fill: 'black' },
+          value: 1,
+          cx: 250,
+          cy: 250,
+          innerRadius: 151.9,
+          outerRadius: 190.9,
+          startAngle: 0,
+          endAngle: 40,
+        },
+      ]);
+    });
+
+    it('should render sectors', () => {
+      const { container } = renderTestCase();
+      expectRadialBars(container, [
+        {
+          d: 'M 293.9,250 A 43.9,43.9,0, 0,0, 228.05,211.98148477386314 L 247.55,245.75647552145625 A 4.9,4.9,0, 0,1, 254.9,250 Z',
+        },
+        {
+          d: 'M 342.9,250 A 92.9,92.9,0, 1,0, 266.1319157052578,341.48864025483414 L 259.3596367762475,303.081137887358 A 53.9,53.9,0, 1,1, 303.9,250 Z',
+        },
+        {
+          d: 'M 391.9,250 A 141.9,141.9,0, 1,0, 391.8999999783874,250.00247662220846 L 352.89999998432745,250.0017959438002 A 102.9,102.9,0, 1,1, 352.9,250 Z',
+        },
+        {
+          d: 'M 440.9,250 A 190.9,190.9,0, 0,0, 396.23788419141295,127.29184531083965 L 366.36215090977277,152.3605620886147 A 151.9,151.9,0, 0,1, 401.9,250 Z',
         },
       ]);
     });
