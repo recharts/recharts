@@ -71,7 +71,7 @@ describe('<RadialBar />', () => {
         allowDataOverflow: false,
         allowDecimals: false,
         // generator has allowDuplicatedCategory set to true, but the actual axis rendering ignores the prop
-        allowDuplicatedCategory: false,
+        allowDuplicatedCategory: true,
         dataKey: undefined,
         domain: undefined,
         id: undefined,
@@ -80,15 +80,15 @@ describe('<RadialBar />', () => {
         reversed: false,
         scale: 'auto',
         tick: true,
-        tickCount: undefined,
+        tickCount: 5,
         ticks: undefined,
-        type: 'category',
+        type: 'number',
         unit: undefined,
       });
     });
 
     it.fails('should select angle axis scale', () => {
-      // this selects different domain than generator, TODO find out why
+      // this selects different domain than generator because it includes nice ticks but generator doesn't
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
       expectScale(spy, {
         domain: [0, 9800],
