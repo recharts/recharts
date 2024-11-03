@@ -1662,7 +1662,7 @@ describe('<PolarAngleAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith({
           allowDataOverflow: false,
           allowDecimals: false,
-          allowDuplicatedCategory: false,
+          allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
           id: undefined,
@@ -1671,9 +1671,9 @@ describe('<PolarAngleAxis />', () => {
           reversed: false,
           scale: 'auto',
           tick: true,
-          tickCount: undefined,
+          tickCount: 5,
           ticks: undefined,
-          type: 'category',
+          type: 'number',
           unit: undefined,
         });
       });
@@ -1693,7 +1693,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
-        expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
+        expect(spy).toHaveBeenLastCalledWith([0, 400]);
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -1705,7 +1705,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [400, 189], range: [0, 360] });
+        expectScale(spy, { domain: [0, 400], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -1734,17 +1734,11 @@ describe('<PolarAngleAxis />', () => {
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
-          { coordinate: 0, value: 400, offset: -0 },
-          { coordinate: 34.12322274881516, value: 380, offset: -0 },
-          { coordinate: 68.24644549763032, value: 360, offset: -0 },
-          { coordinate: 102.36966824644551, value: 340, offset: -0 },
-          { coordinate: 136.49289099526067, value: 320, offset: -0 },
-          { coordinate: 170.61611374407585, value: 300, offset: -0 },
-          { coordinate: 204.739336492891, value: 280, offset: -0 },
-          { coordinate: 238.86255924170615, value: 260, offset: -0 },
-          { coordinate: 272.98578199052133, value: 240, offset: -0 },
-          { coordinate: 307.1090047393365, value: 220, offset: -0 },
-          { coordinate: 341.2322274881517, value: 200, offset: -0 },
+          { coordinate: 0, offset: -0, value: 0 },
+          { coordinate: 90, offset: -0, value: 100 },
+          { coordinate: 180, offset: -0, value: 200 },
+          { coordinate: 270, offset: -0, value: 300 },
+          { coordinate: 360, offset: -0, value: 400 },
         ]);
         expect(spy).toHaveBeenCalledTimes(3);
       });
