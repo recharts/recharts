@@ -7,10 +7,20 @@ function UnknownLayoutComponent() {
   return <p>TODO create inspector for this layout</p>;
 }
 
-export function RechartsHookInspector({ portalRef }: { portalRef: React.RefObject<HTMLElement> }) {
+export function RechartsHookInspector({ rechartsInspectorEnabled }: { rechartsInspectorEnabled: boolean }) {
   const layout = useChartLayout();
 
-  if (portalRef == null || portalRef.current == null) {
+  if (!rechartsInspectorEnabled) {
+    return null;
+  }
+
+  const renderedChart = document.querySelector('.recharts-wrapper');
+  if (!renderedChart) {
+    /*
+     * Wait until after the chart has rendered. Otherwise the inspector renders first and chart second.
+     * Which is not a big problem per se but when you enable it using the tool icon,
+     * the inspector renders second. So let's keep things consistent.
+     */
     return null;
   }
 
@@ -25,5 +35,5 @@ export function RechartsHookInspector({ portalRef }: { portalRef: React.RefObjec
       Component = UnknownLayoutComponent;
   }
 
-  return createPortal(<Component />, portalRef.current);
+  return createPortal(<Component />, document.querySelector('#storybook-root'));
 }
