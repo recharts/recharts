@@ -87,8 +87,7 @@ describe('<RadialBar />', () => {
       });
     });
 
-    it.fails('should select angle axis scale', () => {
-      // this selects different domain than generator because it includes nice ticks but generator doesn't
+    it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
       expectScale(spy, {
         domain: [0, 9800],
@@ -171,8 +170,7 @@ describe('<RadialBar />', () => {
       expect(spy).toHaveBeenLastCalledWith({ offset: 3.266666666666666, size: 26 });
     });
 
-    it.fails('should select radial bar sectors', () => {
-      // this selects different sectors than generator, TODO find out why
+    it('should select radial bar sectors', () => {
       const { spy } = renderTestCase(state => selectRadialBarSectors(state, 0, 0, radialBarSettings, undefined));
       expect(spy).toHaveBeenLastCalledWith([
         {

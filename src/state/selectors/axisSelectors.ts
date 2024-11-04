@@ -1017,8 +1017,16 @@ export const combineAxisDomainWithNiceTicks = (
   axisSettings: BaseCartesianAxis,
   domain: NumberDomain | CategoricalDomain | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
+  axisType: XorYType,
 ) => {
   if (
+    /*
+     * Angle axis for some reason uses nice ticks when rendering axis tick labels,
+     * but doesn't use nice ticks for extending domain like all the other axes do.
+     * Not really sure why? Is there a good reason,
+     * or is it just because someone added support for nice ticks to the other axes and forgot this one?
+     */
+    axisType !== 'angleAxis' &&
     axisSettings?.type === 'number' &&
     isWellFormedNumberDomain(domain) &&
     Array.isArray(niceTicks) &&
@@ -1038,7 +1046,7 @@ export const selectAxisDomainIncludingNiceTicks: (
   axisType: XorYorZType,
   axisId: AxisId,
 ) => NumberDomain | CategoricalDomain = createSelector(
-  [selectBaseAxis, selectAxisDomain, selectNiceTicks],
+  [selectBaseAxis, selectAxisDomain, selectNiceTicks, pickAxisType],
   combineAxisDomainWithNiceTicks,
 );
 
