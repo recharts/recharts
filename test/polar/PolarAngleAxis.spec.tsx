@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { Customized, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
-import { exampleRadarData, PageData } from '../_data';
+import { exampleRadarData, PageData, pageDataWithFillColor } from '../_data';
 import { assertNotNull } from '../helper/assertNotNull';
 import { AngleAxisSettings } from '../../src/state/polarAxisSlice';
 import {
@@ -22,6 +22,7 @@ import {
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 import { expectScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -2055,195 +2056,218 @@ describe('<PolarAngleAxis />', () => {
       });
     });
 
-    test('renders ticks and labels v2', () => {
-      const pageDataWithFillColor = [
-        {
-          name: '18-24',
-          uv: 31.47,
-          pv: 2400,
-          fill: '#8884d8',
-        },
-        {
-          name: '25-29',
-          uv: 26.69,
-          pv: 4567,
-          fill: '#83a6ed',
-        },
-        {
-          name: '30-34',
-          uv: 15.69,
-          pv: 1398,
-          fill: '#8dd1e1',
-        },
-        {
-          name: '35-39',
-          uv: 8.22,
-          pv: 9800,
-          fill: '#82ca9d',
-        },
-        {
-          name: '40-49',
-          uv: 8.63,
-          pv: 3908,
-          fill: '#a4de6c',
-        },
-        {
-          name: '50+',
-          uv: 2.63,
-          pv: 4800,
-          fill: '#d0ed57',
-        },
-        {
-          name: 'unknown',
-          uv: 6.67,
-          pv: 4800,
-          fill: '#ffc658',
-        },
-      ];
+    describe('RadialBarWithColors with default axis', () => {
+      const radialBarSettings: RadialBarSettings = {
+        barSize: undefined,
+        dataKey: 'uv',
+        maxBarSize: undefined,
+        minPointSize: undefined,
+        stackId: undefined,
+      };
 
-      const { container } = render(
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={500} height={500} data={pageDataWithFillColor}>
-          <RadialBar dataKey="uv" />
+          <RadialBar dataKey={radialBarSettings.dataKey} />
           <PolarAngleAxis />
-        </RadialBarChart>,
-      );
+          {children}
+        </RadialBarChart>
+      ));
 
-      expectAngleAxisTicks(container, [
-        {
-          x1: '432.5633372715354',
-          x2: '440.01490205812865',
-          y1: '178.67940070162317',
-          y2: '175.76835583230167',
-        },
-        {
-          x1: '375.0116093670338',
-          x2: '380.11412403507603',
-          y1: '99.04272947796076',
-          y2: '92.88120823216326',
-        },
-        {
-          x1: '286.04361798617344',
-          x2: '287.51478606724174',
-          y1: '57.34264197164234',
-          y2: '49.4790763378318',
-        },
-        {
-          x1: '188.01762147260374',
-          x2: '185.48772847148553',
-          y1: '64.05865238713966',
-          y2: '56.46920962743107',
-        },
-        {
-          x1: '105.56821616178345',
-          x2: '99.67304131124399',
-          y1: '117.5029818550218',
-          y2: '112.09494029808391',
-        },
-        {
-          x1: '59.415495602055415',
-          x2: '51.636536238874015',
-          y1: '204.24470868424243',
-          y2: '202.37714577339517',
-        },
-        {
-          x1: '61.15795081834642',
-          x2: '53.45011207623813',
-          y1: '302.48504987969375',
-          y2: '304.62729681355876',
-        },
-        {
-          x1: '110.35769102236955',
-          x2: '104.65800494164995',
-          y1: '387.53554283673725',
-          y2: '393.14923846272654',
-        },
-        {
-          x1: '194.65048853123875',
-          x2: '192.39132479781992',
-          y1: '438.0224230781251',
-          y2: '445.69680769355875',
-        },
-        {
-          x1: '292.85299286169624',
-          x2: '294.60209461115323',
-          y1: '441.25799591859004',
-          y2: '449.06444473159377',
-        },
-        {
-          x1: '380.28625006934533',
-          x2: '385.6040561946247',
-          y1: '396.4291400059019',
-          y2: '402.4058395979795',
-        },
-        {
-          x1: '434.97769089490146',
-          x2: '442.52780072734646',
-          y1: '314.8016502196532',
-          y2: '317.44661553474106',
-        },
-      ]);
-      expectAngleAxisTickLabels(container, [
-        {
-          textContext: '30',
-          x: '440.01490205812865',
-          y: '175.76835583230167',
-        },
-        {
-          textContext: '28',
-          x: '380.11412403507603',
-          y: '92.88120823216326',
-        },
-        {
-          textContext: '26',
-          x: '287.51478606724174',
-          y: '49.4790763378318',
-        },
-        {
-          textContext: '24',
-          x: '185.48772847148553',
-          y: '56.46920962743107',
-        },
-        {
-          textContext: '22',
-          x: '99.67304131124399',
-          y: '112.09494029808391',
-        },
-        {
-          textContext: '20',
-          x: '51.636536238874015',
-          y: '202.37714577339517',
-        },
-        {
-          textContext: '18',
-          x: '53.45011207623813',
-          y: '304.62729681355876',
-        },
-        {
-          textContext: '16',
-          x: '104.65800494164995',
-          y: '393.14923846272654',
-        },
-        {
-          textContext: '14',
-          x: '192.39132479781992',
-          y: '445.69680769355875',
-        },
-        {
-          textContext: '12',
-          x: '294.60209461115323',
-          y: '449.06444473159377',
-        },
-        {
-          textContext: '10',
-          x: '385.6040561946247',
-          y: '402.4058395979795',
-        },
-        {
-          textContext: '8',
-          x: '442.52780072734646',
-          y: '317.44661553474106',
-        },
-      ]);
+      it('should render ticks', () => {
+        const { container } = renderTestCase();
+        expectAngleAxisTicks(container, [
+          {
+            x1: '432.5633372715354',
+            x2: '440.01490205812865',
+            y1: '178.67940070162317',
+            y2: '175.76835583230167',
+          },
+          {
+            x1: '375.0116093670338',
+            x2: '380.11412403507603',
+            y1: '99.04272947796076',
+            y2: '92.88120823216326',
+          },
+          {
+            x1: '286.04361798617344',
+            x2: '287.51478606724174',
+            y1: '57.34264197164234',
+            y2: '49.4790763378318',
+          },
+          {
+            x1: '188.01762147260374',
+            x2: '185.48772847148553',
+            y1: '64.05865238713966',
+            y2: '56.46920962743107',
+          },
+          {
+            x1: '105.56821616178345',
+            x2: '99.67304131124399',
+            y1: '117.5029818550218',
+            y2: '112.09494029808391',
+          },
+          {
+            x1: '59.415495602055415',
+            x2: '51.636536238874015',
+            y1: '204.24470868424243',
+            y2: '202.37714577339517',
+          },
+          {
+            x1: '61.15795081834642',
+            x2: '53.45011207623813',
+            y1: '302.48504987969375',
+            y2: '304.62729681355876',
+          },
+          {
+            x1: '110.35769102236955',
+            x2: '104.65800494164995',
+            y1: '387.53554283673725',
+            y2: '393.14923846272654',
+          },
+          {
+            x1: '194.65048853123875',
+            x2: '192.39132479781992',
+            y1: '438.0224230781251',
+            y2: '445.69680769355875',
+          },
+          {
+            x1: '292.85299286169624',
+            x2: '294.60209461115323',
+            y1: '441.25799591859004',
+            y2: '449.06444473159377',
+          },
+          {
+            x1: '380.28625006934533',
+            x2: '385.6040561946247',
+            y1: '396.4291400059019',
+            y2: '402.4058395979795',
+          },
+          {
+            x1: '434.97769089490146',
+            x2: '442.52780072734646',
+            y1: '314.8016502196532',
+            y2: '317.44661553474106',
+          },
+        ]);
+      });
+
+      it('should render labels', () => {
+        const { container } = renderTestCase();
+        expectAngleAxisTickLabels(container, [
+          {
+            textContext: '30',
+            x: '440.01490205812865',
+            y: '175.76835583230167',
+          },
+          {
+            textContext: '28',
+            x: '380.11412403507603',
+            y: '92.88120823216326',
+          },
+          {
+            textContext: '26',
+            x: '287.51478606724174',
+            y: '49.4790763378318',
+          },
+          {
+            textContext: '24',
+            x: '185.48772847148553',
+            y: '56.46920962743107',
+          },
+          {
+            textContext: '22',
+            x: '99.67304131124399',
+            y: '112.09494029808391',
+          },
+          {
+            textContext: '20',
+            x: '51.636536238874015',
+            y: '202.37714577339517',
+          },
+          {
+            textContext: '18',
+            x: '53.45011207623813',
+            y: '304.62729681355876',
+          },
+          {
+            textContext: '16',
+            x: '104.65800494164995',
+            y: '393.14923846272654',
+          },
+          {
+            textContext: '14',
+            x: '192.39132479781992',
+            y: '445.69680769355875',
+          },
+          {
+            textContext: '12',
+            x: '294.60209461115323',
+            y: '449.06444473159377',
+          },
+          {
+            textContext: '10',
+            x: '385.6040561946247',
+            y: '402.4058395979795',
+          },
+          {
+            textContext: '8',
+            x: '442.52780072734646',
+            y: '317.44661553474106',
+          },
+        ]);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([31.47, 26.69, 15.69, 8.22, 8.63, 2.63, 6.67]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+        // why is scale.domain() different from domain?
+        expectScale(spy, { domain: [31.47, 6.67], range: [0, 360] });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+    });
+
+    describe('RadialBarWithColors with implicit axis', () => {
+      const radialBarSettings: RadialBarSettings = {
+        barSize: undefined,
+        dataKey: 'pv',
+        maxBarSize: undefined,
+        minPointSize: undefined,
+        stackId: undefined,
+      };
+
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={500} height={500} data={pageDataWithFillColor}>
+          <RadialBar dataKey={radialBarSettings.dataKey} />
+          {children}
+        </RadialBarChart>
+      ));
+
+      it('should not render ticks', () => {
+        const { container } = renderTestCase();
+        expectAngleAxisTicks(container, []);
+      });
+
+      it('should not render labels', () => {
+        const { container } = renderTestCase();
+        expectAngleAxisTickLabels(container, []);
+      });
+
+      it('should select domain', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
+        expect(spy).toHaveBeenLastCalledWith([0, 9800]);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+        expectScale(spy, { domain: [0, 9800], range: [0, 360] });
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
     });
 
     test.each([

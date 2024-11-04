@@ -161,6 +161,6 @@ export const selectPolarAxisDomainIncludingNiceTicks: (
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => NumberDomain | CategoricalDomain | undefined = createSelector(
-  [selectBaseAxis, selectPolarAxisDomain, selectPolarNiceTicks],
+  [selectBaseAxis, selectPolarAxisDomain, selectPolarNiceTicks, pickAxisType],
   combineAxisDomainWithNiceTicks,
 );
