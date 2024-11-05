@@ -1730,32 +1730,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    /**
-     * Only used by renderGraphicChild.
-     * @deprecated use a Context-based approach instead
-     * @param item do not use
-     * @param displayName do not use
-     * @param childIndex do not use
-     * @returns do not use
-     */
-    filterFormatItem(item: any, displayName: any, childIndex: any) {
-      const { formattedGraphicalItems } = this.state;
-
-      for (let i = 0, len = formattedGraphicalItems.length; i < len; i++) {
-        const entry = formattedGraphicalItems[i];
-
-        if (
-          entry.item === item ||
-          entry.props.key === item.key ||
-          (displayName === getDisplayName(entry.item.type) && childIndex === entry.childIndex)
-        ) {
-          return entry;
-        }
-      }
-
-      return null;
-    }
-
     getGraphicalItemClickHandler(
       tooltipEventType: TooltipEventType,
       trigger: TooltipTrigger | undefined,
@@ -1797,15 +1771,6 @@ export const generateCategoricalChart = ({
       }
       return null;
     }
-
-    renderGraphicChild = (element: React.ReactElement, displayName: string, index: number): ReactElement | null => {
-      const item = this.filterFormatItem(element, displayName, index);
-      if (!item) {
-        return null;
-      }
-
-      return cloneElement(element, item.props);
-    };
 
     renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>
       cloneElement(element, {
