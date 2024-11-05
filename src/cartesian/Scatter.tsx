@@ -147,6 +147,7 @@ interface State {
 }
 
 const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload> => {
+  // TODO does Scatter report legend when its data are defined on the graphical item?
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
