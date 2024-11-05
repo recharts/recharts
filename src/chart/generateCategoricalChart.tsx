@@ -1,4 +1,4 @@
-import React, { cloneElement, Component, ReactElement } from 'react';
+import React, { cloneElement, Component, forwardRef, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -1960,7 +1960,10 @@ export const generateCategoricalChart = ({
     }
   }
 
-  return function CategoricalChart(props: CategoricalChartProps) {
+  const CategoricalChart = forwardRef<CategoricalChartWrapper, CategoricalChartProps>(function CategoricalChart(
+    props: CategoricalChartProps,
+    ref,
+  ) {
     const options: ChartOptions = {
       chartName,
       defaultTooltipEventType,
@@ -1996,8 +1999,14 @@ export const generateCategoricalChart = ({
           innerRadius={innerRadius}
           outerRadius={outerRadius}
         />
-        <CategoricalChartWrapper {...props} />
+        <CategoricalChartWrapper {...props} ref={ref} />
       </RechartsStoreProvider>
     );
-  };
+  });
+
+  // in recharts 2.x the returned component has the displayName of the chart itself
+  // set that here so it isn't lost (until we know we don't need it anymore)
+  CategoricalChart.displayName = CategoricalChartWrapper.displayName;
+
+  return CategoricalChart;
 };

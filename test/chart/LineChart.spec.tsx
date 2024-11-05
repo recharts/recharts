@@ -1543,6 +1543,34 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     }
   });
 
+  describe('LineChart - test ref access', () => {
+    test('should allow access to the CategoricalChartWrapper through the ref prop forwarded from CategoricalChart', () => {
+      let refNode: { clipPathId: string };
+
+      const MyComponent = () => {
+        return (
+          <LineChart
+            width={width}
+            height={height}
+            data={data2}
+            ref={node => {
+              refNode = node;
+            }}
+          >
+            <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+            <Tooltip />
+            <XAxis dataKey="name" />
+          </LineChart>
+        );
+      };
+
+      render(<MyComponent />);
+
+      expect(refNode).toBeDefined();
+      expect(refNode.clipPathId).toMatch(/recharts\d+-clip/);
+    });
+  });
+
   describe('LineChart layout context', () => {
     it(
       'should provide viewBox and clipPathId if there are no axes',

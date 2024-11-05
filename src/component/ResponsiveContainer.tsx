@@ -1,6 +1,3 @@
-/**
- * @fileOverview Wrapper component to make charts adapt to the size of parent * DOM
- */
 import clsx from 'clsx';
 import React, {
   ReactElement,
@@ -15,7 +12,6 @@ import React, {
   useCallback,
 } from 'react';
 import throttle from 'lodash/throttle';
-import { isElement } from 'react-is';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 import { getDisplayName } from '../util/ReactUtils';
@@ -162,11 +158,10 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         aspect,
       );
 
-      const isCharts =
-        !Array.isArray(children) && isElement(children) && getDisplayName(children.type).endsWith('Chart');
+      const isCharts = !Array.isArray(children) && getDisplayName(children.type).endsWith('Chart');
 
       return React.Children.map(children, child => {
-        if (isElement(child)) {
+        if (React.isValidElement<any>(child)) {
           return cloneElement(child, {
             width: calculatedWidth,
             height: calculatedHeight,
