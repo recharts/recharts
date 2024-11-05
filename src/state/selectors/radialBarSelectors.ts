@@ -7,7 +7,7 @@ import { selectChartDataWithIndexes } from './dataSelectors';
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
-import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
+import { DataKey, LayoutType, LegendType, PolarViewBox, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
 import { BaseAxisWithScale, combineStackGroups, StackGroup } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
@@ -38,6 +38,7 @@ import {
 } from './polarSelectors';
 import { selectStackOffsetType } from './selectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
+import { Payload as LegendPayload } from '../../component/DefaultLegendContent';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
   dataKey: DataKey<any> | undefined;
@@ -396,3 +397,29 @@ export const selectRadialBarSectors: (
     });
   },
 );
+
+export const selectLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
+  createSelector(
+    [selectChartDataWithIndexes, (s, l) => l],
+    ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {
+      if (chartData == null) {
+        return [];
+      }
+      const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
+
+      if (displayedData.length === 0) {
+        return [];
+      }
+
+      return displayedData.map(entry => {
+        return {
+          type: legendType,
+          // @ts-expect-error we need a better typing for our data inputs
+          value: entry.name,
+          // @ts-expect-error we need a better typing for our data inputs
+          color: entry.fill,
+          payload: entry,
+        };
+      });
+    },
+  );

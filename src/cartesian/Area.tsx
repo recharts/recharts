@@ -148,6 +148,7 @@ function getLegendItemColor(stroke: string | undefined, fill: string): string {
 }
 
 const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
+  // TODO does Area report legend when its data are defined on the graphical item?
   const { dataKey, name, stroke, fill, legendType, hide } = props;
   return [
     {

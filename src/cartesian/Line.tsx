@@ -154,6 +154,7 @@ function SetLineLegend(props: Props): null {
 }
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+  // This probably means that the tooltip never receives data when they are defined on the Line itself, TODO add a test for it + fix
   const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
   return {
     dataDefinedOnItem: data,

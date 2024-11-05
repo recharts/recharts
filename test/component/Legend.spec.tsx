@@ -41,9 +41,21 @@ function assertHasLegend(container: Element): ReadonlyArray<Element> {
   return Array.from(container.querySelectorAll('.recharts-default-legend .recharts-legend-item'));
 }
 
-function expectLegendLabels(container: Element, expectedLabels: ReadonlyArray<string>) {
+function expectLegendLabels(
+  container: Element,
+  expectedLabels: undefined | ReadonlyArray<{ textContent: string; fill: string }>,
+) {
   assertNotNull(container);
-  const actualLabels = assertHasLegend(container).map(legend => legend.textContent);
+
+  if (expectedLabels == null) {
+    expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
+    return;
+  }
+
+  const actualLabels = assertHasLegend(container).map(legend => ({
+    textContent: legend.textContent,
+    fill: legend.querySelector('.recharts-legend-icon')?.getAttribute('fill'),
+  }));
 
   expect(actualLabels).toEqual(expectedLabels);
 }
@@ -2170,7 +2182,7 @@ describe('<Legend />', () => {
           <Scatter dataKey="scatter datakey" />
         </ComposedChart>,
       );
-      expectLegendLabels(container, ['scatter datakey']);
+      expectLegendLabels(container, [{ textContent: 'scatter datakey', fill: undefined }]);
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
@@ -2287,12 +2299,12 @@ describe('<Legend />', () => {
       );
 
       expectLegendLabels(container, [
-        'Luck',
-        'Skill',
-        'Concentrated power of will',
-        'Pleasure',
-        'Pain',
-        'Reason to remember the name',
+        { textContent: 'Luck', fill: '#808080' },
+        { textContent: 'Skill', fill: '#808080' },
+        { textContent: 'Concentrated power of will', fill: '#808080' },
+        { textContent: 'Pleasure', fill: '#808080' },
+        { textContent: 'Pain', fill: '#808080' },
+        { textContent: 'Reason to remember the name', fill: '#808080' },
       ]);
     });
 
@@ -2305,25 +2317,60 @@ describe('<Legend />', () => {
       );
 
       // This doesn't seem too helpful to me.
-      expectLegendLabels(container, ['', '', '', '', '', '']);
+      expectLegendLabels(container, [
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+      ]);
     });
 
     it('should implicitly use special `name` and `fill` properties from data as legend labels and colors', () => {
-      const { container, getByText } = render(
+      const { container } = render(
         <PieChart width={500} height={500}>
           <Legend />
           <Pie data={dataWithSpecialNameAndFillProperties} dataKey="value" />
         </PieChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
-      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
-      legendItems.forEach((legendItem, index) => {
-        const icon = legendItem.querySelector('.recharts-legend-icon');
-        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
-      });
 
-      expectLegendLabels(container, ['name1', 'name2', 'name3', 'name4']);
+      expectLegendLabels(container, [
+        {
+          fill: 'fill1',
+          textContent: 'name1',
+        },
+        {
+          fill: 'fill2',
+          textContent: 'name2',
+        },
+        {
+          fill: 'fill3',
+          textContent: 'name3',
+        },
+        {
+          fill: 'fill4',
+          textContent: 'name4',
+        },
+      ]);
     });
 
     it('should disappear after Pie data is removed', () => {
@@ -2335,17 +2382,50 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Luftbaloons',
-        'Miles I would walk',
-        'Days a week',
-        'Mambo number',
-        'Seas of Rhye',
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Luftbaloons',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Miles I would walk',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Days a week',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Mambo number',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Seas of Rhye',
+        },
       ]);
 
       rerender(
@@ -2356,11 +2436,26 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        'Luftbaloons',
-        'Miles I would walk',
-        'Days a week',
-        'Mambo number',
-        'Seas of Rhye',
+        {
+          fill: '#808080',
+          textContent: 'Luftbaloons',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Miles I would walk',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Days a week',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Mambo number',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Seas of Rhye',
+        },
       ]);
     });
 
@@ -2373,17 +2468,50 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Luftbaloons',
-        'Miles I would walk',
-        'Days a week',
-        'Mambo number',
-        'Seas of Rhye',
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: '',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Luftbaloons',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Miles I would walk',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Days a week',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Mambo number',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Seas of Rhye',
+        },
       ]);
 
       rerender(
@@ -2393,11 +2521,26 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        'Luftbaloons',
-        'Miles I would walk',
-        'Days a week',
-        'Mambo number',
-        'Seas of Rhye',
+        {
+          fill: '#808080',
+          textContent: 'Luftbaloons',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Miles I would walk',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Days a week',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Mambo number',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Seas of Rhye',
+        },
       ]);
     });
 
@@ -2409,12 +2552,30 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        'Luck',
-        'Skill',
-        'Concentrated power of will',
-        'Pleasure',
-        'Pain',
-        'Reason to remember the name',
+        {
+          fill: '#808080',
+          textContent: 'Luck',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Skill',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Concentrated power of will',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Pleasure',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Pain',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Reason to remember the name',
+        },
       ]);
 
       rerender(
@@ -2424,11 +2585,26 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        'Luftbaloons',
-        'Miles I would walk',
-        'Days a week',
-        'Mambo number',
-        'Seas of Rhye',
+        {
+          fill: '#808080',
+          textContent: 'Luftbaloons',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Miles I would walk',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Days a week',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Mambo number',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Seas of Rhye',
+        },
       ]);
     });
 
@@ -2440,12 +2616,30 @@ describe('<Legend />', () => {
         </PieChart>,
       );
       expectLegendLabels(container, [
-        'Luck',
-        'Skill',
-        'Concentrated power of will',
-        'Pleasure',
-        'Pain',
-        'Reason to remember the name',
+        {
+          fill: '#808080',
+          textContent: 'Luck',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Skill',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Concentrated power of will',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Pleasure',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Pain',
+        },
+        {
+          fill: '#808080',
+          textContent: 'Reason to remember the name',
+        },
       ]);
 
       rerender(
@@ -2454,7 +2648,32 @@ describe('<Legend />', () => {
           <Pie data={numericalData} dataKey="percent" nameKey="percent" />
         </PieChart>,
       );
-      expectLegendLabels(container, ['10', '20', '15', '50', '50', '100']);
+      expectLegendLabels(container, [
+        {
+          fill: '#808080',
+          textContent: '10',
+        },
+        {
+          fill: '#808080',
+          textContent: '20',
+        },
+        {
+          fill: '#808080',
+          textContent: '15',
+        },
+        {
+          fill: '#808080',
+          textContent: '50',
+        },
+        {
+          fill: '#808080',
+          textContent: '50',
+        },
+        {
+          fill: '#808080',
+          textContent: '100',
+        },
+      ]);
     });
 
     describe('legendType symbols', () => {
@@ -2579,46 +2798,56 @@ describe('<Legend />', () => {
           <Radar />
         </RadarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect.soft(legendItems).toHaveLength(1);
-      expect(legendItems[0].textContent).toBe('');
+
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: '',
+        },
+      ]);
     });
 
     it('should set legend item from `name` prop on Radar, and update it after rerender', () => {
-      const { rerender, queryByText } = render(
+      const { rerender, container } = render(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="percent" name="%" />
         </RadarChart>,
       );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).toBeInTheDocument();
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: '%',
+        },
+      ]);
+
       rerender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="percent" name="Percent" />
         </RadarChart>,
       );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).not.toBeInTheDocument();
-      expect.soft(queryByText('Percent')).toBeInTheDocument();
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'Percent',
+        },
+      ]);
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {
-      const { container, queryByText } = render(
+      const { container } = render(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Radar dataKey="value" />
         </RadarChart>,
       );
-      expect.soft(queryByText('name1')).not.toBeInTheDocument();
-      expect.soft(queryByText('name2')).not.toBeInTheDocument();
-      expect.soft(queryByText('name3')).not.toBeInTheDocument();
-      expect.soft(queryByText('name4')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill1"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill2"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill3"]')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill4"]')).not.toBeInTheDocument();
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'value',
+        },
+      ]);
     });
 
     it('should disappear after Radar element is removed', () => {
@@ -2629,18 +2858,29 @@ describe('<Legend />', () => {
           <Radar dataKey="value" />
         </RadarChart>,
       );
-      const legendItems1 = assertHasLegend(container);
-      expect.soft(legendItems1).toHaveLength(2);
-      expect.soft(Array.from(legendItems1).map(i => i.textContent)).toEqual(['name', 'value']);
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'name',
+        },
+        {
+          fill: null,
+          textContent: 'value',
+        },
+      ]);
+
       rerender(
         <RadarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Radar dataKey="value" />
         </RadarChart>,
       );
-      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
-      expect.soft(legendItems2).toHaveLength(1);
-      expect(Array.from(legendItems2).map(i => i.textContent)).toEqual(['value']);
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'value',
+        },
+      ]);
     });
 
     it('should update legend if Radar data changes', () => {
@@ -2650,18 +2890,25 @@ describe('<Legend />', () => {
           <Radar dataKey="value" />
         </RadarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect.soft(legendItems).toHaveLength(1);
-      expect.soft(Array.from(legendItems).map(i => i.textContent)).toEqual(['value']);
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'value',
+        },
+      ]);
+
       rerender(
         <RadarChart width={500} height={500} data={numericalData}>
           <Legend />
           <Radar dataKey="percent" />
         </RadarChart>,
       );
-      const legendItems2 = assertHasLegend(container);
-      expect.soft(legendItems2).toHaveLength(1);
-      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['percent']);
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: 'percent',
+        },
+      ]);
     });
 
     describe('legendType symbols without color', () => {
@@ -2779,43 +3026,85 @@ describe('<Legend />', () => {
           <RadialBar dataKey="unknown" />
         </RadialBarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(numericalData.length);
-      legendItems.forEach(li => expect(li.textContent).toBe(''));
+      expectLegendLabels(container, [
+        { fill: null, textContent: '' },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+      ]);
     });
 
     it('should use special `name` and `fill` properties from data as legend labels and colors', () => {
-      const { container, getByText } = render(
+      // I think this is the only way to set legend labels for RadialBarChart?
+      const { container } = render(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="percent" />
         </RadialBarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
-      // I think this is the only way to set legend labels for RadialBarChart?
-      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
-      legendItems.forEach((legendItem, index) => {
-        const icon = legendItem.querySelector('.recharts-legend-icon');
-        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
-      });
+
+      expectLegendLabels(container, [
+        {
+          fill: 'fill1',
+          textContent: 'name1',
+        },
+        {
+          fill: 'fill2',
+          textContent: 'name2',
+        },
+        {
+          fill: 'fill3',
+          textContent: 'name3',
+        },
+        {
+          fill: 'fill4',
+          textContent: 'name4',
+        },
+      ]);
     });
 
     it('should use special `name` and `fill` properties from data as legend labels and colors, even if the dataKey does not match', () => {
-      const { container, getByText } = render(
+      const { container } = render(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="unknown" />
         </RadialBarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(dataWithSpecialNameAndFillProperties.length);
-      // I think this is the only way to set legend labels for RadialBarChart?
-      dataWithSpecialNameAndFillProperties.forEach(({ name }) => expect.soft(getByText(name)).toBeInTheDocument());
-      legendItems.forEach((legendItem, index) => {
-        const icon = legendItem.querySelector('.recharts-legend-icon');
-        expect.soft(icon).toHaveAttribute('fill', dataWithSpecialNameAndFillProperties[index].fill);
-      });
+      expectLegendLabels(container, [
+        {
+          fill: 'fill1',
+          textContent: 'name1',
+        },
+        {
+          fill: 'fill2',
+          textContent: 'name2',
+        },
+        {
+          fill: 'fill3',
+          textContent: 'name3',
+        },
+        {
+          fill: 'fill4',
+          textContent: 'name4',
+        },
+      ]);
     });
 
     it('should disappear after RadialBar itself is removed', () => {
@@ -2826,27 +3115,96 @@ describe('<Legend />', () => {
           <RadialBar dataKey="value" />
         </RadialBarChart>,
       );
-      const legendItems1 = assertHasLegend(container);
-      expect.soft(legendItems1).toHaveLength(numericalData.length * 2);
-      // all legend items have empty textContent
-      legendItems1.forEach(legendItem => {
-        expect(legendItem.textContent).toBe('');
-      });
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+      ]);
+
       rerender(
         <RadialBarChart width={500} height={500} data={numericalData}>
           <Legend />
           <RadialBar dataKey="value" />
         </RadialBarChart>,
       );
-      const legendItems2 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
-      expect.soft(legendItems2).toHaveLength(numericalData.length);
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+      ]);
+
       rerender(
         <RadialBarChart width={500} height={500}>
           <Legend />
         </RadialBarChart>,
       );
-      const legendItems3 = container.querySelectorAll('.recharts-default-legend .recharts-legend-item');
-      expect.soft(legendItems3).toHaveLength(0);
+      expectLegendLabels(container, undefined);
     });
 
     it('should update legend if RadialBarChart data changes', () => {
@@ -2856,19 +3214,58 @@ describe('<Legend />', () => {
           <RadialBar dataKey="percent" />
         </RadialBarChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect.soft(legendItems).toHaveLength(numericalData.length);
       // all these are empty because numericalData does not have .name property
-      legendItems.forEach(li => expect(li.textContent).toBe(''));
+      expectLegendLabels(container, [
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+        {
+          fill: null,
+          textContent: '',
+        },
+      ]);
+
       rerender(
         <RadialBarChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <RadialBar dataKey="value" />
         </RadialBarChart>,
       );
-      const legendItems2 = assertHasLegend(container);
-      expect.soft(legendItems2).toHaveLength(dataWithSpecialNameAndFillProperties.length);
-      expect.soft(Array.from(legendItems2).map(i => i.textContent)).toEqual(['name1', 'name2', 'name3', 'name4']);
+      expectLegendLabels(container, [
+        {
+          fill: 'fill1',
+          textContent: 'name1',
+        },
+        {
+          fill: 'fill2',
+          textContent: 'name2',
+        },
+        {
+          fill: 'fill3',
+          textContent: 'name3',
+        },
+        {
+          fill: 'fill4',
+          textContent: 'name4',
+        },
+      ]);
     });
 
     describe('legendType symbols', () => {

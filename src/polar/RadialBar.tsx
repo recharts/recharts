@@ -35,7 +35,6 @@ import {
   LayoutType,
   DataKey,
 } from '../util/types';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,
@@ -49,6 +48,8 @@ import { ReportBar } from '../state/ReportBar';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
+import { RadialBarSettings, selectLegendPayload, selectRadialBarSectors } from '../state/selectors/radialBarSelectors';
+import { useAppSelector } from '../state/hooks';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -161,24 +162,13 @@ type RadialBarComposedData = {
   layout: LayoutType;
 };
 
-type RadialBarPayloadInputProps = {
-  data: ReadonlyArray<RadialBarDataItem>;
-  legendType?: LegendType;
-};
+function identity<T>(value: T): T {
+  return value;
+}
 
-const computeLegendPayloadFromRadarData = ({ data, legendType }: RadialBarPayloadInputProps): Array<LegendPayload> => {
-  return data.map(
-    (entry: RadialBarDataItem): LegendPayload => ({
-      type: legendType,
-      value: entry.name,
-      color: entry.fill,
-      payload: entry,
-    }),
-  );
-};
-
-function SetRadialBarPayloadLegend(props: RadialBarPayloadInputProps): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromRadarData, props);
+function SetRadialBarPayloadLegend(props: RadialBarProps): null {
+  const data = useAppSelector(state => selectLegendPayload(state, props.legendType));
+  useLegendPayloadDispatch(identity, data);
   return null;
 }
 
@@ -352,7 +342,23 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
 
 function RadialBarImpl(props: RadialBarProps) {
   const { ref, ...rest } = props;
-  return <RadialBarWithState {...rest} />;
+  const cells = findAllByType(props.children, Cell);
+  const radialBarSettings: RadialBarSettings = {
+    dataKey: props.dataKey,
+    minPointSize: props.minPointSize,
+    stackId: props.stackId,
+    maxBarSize: props.maxBarSize,
+    barSize: props.barSize,
+  };
+  const data = useAppSelector(state =>
+    selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
+  );
+  return (
+    <>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
+      <RadialBarWithState {...rest} data={data} />
+    </>
+  );
 }
 
 const defaultRadialBarProps: Partial<RadialBarProps> = {
@@ -564,8 +570,6 @@ export class RadialBar extends PureComponent<RadialBarProps> {
     return (
       <>
         <ReportBar />
-        <SetRadialBarPayloadLegend data={this.props.data} legendType={this.props.legendType} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <PolarGraphicalItemContext
           data={undefined} // data prop is injected through generator and overwrites what user passes in
           dataKey={this.props.dataKey}
@@ -576,6 +580,7 @@ export class RadialBar extends PureComponent<RadialBarProps> {
           barSize={this.props.barSize}
           type="radialBar"
         />
+        <SetRadialBarPayloadLegend {...this.props} />
         <RadialBarImpl {...this.props} />
       </>
     );
