@@ -1800,7 +1800,7 @@ export const generateCategoricalChart = ({
       PolarGrid: { handler: renderAsIs, once: true },
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
-      Customized: { handler: this.renderCustomized },
+      Customized: { handler: renderAsIs },
       Legend: { handler: renderAsIs },
     };
 
