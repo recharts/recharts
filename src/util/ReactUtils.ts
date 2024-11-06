@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import isNil from 'lodash/isNil';
-import isString from 'lodash/isString';
 import isFunction from 'lodash/isFunction';
 import isObject from 'lodash/isObject';
 
@@ -155,96 +154,6 @@ export const validateWidthHeight = ({ width, height }: { width: number; height: 
   return true;
 };
 
-const SVG_TAGS: string[] = [
-  'a',
-  'altGlyph',
-  'altGlyphDef',
-  'altGlyphItem',
-  'animate',
-  'animateColor',
-  'animateMotion',
-  'animateTransform',
-  'circle',
-  'clipPath',
-  'color-profile',
-  'cursor',
-  'defs',
-  'desc',
-  'ellipse',
-  'feBlend',
-  'feColormatrix',
-  'feComponentTransfer',
-  'feComposite',
-  'feConvolveMatrix',
-  'feDiffuseLighting',
-  'feDisplacementMap',
-  'feDistantLight',
-  'feFlood',
-  'feFuncA',
-  'feFuncB',
-  'feFuncG',
-  'feFuncR',
-  'feGaussianBlur',
-  'feImage',
-  'feMerge',
-  'feMergeNode',
-  'feMorphology',
-  'feOffset',
-  'fePointLight',
-  'feSpecularLighting',
-  'feSpotLight',
-  'feTile',
-  'feTurbulence',
-  'filter',
-  'font',
-  'font-face',
-  'font-face-format',
-  'font-face-name',
-  'font-face-url',
-  'foreignObject',
-  'g',
-  'glyph',
-  'glyphRef',
-  'hkern',
-  'image',
-  'line',
-  'lineGradient',
-  'marker',
-  'mask',
-  'metadata',
-  'missing-glyph',
-  'mpath',
-  'path',
-  'pattern',
-  'polygon',
-  'polyline',
-  'radialGradient',
-  'rect',
-  'script',
-  'set',
-  'stop',
-  'style',
-  'svg',
-  'switch',
-  'symbol',
-  'text',
-  'textPath',
-  'title',
-  'tref',
-  'tspan',
-  'use',
-  'view',
-  'vkern',
-];
-
-/**
- * @deprecated instead find another approach that does not require reading React Elements from DOM.
- *
- * @param child do not use
- * @return deprecated do not use
- */
-const isSvgElement = (child: any) => child && child.type && isString(child.type) && SVG_TAGS.indexOf(child.type) >= 0;
-
 export const hasClipDot = (dot: ActiveDotType): dot is DotProps => dot && typeof dot === 'object' && 'clipDot' in dot;
 
 /**
@@ -382,36 +291,6 @@ const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.Reac
   }
 
   return false;
-};
-
-/**
- * @deprecated instead find another approach that does not require reading React Elements from DOM.
- *
- * @param children do not use
- * @param renderMap do not use
- * @return deprecated do not use
- */
-export const renderByOrder = (children: React.ReactElement[], renderMap: any) => {
-  const elements: React.ReactElement[] = [];
-  const record: Record<string, boolean> = {};
-
-  toArray(children).forEach((child, index) => {
-    if (isSvgElement(child)) {
-      elements.push(child);
-    } else if (child) {
-      const displayName = getDisplayName(child.type);
-      const { handler, once } = renderMap[displayName] || {};
-
-      if (handler && (!once || !record[displayName])) {
-        const results = handler(child, displayName, index);
-
-        elements.push(results);
-        record[displayName] = true;
-      }
-    }
-  });
-
-  return elements;
 };
 
 export const getReactEventByType = (e: { type?: string }): string => {
