@@ -161,7 +161,7 @@ describe('selectMargin', () => {
       bottom: 10,
       left: 10,
     });
-    expect(marginSpy).toHaveBeenCalledTimes(2);
+    expect(marginSpy).toHaveBeenCalledTimes(1);
 
     rerender(
       <BarChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }} width={500} height={300}>
@@ -174,6 +174,6 @@ describe('selectMargin', () => {
       bottom: 20,
       left: 20,
     });
-    expect(marginSpy).toHaveBeenCalledTimes(4);
+    expect(marginSpy).toHaveBeenCalledTimes(3);
   });
 });

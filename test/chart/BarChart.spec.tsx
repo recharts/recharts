@@ -3139,7 +3139,7 @@ describe('<BarChart />', () => {
         right: 2,
         top: 1,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(2);
+      expect(marginSpy).toHaveBeenCalledTimes(1);
 
       rerender(
         <BarChart width={100} height={100} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
@@ -3152,7 +3152,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(4);
+      expect(marginSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

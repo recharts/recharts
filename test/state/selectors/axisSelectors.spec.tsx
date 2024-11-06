@@ -1597,7 +1597,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should return empty array in a chart with root data', () => {
@@ -1780,7 +1780,7 @@ describe('selectDisplayedData', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should return the original data if there is no axis with matching ID', () => {
@@ -2263,7 +2263,7 @@ describe('selectAllAppliedValues', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should return empty array if there is no axis with matching ID', () => {
@@ -2724,7 +2724,7 @@ describe('selectNiceTicks', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(undefined);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('should return undefined if there is no axis with matching ID', () => {
@@ -2745,8 +2745,8 @@ describe('selectNiceTicks', () => {
     // There is an XAxis but it has a different ID
     expect(xAxisSpy).toHaveBeenLastCalledWith(undefined);
     expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
-    expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(xAxisSpy).toHaveBeenCalledTimes(1);
+    expect(yAxisSpy).toHaveBeenCalledTimes(1);
   });
 
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
@@ -2815,7 +2815,7 @@ describe('selectStackGroups', () => {
       </BarChart>,
     );
     expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should return object keyed by stack IDs, with bar settings and stacked data', () => {

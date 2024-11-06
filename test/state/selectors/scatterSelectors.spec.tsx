@@ -43,7 +43,7 @@ describe('selectScatterPoints', () => {
       </PieChart>,
     );
     expect(scatterPointsSpy).toHaveBeenCalledWith(undefined);
-    expect(scatterPointsSpy).toHaveBeenCalledTimes(2);
+    expect(scatterPointsSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should return computed scatter points when data is defined on Scatter child', () => {

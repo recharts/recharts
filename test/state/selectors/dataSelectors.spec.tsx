@@ -32,7 +32,7 @@ describe('selectChartDataWithIndexes', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     const expected: ChartDataState = { chartData: undefined, dataEndIndex: 0, dataStartIndex: 0 };
     expect(spy).toHaveBeenLastCalledWith(expected);
   });
