@@ -18,6 +18,7 @@ describe('selectChartDataWithIndexes', () => {
     chartData: undefined,
     dataEndIndex: 0,
     dataStartIndex: 0,
+    computedData: undefined,
   });
 
   it('should return undefined in an empty chart', () => {
@@ -33,7 +34,12 @@ describe('selectChartDataWithIndexes', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledTimes(1);
-    const expected: ChartDataState = { chartData: undefined, dataEndIndex: 0, dataStartIndex: 0 };
+    const expected: ChartDataState = {
+      chartData: undefined,
+      dataEndIndex: 0,
+      dataStartIndex: 0,
+      computedData: undefined,
+    };
     expect(spy).toHaveBeenLastCalledWith(expected);
   });
 
@@ -55,7 +61,12 @@ describe('selectChartDataWithIndexes', () => {
         <Customized component={Comp} />
       </ComposedChart>,
     );
-    const expected: ChartDataState = { chartData: undefined, dataEndIndex: 0, dataStartIndex: 0 };
+    const expected: ChartDataState = {
+      chartData: undefined,
+      dataEndIndex: 0,
+      dataStartIndex: 0,
+      computedData: undefined,
+    };
     expect(spy).toHaveBeenCalledWith(expected);
   });
 
@@ -72,7 +83,12 @@ describe('selectChartDataWithIndexes', () => {
       </BarChart>,
     );
     expect(pageData.length).toBeGreaterThan(1);
-    const expected: ChartDataState = { chartData: PageData, dataEndIndex: PageData.length - 1, dataStartIndex: 0 };
+    const expected: ChartDataState = {
+      chartData: PageData,
+      dataEndIndex: PageData.length - 1,
+      dataStartIndex: 0,
+      computedData: undefined,
+    };
     expect(spy).toHaveBeenLastCalledWith(expected);
   });
 
@@ -89,7 +105,12 @@ describe('selectChartDataWithIndexes', () => {
         <Customized component={Comp} />
       </BarChart>,
     );
-    const expected: ChartDataState = { chartData: PageData, dataEndIndex: 4, dataStartIndex: 3 };
+    const expected: ChartDataState = {
+      chartData: PageData,
+      dataEndIndex: 4,
+      dataStartIndex: 3,
+      computedData: undefined,
+    };
     expect(spy).toHaveBeenLastCalledWith(expected);
   });
 });
