@@ -22,7 +22,6 @@ import {
   getReactEventByType,
   isChildrenEqual,
   parseChildIndex,
-  renderByOrder,
   validateWidthHeight,
 } from '../util/ReactUtils';
 
@@ -127,22 +126,6 @@ const ORIENT_MAP = {
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
-
-/**
- * This function exists as a temporary workaround.
- *
- * Why? generateCategoricalChart does not render `{children}` directly;
- * instead it passes them through `renderByOrder` function which reads their handlers.
- *
- * So, this is a handler that does nothing.
- * Once we get rid of `renderByOrder` and switch to JSX only, we can get rid of this handler too.
- *
- * @param {JSX} element as is in JSX
- * @returns {JSX} the same element
- */
-function renderAsIs(element: React.ReactElement): React.ReactElement {
-  return element;
-}
 
 const getDisplayedData = (
   data: any[],
@@ -1772,31 +1755,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderMap = {
-      CartesianGrid: { handler: renderAsIs, once: true },
-      ReferenceArea: { handler: renderAsIs },
-      ReferenceLine: { handler: renderAsIs },
-      ReferenceDot: { handler: renderAsIs },
-      XAxis: { handler: renderAsIs },
-      YAxis: { handler: renderAsIs },
-      ZAxis: { handler: renderAsIs },
-      Brush: { handler: renderAsIs },
-      Bar: { handler: renderAsIs },
-      Line: { handler: renderAsIs },
-      Area: { handler: renderAsIs },
-      Radar: { handler: renderAsIs },
-      RadialBar: { handler: renderAsIs },
-      Scatter: { handler: renderAsIs },
-      Pie: { handler: renderAsIs },
-      Funnel: { handler: renderAsIs },
-      Tooltip: { handler: renderAsIs },
-      PolarGrid: { handler: renderAsIs, once: true },
-      PolarAngleAxis: { handler: renderAsIs },
-      PolarRadiusAxis: { handler: renderAsIs },
-      Customized: { handler: renderAsIs },
-      Legend: { handler: renderAsIs },
-    };
-
     render() {
       if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
         return null;
@@ -1818,7 +1776,7 @@ export const generateCategoricalChart = ({
           >
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
               <ClipPath clipPathId={this.clipPathId} />
-              {renderByOrder(children, this.renderMap)}
+              {children}
             </Surface>
           </ChartLayoutContextProvider>
         );
@@ -1900,7 +1858,7 @@ export const generateCategoricalChart = ({
                                       }
                                     }}
                                   />
-                                  {renderByOrder(children, this.renderMap)}
+                                  {children}
                                 </Surface>
                               </RechartsWrapper>
                             </ChartLayoutContextProvider>
