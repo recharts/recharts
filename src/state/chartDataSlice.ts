@@ -23,6 +23,11 @@ export type AppliedChartData = ReadonlyArray<{ value: unknown }>;
 export type ChartDataState = {
   chartData: ChartData | undefined;
   /**
+   * store a copy of chart data after it has been processed by each chart's specific
+   * compute functions. TODO: add other charts besides Sankey
+   */
+  computedData: unknown | undefined;
+  /**
    * Using Brush, users can choose where they want to zoom in.
    * This is zero-based index of the starting data point.
    */
@@ -36,6 +41,7 @@ export type ChartDataState = {
 
 export const initialChartDataState: ChartDataState = {
   chartData: undefined,
+  computedData: undefined,
   dataStartIndex: 0,
   dataEndIndex: 0,
 };
@@ -52,6 +58,9 @@ const chartDataSlice = createSlice({
         state.dataEndIndex = action.payload.length - 1;
       }
     },
+    setComputedData(state, action: PayloadAction<unknown | undefined>) {
+      state.computedData = action.payload;
+    },
     setDataStartEndIndexes(state, action: PayloadAction<BrushStartEndIndexActionPayload>) {
       const { startIndex, endIndex } = action.payload;
       if (startIndex != null) {
@@ -64,6 +73,6 @@ const chartDataSlice = createSlice({
   },
 });
 
-export const { setChartData, setDataStartEndIndexes } = chartDataSlice.actions;
+export const { setChartData, setDataStartEndIndexes, setComputedData } = chartDataSlice.actions;
 
 export const chartDataReducer = chartDataSlice.reducer;

@@ -18,7 +18,6 @@ import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
-import { TooltipContextValue } from '../context/tooltipContext';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
@@ -507,16 +506,6 @@ function getTooltipEntrySettings({
   };
 }
 
-function createTooltipPayload(activeNode: TreemapNode) {
-  return [
-    {
-      payload: activeNode,
-      name: activeNode.name,
-      value: activeNode.value,
-    },
-  ];
-}
-
 // Why is margin not a treemap prop? No clue. Probably it should be
 const defaultTreemapMargin: Margin = {
   top: 0,
@@ -868,25 +857,6 @@ export class Treemap extends PureComponent<Props, State> {
         })}
       </div>
     );
-  }
-
-  getTooltipContext(): TooltipContextValue {
-    const { isTooltipActive, activeNode } = this.state;
-    const coordinate = activeNode
-      ? {
-          x: activeNode.x + activeNode.width / 2,
-          y: activeNode.y + activeNode.height / 2,
-        }
-      : null;
-    const payload = isTooltipActive && activeNode ? createTooltipPayload(activeNode) : [];
-
-    return {
-      active: isTooltipActive,
-      coordinate,
-      label: '',
-      payload,
-      index: 0,
-    };
   }
 
   render() {
