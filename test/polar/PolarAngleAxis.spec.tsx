@@ -168,7 +168,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('band');
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -235,7 +235,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select nice ticks', () => {
         const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith(undefined);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select applied data', () => {
@@ -568,7 +568,7 @@ describe('<PolarAngleAxis />', () => {
           type: 'category',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select polar items', () => {
@@ -749,7 +749,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select nice ticks', () => {
         const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith(undefined);
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select applied data', () => {
@@ -1377,7 +1377,7 @@ describe('<PolarAngleAxis />', () => {
       ]);
 
       expect(niceTicksSpy).toHaveBeenLastCalledWith(undefined);
-      expect(niceTicksSpy).toHaveBeenCalledTimes(2);
+      expect(niceTicksSpy).toHaveBeenCalledTimes(1);
     });
 
     test.each([
@@ -1602,7 +1602,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('linear');
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select polarItemsSettings', () => {
@@ -1713,7 +1713,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('linear');
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select polarItemsSettings', () => {
@@ -2290,7 +2290,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(1);
     });
   });
 

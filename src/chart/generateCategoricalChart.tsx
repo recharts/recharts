@@ -1,4 +1,4 @@
-import React, { cloneElement, Component, forwardRef, ReactElement } from 'react';
+import React, { Component, forwardRef, ReactElement } from 'react';
 import isNil from 'lodash/isNil';
 import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
@@ -1772,13 +1772,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    renderCustomized = (element: React.ReactElement, displayName: string, index: number): React.ReactElement =>
-      cloneElement(element, {
-        key: `recharts-customized-${index}`,
-        ...this.props,
-        ...this.state,
-      });
-
     renderMap = {
       CartesianGrid: { handler: renderAsIs, once: true },
       ReferenceArea: { handler: renderAsIs },
@@ -1800,7 +1793,7 @@ export const generateCategoricalChart = ({
       PolarGrid: { handler: renderAsIs, once: true },
       PolarAngleAxis: { handler: renderAsIs },
       PolarRadiusAxis: { handler: renderAsIs },
-      Customized: { handler: this.renderCustomized },
+      Customized: { handler: renderAsIs },
       Legend: { handler: renderAsIs },
     };
 
