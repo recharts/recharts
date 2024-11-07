@@ -200,7 +200,7 @@ export const combineTooltipPayload = (
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
   }
-  const { chartData, dataStartIndex, dataEndIndex } = chartDataState;
+  const { chartData, computedData, dataStartIndex, dataEndIndex } = chartDataState;
 
   const init: Array<TooltipPayloadEntry> = [];
 
@@ -216,7 +216,7 @@ export const combineTooltipPayload = (
     if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
-      tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex);
+      tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
     }
 
     if (Array.isArray(tooltipPayload)) {

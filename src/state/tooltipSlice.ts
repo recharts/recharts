@@ -40,7 +40,12 @@ export type TooltipIndex = string | null;
  * the only requirement is that the chart also provides a searcher function
  * that accepts the data, and a key, and returns whatever the payload in Tooltip should be.
  */
-export type TooltipPayloadSearcher<T = unknown, R = unknown> = (data: T, index: TooltipIndex) => R | undefined;
+export type TooltipPayloadSearcher<T = unknown, R = unknown> = (
+  data: T,
+  index: TooltipIndex,
+  computedData?: unknown,
+  nameKey?: DataKey<any>,
+) => R | undefined;
 
 export type TooltipPayloadConfiguration = {
   // This is the data that is the same for all tooltip payloads, regardless of activeIndex

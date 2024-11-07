@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ChartData, setChartData } from '../state/chartDataSlice';
+import { ChartData, setChartData, setComputedData } from '../state/chartDataSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { BrushStartEndIndex } from './brushUpdateContext';
@@ -13,6 +13,18 @@ export const ChartDataContextProvider = (props: { chartData: ChartData }): null 
       dispatch(setChartData([]));
     };
   }, [chartData, dispatch]);
+  return null;
+};
+
+export const SetComputedData = (props: { computedData: any }): null => {
+  const { computedData } = props;
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setComputedData(computedData));
+    return () => {
+      dispatch(setChartData([]));
+    };
+  }, [computedData, dispatch]);
   return null;
 };
 
