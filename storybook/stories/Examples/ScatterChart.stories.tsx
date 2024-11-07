@@ -252,186 +252,92 @@ export const BubbleChart = {
       return null;
     };
 
+    const BubbleAxes = ({ day, showXTicks = false }: { day: string; showXTicks?: boolean }) => (
+      <>
+        <XAxis
+          type="category"
+          dataKey="hour"
+          name="hour"
+          interval={0}
+          tick={showXTicks || { fontSize: 0 }}
+          tickLine={{ transform: 'translate(0, -6)' }}
+        />
+        <YAxis
+          type="number"
+          dataKey="index"
+          name="sunday"
+          height={10}
+          width={80}
+          tick={false}
+          tickLine={false}
+          axisLine={false}
+          label={{ value: day, position: 'insideRight' }}
+        />
+        <ZAxis type="number" dataKey="value" domain={domain} range={range} />
+      </>
+    );
+
+    const MyTooltip = () => (
+      <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+    );
+
+    const Bubbles = ({ data }: { data: Array<unknown> }) => <Scatter data={data} fill="#8884d8" />;
+
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              name="sunday"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Sunday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data01} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Sunday" />
+            <Bubbles data={data01} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Monday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data02} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Monday" />
+            <Bubbles data={data02} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Tuesday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data01} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Tuesday" />
+            <Bubbles data={data01} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Wednesday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data02} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Wednesday" />
+            <Bubbles data={data02} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Thursday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data01} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Thursday" />
+            <Bubbles data={data01} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tick={{ fontSize: 0 }}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Friday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data02} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Friday" />
+            <Bubbles data={data02} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={60}>
           <ScatterChart {...args}>
-            <XAxis
-              type="category"
-              dataKey="hour"
-              name="hour"
-              interval={0}
-              tickLine={{ transform: 'translate(0, -6)' }}
-            />
-            <YAxis
-              type="number"
-              dataKey="index"
-              height={10}
-              width={80}
-              tick={false}
-              tickLine={false}
-              axisLine={false}
-              label={{ value: 'Saturday', position: 'insideRight' }}
-            />
-            <ZAxis type="number" dataKey="value" domain={domain} range={range} />
-            <Scatter data={data01} fill="#8884d8" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} wrapperStyle={{ zIndex: 100 }} content={renderTooltip} />
+            <BubbleAxes day="Saturday" showXTicks />
+            <Bubbles data={data01} />
+            <MyTooltip />
           </ScatterChart>
         </ResponsiveContainer>
       </div>
