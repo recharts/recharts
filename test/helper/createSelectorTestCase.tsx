@@ -4,7 +4,6 @@ import { Mock, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
-import { Customized } from '../../src';
 
 const emptySelector: Selector<RechartsRootState, undefined, never> = () => {};
 
@@ -22,7 +21,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
 
     const { container } = render(
       <Component>
-        <Customized component={<Comp />} />
+        <Comp />
       </Component>,
     );
     return { container, spy };

@@ -7,7 +7,6 @@ import {
   useOffset,
   useViewBox,
 } from '../../src/context/chartLayoutContext';
-import { Customized } from '../../src/component/Customized';
 import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../../src/util/types';
 import { useAppSelector } from '../../src/state/hooks';
 
@@ -54,25 +53,7 @@ export function testChartLayoutContext(
     }
     render(
       <ChartParentComponent>
-        {/*
-         * This is a bit of a hack. Why?
-         *
-         * generateCategoricalChart does not actually render any children.
-         * Instead it filters them through a renderByOrder function.
-         * So we cannot read the context directly from a custom child component.
-         *
-         * React-Testing-Library also does not have any tools for testing context,
-         * other than rendering it as string and then parsing back:
-         * https://testing-library.com/docs/example-react-context/
-         *
-         * Good news is, we can work around with using the `component` prop in Customized
-         * which happens to do exactly what we need for this test:
-         * renders arbitrary components directly to DOM. Yay.
-         *
-         * Later, when we make generateCategoricalChart render actual `{children}` as it should,
-         * we can remove the Customized, and read the Context directly from a hook or somewhere.
-         */}
-        <Customized component={<Spy />} />
+        <Spy />
       </ChartParentComponent>,
     );
   };
