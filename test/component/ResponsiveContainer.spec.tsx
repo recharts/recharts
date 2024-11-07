@@ -2,6 +2,7 @@ import React from 'react';
 import { Mock, MockInstance, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { ResponsiveContainer } from '../../src';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 declare global {
   interface Window {
@@ -278,5 +279,48 @@ describe('<ResponsiveContainer />', () => {
     const element = container.querySelector('.recharts-responsive-container');
 
     expect(element).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
+  });
+
+  it('should render multiple children if TS is ignored', () => {
+    const onResize = vi.fn();
+
+    mockGetBoundingClientRect({ height: 200, width: 400 });
+
+    const { container } = render(
+      // @ts-expect-error should render these even though ResponsiveContainer throws a type error
+      <ResponsiveContainer width="100%" height={200} minWidth={200} onResize={onResize}>
+        <div data-testid="inside" style={{ backgroundColor: 'blue' }} />
+        <div data-testid="inside" />
+        <div data-testid="inside" />
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    const responsiveContainerDiv = container.querySelector('.recharts-responsive-container');
+    expect(responsiveContainerDiv).toHaveStyle({ width: '100%', height: '200px', 'min-width': '200px' });
+
+    const elementsInside = screen.getAllByTestId('inside');
+
+    expect(elementsInside).toHaveLength(4);
+    expect(elementsInside[0]).toHaveStyle({
+      width: '100%',
+      height: '100%',
+      'max-width': '400px',
+      'max-height': '200px',
+      'background-color': 'rgb(0, 0, 255)',
+    });
+    expect(elementsInside[0]).toHaveAttribute('height', '200');
+    expect(elementsInside[0]).toHaveAttribute('width', '400');
+
+    // all elements are cloned with the same style props besides their own style
+    expect(elementsInside[1]).toHaveStyle({
+      width: '100%',
+      height: '100%',
+      'max-width': '400px',
+      'max-height': '200px',
+      'background-color': 'rgba(0, 0, 0, 0)',
+    });
+    expect(elementsInside[1]).toHaveAttribute('height', '200');
+    expect(elementsInside[1]).toHaveAttribute('width', '400');
   });
 });
