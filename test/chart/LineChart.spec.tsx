@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { describe, MockInstance, test, vi } from 'vitest';
+import { describe, expect, it, MockInstance, test, vi } from 'vitest';
 import {
   Brush,
   CartesianAxis,
@@ -24,6 +24,8 @@ import { useClipPathId, useViewBox } from '../../src/context/chartLayoutContext'
 import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
 import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../src/state/selectors/axisSelectors';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
@@ -781,6 +783,41 @@ describe('<LineChart />', () => {
     // verify one of the dots that we expect to move when the brush happens
     expect(lineDots[0].children[1]).toHaveAttribute('cx', '200');
     expect(lineDots[0].children[1]).toHaveAttribute('cy', '126.66666666666667');
+  });
+
+  describe('Tooltip integration', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={100} height={100} data={PageData}>
+        <Line dataKey="y" isAnimationActive={false} />
+        {children}
+      </LineChart>
+    ));
+
+    it('should select tooltip payload', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'y',
+          fill: '#fff',
+          hide: false,
+          name: 'y',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: undefined,
+          value: undefined,
+        },
+      ]);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
   });
 });
 

@@ -4,6 +4,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { Line, ErrorBar, LineChart, Customized, XAxis } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 
 describe('<Line />', () => {
   const data = [
@@ -144,5 +146,39 @@ describe('<Line />', () => {
       },
     ]);
     expect(spy).toHaveBeenCalledTimes(4);
+  });
+
+  describe('Tooltip integration', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={100} height={100}>
+        <Line data={data} dataKey="y" isAnimationActive={false} />
+        {children}
+      </LineChart>
+    ));
+
+    it('should select tooltip payload', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'y',
+          fill: '#fff',
+          hide: false,
+          name: 'y',
+          nameKey: undefined,
+          payload: {
+            value: 100,
+            x: 10,
+            y: 50,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: undefined,
+          value: 50,
+        },
+      ]);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
   });
 });

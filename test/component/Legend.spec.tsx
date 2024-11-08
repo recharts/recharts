@@ -1037,6 +1037,62 @@ describe('<Legend />', () => {
           width: 550,
         });
       });
+
+      it('should render legend labels', () => {
+        const { container } = render(
+          <LineChart
+            width={600}
+            height={300}
+            data={categoricalData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <Legend iconType="plainline" />
+            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>,
+        );
+
+        expectLegendLabels(container, [
+          {
+            fill: 'none',
+            textContent: 'pv',
+          },
+          {
+            fill: 'none',
+            textContent: 'uv',
+          },
+        ]);
+      });
+    });
+
+    describe('as a child of LineChart when data is passed to Line child instead of the root', () => {
+      it('should render labels', () => {
+        const { container } = render(
+          <LineChart width={600} height={300} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <Legend iconType="plainline" />
+            <Line
+              type="monotone"
+              data={categoricalData}
+              dataKey="pv"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+              strokeDasharray="5 5"
+            />
+            <Line data={categoricalData} type="monotone" dataKey="uv" stroke="#82ca9d" />
+          </LineChart>,
+        );
+
+        expectLegendLabels(container, [
+          {
+            fill: 'none',
+            textContent: 'pv',
+          },
+          {
+            fill: 'none',
+            textContent: 'uv',
+          },
+        ]);
+      });
     });
 
     describe('legendType symbols', () => {

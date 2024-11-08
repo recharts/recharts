@@ -125,6 +125,21 @@ const LineChartTestCase: TooltipPayloadTestCase = {
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
 };
 
+const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
+  name: 'LineChart with data on graphical item',
+  Wrapper: ({ children }) => (
+    <LineChart {...commonChartProps}>
+      <Line dataKey="uv" unit="kg" data={PageData} isAnimationActive={false} />
+      <Line dataKey="pv" unit="$$$" name="My custom name" data={PageData} isAnimationActive={false} />
+      <Line dataKey="amt" unit={null} data={PageData} isAnimationActive={false} />
+      {children}
+    </LineChart>
+  ),
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+  expectedTooltipTitle: '2',
+  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+};
+
 const LineChartVerticalTestCase: TooltipPayloadTestCase = {
   name: 'vertical LineChart',
   Wrapper: ({ children }) => (
@@ -368,6 +383,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   AreaChartWithXAxisTestCase,
   BarChartTestCase,
   LineChartTestCase,
+  LineChartDataOnGraphicalItemTestCase,
   LineChartVerticalTestCase,
   ComposedChartTestCase,
   FunnelChartTestCase,
