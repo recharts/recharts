@@ -8,7 +8,6 @@ import throttle from 'lodash/throttle';
 
 // eslint-disable-next-line no-restricted-imports
 import type { DebouncedFunc } from 'lodash';
-import invariant from 'tiny-invariant';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 import { Tooltip } from '../component/Tooltip';
@@ -18,10 +17,8 @@ import {
   filterProps,
   findAllByType,
   findChildByType,
-  getDisplayName,
   getReactEventByType,
   isChildrenEqual,
-  parseChildIndex,
   validateWidthHeight,
 } from '../util/ReactUtils';
 
@@ -32,15 +29,11 @@ import {
   appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
-  BarPosition,
   calculateActiveTickIndex,
   calculateTooltipPos,
   getActiveCoordinate,
-  getBandSizeOfAxis,
-  getBarPositions,
   getDomainOfDataByKey,
   getDomainOfStackGroups,
-  getStackedDataOfItem,
   getStackGroupsByAxisId,
   getTicksOfAxis,
   getTooltipItem,
@@ -77,14 +70,7 @@ import {
 import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import {
-  AxisMap,
-  AxisObj,
-  CategoricalChartState,
-  TooltipTrigger,
-  XAxisWithExtraData,
-  YAxisWithExtraData,
-} from './types';
+import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
 import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
@@ -633,18 +619,6 @@ export const createDefaultState = (props: CategoricalChartProps): CategoricalCha
   };
 };
 
-const hasGraphicalBarItem = (graphicalItems: ReadonlyArray<ReactElement>): boolean => {
-  if (!graphicalItems || !graphicalItems.length) {
-    return false;
-  }
-
-  return graphicalItems.some(item => {
-    const name = getDisplayName(item && item.type);
-
-    return name && name.indexOf('Bar') >= 0;
-  });
-};
-
 const getAxisNameByLayout = (layout: LayoutType) => {
   if (layout === 'horizontal') {
     return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' } as const;
@@ -798,114 +772,6 @@ export const generateCategoricalChart = ({
   defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
-  const getFormatItems = (props: CategoricalChartProps, currentState: CategoricalChartState): any[] => {
-    const { graphicalItems, stackGroups, offset, updateId, dataStartIndex, dataEndIndex } = currentState;
-    const { barSize, layout, barGap, barCategoryGap, maxBarSize: globalMaxBarSize } = props;
-    const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
-    const hasBar = hasGraphicalBarItem(graphicalItems);
-
-    const formattedItems: any[] = [];
-
-    graphicalItems.forEach((item: ReactElement, index: number) => {
-      const displayedData = getDisplayedData(props.data, { graphicalItems: [item], dataStartIndex, dataEndIndex });
-      const { dataKey, maxBarSize: childMaxBarSize } = item.props;
-      // axisId of the numerical axis
-      const numericAxisId = item.props[`${numericAxisName}Id`];
-      // axisId of the categorical axis
-      const cateAxisId = item.props[`${cateAxisName}Id`];
-
-      const axisObjInitialValue: AxisObj = {};
-
-      const axisObj: AxisObj = axisComponents.reduce((result: AxisObj, entry: AllowedAxisComponent): AxisObj => {
-        // map of axisId to axis for a specific axis type
-        const axisMap: AxisMap | undefined = currentState[`${entry.axisType}Map` as const];
-        // axisId of axis we are currently computing
-        const id: string = item.props[`${entry.axisType}Id`];
-
-        /**
-         * tell the user in dev mode that their configuration is incorrect if we cannot find a match between
-         * axisId on the chart and axisId on the axis. zAxis does not get passed in the map for ComposedChart,
-         * leave it out of the check for now.
-         */
-        invariant(
-          (axisMap && axisMap[id]) || entry.axisType === 'zAxis',
-          `Specifying a(n) ${entry.axisType}Id requires a corresponding ${
-            entry.axisType
-            // @ts-expect-error we should stop reading data from ReactElements
-          }Id on the targeted graphical component ${item?.type?.displayName ?? ''}`,
-        );
-
-        // the axis we are currently formatting
-        const axis: AxisPropsNeededForTicksGenerator = axisMap[id];
-
-        return {
-          ...result,
-          [entry.axisType]: axis,
-          [`${entry.axisType}Ticks`]: getTicksOfAxis(axis),
-        };
-      }, axisObjInitialValue);
-      const cateAxis = axisObj[cateAxisName];
-      const cateTicks = axisObj[`${cateAxisName}Ticks` as const];
-      const stackedData =
-        stackGroups &&
-        stackGroups[numericAxisId] &&
-        stackGroups[numericAxisId].hasStack &&
-        getStackedDataOfItem(item, stackGroups[numericAxisId].stackGroups);
-      const itemIsBar = getDisplayName(item.type).indexOf('Bar') >= 0;
-      // @ts-expect-error generator axis has optional ID
-      const bandSize = getBandSizeOfAxis(cateAxis, cateTicks);
-      const barPosition: ReadonlyArray<BarPosition> = getBarPositions({
-        axisObj,
-        hasBar,
-        itemIsBar,
-        childMaxBarSize,
-        globalMaxBarSize,
-        cateTicks,
-        // @ts-expect-error generator axis has optional ID
-        cateAxis,
-        barSize,
-        barGap,
-        barCategoryGap,
-        cateAxisName,
-        bandSize,
-        stackGroups,
-        cateAxisId,
-      });
-
-      // @ts-expect-error we should stop reading data from ReactElements
-      const composedFn = item && item.type && item.type.getComposedData;
-
-      if (composedFn) {
-        formattedItems.push({
-          props: {
-            ...composedFn({
-              ...axisObj,
-              displayedData,
-              props,
-              dataKey,
-              item,
-              bandSize,
-              barPosition,
-              offset,
-              stackedData,
-              layout,
-              dataStartIndex,
-              dataEndIndex,
-            }),
-            key: item.key || `item-${index}`,
-            [numericAxisName]: axisObj[numericAxisName],
-            [cateAxisName]: axisObj[cateAxisName],
-            animationId: updateId,
-          },
-          childIndex: parseChildIndex(item, props.children),
-          item,
-        });
-      }
-    });
-
-    return formattedItems;
-  };
-
   /**
    * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
    *
@@ -927,7 +793,6 @@ export const generateCategoricalChart = ({
       props,
       dataStartIndex,
       dataEndIndex,
-      updateId,
     }: {
       props: CategoricalChartProps;
       dataStartIndex?: number;
@@ -988,18 +853,8 @@ export const generateCategoricalChart = ({
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
-    const formattedGraphicalItems = getFormatItems(props, {
-      ...axisObj,
-      dataStartIndex,
-      dataEndIndex,
-      updateId,
-      graphicalItems,
-      stackGroups,
-      offset,
-    });
-
     return {
-      formattedGraphicalItems,
+      formattedGraphicalItems: [],
       graphicalItems,
       offset,
       stackGroups,

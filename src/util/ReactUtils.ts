@@ -302,14 +302,3 @@ export const getReactEventByType = (e: { type?: string }): string => {
 
   return null;
 };
-
-/**
- * @deprecated instead find another approach that does not require reading React Elements from DOM.
- *
- * @param child do not use
- * @param children do not use
- * @return deprecated do not use
- */
-export const parseChildIndex = (child: any, children: any[]) => {
-  return toArray(children).indexOf(child);
-};
