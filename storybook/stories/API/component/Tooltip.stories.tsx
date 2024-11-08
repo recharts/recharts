@@ -152,7 +152,8 @@ const TooltipProps: StorybookArgs = {
   formatter: {
     description: `The formatter function of value in tooltip.
     If you return an array, the first entry will be the formatted "value",
-    and the second entry will be the formatted "name".`,
+    and the second entry will be the formatted "name". If you return a nullish value
+    nothing will be rendered for the tooltip name or value.`,
     table: {
       category: 'Content',
       type: {
