@@ -2176,6 +2176,40 @@ describe('<Legend />', () => {
         assertExpectedAttributes(container, selector, expectedAttributes);
       });
     });
+
+    it('should render legend', () => {
+      const { container } = render(
+        <AreaChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Area dataKey="value" />
+        </AreaChart>,
+      );
+
+      expectLegendLabels(container, [
+        {
+          fill: 'none',
+          textContent: 'value',
+        },
+      ]);
+    });
+  });
+
+  describe('as a child of AreaChart when data is defined on graphical item', () => {
+    it('should render legend', () => {
+      const { container } = render(
+        <AreaChart width={500} height={500}>
+          <Legend />
+          <Area dataKey="value" data={numericalData} />
+        </AreaChart>,
+      );
+
+      expectLegendLabels(container, [
+        {
+          fill: 'none',
+          textContent: 'value',
+        },
+      ]);
+    });
   });
 
   describe('as a child of ComposedChart', () => {
