@@ -452,22 +452,6 @@ export class Radar extends PureComponent<Props> {
 
   static defaultProps = defaultRadarProps;
 
-  static getComposedData = ({
-    radiusAxis,
-    angleAxis,
-    displayedData,
-    dataKey,
-    bandSize,
-  }: {
-    radiusAxis: RadiusAxisForRadar;
-    angleAxis: AngleAxisForRadar;
-    displayedData: any[];
-    dataKey: RadarProps['dataKey'];
-    bandSize: number;
-  }): RadarComposedData => {
-    return computeRadarPoints({ radiusAxis, angleAxis, displayedData, dataKey, bandSize });
-  };
-
   render() {
     return (
       <>

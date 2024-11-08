@@ -16,10 +16,8 @@ import { Cell } from '../component/Cell';
 import { mathSign, interpolateNumber } from '../util/DataUtils';
 import {
   getCateCoordinateOfBar,
-  findPositionOfBar,
   getValueByDataKey,
   truncateByDomain,
-  getBaseValueOfBar,
   getTooltipNameProp,
   BarPositionPosition,
 } from '../util/ChartUtils';
@@ -156,11 +154,6 @@ interface State {
   readonly curData?: ReadonlyArray<RadialBarDataItem>;
   readonly prevAnimationId?: string | number;
 }
-
-type RadialBarComposedData = {
-  data: ReadonlyArray<RadialBarDataItem>;
-  layout: LayoutType;
-};
 
 function identity<T>(value: T): T {
   return value;
@@ -500,71 +493,6 @@ export class RadialBar extends PureComponent<RadialBarProps> {
   static displayName = 'RadialBar';
 
   static defaultProps = defaultRadialBarProps;
-
-  static getComposedData = ({
-    item,
-    props,
-    radiusAxis,
-    radiusAxisTicks,
-    angleAxis,
-    angleAxisTicks,
-    displayedData,
-    dataKey,
-    stackedData,
-    barPosition,
-    bandSize,
-    dataStartIndex,
-  }: {
-    item: ReactElement;
-    props: any;
-    radiusAxis: any; // RadiusAxisProps;
-    radiusAxisTicks: Array<TickItem>;
-    angleAxis: any; // AngleAxisProps;
-    angleAxisTicks: Array<TickItem>;
-    displayedData: any[];
-    dataKey: RadialBarProps['dataKey'];
-    stackedData?: any[];
-    barPosition?: any[];
-    bandSize?: number;
-    dataStartIndex: number;
-  }): RadialBarComposedData => {
-    const pos = findPositionOfBar(barPosition, item);
-    if (!pos) {
-      return null;
-    }
-
-    const { cx, cy } = angleAxis;
-    const { layout } = props;
-    const { children, minPointSize } = item.props;
-    const numericAxis = layout === 'radial' ? angleAxis : radiusAxis;
-    const stackedDomain = stackedData ? numericAxis.scale.domain() : null;
-    const baseValue = getBaseValueOfBar({ numericAxis });
-    const cells = findAllByType(children, Cell);
-    const sectors = computeRadialBarDataItems({
-      angleAxis,
-      angleAxisTicks,
-      bandSize,
-      baseValue,
-      cells,
-      cx,
-      cy,
-      dataKey,
-      dataStartIndex,
-      displayedData,
-      endAngle: props.endAngle,
-      layout,
-      minPointSize,
-      pos,
-      radiusAxis,
-      radiusAxisTicks,
-      // @ts-expect-error any
-      stackedData,
-      stackedDomain,
-      startAngle: props.startAngle,
-    });
-
-    return { data: sectors, layout };
-  };
 
   render() {
     return (

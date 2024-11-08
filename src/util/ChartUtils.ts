@@ -21,19 +21,10 @@ import {
   type SeriesPoint,
 } from 'victory-vendor/d3-shape';
 
-import { ReactElement, ReactNode } from 'react';
-import {
-  findEntryInArray,
-  getAnyElementOfObject,
-  getPercentValue,
-  isNumber,
-  isNumOrStr,
-  mathSign,
-  uniqueId,
-} from './DataUtils';
-import { filterProps, getDisplayName } from './ReactUtils';
-// TODO: Cause of circular dependency. Needs refactor.
-// import { RadiusAxisProps, AngleAxisProps } from '../polar/types';
+import { ReactElement } from 'react';
+import { findEntryInArray, getAnyElementOfObject, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
+import { filterProps } from './ReactUtils';
+
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
@@ -231,63 +222,6 @@ export type BarSetup = {
   item: ReactElement;
 };
 
-/**
- * @deprecated do not use - depends on passing around DOM elements. Instead, use {@link selectBarSize}
- *
- * Calculate the size of all groups for stacked bar graph
- * @param  {Object} stackGroups The items grouped by axisId and stackId
- * @return {Object} The size of all groups
- */
-const getBarSizeList = ({
-  barSize: globalSize,
-  totalSize,
-  stackGroups = {},
-}: {
-  barSize: number | string;
-  /**
-   * @deprecated do not use - depends on passing around DOM elements
-   */
-  stackGroups: AxisStackGroups;
-  totalSize: number;
-}): Record<string, ReadonlyArray<BarSetup>> => {
-  if (!stackGroups) {
-    return {};
-  }
-
-  const result: Record<string, Array<BarSetup>> = {};
-  const numericAxisIds = Object.keys(stackGroups);
-
-  for (let i = 0, len = numericAxisIds.length; i < len; i++) {
-    const sgs = stackGroups[numericAxisIds[i]].stackGroups;
-    const stackIds = Object.keys(sgs);
-
-    for (let j = 0, sLen = stackIds.length; j < sLen; j++) {
-      const { items, cateAxisId } = sgs[stackIds[j]];
-
-      const barItems = items.filter(item => getDisplayName(item.type).indexOf('Bar') >= 0);
-
-      if (barItems && barItems.length) {
-        const { barSize: selfSize } = barItems[0].props;
-        const cateId = barItems[0].props[cateAxisId];
-
-        if (!result[cateId]) {
-          result[cateId] = [];
-        }
-
-        const barSize: string | number | undefined = isNil(selfSize) ? globalSize : selfSize;
-
-        result[cateId].push({
-          item: barItems[0],
-          stackList: barItems.slice(1),
-          barSize: isNil(barSize) ? undefined : getPercentValue(barSize, totalSize, 0),
-        });
-      }
-    }
-  }
-
-  return result;
-};
-
 export type BarPositionPosition = {
   /**
    * Offset is returned always from zero position.
@@ -302,126 +236,6 @@ export type BarPositionPosition = {
    * But if the input data is not well-formed, undefined or NaN will be on the output too.
    */
   size: number | undefined | typeof NaN;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export type BarPosition = {
-  item: ReactElement;
-  position: BarPositionPosition;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- *
- * Calculate the size of each bar and offset between start of band and the bar
- *
- * @param  {number} bandSize is the size of area where bars can render
- * @param  {number | string} barGap is the gap size, as a percentage of `bandSize`.
- *                                  Can be defined as number or percent string
- * @param  {number | string} barCategoryGap is the gap size, as a percentage of `bandSize`.
- *                                  Can be defined as number or percent string
- * @param  {Array<object>} sizeList Sizes of all groups
- * @param  {number} maxBarSize The maximum size of each bar
- * @return {Array<object>} The size and offset of each bar
- */
-export const getBarPosition = ({
-  barGap,
-  barCategoryGap,
-  bandSize,
-  sizeList = [],
-  maxBarSize,
-}: {
-  barGap: string | number;
-  barCategoryGap: string | number;
-  bandSize: number;
-  sizeList: ReadonlyArray<BarSetup>;
-  maxBarSize: number;
-}): ReadonlyArray<BarPosition> => {
-  const len = sizeList.length;
-  if (len < 1) return null;
-
-  let realBarGap = getPercentValue(barGap, bandSize, 0, true);
-  let result: ReadonlyArray<BarPosition>;
-  const initialValue: ReadonlyArray<BarPosition> = [];
-
-  // whether or not is barSize setted by user
-  if (sizeList[0].barSize === +sizeList[0].barSize) {
-    let useFull = false;
-    let fullBarSize = bandSize / len;
-    // @ts-expect-error the type check above does not check for type number explicitly
-    let sum = sizeList.reduce((res, entry) => res + entry.barSize || 0, 0);
-    sum += (len - 1) * realBarGap;
-
-    if (sum >= bandSize) {
-      sum -= (len - 1) * realBarGap;
-      realBarGap = 0;
-    }
-    if (sum >= bandSize && fullBarSize > 0) {
-      useFull = true;
-      fullBarSize *= 0.9;
-      sum = len * fullBarSize;
-    }
-
-    const offset = ((bandSize - sum) / 2) >> 0;
-    let prev: BarPosition['position'] = { offset: offset - realBarGap, size: 0 };
-
-    result = sizeList.reduce((res, entry) => {
-      const newPosition: BarPosition = {
-        item: entry.item,
-        position: {
-          offset: prev.offset + prev.size + realBarGap,
-          // @ts-expect-error the type check above does not check for type number explicitly
-          size: useFull ? fullBarSize : entry.barSize,
-        },
-      };
-      const newRes: Array<BarPosition> = [...res, newPosition];
-
-      prev = newRes[newRes.length - 1].position;
-
-      if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach(item => {
-          newRes.push({ item, position: prev });
-        });
-      }
-      return newRes;
-    }, initialValue);
-  } else {
-    const offset = getPercentValue(barCategoryGap, bandSize, 0, true);
-
-    if (bandSize - 2 * offset - (len - 1) * realBarGap <= 0) {
-      realBarGap = 0;
-    }
-
-    let originalSize = (bandSize - 2 * offset - (len - 1) * realBarGap) / len;
-    if (originalSize > 1) {
-      originalSize >>= 0;
-    }
-    const size = maxBarSize === +maxBarSize ? Math.min(originalSize, maxBarSize) : originalSize;
-
-    result = sizeList.reduce((res, entry, i) => {
-      const newRes = [
-        ...res,
-        {
-          item: entry.item,
-          position: {
-            offset: offset + (originalSize + realBarGap) * i + (originalSize - size) / 2,
-            size,
-          },
-        },
-      ];
-
-      if (entry.stackList && entry.stackList.length) {
-        entry.stackList.forEach(item => {
-          newRes.push({ item, position: newRes[newRes.length - 1].position });
-        });
-      }
-      return newRes;
-    }, initialValue);
-  }
-
-  return result;
 };
 
 export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendState): ChartOffset => {
@@ -729,27 +543,6 @@ export const checkDomainOfScale = (scale: any) => {
   if (first < minValue || first > maxValue || last < minValue || last > maxValue) {
     scale.domain([domain[0], domain[len - 1]]);
   }
-};
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export const findPositionOfBar = (
-  barPosition: ReadonlyArray<BarPosition>,
-  child: ReactNode,
-): BarPositionPosition | null => {
-  if (!barPosition) {
-    return null;
-  }
-
-  for (let i = 0, len = barPosition.length; i < len; i++) {
-    if (barPosition[i].item === child) {
-      return barPosition[i].position;
-    }
-  }
-
-  return null;
 };
 
 /**
@@ -1147,30 +940,6 @@ export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithSc
   return domain[0];
 };
 
-/**
- * @deprecated do not use - relies on direct DOM access
- * @param item do not use
- * @param stackGroups do not use
- * @return deprecated, do not use
- */
-export const getStackedDataOfItem = <StackedData>(
-  item: ReactElement,
-  stackGroups: Record<StackId, GenericChildStackGroup<StackedData>>,
-): StackedData | null => {
-  const { stackId } = item.props;
-
-  if (isNumOrStr(stackId)) {
-    const group = stackGroups[stackId];
-
-    if (group) {
-      const itemIndex = group.items.indexOf(item);
-      return itemIndex >= 0 ? group.stackedData[itemIndex] : null;
-    }
-  }
-
-  return null;
-};
-
 const getDomainOfSingle = (data: Array<Array<any>>): number[] => {
   const flat = data.flat(2).filter(isNumber);
   return [Math.min(...flat), Math.max(...flat)];
@@ -1424,67 +1193,6 @@ export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxi
   // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
   return undefined;
 };
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export function getBarPositions({
-  axisObj,
-  hasBar,
-  itemIsBar,
-  childMaxBarSize,
-  globalMaxBarSize,
-  cateTicks,
-  cateAxis,
-  barSize,
-  barGap,
-  barCategoryGap,
-  cateAxisName,
-  bandSize,
-  stackGroups,
-  cateAxisId,
-}: {
-  axisObj: AxisObj;
-  cateAxisId: any;
-  hasBar: boolean;
-  itemIsBar: boolean;
-  childMaxBarSize: any;
-  globalMaxBarSize: number;
-  cateAxis: BaseAxisWithScale;
-  cateTicks: ReadonlyArray<TickItem>;
-  cateAxisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis';
-  barSize: number | string | undefined;
-  barGap: number | string | undefined;
-  barCategoryGap: number | string | undefined;
-  bandSize: number | undefined;
-  stackGroups: AxisStackGroups | undefined;
-}): ReadonlyArray<BarPosition> {
-  let barPosition: ReadonlyArray<BarPosition> = [];
-  const sizeList =
-    hasBar && getBarSizeList({ barSize, stackGroups, totalSize: getCartesianAxisSize(axisObj, cateAxisName) });
-
-  if (itemIsBar) {
-    // If it is bar, calculate the position of bar
-    const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-    const barBandSize: number = getBandSizeOfAxis(cateAxis, cateTicks, true) ?? maxBarSize ?? 0;
-    barPosition = getBarPosition({
-      barGap,
-      barCategoryGap,
-      bandSize: barBandSize !== bandSize ? barBandSize : bandSize,
-      sizeList: sizeList[cateAxisId],
-      maxBarSize,
-    });
-
-    if (barBandSize !== bandSize) {
-      barPosition = barPosition.map(pos => ({
-        ...pos,
-        position: { ...pos.position, offset: pos.position.offset - barBandSize / 2 },
-      }));
-    }
-  }
-  return barPosition;
-}
 
 export function inRange(
   x: number,
