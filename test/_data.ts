@@ -338,3 +338,16 @@ export const pageDataWithFillColor = [
     fill: '#ffc658',
   },
 ];
+
+/**
+ * PieChart, and RadialBarChar, have this specialty where they read properties `name` and `fill`
+ * and use them to set labels, and to set legend colors.
+ *
+ * Other charts use `nameKey` and `fill` or `stroke` properties.
+ */
+export const dataWithSpecialNameAndFillProperties = [
+  { name: 'name1', fill: 'fill1', value: 12 },
+  { name: 'name2', fill: 'fill2', value: 34 },
+  { name: 'name3', fill: 'fill3', value: 56 },
+  { name: 'name4', fill: 'fill4', value: 78 },
+];

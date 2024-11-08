@@ -35,6 +35,8 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendState } from '../../src/state/selectors/legendSelectors';
 import { LegendPortalContext } from '../../src/context/legendPortalContext';
+import { dataWithSpecialNameAndFillProperties } from '../_data';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 function assertHasLegend(container: Element): ReadonlyArray<Element> {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -358,19 +360,6 @@ describe('<Legend />', () => {
     { title: 'Days a week', value: 8 },
     { title: 'Mambo number', value: 5 },
     { title: 'Seas of Rhye', value: 7 },
-  ];
-
-  /**
-   * PieChart, and RadialBarChar, have this specialty where they read properties `name` and `fill`
-   * and use them to set labels, and to set legend colors.
-   *
-   * Other charts use `nameKey` and `fill` or `stroke` properties.
-   */
-  const dataWithSpecialNameAndFillProperties = [
-    { name: 'name1', fill: 'fill1', value: 12 },
-    { name: 'name2', fill: 'fill2', value: 34 },
-    { name: 'name3', fill: 'fill3', value: 56 },
-    { name: 'name4', fill: 'fill4', value: 78 },
   ];
 
   describe('outside of chart context', () => {
@@ -3355,34 +3344,38 @@ describe('<Legend />', () => {
 
   describe('as a child of ScatterChart', () => {
     it('should render one legend item for each Scatter', () => {
-      const { container, getByText } = render(
+      const { container } = render(
         <ScatterChart width={500} height={500} data={numericalData}>
           <Legend />
           <Scatter dataKey="percent" />
           <Scatter dataKey="value" />
         </ScatterChart>,
       );
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(2);
-      expect(getByText('value')).toBeInTheDocument();
-      expect(getByText('percent')).toBeInTheDocument();
+      expectLegendLabels(container, [
+        {
+          fill: undefined,
+          textContent: 'percent',
+        },
+        {
+          fill: undefined,
+          textContent: 'value',
+        },
+      ]);
     });
 
-    it('should implicitly read `fill` property from the data array but not `name`', () => {
-      const { container, queryByText } = render(
+    it('should not use `fill` from data for the legend fill', () => {
+      const { container } = render(
         <ScatterChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
           <Legend />
           <Scatter dataKey="value" />
         </ScatterChart>,
       );
-      expect.soft(queryByText('name1')).not.toBeInTheDocument();
-      expect.soft(queryByText('name2')).not.toBeInTheDocument();
-      expect.soft(queryByText('name3')).not.toBeInTheDocument();
-      expect.soft(queryByText('name4')).not.toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill1"]')).toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill2"]')).toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill3"]')).toBeInTheDocument();
-      expect.soft(container.querySelector('[fill="fill4"]')).toBeInTheDocument();
+      expectLegendLabels(container, [
+        {
+          fill: undefined,
+          textContent: 'value',
+        },
+      ]);
     });
 
     describe('legendType symbols', () => {
@@ -3426,6 +3419,26 @@ describe('<Legend />', () => {
           assertExpectedAttributes(container, selector, expectedAttributes);
         },
       );
+    });
+  });
+
+  describe('as a child of ScatterChart with data defined on graphical item', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ScatterChart width={500} height={500}>
+        <Legend />
+        <Scatter dataKey="value" data={dataWithSpecialNameAndFillProperties} />
+        {children}
+      </ScatterChart>
+    ));
+
+    it('should render legend', () => {
+      const { container } = renderTestCase();
+      expectLegendLabels(container, [
+        {
+          fill: undefined,
+          textContent: 'value',
+        },
+      ]);
     });
   });
 
