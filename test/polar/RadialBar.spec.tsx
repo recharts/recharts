@@ -80,7 +80,7 @@ describe('<RadialBar />', () => {
         reversed: false,
         scale: 'auto',
         tick: true,
-        tickCount: 5,
+        tickCount: undefined,
         ticks: undefined,
         type: 'number',
         unit: undefined,

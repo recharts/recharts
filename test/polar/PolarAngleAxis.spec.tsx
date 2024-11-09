@@ -1672,7 +1672,7 @@ describe('<PolarAngleAxis />', () => {
           reversed: false,
           scale: 'auto',
           tick: true,
-          tickCount: 5,
+          tickCount: undefined,
           ticks: undefined,
           type: 'number',
           unit: undefined,
@@ -1736,9 +1736,13 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           { coordinate: 0, offset: -0, value: 0 },
+          { coordinate: 45, offset: -0, value: 50 },
           { coordinate: 90, offset: -0, value: 100 },
+          { coordinate: 135, offset: -0, value: 150 },
           { coordinate: 180, offset: -0, value: 200 },
+          { coordinate: 225, offset: -0, value: 250 },
           { coordinate: 270, offset: -0, value: 300 },
+          { coordinate: 315, offset: -0, value: 350 },
           { coordinate: 360, offset: -0, value: 400 },
         ]);
         expect(spy).toHaveBeenCalledTimes(3);
