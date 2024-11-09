@@ -47,19 +47,19 @@ export const implicitRadiusAxis: RadiusAxisSettings = {
   unit: undefined,
 };
 
-const implicitRadialBarRadiusAxis: RadiusAxisSettings = {
-  allowDataOverflow: defaultPolarRadiusAxisProps.allowDataOverflow,
+const implicitRadialBarAngleAxis: RadiusAxisSettings = {
+  allowDataOverflow: false,
   allowDecimals: false,
-  allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
+  allowDuplicatedCategory: defaultPolarAngleAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
-  domain: defaultPolarRadiusAxisProps.domain,
+  domain: defaultPolarAngleAxisProps.domain,
   id: undefined,
   includeHidden: false,
   name: undefined,
   reversed: false,
-  scale: defaultPolarRadiusAxisProps.scale,
-  tick: defaultPolarRadiusAxisProps.tick,
-  tickCount: defaultPolarRadiusAxisProps.tickCount,
+  scale: defaultPolarAngleAxisProps.scale,
+  tick: defaultPolarAngleAxisProps.tick,
+  tickCount: defaultPolarAngleAxisProps.tickCount,
   ticks: undefined,
   type: 'number',
   unit: undefined,
@@ -70,7 +70,7 @@ export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): 
     return state.polarAxis.angleAxis[angleAxisId];
   }
   if (state.layout.layoutType === 'radial') {
-    return implicitRadialBarRadiusAxis;
+    return implicitRadialBarAngleAxis;
   }
   return implicitAngleAxis;
 };
