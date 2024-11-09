@@ -1,12 +1,15 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { vi } from 'vitest';
-import { Scatter, Customized, ScatterChart } from '../../src';
+import { describe, expect, it, vi } from 'vitest';
+import { Scatter, Customized, ScatterChart, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectTooltipPayload } from '../../src/state/selectors/selectors';
+import { dataWithSpecialNameAndFillProperties, PageData } from '../_data';
 
 describe('<Scatter />', () => {
   const data = [
@@ -153,6 +156,22 @@ describe('<Scatter />', () => {
     expect(onClick).toHaveBeenCalled();
   });
 
+  it('should implicitly read `fill` property from the data array but not `name`', () => {
+    const { container, queryByText } = render(
+      <ScatterChart width={500} height={500} data={dataWithSpecialNameAndFillProperties}>
+        <Scatter dataKey="value" />
+      </ScatterChart>,
+    );
+    expect.soft(queryByText('name1')).not.toBeInTheDocument();
+    expect.soft(queryByText('name2')).not.toBeInTheDocument();
+    expect.soft(queryByText('name3')).not.toBeInTheDocument();
+    expect.soft(queryByText('name4')).not.toBeInTheDocument();
+    expect.soft(container.querySelector('[fill="fill1"]')).toBeInTheDocument();
+    expect.soft(container.querySelector('[fill="fill2"]')).toBeInTheDocument();
+    expect.soft(container.querySelector('[fill="fill3"]')).toBeInTheDocument();
+    expect.soft(container.querySelector('[fill="fill4"]')).toBeInTheDocument();
+  });
+
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
       const settingsSpy = vi.fn();
@@ -182,6 +201,61 @@ describe('<Scatter />', () => {
       };
       expect(settingsSpy).toHaveBeenLastCalledWith([expected]);
       expect(settingsSpy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('Tooltip integration', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ScatterChart width={100} height={100}>
+        <Scatter isAnimationActive={false} data={PageData} />
+        <XAxis dataKey="uv" />
+        <YAxis dataKey="pv" />
+        {children}
+      </ScatterChart>
+    ));
+
+    it('should return tooltip payload', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 400,
+        },
+        {
+          color: undefined,
+          dataKey: 'pv',
+          fill: undefined,
+          hide: false,
+          name: 'pv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        },
+      ]);
     });
   });
 });

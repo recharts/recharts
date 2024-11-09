@@ -29,7 +29,13 @@ import {
   XAxis,
   YAxis,
 } from '../../../src';
-import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  MouseCoordinate,
+  showTooltip,
+  showTooltipOnCoordinate,
+} from './tooltipTestHelpers';
 import { exampleSunburstData, exampleTreemapData, PageData, exampleSankeyData } from '../../_data';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -48,12 +54,26 @@ import {
   sunburstChartMouseHoverTooltipSelector,
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import {
+  selectActiveCoordinate,
+  selectActiveLabel,
+  selectIsTooltipActive,
+  selectTooltipPayload,
+  selectTooltipPayloadConfigurations,
+} from '../../../src/state/selectors/selectors';
+import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
   name: string;
+
+  // Input parameters to the test case
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
+  mouseCoordinate?: MouseCoordinate;
   Wrapper: ComponentType<{ children: ReactNode }>;
+
+  // assertions
   expectedTooltipTitle: string;
   expectedTooltipContent: ReadonlyArray<string>;
 };
@@ -123,6 +143,22 @@ const LineChartTestCase: TooltipPayloadTestCase = {
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
   expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+};
+
+const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
+  name: 'LineChart with data on graphical item',
+  Wrapper: ({ children }) => (
+    <LineChart {...commonChartProps}>
+      <Line dataKey="uv" unit="kg" data={PageData} />
+      <Line dataKey="pv" unit="$$$" name="My custom name" data={PageData} />
+      <Line dataKey="amt" unit={null} data={PageData} />
+      {children}
+    </LineChart>
+  ),
+  mouseHoverSelector: lineChartMouseHoverTooltipSelector,
+  mouseCoordinate: { clientX: 20, clientY: 20 },
+  expectedTooltipTitle: '1',
+  expectedTooltipContent: ['uv : 300kg', 'My custom name : 4567$$$', 'amt : 2400'],
 };
 
 const LineChartVerticalTestCase: TooltipPayloadTestCase = {
@@ -368,6 +404,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
   AreaChartWithXAxisTestCase,
   BarChartTestCase,
   LineChartTestCase,
+  LineChartDataOnGraphicalItemTestCase,
   LineChartVerticalTestCase,
   ComposedChartTestCase,
   FunnelChartTestCase,
@@ -388,7 +425,7 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
 describe('Tooltip payload', () => {
   describe.each(testCases)(
     'as a child of $name',
-    ({ Wrapper, mouseHoverSelector, expectedTooltipTitle, expectedTooltipContent }) => {
+    ({ Wrapper, mouseHoverSelector, expectedTooltipTitle, expectedTooltipContent, mouseCoordinate }) => {
       it('should render expected tooltip payload', () => {
         const { container, debug } = render(
           <Wrapper>
@@ -399,12 +436,391 @@ describe('Tooltip payload', () => {
         expect(container.querySelector('.recharts-tooltip-item-name')).toBeNull();
         expect(container.querySelector('.recharts-tooltip-item-value')).toBeNull();
 
-        showTooltip(container, mouseHoverSelector, debug);
+        showTooltipOnCoordinate(container, mouseHoverSelector, mouseCoordinate, debug);
 
         expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
       });
     },
   );
+
+  describe('LineChartDataOnGraphicalItemTestCase', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChartDataOnGraphicalItemTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </LineChartDataOnGraphicalItemTestCase.Wrapper>
+    ));
+
+    it('should select Tooltip payload when given defaultIndex', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'uv',
+          fill: '#fff',
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: 'kg',
+          value: 400,
+        },
+        {
+          color: '#3182bd',
+          dataKey: 'pv',
+          fill: '#fff',
+          hide: false,
+          name: 'My custom name',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: '$$$',
+          value: 2400,
+        },
+        {
+          color: '#3182bd',
+          dataKey: 'amt',
+          fill: '#fff',
+          hide: false,
+          name: 'amt',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: null,
+          value: 2400,
+        },
+      ]);
+    });
+
+    it('should select dataStartIndex and dataEndIndex', () => {
+      const { spy } = renderTestCase(selectChartDataWithIndexes);
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: undefined,
+        dataEndIndex: 0,
+        dataStartIndex: 0,
+      });
+    });
+
+    it('should select tooltip payload settings for every graphical item', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          dataDefinedOnItem: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          settings: {
+            color: '#3182bd',
+            dataKey: 'uv',
+            fill: '#fff',
+            hide: false,
+            name: 'uv',
+            nameKey: undefined,
+            stroke: '#3182bd',
+            strokeWidth: 1,
+            type: undefined,
+            unit: 'kg',
+          },
+        },
+        {
+          dataDefinedOnItem: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          settings: {
+            color: '#3182bd',
+            dataKey: 'pv',
+            fill: '#fff',
+            hide: false,
+            name: 'My custom name',
+            nameKey: undefined,
+            stroke: '#3182bd',
+            strokeWidth: 1,
+            type: undefined,
+            unit: '$$$',
+          },
+        },
+        {
+          dataDefinedOnItem: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          settings: {
+            color: '#3182bd',
+            dataKey: 'amt',
+            fill: '#fff',
+            hide: false,
+            name: 'amt',
+            nameKey: undefined,
+            stroke: '#3182bd',
+            strokeWidth: 1,
+            type: undefined,
+            unit: null,
+          },
+        },
+      ]);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should select Tooltip payload after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', undefined));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartDataOnGraphicalItemTestCase.mouseHoverSelector,
+        LineChartDataOnGraphicalItemTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'uv',
+          fill: '#fff',
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: 'kg',
+          value: 300,
+        },
+        {
+          color: '#3182bd',
+          dataKey: 'pv',
+          fill: '#fff',
+          hide: false,
+          name: 'My custom name',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: '$$$',
+          value: 4567,
+        },
+        {
+          color: '#3182bd',
+          dataKey: 'amt',
+          fill: '#fff',
+          hide: false,
+          name: 'amt',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: null,
+          value: 2400,
+        },
+      ]);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should show tooltip after mouse hover', () => {
+      const { container } = renderTestCase();
+
+      expectTooltipNotVisible(container);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartDataOnGraphicalItemTestCase.mouseHoverSelector,
+        LineChartDataOnGraphicalItemTestCase.mouseCoordinate,
+      );
+
+      expectTooltipPayload(
+        container,
+        LineChartDataOnGraphicalItemTestCase.expectedTooltipTitle,
+        LineChartDataOnGraphicalItemTestCase.expectedTooltipContent,
+      );
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith(2);
+    });
+
+    it('should select isActive and activeIndex, and update it after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartDataOnGraphicalItemTestCase.mouseHoverSelector,
+        LineChartDataOnGraphicalItemTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: '1',
+        isActive: true,
+      });
+      expect(spy).toHaveBeenCalledTimes(5);
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartDataOnGraphicalItemTestCase.mouseHoverSelector,
+        LineChartDataOnGraphicalItemTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        x: 27.941176470588236,
+        y: 20,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
 
   /*
    * Scatter no longer renders values with nulls in them so the Tooltip never displays in the first place.

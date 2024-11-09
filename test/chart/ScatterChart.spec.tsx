@@ -1,5 +1,5 @@
 import React from 'react';
-import { expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import {
   Bar,
@@ -30,7 +30,9 @@ import {
   selectTicksOfGraphicalItem,
   selectZAxisWithScale,
 } from '../../src/state/selectors/axisSelectors';
-import { boxPlotData } from '../_data';
+import { boxPlotData, PageData } from '../_data';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -1564,6 +1566,61 @@ describe('ScatterChart with multiple Y axes', () => {
         height: '9.0270333367641',
         transform: 'translate(528, 234.5)',
         width: '9.0270333367641',
+      },
+    ]);
+  });
+});
+
+describe('Tooltip integration', () => {
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <ScatterChart width={100} height={100} data={PageData}>
+      <Scatter isAnimationActive={false} />
+      <XAxis dataKey="uv" />
+      <YAxis dataKey="pv" />
+      {children}
+    </ScatterChart>
+  ));
+
+  it('should return tooltip payload', () => {
+    const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        color: undefined,
+        dataKey: 'uv',
+        fill: undefined,
+        hide: false,
+        name: 'uv',
+        nameKey: undefined,
+        payload: {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        stroke: undefined,
+        strokeWidth: undefined,
+        type: undefined,
+        unit: '',
+        value: 400,
+      },
+      {
+        color: undefined,
+        dataKey: 'pv',
+        fill: undefined,
+        hide: false,
+        name: 'pv',
+        nameKey: undefined,
+        payload: {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        stroke: undefined,
+        strokeWidth: undefined,
+        type: undefined,
+        unit: '',
+        value: 2400,
       },
     ]);
   });
