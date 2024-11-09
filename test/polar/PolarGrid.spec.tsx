@@ -1,17 +1,26 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { exampleRadarData } from '../_data';
+import { exampleRadarData, ringsData } from '../_data';
 import {
-  Surface,
+  PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
   Radar,
   RadarChart,
   RadialBar,
   RadialBarChart,
-  PolarAngleAxis,
+  Surface,
 } from '../../src';
 import { pageData } from '../../storybook/stories/data/Page';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import {
+  selectPolarAxis,
+  selectPolarAxisScale,
+  selectPolarAxisTicks,
+} from '../../src/state/selectors/polarScaleSelectors';
+import { selectPolarGridAngles } from '../../src/state/selectors/polarGridSelectors';
+import { expectScale } from '../helper/expectScale';
+import { selectPolarNiceTicks } from '../../src/state/selectors/polarSelectors';
 
 type ExpectedLine = {
   x1: string;
@@ -325,7 +334,7 @@ describe('<PolarGrid />', () => {
     });
   });
 
-  describe('as a child of RadialBarChart', () => {
+  describe('as a child of RadialBarChart with explicit axes', () => {
     it.each([
       { gridType: 'polygon', radialLines: true },
       { gridType: undefined, radialLines: true },
@@ -497,6 +506,405 @@ describe('<PolarGrid />', () => {
       );
 
       expectPolarGridLines(container, []);
+    });
+  });
+
+  describe('as a child of RadialBarChart with implicit axes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChart width={300} height={300} data={ringsData}>
+        <RadialBar dataKey="rings" />
+        <PolarGrid gridType="circle" />
+        {children}
+      </RadialBarChart>
+    ));
+
+    it('should render concentric circles', () => {
+      const { container } = renderTestCase();
+
+      expectPolarGridCircles(container, [
+        {
+          cx: 150,
+          cy: 150,
+          r: 0,
+        },
+        {
+          cx: 150,
+          cy: 150,
+          r: 29,
+        },
+        {
+          cx: 150,
+          cy: 150,
+          r: 58,
+        },
+        {
+          cx: 150,
+          cy: 150,
+          r: 87,
+        },
+      ]);
+    });
+
+    it('should select scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
+      expectScale(spy, {
+        domain: [0, 9],
+        range: [0, 360],
+      });
+    });
+
+    it('should select angle axis settings', () => {
+      const { spy } = renderTestCase(state => selectPolarAxis(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: false,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        id: undefined,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should select angle ticks', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        { coordinate: 0, value: 0, offset: -0 },
+        { coordinate: 40, value: 1, offset: -0 },
+        { coordinate: 80, value: 2, offset: -0 },
+        { coordinate: 120, value: 3, offset: -0 },
+        { coordinate: 160, value: 4, offset: -0 },
+        { coordinate: 200, value: 5, offset: -0 },
+        { coordinate: 240, value: 6, offset: -0 },
+        { coordinate: 280, value: 7, offset: -0 },
+        { coordinate: 320, value: 8, offset: -0 },
+        { coordinate: 360, value: 9, offset: -0 },
+      ]);
+    });
+
+    it('should select grid angles', () => {
+      const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([0, 40, 80, 120, 160, 200, 240, 280, 320, 360]);
+    });
+
+    it('should render lines', () => {
+      const { container } = renderTestCase();
+
+      expectPolarGridLines(container, [
+        {
+          x1: '150',
+          x2: '266',
+          y1: '150',
+          y2: '150',
+        },
+        {
+          x1: '150',
+          x2: '238.86115540180145',
+          y1: '150',
+          y2: '75.43663727636145',
+        },
+        {
+          x1: '150',
+          x2: '170.14318860936393',
+          y1: '150',
+          y2: '35.76230065058387',
+        },
+        {
+          x1: '150',
+          x2: '92.00000000000003',
+          y1: '150',
+          y2: '49.54105316100511',
+        },
+        {
+          x1: '150',
+          x2: '40.99565598883464',
+          y1: '150',
+          y2: '110.32566337422242',
+        },
+        {
+          x1: '150',
+          x2: '40.99565598883463',
+          y1: '150',
+          y2: '189.67433662577756',
+        },
+        {
+          x1: '150',
+          x2: '91.99999999999994',
+          y1: '150',
+          y2: '250.45894683899485',
+        },
+        {
+          x1: '150',
+          x2: '170.14318860936388',
+          y1: '150',
+          y2: '264.2376993494162',
+        },
+        {
+          x1: '150',
+          x2: '238.86115540180143',
+          y1: '150',
+          y2: '224.5633627236386',
+        },
+        {
+          x1: '150',
+          x2: '266',
+          y1: '150',
+          y2: '150.00000000000003',
+        },
+      ]);
+    });
+  });
+
+  /*
+   * The PolarGrid behaves very weird with multiple axes. It ignores tickCount,
+   * the labels follow niceTicks but the domain doesn't,
+   * the grid lines are pointing to labels sometimes and sometimes they are not.
+   *
+   * In 2.x it didn't support multiple axes at all (it picked a random one)
+   * so having the abilitity to pick a specific one is an improvement, and we should iterate on the behaviour later.
+   */
+  describe('with multiple axes', () => {
+    function RadialBarChartWithMultipleAxesWrapper({ children }: { children: React.ReactNode }) {
+      return (
+        <RadialBarChart width={300} height={300} data={pageData}>
+          <RadialBar angleAxisId="axis-pv" radiusAxisId="axis-name" dataKey="pv" />
+          <PolarAngleAxis
+            angleAxisId="axis-uv"
+            dataKey="uv"
+            tickFormatter={value => `uv${value}`}
+            tickCount={5}
+            type="number"
+          />
+          <PolarAngleAxis
+            angleAxisId="axis-pv"
+            dataKey="pv"
+            tickFormatter={value => `pv: ${value}`}
+            type="number"
+            tickCount={3}
+          />
+          <PolarRadiusAxis radiusAxisId="axis-name" dataKey="name" type="category" />
+          <PolarRadiusAxis radiusAxisId="axis-amt" dataKey="amt" type="number" angle={180} />
+          {children}
+        </RadialBarChart>
+      );
+    }
+
+    describe('when angleAxisId=undefined', () => {
+      it('should not render any lines or polygons or circles', () => {
+        const { container } = render(
+          <RadialBarChartWithMultipleAxesWrapper>
+            <PolarGrid />
+          </RadialBarChartWithMultipleAxesWrapper>,
+        );
+
+        expectPolarGridLines(container, []);
+        expectPolarGridPolygons(container, []);
+        expectPolarGridCircles(container, []);
+      });
+    });
+
+    describe('when angleAxisId="axis-pv"', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChartWithMultipleAxesWrapper>
+          <PolarGrid angleAxisId="axis-pv" />
+          {children}
+        </RadialBarChartWithMultipleAxesWrapper>
+      ));
+      it('should render lines pointing to labels of first angle axis', () => {
+        const { container } = renderTestCase();
+
+        expectPolarGridLines(container, [
+          {
+            x1: '150',
+            x2: '266',
+            y1: '150',
+            y2: '150',
+          },
+          {
+            x1: '150',
+            x2: '34',
+            y1: '150',
+            y2: '150',
+          },
+          {
+            x1: '150',
+            x2: '266',
+            y1: '150',
+            y2: '150.00000000000003',
+          },
+        ]);
+      });
+
+      it('should select ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-pv'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            coordinate: 0,
+            offset: -0,
+            value: 0,
+          },
+          {
+            coordinate: 180,
+            offset: -0,
+            value: 600,
+          },
+          {
+            coordinate: 360,
+            offset: -0,
+            value: 1200,
+          },
+        ]);
+      });
+
+      it('should select angles', () => {
+        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 'axis-pv'));
+        expect(spy).toHaveBeenLastCalledWith([0, 180, 360]);
+      });
+    });
+
+    describe('when angleAxisId="axis-uv"', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChartWithMultipleAxesWrapper>
+          <PolarGrid angleAxisId="axis-uv" />
+          {children}
+        </RadialBarChartWithMultipleAxesWrapper>
+      ));
+
+      it('should select nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarNiceTicks(state, 'angleAxis', 'axis-uv'));
+        expect(spy).toHaveBeenLastCalledWith([0, 400, 800, 1200, 1600]);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 'axis-uv'));
+        expectScale(spy, {
+          domain: [0, 1520], // niceTicks go all the way to 1600 but domain gets stuck at 1520, IMHO this is a bug
+          range: [0, 360],
+        });
+      });
+
+      it('should select ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            coordinate: 0,
+            offset: -0,
+            value: 0,
+          },
+          {
+            coordinate: 94.73684210526315,
+            offset: -0,
+            value: 400,
+          },
+          {
+            coordinate: 189.4736842105263,
+            offset: -0,
+            value: 800,
+          },
+          {
+            coordinate: 284.2105263157895,
+            offset: -0,
+            value: 1200,
+          },
+          {
+            coordinate: 378.9473684210526, // tick coordinates go above the range (360) because the value is outside of the domain, again this looks like a bug to me.
+            offset: -0,
+            value: 1600,
+          },
+        ]);
+      });
+
+      it('should select angles', () => {
+        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 'axis-uv'));
+        expect(spy).toHaveBeenLastCalledWith([
+          0, 94.73684210526315, 189.4736842105263, 284.2105263157895, 378.9473684210526,
+        ]);
+        // this should be:
+        // expect(spy).toHaveBeenLastCalledWith([0, 90, 180, 270, 360]);
+      });
+
+      it('should render lines pointing to labels of second angle axis', () => {
+        const { container } = renderTestCase();
+
+        // this is wrapping around the full circle because of the niceTicks problem, see above
+        expectPolarGridLines(container, [
+          {
+            x1: '150',
+            x2: '266',
+            y1: '150',
+            y2: '150',
+          },
+          {
+            x1: '150',
+            x2: '140.42079592520946',
+            y1: '150',
+            y2: '34.3961988112263',
+          },
+          {
+            x1: '150',
+            x2: '35.5820888052842',
+            y1: '150',
+            y2: '169.09297247256512',
+          },
+          {
+            x1: '150',
+            x2: '178.47631650833267',
+            y1: '150',
+            y2: '262.45043084896236',
+          },
+          {
+            x1: '150',
+            x2: '259.7148000372736',
+            y1: '150',
+            y2: '112.33486157225674',
+          },
+        ]);
+      });
+
+      it.fails('should render lines pointing to labels of second angle axis', () => {
+        const { container } = renderTestCase();
+
+        expectPolarGridLines(container, [
+          {
+            x1: '150',
+            x2: '266',
+            y1: '150',
+            y2: '150',
+          },
+          {
+            x1: '150',
+            x2: '150',
+            y1: '150',
+            y2: '34',
+          },
+          {
+            x1: '150',
+            x2: '34',
+            y1: '150',
+            y2: '150',
+          },
+          {
+            x1: '150',
+            x2: '149.99999999999997',
+            y1: '150',
+            y2: '266',
+          },
+          {
+            x1: '150',
+            x2: '266',
+            y1: '150',
+            y2: '150.00000000000003',
+          },
+        ]);
+      });
     });
   });
 });

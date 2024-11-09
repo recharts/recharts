@@ -21,7 +21,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectPolarAxisDomainIncludingNiceTicks, selectPolarNiceTicks } from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
 
-const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
+export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {
     case 'angleAxis': {
       return selectAngleAxis(state, axisId);
