@@ -44,6 +44,8 @@ const selectChartData = (state: RechartsRootState): ChartData | undefined => sta
  *
  * Some charts also allow setting both - data on the parent, and data on the children at the same time!
  *
+ * @deprecated use redux selector instead
+ *
  * @return data array for some charts and undefined for other
  */
 export const useChartData = (): ChartData | undefined => useAppSelector(selectChartData);
