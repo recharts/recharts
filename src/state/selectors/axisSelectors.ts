@@ -819,6 +819,7 @@ export const combineNumericalDomain = (
     axisSettings.allowDataOverflow,
   );
 };
+
 const selectNumericalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,

@@ -81,7 +81,7 @@ export const selectPolarAppliedValues: (
   combineAppliedValues,
 );
 
-const selectAllPolarAppliedNumericalValues: (
+export const selectAllPolarAppliedNumericalValues: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   axisId: AxisId,

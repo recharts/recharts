@@ -1,7 +1,5 @@
 import clsx from 'clsx';
 import React, { SVGProps } from 'react';
-import { getTicksOfAxis } from '../util/ChartUtils';
-import { useArbitraryPolarRadiusAxis } from '../context/chartLayoutContext';
 import { polarToCartesian } from '../util/PolarUtils';
 import { filterProps } from '../util/ReactUtils';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -144,7 +142,6 @@ export const PolarGrid = ({
   ...inputs
 }: Props) => {
   const polarViewBox: PolarViewBox | undefined = useAppSelector(selectPolarViewBox);
-  const radiusAxis = useArbitraryPolarRadiusAxis();
 
   const props = {
     cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
@@ -166,21 +163,6 @@ export const PolarGrid = ({
     return null;
   }
 
-  const polarRadiusFromGenerator = Array.isArray(polarRadiusInput)
-    ? polarRadiusInput
-    : // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
-      getTicksOfAxis(radiusAxis, true)?.map(entry => entry.coordinate);
-  // const polarRadius = polarRadiusFromGenerator;
-  console.log({
-    radiusAxis,
-    radiusAxisScale: {
-      domain: radiusAxis?.scale?.domain(),
-      range: radiusAxis?.scale?.range(),
-      bandwidth: radiusAxis?.scale?.bandwidth?.(),
-    },
-    polarRadius,
-    radiusAxisTicks: getTicksOfAxis(radiusAxis, true),
-  });
   return (
     <g className="recharts-polar-grid">
       <PolarAngles

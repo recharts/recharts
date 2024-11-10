@@ -206,16 +206,6 @@ export const selectArbitraryPolarAngleAxis: (state: RechartsRootState) => PolarA
 export const selectArbitraryPolarRadiusAxis: (state: RechartsRootState) => PolarRadiusAxisProps | undefined =
   createSelector(selectPolarRadiusAxisMap, getAnyElementOfObject);
 
-/**
- @deprecated this is a temporary Redux slice for storing axismaps. Instead, use `axisMapSlice`.
- * This will find an arbitrary first PolarRadiusAxis . If there's exactly one it always returns that one
- * - but if there are multiple then it can return any of those.
- *
- * @returns polarAngle axisOptions, or undefined - if there are no PolarRadiusAxes
- */
-export const useArbitraryPolarRadiusAxis = (): PolarRadiusAxisProps | undefined =>
-  useAppSelector(selectArbitraryPolarRadiusAxis);
-
 export const useViewBox = (): CartesianViewBox => {
   const panorama = useIsPanorama();
   const rootViewBox = useAppSelector(selectChartViewBox);
