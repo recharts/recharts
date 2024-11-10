@@ -6,7 +6,7 @@ import { polarToCartesian } from '../util/PolarUtils';
 import { filterProps } from '../util/ReactUtils';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useAppSelector } from '../state/hooks';
-import { selectPolarGridAngles } from '../state/selectors/polarGridSelectors';
+import { selectPolarGridAngles, selectPolarGridRadii } from '../state/selectors/polarGridSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { PolarViewBox } from '../util/types';
 
@@ -20,6 +20,7 @@ interface PolarGridProps {
   gridType?: 'polygon' | 'circle';
   radialLines?: boolean;
   angleAxisId?: AxisId;
+  radiusAxisId?: AxisId;
 }
 
 export type Props = SVGProps<SVGPathElement> & PolarGridProps;
@@ -131,33 +132,55 @@ const ConcentricGridPath: React.FC<Props> = props => {
   );
 };
 
-export const PolarGrid = ({ gridType = 'polygon', radialLines = true, angleAxisId = 0, ...inputs }: Props) => {
+export const PolarGrid = ({
+  gridType = 'polygon',
+  radialLines = true,
+  angleAxisId = 0,
+  radiusAxisId = 0,
+  cx: cxFromOutside,
+  cy: cyFromOutside,
+  innerRadius: innerRadiusFromOutside,
+  outerRadius: outerRadiusFromOutside,
+  ...inputs
+}: Props) => {
   const polarViewBox: PolarViewBox | undefined = useAppSelector(selectPolarViewBox);
   const radiusAxis = useArbitraryPolarRadiusAxis();
 
   const props = {
-    cx: polarViewBox?.cx ?? 0,
-    cy: polarViewBox?.cy ?? 0,
-    innerRadius: polarViewBox?.innerRadius ?? 0,
-    outerRadius: polarViewBox?.outerRadius ?? 0,
+    cx: polarViewBox?.cx ?? cxFromOutside ?? 0,
+    cy: polarViewBox?.cy ?? cyFromOutside ?? 0,
+    innerRadius: polarViewBox?.innerRadius ?? innerRadiusFromOutside ?? 0,
+    outerRadius: polarViewBox?.outerRadius ?? outerRadiusFromOutside ?? 0,
     ...inputs,
   };
 
   const { polarAngles: polarAnglesInput, polarRadius: polarRadiusInput, cx, cy, innerRadius, outerRadius } = props;
 
-  const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, 'angleAxis', angleAxisId));
+  const polarAnglesFromRedux = useAppSelector(state => selectPolarGridAngles(state, angleAxisId));
+  const polarRadiiFromRedux = useAppSelector(state => selectPolarGridRadii(state, radiusAxisId));
 
   const polarAngles = Array.isArray(polarAnglesInput) ? polarAnglesInput : polarAnglesFromRedux;
+  const polarRadius = Array.isArray(polarRadiusInput) ? polarRadiusInput : polarRadiiFromRedux;
 
-  if (outerRadius <= 0 || polarAngles == null) {
+  if (outerRadius <= 0 || polarAngles == null || polarRadius == null) {
     return null;
   }
 
-  const polarRadius = Array.isArray(polarRadiusInput)
+  const polarRadiusFromGenerator = Array.isArray(polarRadiusInput)
     ? polarRadiusInput
     : // @ts-expect-error the types are not matching here - both named `ticks` but different shape.
       getTicksOfAxis(radiusAxis, true)?.map(entry => entry.coordinate);
-
+  // const polarRadius = polarRadiusFromGenerator;
+  console.log({
+    radiusAxis,
+    radiusAxisScale: {
+      domain: radiusAxis?.scale?.domain(),
+      range: radiusAxis?.scale?.range(),
+      bandwidth: radiusAxis?.scale?.bandwidth?.(),
+    },
+    polarRadius,
+    radiusAxisTicks: getTicksOfAxis(radiusAxis, true),
+  });
   return (
     <g className="recharts-polar-grid">
       <PolarAngles

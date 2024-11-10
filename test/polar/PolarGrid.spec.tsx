@@ -17,8 +17,9 @@ import {
   selectPolarAxis,
   selectPolarAxisScale,
   selectPolarAxisTicks,
+  selectPolarCategoricalDomain,
 } from '../../src/state/selectors/polarScaleSelectors';
-import { selectPolarGridAngles } from '../../src/state/selectors/polarGridSelectors';
+import { selectPolarGridAngles, selectPolarGridRadii } from '../../src/state/selectors/polarGridSelectors';
 import { expectScale } from '../helper/expectScale';
 import { selectPolarNiceTicks } from '../../src/state/selectors/polarSelectors';
 
@@ -518,6 +519,30 @@ describe('<PolarGrid />', () => {
       </RadialBarChart>
     ));
 
+    it('should select radius axis scale', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
+      expectScale(spy, {
+        domain: [0, 1, 2, 3],
+        range: [0, 116],
+        bandwidth: 29,
+      });
+    });
+
+    it('should select categorical domain', () => {
+      const { spy } = renderTestCase(state => selectPolarCategoricalDomain(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([3, 7, 9, 1]);
+    });
+
+    it('should select radius axis ticks', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        { coordinate: 0, value: 0, index: 0, offset: 0 },
+        { coordinate: 29, value: 1, index: 1, offset: 0 },
+        { coordinate: 58, value: 2, index: 2, offset: 0 },
+        { coordinate: 87, value: 3, index: 3, offset: 0 },
+      ]);
+    });
+
     it('should render concentric circles', () => {
       const { container } = renderTestCase();
 
@@ -591,7 +616,7 @@ describe('<PolarGrid />', () => {
     });
 
     it('should select grid angles', () => {
-      const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarGridAngles(state, 0));
       expect(spy).toHaveBeenLastCalledWith([0, 40, 80, 120, 160, 200, 240, 280, 320, 360]);
     });
 
@@ -765,7 +790,7 @@ describe('<PolarGrid />', () => {
       });
 
       it('should select angles', () => {
-        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 'axis-pv'));
+        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'axis-pv'));
         expect(spy).toHaveBeenLastCalledWith([0, 180, 360]);
       });
     });
@@ -823,7 +848,7 @@ describe('<PolarGrid />', () => {
       });
 
       it('should select angles', () => {
-        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'angleAxis', 'axis-uv'));
+        const { spy } = renderTestCase(state => selectPolarGridAngles(state, 'axis-uv'));
         expect(spy).toHaveBeenLastCalledWith([
           0, 94.73684210526315, 189.4736842105263, 284.2105263157895, 378.9473684210526,
         ]);
@@ -903,6 +928,97 @@ describe('<PolarGrid />', () => {
             y1: '150',
             y2: '150.00000000000003',
           },
+        ]);
+      });
+    });
+
+    describe('when radiusAxisId=undefined', () => {
+      it('should not render any polygons or circles', () => {
+        const { container } = render(
+          <RadialBarChartWithMultipleAxesWrapper>
+            <PolarGrid angleAxisId="axis-pv" />
+          </RadialBarChartWithMultipleAxesWrapper>,
+        );
+
+        expectPolarGridPolygons(container, []);
+        expectPolarGridCircles(container, []);
+      });
+    });
+
+    describe('when radiusAxisId=axis-name', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <RadialBarChartWithMultipleAxesWrapper>
+          <PolarGrid angleAxisId="axis-pv" radiusAxisId="axis-name" />
+          {children}
+        </RadialBarChartWithMultipleAxesWrapper>
+      ));
+
+      it('should select nice ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarNiceTicks(state, 'radiusAxis', 'axis-name'));
+        expect(spy).toHaveBeenLastCalledWith(undefined);
+      });
+
+      it('should select scale', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 'axis-name'));
+        expectScale(spy, {
+          domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F', 'Page G'],
+          range: [0, 116],
+        });
+      });
+
+      it('should select ticks', () => {
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 'axis-name'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            coordinate: 8.28571428571428,
+            value: 'Page A',
+            index: 0,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 24.857142857142854,
+            value: 'Page B',
+            index: 1,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 41.42857142857142,
+            value: 'Page C',
+            index: 2,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 58,
+            value: 'Page D',
+            index: 3,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 74.57142857142857,
+            value: 'Page E',
+            index: 4,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 91.14285714285715,
+            value: 'Page F',
+            index: 5,
+            offset: 8.285714285714286,
+          },
+          {
+            coordinate: 107.71428571428574,
+            value: 'Page G',
+            index: 6,
+            offset: 8.285714285714286,
+          },
+        ]);
+      });
+
+      it('should select array of radii', () => {
+        const { spy } = renderTestCase(state => selectPolarGridRadii(state, 'axis-name'));
+        expect(spy).toHaveBeenLastCalledWith([
+          8.28571428571428, 24.857142857142854, 41.42857142857142, 58, 74.57142857142857, 91.14285714285715,
+          107.71428571428574,
         ]);
       });
     });
