@@ -6,6 +6,7 @@ import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarCha
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
+  implicitRadialBarRadiusAxis,
   implicitRadiusAxis,
   selectRadiusAxis,
   selectRadiusAxisRangeWithReversed,
@@ -727,7 +728,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select angle settings', () => {
         const { spy } = renderTestCase(state => selectRadiusAxis(state, 0));
-        expect(spy).toHaveBeenLastCalledWith(implicitRadiusAxis);
+        expect(spy).toHaveBeenLastCalledWith(implicitRadialBarRadiusAxis);
         expect(spy).toHaveBeenCalledTimes(1);
       });
 

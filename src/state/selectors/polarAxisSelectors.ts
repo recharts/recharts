@@ -65,6 +65,24 @@ const implicitRadialBarAngleAxis: RadiusAxisSettings = {
   unit: undefined,
 };
 
+export const implicitRadialBarRadiusAxis: RadiusAxisSettings = {
+  allowDataOverflow: defaultPolarRadiusAxisProps.allowDataOverflow,
+  allowDecimals: false,
+  allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
+  dataKey: undefined,
+  domain: defaultPolarRadiusAxisProps.domain,
+  id: undefined,
+  includeHidden: false,
+  name: undefined,
+  reversed: false,
+  scale: defaultPolarRadiusAxisProps.scale,
+  tick: defaultPolarRadiusAxisProps.tick,
+  tickCount: defaultPolarRadiusAxisProps.tickCount,
+  ticks: undefined,
+  type: 'category',
+  unit: undefined,
+};
+
 export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): AngleAxisSettings | undefined => {
   if (state.polarAxis.angleAxis[angleAxisId] != null) {
     return state.polarAxis.angleAxis[angleAxisId];
@@ -75,8 +93,15 @@ export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): 
   return implicitAngleAxis;
 };
 
-export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings | undefined =>
-  state.polarAxis.radiusAxis[radiusAxisId] ?? implicitRadiusAxis;
+export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings | undefined => {
+  if (state.polarAxis.radiusAxis[radiusAxisId] != null) {
+    return state.polarAxis.radiusAxis[radiusAxisId];
+  }
+  if (state.layout.layoutType === 'radial') {
+    return implicitRadialBarRadiusAxis;
+  }
+  return implicitRadiusAxis;
+};
 
 export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | undefined => state.polarOptions;
 
