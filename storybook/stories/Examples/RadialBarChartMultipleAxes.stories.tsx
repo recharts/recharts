@@ -35,7 +35,7 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
           stroke="red"
           tickFormatter={value => `pv: ${value}`}
           type="number"
-          // the typescript type says that radius is a prop but it's not doing anything
+          // the typescript type says that radius is a prop, but it's not doing anything. It would be quite convenient in this chart
           radius={230}
         />
         <PolarRadiusAxis radiusAxisId="axis-name" dataKey="name" type="category" stroke="green" />
