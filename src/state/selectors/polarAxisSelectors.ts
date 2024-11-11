@@ -47,7 +47,7 @@ export const implicitRadiusAxis: RadiusAxisSettings = {
   unit: undefined,
 };
 
-const implicitRadialBarAngleAxis: RadiusAxisSettings = {
+export const implicitRadialBarAngleAxis: AngleAxisSettings = {
   allowDataOverflow: false,
   allowDecimals: false,
   allowDuplicatedCategory: defaultPolarAngleAxisProps.allowDuplicatedCategory,

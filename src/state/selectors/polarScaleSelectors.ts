@@ -4,9 +4,10 @@ import { AxisId } from '../cartesianAxisSlice';
 import { RechartsScale } from '../../util/ChartUtils';
 import {
   combineAxisTicks,
+  combineCategoricalDomain,
   combineGraphicalItemTicks,
   combineScaleFunction,
-  selectCategoricalDomain,
+  selectAxisSettings,
   selectDuplicateDomain,
   selectRealScaleType,
 } from './axisSelectors';
@@ -18,10 +19,14 @@ import {
 } from './polarAxisSelectors';
 import { CartesianTickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectPolarAxisDomainIncludingNiceTicks, selectPolarNiceTicks } from './polarSelectors';
+import {
+  selectPolarAppliedValues,
+  selectPolarAxisDomainIncludingNiceTicks,
+  selectPolarNiceTicks,
+} from './polarSelectors';
 import { pickAxisType } from './pickAxisType';
 
-const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
+export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
   switch (axisType) {
     case 'angleAxis': {
       return selectAngleAxis(state, axisId);
@@ -58,6 +63,15 @@ export const selectPolarAxisScale: (
   combineScaleFunction,
 );
 
+export const selectPolarCategoricalDomain: (
+  state: RechartsRootState,
+  axisType: 'angleAxis' | 'radiusAxis',
+  polarAxisId: AxisId,
+) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectPolarAppliedValues, selectAxisSettings, pickAxisType],
+  combineCategoricalDomain,
+);
+
 export const selectPolarAxisTicks: (
   state: RechartsRootState,
   axisType: 'angleAxis' | 'radiusAxis',
@@ -71,7 +85,7 @@ export const selectPolarAxisTicks: (
     selectPolarNiceTicks,
     selectPolarAxisRange,
     selectDuplicateDomain,
-    selectCategoricalDomain,
+    selectPolarCategoricalDomain,
     pickAxisType,
   ],
   combineAxisTicks,
@@ -88,7 +102,7 @@ export const selectPolarGraphicalItemAxisTicks: (
     selectPolarAxisScale,
     selectPolarAxisRange,
     selectDuplicateDomain,
-    selectCategoricalDomain,
+    selectPolarCategoricalDomain,
     pickAxisType,
   ],
   combineGraphicalItemTicks,

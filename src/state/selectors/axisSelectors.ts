@@ -819,6 +819,7 @@ export const combineNumericalDomain = (
     axisSettings.allowDataOverflow,
   );
 };
+
 const selectNumericalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
@@ -1521,22 +1522,28 @@ export const selectDuplicateDomain = createSelector(
   },
 );
 
+export const combineCategoricalDomain = (
+  layout: LayoutType,
+  appliedValues: AppliedChartData,
+  axis: AxisWithTicksSettings,
+  axisType: XorYType,
+): ReadonlyArray<unknown> | undefined => {
+  if (axis == null) {
+    return undefined;
+  }
+  const { type, scale } = axis;
+  const isCategorical = isCategoricalAxis(layout, axisType);
+  if (isCategorical && (type === 'number' || scale !== 'auto')) {
+    return appliedValues.map(d => d.value);
+  }
+  return undefined;
+};
 export const selectCategoricalDomain = createSelector(
   selectChartLayout,
   selectAllAppliedValues,
   selectAxisSettings,
   pickAxisType,
-  (layout, displayedData, axis, axisType): ReadonlyArray<unknown> | undefined => {
-    if (axis == null) {
-      return undefined;
-    }
-    const { type, scale } = axis;
-    const isCategorical = isCategoricalAxis(layout, axisType);
-    if (isCategorical && (type === 'number' || scale !== 'auto')) {
-      return displayedData.map(d => d.value);
-    }
-    return undefined;
-  },
+  combineCategoricalDomain,
 );
 
 export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(

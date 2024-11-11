@@ -124,6 +124,48 @@ describe('<RadialBar />', () => {
       });
     });
 
+    it('should select radius axis ticks', () => {
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 16.333333333333332,
+          index: 0,
+          offset: 16.333333333333332,
+          value: 0,
+        },
+        {
+          coordinate: 49,
+          index: 1,
+          offset: 16.333333333333332,
+          value: 1,
+        },
+        {
+          coordinate: 81.66666666666666,
+          index: 2,
+          offset: 16.333333333333332,
+          value: 2,
+        },
+        {
+          coordinate: 114.33333333333333,
+          index: 3,
+          offset: 16.333333333333332,
+          value: 3,
+        },
+        {
+          coordinate: 147,
+          index: 4,
+          offset: 16.333333333333332,
+          value: 4,
+        },
+        {
+          coordinate: 179.66666666666666,
+          index: 5,
+          offset: 16.333333333333332,
+          value: 5,
+        },
+      ]);
+    });
+
     it('should select barBandSize', () => {
       const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0));
       expect(spy).toHaveBeenLastCalledWith(32.666666666666664);
