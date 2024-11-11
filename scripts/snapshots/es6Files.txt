@@ -84,6 +84,7 @@
   "es6/state/selectors/radarSelectors.js",
   "es6/state/selectors/polarSelectors.js",
   "es6/state/selectors/polarScaleSelectors.js",
+  "es6/state/selectors/polarGridSelectors.js",
   "es6/state/selectors/polarAxisSelectors.js",
   "es6/state/selectors/pieSelectors.js",
   "es6/state/selectors/pickAxisType.js",

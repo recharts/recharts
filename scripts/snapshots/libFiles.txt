@@ -84,6 +84,7 @@
   "lib/state/selectors/radarSelectors.js",
   "lib/state/selectors/polarSelectors.js",
   "lib/state/selectors/polarScaleSelectors.js",
+  "lib/state/selectors/polarGridSelectors.js",
   "lib/state/selectors/polarAxisSelectors.js",
   "lib/state/selectors/pieSelectors.js",
   "lib/state/selectors/pickAxisType.js",
