@@ -40,9 +40,7 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
         />
         <PolarRadiusAxis radiusAxisId="axis-name" dataKey="name" type="category" stroke="green" />
         <PolarRadiusAxis radiusAxisId="axis-amt" dataKey="amt" type="number" angle={180} stroke="black" />
-        {/* @ts-expect-error I will be adding axis IDs in the next PR */}
         <PolarGrid stroke="red" strokeOpacity={0.5} angleAxisId="axis-pv" radiusAxisId="axis-name" />
-        {/* @ts-expect-error I will be adding axis IDs in the next PR */}
         <PolarGrid stroke="blue" strokeOpacity={0.5} angleAxisId="axis-uv" radiusAxisId="axis-amt" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
       </RadialBarChart>
