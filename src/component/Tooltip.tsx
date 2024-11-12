@@ -28,6 +28,7 @@ import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalConte
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
+import { AxisId } from '../state/cartesianAxisSlice';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -99,6 +100,16 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   trigger?: TooltipTrigger;
   useTranslate3d?: boolean;
   wrapperStyle?: CSSProperties;
+  /**
+   * Tooltip always attaches itself to "categorical" axis. Which axis is categorical? Depends on the layout:
+   * - horizontal layout -> X axis is categorical
+   * - vertical layout -> Y axis
+   * - radial layout -> radial axis
+   * - centric layout -> angle axis
+   *
+   * Tooltip will use the default axis for the layout, unless you specify an axisId.
+   */
+  axisId?: AxisId;
 };
 
 const emptyPayload: TooltipPayload = [];
