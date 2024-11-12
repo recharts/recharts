@@ -101,8 +101,8 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   useTranslate3d?: boolean;
   wrapperStyle?: CSSProperties;
   /**
-   * Tooltip always attaches itself to "categorical" axis. Which axis is categorical? Depends on the layout:
-   * - horizontal layout -> X axis is categorical
+   * Tooltip always attaches itself to the "Tooltip" axis. Which axis is it? Depends on the layout:
+   * - horizontal layout -> X axis
    * - vertical layout -> Y axis
    * - radial layout -> radial axis
    * - centric layout -> angle axis
