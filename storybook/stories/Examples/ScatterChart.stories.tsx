@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta, StoryContext, StoryObj } from '@storybook/react';
 import React from 'react';
 import {
   ScatterChart,
@@ -17,6 +17,8 @@ import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
+import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 
 export default {
   component: ScatterChart,
@@ -486,5 +488,90 @@ export const WithCells = {
       bottom: 20,
       left: 20,
     },
+  },
+};
+
+export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
+  render: (args: StorybookArgs, context: StoryContext) => {
+    return (
+      <ScatterChart {...args}>
+        <CartesianGrid vertical={false} yAxisId="axis-babies" />
+        <XAxis type="category" dataKey="year" name="Year" />
+        <YAxis
+          yAxisId="axis-babies"
+          type="number"
+          dataKey="babies"
+          label={{
+            value: 'Babies born',
+            position: 'center',
+            angle: -90,
+            stroke: 'black',
+            dx: -20,
+          }}
+          domain={['dataMin', 'dataMax']}
+          stroke="black"
+          name="Babies born"
+          unit=""
+          orientation="left"
+          axisLine={false}
+          tickLine={false}
+          tickCount={5}
+        />
+        <YAxis
+          yAxisId="axis-youtube"
+          type="number"
+          dataKey="length"
+          stroke="red"
+          orientation="right"
+          name="Video length"
+          unit=""
+          domain={['dataMin', 'dataMax']}
+          label={{
+            value: 'Length in seconds',
+            position: 'center',
+            angle: 90,
+            stroke: 'red',
+            dx: 30,
+          }}
+          tickCount={5}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Legend />
+        <Scatter
+          lineType="joint"
+          line
+          name="Babies of all sexes born in the US named Mara. Source: US Social Security Administration (https://www.ssa.gov/oact/babynames/index.html)"
+          yAxisId="axis-babies"
+          fill="black"
+          shape="diamond"
+          strokeWidth={2}
+          strokeDasharray="3 1"
+        />
+        <Scatter
+          line
+          lineType="joint"
+          name="Average length of Stand-up Maths YouTube videos. Source: YouTube"
+          yAxisId="axis-youtube"
+          fill="red"
+          strokeWidth={2}
+          shape="circle"
+        />
+        <Tooltip cursor={{ strokeDasharray: '3 3' }} shared={false} />
+        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+      </ScatterChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 800,
+    height: 400,
+    margin: {
+      top: 0,
+      right: 20,
+      bottom: 0,
+      left: 20,
+    },
+    data: babiesAndVideosCorrelation,
   },
 };
