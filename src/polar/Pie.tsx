@@ -137,6 +137,7 @@ interface PieProps extends PieDef {
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
+  radiusKey?: DataKey<any>;
   /** Match each sector's stroke color to it's fill color */
   blendStroke?: boolean;
   /** The minimum angle for no-zero element */
@@ -416,6 +417,7 @@ export function computePieSectors({
     tooltipType?: TooltipType;
     name?: string | number;
     nameKey?: DataKey<any>;
+    radiusKey?: DataKey<any>;
     cx?: number | string;
     cy?: number | string;
     startAngle?: number;
@@ -429,7 +431,7 @@ export function computePieSectors({
   };
   offset: ChartOffset;
 }): { sectors: ReadonlyArray<PieSectorDataItem>; coordinate: PieCoordinate } {
-  const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
+  const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType, radiusKey } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
   const coordinate = parseCoordinateOfPie(pieSettings, offset);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
@@ -479,6 +481,12 @@ export function computePieSectors({
         },
       ];
       const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
+      const outerRadiusParam = getValueByDataKey(entry, radiusKey, coordinate.outerRadius);
+
+      let calculatedOuterRadius = coordinate.outerRadius;
+      if (typeof outerRadiusParam === 'string' || typeof outerRadiusParam === 'number') {
+        calculatedOuterRadius = getPercentValue(outerRadiusParam, coordinate.outerRadius, coordinate.outerRadius);
+      }
 
       prev = {
         ...pieSettings.presentationProps,
@@ -496,12 +504,11 @@ export function computePieSectors({
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
         paddingAngle: mathSign(deltaAngle) * paddingAngle,
+        outerRadius: calculatedOuterRadius,
       };
-
       return prev;
     });
   }
-
   return { sectors, coordinate };
 }
 
@@ -798,6 +805,7 @@ function PieImpl(props: Props) {
       tooltipType: props.tooltipType,
       data: props.data,
       dataKey: props.dataKey,
+      radiusKey: props.radiusKey,
       cx: props.cx,
       cy: props.cy,
       startAngle: props.startAngle,
@@ -817,6 +825,7 @@ function PieImpl(props: Props) {
       props.cy,
       props.data,
       props.dataKey,
+      props.radiusKey,
       props.endAngle,
       props.innerRadius,
       props.minAngle,

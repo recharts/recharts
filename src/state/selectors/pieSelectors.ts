@@ -17,6 +17,7 @@ export type ResolvedPieSettings = {
   data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   tooltipType?: TooltipType | undefined;
+  radiusKey?: DataKey<any> | undefined;
 
   legendType: LegendType;
   fill: string;
