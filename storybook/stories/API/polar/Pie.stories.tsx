@@ -39,7 +39,6 @@ const GeneralProps: Args = {
       category: 'General',
     },
   },
-
   startAngle: {
     description: 'The start angle of first sector.',
     table: {
@@ -75,6 +74,13 @@ const GeneralProps: Args = {
   dataKey: {
     description: "The key of each sector's value.",
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
+  },
+  radiusKey: {
+    description: `The key of each sector's radius.`,
+    table: {
+      type: { summary: 'percentage | number', defaultValue: '100%' },
+      category: 'General',
+    },
   },
   legendType: {
     description: 'The type of icon in legend. If set to "none", no legend item will be rendered.',
