@@ -134,12 +134,13 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     trigger,
     defaultIndex,
     portal: portalFromProps,
+    axisId,
   } = props;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTooltipSettingsState({ shared, trigger }));
-  }, [dispatch, shared, trigger]);
+    dispatch(setTooltipSettingsState({ shared, trigger, axisId }));
+  }, [dispatch, shared, trigger, axisId]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
