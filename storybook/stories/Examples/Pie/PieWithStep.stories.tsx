@@ -3,12 +3,12 @@ import { Args } from '@storybook/react';
 import { Pie, PieChart, ResponsiveContainer } from '../../../../src';
 
 const data = [
-  { value: 'Luck', percent: 10, radius: '45%' },
-  { value: 'Skill', percent: 20, radius: '50%' },
-  { value: 'Concentrated power of will', percent: 15, radius: '60%' },
-  { value: 'Pleasure', percent: 50, radius: '80%' },
-  { value: 'Pain', percent: 50, radius: '80%' },
-  { value: 'Reason to remember the name', percent: 100, radius: '100%' },
+  { value: 'Luck', percent: 10, customRadius: 140 },
+  { value: 'Skill', percent: 20, customRadius: 160 },
+  { value: 'Concentrated power of will', percent: 15, customRadius: 150 },
+  { value: 'Pleasure', percent: 50, customRadius: 190 },
+  { value: 'Pain', percent: 50, customRadius: 190 },
+  { value: 'Reason to remember the name', percent: 100, customRadius: 220 },
 ];
 
 export default {
@@ -33,6 +33,8 @@ export const PieWithStep = {
     nameKey: 'value',
     fill: '#8884d8',
     label: true,
-    radiusKey: 'radius',
+    outerRadius: (element: any) => {
+      return element.customRadius;
+    },
   },
 };

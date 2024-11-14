@@ -33,9 +33,10 @@ const GeneralProps: Args = {
   },
   outerRadius: {
     description: `The outer radius of all the sectors. If set a percentage, the final value is
-      obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.`,
+      obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+      If set a function, the function will be called to return customized radius.`,
     table: {
-      type: { summary: 'percentage | number', defaultValue: '80%' },
+      type: { summary: 'percentage | number | Function', defaultValue: '80%' },
       category: 'General',
     },
   },
@@ -74,13 +75,6 @@ const GeneralProps: Args = {
   dataKey: {
     description: "The key of each sector's value.",
     table: { type: { summary: 'string | number | Function' }, category: 'General' },
-  },
-  radiusKey: {
-    description: `The key of each sector's radius.`,
-    table: {
-      type: { summary: 'percentage | number', defaultValue: '100%' },
-      category: 'General',
-    },
   },
   legendType: {
     description: 'The type of icon in legend. If set to "none", no legend item will be rendered.',

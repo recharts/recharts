@@ -59,7 +59,7 @@ interface PieDef {
   /** The inner radius of sectors */
   innerRadius?: number | string;
   /** The outer radius of sectors */
-  outerRadius?: number | string;
+  outerRadius?: number | string | ((element: any) => number);
   cornerRadius?: number | string;
 }
 
@@ -137,7 +137,6 @@ interface PieProps extends PieDef {
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
-  radiusKey?: DataKey<any>;
   /** Match each sector's stroke color to it's fill color */
   blendStroke?: boolean;
   /** The minimum angle for no-zero element */
@@ -346,17 +345,25 @@ const parseCoordinateOfPie = (
     cx?: number | string;
     cy?: number | string;
     innerRadius?: number | string;
-    outerRadius?: number | string;
+    outerRadius?: number | string | ((element: any) => number);
     maxRadius?: number;
   },
   offset: ChartOffset,
+  element: any,
 ): PieCoordinate => {
   const { top, left, width, height } = offset;
   const maxPieRadius = getMaxRadius(width, height);
   const cx = left + getPercentValue(item.cx, width, width / 2);
   const cy = top + getPercentValue(item.cy, height, height / 2);
   const innerRadius = getPercentValue(item.innerRadius, maxPieRadius, 0);
-  const outerRadius = getPercentValue(item.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+
+  let outerRadius;
+  if (typeof item.outerRadius === 'function') {
+    outerRadius = item.outerRadius(element);
+  } else {
+    outerRadius = getPercentValue(item.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+  }
+
   const maxRadius = item.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
   return { cx, cy, innerRadius, outerRadius, maxRadius };
@@ -417,7 +424,6 @@ export function computePieSectors({
     tooltipType?: TooltipType;
     name?: string | number;
     nameKey?: DataKey<any>;
-    radiusKey?: DataKey<any>;
     cx?: number | string;
     cy?: number | string;
     startAngle?: number;
@@ -425,15 +431,14 @@ export function computePieSectors({
     paddingAngle?: number;
     minAngle?: number;
     innerRadius?: number | string;
-    outerRadius?: number | string;
+    outerRadius?: number | string | ((element: any) => number);
     cornerRadius?: number | string;
     presentationProps?: Record<string, string>;
   };
   offset: ChartOffset;
-}): { sectors: ReadonlyArray<PieSectorDataItem>; coordinate: PieCoordinate } {
-  const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType, radiusKey } = pieSettings;
+}): { sectors: ReadonlyArray<PieSectorDataItem> } {
+  const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
-  const coordinate = parseCoordinateOfPie(pieSettings, offset);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
   const absDeltaAngle = Math.abs(deltaAngle);
   const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
@@ -453,6 +458,7 @@ export function computePieSectors({
     sectors = displayedData.map((entry: any, i: number) => {
       const val = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
+      const coordinate = parseCoordinateOfPie(pieSettings, offset, entry);
       const percent = (isNumber(val) ? val : 0) / sum;
       let tempStartAngle;
 
@@ -481,12 +487,6 @@ export function computePieSectors({
         },
       ];
       const tooltipPosition = polarToCartesian(coordinate.cx, coordinate.cy, middleRadius, midAngle);
-      const outerRadiusParam = getValueByDataKey(entry, radiusKey, coordinate.outerRadius);
-
-      let calculatedOuterRadius = coordinate.outerRadius;
-      if (typeof outerRadiusParam === 'string' || typeof outerRadiusParam === 'number') {
-        calculatedOuterRadius = getPercentValue(outerRadiusParam, coordinate.outerRadius, coordinate.outerRadius);
-      }
 
       prev = {
         ...pieSettings.presentationProps,
@@ -504,12 +504,11 @@ export function computePieSectors({
         endAngle: tempEndAngle,
         payload: entryWithCellInfo,
         paddingAngle: mathSign(deltaAngle) * paddingAngle,
-        outerRadius: calculatedOuterRadius,
       };
       return prev;
     });
   }
-  return { sectors, coordinate };
+  return { sectors };
 }
 
 export class PieWithState extends PureComponent<InternalProps, State> {
@@ -805,7 +804,6 @@ function PieImpl(props: Props) {
       tooltipType: props.tooltipType,
       data: props.data,
       dataKey: props.dataKey,
-      radiusKey: props.radiusKey,
       cx: props.cx,
       cy: props.cy,
       startAngle: props.startAngle,
@@ -825,7 +823,6 @@ function PieImpl(props: Props) {
       props.cy,
       props.data,
       props.dataKey,
-      props.radiusKey,
       props.endAngle,
       props.innerRadius,
       props.minAngle,

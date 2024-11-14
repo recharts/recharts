@@ -17,7 +17,6 @@ export type ResolvedPieSettings = {
   data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   tooltipType?: TooltipType | undefined;
-  radiusKey?: DataKey<any> | undefined;
 
   legendType: LegendType;
   fill: string;
@@ -29,7 +28,7 @@ export type ResolvedPieSettings = {
   paddingAngle?: number;
   minAngle?: number;
   innerRadius?: number | string;
-  outerRadius?: number | string;
+  outerRadius?: number | string | ((element: any) => number);
   cornerRadius?: number | string;
   presentationProps?: Record<string, string>;
 };

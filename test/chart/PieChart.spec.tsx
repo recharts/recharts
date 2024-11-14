@@ -408,8 +408,6 @@ describe('<PieChart />', () => {
   });
 
   describe('PieChart sector radius rendering', () => {
-    const outerRadius = 80;
-
     const assertSectorRadius = (element: Element, radius: number) => {
       // Checks if the 'd' attribute has an arc with the specified radius.
       const dAttribute = element.getAttribute('d');
@@ -417,7 +415,8 @@ describe('<PieChart />', () => {
       expect(dAttribute).toMatch(arcRadius);
     };
 
-    test('should render sectors with default radius when no radius is specified', () => {
+    it('renders sectors with a constant radius', () => {
+      const outerRadius = 80;
       const { container } = render(
         <PieChart width={800} height={400}>
           <Pie
@@ -431,7 +430,6 @@ describe('<PieChart />', () => {
             cy={200}
             outerRadius={outerRadius}
             fill="#ff7300"
-            radiusKey="r"
           />
         </PieChart>,
       );
@@ -443,56 +441,31 @@ describe('<PieChart />', () => {
       assertSectorRadius(elementB, outerRadius);
     });
 
-    test('should render sectors with specified fixed radius values', () => {
+    it('renders sectors with radius based on outerRadius function', () => {
       const { container } = render(
         <PieChart width={800} height={400}>
           <Pie
             dataKey="value"
             isAnimationActive={false}
             data={[
-              { name: 'Group C', value: 200, r: 102 },
-              { name: 'Group D', value: 200, r: 120 },
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
             ]}
             cx={200}
             cy={200}
-            outerRadius={outerRadius}
+            outerRadius={(element: any) => {
+              return element.value / 10;
+            }}
             fill="#ff7300"
-            radiusKey="r"
           />
         </PieChart>,
       );
 
-      const elementC = container.querySelector('path[name="Group C"]');
-      assertSectorRadius(elementC, 102);
+      const elementA = container.querySelector('path[name="Group A"]');
+      assertSectorRadius(elementA, 40);
 
-      const elementD = container.querySelector('path[name="Group D"]');
-      assertSectorRadius(elementD, 120);
-    });
-
-    test('should render sectors with radius values as a percentage of outer radius', () => {
-      const { container } = render(
-        <PieChart width={800} height={400}>
-          <Pie
-            dataKey="value"
-            isAnimationActive={false}
-            data={[
-              { name: 'Group E', value: 278, r: '45%' },
-              { name: 'Group F', value: 189, r: '21%' },
-            ]}
-            cx={200}
-            cy={200}
-            outerRadius={outerRadius}
-            fill="#ff7300"
-            radiusKey="r"
-          />
-        </PieChart>,
-      );
-
-      const elementE = container.querySelector('path[name="Group E"]');
-      assertSectorRadius(elementE, outerRadius * 0.45);
-
-      const elementF = container.querySelector('path[name="Group F"]');
-      assertSectorRadius(elementF, outerRadius * 0.21);
+      const elementB = container.querySelector('path[name="Group B"]');
+      assertSectorRadius(elementB, 30);
     });
   });
 });
