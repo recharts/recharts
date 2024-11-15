@@ -59,7 +59,7 @@ interface PieDef {
   /** The inner radius of sectors */
   innerRadius?: number | string;
   /** The outer radius of sectors */
-  outerRadius?: number | string | ((element: any) => number);
+  outerRadius?: number | string | ((dataPoint: any) => number);
   cornerRadius?: number | string;
 }
 
@@ -340,16 +340,27 @@ const getTextAnchor = (x: number, cx: number) => {
   return 'middle';
 };
 
+const getOuterRadius = (
+  dataPoint: any,
+  outerRadius?: number | string | ((element: any) => number),
+  maxPieRadius?: number,
+) => {
+  if (typeof outerRadius === 'function') {
+    return outerRadius(dataPoint);
+  }
+  return getPercentValue(outerRadius, maxPieRadius, maxPieRadius * 0.8);
+};
+
 const parseCoordinateOfPie = (
   item: {
     cx?: number | string;
     cy?: number | string;
     innerRadius?: number | string;
-    outerRadius?: number | string | ((element: any) => number);
+    outerRadius?: number | string | ((dataPoint: any) => number);
     maxRadius?: number;
   },
   offset: ChartOffset,
-  element: any,
+  dataPoint: any,
 ): PieCoordinate => {
   const { top, left, width, height } = offset;
   const maxPieRadius = getMaxRadius(width, height);
@@ -357,12 +368,7 @@ const parseCoordinateOfPie = (
   const cy = top + getPercentValue(item.cy, height, height / 2);
   const innerRadius = getPercentValue(item.innerRadius, maxPieRadius, 0);
 
-  let outerRadius;
-  if (typeof item.outerRadius === 'function') {
-    outerRadius = item.outerRadius(element);
-  } else {
-    outerRadius = getPercentValue(item.outerRadius, maxPieRadius, maxPieRadius * 0.8);
-  }
+  const outerRadius = getOuterRadius(dataPoint, item.outerRadius, maxPieRadius);
 
   const maxRadius = item.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
