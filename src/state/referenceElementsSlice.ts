@@ -2,7 +2,7 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
 
-type ReferenceElementSettings = {
+export type ReferenceElementSettings = {
   yAxisId: AxisId;
   xAxisId: AxisId;
   ifOverflow: IfOverflow;

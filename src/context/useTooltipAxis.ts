@@ -10,34 +10,12 @@ import {
   selectArbitraryYAxis,
   selectChartLayout,
 } from './chartLayoutContext';
+import { RechartsRootState } from '../state/store';
+import { selectTooltipSettings } from '../state/selectors/selectors';
+import { AxisWithTicksSettings, selectAxisSettings, XorYType } from '../state/selectors/axisSelectors';
+import { AxisId } from '../state/cartesianAxisSlice';
 
-export const selectTooltipAxis = createSelector(
-  selectChartLayout,
-  selectArbitraryXAxis,
-  selectArbitraryYAxis,
-  selectArbitraryPolarAngleAxis,
-  selectArbitraryPolarRadiusAxis,
-  (
-    layout: LayoutType,
-    xAxis: XAxisWithExtraData,
-    yAxis: YAxisWithExtraData,
-    angleAxis: AxisPropsWithExtraComputedData,
-    radiusAxis: AxisPropsWithExtraComputedData,
-  ): AxisPropsWithExtraComputedData => {
-    if (layout === 'horizontal') {
-      return xAxis;
-    }
-    if (layout === 'vertical') {
-      return yAxis;
-    }
-    if (layout === 'centric') {
-      return angleAxis;
-    }
-    return radiusAxis;
-  },
-);
-
-export const useTooltipAxis = (): AxisPropsWithExtraComputedData => useAppSelector(selectTooltipAxis);
+export const useTooltipAxis = (): AxisWithTicksSettings => useAppSelector(selectTooltipAxis);
 
 export const useTooltipAxisBandSize = (): number | undefined => {
   const tooltipAxis = useTooltipAxis();

@@ -6,7 +6,6 @@ import {
   combineTooltipPayload,
   selectActiveCoordinate,
   selectActiveIndex,
-  selectActivePropsFromMousePointer,
   selectIsTooltipActive,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
@@ -49,6 +48,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
+import { selectActivePropsFromMousePointer } from '../../../src/state/selectors/selectActivePropsFromMousePointer';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {

@@ -79,6 +79,7 @@ export type PolarGraphicalItemSettings = GraphicalItemSettings & {
 
 export type GraphicalItemsState = {
   /**
+   * @deprecated - we can now read graphicalitems.type property instead of maintaining separate reducer. TODO replace
    * Axis scale selector behaves differently if one of the child elements is a bar
    * vs if it's not;
    * So we need to track the number of bars present in the chart

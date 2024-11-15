@@ -1,0 +1,249 @@
+import { createSelector } from '@reduxjs/toolkit';
+import { RechartsRootState } from '../store';
+import {
+  AppliedChartDataWithErrorDomain,
+  AxisRange,
+  AxisWithTicksSettings,
+  combineAppliedNumericalValuesIncludingErrorValues,
+  combineAppliedValues,
+  combineAreasDomain,
+  combineAxisDomain,
+  combineAxisDomainWithNiceTicks,
+  combineAxisRangeWithReverse,
+  combineAxisTicks,
+  combineCategoricalDomain,
+  combineDisplayedData,
+  combineDomainOfStackGroups,
+  combineDotsDomain,
+  combineDuplicateDomain,
+  combineGraphicalItemsData,
+  combineGraphicalItemsSettings,
+  combineLinesDomain,
+  combineNiceTicks,
+  combineNumericalDomain,
+  combineRealScaleType,
+  combineScaleFunction,
+  combineStackGroups,
+  filterGraphicalNotStackedItems,
+  filterReferenceElements,
+  getDomainDefinition,
+  itemAxisPredicate,
+  mergeDomains,
+  selectAxisRange,
+  selectAxisSettings,
+  selectHasBar,
+  selectReferenceAreas,
+  selectReferenceDots,
+  selectReferenceLines,
+  StackGroup,
+  XorYType,
+} from './axisSelectors';
+import { selectChartLayout } from '../../context/chartLayoutContext';
+import { AxisId } from '../cartesianAxisSlice';
+import { selectChartName, selectStackOffsetType } from './selectors';
+import { RechartsScale, StackId } from '../../util/ChartUtils';
+import { AxisDomain, CategoricalDomain, NumberDomain } from '../../util/types';
+import { AppliedChartData, ChartData } from '../chartDataSlice';
+import { selectChartDataWithIndexes } from './dataSelectors';
+import { GraphicalItemSettings } from '../graphicalItemsSlice';
+import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
+
+const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
+  const layout = selectChartLayout(state);
+
+  if (layout === 'horizontal') {
+    return 'xAxis';
+  }
+
+  if (layout === 'vertical') {
+    return 'yAxis';
+  }
+
+  if (layout === 'centric') {
+    return 'angleAxis';
+  }
+
+  return 'radiusAxis';
+};
+
+const selectTooltipAxisId = (state: RechartsRootState): AxisId => state.tooltip.settings.axisId;
+
+export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
+  const axisType = selectTooltipAxisType(state);
+  const axisId = selectTooltipAxisId(state);
+  return selectAxisSettings(state, axisType, axisId);
+};
+
+const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
+  [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
+  combineRealScaleType,
+);
+
+const selectAllUnfilteredGraphicalItems = (state: RechartsRootState): ReadonlyArray<GraphicalItemSettings> => [
+  ...state.graphicalItems.cartesianItems,
+  ...state.graphicalItems.polarItems,
+];
+
+const selectTooltipAxisPredicate = createSelector([selectTooltipAxisType, selectTooltipAxisId], itemAxisPredicate);
+
+const selectAllGraphicalItemsSettings = createSelector(
+  [selectAllUnfilteredGraphicalItems, selectTooltipAxis, selectTooltipAxisPredicate],
+  combineGraphicalItemsSettings,
+);
+
+const selectTooltipGraphicalItemsData = createSelector([selectAllGraphicalItemsSettings], combineGraphicalItemsData);
+
+const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData = createSelector(
+  [selectTooltipGraphicalItemsData, selectChartDataWithIndexes],
+  combineDisplayedData,
+);
+
+const selectAllTooltipAppliedValues: (state: RechartsRootState) => AppliedChartData = createSelector(
+  [selectTooltipDisplayedData, selectTooltipAxis, selectAllGraphicalItemsSettings],
+  combineAppliedValues,
+);
+
+const selectTooltipAxisDomainDefinition: (state: RechartsRootState) => AxisDomain | undefined = createSelector(
+  [selectTooltipAxis],
+  getDomainDefinition,
+);
+
+const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(
+  [selectTooltipDisplayedData, selectAllGraphicalItemsSettings, selectStackOffsetType],
+  combineStackGroups,
+);
+
+const selectTooltipDomainOfStackGroups: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [selectTooltipStackGroups, selectChartDataWithIndexes, selectTooltipAxisType],
+  combineDomainOfStackGroups,
+);
+
+const selectTooltipItemsSettingsExceptStacked: (state: RechartsRootState) => ReadonlyArray<GraphicalItemSettings> =
+  createSelector([selectAllGraphicalItemsSettings], filterGraphicalNotStackedItems);
+
+const selectTooltipAllAppliedNumericalValuesIncludingErrorValues: (
+  state: RechartsRootState,
+) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
+  [selectTooltipDisplayedData, selectTooltipAxis, selectTooltipItemsSettingsExceptStacked, selectTooltipAxisType],
+  combineAppliedNumericalValuesIncludingErrorValues,
+);
+
+const selectReferenceDotsByTooltipAxis: (state: RechartsRootState) => ReadonlyArray<ReferenceDotSettings> | undefined =
+  createSelector([selectReferenceDots, selectTooltipAxisType, selectTooltipAxisId], filterReferenceElements);
+
+const selectTooltipReferenceDotsDomain: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [selectReferenceDotsByTooltipAxis, selectTooltipAxisType],
+  combineDotsDomain,
+);
+
+const selectReferenceAreasByTooltipAxis: (
+  state: RechartsRootState,
+) => ReadonlyArray<ReferenceAreaSettings> | undefined = createSelector(
+  [selectReferenceAreas, selectTooltipAxisType, selectTooltipAxisId],
+  filterReferenceElements,
+);
+
+const selectTooltipReferenceAreasDomain: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [selectReferenceAreasByTooltipAxis, selectTooltipAxisType],
+  combineAreasDomain,
+);
+
+const selectReferenceLinesByTooltipAxis: (
+  state: RechartsRootState,
+) => ReadonlyArray<ReferenceLineSettings> | undefined = createSelector(
+  [selectReferenceLines, selectTooltipAxisType, selectTooltipAxisId],
+  filterReferenceElements,
+);
+
+const selectTooltipReferenceLinesDomain: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [selectReferenceLinesByTooltipAxis, selectTooltipAxisType],
+  combineLinesDomain,
+);
+
+const selectTooltipReferenceElementsDomain: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [selectTooltipReferenceDotsDomain, selectTooltipReferenceLinesDomain, selectTooltipReferenceAreasDomain],
+  mergeDomains,
+);
+
+const selectTooltipNumericalDomain: (state: RechartsRootState) => NumberDomain | undefined = createSelector(
+  [
+    selectTooltipAxis,
+    selectTooltipAxisDomainDefinition,
+    selectTooltipDomainOfStackGroups,
+    selectTooltipAllAppliedNumericalValuesIncludingErrorValues,
+    selectTooltipReferenceElementsDomain,
+  ],
+  combineNumericalDomain,
+);
+
+const selectTooltipAxisDomain: (state: RechartsRootState) => NumberDomain | CategoricalDomain | undefined =
+  createSelector(
+    [
+      selectTooltipAxis,
+      selectChartLayout,
+      selectTooltipDisplayedData,
+      selectAllTooltipAppliedValues,
+      selectStackOffsetType,
+      selectTooltipAxisType,
+      selectTooltipNumericalDomain,
+    ],
+    combineAxisDomain,
+  );
+
+const selectTooltipNiceTicks: (state: RechartsRootState) => ReadonlyArray<number | string> = createSelector(
+  [selectTooltipAxisDomain, selectTooltipAxis, selectTooltipAxisRealScaleType],
+  combineNiceTicks,
+);
+
+const selectTooltipAxisDomainIncludingNiceTicks: (state: RechartsRootState) => NumberDomain | CategoricalDomain =
+  createSelector(
+    [selectTooltipAxis, selectTooltipAxisDomain, selectTooltipNiceTicks, selectTooltipAxisType],
+    combineAxisDomainWithNiceTicks,
+  );
+
+const selectTooltipAxisRange = (state: RechartsRootState): AxisRange | undefined => {
+  const axisType = selectTooltipAxisType(state);
+  const axisId = selectTooltipAxisId(state);
+  const isPanorama = false; // Tooltip never displays in panorama so this is safe to assume
+  return selectAxisRange(state, axisType, axisId, isPanorama);
+};
+
+const selectTooltipAxisRangeWithReverse: (state: RechartsRootState) => AxisRange | undefined = createSelector(
+  [selectTooltipAxis, selectTooltipAxisRange],
+  combineAxisRangeWithReverse,
+);
+
+const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale | undefined = createSelector(
+  [
+    selectTooltipAxis,
+    selectTooltipAxisRealScaleType,
+    selectTooltipAxisDomainIncludingNiceTicks,
+    selectTooltipAxisRangeWithReverse,
+  ],
+  combineScaleFunction,
+);
+
+const selectTooltipDuplicateDomain: (state: RechartsRootState) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectAllTooltipAppliedValues, selectTooltipAxis, selectTooltipAxisType],
+  combineDuplicateDomain,
+);
+
+const selectTooltipCategoricalDomain: (state: RechartsRootState) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectAllTooltipAppliedValues, selectTooltipAxis, selectTooltipAxisType],
+  combineCategoricalDomain,
+);
+
+export const selectTooltipAxisTicks = createSelector(
+  [
+    selectChartLayout,
+    selectTooltipAxis,
+    selectTooltipAxisRealScaleType,
+    selectTooltipAxisScale,
+    selectTooltipNiceTicks,
+    selectTooltipAxisRange,
+    selectTooltipDuplicateDomain,
+    selectTooltipCategoricalDomain,
+    selectTooltipAxisType,
+  ],
+  combineAxisTicks,
+);

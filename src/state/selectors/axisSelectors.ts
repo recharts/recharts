@@ -49,7 +49,12 @@ import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, u
 import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
-import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
+import {
+  ReferenceAreaSettings,
+  ReferenceDotSettings,
+  ReferenceElementSettings,
+  ReferenceLineSettings,
+} from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
@@ -250,7 +255,6 @@ export const selectAxisSettings = (
 };
 
 /**
- * @deprecated - we can now read graphicalitems.type property instead of maintaining separate reducer. TODO replace
  * @param state RechartsRootState
  * @return boolean true if there is at least one Bar or RadialBar
  */
@@ -263,7 +267,7 @@ export const selectHasBar = (state: RechartsRootState): boolean => state.graphic
  *
  * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
  */
-function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
+export function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
   return (item: CartesianGraphicalItemSettings) => {
     switch (axisType) {
       case 'xAxis':
@@ -279,7 +283,9 @@ function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
   };
 }
 
-export const selectUnfilteredCartesianItems = (state: RechartsRootState) => state.graphicalItems.cartesianItems;
+export const selectUnfilteredCartesianItems = (
+  state: RechartsRootState,
+): ReadonlyArray<CartesianGraphicalItemSettings> => state.graphicalItems.cartesianItems;
 
 const selectAxisPredicate: (
   _state: RechartsRootState,
@@ -308,12 +314,17 @@ export const selectCartesianItemsSettings: (
   combineGraphicalItemsSettings,
 );
 
+export const filterGraphicalNotStackedItems = <T extends MaybeStackedGraphicalItem>(
+  cartesianItems: ReadonlyArray<T>,
+): ReadonlyArray<T> => cartesianItems.filter(item => item.stackId === undefined);
+
 const selectCartesianItemsSettingsExceptStacked: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
-) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(selectCartesianItemsSettings, cartesianItems =>
-  cartesianItems.filter(item => item.stackId === undefined),
+) => ReadonlyArray<CartesianGraphicalItemSettings> = createSelector(
+  [selectCartesianItemsSettings],
+  filterGraphicalNotStackedItems,
 );
 
 export const combineGraphicalItemsData = (cartesianItems: ReadonlyArray<GraphicalItemSettings>) =>
@@ -384,6 +395,7 @@ export const combineAppliedValues = (
   }
   return data.map(entry => ({ value: entry }));
 };
+
 /**
  * This selector will return all values with the appropriate dataKey applied on them.
  * Which dataKey is appropriate depends on where it is defined.
@@ -548,61 +560,71 @@ export const selectStackGroups: (
   combineStackGroups,
 );
 
+export const combineDomainOfStackGroups = (
+  stackGroups: Record<StackId, StackGroup> | undefined,
+  { dataStartIndex, dataEndIndex }: ChartDataState,
+  axisType: XorYorZType,
+): NumberDomain | undefined => {
+  if (axisType === 'zAxis') {
+    // ZAxis ignores stacks
+    return undefined;
+  }
+  // @ts-expect-error typescript is unhappy with the two different types of StackGroups
+  const domainOfStackGroups = getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
+  if (domainOfStackGroups != null && domainOfStackGroups[0] === 0 && domainOfStackGroups[1] === 0) {
+    return undefined;
+  }
+  return domainOfStackGroups;
+};
+
 export const selectDomainOfStackGroups = createSelector(
-  selectStackGroups,
-  selectChartDataWithIndexes,
-  pickAxisType,
-  (stackGroups, { dataStartIndex, dataEndIndex }, axisType): NumberDomain | undefined => {
-    if (axisType === 'zAxis') {
-      // ZAxis ignores stacks
-      return undefined;
-    }
-    // @ts-expect-error typescript is unhappy with the two different types of StackGroups
-    const domainOfStackGroups = getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
-    if (domainOfStackGroups != null && domainOfStackGroups[0] === 0 && domainOfStackGroups[1] === 0) {
-      return undefined;
-    }
-    return domainOfStackGroups;
-  },
+  [selectStackGroups, selectChartDataWithIndexes, pickAxisType],
+  combineDomainOfStackGroups,
 );
 
-export const selectAllAppliedNumericalValuesIncludingErrorValues = createSelector(
+export const combineAppliedNumericalValuesIncludingErrorValues = (
+  data: ChartData,
+  axisSettings: BaseCartesianAxis,
+  items: ReadonlyArray<CartesianGraphicalItemSettings>,
+  axisType: XorYorZType,
+): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
+  if (items.length > 0) {
+    return data
+      .flatMap(entry => {
+        return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
+          const relevantErrorBars = item.errorBars.filter(errorBar =>
+            isErrorBarRelevantForAxisType(axisType, errorBar),
+          );
+          const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
+          return {
+            value: valueByDataKey,
+            errorDomain: getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars),
+          };
+        });
+      })
+      .filter(Boolean);
+  }
+  if (axisSettings?.dataKey != null) {
+    return data.map(
+      (item): AppliedChartDataWithErrorDomain => ({
+        value: getValueByDataKey(item, axisSettings.dataKey),
+        errorDomain: [],
+      }),
+    );
+  }
+  return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
+};
+
+export const selectAllAppliedNumericalValuesIncludingErrorValues: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
   selectDisplayedData,
   selectBaseAxis,
   selectCartesianItemsSettingsExceptStacked,
   pickAxisType,
-  (
-    data: ChartData,
-    axisSettings: BaseCartesianAxis,
-    items: ReadonlyArray<CartesianGraphicalItemSettings>,
-    axisType: XorYorZType,
-  ): ReadonlyArray<AppliedChartDataWithErrorDomain> => {
-    if (items.length > 0) {
-      return data
-        .flatMap(entry => {
-          return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-            const relevantErrorBars = item.errorBars.filter(errorBar =>
-              isErrorBarRelevantForAxisType(axisType, errorBar),
-            );
-            const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);
-            return {
-              value: valueByDataKey,
-              errorDomain: getErrorDomainByDataKey(entry, valueByDataKey, relevantErrorBars),
-            };
-          });
-        })
-        .filter(Boolean);
-    }
-    if (axisSettings?.dataKey != null) {
-      return data.map(
-        (item): AppliedChartDataWithErrorDomain => ({
-          value: getValueByDataKey(item, axisSettings.dataKey),
-          errorDomain: [],
-        }),
-      );
-    }
-    return data.map((entry): AppliedChartDataWithErrorDomain => ({ value: entry, errorDomain: [] }));
-  },
+  combineAppliedNumericalValuesIncludingErrorValues,
 );
 
 export function getDefaultDomainByAxisType(axisType: 'number' | string) {
@@ -654,7 +676,7 @@ const computeDomainOfTypeCategory = (
   return Array.from(new Set(categoricalDomain));
 };
 
-const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDomain => {
+export const getDomainDefinition = (axisSettings: CartesianAxisSettings): AxisDomain => {
   if (axisSettings == null || !('domain' in axisSettings)) {
     return defaultNumericDomain;
   }
@@ -685,100 +707,84 @@ export const mergeDomains = (...domains: ReadonlyArray<NumberDomain | undefined>
   return [min, max];
 };
 
-const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
+export const selectReferenceDots = (state: RechartsRootState): ReadonlyArray<ReferenceDotSettings> =>
   state.referenceElements.dots;
 
+export const filterReferenceElements = <T extends ReferenceElementSettings>(
+  elements: ReadonlyArray<T>,
+  axisType: XorYorZType,
+  axisId: AxisId,
+): ReadonlyArray<T> => {
+  return elements
+    .filter(el => el.ifOverflow === 'extendDomain')
+    .filter(el => {
+      if (axisType === 'xAxis') {
+        return el.xAxisId === axisId;
+      }
+      return el.yAxisId === axisId;
+    });
+};
+
 export const selectReferenceDotsByAxis = createSelector(
-  selectReferenceDots,
-  pickAxisType,
-  pickAxisId,
-  (dots, axisType, axisId) => {
-    return dots
-      .filter(dot => dot.ifOverflow === 'extendDomain')
-      .filter(dot => {
-        if (axisType === 'xAxis') {
-          return dot.xAxisId === axisId;
-        }
-        return dot.yAxisId === axisId;
-      });
-  },
+  [selectReferenceDots, pickAxisType, pickAxisId],
+  filterReferenceElements,
 );
 
-const selectReferenceAreas = (state: RechartsRootState): ReadonlyArray<ReferenceAreaSettings> =>
+export const selectReferenceAreas = (state: RechartsRootState): ReadonlyArray<ReferenceAreaSettings> =>
   state.referenceElements.areas;
 
-export const selectReferenceAreasByAxis = createSelector(
-  selectReferenceAreas,
-  pickAxisType,
-  pickAxisId,
-  (areas, axisType, axisId) => {
-    return areas
-      .filter(area => area.ifOverflow === 'extendDomain')
-      .filter(area => {
-        if (axisType === 'xAxis') {
-          return area.xAxisId === axisId;
-        }
-        return area.yAxisId === axisId;
-      });
-  },
+export const selectReferenceAreasByAxis: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<ReferenceAreaSettings> = createSelector(
+  [selectReferenceAreas, pickAxisType, pickAxisId],
+  filterReferenceElements,
 );
 
-const selectReferenceLines = (state: RechartsRootState): ReadonlyArray<ReferenceLineSettings> =>
+export const selectReferenceLines = (state: RechartsRootState): ReadonlyArray<ReferenceLineSettings> =>
   state.referenceElements.lines;
 
-export const selectReferenceLinesByAxis = createSelector(
-  selectReferenceLines,
-  pickAxisType,
-  pickAxisId,
-  (lines, axisType, axisId) => {
-    return lines
-      .filter(line => line.ifOverflow === 'extendDomain')
-      .filter(line => {
-        if (axisType === 'xAxis') {
-          return line.xAxisId === axisId;
-        }
-        return line.yAxisId === axisId;
-      });
-  },
+export const selectReferenceLinesByAxis: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<ReferenceLineSettings> = createSelector(
+  [selectReferenceLines, pickAxisType, pickAxisId],
+  filterReferenceElements,
 );
 
-const selectReferenceDotsDomain = createSelector(
-  selectReferenceDotsByAxis,
-  pickAxisType,
-  (dots: ReadonlyArray<ReferenceDotSettings>, axisType: XorYType): NumberDomain => {
-    const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
-    if (allCoords.length === 0) {
-      return undefined;
-    }
-    return [Math.min(...allCoords), Math.max(...allCoords)];
-  },
-);
+export const combineDotsDomain = (dots: ReadonlyArray<ReferenceDotSettings>, axisType: XorYType): NumberDomain => {
+  const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
+  if (allCoords.length === 0) {
+    return undefined;
+  }
+  return [Math.min(...allCoords), Math.max(...allCoords)];
+};
 
-const selectReferenceAreasDomain = createSelector(
-  selectReferenceAreasByAxis,
-  pickAxisType,
-  (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: XorYType): NumberDomain => {
-    const allCoords = onlyAllowNumbers(
-      areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
-    );
-    if (allCoords.length === 0) {
-      return undefined;
-    }
-    return [Math.min(...allCoords), Math.max(...allCoords)];
-  },
-);
+const selectReferenceDotsDomain = createSelector(selectReferenceDotsByAxis, pickAxisType, combineDotsDomain);
 
-const selectReferenceLinesDomain = createSelector(
-  selectReferenceLinesByAxis,
-  pickAxisType,
-  (lines: ReadonlyArray<ReferenceLineSettings>, axisType: XorYType): NumberDomain => {
-    const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
-    if (allCoords.length === 0) {
-      return undefined;
-    }
-    return [Math.min(...allCoords), Math.max(...allCoords)];
-  },
-);
+export const combineAreasDomain = (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: XorYType): NumberDomain => {
+  const allCoords = onlyAllowNumbers(
+    areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
+  );
+  if (allCoords.length === 0) {
+    return undefined;
+  }
+  return [Math.min(...allCoords), Math.max(...allCoords)];
+};
+
+const selectReferenceAreasDomain = createSelector([selectReferenceAreasByAxis, pickAxisType], combineAreasDomain);
+
+export const combineLinesDomain = (lines: ReadonlyArray<ReferenceLineSettings>, axisType: XorYType): NumberDomain => {
+  const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
+  if (allCoords.length === 0) {
+    return undefined;
+  }
+  return [Math.min(...allCoords), Math.max(...allCoords)];
+};
+
+const selectReferenceLinesDomain = createSelector(selectReferenceLinesByAxis, pickAxisType, combineLinesDomain);
 
 const selectReferenceElementsDomain = createSelector(
   selectReferenceDotsDomain,
@@ -888,53 +894,55 @@ export const selectAxisDomain: (
   combineAxisDomain,
 );
 
+export const combineRealScaleType = (
+  axisConfig: BaseCartesianAxis | undefined,
+  layout: LayoutType,
+  hasBar: boolean,
+  chartType: string,
+  axisType: XorYorZType,
+): string | undefined => {
+  if (axisConfig == null) {
+    return undefined;
+  }
+  const { scale, type } = axisConfig;
+  if (scale === 'auto') {
+    if (layout === 'radial' && axisType === 'radiusAxis') {
+      return 'band';
+    }
+    if (layout === 'radial' && axisType === 'angleAxis') {
+      return 'linear';
+    }
+
+    if (
+      type === 'category' &&
+      chartType &&
+      (chartType.indexOf('LineChart') >= 0 ||
+        chartType.indexOf('AreaChart') >= 0 ||
+        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
+    ) {
+      return 'point';
+    }
+    if (type === 'category') {
+      return 'band';
+    }
+
+    return 'linear';
+  }
+  if (typeof scale === 'string') {
+    const name = `scale${upperFirst(scale)}`;
+
+    return name in d3Scales ? name : 'point';
+  }
+  return undefined;
+};
+
 export const selectRealScaleType: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
 ) => string | undefined = createSelector(
   [selectBaseAxis, selectChartLayout, selectHasBar, selectChartName, pickAxisType],
-  (
-    axisConfig: BaseCartesianAxis | undefined,
-    layout: LayoutType,
-    hasBar: boolean,
-    chartType: string,
-    axisType: XorYorZType,
-  ): string | undefined => {
-    if (axisConfig == null) {
-      return undefined;
-    }
-    const { scale, type } = axisConfig;
-    if (scale === 'auto') {
-      if (layout === 'radial' && axisType === 'radiusAxis') {
-        return 'band';
-      }
-      if (layout === 'radial' && axisType === 'angleAxis') {
-        return 'linear';
-      }
-
-      if (
-        type === 'category' &&
-        chartType &&
-        (chartType.indexOf('LineChart') >= 0 ||
-          chartType.indexOf('AreaChart') >= 0 ||
-          (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
-      ) {
-        return 'point';
-      }
-      if (type === 'category') {
-        return 'band';
-      }
-
-      return 'linear';
-    }
-    if (typeof scale === 'string') {
-      const name = `scale${upperFirst(scale)}`;
-
-      return name in d3Scales ? name : 'point';
-    }
-    return undefined;
-  },
+  combineRealScaleType,
 );
 
 function getD3ScaleFromType(realScaleType: string | undefined) {
@@ -1235,7 +1243,7 @@ export const combineYAxisRange: (
   },
 );
 
-const selectAxisRange = (
+export const selectAxisRange = (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
@@ -1253,20 +1261,22 @@ const selectAxisRange = (
   }
 };
 
+export const combineAxisRangeWithReverse = (
+  axisSettings: BaseCartesianAxis | undefined,
+  axisRange: AxisRange,
+): AxisRange | undefined => {
+  if (axisSettings?.reversed) {
+    return [axisRange[1], axisRange[0]];
+  }
+  return axisRange;
+};
+
 export const selectAxisRangeWithReverse: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
   isPanorama: boolean,
-) => AxisRange | undefined = createSelector(
-  [selectBaseAxis, selectAxisRange],
-  (axisSettings: BaseCartesianAxis | undefined, axisRange: AxisRange): AxisRange | undefined => {
-    if (axisSettings?.reversed) {
-      return [axisRange[1], axisRange[0]];
-    }
-    return axisRange;
-  },
-);
+) => AxisRange | undefined = createSelector([selectBaseAxis, selectAxisRange], combineAxisRangeWithReverse);
 
 export const selectAxisScale: (
   state: RechartsRootState,
@@ -1501,23 +1511,31 @@ export const selectCartesianAxisSize = (
   }
 };
 
-export const selectDuplicateDomain = createSelector(
-  selectChartLayout,
-  selectAllAppliedValues,
-  selectBaseAxis,
-  pickAxisType,
-  (chartLayout, appliedValues, axis: BaseCartesianAxis, axisType): ReadonlyArray<unknown> | undefined => {
-    if (axis == null) {
-      return undefined;
-    }
-    const { allowDuplicatedCategory, type, dataKey } = axis;
-    const isCategorical = isCategoricalAxis(chartLayout, axisType);
-    const allData = appliedValues.map(av => av.value);
-    if (dataKey && isCategorical && type === 'category' && allowDuplicatedCategory && hasDuplicate(allData)) {
-      return allData;
-    }
+export const combineDuplicateDomain = (
+  chartLayout: LayoutType,
+  appliedValues: AppliedChartData,
+  axis: BaseCartesianAxis,
+  axisType: XorYorZType,
+): ReadonlyArray<unknown> | undefined => {
+  if (axis == null) {
     return undefined;
-  },
+  }
+  const { allowDuplicatedCategory, type, dataKey } = axis;
+  const isCategorical = isCategoricalAxis(chartLayout, axisType);
+  const allData = appliedValues.map(av => av.value);
+  if (dataKey && isCategorical && type === 'category' && allowDuplicatedCategory && hasDuplicate(allData)) {
+    return allData;
+  }
+  return undefined;
+};
+
+export const selectDuplicateDomain: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectAllAppliedValues, selectBaseAxis, pickAxisType],
+  combineDuplicateDomain,
 );
 
 export const combineCategoricalDomain = (
@@ -1537,24 +1555,27 @@ export const combineCategoricalDomain = (
   return undefined;
 };
 
-export const selectCategoricalDomain = createSelector(
-  selectChartLayout,
-  selectAllAppliedValues,
-  selectAxisSettings,
-  pickAxisType,
+export const selectCategoricalDomain: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+) => ReadonlyArray<unknown> | undefined = createSelector(
+  [selectChartLayout, selectAllAppliedValues, selectAxisSettings, pickAxisType],
   combineCategoricalDomain,
 );
 
 export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelector(
-  selectChartLayout,
-  selectCartesianAxisSettings,
-  selectRealScaleType,
-  selectAxisScale,
-  selectDuplicateDomain,
-  selectCategoricalDomain,
-  selectAxisRange,
-  selectNiceTicks,
-  pickAxisType,
+  [
+    selectChartLayout,
+    selectCartesianAxisSettings,
+    selectRealScaleType,
+    selectAxisScale,
+    selectDuplicateDomain,
+    selectCategoricalDomain,
+    selectAxisRange,
+    selectNiceTicks,
+    pickAxisType,
+  ],
   (
     layout: LayoutType,
     axis: XAxisSettings | YAxisSettings,
