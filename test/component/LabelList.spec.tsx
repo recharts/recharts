@@ -20,7 +20,8 @@ describe('<LabelList />', () => {
         <YAxis dataKey="y" name="weight" unit="kg" />
         <ZAxis dataKey="z" range={[4, 20]} name="score" unit="km" />
         <Scatter name="A school" data={data} isAnimationActive={false}>
-          <LabelList dataKey="x" />
+          {/* should be able to use dataKey as a function with LabelList */}
+          <LabelList dataKey={d => d.x} />
         </Scatter>
       </ScatterChart>,
     );

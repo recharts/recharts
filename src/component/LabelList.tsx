@@ -18,10 +18,11 @@ interface Data {
 
 interface LabelListProps<T extends Data> {
   id?: string;
+  // why is data a prop here, shouldn't this only come from chart data?
   data?: ReadonlyArray<T>;
   valueAccessor?: (entry: T, index: number) => string | number;
   clockWise?: boolean;
-  dataKey?: DataKey<T>;
+  dataKey?: DataKey<Record<string, any>>;
   content?: ContentType;
   textBreakAll?: boolean;
   position?: LabelPosition;
