@@ -266,7 +266,6 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
     contentStyle: {},
     coordinate: { x: 0, y: 0 },
     cursor: true,
-    cursorStyle: {},
     filterNull: true,
     isAnimationActive: !Global.isSsr,
     itemStyle: {},

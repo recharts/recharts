@@ -802,3 +802,38 @@ export const RangedBarChart = {
     barSize: '30%',
   },
 };
+
+const MyCustomCursor = (props: any) => {
+  // do something here to make your cursor different
+  return <Rectangle {...props} fill="red" fillOpacity={0.6} stroke="#111" />;
+};
+
+export const CustomCursorBarChart = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart {...args}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Bar dataKey="uv" fill="violet" stroke="indigo" />
+          <Tooltip cursor={<MyCustomCursor />} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+    /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
+    barSize: '30%',
+  },
+};
