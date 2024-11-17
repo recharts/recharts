@@ -21,7 +21,7 @@ interface LabelListProps<T extends Data> {
   data?: Array<T>;
   valueAccessor?: Function;
   clockWise?: boolean;
-  dataKey?: DataKey<T>;
+  dataKey?: DataKey<Record<string, any>>;
   content?: ContentType;
   textBreakAll?: boolean;
   position?: LabelPosition;
