@@ -850,6 +850,8 @@ export interface CategoricalChartProps {
   onMouseMove?: CategoricalChartFunc;
   onMouseDown?: CategoricalChartFunc;
   onMouseUp?: CategoricalChartFunc;
+  onContextMenu?: CategoricalChartFunc;
+  onDoubleClick?: CategoricalChartFunc;
   reverseStackOrder?: boolean;
   id?: string;
 
@@ -1482,11 +1484,13 @@ export const generateCategoricalChart = ({
         } else {
           tooltipEvents = {
             onMouseEnter: this.handleMouseEnter,
+            onDoubleClick: this.handleDoubleClick,
             onMouseMove: this.handleMouseMove,
             onMouseLeave: this.handleMouseLeave,
             onTouchMove: this.handleTouchMove,
             onTouchStart: this.handleTouchStart,
             onTouchEnd: this.handleTouchEnd,
+            onContextMenu: this.handleContextMenu,
           };
         }
       }
@@ -1713,6 +1717,24 @@ export const generateCategoricalChart = ({
     handleTouchEnd = (e: React.TouchEvent) => {
       if (e.changedTouches != null && e.changedTouches.length > 0) {
         this.handleMouseUp(e.changedTouches[0]);
+      }
+    };
+
+    handleDoubleClick = (e: React.MouseEvent) => {
+      const { onDoubleClick } = this.props;
+
+      if (isFunction(onDoubleClick)) {
+        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        onDoubleClick(nextState, e);
+      }
+    };
+
+    handleContextMenu = (e: React.MouseEvent) => {
+      const { onContextMenu } = this.props;
+
+      if (isFunction(onContextMenu)) {
+        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        onContextMenu(nextState, e);
       }
     };
 
