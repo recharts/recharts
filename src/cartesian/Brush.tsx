@@ -11,6 +11,7 @@ import React, {
   SVGProps,
   TouchEvent,
   useCallback,
+  useContext,
   useEffect,
 } from 'react';
 import clsx from 'clsx';
@@ -26,7 +27,7 @@ import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
-import { BrushStartEndIndex, OnBrushUpdate } from '../context/brushUpdateContext';
+import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { BrushSettings, setBrushSettings } from '../state/brushSlice';
@@ -862,6 +863,7 @@ function BrushInternal(props: Props) {
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
   const updateId = useUpdateId();
+  const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
 
@@ -873,11 +875,12 @@ function BrushInternal(props: Props) {
   const onChange = useCallback(
     (nextState: BrushStartEndIndex) => {
       if (nextState.startIndex !== startIndex || nextState.endIndex !== endIndex) {
+        onChangeFromContext?.(nextState);
         onChangeFromProps?.(nextState);
         dispatch(setDataStartEndIndexes(nextState));
       }
     },
-    [onChangeFromProps, dispatch, startIndex, endIndex],
+    [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
   );
 
   const { x, y, width } = useAppSelector(selectBrushDimensions);
