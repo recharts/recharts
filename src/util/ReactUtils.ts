@@ -26,6 +26,8 @@ const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
   touchend: 'onTouchEnd',
   touchmove: 'onTouchMove',
   touchstart: 'onTouchStart',
+  contextmenu: 'onContextMenu',
+  dblclick: 'onDoubleClick',
 };
 
 export const SCALE_TYPES = [

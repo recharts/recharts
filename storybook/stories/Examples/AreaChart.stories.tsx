@@ -3,7 +3,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
 import { pageData } from '../data';
-import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area } from '../../../src';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 
 export default {
   component: AreaChart,
@@ -45,6 +45,55 @@ export const StackedAreaChart = {
         <AreaChart
           width={500}
           height={400}
+          data={pageData}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+          <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+          <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+};
+
+const handleContextMenu = (state: any, event: any) => {
+  event.preventDefault();
+  // eslint-disable-next-line no-console
+  console.log('On context menu', { state, event });
+};
+
+const handleDoubleClick = (state: any, event: any) => {
+  event.preventDefault();
+  // eslint-disable-next-line no-console
+  console.log('On double click', { state, event });
+};
+
+const handleClick = (state: any, event: any) => {
+  event.preventDefault();
+  // eslint-disable-next-line no-console
+  console.log('On click', { state, event });
+};
+
+export const StackedAreaChartWithMouseEvents = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          width={500}
+          height={400}
+          onContextMenu={handleContextMenu}
+          onDoubleClick={handleDoubleClick}
+          onClick={handleClick}
           data={pageData}
           margin={{
             top: 10,
