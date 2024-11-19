@@ -27,7 +27,7 @@ import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
-import { BrushStartEndIndex, BrushUpdateDispatchContext, OnBrushUpdate } from '../context/brushUpdateContext';
+import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { BrushSettings, setBrushSettings } from '../state/brushSlice';
@@ -866,12 +866,12 @@ function BrushInternal(props: Props) {
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
+
   useEffect(() => {
     // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
-    if (startIndexFromProps !== startIndex || endIndexFromProps !== endIndex) {
-      dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
-    }
-  }, [dispatch, startIndexFromProps, endIndexFromProps, startIndex, endIndex]);
+    dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
+  }, [dispatch, endIndexFromProps, startIndexFromProps]);
+
   const onChange = useCallback(
     (nextState: BrushStartEndIndex) => {
       if (nextState.startIndex !== startIndex || nextState.endIndex !== endIndex) {
@@ -882,6 +882,7 @@ function BrushInternal(props: Props) {
     },
     [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
   );
+
   const { x, y, width } = useAppSelector(selectBrushDimensions);
   const contextProperties: PropertiesFromContext = {
     data: chartData,
