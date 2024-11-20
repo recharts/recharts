@@ -59,7 +59,7 @@ interface PieDef {
   /** The inner radius of sectors */
   innerRadius?: number | string;
   /** The outer radius of sectors */
-  outerRadius?: number | string;
+  outerRadius?: number | string | ((dataPoint: any) => number);
   cornerRadius?: number | string;
 }
 
@@ -340,22 +340,36 @@ const getTextAnchor = (x: number, cx: number) => {
   return 'middle';
 };
 
+const getOuterRadius = (
+  dataPoint: any,
+  outerRadius?: number | string | ((element: any) => number),
+  maxPieRadius?: number,
+) => {
+  if (typeof outerRadius === 'function') {
+    return outerRadius(dataPoint);
+  }
+  return getPercentValue(outerRadius, maxPieRadius, maxPieRadius * 0.8);
+};
+
 const parseCoordinateOfPie = (
   item: {
     cx?: number | string;
     cy?: number | string;
     innerRadius?: number | string;
-    outerRadius?: number | string;
+    outerRadius?: number | string | ((dataPoint: any) => number);
     maxRadius?: number;
   },
   offset: ChartOffset,
+  dataPoint: any,
 ): PieCoordinate => {
   const { top, left, width, height } = offset;
   const maxPieRadius = getMaxRadius(width, height);
   const cx = left + getPercentValue(item.cx, width, width / 2);
   const cy = top + getPercentValue(item.cy, height, height / 2);
   const innerRadius = getPercentValue(item.innerRadius, maxPieRadius, 0);
-  const outerRadius = getPercentValue(item.outerRadius, maxPieRadius, maxPieRadius * 0.8);
+
+  const outerRadius = getOuterRadius(dataPoint, item.outerRadius, maxPieRadius);
+
   const maxRadius = item.maxRadius || Math.sqrt(width * width + height * height) / 2;
 
   return { cx, cy, innerRadius, outerRadius, maxRadius };
@@ -423,15 +437,14 @@ export function computePieSectors({
     paddingAngle?: number;
     minAngle?: number;
     innerRadius?: number | string;
-    outerRadius?: number | string;
+    outerRadius?: number | string | ((dataPoint: any) => number);
     cornerRadius?: number | string;
     presentationProps?: Record<string, string>;
   };
   offset: ChartOffset;
-}): { sectors: ReadonlyArray<PieSectorDataItem>; coordinate: PieCoordinate } {
+}): { sectors: ReadonlyArray<PieSectorDataItem> } {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
-  const coordinate = parseCoordinateOfPie(pieSettings, offset);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
   const absDeltaAngle = Math.abs(deltaAngle);
   const paddingAngle = displayedData.length <= 1 ? 0 : (pieSettings.paddingAngle ?? 0);
@@ -451,6 +464,7 @@ export function computePieSectors({
     sectors = displayedData.map((entry: any, i: number) => {
       const val = getValueByDataKey(entry, dataKey, 0);
       const name = getValueByDataKey(entry, nameKey, i);
+      const coordinate = parseCoordinateOfPie(pieSettings, offset, entry);
       const percent = (isNumber(val) ? val : 0) / sum;
       let tempStartAngle;
 
@@ -497,12 +511,10 @@ export function computePieSectors({
         payload: entryWithCellInfo,
         paddingAngle: mathSign(deltaAngle) * paddingAngle,
       };
-
       return prev;
     });
   }
-
-  return { sectors, coordinate };
+  return { sectors };
 }
 
 export class PieWithState extends PureComponent<InternalProps, State> {

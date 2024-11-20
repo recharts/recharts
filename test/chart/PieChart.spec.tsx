@@ -406,4 +406,66 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.label-custom-className')).toHaveLength(6);
     expect(container.querySelectorAll('.label-line-custom-className')).toHaveLength(6);
   });
+
+  describe('PieChart sector radius rendering', () => {
+    const assertSectorRadius = (element: Element, radius: number) => {
+      // Checks if the 'd' attribute has an arc with the specified radius.
+      const dAttribute = element.getAttribute('d');
+      const arcRadius = new RegExp(`A ${radius},${radius}`);
+      expect(dAttribute).toMatch(arcRadius);
+    };
+
+    it('renders sectors with a constant radius', () => {
+      const outerRadius = 80;
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={[
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
+            ]}
+            cx={200}
+            cy={200}
+            outerRadius={outerRadius}
+            fill="#ff7300"
+          />
+        </PieChart>,
+      );
+
+      const elementA = container.querySelector('path[name="Group A"]');
+      assertSectorRadius(elementA, outerRadius);
+
+      const elementB = container.querySelector('path[name="Group B"]');
+      assertSectorRadius(elementB, outerRadius);
+    });
+
+    it('renders sectors with radius based on outerRadius function', () => {
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={[
+              { name: 'Group A', value: 400 },
+              { name: 'Group B', value: 300 },
+            ]}
+            cx={200}
+            cy={200}
+            outerRadius={(element: any) => {
+              return element.value / 10;
+            }}
+            fill="#ff7300"
+          />
+        </PieChart>,
+      );
+
+      const elementA = container.querySelector('path[name="Group A"]');
+      assertSectorRadius(elementA, 40);
+
+      const elementB = container.querySelector('path[name="Group B"]');
+      assertSectorRadius(elementB, 30);
+    });
+  });
 });

@@ -33,13 +33,13 @@ const GeneralProps: Args = {
   },
   outerRadius: {
     description: `The outer radius of all the sectors. If set a percentage, the final value is
-      obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.`,
+      obtained by multiplying the percentage of maxRadius which is calculated by the width, height, cx, cy.
+      If set a function, the function will be called to return customized radius.`,
     table: {
-      type: { summary: 'percentage | number', defaultValue: '80%' },
+      type: { summary: 'percentage | number | Function', defaultValue: '80%' },
       category: 'General',
     },
   },
-
   startAngle: {
     description: 'The start angle of first sector.',
     table: {

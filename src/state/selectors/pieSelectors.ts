@@ -28,7 +28,7 @@ export type ResolvedPieSettings = {
   paddingAngle?: number;
   minAngle?: number;
   innerRadius?: number | string;
-  outerRadius?: number | string;
+  outerRadius?: number | string | ((element: any) => number);
   cornerRadius?: number | string;
   presentationProps?: Record<string, string>;
 };
