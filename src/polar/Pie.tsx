@@ -437,7 +437,7 @@ export function computePieSectors({
     paddingAngle?: number;
     minAngle?: number;
     innerRadius?: number | string;
-    outerRadius?: number | string | ((element: any) => number);
+    outerRadius?: number | string | ((dataPoint: any) => number);
     cornerRadius?: number | string;
     presentationProps?: Record<string, string>;
   };
