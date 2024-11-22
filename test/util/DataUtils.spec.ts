@@ -10,6 +10,8 @@ import {
   getLinearRegression,
   findEntryInArray,
   uniqueId,
+  isNullOrUndefined,
+  upperFirst,
 } from '../../src/util/DataUtils';
 
 /**
@@ -271,5 +273,27 @@ describe('getLinearRegression', () => {
       xmax: 0,
       xmin: 0,
     });
+  });
+});
+
+describe('isNullOrUndefined', () => {
+  it('should return true when value is null', () => {
+    expect(isNullOrUndefined(null)).toBe(true);
+  });
+
+  it('should return true when value is undefined', () => {
+    expect(isNullOrUndefined(undefined)).toBe(true);
+  });
+
+  it('should return false when value is not null or undefined', () => {
+    expect(isNullOrUndefined(0)).toBe(false);
+    expect(isNullOrUndefined('')).toBe(false);
+    expect(isNullOrUndefined('0')).toBe(false);
+  });
+});
+
+describe('upperFirst', () => {
+  it('should return the string with the first letter uppercased', () => {
+    expect(upperFirst('hello')).toBe('Hello');
   });
 });
