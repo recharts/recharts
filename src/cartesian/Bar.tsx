@@ -6,14 +6,13 @@ import React, { Key, PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
-import isNil from 'lodash/isNil';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
-import { interpolateNumber, mathSign, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNullOrUndefined, mathSign, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
@@ -481,7 +480,7 @@ class BarWithState extends PureComponent<InternalProps, State> {
 
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-bar', className);
-    const clipPathId = isNil(id) ? this.id : id;
+    const clipPathId = isNullOrUndefined(id) ? this.id : id;
 
     return (
       <Layer className={layerClass}>

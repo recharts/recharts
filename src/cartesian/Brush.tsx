@@ -16,7 +16,6 @@ import React, {
 } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
-import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -101,7 +100,7 @@ function Traveller(props: { travellerType: BrushTravellerType; travellerProps: T
     // @ts-expect-error element cloning disagrees with the types (and it should)
     return React.cloneElement(travellerType, travellerProps);
   }
-  if (isFunction(travellerType)) {
+  if (typeof travellerType === 'function') {
     return travellerType(travellerProps);
   }
   return <DefaultTraveller {...travellerProps} />;
@@ -186,7 +185,7 @@ function getTextOfTick(props: TextOfTickProps): ReactText {
   const text = getValueByDataKey(data[index], dataKey, index);
 
   // @ts-expect-error getValueByDataKey does not validate the output type
-  return isFunction(tickFormatter) ? tickFormatter(text, index) : text;
+  return typeof tickFormatter === 'function' ? tickFormatter(text, index) : text;
 }
 
 function getIndexInRange(valueRange: number[], x: number) {

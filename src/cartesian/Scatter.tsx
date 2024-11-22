@@ -2,9 +2,7 @@
 import React, { Component, PureComponent, ReactElement, useMemo } from 'react';
 import Animate from 'react-smooth';
 
-import isNil from 'lodash/isNil';
 import isEqual from 'lodash/isEqual';
-import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
@@ -14,7 +12,7 @@ import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
-import { getLinearRegression, interpolateNumber, uniqueId } from '../util/DataUtils';
+import { getLinearRegression, interpolateNumber, isNullOrUndefined, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -269,8 +267,8 @@ export function computeScatterPoints({
   yAxisTicks: TickItem[];
   cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<ScatterPointItem> {
-  const xAxisDataKey = isNil(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
-  const yAxisDataKey = isNil(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
+  const xAxisDataKey = isNullOrUndefined(xAxis.dataKey) ? scatterSettings.dataKey : xAxis.dataKey;
+  const yAxisDataKey = isNullOrUndefined(yAxis.dataKey) ? scatterSettings.dataKey : yAxis.dataKey;
   const zAxisDataKey = zAxis && zAxis.dataKey;
   const defaultRangeZ = zAxis ? zAxis.range : ZAxis.defaultProps.range;
   const defaultZ = defaultRangeZ && defaultRangeZ[0];
@@ -279,12 +277,12 @@ export function computeScatterPoints({
   return displayedData.map((entry, index): ScatterPointItem => {
     const x = getValueByDataKey(entry, xAxisDataKey);
     const y = getValueByDataKey(entry, yAxisDataKey);
-    const z = (!isNil(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
+    const z = (!isNullOrUndefined(zAxisDataKey) && getValueByDataKey(entry, zAxisDataKey)) || '-';
 
     const tooltipPayload: Array<TooltipPayloadEntry> = [
       {
         // @ts-expect-error name prop should not have dataKey in it
-        name: isNil(xAxis.dataKey) ? scatterSettings.name : xAxis.name || xAxis.dataKey,
+        name: isNullOrUndefined(xAxis.dataKey) ? scatterSettings.name : xAxis.name || xAxis.dataKey,
         unit: xAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: x,
@@ -294,7 +292,7 @@ export function computeScatterPoints({
       },
       {
         // @ts-expect-error name prop should not have dataKey in it
-        name: isNil(yAxis.dataKey) ? scatterSettings.name : yAxis.name || yAxis.dataKey,
+        name: isNullOrUndefined(yAxis.dataKey) ? scatterSettings.name : yAxis.name || yAxis.dataKey,
         unit: yAxis.unit || '',
         // @ts-expect-error getValueByDataKey does not validate the output type
         value: y,
@@ -385,7 +383,7 @@ function ScatterLine(props: InternalProps) {
 
   if (React.isValidElement(line)) {
     lineItem = React.cloneElement(line as any, lineProps);
-  } else if (isFunction(line)) {
+  } else if (typeof line === 'function') {
     lineItem = line(lineProps);
   } else {
     lineItem = <Curve {...lineProps} type={lineJointType} />;
@@ -508,7 +506,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
     }
     const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
-    const clipPathId = isNil(id) ? this.id : id;
+    const clipPathId = isNullOrUndefined(id) ? this.id : id;
     return (
       <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
         {needClip && (

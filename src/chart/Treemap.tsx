@@ -1,6 +1,4 @@
 import React, { PureComponent } from 'react';
-import isNan from 'lodash/isNaN';
-import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 import Smooth from 'react-smooth';
@@ -118,7 +116,7 @@ export const computeNode = ({
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify dataKey
-    nodeValue = isNan(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
+    nodeValue = Number.isNaN(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
   }
 
   return {
@@ -144,7 +142,7 @@ const getAreaOfChildren = (children: ReadonlyArray<TreemapNode>, areaValueRatio:
 
     return {
       ...child,
-      area: isNan(area) || area <= 0 ? 0 : area,
+      area: Number.isNaN(area) || area <= 0 ? 0 : area,
     };
   });
 };
@@ -402,7 +400,7 @@ function ContentItem({
   if (React.isValidElement(content)) {
     return React.cloneElement(content, nodeProps);
   }
-  if (isFunction(content)) {
+  if (typeof content === 'function') {
     return content(nodeProps);
   }
   // optimize default shape
@@ -617,7 +615,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -626,7 +624,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };
@@ -830,7 +828,7 @@ export class Treemap extends PureComponent<Props, State> {
           if (React.isValidElement(nestIndexContent)) {
             content = React.cloneElement(nestIndexContent, item, i);
           }
-          if (isFunction(nestIndexContent)) {
+          if (typeof nestIndexContent === 'function') {
             content = nestIndexContent(item, i);
           } else {
             content = name;

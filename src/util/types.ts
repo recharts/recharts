@@ -23,7 +23,6 @@ import {
   WheelEvent,
   JSX,
 } from 'react';
-import isObject from 'lodash/isObject';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
@@ -1245,7 +1244,7 @@ export const adaptEventHandlers = (
     inputProps = props.props as RecordString<any>;
   }
 
-  if (!isObject(inputProps)) {
+  if (typeof inputProps !== 'object' && typeof inputProps !== 'function') {
     return null;
   }
 
@@ -1273,7 +1272,7 @@ export const adaptEventsOfChild = (
   data: any,
   index: number,
 ): RecordString<(e?: Event) => any> | null => {
-  if (!isObject(props) || typeof props !== 'object') {
+  if (props === null || (typeof props !== 'object' && typeof props !== 'function')) {
     return null;
   }
 

@@ -2,7 +2,6 @@
  * @fileOverview Curve
  */
 import React, { SVGProps } from 'react';
-import upperFirst from 'lodash/upperFirst';
 
 import {
   symbol as shapeSymbol,
@@ -18,6 +17,7 @@ import {
 import clsx from 'clsx';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { upperFirst } from '../util/DataUtils';
 
 type SizeType = 'area' | 'diameter';
 
@@ -80,7 +80,7 @@ export interface InnerSymbolsProp {
 export type SymbolsProps = SVGProps<SVGPathElement> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
-  symbolFactories[`symbol${upperFirst(key)}`] = factory;
+  symbolFactories[`symbol${key.substring(0, 1).toUpperCase() + key.substring(1)}`] = factory;
 };
 
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {

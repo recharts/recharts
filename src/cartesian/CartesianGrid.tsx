@@ -2,7 +2,6 @@
  * @fileOverview Cartesian Grid
  */
 import React, { ReactElement, SVGProps } from 'react';
-import isFunction from 'lodash/isFunction';
 
 import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';
@@ -177,7 +176,7 @@ function renderLineItem(option: GridLineType, props: LineItemProps) {
   if (React.isValidElement(option)) {
     // @ts-expect-error typescript does not see the props type when cloning an element
     lineItem = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     lineItem = option(props);
   } else {
     const { x1, y1, x2, y2, key, ...others } = props;
@@ -429,7 +428,7 @@ export function CartesianGrid(props: Props) {
   let { horizontalPoints, verticalPoints } = propsIncludingDefaults;
 
   // No horizontal points are specified
-  if ((!horizontalPoints || !horizontalPoints.length) && isFunction(horizontalCoordinatesGenerator)) {
+  if ((!horizontalPoints || !horizontalPoints.length) && typeof horizontalCoordinatesGenerator === 'function') {
     const isHorizontalValues = horizontalValues && horizontalValues.length;
 
     const generatorResult = horizontalCoordinatesGenerator(
@@ -457,7 +456,7 @@ export function CartesianGrid(props: Props) {
   }
 
   // No vertical points are specified
-  if ((!verticalPoints || !verticalPoints.length) && isFunction(verticalCoordinatesGenerator)) {
+  if ((!verticalPoints || !verticalPoints.length) && typeof verticalCoordinatesGenerator === 'function') {
     const isVerticalValues = verticalValues && verticalValues.length;
     const generatorResult = verticalCoordinatesGenerator(
       {

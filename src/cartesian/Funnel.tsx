@@ -1,9 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import React, { PureComponent } from 'react';
 import Animate from 'react-smooth';
-import isFunction from 'lodash/isFunction';
-import isNumber from 'lodash/isNumber';
-import isString from 'lodash/isString';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
 
@@ -192,9 +189,9 @@ const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, o
   const realHeight = height;
   let realWidth = width;
 
-  if (isNumber(customWidth)) {
+  if (typeof customWidth === 'number') {
     realWidth = customWidth;
-  } else if (isString(customWidth)) {
+  } else if (typeof customWidth === 'string') {
     realWidth = (realWidth * parseFloat(customWidth)) / 100;
   }
 
@@ -230,7 +227,7 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -239,7 +236,7 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };

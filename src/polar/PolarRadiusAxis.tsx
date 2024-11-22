@@ -1,7 +1,6 @@
 import React, { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
 import maxBy from 'lodash/maxBy';
 import minBy from 'lodash/minBy';
-import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
@@ -130,7 +129,7 @@ const renderTickItem = (option: Props['tick'], tickProps: any, value: string | n
 
   if (React.isValidElement(option)) {
     tickItem = React.cloneElement(option, tickProps);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     tickItem = option(tickProps);
   } else {
     tickItem = (

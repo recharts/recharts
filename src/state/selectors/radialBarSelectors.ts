@@ -1,6 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ReactElement } from 'react';
-import isNil from 'lodash/isNil';
 import { Series } from 'victory-vendor/d3-shape';
 import { computeRadialBarDataItems, RadialBarDataItem } from '../../polar/RadialBar';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -39,6 +38,7 @@ import {
 import { selectStackOffsetType } from './selectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { Payload as LegendPayload } from '../../component/DefaultLegendContent';
+import { isNullOrUndefined } from '../../util/DataUtils';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
   dataKey: DataKey<any> | undefined;
@@ -248,7 +248,7 @@ export const selectPolarBarBandSize: (
     radiusAxisTicks,
     childMaxBarSize: number | undefined,
   ): number | undefined => {
-    const maxBarSize: number = isNil(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+    const maxBarSize: number = isNullOrUndefined(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
     if (layout === 'centric') {
       return getBandSizeOfAxis(angleAxis, angleAxisTicks, true) ?? maxBarSize ?? 0;
     }

@@ -1,8 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import React, { Component, PureComponent } from 'react';
 import Animate from 'react-smooth';
-import isFunction from 'lodash/isFunction';
-import isNil from 'lodash/isNil';
 import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
@@ -12,7 +10,7 @@ import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
-import { interpolateNumber, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNullOrUndefined, uniqueId } from '../util/DataUtils';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -217,7 +215,7 @@ function renderDotItem(option: ActiveDotType, props: any) {
 
   if (React.isValidElement(option)) {
     dotItem = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     dotItem = option(props);
   } else {
     const className = clsx('recharts-line-dot', typeof option !== 'boolean' ? option.className : '');
@@ -485,7 +483,7 @@ class LineWithState extends Component<InternalProps, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-line', className);
-    const clipPathId = isNil(id) ? this.id : id;
+    const clipPathId = isNullOrUndefined(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
@@ -639,14 +637,14 @@ export function computeLinePoints({
     if (layout === 'horizontal') {
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isNil(value) ? null : yAxis.scale(value),
+        y: isNullOrUndefined(value) ? null : yAxis.scale(value),
         value,
         payload: entry,
       };
     }
 
     return {
-      x: isNil(value) ? null : xAxis.scale(value),
+      x: isNullOrUndefined(value) ? null : xAxis.scale(value),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value,
       payload: entry,

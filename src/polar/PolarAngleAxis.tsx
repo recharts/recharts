@@ -1,5 +1,4 @@
 import React, { FunctionComponent, PureComponent, ReactElement, SVGProps, useEffect } from 'react';
-import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
@@ -148,7 +147,7 @@ const TickItemText = ({ tick, allAxisProps, tickProps, value }: TickItemProps): 
   if (React.isValidElement(tick)) {
     return React.cloneElement(tick, tickProps);
   }
-  if (isFunction(tick)) {
+  if (typeof tick === 'function') {
     return tick(allAxisProps);
   }
   return (

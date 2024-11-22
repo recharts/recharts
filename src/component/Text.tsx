@@ -1,8 +1,7 @@
 import React, { CSSProperties, SVGProps, useMemo } from 'react';
 
-import isNil from 'lodash/isNil';
 import clsx from 'clsx';
-import { isNumber, isNumOrStr } from '../util/DataUtils';
+import { isNullOrUndefined, isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
@@ -25,7 +24,7 @@ type CalculateWordWidthsParam = Pick<Props, 'children' | 'breakAll' | 'style'>;
 const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsParam): CalculatedWordWidths => {
   try {
     let words: string[] = [];
-    if (!isNil(children)) {
+    if (!isNullOrUndefined(children)) {
       if (breakAll) {
         words = children.toString().split('');
       } else {
@@ -161,7 +160,7 @@ const calculateWordsByLines = (
 };
 
 const getWordsWithoutCalculate = (children: React.ReactNode): Array<Words> => {
-  const words = !isNil(children) ? children.toString().split(BREAKING_SPACES) : [];
+  const words = !isNullOrUndefined(children) ? children.toString().split(BREAKING_SPACES) : [];
   return [{ words }];
 };
 

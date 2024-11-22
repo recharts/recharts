@@ -1,14 +1,12 @@
 // eslint-disable-next-line max-classes-per-file
 import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
 import Animate from 'react-smooth';
-import isNil from 'lodash/isNil';
 import last from 'lodash/last';
 import first from 'lodash/first';
 import isEqual from 'lodash/isEqual';
-import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
-import { interpolateNumber } from '../util/DataUtils';
+import { interpolateNumber, isNullOrUndefined } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
@@ -148,7 +146,7 @@ function renderDotItem(option: RadarDot, props: DotProps) {
   if (React.isValidElement(option)) {
     // @ts-expect-error typescript is unhappy with cloned props type
     dotItem = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     dotItem = option(props);
   } else {
     dotItem = (
@@ -182,7 +180,7 @@ export function computeRadarPoints({
     const value = getValueByDataKey(entry, dataKey);
     const angle = angleAxis.scale(name) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
-    const radius = isNil(pointValue) ? undefined : radiusAxis.scale(pointValue);
+    const radius = isNullOrUndefined(pointValue) ? undefined : radiusAxis.scale(pointValue);
 
     if (Array.isArray(value) && value.length >= 2) {
       isRange = true;
@@ -207,7 +205,7 @@ export function computeRadarPoints({
     points.forEach(point => {
       if (Array.isArray(point.value)) {
         const baseValue = first(point.value);
-        const radius = isNil(baseValue) ? undefined : radiusAxis.scale(baseValue);
+        const radius = isNullOrUndefined(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
         baseLinePoints.push({
           ...point,
@@ -260,7 +258,7 @@ class RadarWithState extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -270,7 +268,7 @@ class RadarWithState extends PureComponent<Props, State> {
 
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };
@@ -321,7 +319,7 @@ class RadarWithState extends PureComponent<Props, State> {
     let radar;
     if (React.isValidElement(shape)) {
       radar = React.cloneElement(shape, { ...this.props, points } as any);
-    } else if (isFunction(shape)) {
+    } else if (typeof shape === 'function') {
       radar = shape({ ...this.props, points });
     } else {
       radar = (

@@ -2,17 +2,14 @@
 import React, { PureComponent } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isFunction from 'lodash/isFunction';
 import max from 'lodash/max';
-import isNil from 'lodash/isNil';
-import isNan from 'lodash/isNaN';
 import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolateNumber, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNullOrUndefined, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveDotType,
@@ -190,7 +187,7 @@ const renderDotItem = (option: ActiveDotType, props: any) => {
 
   if (React.isValidElement(option)) {
     dotItem = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     dotItem = option(props);
   } else {
     const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
@@ -232,7 +229,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
 
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -241,7 +238,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };
@@ -399,7 +396,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
     const { prevPoints, prevBaseLine } = this.state;
-    // const clipPathId = isNil(id) ? this.id : id;
+    // const clipPathId = isNullOrUndefined(id) ? this.id : id;
 
     return (
       <Animate
@@ -434,7 +431,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
             if (isNumber(baseLine) && typeof baseLine === 'number') {
               const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
               stepBaseLine = interpolator(t);
-            } else if (isNil(baseLine) || isNan(baseLine)) {
+            } else if (isNullOrUndefined(baseLine) || Number.isNaN(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, 0);
               stepBaseLine = interpolator(t);
             } else {
@@ -511,7 +508,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-area', className);
-    const clipPathId = isNil(id) ? this.id : id;
+    const clipPathId = isNullOrUndefined(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;

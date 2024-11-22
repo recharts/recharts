@@ -1,9 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
-import isNan from 'lodash/isNaN';
 import * as d3Scales from 'victory-vendor/d3-scale';
-import upperFirst from 'lodash/upperFirst';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   checkDomainOfScale,
@@ -47,7 +45,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, mathSign } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, mathSign, upperFirst } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -1636,7 +1634,7 @@ export const combineAxisTicks = (
       };
     });
 
-    return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
+    return result.filter((row: CartesianTickItem) => !Number.isNaN(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"

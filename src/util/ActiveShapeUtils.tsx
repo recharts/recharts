@@ -1,7 +1,5 @@
 import React, { cloneElement, isValidElement, SVGProps } from 'react';
-import isFunction from 'lodash/isFunction';
 import isPlainObject from 'lodash/isPlainObject';
-import isBoolean from 'lodash/isBoolean';
 
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
@@ -87,9 +85,9 @@ export function Shape<OptionType, ExtraProps, ShapePropsType>({
 
   if (isValidElement(option)) {
     shape = cloneElement(option, { ...props, ...getPropsFromShapeOption(option) });
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     shape = option(props);
-  } else if (isPlainObject(option) && !isBoolean(option)) {
+  } else if (isPlainObject(option) && typeof option !== 'boolean') {
     const nextProps = propTransformer(option, props);
     shape = <ShapeSelector<ShapePropsType> shapeType={shapeType} elementProps={nextProps} />;
   } else {

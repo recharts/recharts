@@ -1,7 +1,4 @@
 import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
-import isNil from 'lodash/isNil';
-import isObject from 'lodash/isObject';
-import isFunction from 'lodash/isFunction';
 import last from 'lodash/last';
 
 import { Label, ContentType, Props as LabelProps, LabelPosition } from './Label';
@@ -9,6 +6,7 @@ import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { DataKey, ViewBox } from '../util/types';
+import { isNullOrUndefined } from '../util/DataUtils';
 
 interface Data {
   value?: number | string | Array<number | string>;
@@ -51,10 +49,10 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
   return (
     <Layer className="recharts-label-list">
       {data.map((entry, index) => {
-        const value = isNil(dataKey)
+        const value = isNullOrUndefined(dataKey)
           ? valueAccessor(entry, index)
           : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
-        const idProps = isNil(id) ? {} : { id: `${id}-${index}` };
+        const idProps = isNullOrUndefined(id) ? {} : { id: `${id}-${index}` };
 
         return (
           <Label
@@ -64,7 +62,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
             parentViewBox={entry.parentViewBox}
             value={value}
             textBreakAll={textBreakAll}
-            viewBox={Label.parseViewBox(isNil(clockWise) ? entry : { ...entry, clockWise })}
+            viewBox={Label.parseViewBox(isNullOrUndefined(clockWise) ? entry : { ...entry, clockWise })}
             key={`label-${index}`} // eslint-disable-line react/no-array-index-key
             index={index}
           />
@@ -85,11 +83,11 @@ function parseLabelList<T extends Data>(label: unknown, data: ReadonlyArray<T>) 
     return <LabelList key="labelList-implicit" data={data} />;
   }
 
-  if (React.isValidElement(label) || isFunction(label)) {
+  if (React.isValidElement(label) || typeof label === 'function') {
     return <LabelList key="labelList-implicit" data={data} content={label} />;
   }
 
-  if (isObject(label)) {
+  if (typeof label === 'object') {
     return <LabelList data={data} {...label} key="labelList-implicit" />;
   }
 

@@ -2,7 +2,6 @@
  * @fileOverview Reference Line
  */
 import React, { Component, ReactElement, SVGProps, useEffect } from 'react';
-import isFunction from 'lodash/isFunction';
 import some from 'lodash/some';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
@@ -69,7 +68,7 @@ const renderLine = (option: ReferenceLineProps['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     line = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     line = option(props);
   } else {
     line = <line {...props} className="recharts-reference-line-line" />;

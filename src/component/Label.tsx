@@ -1,15 +1,20 @@
 import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import isNil from 'lodash/isNil';
-import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
 import clsx from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
-import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign } from '../util/DataUtils';
+import {
+  isNumOrStr,
+  isNumber,
+  isPercent,
+  getPercentValue,
+  uniqueId,
+  mathSign,
+  isNullOrUndefined,
+} from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
 
-export type ContentType = ReactElement | ((props: Props) => ReactNode);
+export type ContentType = ReactElement | ((props: Props) => ReactNode) | Function;
 
 export type LabelPosition =
   | 'top'
@@ -66,9 +71,9 @@ export type ImplicitLabelType =
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
-  const label = isNil(props.children) ? value : props.children;
+  const label = isNullOrUndefined(props.children) ? value : props.children;
 
-  if (isFunction(formatter)) {
+  if (typeof formatter === 'function') {
     return formatter(label);
   }
 
@@ -108,7 +113,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = isNil(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
+  const id = isNullOrUndefined(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
@@ -354,7 +359,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   }
 
   if (
-    isObject(position) &&
+    !!position &&
+    typeof position === 'object' &&
     (isNumber(position.x) || isPercent(position.x)) &&
     (isNumber(position.y) || isPercent(position.y))
   ) {
@@ -383,7 +389,13 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
   const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
 
-  if (!viewBox || (isNil(value) && isNil(children) && !isValidElement(content) && !isFunction(content))) {
+  if (
+    !viewBox ||
+    (isNullOrUndefined(value) &&
+      isNullOrUndefined(children) &&
+      !isValidElement(content) &&
+      typeof content !== 'function')
+  ) {
     return null;
   }
 
@@ -392,7 +404,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
   }
 
   let label: ReactNode;
-  if (isFunction(content)) {
+  if (typeof content === 'function') {
     label = createElement(content as any, props);
 
     if (isValidElement(label)) {
@@ -498,11 +510,11 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (isFunction(label)) {
+  if (isValidElement(label) || typeof label === 'function') {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (isObject(label)) {
+  if (label && typeof label === 'object') {
     return <Label viewBox={viewBox} {...label} key="label-implicit" />;
   }
 
