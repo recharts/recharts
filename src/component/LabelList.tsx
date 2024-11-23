@@ -1,7 +1,7 @@
 import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
 import last from 'lodash/last';
 
-import { Label, ContentType, Props as LabelProps, LabelPosition } from './Label';
+import { Label, ContentType, Props as LabelProps, LabelPosition, isLabelContentAFunction } from './Label';
 import { Layer } from '../container/Layer';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -83,7 +83,7 @@ function parseLabelList<T extends Data>(label: unknown, data: ReadonlyArray<T>) 
     return <LabelList key="labelList-implicit" data={data} />;
   }
 
-  if (React.isValidElement(label) || typeof label === 'function') {
+  if (React.isValidElement(label) || isLabelContentAFunction(label)) {
     return <LabelList key="labelList-implicit" data={data} content={label} />;
   }
 

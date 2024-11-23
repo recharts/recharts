@@ -72,7 +72,7 @@ const getLabel = (props: Props) => {
   return label;
 };
 
-const isLabelContentAFunction = (content: unknown): content is (props: Props) => React.ReactNode => {
+export const isLabelContentAFunction = (content: unknown): content is (props: Props) => React.ReactNode => {
   return content && typeof content === 'function';
 };
 
