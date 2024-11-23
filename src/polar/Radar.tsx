@@ -6,7 +6,7 @@ import first from 'lodash/first';
 import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
-import { interpolateNumber, isNullOrUndefined } from '../util/DataUtils';
+import { interpolateNumber, isNullish } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
 import { getTooltipNameProp, getValueByDataKey, RechartsScale } from '../util/ChartUtils';
@@ -180,7 +180,7 @@ export function computeRadarPoints({
     const value = getValueByDataKey(entry, dataKey);
     const angle = angleAxis.scale(name) + angleBandSize;
     const pointValue = Array.isArray(value) ? last(value) : value;
-    const radius = isNullOrUndefined(pointValue) ? undefined : radiusAxis.scale(pointValue);
+    const radius = isNullish(pointValue) ? undefined : radiusAxis.scale(pointValue);
 
     if (Array.isArray(value) && value.length >= 2) {
       isRange = true;
@@ -205,7 +205,7 @@ export function computeRadarPoints({
     points.forEach(point => {
       if (Array.isArray(point.value)) {
         const baseValue = first(point.value);
-        const radius = isNullOrUndefined(baseValue) ? undefined : radiusAxis.scale(baseValue);
+        const radius = isNullish(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
         baseLinePoints.push({
           ...point,

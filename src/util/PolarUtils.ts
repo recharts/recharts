@@ -1,5 +1,5 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import { getPercentValue, isNullOrUndefined } from './DataUtils';
+import { getPercentValue, isNullish } from './DataUtils';
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 import { Coordinate, ChartOffset, GeometrySector, RangeObj } from './types';
 
@@ -59,7 +59,7 @@ export const formatAxisMap = (
     const { domain, reversed } = axis;
     let range;
 
-    if (isNullOrUndefined(axis.range)) {
+    if (isNullish(axis.range)) {
       if (axisType === 'angleAxis') {
         range = [startAngle, endAngle];
       } else if (axisType === 'radiusAxis') {

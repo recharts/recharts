@@ -164,7 +164,7 @@ export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: numb
  * @param {any} value The value to check
  * @returns {boolean} true if the value is null or undefined
  */
-export const isNullOrUndefined = (value: any): boolean => {
+export const isNullish = (value: any): boolean => {
   return value === null || typeof value === 'undefined';
 };
 
@@ -174,5 +174,9 @@ export const isNullOrUndefined = (value: any): boolean => {
  * @returns {string} The uppercased string
  */
 export const upperFirst = (value: string): string => {
+  if (isNullish(value)) {
+    return value;
+  }
+
   return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 };

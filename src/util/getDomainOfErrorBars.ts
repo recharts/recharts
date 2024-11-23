@@ -5,7 +5,7 @@ import { AxisType, BaseAxisProps, CategoricalDomain, DataKey, LayoutType, Number
 import { findAllByType } from './ReactUtils';
 import { ErrorBar } from '../cartesian/ErrorBar';
 import { getDomainOfDataByKey, getValueByDataKey, isErrorBarRelevantForAxis } from './ChartUtils';
-import { isNullOrUndefined } from './DataUtils';
+import { isNullish } from './DataUtils';
 
 /**
  * @deprecated - this is using direct DOM access. Use different approach.
@@ -34,7 +34,7 @@ export const getDomainOfErrorBars = (
     return data.reduce<NumberDomain>(
       (result: NumberDomain, entry: object): NumberDomain => {
         const entryValue = getValueByDataKey(entry, dataKey);
-        if (isNullOrUndefined(entryValue)) return result;
+        if (isNullish(entryValue)) return result;
 
         const mainValue = Array.isArray(entryValue) ? [min(entryValue), max(entryValue)] : [entryValue, entryValue];
         const errorDomain = keys.reduce(
@@ -75,7 +75,7 @@ export const parseErrorBarsOfAxis = (
 ): NumberDomain | null => {
   const domains = items
     .map(item => getDomainOfErrorBars(data, item, dataKey, layout, axisType))
-    .filter(entry => !isNullOrUndefined(entry));
+    .filter(entry => !isNullish(entry));
 
   if (domains && domains.length) {
     return domains.reduce(

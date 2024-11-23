@@ -12,7 +12,7 @@ import {
   StackGroup,
 } from './axisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
-import { getPercentValue, isNullOrUndefined } from '../../util/DataUtils';
+import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
 import { DataKey, LayoutType, TickItem } from '../../util/types';
@@ -72,7 +72,7 @@ const getBarSize = (
 ): number | undefined => {
   const barSize: string | number | undefined = selfSize ?? globalSize;
 
-  return isNullOrUndefined(barSize) ? undefined : getPercentValue(barSize, totalSize, 0);
+  return isNullish(barSize) ? undefined : getPercentValue(barSize, totalSize, 0);
 };
 
 export const selectAllVisibleBars: (
@@ -203,7 +203,7 @@ export const selectBarBandSize: (
   const layout = selectChartLayout(state);
   const globalMaxBarSize: number | undefined = selectRootMaxBarSize(state);
   const { maxBarSize: childMaxBarSize } = barSettings;
-  const maxBarSize: number = isNullOrUndefined(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
   let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
   if (layout === 'horizontal') {
     axis = selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
@@ -344,7 +344,7 @@ export const combineAllBarPositions = (
   bandSize: number,
   childMaxBarSize: number | undefined,
 ): ReadonlyArray<BarWithPosition> | undefined => {
-  const maxBarSize: number = isNullOrUndefined(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
 
   let allBarPositions = getBarPositions(
     barGap,

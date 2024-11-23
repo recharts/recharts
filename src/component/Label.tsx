@@ -2,15 +2,7 @@ import React, { cloneElement, isValidElement, ReactNode, ReactElement, createEle
 import clsx from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
-import {
-  isNumOrStr,
-  isNumber,
-  isPercent,
-  getPercentValue,
-  uniqueId,
-  mathSign,
-  isNullOrUndefined,
-} from '../util/DataUtils';
+import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
 
@@ -71,7 +63,7 @@ export type ImplicitLabelType =
 
 const getLabel = (props: Props) => {
   const { value, formatter } = props;
-  const label = isNullOrUndefined(props.children) ? value : props.children;
+  const label = isNullish(props.children) ? value : props.children;
 
   if (typeof formatter === 'function') {
     return formatter(label);
@@ -113,7 +105,7 @@ const renderRadialLabel = (labelProps: Props, label: ReactNode, attrs: SVGProps<
   const path = `M${startPoint.x},${startPoint.y}
     A${radius},${radius},0,1,${direction ? 0 : 1},
     ${endPoint.x},${endPoint.y}`;
-  const id = isNullOrUndefined(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
+  const id = isNullish(labelProps.id) ? uniqueId('recharts-radial-line-') : labelProps.id;
 
   return (
     <text {...attrs} dominantBaseline="central" className={clsx('recharts-radial-bar-label', className)}>
@@ -391,10 +383,7 @@ export function Label({ offset = 5, ...restProps }: Props) {
 
   if (
     !viewBox ||
-    (isNullOrUndefined(value) &&
-      isNullOrUndefined(children) &&
-      !isValidElement(content) &&
-      typeof content !== 'function')
+    (isNullish(value) && isNullish(children) && !isValidElement(content) && typeof content !== 'function')
   ) {
     return null;
   }
@@ -510,7 +499,7 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (isValidElement(label) || typeof label === 'function') {
+  if (typeof label === 'function') {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 

@@ -10,7 +10,7 @@ import {
   getLinearRegression,
   findEntryInArray,
   uniqueId,
-  isNullOrUndefined,
+  isNullish,
   upperFirst,
 } from '../../src/util/DataUtils';
 
@@ -276,23 +276,35 @@ describe('getLinearRegression', () => {
   });
 });
 
-describe('isNullOrUndefined', () => {
+describe('isNullish', () => {
   it('should return true when value is null', () => {
-    expect(isNullOrUndefined(null)).toBe(true);
+    expect(isNullish(null)).toBe(true);
   });
 
   it('should return true when value is undefined', () => {
-    expect(isNullOrUndefined(undefined)).toBe(true);
+    expect(isNullish(undefined)).toBe(true);
   });
 
   it('should return false when value is not null or undefined', () => {
-    expect(isNullOrUndefined(0)).toBe(false);
-    expect(isNullOrUndefined('')).toBe(false);
-    expect(isNullOrUndefined('0')).toBe(false);
+    expect(isNullish(0)).toBe(false);
+    expect(isNullish('')).toBe(false);
+    expect(isNullish('0')).toBe(false);
   });
 });
 
 describe('upperFirst', () => {
+  it('should return null when value is null', () => {
+    expect(upperFirst(null)).toBe(null);
+  });
+
+  it('should return undefined when value is undefined', () => {
+    expect(upperFirst(undefined)).toBe(undefined);
+  });
+
+  it('should return empty string when value is empty string', () => {
+    expect(upperFirst('')).toBe('');
+  });
+
   it('should return the string with the first letter uppercased', () => {
     expect(upperFirst('hello')).toBe('Hello');
   });

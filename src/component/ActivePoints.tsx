@@ -5,7 +5,7 @@ import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/useTooltipAxis';
 import { useTooltipContext } from '../context/tooltipContext';
-import { findEntryInArray, isNullOrUndefined } from '../util/DataUtils';
+import { findEntryInArray, isNullish } from '../util/DataUtils';
 
 export interface PointType {
   readonly x: number;
@@ -88,7 +88,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     activePoint = points?.[activeTooltipIndex];
   }
 
-  if (isNullOrUndefined(activePoint)) {
+  if (isNullish(activePoint)) {
     return null;
   }
 

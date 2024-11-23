@@ -20,7 +20,7 @@ import { ReactElement } from 'react';
 import {
   findEntryInArray,
   getAnyElementOfObject,
-  isNullOrUndefined,
+  isNullish,
   isNumber,
   isNumOrStr,
   mathSign,
@@ -54,7 +54,7 @@ import { LegendState } from '../state/legendSlice';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
-  if (isNullOrUndefined(obj) || isNullOrUndefined(dataKey)) {
+  if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
 
@@ -92,7 +92,7 @@ export function getDomainOfDataByKey<T>(
     return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
   }
 
-  const validateData = filterNil ? flattenData.filter(entry => !isNullOrUndefined(entry)) : flattenData;
+  const validateData = filterNil ? flattenData.filter(entry => !isNullish(entry)) : flattenData;
 
   // Supports x-axis of Date type
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
@@ -275,7 +275,7 @@ export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendSta
  * @return if true then is relevant, if false then irrelevant
  */
 export const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (isNullOrUndefined(axisType)) {
+  if (isNullish(axisType)) {
     return true;
   }
 
@@ -881,7 +881,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
     // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullOrUndefined(entry[axis.dataKey])) {
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullish(entry[axis.dataKey])) {
       // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
@@ -893,10 +893,10 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, !isNullOrUndefined(dataKey) ? dataKey : axis.dataKey);
+  const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);
 
   // @ts-expect-error getValueByDataKey does not validate the output type
-  return !isNullOrUndefined(value) ? axis.scale(value) : null;
+  return !isNullish(value) ? axis.scale(value) : null;
 }
 
 export const getCateCoordinateOfBar = ({
@@ -919,7 +919,7 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
-  return !isNullOrUndefined(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNullish(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithScale }): number | unknown => {

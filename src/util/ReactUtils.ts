@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { DotProps } from '..';
-import { isNullOrUndefined, isNumber } from './DataUtils';
+import { isNullish, isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
@@ -73,7 +73,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   }
   let result: T[] = [];
   Children.forEach(children, child => {
-    if (isNullOrUndefined(child)) return;
+    if (isNullish(child)) return;
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
@@ -270,10 +270,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
  * @return deprecated do not use
  */
 const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (isNullOrUndefined(nextChild) && isNullOrUndefined(prevChild)) {
+  if (isNullish(nextChild) && isNullish(prevChild)) {
     return true;
   }
-  if (!isNullOrUndefined(nextChild) && !isNullOrUndefined(prevChild)) {
+  if (!isNullish(nextChild) && !isNullish(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 

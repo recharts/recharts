@@ -26,7 +26,7 @@ import {
   findEntryInArray,
   getAnyElementOfObject,
   hasDuplicate,
-  isNullOrUndefined,
+  isNullish,
   isNumber,
   uniqueId,
 } from '../util/DataUtils';
@@ -342,14 +342,14 @@ export const getAxisMapByAxes = (
           if (!allowDuplicatedCategory) {
             domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || isNullOrUndefined(entry)
+                finalDomain.indexOf(entry) >= 0 || entry === '' || isNullish(entry)
                   ? finalDomain
                   : [...finalDomain, entry],
               [],
             );
           } else {
             // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !isNullOrUndefined(entry));
+            domain = domain.filter((entry: any) => entry !== '' && !isNullish(entry));
           }
         } else if (type === 'number') {
           // the field type is numerical
@@ -1120,7 +1120,7 @@ export const generateCategoricalChart = ({
         const hasDifferentStartOrEndIndex = startIndex !== dataStartIndex || endIndex !== dataEndIndex;
 
         // update configuration in children
-        const hasGlobalData = !isNullOrUndefined(data);
+        const hasGlobalData = !isNullish(data);
         const newUpdateId = hasGlobalData && !hasDifferentStartOrEndIndex ? prevState.updateId : prevState.updateId + 1;
 
         return {

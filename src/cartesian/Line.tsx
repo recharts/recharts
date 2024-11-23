@@ -10,7 +10,7 @@ import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
-import { interpolateNumber, isNullOrUndefined, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNullish, uniqueId } from '../util/DataUtils';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -483,7 +483,7 @@ class LineWithState extends Component<InternalProps, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-line', className);
-    const clipPathId = isNullOrUndefined(id) ? this.id : id;
+    const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
@@ -637,14 +637,14 @@ export function computeLinePoints({
     if (layout === 'horizontal') {
       return {
         x: getCateCoordinateOfLine({ axis: xAxis, ticks: xAxisTicks, bandSize, entry, index }),
-        y: isNullOrUndefined(value) ? null : yAxis.scale(value),
+        y: isNullish(value) ? null : yAxis.scale(value),
         value,
         payload: entry,
       };
     }
 
     return {
-      x: isNullOrUndefined(value) ? null : xAxis.scale(value),
+      x: isNullish(value) ? null : xAxis.scale(value),
       y: getCateCoordinateOfLine({ axis: yAxis, ticks: yAxisTicks, bandSize, entry, index }),
       value,
       payload: entry,
