@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';
-import { isNumOrStr } from '../util/DataUtils';
+import { isNan, isNumOrStr } from '../util/DataUtils';
 import { createLabeledScales, rectWithCoords } from '../util/CartesianUtils';
 import { CartesianViewBox } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
@@ -101,7 +101,7 @@ export const getEndPoints = (
     const { y: yCoord } = props;
     const coord = scales.y.apply(yCoord, { position });
     // don't render the line if the scale can't compute a result that makes sense
-    if (Number.isNaN(coord)) return null;
+    if (isNan(coord)) return null;
 
     if (props.ifOverflow === 'discard' && !scales.y.isInRange(coord)) {
       return null;
@@ -117,7 +117,7 @@ export const getEndPoints = (
     const { x: xCoord } = props;
     const coord = scales.x.apply(xCoord, { position });
     // don't render the line if the scale can't compute a result that makes sense
-    if (Number.isNaN(coord)) return null;
+    if (isNan(coord)) return null;
 
     if (props.ifOverflow === 'discard' && !scales.x.isInRange(coord)) {
       return null;

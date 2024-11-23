@@ -12,6 +12,7 @@ import {
   uniqueId,
   isNullish,
   upperFirst,
+  isNan,
 } from '../../src/util/DataUtils';
 
 /**
@@ -307,5 +308,31 @@ describe('upperFirst', () => {
 
   it('should return the string with the first letter uppercased', () => {
     expect(upperFirst('hello')).toBe('Hello');
+  });
+});
+
+describe('isNan', () => {
+  it('should return true when value is NaN', () => {
+    expect(isNan(NaN)).toBe(true);
+  });
+
+  it('should return false when value is undefined', () => {
+    expect(isNan(undefined)).toBe(false);
+  });
+
+  it('should return false when value is null', () => {
+    expect(isNan(null)).toBe(false);
+  });
+
+  it('should return false when value is empty string', () => {
+    expect(isNan('')).toBe(false);
+  });
+
+  it('should return false when value is "0"', () => {
+    expect(isNan('0')).toBe(false);
+  });
+
+  it('should return false when value is a number', () => {
+    expect(isNan(1)).toBe(false);
   });
 });

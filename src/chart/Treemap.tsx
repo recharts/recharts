@@ -10,7 +10,7 @@ import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { uniqueId } from '../util/DataUtils';
+import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
@@ -116,7 +116,7 @@ export const computeNode = ({
     nodeValue = computedChildren.reduce((result: any, child: TreemapNode) => result + child[NODE_VALUE_KEY], 0);
   } else {
     // TODO need to verify dataKey
-    nodeValue = Number.isNaN(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
+    nodeValue = isNan(node[dataKey as string]) || node[dataKey as string] <= 0 ? 0 : node[dataKey as string];
   }
 
   return {
@@ -142,7 +142,7 @@ const getAreaOfChildren = (children: ReadonlyArray<TreemapNode>, areaValueRatio:
 
     return {
       ...child,
-      area: Number.isNaN(area) || area <= 0 ? 0 : area,
+      area: isNan(area) || area <= 0 ? 0 : area,
     };
   });
 };

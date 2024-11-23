@@ -1,3 +1,5 @@
+import { isNan } from './DataUtils';
+
 const MULTIPLY_OR_DIVIDE_REGEX = /(-?\d+(?:\.\d+)?[a-zA-Z%]*)([*/])(-?\d+(?:\.\d+)?[a-zA-Z%]*)/;
 const ADD_OR_SUBTRACT_REGEX = /(-?\d+(?:\.\d+)?[a-zA-Z%]*)([+-])(-?\d+(?:\.\d+)?[a-zA-Z%]*)/;
 const CSS_LENGTH_UNIT_REGEX = /^px|cm|vh|vw|em|rem|%|mm|in|pt|pc|ex|ch|vmin|vmax|Q$/;
@@ -34,7 +36,7 @@ class DecimalCSS {
     this.num = num;
     this.unit = unit;
 
-    if (Number.isNaN(num)) {
+    if (isNan(num)) {
       this.unit = '';
     }
 
@@ -86,7 +88,7 @@ class DecimalCSS {
   }
 
   isNaN() {
-    return Number.isNaN(this.num);
+    return isNan(this.num);
   }
 }
 

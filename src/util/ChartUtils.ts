@@ -20,6 +20,7 @@ import { ReactElement } from 'react';
 import {
   findEntryInArray,
   getAnyElementOfObject,
+  isNan,
   isNullish,
   isNumber,
   isNumOrStr,
@@ -425,7 +426,7 @@ export const getTicksOfAxis = (
       };
     });
 
-    return result.filter((row: TickItem) => !Number.isNaN(row.coordinate));
+    return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
@@ -606,7 +607,7 @@ export const offsetSign: OffsetAccessor = series => {
     let negative = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = Number.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {
@@ -641,7 +642,7 @@ export const offsetPositive: OffsetAccessor = series => {
     let positive = 0;
 
     for (let i = 0; i < n; ++i) {
-      const value = Number.isNaN(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
+      const value = isNan(series[i][j][1]) ? series[i][j][0] : series[i][j][1];
 
       /* eslint-disable prefer-destructuring, no-param-reassign */
       if (value >= 0) {

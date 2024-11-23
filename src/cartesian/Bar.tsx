@@ -12,7 +12,7 @@ import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
-import { interpolateNumber, isNullish, mathSign, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNan, isNullish, mathSign, uniqueId } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
@@ -659,7 +659,7 @@ export function computeBarRectangles({
       y = currentValueScale ?? baseValueScale ?? undefined;
       width = pos.size;
       const computedHeight = baseValueScale - currentValueScale;
-      height = Number.isNaN(computedHeight) ? 0 : computedHeight;
+      height = isNan(computedHeight) ? 0 : computedHeight;
       background = { x, y: offset.top, width, height: offset.height };
 
       if (Math.abs(minPointSize) > 0 && Math.abs(height) < Math.abs(minPointSize)) {

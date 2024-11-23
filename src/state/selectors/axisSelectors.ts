@@ -45,7 +45,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -443,7 +443,7 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
   if (Array.isArray(value)) {
     const minError = Math.min(...value);
     const maxError = Math.max(...value);
-    if (!Number.isNaN(minError) && !Number.isNaN(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
+    if (!isNan(minError) && !isNan(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
       return [minError, maxError];
     }
   }
@@ -455,7 +455,7 @@ function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data
     .filter(v => isNumOrStr(v) || v instanceof Date)
     .map(Number)
-    .filter(n => Number.isNaN(n) === false);
+    .filter(n => isNan(n) === false);
 }
 
 /**
@@ -469,7 +469,7 @@ export function getErrorDomainByDataKey(
   appliedValue: unknown,
   relevantErrorBars: ReadonlyArray<ErrorBarsSettings>,
 ): ReadonlyArray<number> {
-  if (!relevantErrorBars || typeof appliedValue !== 'number' || Number.isNaN(appliedValue)) {
+  if (!relevantErrorBars || typeof appliedValue !== 'number' || isNan(appliedValue)) {
     return [];
   }
 
@@ -1634,7 +1634,7 @@ export const combineAxisTicks = (
       };
     });
 
-    return result.filter((row: CartesianTickItem) => !Number.isNaN(row.coordinate));
+    return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"

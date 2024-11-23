@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from './tooltipSlice';
+import { isNan } from '../util/DataUtils';
 
 /**
  * These chart options are decided internally, by Recharts,
@@ -22,7 +23,7 @@ export const arrayTooltipSearcher: TooltipPayloadSearcher = (
   strIndex: string | undefined,
 ): unknown => {
   const numIndex = Number.parseInt(strIndex, 10);
-  if (Number.isNaN(numIndex)) {
+  if (isNan(numIndex)) {
     return undefined;
   }
   return data?.[numIndex];

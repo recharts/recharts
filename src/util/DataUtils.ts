@@ -11,11 +11,16 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
+export const isNan = (value: any): boolean => {
+  // eslint-disable-next-line eqeqeq
+  return typeof value == 'number' && value != +value;
+};
+
 export const isPercent = (value: string | number): value is `${number}%` =>
   typeof value === 'string' && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number =>
-  (typeof value === 'number' || value instanceof Number) && !Number.isNaN(value);
+  (typeof value === 'number' || value instanceof Number) && !isNan(value);
 
 export const isNumOrStr = (value: unknown): value is number | string =>
   isNumber(value as number) || typeof value === 'string';
@@ -49,7 +54,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
     value = +percent;
   }
 
-  if (Number.isNaN(value)) {
+  if (isNan(value)) {
     value = defaultValue;
   }
 

@@ -9,7 +9,7 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolateNumber, isNullish, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveDotType,
@@ -431,7 +431,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
             if (isNumber(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
               stepBaseLine = interpolator(t);
-            } else if (isNullish(baseLine) || Number.isNaN(baseLine)) {
+            } else if (isNullish(baseLine) || isNan(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, 0);
               stepBaseLine = interpolator(t);
             } else {
