@@ -6,7 +6,7 @@ import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, i
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
 
-export type ContentType = ReactElement | ((props: Props) => ReactNode) | Function;
+export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
 export type LabelPosition =
   | 'top'
@@ -70,6 +70,10 @@ const getLabel = (props: Props) => {
   }
 
   return label;
+};
+
+const isLabelContentAFunction = (content: unknown): content is (props: Props) => React.ReactNode => {
+  return content && typeof content === 'function';
 };
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {
@@ -499,7 +503,7 @@ const parseLabel = (label: unknown, viewBox: ViewBox) => {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 
-  if (typeof label === 'function') {
+  if (isLabelContentAFunction(label)) {
     return <Label key="label-implicit" content={label} viewBox={viewBox} />;
   }
 

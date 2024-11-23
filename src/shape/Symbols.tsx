@@ -80,7 +80,7 @@ export interface InnerSymbolsProp {
 export type SymbolsProps = SVGProps<SVGPathElement> & InnerSymbolsProp;
 
 const registerSymbol = (key: string, factory: D3SymbolType) => {
-  symbolFactories[`symbol${key.substring(0, 1).toUpperCase() + key.substring(1)}`] = factory;
+  symbolFactories[`symbol${upperFirst(key)}`] = factory;
 };
 
 export const Symbols = ({ type = 'circle', size = 64, sizeType = 'area', ...rest }: SymbolsProps) => {

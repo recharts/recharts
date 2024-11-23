@@ -11,7 +11,7 @@ import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolateNumber } from '../util/DataUtils';
+import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
   LegendType,
@@ -189,7 +189,7 @@ const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, o
   const realHeight = height;
   let realWidth = width;
 
-  if (typeof customWidth === 'number') {
+  if (isNumber(customWidth)) {
     realWidth = customWidth;
   } else if (typeof customWidth === 'string') {
     realWidth = (realWidth * parseFloat(customWidth)) / 100;

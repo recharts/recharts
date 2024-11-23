@@ -4,6 +4,7 @@ import { ActiveShape } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { BarProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
+import { isNumber } from './DataUtils';
 
 // Rectangle props is expecting x, y, height, width as numbers, name as a string, and radius as a custom type
 // When props are being spread in from a user defined component in Bar,
@@ -66,8 +67,8 @@ export type MinPointSize = number | ((value: number, index: number) => number);
 export const minPointSizeCallback =
   (minPointSize: MinPointSize, defaultValue = 0) =>
   (value: unknown, index: number): number => {
-    if (typeof minPointSize === 'number') return minPointSize;
-    const isValueNumber = typeof value === 'number';
+    if (isNumber(minPointSize)) return minPointSize;
+    const isValueNumber = isNumber(value);
     if (isValueNumber) {
       return minPointSize(value, index);
     }

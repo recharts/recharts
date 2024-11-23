@@ -45,7 +45,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, mathSign, upperFirst } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -436,7 +436,7 @@ export type AppliedChartDataWithErrorDomain = {
 export type ErrorValue = [number, number];
 
 export function fromMainValueToError(value: unknown): ErrorValue | undefined {
-  if (typeof value === 'number' && !Number.isNaN(value) && Number.isFinite(value)) {
+  if (isNumber(value) && Number.isFinite(value)) {
     return [value, value];
   }
 
@@ -453,7 +453,7 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
 
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data
-    .filter(v => typeof v === 'number' || typeof v === 'string' || v instanceof Date)
+    .filter(v => isNumOrStr(v) || v instanceof Date)
     .map(Number)
     .filter(n => Number.isNaN(n) === false);
 }
@@ -611,7 +611,7 @@ export function getDefaultDomainByAxisType(axisType: 'number' | string) {
 
 function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date {
   const { value } = item;
-  if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'string' || value instanceof Date) {
+  if (isNumOrStr(value) || value instanceof Date) {
     return value;
   }
   return undefined;
