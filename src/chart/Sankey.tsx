@@ -937,7 +937,12 @@ export class Sankey extends PureComponent<Props, State> {
     if (tooltipItem && tooltipItem.props.trigger === 'click') {
       if (this.state.isTooltipActive) {
         this.setState(prev => {
-          return { ...prev, activeElement: undefined, activeElementType: undefined, isTooltipActive: false };
+          return {
+            ...prev,
+            activeElement: undefined as NodeProps | LinkProps | undefined,
+            activeElementType: undefined as SankeyElementType | undefined,
+            isTooltipActive: false,
+          };
         });
       } else {
         this.setState(prev => {

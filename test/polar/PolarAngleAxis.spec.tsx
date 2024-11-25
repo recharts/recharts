@@ -254,7 +254,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should render axis ticks', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTicks(container, [
           {
             x1: '250',
@@ -308,7 +308,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should render angle labels', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTickLabels(container, [
           {
             textContext: '420',
@@ -441,7 +441,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should render ticks', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTicks(container, [
           {
             x1: '250',
@@ -626,12 +626,12 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should not render ticks', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTicks(container, []);
       });
 
       it('should not render labels', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTickLabels(container, []);
       });
     });
@@ -759,7 +759,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should render axis ticks', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTicks(container, [
           {
             x1: '180',
@@ -789,7 +789,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should render angle labels', () => {
-        const { container } = renderTestCase(() => null);
+        const { container } = renderTestCase((): null => null);
         expectAngleAxisTickLabels(container, [
           {
             textContext: '0',
