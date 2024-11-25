@@ -10,6 +10,9 @@ import {
   getLinearRegression,
   findEntryInArray,
   uniqueId,
+  isNullish,
+  upperFirst,
+  isNan,
 } from '../../src/util/DataUtils';
 
 /**
@@ -271,5 +274,65 @@ describe('getLinearRegression', () => {
       xmax: 0,
       xmin: 0,
     });
+  });
+});
+
+describe('isNullish', () => {
+  it('should return true when value is null', () => {
+    expect(isNullish(null)).toBe(true);
+  });
+
+  it('should return true when value is undefined', () => {
+    expect(isNullish(undefined)).toBe(true);
+  });
+
+  it('should return false when value is not null or undefined', () => {
+    expect(isNullish(0)).toBe(false);
+    expect(isNullish('')).toBe(false);
+    expect(isNullish('0')).toBe(false);
+  });
+});
+
+describe('upperFirst', () => {
+  it('should return null when value is null', () => {
+    expect(upperFirst(null)).toBe(null);
+  });
+
+  it('should return undefined when value is undefined', () => {
+    expect(upperFirst(undefined)).toBe(undefined);
+  });
+
+  it('should return empty string when value is empty string', () => {
+    expect(upperFirst('')).toBe('');
+  });
+
+  it('should return the string with the first letter uppercased', () => {
+    expect(upperFirst('hello')).toBe('Hello');
+  });
+});
+
+describe('isNan', () => {
+  it('should return true when value is NaN', () => {
+    expect(isNan(NaN)).toBe(true);
+  });
+
+  it('should return false when value is undefined', () => {
+    expect(isNan(undefined)).toBe(false);
+  });
+
+  it('should return false when value is null', () => {
+    expect(isNan(null)).toBe(false);
+  });
+
+  it('should return false when value is empty string', () => {
+    expect(isNan('')).toBe(false);
+  });
+
+  it('should return false when value is "0"', () => {
+    expect(isNan('0')).toBe(false);
+  });
+
+  it('should return false when value is a number', () => {
+    expect(isNan(1)).toBe(false);
   });
 });

@@ -1,5 +1,4 @@
 import React, { Component, ReactElement, useEffect } from 'react';
-import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
@@ -71,7 +70,7 @@ const renderRect = (option: ReferenceAreaProps['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     rect = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     rect = option(props);
   } else {
     rect = <Rectangle {...props} className="recharts-reference-area-rect" />;

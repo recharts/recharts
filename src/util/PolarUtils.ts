@@ -1,7 +1,5 @@
-import isNil from 'lodash/isNil';
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import isFunction from 'lodash/isFunction';
-import { getPercentValue } from './DataUtils';
+import { getPercentValue, isNullish } from './DataUtils';
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 import { Coordinate, ChartOffset, GeometrySector, RangeObj } from './types';
 
@@ -61,7 +59,7 @@ export const formatAxisMap = (
     const { domain, reversed } = axis;
     let range;
 
-    if (isNil(axis.range)) {
+    if (isNullish(axis.range)) {
       if (axisType === 'angleAxis') {
         range = [startAngle, endAngle];
       } else if (axisType === 'radiusAxis') {
@@ -188,4 +186,4 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector): R
 
 export const getTickClassName = (
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean,
-) => (!isValidElement(tick) && !isFunction(tick) && typeof tick !== 'boolean' ? tick.className : '');
+) => (!isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' ? tick.className : '');

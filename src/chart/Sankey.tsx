@@ -3,8 +3,6 @@ import maxBy from 'lodash/maxBy';
 import min from 'lodash/min';
 import get from 'lodash/get';
 import sumBy from 'lodash/sumBy';
-import isFunction from 'lodash/isFunction';
-
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Tooltip } from '../component/Tooltip';
@@ -510,7 +508,7 @@ function renderLinkItem(option: SankeyLinkOptions, props: LinkProps) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
-  if (isFunction(option)) {
+  if (typeof option === 'function') {
     return option(props);
   }
 
@@ -672,7 +670,7 @@ function renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
-  if (isFunction(option)) {
+  if (typeof option === 'function') {
     return option(props);
   }
 

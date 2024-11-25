@@ -1,5 +1,4 @@
 import React, { Component, ReactElement, useEffect } from 'react';
-import isFunction from 'lodash/isFunction';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
@@ -79,7 +78,7 @@ const renderDot = (option: Props['shape'], props: any) => {
 
   if (React.isValidElement(option)) {
     dot = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     dot = option(props);
   } else {
     dot = <Dot {...props} cx={props.cx} cy={props.cy} className="recharts-reference-dot-dot" />;

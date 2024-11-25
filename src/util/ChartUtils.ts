@@ -1,14 +1,9 @@
 import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import isFunction from 'lodash/isFunction';
-import isNan from 'lodash/isNaN';
-import isNil from 'lodash/isNil';
-import isString from 'lodash/isString';
 import max from 'lodash/max';
 import min from 'lodash/min';
 import sortBy from 'lodash/sortBy';
-import upperFirst from 'lodash/upperFirst';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   Series,
@@ -22,7 +17,17 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
-import { findEntryInArray, getAnyElementOfObject, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
+import {
+  findEntryInArray,
+  getAnyElementOfObject,
+  isNan,
+  isNullish,
+  isNumber,
+  isNumOrStr,
+  mathSign,
+  uniqueId,
+  upperFirst,
+} from './DataUtils';
 import { filterProps } from './ReactUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
@@ -50,7 +55,7 @@ import { LegendState } from '../state/legendSlice';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
-  if (isNil(obj) || isNil(dataKey)) {
+  if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
 
@@ -58,7 +63,7 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
     return get(obj, dataKey, defaultValue);
   }
 
-  if (isFunction(dataKey)) {
+  if (typeof dataKey === 'function') {
     return dataKey(obj);
   }
 
@@ -88,7 +93,7 @@ export function getDomainOfDataByKey<T>(
     return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
   }
 
-  const validateData = filterNil ? flattenData.filter(entry => !isNil(entry)) : flattenData;
+  const validateData = filterNil ? flattenData.filter(entry => !isNullish(entry)) : flattenData;
 
   // Supports x-axis of Date type
   return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
@@ -271,7 +276,7 @@ export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendSta
  * @return if true then is relevant, if false then irrelevant
  */
 export const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (isNil(axisType)) {
+  if (isNullish(axisType)) {
     return true;
   }
 
@@ -511,7 +516,7 @@ export const parseScale = (
     // @ts-expect-error we need to wrap the d3 scales in unified interface
     return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
   }
-  if (isString(scale)) {
+  if (typeof scale === 'string') {
     const name = `scale${upperFirst(scale)}`;
 
     return {
@@ -521,7 +526,7 @@ export const parseScale = (
   }
 
   // @ts-expect-error we need to wrap the d3 scales in unified interface
-  return isFunction(scale)
+  return typeof scale === 'function'
     ? { scale, realScaleType: undefined }
     : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
 };
@@ -877,7 +882,7 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   if (axis.type === 'category') {
     // find coordinate of category axis by the value of category
     // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
-    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNil(entry[axis.dataKey])) {
+    if (!axis.allowDuplicatedCategory && axis.dataKey && !isNullish(entry[axis.dataKey])) {
       // @ts-expect-error why does this use direct object access instead of getValueByDataKey?
       const matchedTick = findEntryInArray(ticks, 'value', entry[axis.dataKey]);
 
@@ -889,10 +894,10 @@ export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
     return ticks[index] ? ticks[index].coordinate + bandSize / 2 : null;
   }
 
-  const value = getValueByDataKey(entry, !isNil(dataKey) ? dataKey : axis.dataKey);
+  const value = getValueByDataKey(entry, !isNullish(dataKey) ? dataKey : axis.dataKey);
 
   // @ts-expect-error getValueByDataKey does not validate the output type
-  return !isNil(value) ? axis.scale(value) : null;
+  return !isNullish(value) ? axis.scale(value) : null;
 }
 
 export const getCateCoordinateOfBar = ({
@@ -915,7 +920,7 @@ export const getCateCoordinateOfBar = ({
   }
   const value = getValueByDataKey(entry, axis.dataKey, axis.scale.domain()[index]);
 
-  return !isNil(value) ? axis.scale(value) - bandSize / 2 + offset : null;
+  return !isNullish(value) ? axis.scale(value) - bandSize / 2 + offset : null;
 };
 
 export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithScale }): number | unknown => {
@@ -989,7 +994,7 @@ export const parseSpecifiedDomain = (
   dataDomain: any,
   allowDataOverflow?: boolean,
 ) => {
-  if (isFunction(specifiedDomain)) {
+  if (typeof specifiedDomain === 'function') {
     return specifiedDomain(dataDomain, allowDataOverflow);
   }
 
@@ -1006,7 +1011,7 @@ export const parseSpecifiedDomain = (
     const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
 
     domain[0] = dataDomain[0] - value;
-  } else if (isFunction(specifiedDomain[0])) {
+  } else if (typeof specifiedDomain[0] === 'function') {
     domain[0] = specifiedDomain[0](dataDomain[0]);
   } else {
     domain[0] = dataDomain[0];
@@ -1018,7 +1023,7 @@ export const parseSpecifiedDomain = (
     const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
 
     domain[1] = dataDomain[1] + value;
-  } else if (isFunction(specifiedDomain[1])) {
+  } else if (typeof specifiedDomain[1] === 'function') {
     domain[1] = specifiedDomain[1](dataDomain[1]);
   } else {
     domain[1] = dataDomain[1];

@@ -2,7 +2,6 @@
  * @fileOverview Curve
  */
 import React, { SVGProps } from 'react';
-import upperFirst from 'lodash/upperFirst';
 
 import {
   symbol as shapeSymbol,
@@ -18,6 +17,7 @@ import {
 import clsx from 'clsx';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { upperFirst } from '../util/DataUtils';
 
 type SizeType = 'area' | 'diameter';
 

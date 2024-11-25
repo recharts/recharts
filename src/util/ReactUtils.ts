@@ -1,12 +1,9 @@
 import get from 'lodash/get';
-import isNil from 'lodash/isNil';
-import isFunction from 'lodash/isFunction';
-import isObject from 'lodash/isObject';
 
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { DotProps } from '..';
-import { isNumber } from './DataUtils';
+import { isNullish, isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
@@ -76,7 +73,7 @@ export const toArray = <T extends ReactNode>(children: T | T[]): T[] => {
   }
   let result: T[] = [];
   Children.forEach(children, child => {
-    if (isNil(child)) return;
+    if (isNullish(child)) return;
     if (isFragment(child)) {
       result = result.concat(toArray(child.props.children));
     } else {
@@ -178,7 +175,7 @@ export const isValidSpreadableProp = (
   const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
 
   return (
-    (!isFunction(property) &&
+    (typeof property !== 'function' &&
       ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
     (includeEvents && EventKeys.includes(key))
   );
@@ -199,7 +196,7 @@ export const filterProps = (
     inputProps = props.props as Record<string, any>;
   }
 
-  if (!isObject(inputProps)) {
+  if (typeof inputProps !== 'object' && typeof inputProps !== 'function') {
     return null;
   }
 
@@ -273,10 +270,10 @@ export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren
  * @return deprecated do not use
  */
 const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (isNil(nextChild) && isNil(prevChild)) {
+  if (isNullish(nextChild) && isNullish(prevChild)) {
     return true;
   }
-  if (!isNil(nextChild) && !isNil(prevChild)) {
+  if (!isNullish(nextChild) && !isNullish(prevChild)) {
     const { children: nextChildren, ...nextProps } = nextChild.props || {};
     const { children: prevChildren, ...prevProps } = prevChild.props || {};
 

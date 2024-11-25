@@ -1,6 +1,4 @@
 import React, { PureComponent } from 'react';
-import isNan from 'lodash/isNaN';
-import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import get from 'lodash/get';
 import Smooth from 'react-smooth';
@@ -12,7 +10,7 @@ import { Polygon } from '../shape/Polygon';
 import { Rectangle } from '../shape/Rectangle';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { COLOR_PANEL } from '../util/Constants';
-import { uniqueId } from '../util/DataUtils';
+import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
@@ -402,7 +400,7 @@ function ContentItem({
   if (React.isValidElement(content)) {
     return React.cloneElement(content, nodeProps);
   }
-  if (isFunction(content)) {
+  if (typeof content === 'function') {
     return content(nodeProps);
   }
   // optimize default shape
@@ -617,7 +615,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationEnd } = this.props;
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -626,7 +624,7 @@ export class Treemap extends PureComponent<Props, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };
@@ -830,7 +828,7 @@ export class Treemap extends PureComponent<Props, State> {
           if (React.isValidElement(nestIndexContent)) {
             content = React.cloneElement(nestIndexContent, item, i);
           }
-          if (isFunction(nestIndexContent)) {
+          if (typeof nestIndexContent === 'function') {
             content = nestIndexContent(item, i);
           } else {
             content = name;

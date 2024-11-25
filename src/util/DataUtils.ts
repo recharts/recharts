@@ -1,7 +1,4 @@
-import isString from 'lodash/isString';
-import isNan from 'lodash/isNaN';
 import get from 'lodash/get';
-import lodashIsNumber from 'lodash/isNumber';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -14,12 +11,19 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
+export const isNan = (value: any): boolean => {
+  // eslint-disable-next-line eqeqeq
+  return typeof value == 'number' && value != +value;
+};
+
 export const isPercent = (value: string | number): value is `${number}%` =>
-  isString(value) && value.indexOf('%') === value.length - 1;
+  typeof value === 'string' && value.indexOf('%') === value.length - 1;
 
-export const isNumber = (value: unknown): value is number => lodashIsNumber(value) && !isNan(value);
+export const isNumber = (value: unknown): value is number =>
+  (typeof value === 'number' || value instanceof Number) && !isNan(value);
 
-export const isNumOrStr = (value: unknown): value is number | string => isNumber(value as number) || isString(value);
+export const isNumOrStr = (value: unknown): value is number | string =>
+  isNumber(value as number) || typeof value === 'string';
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -37,7 +41,7 @@ export const uniqueId = (prefix?: string) => {
  * @return {number} value
  */
 export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
-  if (!isNumber(percent) && !isString(percent)) {
+  if (!isNumber(percent) && typeof percent !== 'string') {
     return defaultValue;
   }
 
@@ -158,4 +162,26 @@ export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: numb
     a,
     b: (ysum - a * xsum) / len,
   };
+};
+
+/**
+ * Checks if the value is null or undefined
+ * @param {any} value The value to check
+ * @returns {boolean} true if the value is null or undefined
+ */
+export const isNullish = (value: any): boolean => {
+  return value === null || typeof value === 'undefined';
+};
+
+/**
+ *Uppercase the first letter of a string
+ * @param {string} value The string to uppercase
+ * @returns {string} The uppercased string
+ */
+export const upperFirst = (value: string): string => {
+  if (isNullish(value)) {
+    return value;
+  }
+
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 };

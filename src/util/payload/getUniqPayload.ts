@@ -1,5 +1,4 @@
 import uniqBy from 'lodash/uniqBy';
-import isFunction from 'lodash/isFunction';
 
 type UniqueFunc<T> = (entry: T) => unknown;
 
@@ -17,7 +16,7 @@ export function getUniqPayload<T>(payload: Array<T>, option: UniqueOption<T>, de
     return uniqBy(payload, defaultUniqBy);
   }
 
-  if (isFunction(option)) {
+  if (typeof option === 'function') {
     return uniqBy(payload, option);
   }
 

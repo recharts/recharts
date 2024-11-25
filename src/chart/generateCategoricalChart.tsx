@@ -1,6 +1,4 @@
 import React, { Component, forwardRef, ReactElement } from 'react';
-import isNil from 'lodash/isNil';
-import isFunction from 'lodash/isFunction';
 import range from 'lodash/range';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
@@ -24,7 +22,14 @@ import {
 
 import { Brush } from '../cartesian/Brush';
 import { getOffset } from '../util/DOMUtils';
-import { findEntryInArray, getAnyElementOfObject, hasDuplicate, isNumber, uniqueId } from '../util/DataUtils';
+import {
+  findEntryInArray,
+  getAnyElementOfObject,
+  hasDuplicate,
+  isNullish,
+  isNumber,
+  uniqueId,
+} from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
@@ -337,12 +342,14 @@ export const getAxisMapByAxes = (
           if (!allowDuplicatedCategory) {
             domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
               (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || isNil(entry) ? finalDomain : [...finalDomain, entry],
+                finalDomain.indexOf(entry) >= 0 || entry === '' || isNullish(entry)
+                  ? finalDomain
+                  : [...finalDomain, entry],
               [],
             );
           } else {
             // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !isNil(entry));
+            domain = domain.filter((entry: any) => entry !== '' && !isNullish(entry));
           }
         } else if (type === 'number') {
           // the field type is numerical
@@ -1113,7 +1120,7 @@ export const generateCategoricalChart = ({
         const hasDifferentStartOrEndIndex = startIndex !== dataStartIndex || endIndex !== dataEndIndex;
 
         // update configuration in children
-        const hasGlobalData = !isNil(data);
+        const hasGlobalData = !isNullish(data);
         const newUpdateId = hasGlobalData && !hasDifferentStartOrEndIndex ? prevState.updateId : prevState.updateId + 1;
 
         return {
@@ -1338,7 +1345,7 @@ export const generateCategoricalChart = ({
         this.triggerSyncEvent(nextState);
 
         const { onMouseEnter } = this.props;
-        if (isFunction(onMouseEnter)) {
+        if (typeof onMouseEnter === 'function') {
           onMouseEnter(nextState, e);
         }
       }
@@ -1352,7 +1359,7 @@ export const generateCategoricalChart = ({
       this.triggerSyncEvent(nextState);
 
       const { onMouseMove } = this.props;
-      if (isFunction(onMouseMove)) {
+      if (typeof onMouseMove === 'function') {
         onMouseMove(nextState, e);
       }
     };
@@ -1409,7 +1416,7 @@ export const generateCategoricalChart = ({
       this.triggerSyncEvent(nextState);
 
       const { onMouseLeave } = this.props;
-      if (isFunction(onMouseLeave)) {
+      if (typeof onMouseLeave === 'function') {
         onMouseLeave(nextState, e);
       }
     };
@@ -1418,7 +1425,7 @@ export const generateCategoricalChart = ({
       const eventName = getReactEventByType(e);
 
       const event = get(this.props, `${eventName}`);
-      if (eventName && isFunction(event)) {
+      if (eventName && typeof event === 'function') {
         let mouse;
         if (/.*touch.*/i.test(eventName)) {
           mouse = this.getMouseInfo((e as React.TouchEvent).changedTouches[0]);
@@ -1439,7 +1446,7 @@ export const generateCategoricalChart = ({
         this.triggerSyncEvent(nextState);
 
         const { onClick } = this.props;
-        if (isFunction(onClick)) {
+        if (typeof onClick === 'function') {
           onClick(nextState, e);
         }
       }
@@ -1448,7 +1455,7 @@ export const generateCategoricalChart = ({
     handleMouseDown = (e: React.MouseEvent | React.Touch) => {
       const { onMouseDown } = this.props;
 
-      if (isFunction(onMouseDown)) {
+      if (typeof onMouseDown === 'function') {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseDown(nextState, e);
       }
@@ -1457,7 +1464,7 @@ export const generateCategoricalChart = ({
     handleMouseUp = (e: React.MouseEvent | React.Touch) => {
       const { onMouseUp } = this.props;
 
-      if (isFunction(onMouseUp)) {
+      if (typeof onMouseUp === 'function') {
         const nextState: CategoricalChartState = this.getMouseInfo(e);
         onMouseUp(nextState, e);
       }

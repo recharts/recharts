@@ -179,7 +179,7 @@ export function parseNumericalUserDomain(
       if (dataDomain != null) {
         finalMin = Math.min(...dataDomain);
       }
-    } else if (typeof providedMin === 'number' && !Number.isNaN(providedMin)) {
+    } else if (isNumber(providedMin)) {
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
       try {
@@ -199,7 +199,7 @@ export function parseNumericalUserDomain(
       if (dataDomain != null) {
         finalMax = Math.max(...dataDomain);
       }
-    } else if (typeof providedMax === 'number' && !Number.isNaN(providedMax)) {
+    } else if (isNumber(providedMax)) {
       finalMax = providedMax;
     } else if (typeof providedMax === 'function') {
       try {

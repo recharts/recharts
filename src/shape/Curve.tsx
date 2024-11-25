@@ -20,13 +20,11 @@ import {
   curveStepAfter,
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
-import upperFirst from 'lodash/upperFirst';
-import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { isNumber } from '../util/DataUtils';
+import { isNumber, upperFirst } from '../util/DataUtils';
 
 interface CurveFactories {
   [index: string]: CurveFactory;
@@ -76,7 +74,7 @@ const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
 const getCurveFactory = (type: CurveType, layout: LayoutType) => {
-  if (isFunction(type)) {
+  if (typeof type === 'function') {
     return type;
   }
 

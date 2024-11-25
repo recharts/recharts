@@ -3,7 +3,6 @@ import React, { PureComponent, ReactElement, ReactNode, SVGProps, useMemo } from
 import Animate from 'react-smooth';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
@@ -386,7 +385,7 @@ const renderLabelLineItem = (option: PieLabelLine, props: any) => {
   if (React.isValidElement(option)) {
     return React.cloneElement(option, props);
   }
-  if (isFunction(option)) {
+  if (typeof option === 'function') {
     return option(props);
   }
 
@@ -399,7 +398,7 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
     return React.cloneElement(option, props);
   }
   let label = value;
-  if (isFunction(option)) {
+  if (typeof option === 'function') {
     label = option(props);
     if (React.isValidElement(label)) {
       return label;
@@ -408,7 +407,7 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
 
   const className = clsx(
     'recharts-pie-label-text',
-    typeof option !== 'boolean' && !isFunction(option) ? option.className : '',
+    typeof option !== 'boolean' && typeof option !== 'function' ? option.className : '',
   );
   return (
     <Text {...props} alignmentBaseline="middle" className={className}>
@@ -565,7 +564,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       isAnimationFinished: true,
     });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -577,7 +576,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       isAnimationFinished: false,
     });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };

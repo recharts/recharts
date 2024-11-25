@@ -3,7 +3,6 @@
  */
 import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
 
-import isFunction from 'lodash/isFunction';
 import get from 'lodash/get';
 import clsx from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
@@ -257,7 +256,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
     if (React.isValidElement(option)) {
       tickItem = React.cloneElement(option, props);
-    } else if (isFunction(option)) {
+    } else if (typeof option === 'function') {
       tickItem = option(props);
     } else {
       tickItem = (
@@ -327,7 +326,7 @@ export class CartesianAxis extends Component<Props, IState> {
             CartesianAxis.renderTickItem(
               tick,
               tickProps,
-              `${isFunction(tickFormatter) ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
+              `${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
             )}
         </Layer>
       );

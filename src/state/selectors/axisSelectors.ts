@@ -1,9 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
-import isNan from 'lodash/isNaN';
 import * as d3Scales from 'victory-vendor/d3-scale';
-import upperFirst from 'lodash/upperFirst';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
   checkDomainOfScale,
@@ -47,7 +45,7 @@ import {
   parseNumericalUserDomain,
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
-import { getPercentValue, hasDuplicate, mathSign } from '../../util/DataUtils';
+import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
@@ -438,14 +436,14 @@ export type AppliedChartDataWithErrorDomain = {
 export type ErrorValue = [number, number];
 
 export function fromMainValueToError(value: unknown): ErrorValue | undefined {
-  if (typeof value === 'number' && !Number.isNaN(value) && Number.isFinite(value)) {
+  if (isNumber(value) && Number.isFinite(value)) {
     return [value, value];
   }
 
   if (Array.isArray(value)) {
     const minError = Math.min(...value);
     const maxError = Math.max(...value);
-    if (!Number.isNaN(minError) && !Number.isNaN(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
+    if (!isNan(minError) && !isNan(maxError) && Number.isFinite(minError) && Number.isFinite(maxError)) {
       return [minError, maxError];
     }
   }
@@ -455,9 +453,9 @@ export function fromMainValueToError(value: unknown): ErrorValue | undefined {
 
 function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
   return data
-    .filter(v => typeof v === 'number' || typeof v === 'string' || v instanceof Date)
+    .filter(v => isNumOrStr(v) || v instanceof Date)
     .map(Number)
-    .filter(n => Number.isNaN(n) === false);
+    .filter(n => isNan(n) === false);
 }
 
 /**
@@ -471,7 +469,7 @@ export function getErrorDomainByDataKey(
   appliedValue: unknown,
   relevantErrorBars: ReadonlyArray<ErrorBarsSettings>,
 ): ReadonlyArray<number> {
-  if (!relevantErrorBars || typeof appliedValue !== 'number' || Number.isNaN(appliedValue)) {
+  if (!relevantErrorBars || typeof appliedValue !== 'number' || isNan(appliedValue)) {
     return [];
   }
 
@@ -613,7 +611,7 @@ export function getDefaultDomainByAxisType(axisType: 'number' | string) {
 
 function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date {
   const { value } = item;
-  if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'string' || value instanceof Date) {
+  if (isNumOrStr(value) || value instanceof Date) {
     return value;
   }
   return undefined;

@@ -1,13 +1,11 @@
 import React, { cloneElement, isValidElement } from 'react';
-import isFunction from 'lodash/isFunction';
-import isNil from 'lodash/isNil';
 import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/useTooltipAxis';
 import { useTooltipContext } from '../context/tooltipContext';
-import { findEntryInArray } from '../util/DataUtils';
+import { findEntryInArray, isNullish } from '../util/DataUtils';
 
 export interface PointType {
   readonly x: number;
@@ -54,7 +52,7 @@ const renderActivePoint = ({
   if (isValidElement(activeDot)) {
     // @ts-expect-error element cloning does not have types
     dot = cloneElement(activeDot, dotProps);
-  } else if (isFunction(activeDot)) {
+  } else if (typeof activeDot === 'function') {
     dot = activeDot(dotProps);
   } else {
     dot = <Dot {...dotProps} />;
@@ -90,7 +88,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     activePoint = points?.[activeTooltipIndex];
   }
 
-  if (isNil(activePoint)) {
+  if (isNullish(activePoint)) {
     return null;
   }
 

@@ -2,17 +2,14 @@
 import React, { PureComponent } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isFunction from 'lodash/isFunction';
 import max from 'lodash/max';
-import isNil from 'lodash/isNil';
-import isNan from 'lodash/isNaN';
 import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolateNumber, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveDotType,
@@ -190,7 +187,7 @@ const renderDotItem = (option: ActiveDotType, props: any) => {
 
   if (React.isValidElement(option)) {
     dotItem = React.cloneElement(option, props);
-  } else if (isFunction(option)) {
+  } else if (typeof option === 'function') {
     dotItem = option(props);
   } else {
     const className = clsx('recharts-area-dot', typeof option !== 'boolean' ? option.className : '');
@@ -232,7 +229,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
 
     this.setState({ isAnimationFinished: true });
 
-    if (isFunction(onAnimationEnd)) {
+    if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
   };
@@ -241,7 +238,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { onAnimationStart } = this.props;
     this.setState({ isAnimationFinished: false });
 
-    if (isFunction(onAnimationStart)) {
+    if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
   };
@@ -292,7 +289,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const width = alpha * Math.abs(startX - endX);
     let maxY = max(points.map(entry => entry.y || 0));
 
-    if (isNumber(baseLine) && typeof baseLine === 'number') {
+    if (isNumber(baseLine)) {
       maxY = Math.max(baseLine, maxY);
     } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
       maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
@@ -319,7 +316,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const height = alpha * Math.abs(startY - endY);
     let maxX = max(points.map(entry => entry.x || 0));
 
-    if (isNumber(baseLine) && typeof baseLine === 'number') {
+    if (isNumber(baseLine)) {
       maxX = Math.max(baseLine, maxX);
     } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
       maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
@@ -399,7 +396,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
     const { prevPoints, prevBaseLine } = this.state;
-    // const clipPathId = isNil(id) ? this.id : id;
+    // const clipPathId = isNullish(id) ? this.id : id;
 
     return (
       <Animate
@@ -431,10 +428,10 @@ class AreaWithState extends PureComponent<InternalProps, State> {
             });
             let stepBaseLine;
 
-            if (isNumber(baseLine) && typeof baseLine === 'number') {
+            if (isNumber(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
               stepBaseLine = interpolator(t);
-            } else if (isNil(baseLine) || isNan(baseLine)) {
+            } else if (isNullish(baseLine) || isNan(baseLine)) {
               const interpolator = interpolateNumber(prevBaseLine as number, 0);
               stepBaseLine = interpolator(t);
             } else {
@@ -511,7 +508,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const { isAnimationFinished } = this.state;
     const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-area', className);
-    const clipPathId = isNil(id) ? this.id : id;
+    const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const { clipDot = true } = hasClipDot(dot) ? dot : {};
     const dotSize = r * 2 + strokeWidth;
@@ -662,7 +659,7 @@ export const getBaseValue = (
   // The value for the item takes precedence.
   const baseValue = itemBaseValue ?? chartBaseValue;
 
-  if (isNumber(baseValue) && typeof baseValue === 'number') {
+  if (isNumber(baseValue)) {
     return baseValue;
   }
 
