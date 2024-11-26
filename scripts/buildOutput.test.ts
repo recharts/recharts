@@ -48,33 +48,39 @@ describe('expected folder structure', () => {
     });
   });
 
+  async function checkFolderOutput(folder: string, snapshot: string) {
+    return expect(globSync(folder, { dot: true, platform: 'linux' }).sort()).toMatchFileSnapshot(
+      `./snapshots/${snapshot}.txt`,
+    );
+  }
+
   describe('types folder output', () => {
     it('should have expected files and no more', async () => {
-      await expect(globSync('types/**/*', { dot: true })).toMatchFileSnapshot('./snapshots/typesFiles.txt');
+      await checkFolderOutput('types/**/*', 'typesFiles');
     });
   });
 
   describe('es6 folder output', () => {
     it('should have expected files and no more', async () => {
-      await expect(globSync('es6/**/*', { dot: true })).toMatchFileSnapshot('./snapshots/es6Files.txt');
+      await checkFolderOutput('es6/**/*', 'es6Files');
     });
   });
 
   describe('markdown files output', () => {
     it('should have expected files and no more', async () => {
-      await expect(globSync('*.md', { dot: true })).toMatchFileSnapshot('./snapshots/markdownFiles.txt');
+      await checkFolderOutput('*.md', 'markdownFiles');
     });
   });
 
   describe('umd folder output', () => {
     it('should have expected files and no more', async () => {
-      await expect(globSync('umd/**/*', { dot: true })).toMatchFileSnapshot('./snapshots/umdFiles.txt');
+      await checkFolderOutput('umd/**/*', 'umdFiles');
     });
   });
 
   describe('lib folder output', () => {
     it('should have expected files and no more', async () => {
-      await expect(globSync('lib/**/*', { dot: true })).toMatchFileSnapshot('./snapshots/libFiles.txt');
+      await checkFolderOutput('lib/**/*', 'libFiles');
     });
   });
 });
