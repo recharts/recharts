@@ -1,6 +1,6 @@
 [
-  "umd/report.html",
-  "umd/Recharts.js.map",
-  "umd/Recharts.js.LICENSE.txt",
   "umd/Recharts.js",
+  "umd/Recharts.js.LICENSE.txt",
+  "umd/Recharts.js.map",
+  "umd/report.html",
 ]
