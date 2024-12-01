@@ -20,6 +20,7 @@ import {
   XAxis,
   YAxis,
 } from '../../src';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 type WrapperProps = {
   onClick: () => void;
@@ -176,6 +177,10 @@ const testCases = [
 ];
 
 describe('CategoricalChart', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ height: 50, width: 50 });
+  });
+
   describe.each(testCases)('$name', ({ Wrapper }) => {
     test('should call corresponding callback on mouse events', () => {
       const handleClickMock = vi.fn();
