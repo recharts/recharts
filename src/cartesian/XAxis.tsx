@@ -14,7 +14,7 @@ interface XAxisProps extends BaseAxisProps {
   xAxisId?: string | number;
   /** The width of axis which is usually calculated internally */
   width?: number;
-  /** The height of axis, which need to be setted by user */
+  /** The height of axis, which need to be set by the user */
   height?: number;
   mirror?: boolean;
   // The orientation of axis
@@ -33,7 +33,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
 
 function XAxisImpl({ xAxisId }: Props) {
   const width = useChartWidth();

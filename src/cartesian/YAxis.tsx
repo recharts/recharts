@@ -16,7 +16,7 @@ interface YAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: (string | number)[];
-  /** The width of axis, which need to be setted by user */
+  /** The width of axis, which need to be set by the user */
   width?: number;
   /** The height of axis which is usually calculated in Chart */
   height?: number;
@@ -33,7 +33,7 @@ interface YAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & YAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
 
 const YAxisImpl = ({ yAxisId }: Props) => {
   const width = useChartWidth();
