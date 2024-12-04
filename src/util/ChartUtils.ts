@@ -49,7 +49,7 @@ import {
   TickItem,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisMap, AxisObj } from '../chart/types';
+import { AxisMap } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendState } from '../state/legendSlice';
 import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
@@ -216,15 +216,6 @@ export const getMainColorOfGraphicItem = (item: {
   }
 
   return result;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export type BarSetup = {
-  barSize: number | string;
-  stackList: ReadonlyArray<ReactElement>;
-  item: ReactElement;
 };
 
 export type BarPositionPosition = {
@@ -1181,22 +1172,6 @@ export const isAxisLTR = (axisMap: { [key: string]: Reversible }) => {
   // If there are any cases of reversed=true, then the chart is right-to-left (returning false).
   // Otherwise, the chart is left-to-right (returning true)
   return !axes.some(({ reversed }) => reversed);
-};
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated do not use, depends (indirectly) on DOM access. Instead, use {@link selectCartesianAxisSize}
- * Determine the size of the axis, used for calculation of relative bar sizes
- */
-export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
-  if (axisName === 'xAxis') {
-    return axisObj[axisName].width;
-  }
-  if (axisName === 'yAxis') {
-    return axisObj[axisName].height;
-  }
-  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
-  return undefined;
 };
 
 export function inRange(
