@@ -49,10 +49,10 @@ import {
   TickItem,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
+import { AxisMap } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendState } from '../state/legendSlice';
-import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -109,8 +109,9 @@ export const calculateActiveTickIndex = (
    */
   coordinate: number,
   ticks: ReadonlyArray<TickItem>,
-  unsortedTicks?: ReadonlyArray<TickItem>,
-  axis?: AxisPropsWithExtraComputedData,
+  unsortedTicks: ReadonlyArray<TickItem> | undefined,
+  axisType: AxisType | undefined,
+  range: AxisRange | undefined,
 ): number => {
   let index = -1;
   const len = ticks?.length ?? 0;
@@ -120,8 +121,7 @@ export const calculateActiveTickIndex = (
     return 0;
   }
 
-  if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
-    const { range } = axis;
+  if (axisType === 'angleAxis' && range != null && Math.abs(Math.abs(range[1] - range[0]) - 360) <= 1e-6) {
     // ticks are distributed in a circle
     for (let i = 0; i < len; i++) {
       const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;
@@ -216,15 +216,6 @@ export const getMainColorOfGraphicItem = (item: {
   }
 
   return result;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export type BarSetup = {
-  barSize: number | string;
-  stackList: ReadonlyArray<ReactElement>;
-  item: ReactElement;
 };
 
 export type BarPositionPosition = {
@@ -1181,22 +1172,6 @@ export const isAxisLTR = (axisMap: { [key: string]: Reversible }) => {
   // If there are any cases of reversed=true, then the chart is right-to-left (returning false).
   // Otherwise, the chart is left-to-right (returning true)
   return !axes.some(({ reversed }) => reversed);
-};
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated do not use, depends (indirectly) on DOM access. Instead, use {@link selectCartesianAxisSize}
- * Determine the size of the axis, used for calculation of relative bar sizes
- */
-export const getCartesianAxisSize = (axisObj: AxisObj, axisName: 'xAxis' | 'yAxis' | 'angleAxis' | 'radiusAxis') => {
-  if (axisName === 'xAxis') {
-    return axisObj[axisName].width;
-  }
-  if (axisName === 'yAxis') {
-    return axisObj[axisName].height;
-  }
-  // This is only supported for Bar charts (i.e. charts with cartesian axes), so we should never get here
-  return undefined;
 };
 
 export function inRange(

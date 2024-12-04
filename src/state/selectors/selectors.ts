@@ -347,7 +347,13 @@ export const combineActiveProps = (
   }
   const pos: number | undefined = calculateTooltipPos(rangeObj, layout);
 
-  const activeIndex = calculateActiveTickIndex(pos, orderedTooltipTicks, tooltipTicks, tooltipAxis);
+  const activeIndex = calculateActiveTickIndex(
+    pos,
+    orderedTooltipTicks,
+    tooltipTicks,
+    tooltipAxis.axisType,
+    tooltipAxis.range,
+  );
 
   const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
 

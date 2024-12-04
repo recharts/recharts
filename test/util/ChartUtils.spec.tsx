@@ -389,15 +389,15 @@ describe('calculateActiveTickIndex', () => {
     { coordinate: 15, index: 3 },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
-    expect(calculateActiveTickIndex(12, ticks)).toBe(1);
+    expect(calculateActiveTickIndex(12, ticks, [], 'radiusAxis', [0, 100])).toBe(1);
   });
 
   it('calculateActiveTickIndex(-1, ticks) should return 0', () => {
-    expect(calculateActiveTickIndex(-1, ticks)).toBe(0);
+    expect(calculateActiveTickIndex(-1, ticks, [], 'radiusAxis', [0, 100])).toBe(0);
   });
 
   it('calculateActiveTickIndex(16, ticks) should return 3', () => {
-    expect(calculateActiveTickIndex(16, ticks)).toBe(3);
+    expect(calculateActiveTickIndex(16, ticks, [], 'radiusAxis', [0, 100])).toBe(3);
   });
 });
 
