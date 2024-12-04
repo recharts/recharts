@@ -219,7 +219,7 @@ const getTooltipData = (
   const pos: number | undefined = calculateTooltipPos(rangeData, layout);
   const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = state;
 
-  const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis);
+  const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis?.axisType, axis?.range);
 
   if (activeIndex >= 0 && tooltipTicks) {
     const activeLabel: TickItem['value'] | undefined = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;

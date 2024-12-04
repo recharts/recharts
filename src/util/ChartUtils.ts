@@ -49,10 +49,10 @@ import {
   TickItem,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisMap, AxisObj, AxisPropsWithExtraComputedData } from '../chart/types';
+import { AxisMap, AxisObj } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendState } from '../state/legendSlice';
-import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -109,8 +109,9 @@ export const calculateActiveTickIndex = (
    */
   coordinate: number,
   ticks: ReadonlyArray<TickItem>,
-  unsortedTicks?: ReadonlyArray<TickItem>,
-  axis?: AxisPropsWithExtraComputedData,
+  unsortedTicks: ReadonlyArray<TickItem> | undefined,
+  axisType: AxisType | undefined,
+  range: AxisRange | undefined,
 ): number => {
   let index = -1;
   const len = ticks?.length ?? 0;
@@ -120,8 +121,7 @@ export const calculateActiveTickIndex = (
     return 0;
   }
 
-  if (axis && axis.axisType === 'angleAxis' && Math.abs(Math.abs(axis.range[1] - axis.range[0]) - 360) <= 1e-6) {
-    const { range } = axis;
+  if (axisType === 'angleAxis' && range != null && Math.abs(Math.abs(range[1] - range[0]) - 360) <= 1e-6) {
     // ticks are distributed in a circle
     for (let i = 0; i < len; i++) {
       const before = i > 0 ? unsortedTicks[i - 1].coordinate : unsortedTicks[len - 1].coordinate;

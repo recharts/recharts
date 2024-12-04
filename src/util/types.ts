@@ -30,6 +30,7 @@ import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
 import { RechartsScale } from './ChartUtils';
+import { AxisRange } from '../state/selectors/axisSelectors';
 
 /**
  * Determines how values are stacked:
@@ -1164,7 +1165,7 @@ export interface BaseAxisProps {
   name?: string;
   /** The unit of data displayed in the axis */
   unit?: string;
-  range?: Array<number>;
+  range?: AxisRange;
   /** axis react component */
   AxisComp?: any;
   /** Needed to allow usage of the label prop on the X and Y axis */
