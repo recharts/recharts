@@ -63,6 +63,20 @@ import {
   selectTooltipPayloadConfigurations,
 } from '../../../src/state/selectors/selectors';
 import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
+import {
+  selectAllGraphicalItemsSettings,
+  selectAllUnfilteredGraphicalItems,
+  selectTooltipAxisDomain,
+  selectTooltipAxisDomainIncludingNiceTicks,
+  selectTooltipAxisId,
+  selectTooltipAxisScale,
+  selectTooltipAxisTicks,
+  selectTooltipAxisType,
+  selectTooltipDisplayedData,
+  selectTooltipGraphicalItemsData,
+} from '../../../src/state/selectors/tooltipSelectors';
+import { expectScale } from '../../helper/expectScale';
+import { selectAxisDomain } from '../../../src/state/selectors/axisSelectors';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
@@ -450,6 +464,693 @@ describe('Tooltip payload', () => {
         {children}
       </LineChartDataOnGraphicalItemTestCase.Wrapper>
     ));
+
+    it('should select xaxis domain', () => {
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'xAxis', 0));
+      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+    });
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('xAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select unfiltered graphical items', () => {
+      const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'uv',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'pv',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'amt',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+      ]);
+    });
+
+    it('should select all graphical items', () => {
+      const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'uv',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'pv',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+        {
+          barSize: undefined,
+          data: [
+            {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            {
+              amt: 2400,
+              name: 'Page B',
+              pv: 4567,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page C',
+              pv: 1398,
+              uv: 300,
+            },
+            {
+              amt: 2400,
+              name: 'Page D',
+              pv: 9800,
+              uv: 200,
+            },
+            {
+              amt: 2400,
+              name: 'Page E',
+              pv: 3908,
+              uv: 278,
+            },
+            {
+              amt: 2400,
+              name: 'Page F',
+              pv: 4800,
+              uv: 189,
+            },
+          ],
+          dataKey: 'amt',
+          errorBars: [],
+          hide: false,
+          isPanorama: false,
+          stackId: undefined,
+          type: 'line',
+          xAxisId: 0,
+          yAxisId: 0,
+          zAxisId: 0,
+        },
+      ]);
+    });
+
+    it('should select tooltip data defined on graphical items', () => {
+      const { spy } = renderTestCase(selectTooltipGraphicalItemsData);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+      ]);
+    });
+
+    it('should select tooltip displayed data', () => {
+      const { spy } = renderTestCase(selectTooltipDisplayedData);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+        {
+          amt: 2400,
+          name: 'Page A',
+          pv: 2400,
+          uv: 400,
+        },
+        {
+          amt: 2400,
+          name: 'Page B',
+          pv: 4567,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        {
+          amt: 2400,
+          name: 'Page D',
+          pv: 9800,
+          uv: 200,
+        },
+        {
+          amt: 2400,
+          name: 'Page E',
+          pv: 3908,
+          uv: 278,
+        },
+        {
+          amt: 2400,
+          name: 'Page F',
+          pv: 4800,
+          uv: 189,
+        },
+      ]);
+    });
+
+    it('should select tooltip axis domain', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomain);
+      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+    });
+
+    it('should select tooltip axis domain with nice ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisDomainIncludingNiceTicks);
+      expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+        range: [5, 395],
+      });
+    });
+
+    it('should select tooltip ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 5,
+          index: 0,
+          offset: 0,
+          value: 0,
+        },
+        {
+          coordinate: 27.941176470588236,
+          index: 1,
+          offset: 0,
+          value: 1,
+        },
+        {
+          coordinate: 50.88235294117647,
+          index: 2,
+          offset: 0,
+          value: 2,
+        },
+        {
+          coordinate: 73.82352941176471,
+          index: 3,
+          offset: 0,
+          value: 3,
+        },
+        {
+          coordinate: 96.76470588235294,
+          index: 4,
+          offset: 0,
+          value: 4,
+        },
+        {
+          coordinate: 119.70588235294117,
+          index: 5,
+          offset: 0,
+          value: 5,
+        },
+        {
+          coordinate: 142.64705882352942,
+          index: 6,
+          offset: 0,
+          value: 6,
+        },
+        {
+          coordinate: 165.58823529411765,
+          index: 7,
+          offset: 0,
+          value: 7,
+        },
+        {
+          coordinate: 188.52941176470588,
+          index: 8,
+          offset: 0,
+          value: 8,
+        },
+        {
+          coordinate: 211.47058823529412,
+          index: 9,
+          offset: 0,
+          value: 9,
+        },
+        {
+          coordinate: 234.41176470588235,
+          index: 10,
+          offset: 0,
+          value: 10,
+        },
+        {
+          coordinate: 257.3529411764706,
+          index: 11,
+          offset: 0,
+          value: 11,
+        },
+        {
+          coordinate: 280.29411764705884,
+          index: 12,
+          offset: 0,
+          value: 12,
+        },
+        {
+          coordinate: 303.2352941176471,
+          index: 13,
+          offset: 0,
+          value: 13,
+        },
+        {
+          coordinate: 326.1764705882353,
+          index: 14,
+          offset: 0,
+          value: 14,
+        },
+        {
+          coordinate: 349.11764705882354,
+          index: 15,
+          offset: 0,
+          value: 15,
+        },
+        {
+          coordinate: 372.05882352941177,
+          index: 16,
+          offset: 0,
+          value: 16,
+        },
+        {
+          coordinate: 395,
+          index: 17,
+          offset: 0,
+          value: 17,
+        },
+      ]);
+    });
 
     it('should select Tooltip payload when given defaultIndex', () => {
       const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));

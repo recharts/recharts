@@ -23,12 +23,12 @@ import {
 } from '../../util/ChartUtils';
 import { ChartDataState } from '../chartDataSlice';
 import {
+  AxisType,
   BaseAxisProps,
   ChartCoordinate,
   ChartOffset,
   DataKey,
   LayoutType,
-  StackOffsetType,
   TickItem,
   TooltipEventType,
 } from '../../util/types';
@@ -37,11 +37,8 @@ import { AxisMap, TooltipTrigger } from '../../chart/types';
 import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxis, selectTooltipAxisTicks } from './tooltipSelectors';
-import { AxisWithTicksSettings } from './axisSelectors';
-
-export const selectChartName = (state: RechartsRootState) => state.options.chartName;
-
-export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;
+import { AxisRange } from './axisSelectors';
+import { selectChartName } from './rootPropsSelectors';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -327,12 +324,13 @@ export const combineActiveProps = (
   yAxisMap: AxisMap | undefined,
   angleAxisMap: AxisMap | undefined,
   radiusAxisMap: AxisMap | undefined,
-  tooltipAxis: AxisWithTicksSettings | undefined,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,
 ): ActiveTooltipProps => {
-  if (!chartEvent || !scale || !layout || !tooltipAxis || !tooltipTicks) {
+  if (!chartEvent || !scale || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
   const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, angleAxisMap, radiusAxisMap, offset);
@@ -345,8 +343,8 @@ export const combineActiveProps = (
     pos,
     orderedTooltipTicks,
     tooltipTicks,
-    tooltipAxis.axisType,
-    tooltipAxis.range,
+    tooltipAxisType,
+    tooltipAxisRange,
   );
 
   const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);

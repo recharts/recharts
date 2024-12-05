@@ -36,7 +36,6 @@ import {
   YAxisSettings,
   ZAxisSettings,
 } from '../cartesianAxisSlice';
-import { selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsRootState } from '../store';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import {
@@ -60,7 +59,7 @@ import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
-import { selectBarCategoryGap } from './rootPropsSelectors';
+import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';

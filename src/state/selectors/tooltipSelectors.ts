@@ -40,15 +40,15 @@ import {
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { AxisId } from '../cartesianAxisSlice';
-import { selectChartName, selectStackOffsetType } from './selectors';
 import { RechartsScale, StackId } from '../../util/ChartUtils';
 import { AxisDomain, CategoricalDomain, NumberDomain } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
+import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 
-const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
+export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
 
   if (layout === 'horizontal') {
@@ -66,7 +66,7 @@ const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   return 'radiusAxis';
 };
 
-const selectTooltipAxisId = (state: RechartsRootState): AxisId => state.tooltip.settings.axisId;
+export const selectTooltipAxisId = (state: RechartsRootState): AxisId => state.tooltip.settings.axisId;
 
 export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
   const axisType = selectTooltipAxisType(state);
@@ -79,21 +79,28 @@ const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | und
   combineRealScaleType,
 );
 
-const selectAllUnfilteredGraphicalItems = (state: RechartsRootState): ReadonlyArray<GraphicalItemSettings> => [
-  ...state.graphicalItems.cartesianItems,
-  ...state.graphicalItems.polarItems,
-];
+export const selectAllUnfilteredGraphicalItems: (state: RechartsRootState) => ReadonlyArray<GraphicalItemSettings> =
+  createSelector(
+    [
+      (state: RechartsRootState) => state.graphicalItems.cartesianItems,
+      (state: RechartsRootState) => state.graphicalItems.polarItems,
+    ],
+    (cartesianItems, polarItems) => [...cartesianItems, ...polarItems],
+  );
 
 const selectTooltipAxisPredicate = createSelector([selectTooltipAxisType, selectTooltipAxisId], itemAxisPredicate);
 
-const selectAllGraphicalItemsSettings = createSelector(
+export const selectAllGraphicalItemsSettings = createSelector(
   [selectAllUnfilteredGraphicalItems, selectTooltipAxis, selectTooltipAxisPredicate],
   combineGraphicalItemsSettings,
 );
 
-const selectTooltipGraphicalItemsData = createSelector([selectAllGraphicalItemsSettings], combineGraphicalItemsData);
+export const selectTooltipGraphicalItemsData = createSelector(
+  [selectAllGraphicalItemsSettings],
+  combineGraphicalItemsData,
+);
 
-const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData = createSelector(
+export const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData = createSelector(
   [selectTooltipGraphicalItemsData, selectChartDataWithIndexes],
   combineDisplayedData,
 );
@@ -176,7 +183,7 @@ const selectTooltipNumericalDomain: (state: RechartsRootState) => NumberDomain |
   combineNumericalDomain,
 );
 
-const selectTooltipAxisDomain: (state: RechartsRootState) => NumberDomain | CategoricalDomain | undefined =
+export const selectTooltipAxisDomain: (state: RechartsRootState) => NumberDomain | CategoricalDomain | undefined =
   createSelector(
     [
       selectTooltipAxis,
@@ -195,7 +202,7 @@ const selectTooltipNiceTicks: (state: RechartsRootState) => ReadonlyArray<number
   combineNiceTicks,
 );
 
-const selectTooltipAxisDomainIncludingNiceTicks: (state: RechartsRootState) => NumberDomain | CategoricalDomain =
+export const selectTooltipAxisDomainIncludingNiceTicks: (state: RechartsRootState) => NumberDomain | CategoricalDomain =
   createSelector(
     [selectTooltipAxis, selectTooltipAxisDomain, selectTooltipNiceTicks, selectTooltipAxisType],
     combineAxisDomainWithNiceTicks,
@@ -208,12 +215,12 @@ const selectTooltipAxisRange = (state: RechartsRootState): AxisRange | undefined
   return selectAxisRange(state, axisType, axisId, isPanorama);
 };
 
-const selectTooltipAxisRangeWithReverse: (state: RechartsRootState) => AxisRange | undefined = createSelector(
+export const selectTooltipAxisRangeWithReverse: (state: RechartsRootState) => AxisRange | undefined = createSelector(
   [selectTooltipAxis, selectTooltipAxisRange],
   combineAxisRangeWithReverse,
 );
 
-const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale | undefined = createSelector(
+export const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale | undefined = createSelector(
   [
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
