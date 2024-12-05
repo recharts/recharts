@@ -35,7 +35,7 @@ import {
 } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
-import { getTooltip, showTooltip } from './tooltipTestHelpers';
+import { expectTooltipNotVisible, expectTooltipPayload, getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -51,7 +51,7 @@ import {
   sunburstChartMouseHoverTooltipSelector,
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
-import { assertNotNull } from '../../helper/assertNotNull';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -658,64 +658,63 @@ describe('Tooltip visibility', () => {
   });
 
   describe('includeHidden prop', () => {
-    test('true - Should render tooltip for hidden items', () => {
-      let tooltipPayload: any[] | undefined = [];
-
-      const { container } = render(
+    describe('when includeHidden = true', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <ComposedChart width={400} height={400} data={PageData}>
           <Area dataKey="uv" hide name="1" />
-          <Bar dataKey="uv" hide name="2" />
-          <Line dataKey="uv" hide name="3" />
+          <Bar dataKey="pv" hide name="2" />
+          <Line dataKey="amt" hide name="3" />
           <Scatter dataKey="uv" hide name="4" />
-          <Line dataKey="uv" name="5" />
-          <XAxis type="number" dataKey="uv" name="stature" unit="cm" />
+          <Line dataKey="pv" name="5" />
+          <XAxis type="number" dataKey="amt" name="stature" unit="cm" />
           <YAxis type="number" dataKey="pv" name="weight" unit="kg" />
-          <Tooltip
-            includeHidden
-            content={({ payload }) => {
-              tooltipPayload = payload;
-              return null;
-            }}
-          />
-        </ComposedChart>,
-      );
+          <Tooltip includeHidden />
+          {children}
+        </ComposedChart>
+      ));
 
-      expect(tooltipPayload).toHaveLength(0);
+      it('should render tooltip payload for hidden items', () => {
+        const { container } = renderTestCase();
 
-      const chart = container.querySelector('.recharts-wrapper');
-      assertNotNull(chart);
-      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+        expectTooltipNotVisible(container);
 
-      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('1235statureweight');
+        showTooltip(container, composedChartMouseHoverTooltipSelector);
+
+        expectTooltipPayload(container, '2400', [
+          '1 : 400',
+          '2 : 2400',
+          '3 : 2400',
+          '5 : 2400',
+          'stature : 2400cm',
+          'weight : 2400kg',
+        ]);
+      });
     });
 
-    test('false - Should hide tooltip for hidden items', () => {
-      let tooltipPayload: any[] | undefined = [];
-
-      const { container } = render(
+    describe('when includeHidden = false', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <ComposedChart width={400} height={400} data={PageData}>
           <Area dataKey="uv" hide name="1" />
-          <Bar dataKey="uv" hide name="2" />
-          <Line dataKey="uv" hide name="3" />
+          <Bar dataKey="pv" hide name="2" />
+          <Line dataKey="amt" hide name="3" />
           <Scatter dataKey="uv" hide name="4" />
-          <Line dataKey="uv" name="5" />
-          <Tooltip
-            includeHidden={false}
-            content={({ payload }) => {
-              tooltipPayload = payload;
-              return null;
-            }}
-          />
-        </ComposedChart>,
-      );
+          <Line dataKey="pv" name="5" />
+          <XAxis type="number" dataKey="amt" name="stature" unit="cm" />
+          <YAxis type="number" dataKey="pv" name="weight" unit="kg" />
+          <Tooltip includeHidden={false} />
+          {children}
+        </ComposedChart>
+      ));
 
-      expect(tooltipPayload).toHaveLength(0);
+      it('should hide tooltip for hidden items', () => {
+        const { container } = renderTestCase();
 
-      const chart = container.querySelector('.recharts-wrapper');
-      assertNotNull(chart);
-      fireEvent.mouseOver(chart, { clientX: 200, clientY: 200 });
+        expectTooltipNotVisible(container);
 
-      expect(tooltipPayload.map(({ name }) => name).join('')).toBe('5');
+        showTooltip(container, composedChartMouseHoverTooltipSelector);
+
+        expectTooltipPayload(container, '2400', ['5 : 2400']);
+      });
     });
   });
 
