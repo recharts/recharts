@@ -180,7 +180,7 @@ const LineChartVerticalTestCase: TooltipPayloadTestCase = {
   Wrapper: ({ children }) => (
     <LineChart layout="vertical" {...commonChartProps} data={PageData}>
       <XAxis dataKey="name" />
-      <YAxis />
+      <YAxis dataKey="name" type="category" />
       <CartesianGrid strokeDasharray="3 3" />
       {children}
       <Legend />
@@ -190,8 +190,8 @@ const LineChartVerticalTestCase: TooltipPayloadTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
-  expectedTooltipTitle: '1',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 4567$$$', 'amt : 2400'],
+  expectedTooltipTitle: 'Page D',
+  expectedTooltipContent: ['uv : 200kg', 'My custom name : 9800$$$', 'amt : 2400'],
 };
 
 const ComposedChartTestCase: TooltipPayloadTestCase = {
@@ -1520,6 +1520,116 @@ describe('Tooltip payload', () => {
         y: 20,
       });
       expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe(`As a child of vertical LineChart`, () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChartVerticalTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </LineChartVerticalTestCase.Wrapper>
+    ));
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('yAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select dataStartIndex and dataEndIndex', () => {
+      const { spy } = renderTestCase(selectChartDataWithIndexes);
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: [
+          {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page C',
+            pv: 1398,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page D',
+            pv: 9800,
+            uv: 200,
+          },
+          {
+            amt: 2400,
+            name: 'Page E',
+            pv: 3908,
+            uv: 278,
+          },
+          {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+        ],
+        computedData: undefined,
+        dataEndIndex: 5,
+        dataStartIndex: 0,
+      });
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith('Page C');
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        x: 200,
+        y: 221,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should select isActive and activeIndex, and update it after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: '3',
+        isActive: true,
+      });
+      expect(spy).toHaveBeenCalledTimes(5);
     });
   });
 

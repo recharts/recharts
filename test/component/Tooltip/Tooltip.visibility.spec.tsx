@@ -34,8 +34,15 @@ import {
   YAxis,
 } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
-import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
-import { expectTooltipNotVisible, expectTooltipPayload, getTooltip, showTooltip } from './tooltipTestHelpers';
+import { exampleSankeyData, exampleSunburstData, exampleTreemapData, PageData } from '../../_data';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  MouseCoordinate,
+  showTooltip,
+  showTooltipOnCoordinate,
+} from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -52,11 +59,19 @@ import {
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { selectTooltipAxisId, selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
+import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
+import {
+  selectActiveCoordinate,
+  selectActiveLabel,
+  selectIsTooltipActive,
+} from '../../../src/state/selectors/selectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
   name: string;
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
+  mouseCoordinate?: MouseCoordinate;
   Wrapper: ComponentType<{ children: ReactNode }>;
   expectedTransform: string;
 };
@@ -654,6 +669,116 @@ describe('Tooltip visibility', () => {
         expect(tooltip).toBeInTheDocument();
         expect(tooltip).not.toBeVisible();
       });
+    });
+  });
+
+  describe(`As a child of vertical LineChart`, () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChartVerticalTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </LineChartVerticalTestCase.Wrapper>
+    ));
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('yAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select dataStartIndex and dataEndIndex', () => {
+      const { spy } = renderTestCase(selectChartDataWithIndexes);
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: [
+          {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page C',
+            pv: 1398,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page D',
+            pv: 9800,
+            uv: 200,
+          },
+          {
+            amt: 2400,
+            name: 'Page E',
+            pv: 3908,
+            uv: 278,
+          },
+          {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+        ],
+        computedData: undefined,
+        dataEndIndex: 5,
+        dataStartIndex: 0,
+      });
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith('Page C');
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        x: 200,
+        y: 227,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should select isActive and activeIndex, and update it after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: '3',
+        isActive: true,
+      });
+      expect(spy).toHaveBeenCalledTimes(5);
     });
   });
 
