@@ -67,6 +67,7 @@ import {
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
   selectTooltipAxisType,
+  selectTooltipCategoricalDomain,
 } from '../../../src/state/selectors/tooltipSelectors';
 import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
 import {
@@ -76,6 +77,7 @@ import {
   selectTooltipState,
 } from '../../../src/state/selectors/selectors';
 import { expectScale } from '../../helper/expectScale';
+import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -1059,6 +1061,111 @@ describe('Tooltip visibility', () => {
         y: 229.28932188134524,
       });
       expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('as a child of RadialBarChart', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChartTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </RadialBarChartTestCase.Wrapper>
+    ));
+
+    it('should select chart layout', () => {
+      const { spy } = renderTestCase(selectChartLayout);
+      expect(spy).toHaveBeenLastCalledWith('radial');
+    });
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('radiusAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select tooltip axis settings', () => {
+      const { spy } = renderTestCase(selectTooltipAxis);
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        id: 0,
+        includeHidden: undefined,
+        name: undefined,
+        reversed: undefined,
+        scale: 'auto',
+        tick: true,
+        tickCount: 5,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should select tooltip axis range', () => {
+      const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
+      expect(spy).toHaveBeenLastCalledWith([0, 360]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: [0, 1, 2, 3, 4, 5],
+        range: [0, 360],
+      });
+    });
+
+    it('should select categoricalDomain = undefined', () => {
+      const { spy } = renderTestCase(selectTooltipCategoricalDomain);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 0,
+          index: 0,
+          offset: 0,
+          value: 0,
+        },
+        {
+          coordinate: 60,
+          index: 1,
+          offset: 0,
+          value: 1,
+        },
+        {
+          coordinate: 120,
+          index: 2,
+          offset: 0,
+          value: 2,
+        },
+        {
+          coordinate: 180,
+          index: 3,
+          offset: 0,
+          value: 3,
+        },
+        {
+          coordinate: 240,
+          index: 4,
+          offset: 0,
+          value: 4,
+        },
+        {
+          coordinate: 300,
+          index: 5,
+          offset: 0,
+          value: 5,
+        },
+      ]);
     });
   });
 
