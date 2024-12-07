@@ -1167,6 +1167,30 @@ describe('Tooltip visibility', () => {
         },
       ]);
     });
+
+    it('should move when the mouse moves', async () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+
+      showTooltipOnCoordinate(container, RadialBarChartTestCase.mouseHoverSelector, {
+        clientX: 200,
+        clientY: 200,
+      });
+
+      const tooltip1 = getTooltip(container);
+      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
+
+      showTooltipOnCoordinate(container, RadialBarChartTestCase.mouseHoverSelector, { clientX: 201, clientY: 201 });
+
+      const tooltip2 = getTooltip(container);
+
+      expect(tooltip2.getAttribute('style')).toContain(RadialBarChartTestCase.expectedTransform);
+    });
   });
 
   describe('includeHidden prop', () => {
