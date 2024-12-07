@@ -632,7 +632,7 @@ const computeNumericalDomain = (
   return [Math.min(...onlyNumbers), Math.max(...onlyNumbers)];
 };
 
-const computeCategoricalDomain = (
+const computeDomainOfTypeCategory = (
   allDataSquished: AppliedChartData,
   axisSettings: BaseCartesianAxis,
   isCategorical: boolean,
@@ -861,7 +861,7 @@ export const combineAxisDomain = (
   }
 
   if (type === 'category') {
-    return computeCategoricalDomain(allAppliedValues, axisSettings, isCategorical);
+    return computeDomainOfTypeCategory(allAppliedValues, axisSettings, isCategorical);
   }
 
   if (stackOffsetType === 'expand') {
@@ -1526,7 +1526,7 @@ export const combineCategoricalDomain = (
   axis: AxisWithTicksSettings,
   axisType: XorYType,
 ): ReadonlyArray<unknown> | undefined => {
-  if (axis == null) {
+  if (axis == null || axis.dataKey == null) {
     return undefined;
   }
   const { type, scale } = axis;
@@ -1536,6 +1536,7 @@ export const combineCategoricalDomain = (
   }
   return undefined;
 };
+
 export const selectCategoricalDomain = createSelector(
   selectChartLayout,
   selectAllAppliedValues,

@@ -842,10 +842,47 @@ describe('<PolarRadiusAxis />', () => {
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
-      it('should not render ticks', () => {
+      it('should render ticks', () => {
         const { container } = renderTestCase();
 
-        expectRadiusAxisTicks(container, []);
+        expectRadiusAxisTicks(container, [
+          {
+            textContent: '0',
+            transform: 'rotate(90, 250, 250)',
+            x: '250',
+            y: '250',
+          },
+          {
+            textContent: '1',
+            transform: 'rotate(90, 282.6666666666667, 250)',
+            x: '282.6666666666667',
+            y: '250',
+          },
+          {
+            textContent: '2',
+            transform: 'rotate(90, 315.3333333333333, 250)',
+            x: '315.3333333333333',
+            y: '250',
+          },
+          {
+            textContent: '3',
+            transform: 'rotate(90, 348, 250)',
+            x: '348',
+            y: '250',
+          },
+          {
+            textContent: '4',
+            transform: 'rotate(90, 380.66666666666663, 250)',
+            x: '380.66666666666663',
+            y: '250',
+          },
+          {
+            textContent: '5',
+            transform: 'rotate(90, 413.3333333333333, 250)',
+            x: '413.3333333333333',
+            y: '250',
+          },
+        ]);
       });
 
       it('should not render label', () => {
