@@ -60,11 +60,12 @@ import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
-import { selectAngleAxis, selectRadiusAxis } from './polarAxisSelectors';
+import { selectAngleAxis, selectPolarAxisRange, selectRadiusAxis } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { MaybeStackedGraphicalItem } from './barSelectors';
+import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1255,19 +1256,12 @@ export const selectAxisRange = (
       return combineYAxisRange(state, axisId, isPanorama);
     case 'zAxis':
       return selectZAxisSettings(state, axisId)?.range;
+    case 'angleAxis':
+    case 'radiusAxis':
+      return selectPolarAxisRange(state);
     default:
       return undefined;
   }
-};
-
-export const combineAxisRangeWithReverse = (
-  axisSettings: BaseCartesianAxis | undefined,
-  axisRange: AxisRange,
-): AxisRange | undefined => {
-  if (axisSettings?.reversed) {
-    return [axisRange[1], axisRange[0]];
-  }
-  return axisRange;
 };
 
 export const selectAxisRangeWithReverse: (

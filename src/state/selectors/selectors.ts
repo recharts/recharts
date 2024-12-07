@@ -132,7 +132,12 @@ export function selectActiveCoordinate(
   return activeCoordinate;
 }
 
-export const selectActiveLabel = createSelector(
+export const selectActiveLabel: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
+) => string | undefined = createSelector(
   selectTooltipAxisTicks,
   selectActiveIndex,
   (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {

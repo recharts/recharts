@@ -62,6 +62,7 @@ import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import {
   selectTooltipAxis,
   selectTooltipAxisId,
+  selectTooltipAxisRangeWithReverse,
   selectTooltipAxisRealScaleType,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
@@ -72,6 +73,7 @@ import {
   selectActiveCoordinate,
   selectActiveLabel,
   selectIsTooltipActive,
+  selectTooltipState,
 } from '../../../src/state/selectors/selectors';
 import { expectScale } from '../../helper/expectScale';
 
@@ -680,7 +682,7 @@ describe('Tooltip visibility', () => {
     });
   });
 
-  describe(`As a child of vertical LineChart`, () => {
+  describe(`as a child of vertical LineChart`, () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChartVerticalTestCase.Wrapper>
         <Tooltip />
@@ -787,6 +789,276 @@ describe('Tooltip visibility', () => {
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(5);
+    });
+  });
+
+  describe('as a child of RadarChart', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChartTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </RadarChartTestCase.Wrapper>
+    ));
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('angleAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select tooltip axis settings', () => {
+      const { spy } = renderTestCase(selectTooltipAxis);
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: false,
+        dataKey: 'name',
+        domain: undefined,
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+    });
+
+    it('should select tooltip axis range', () => {
+      const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
+      expect(spy).toHaveBeenLastCalledWith([90, -270]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        range: [90, -270],
+      });
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 90,
+          index: 0,
+          offset: 60,
+          value: 'Page A',
+        },
+        {
+          coordinate: 30,
+          index: 1,
+          offset: 60,
+          value: 'Page B',
+        },
+        {
+          coordinate: -30,
+          index: 2,
+          offset: 60,
+          value: 'Page C',
+        },
+        {
+          coordinate: -90,
+          index: 3,
+          offset: 60,
+          value: 'Page D',
+        },
+        {
+          coordinate: -150,
+          index: 4,
+          offset: 60,
+          value: 'Page E',
+        },
+        {
+          coordinate: -210,
+          index: 5,
+          offset: 60,
+          value: 'Page F',
+        },
+      ]);
+    });
+
+    it('should select tooltip state before & after hover', () => {
+      const { container, spy } = renderTestCase(selectTooltipState);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        axisInteraction: {
+          activeClick: false,
+          activeClickAxisDataKey: undefined,
+          activeClickAxisIndex: null,
+          activeClickCoordinate: undefined,
+          activeHover: false,
+          activeMouseOverAxisDataKey: undefined,
+          activeMouseOverAxisIndex: null,
+          activeMouseOverCoordinate: undefined,
+        },
+        itemInteraction: {
+          activeClick: false,
+          activeClickCoordinate: undefined,
+          activeClickDataKey: undefined,
+          activeClickIndex: null,
+          activeHover: false,
+          activeMouseOverCoordinate: undefined,
+          activeMouseOverDataKey: undefined,
+          activeMouseOverIndex: null,
+        },
+        settings: {
+          axisId: 0,
+          shared: undefined,
+          trigger: 'hover',
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            settings: {
+              color: '#8884d8',
+              dataKey: 'uv',
+              fill: '#8884d8',
+              hide: false,
+              name: 'Mike',
+              nameKey: undefined,
+              stroke: '#8884d8',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ],
+      });
+
+      showTooltip(container, RadarChartTestCase.mouseHoverSelector);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        axisInteraction: {
+          activeClick: false,
+          activeClickAxisDataKey: undefined,
+          activeClickAxisIndex: null,
+          activeClickCoordinate: undefined,
+          activeHover: true,
+          activeMouseOverAxisDataKey: undefined,
+          activeMouseOverAxisIndex: '5',
+          activeMouseOverCoordinate: {
+            // I don't think we need the whole axis to be included here but this is what the generator did
+            allowDuplicatedCategory: true,
+            angle: -210,
+            angleAxisId: 0,
+            axisLine: true,
+            axisType: 'angleAxis',
+            categoricalDomain: undefined,
+            cx: 300,
+            cy: 300,
+            dataKey: 'name',
+            domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+            duplicateDomain: undefined,
+            endAngle: -270,
+            innerRadius: 0,
+            isCategorical: true,
+            layout: 'centric',
+            orientation: 'outer',
+            originalDomain: undefined,
+            outerRadius: 236,
+            radius: 141.4213562373095,
+            range: [90, -270],
+            realScaleType: 'band',
+            reversed: false,
+            scale: expect.any(Function),
+            startAngle: 90,
+            tick: true,
+            tickLine: true,
+            tickSize: 8,
+            type: 'category',
+            x: 177.5255128608411,
+            y: 229.28932188134524,
+          },
+        },
+        itemInteraction: {
+          activeClick: false,
+          activeClickCoordinate: undefined,
+          activeClickDataKey: undefined,
+          activeClickIndex: null,
+          activeHover: false,
+          activeMouseOverCoordinate: undefined,
+          activeMouseOverDataKey: undefined,
+          activeMouseOverIndex: null,
+        },
+        settings: {
+          axisId: 0,
+          shared: undefined,
+          trigger: 'hover',
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            settings: {
+              color: '#8884d8',
+              dataKey: 'uv',
+              fill: '#8884d8',
+              hide: false,
+              name: 'Mike',
+              nameKey: undefined,
+              stroke: '#8884d8',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ],
+      });
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith('Page C');
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(container, RadarChartTestCase.mouseHoverSelector, RadarChartTestCase.mouseCoordinate);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDuplicatedCategory: true,
+        angle: -210,
+        angleAxisId: 0,
+        axisLine: true,
+        axisType: 'angleAxis',
+        categoricalDomain: undefined,
+        cx: 300,
+        cy: 300,
+        dataKey: 'name',
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        duplicateDomain: undefined,
+        endAngle: -270,
+        innerRadius: 0,
+        isCategorical: true,
+        layout: 'centric',
+        orientation: 'outer',
+        originalDomain: undefined,
+        outerRadius: 236,
+        radius: 141.4213562373095,
+        range: [90, -270],
+        realScaleType: 'band',
+        reversed: false,
+        scale: expect.any(Function),
+        startAngle: 90,
+        tick: true,
+        tickLine: true,
+        tickSize: 8,
+        type: 'category',
+        x: 177.5255128608411,
+        y: 229.28932188134524,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 

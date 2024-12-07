@@ -9,7 +9,6 @@ import {
   combineAreasDomain,
   combineAxisDomain,
   combineAxisDomainWithNiceTicks,
-  combineAxisRangeWithReverse,
   combineCategoricalDomain,
   combineDisplayedData,
   combineDomainOfStackGroups,
@@ -47,6 +46,7 @@ import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
+import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);

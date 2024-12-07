@@ -40,7 +40,11 @@ export const selectPolarAxis = (state: RechartsRootState, axisType: 'angleAxis' 
   }
 };
 
-const selectPolarAxisRange = (state: RechartsRootState, axisType: 'angleAxis' | 'radiusAxis', axisId: AxisId) => {
+const selectPolarAxisRangeWithReversed = (
+  state: RechartsRootState,
+  axisType: 'angleAxis' | 'radiusAxis',
+  axisId: AxisId,
+) => {
   switch (axisType) {
     case 'angleAxis': {
       return selectAngleAxisRangeWithReversed(state, axisId);
@@ -59,7 +63,7 @@ export const selectPolarAxisScale: (
   axisType: 'angleAxis' | 'radiusAxis',
   polarAxisId: AxisId,
 ) => RechartsScale | undefined = createSelector(
-  [selectPolarAxis, selectRealScaleType, selectPolarAxisDomainIncludingNiceTicks, selectPolarAxisRange],
+  [selectPolarAxis, selectRealScaleType, selectPolarAxisDomainIncludingNiceTicks, selectPolarAxisRangeWithReversed],
   combineScaleFunction,
 );
 
@@ -83,7 +87,7 @@ export const selectPolarAxisTicks: (
     selectRealScaleType,
     selectPolarAxisScale,
     selectPolarNiceTicks,
-    selectPolarAxisRange,
+    selectPolarAxisRangeWithReversed,
     selectDuplicateDomain,
     selectPolarCategoricalDomain,
     pickAxisType,
@@ -100,7 +104,7 @@ export const selectPolarGraphicalItemAxisTicks: (
     selectChartLayout,
     selectPolarAxis,
     selectPolarAxisScale,
-    selectPolarAxisRange,
+    selectPolarAxisRangeWithReversed,
     selectDuplicateDomain,
     selectPolarCategoricalDomain,
     pickAxisType,
