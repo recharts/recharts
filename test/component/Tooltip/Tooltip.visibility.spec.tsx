@@ -252,7 +252,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(225.1471862576143px, 225.1471862576143px);',
+  expectedTransform: 'transform: translate(198.74853309331652px, 198.7485330933165px);',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -1110,14 +1110,14 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis range', () => {
       const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
-      expect(spy).toHaveBeenLastCalledWith([0, 360]);
+      expect(spy).toHaveBeenLastCalledWith([0, 236]);
     });
 
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
       expectScale(spy, {
         domain: [0, 1, 2, 3, 4, 5],
-        range: [0, 360],
+        range: [0, 236],
       });
     });
 
@@ -1136,31 +1136,31 @@ describe('Tooltip visibility', () => {
           value: 0,
         },
         {
-          coordinate: 60,
+          coordinate: 39.333333333333336,
           index: 1,
           offset: 0,
           value: 1,
         },
         {
-          coordinate: 120,
+          coordinate: 78.66666666666667,
           index: 2,
           offset: 0,
           value: 2,
         },
         {
-          coordinate: 180,
+          coordinate: 118,
           index: 3,
           offset: 0,
           value: 3,
         },
         {
-          coordinate: 240,
+          coordinate: 157.33333333333334,
           index: 4,
           offset: 0,
           value: 4,
         },
         {
-          coordinate: 300,
+          coordinate: 196.66666666666669,
           index: 5,
           offset: 0,
           value: 5,

@@ -26,6 +26,9 @@ export function ArrayInspector({ arr }: { arr: ReadonlyArray<unknown> | undefine
   const typeofArr = typeof arr[0];
   const shouldExpandByDefault = length <= 1 || (typeofArr !== 'object' && typeofArr !== 'function');
   const [expand, setExpand] = useState(shouldExpandByDefault);
+  function copyToClipboard() {
+    navigator.clipboard.writeText(JSON.stringify(arr, null, 2));
+  }
   return (
     <>
       {expand ? (
@@ -37,6 +40,9 @@ export function ArrayInspector({ arr }: { arr: ReadonlyArray<unknown> | undefine
           Expand
         </button>
       )}{' '}
+      <button type="button" onClick={copyToClipboard}>
+        Copy to clipboard
+      </button>
       {typeofArr === 'object' ? (
         <ArrayOfObjectsInspector arr={arr} expand={expand} />
       ) : (

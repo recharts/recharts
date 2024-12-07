@@ -1,23 +1,26 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Meta } from '@storybook/react';
+import { StoryContext, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
-import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend, RadialBarProps } from '../../../../src';
+import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { StorybookArgs } from '../../../StorybookArgs';
 
 export default {
   argTypes: RadialBarChartProps,
   component: RadialBarChart,
 };
 
-export const Simple: Meta<RadialBarProps> = {
-  render: (args: Record<string, any>) => {
+export const Simple: StoryObj = {
+  render: (args: StorybookArgs, context: StoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} />
         <Tooltip />
+        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
       </RadialBarChart>
     );
   },

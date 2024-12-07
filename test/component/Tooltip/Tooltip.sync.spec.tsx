@@ -185,7 +185,7 @@ const RadialBarChartTestCase: TooltipSyncTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  tooltipContent: { chartOne: { name: 'Mike', value: '300' }, chartTwo: { name: 'Mike', value: '4567' } },
+  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '4567' } },
 };
 
 // TODO: fix synchronization in Pie, Scatter, Funnel. These currently accept syncId as a prop but do not work.
