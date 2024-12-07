@@ -1,7 +1,7 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
+import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import clsx from 'clsx';
 import { warn } from '../util/LogUtils';
@@ -28,7 +28,7 @@ export interface Payload {
   type?: LegendType;
   color?: string;
   payload?: {
-    strokeDasharray?: ReactText;
+    strokeDasharray?: number | string;
     value?: any;
   };
   formatter?: Formatter;
