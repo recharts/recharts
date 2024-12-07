@@ -40,13 +40,13 @@ import {
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { AxisId } from '../cartesianAxisSlice';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
-import { AxisDomain, AxisTick, CategoricalDomain, LayoutType, NumberDomain, TickItem } from '../../util/types';
+import { AxisDomain, CategoricalDomain, LayoutType, NumberDomain, TickItem } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
 import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } from '../referenceElementsSlice';
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
-import { isNan, mathSign } from '../../util/DataUtils';
+import { mathSign } from '../../util/DataUtils';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -246,7 +246,6 @@ export const combineTicksOfTooltipAxis = (
   axis: AxisWithTicksSettings,
   realScaleType: string,
   scale: RechartsScale | undefined,
-  niceTicks: ReadonlyArray<number> | undefined,
   range: AxisRange | undefined,
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
@@ -255,38 +254,18 @@ export const combineTicksOfTooltipAxis = (
   if (!axis) {
     return null;
   }
-  const { type, tickCount, ticks } = axis;
+  const { type } = axis;
 
   const isCategorical = isCategoricalAxis(layout, axisType);
-
-  const isGrid = false;
-  const isAll = true;
 
   if (!scale) {
     return null;
   }
 
   const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
-  let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
+  let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
   offset = axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
-
-  // The ticks set by user should only affect the ticks adjacent to axis line
-  if (isGrid && (ticks || niceTicks)) {
-    const result = (ticks || niceTicks).map((entry: AxisTick) => {
-      const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
-
-      return {
-        // If the scaleContent is not a number, the coordinate will be NaN.
-        // That could be the case for example with a PointScale and a string as domain.
-        coordinate: scale(scaleContent) + offset,
-        value: entry,
-        offset,
-      };
-    });
-
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
-  }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
@@ -298,15 +277,6 @@ export const combineTicksOfTooltipAxis = (
         // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
-    );
-  }
-
-  if (scale.ticks && !isAll) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
     );
   }
 
@@ -328,7 +298,6 @@ export const selectTooltipAxisTicks = createSelector(
     selectTooltipAxis,
     selectTooltipAxisRealScaleType,
     selectTooltipAxisScale,
-    selectTooltipNiceTicks,
     selectTooltipAxisRange,
     selectTooltipDuplicateDomain,
     selectTooltipCategoricalDomain,
