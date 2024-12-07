@@ -6,7 +6,6 @@ import React, {
   Children,
   PureComponent,
   ReactElement,
-  ReactText,
   SVGAttributes,
   SVGProps,
   TouchEvent,
@@ -36,7 +35,7 @@ import { selectBrushDimensions } from '../state/selectors/brushSelectors';
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
 // Why is this tickFormatter different from the other TickFormatters? This one allows to return numbers too for some reason.
-type BrushTickFormatter = (value: any, index: number) => ReactText;
+type BrushTickFormatter = (value: any, index: number) => number | string;
 
 interface BrushProps {
   x?: number;
@@ -180,7 +179,7 @@ type TextOfTickProps = {
  * This one cannot be a React Component because React is not happy with it returning only string | number.
  * React wants a full React.JSX.Element but that is not compatible with Text component.
  */
-function getTextOfTick(props: TextOfTickProps): ReactText {
+function getTextOfTick(props: TextOfTickProps): number | string {
   const { index, data, tickFormatter, dataKey } = props;
   const text = getValueByDataKey(data[index], dataKey, index);
 
