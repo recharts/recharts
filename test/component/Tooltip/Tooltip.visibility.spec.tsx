@@ -252,7 +252,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(226.5613998199874px, 226.5613998199874px);',
+  expectedTransform: 'transform: translate(225.1471862576143px, 225.1471862576143px);',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
