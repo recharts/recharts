@@ -1200,15 +1200,9 @@ export const generateCategoricalChart = ({
 
       const scale = boundingRect.width / element.offsetWidth || 1;
 
-      const rangeObj = inRange(
-        e.chartX,
-        e.chartY,
-        scale,
-        this.props.layout,
-        this.state.angleAxisMap,
-        this.state.radiusAxisMap,
-        this.state.offset,
-      );
+      const angleAxis = getAnyElementOfObject(this.state.angleAxisMap);
+
+      const rangeObj = inRange(e.chartX, e.chartY, scale, this.props.layout, angleAxis, this.state.offset);
       if (!rangeObj) {
         return null;
       }
