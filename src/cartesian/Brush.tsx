@@ -1,7 +1,7 @@
 /**
  * @fileOverview Brush
  */
-import React, { PureComponent, Children, ReactText, ReactElement, TouchEvent, SVGProps } from 'react';
+import React, { PureComponent, Children, ReactElement, TouchEvent, SVGProps } from 'react';
 import clsx from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
 import isFunction from 'lodash/isFunction';
@@ -42,7 +42,7 @@ interface BrushProps extends InternalBrushProps {
   dataKey?: DataKey<any>;
   startIndex?: number;
   endIndex?: number;
-  tickFormatter?: (value: any, index: number) => ReactText;
+  tickFormatter?: (value: any, index: number) => string | number;
 
   children?: ReactElement;
 

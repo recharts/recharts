@@ -1,7 +1,7 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { PureComponent, ReactNode, MouseEvent, ReactText, ReactElement } from 'react';
+import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 import isFunction from 'lodash/isFunction';
 
 import clsx from 'clsx';
@@ -30,7 +30,7 @@ export type Formatter = (
     type?: LegendType;
     color?: string;
     payload?: {
-      strokeDasharray: ReactText;
+      strokeDasharray: string | number;
       value?: any;
     };
   },
@@ -43,7 +43,7 @@ export interface Payload {
   type?: LegendType;
   color?: string;
   payload?: {
-    strokeDasharray: ReactText;
+    strokeDasharray: string | number;
     value?: any;
   };
   formatter?: Formatter;
