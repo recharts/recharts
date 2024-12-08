@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import { createSelector } from '@reduxjs/toolkit';
 import {
   CartesianViewBox,
   ChartOffset,
@@ -11,12 +10,9 @@ import {
   XAxisMap,
   YAxisMap,
 } from '../util/types';
-import type { CategoricalChartState, XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
-import { getAnyElementOfObject } from '../util/DataUtils';
+import type { CategoricalChartState } from '../chart/types';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
-import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
-import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
@@ -165,46 +161,6 @@ export const selectPolarAngleAxisMap = (state: RechartsRootState): PolarAngleAxi
  */
 export const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusAxisMap | undefined =>
   state.axis.polarRadiusAxisMap;
-
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `cartesianAxisSlice`
- */
-export const selectArbitraryXAxis: (state: RechartsRootState) => XAxisWithExtraData | undefined = createSelector(
-  selectXAxisMap,
-  getAnyElementOfObject,
-);
-
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `cartesianAxisSlice`
- */
-export const selectArbitraryYAxis: (state: RechartsRootState) => YAxisWithExtraData | undefined = createSelector(
-  selectYAxisMap,
-  getAnyElementOfObject,
-);
-
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
- */
-export const selectArbitraryPolarAngleAxis: (state: RechartsRootState) => PolarAngleAxisProps | undefined =
-  createSelector(selectPolarAngleAxisMap, getAnyElementOfObject);
-
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
- */
-export const selectArbitraryPolarRadiusAxis: (state: RechartsRootState) => PolarRadiusAxisProps | undefined =
-  createSelector(selectPolarRadiusAxisMap, getAnyElementOfObject);
 
 export const useViewBox = (): CartesianViewBox => {
   const panorama = useIsPanorama();
