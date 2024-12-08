@@ -10,6 +10,8 @@ import { getPercentValue } from '../../util/DataUtils';
 import { PolarViewBox } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
+import { AxisRange } from './axisSelectors';
+import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 
 export const implicitAngleAxis: AngleAxisSettings = {
   allowDataOverflow: false,
@@ -130,21 +132,23 @@ export const selectOuterRadius: (state: RechartsRootState) => number | undefined
   },
 );
 
-export const selectAngleAxisRangeWithReversed: (state: RechartsRootState, angleAxisId: AxisId) => [number, number] =
-  createSelector(
-    [selectPolarOptions, selectAngleAxis],
-    (polarChartOptions: PolarChartOptions | undefined, angleAxis: AngleAxisSettings) => {
-      if (polarChartOptions == null) {
-        return undefined;
-      }
-      if (angleAxis.reversed) {
-        return [polarChartOptions.endAngle, polarChartOptions.startAngle];
-      }
-      return [polarChartOptions.startAngle, polarChartOptions.endAngle];
-    },
-  );
+const combinePolarAxisRange = (polarOptions: PolarChartOptions | undefined): AxisRange => {
+  if (polarOptions == null) {
+    return [0, 0];
+  }
+  const { startAngle, endAngle } = polarOptions;
+  return [startAngle, endAngle];
+};
 
-export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => [number, number] =
+export const selectPolarAxisRange: (state: RechartsRootState) => AxisRange = createSelector(
+  [selectPolarOptions],
+  combinePolarAxisRange,
+);
+
+export const selectAngleAxisRangeWithReversed: (state: RechartsRootState, angleAxisId: AxisId) => AxisRange =
+  createSelector([selectAngleAxis, selectPolarAxisRange], combineAxisRangeWithReverse);
+
+export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange =
   createSelector(
     [selectMaxRadius, selectInnerRadius, selectOuterRadius, selectRadiusAxis],
     (maxRadius, innerRadius, outerRadius, radiusAxis) => {

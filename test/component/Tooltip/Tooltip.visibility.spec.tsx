@@ -34,8 +34,15 @@ import {
   YAxis,
 } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
-import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } from '../../_data';
-import { expectTooltipNotVisible, expectTooltipPayload, getTooltip, showTooltip } from './tooltipTestHelpers';
+import { exampleSankeyData, exampleSunburstData, exampleTreemapData, PageData } from '../../_data';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  MouseCoordinate,
+  showTooltip,
+  showTooltipOnCoordinate,
+} from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -52,11 +59,31 @@ import {
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import {
+  selectTooltipAxis,
+  selectTooltipAxisId,
+  selectTooltipAxisRangeWithReverse,
+  selectTooltipAxisRealScaleType,
+  selectTooltipAxisScale,
+  selectTooltipAxisTicks,
+  selectTooltipAxisType,
+  selectTooltipCategoricalDomain,
+} from '../../../src/state/selectors/tooltipSelectors';
+import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
+import {
+  selectActiveCoordinate,
+  selectActiveLabel,
+  selectIsTooltipActive,
+  selectTooltipState,
+} from '../../../src/state/selectors/selectors';
+import { expectScale } from '../../helper/expectScale';
+import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
   name: string;
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
+  mouseCoordinate?: MouseCoordinate;
   Wrapper: ComponentType<{ children: ReactNode }>;
   expectedTransform: string;
 };
@@ -225,7 +252,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(226.5613998199874px, 226.5613998199874px);',
+  expectedTransform: 'transform: translate(225.1471862576143px, 225.1471862576143px);',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -657,6 +684,515 @@ describe('Tooltip visibility', () => {
     });
   });
 
+  describe(`as a child of vertical LineChart`, () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChartVerticalTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </LineChartVerticalTestCase.Wrapper>
+    ));
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('yAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select dataStartIndex and dataEndIndex', () => {
+      const { spy } = renderTestCase(selectChartDataWithIndexes);
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: [
+          {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          {
+            amt: 2400,
+            name: 'Page B',
+            pv: 4567,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page C',
+            pv: 1398,
+            uv: 300,
+          },
+          {
+            amt: 2400,
+            name: 'Page D',
+            pv: 9800,
+            uv: 200,
+          },
+          {
+            amt: 2400,
+            name: 'Page E',
+            pv: 3908,
+            uv: 278,
+          },
+          {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+        ],
+        computedData: undefined,
+        dataEndIndex: 5,
+        dataStartIndex: 0,
+      });
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith('Page C');
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        x: 200,
+        y: 227,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should select isActive and activeIndex, and update it after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spy).toHaveBeenCalledTimes(3);
+
+      showTooltipOnCoordinate(
+        container,
+        LineChartVerticalTestCase.mouseHoverSelector,
+        LineChartVerticalTestCase.mouseCoordinate,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({
+        activeIndex: '3',
+        isActive: true,
+      });
+      expect(spy).toHaveBeenCalledTimes(5);
+    });
+  });
+
+  describe('as a child of RadarChart', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChartTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </RadarChartTestCase.Wrapper>
+    ));
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('angleAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select tooltip axis settings', () => {
+      const { spy } = renderTestCase(selectTooltipAxis);
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: false,
+        dataKey: 'name',
+        domain: undefined,
+        id: 0,
+        includeHidden: false,
+        name: undefined,
+        reversed: false,
+        scale: 'auto',
+        tick: true,
+        tickCount: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      });
+    });
+
+    it('should select tooltip axis range', () => {
+      const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
+      expect(spy).toHaveBeenLastCalledWith([90, -270]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        range: [90, -270],
+      });
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 90,
+          index: 0,
+          offset: 60,
+          value: 'Page A',
+        },
+        {
+          coordinate: 30,
+          index: 1,
+          offset: 60,
+          value: 'Page B',
+        },
+        {
+          coordinate: -30,
+          index: 2,
+          offset: 60,
+          value: 'Page C',
+        },
+        {
+          coordinate: -90,
+          index: 3,
+          offset: 60,
+          value: 'Page D',
+        },
+        {
+          coordinate: -150,
+          index: 4,
+          offset: 60,
+          value: 'Page E',
+        },
+        {
+          coordinate: -210,
+          index: 5,
+          offset: 60,
+          value: 'Page F',
+        },
+      ]);
+    });
+
+    it('should select tooltip state before & after hover', () => {
+      const { container, spy } = renderTestCase(selectTooltipState);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        axisInteraction: {
+          activeClick: false,
+          activeClickAxisDataKey: undefined,
+          activeClickAxisIndex: null,
+          activeClickCoordinate: undefined,
+          activeHover: false,
+          activeMouseOverAxisDataKey: undefined,
+          activeMouseOverAxisIndex: null,
+          activeMouseOverCoordinate: undefined,
+        },
+        itemInteraction: {
+          activeClick: false,
+          activeClickCoordinate: undefined,
+          activeClickDataKey: undefined,
+          activeClickIndex: null,
+          activeHover: false,
+          activeMouseOverCoordinate: undefined,
+          activeMouseOverDataKey: undefined,
+          activeMouseOverIndex: null,
+        },
+        settings: {
+          axisId: 0,
+          shared: undefined,
+          trigger: 'hover',
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            settings: {
+              color: '#8884d8',
+              dataKey: 'uv',
+              fill: '#8884d8',
+              hide: false,
+              name: 'Mike',
+              nameKey: undefined,
+              stroke: '#8884d8',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ],
+      });
+
+      showTooltip(container, RadarChartTestCase.mouseHoverSelector);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        axisInteraction: {
+          activeClick: false,
+          activeClickAxisDataKey: undefined,
+          activeClickAxisIndex: null,
+          activeClickCoordinate: undefined,
+          activeHover: true,
+          activeMouseOverAxisDataKey: undefined,
+          activeMouseOverAxisIndex: '5',
+          activeMouseOverCoordinate: {
+            // I don't think we need the whole axis to be included here but this is what the generator did
+            allowDuplicatedCategory: true,
+            angle: -210,
+            angleAxisId: 0,
+            axisLine: true,
+            axisType: 'angleAxis',
+            categoricalDomain: undefined,
+            cx: 300,
+            cy: 300,
+            dataKey: 'name',
+            domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+            duplicateDomain: undefined,
+            endAngle: -270,
+            innerRadius: 0,
+            isCategorical: true,
+            layout: 'centric',
+            orientation: 'outer',
+            originalDomain: undefined,
+            outerRadius: 236,
+            radius: 141.4213562373095,
+            range: [90, -270],
+            realScaleType: 'band',
+            reversed: false,
+            scale: expect.any(Function),
+            startAngle: 90,
+            tick: true,
+            tickLine: true,
+            tickSize: 8,
+            type: 'category',
+            x: 177.5255128608411,
+            y: 229.28932188134524,
+          },
+        },
+        itemInteraction: {
+          activeClick: false,
+          activeClickCoordinate: undefined,
+          activeClickDataKey: undefined,
+          activeClickIndex: null,
+          activeHover: false,
+          activeMouseOverCoordinate: undefined,
+          activeMouseOverDataKey: undefined,
+          activeMouseOverIndex: null,
+        },
+        settings: {
+          axisId: 0,
+          shared: undefined,
+          trigger: 'hover',
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            settings: {
+              color: '#8884d8',
+              dataKey: 'uv',
+              fill: '#8884d8',
+              hide: false,
+              name: 'Mike',
+              nameKey: undefined,
+              stroke: '#8884d8',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ],
+      });
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      expect(spy).toHaveBeenLastCalledWith('Page C');
+    });
+
+    it('should select active coordinate', () => {
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      showTooltipOnCoordinate(container, RadarChartTestCase.mouseHoverSelector, RadarChartTestCase.mouseCoordinate);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDuplicatedCategory: true,
+        angle: -210,
+        angleAxisId: 0,
+        axisLine: true,
+        axisType: 'angleAxis',
+        categoricalDomain: undefined,
+        cx: 300,
+        cy: 300,
+        dataKey: 'name',
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        duplicateDomain: undefined,
+        endAngle: -270,
+        innerRadius: 0,
+        isCategorical: true,
+        layout: 'centric',
+        orientation: 'outer',
+        originalDomain: undefined,
+        outerRadius: 236,
+        radius: 141.4213562373095,
+        range: [90, -270],
+        realScaleType: 'band',
+        reversed: false,
+        scale: expect.any(Function),
+        startAngle: 90,
+        tick: true,
+        tickLine: true,
+        tickSize: 8,
+        type: 'category',
+        x: 177.5255128608411,
+        y: 229.28932188134524,
+      });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('as a child of RadialBarChart', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadialBarChartTestCase.Wrapper>
+        <Tooltip />
+        {children}
+      </RadialBarChartTestCase.Wrapper>
+    ));
+
+    it('should select chart layout', () => {
+      const { spy } = renderTestCase(selectChartLayout);
+      expect(spy).toHaveBeenLastCalledWith('radial');
+    });
+
+    it('should select tooltip axis type', () => {
+      const { spy } = renderTestCase(selectTooltipAxisType);
+      expect(spy).toHaveBeenLastCalledWith('radiusAxis');
+    });
+
+    it('should select tooltip axis ID', () => {
+      const { spy } = renderTestCase(selectTooltipAxisId);
+      expect(spy).toHaveBeenLastCalledWith(0);
+    });
+
+    it('should select tooltip axis settings', () => {
+      const { spy } = renderTestCase(selectTooltipAxis);
+      expect(spy).toHaveBeenLastCalledWith({
+        allowDataOverflow: false,
+        allowDecimals: undefined,
+        allowDuplicatedCategory: true,
+        dataKey: undefined,
+        domain: undefined,
+        id: 0,
+        includeHidden: undefined,
+        name: undefined,
+        reversed: undefined,
+        scale: 'auto',
+        tick: true,
+        tickCount: 5,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+      });
+    });
+
+    it('should select tooltip axis range', () => {
+      const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
+      expect(spy).toHaveBeenLastCalledWith([0, 360]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: [0, 1, 2, 3, 4, 5],
+        range: [0, 360],
+      });
+    });
+
+    it('should select categoricalDomain = undefined', () => {
+      const { spy } = renderTestCase(selectTooltipCategoricalDomain);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 0,
+          index: 0,
+          offset: 0,
+          value: 0,
+        },
+        {
+          coordinate: 60,
+          index: 1,
+          offset: 0,
+          value: 1,
+        },
+        {
+          coordinate: 120,
+          index: 2,
+          offset: 0,
+          value: 2,
+        },
+        {
+          coordinate: 180,
+          index: 3,
+          offset: 0,
+          value: 3,
+        },
+        {
+          coordinate: 240,
+          index: 4,
+          offset: 0,
+          value: 4,
+        },
+        {
+          coordinate: 300,
+          index: 5,
+          offset: 0,
+          value: 5,
+        },
+      ]);
+    });
+
+    it('should move when the mouse moves', async () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+
+      showTooltipOnCoordinate(container, RadialBarChartTestCase.mouseHoverSelector, {
+        clientX: 200,
+        clientY: 200,
+      });
+
+      const tooltip1 = getTooltip(container);
+      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
+
+      showTooltipOnCoordinate(container, RadialBarChartTestCase.mouseHoverSelector, { clientX: 201, clientY: 201 });
+
+      const tooltip2 = getTooltip(container);
+
+      expect(tooltip2.getAttribute('style')).toContain(RadialBarChartTestCase.expectedTransform);
+    });
+  });
+
   describe('includeHidden prop', () => {
     describe('when includeHidden = true', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
@@ -672,6 +1208,110 @@ describe('Tooltip visibility', () => {
           {children}
         </ComposedChart>
       ));
+
+      it('should select tooltip axis ID', () => {
+        const { spy } = renderTestCase(selectTooltipAxisId);
+        expect(spy).toHaveBeenLastCalledWith(0);
+      });
+
+      it('should select tooltip axis type', () => {
+        const { spy } = renderTestCase(selectTooltipAxisType);
+        expect(spy).toHaveBeenLastCalledWith('xAxis');
+      });
+
+      it('should select active label when given explicit index', () => {
+        const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+        expect(spy).toHaveBeenLastCalledWith(2400);
+      });
+
+      it('should select active coordinate', () => {
+        const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenCalledTimes(1);
+
+        showTooltip(container, composedChartMouseHoverTooltipSelector);
+
+        expect(spy).toHaveBeenLastCalledWith({
+          x: 395,
+          y: 200,
+        });
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it('should select tooltip axis scale', () => {
+        const { spy } = renderTestCase(selectTooltipAxisScale);
+        expectScale(spy, {
+          domain: [0, 2400],
+          range: [65, 395],
+        });
+      });
+
+      it('should select tooltip axis settings', () => {
+        const { spy } = renderTestCase(selectTooltipAxis);
+        expect(spy).toHaveBeenLastCalledWith({
+          allowDataOverflow: false,
+          allowDecimals: true,
+          allowDuplicatedCategory: true,
+          angle: 0,
+          dataKey: 'amt',
+          domain: undefined,
+          height: 30,
+          hide: false,
+          id: 0,
+          includeHidden: false,
+          interval: 'preserveEnd',
+          minTickGap: 5,
+          mirror: false,
+          name: 'stature',
+          orientation: 'bottom',
+          padding: {
+            left: 0,
+            right: 0,
+          },
+          reversed: false,
+          scale: 'auto',
+          tick: true,
+          tickCount: 5,
+          tickFormatter: undefined,
+          ticks: undefined,
+          type: 'number',
+          unit: 'cm',
+        });
+      });
+
+      it('should select tooltip axis real scale type', () => {
+        const { spy } = renderTestCase(selectTooltipAxisRealScaleType);
+        expect(spy).toHaveBeenLastCalledWith('linear');
+      });
+
+      it('should select tooltip axis ticks', () => {
+        const { spy } = renderTestCase(selectTooltipAxisTicks);
+        expect(spy).toHaveBeenLastCalledWith([
+          { coordinate: 395, value: 2400, index: 0, offset: 0 },
+          { coordinate: 395, value: 2400, index: 1, offset: 0 },
+          { coordinate: 395, value: 2400, index: 2, offset: 0 },
+          { coordinate: 395, value: 2400, index: 3, offset: 0 },
+          { coordinate: 395, value: 2400, index: 4, offset: 0 },
+          { coordinate: 395, value: 2400, index: 5, offset: 0 },
+        ]);
+      });
+
+      it('should select isActive', () => {
+        const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'axis', 'hover', undefined));
+        expect(spy).toHaveBeenLastCalledWith({
+          activeIndex: null,
+          isActive: false,
+        });
+        expect(spy).toHaveBeenCalledTimes(3);
+
+        showTooltip(container, composedChartMouseHoverTooltipSelector);
+
+        expect(spy).toHaveBeenLastCalledWith({
+          activeIndex: '0',
+          isActive: true,
+        });
+        expect(spy).toHaveBeenCalledTimes(5);
+      });
 
       it('should render tooltip payload for hidden items', () => {
         const { container } = renderTestCase();

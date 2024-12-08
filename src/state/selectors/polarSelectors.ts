@@ -20,10 +20,10 @@ import {
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import { CategoricalDomain, NumberDomain } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectStackOffsetType } from './selectors';
 import { getValueByDataKey } from '../../util/ChartUtils';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
+import { selectStackOffsetType } from './rootPropsSelectors';
 
 export type PolarAxisType = 'angleAxis' | 'radiusAxis';
 

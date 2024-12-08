@@ -2,6 +2,7 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { ChartCoordinate, DataKey } from '../util/types';
+import { AxisId } from './cartesianAxisSlice';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -63,7 +64,7 @@ export type ActiveTooltipProps = {
   activeCoordinate: ChartCoordinate | undefined;
 };
 
-type TooltipSettingsState = { shared?: boolean; trigger?: TooltipTrigger };
+export type TooltipSettingsState = { shared: boolean; trigger: TooltipTrigger; axisId: AxisId };
 
 /**
  * The tooltip interaction state stores:
@@ -182,7 +183,7 @@ export const initialState: TooltipState = {
     activeClickAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
-  settings: { shared: false, trigger: 'hover' },
+  settings: { shared: false, trigger: 'hover', axisId: 0 },
 };
 
 const tooltipSlice = createSlice({

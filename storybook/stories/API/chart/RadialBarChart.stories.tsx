@@ -16,7 +16,7 @@ export const Simple: Meta<RadialBarProps> = {
   render: (args: Record<string, any>) => {
     return (
       <RadialBarChart {...args}>
-        <RadialBar dataKey="uv" />
+        <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} />
         <Tooltip />
       </RadialBarChart>
     );

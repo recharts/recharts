@@ -10,47 +10,35 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
+  TooltipSettingsState,
   TooltipState,
 } from '../tooltipSlice';
 import {
-  AxisPropsNeededForTicksGenerator,
   calculateActiveTickIndex,
   calculateTooltipPos,
   getActiveCoordinate,
-  getTicksOfAxis,
   getTooltipEntry,
   getValueByDataKey,
   inRange,
 } from '../../util/ChartUtils';
 import { ChartDataState } from '../chartDataSlice';
-import { selectTooltipAxis } from '../../context/useTooltipAxis';
 import {
+  AxisType,
   BaseAxisProps,
   ChartCoordinate,
   ChartOffset,
   DataKey,
   LayoutType,
-  StackOffsetType,
   TickItem,
   TooltipEventType,
 } from '../../util/types';
 import { findEntryInArray, isNan } from '../../util/DataUtils';
-import { AxisMap, AxisPropsWithExtraComputedData, TooltipTrigger } from '../../chart/types';
-import {
-  selectChartLayout,
-  selectPolarAngleAxisMap,
-  selectPolarRadiusAxisMap,
-  selectXAxisMap,
-  selectYAxisMap,
-} from '../../context/chartLayoutContext';
-import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
+import { AxisMap, TooltipTrigger } from '../../chart/types';
+import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
-import { selectChartCoordinates, selectContainerScale } from './containerSelectors';
-import { selectChartOffset } from './selectChartOffset';
-
-export const selectChartName = (state: RechartsRootState) => state.options.chartName;
-
-export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;
+import { selectTooltipAxis, selectTooltipAxisTicks } from './tooltipSelectors';
+import { AxisRange } from './axisSelectors';
+import { selectChartName } from './rootPropsSelectors';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -89,11 +77,12 @@ function getSliced<T>(
 
 export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
 
-const selectTooltipTicks = createSelector(selectTooltipAxis, (tooltipAxis: AxisPropsNeededForTicksGenerator) =>
-  getTicksOfAxis(tooltipAxis, false, true),
+export const selectTooltipSettings: (state: RechartsRootState) => TooltipSettingsState = createSelector(
+  [selectTooltipState],
+  (tooltipState: TooltipState) => tooltipState.settings,
 );
 
-const selectOrderedTooltipTicks = createSelector(selectTooltipTicks, (ticks: ReadonlyArray<TickItem>) =>
+export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
 );
 
@@ -143,8 +132,13 @@ export function selectActiveCoordinate(
   return activeCoordinate;
 }
 
-export const selectActiveLabel = createSelector(
-  selectTooltipTicks,
+export const selectActiveLabel: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
+) => string | undefined = createSelector(
+  selectTooltipAxisTicks,
   selectActiveIndex,
   (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {
     const n = Number(activeIndex);
@@ -268,12 +262,14 @@ export const selectTooltipPayload: (
   trigger: TooltipTrigger,
   defaultIndex: number | undefined,
 ) => TooltipPayload | undefined = createSelector(
-  selectTooltipPayloadConfigurations,
-  selectActiveIndex,
-  selectChartDataWithIndexes,
-  selectTooltipAxis,
-  selectActiveLabel,
-  selectTooltipPayloadSearcher,
+  [
+    selectTooltipPayloadConfigurations,
+    selectActiveIndex,
+    selectChartDataWithIndexes,
+    selectTooltipAxis,
+    selectActiveLabel,
+    selectTooltipPayloadSearcher,
+  ],
   combineTooltipPayload,
 );
 
@@ -333,12 +329,13 @@ export const combineActiveProps = (
   yAxisMap: AxisMap | undefined,
   angleAxisMap: AxisMap | undefined,
   radiusAxisMap: AxisMap | undefined,
-  tooltipAxis: AxisPropsWithExtraComputedData | undefined,
+  tooltipAxisType: AxisType | undefined,
+  tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,
 ): ActiveTooltipProps => {
-  if (!chartEvent || !scale || !layout || !tooltipAxis || !tooltipTicks) {
+  if (!chartEvent || !scale || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
   const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, angleAxisMap, radiusAxisMap, offset);
@@ -351,29 +348,11 @@ export const combineActiveProps = (
     pos,
     orderedTooltipTicks,
     tooltipTicks,
-    tooltipAxis.axisType,
-    tooltipAxis.range,
+    tooltipAxisType,
+    tooltipAxisRange,
   );
 
   const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
 
   return { activeIndex: String(activeIndex), activeCoordinate };
 };
-
-export const selectActivePropsFromMousePointer: (
-  state: RechartsRootState,
-  mousePointer: MousePointer,
-) => ActiveTooltipProps = createSelector(
-  selectChartCoordinates,
-  selectContainerScale,
-  selectChartLayout,
-  selectXAxisMap,
-  selectYAxisMap,
-  selectPolarAngleAxisMap,
-  selectPolarRadiusAxisMap,
-  selectTooltipAxis,
-  selectTooltipTicks,
-  selectOrderedTooltipTicks,
-  selectChartOffset,
-  combineActiveProps,
-);

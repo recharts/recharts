@@ -27,7 +27,13 @@ import {
   MaybeStackedGraphicalItem,
   SizeList,
 } from './barSelectors';
-import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
+import {
+  selectBarCategoryGap,
+  selectBarGap,
+  selectRootBarSize,
+  selectRootMaxBarSize,
+  selectStackOffsetType,
+} from './rootPropsSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
 import {
   PolarAxisType,
@@ -35,7 +41,6 @@ import {
   selectPolarItemsSettings,
   selectUnfilteredPolarItems,
 } from './polarSelectors';
-import { selectStackOffsetType } from './selectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { Payload as LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
