@@ -31,9 +31,9 @@ import {
   ChartCoordinate,
   ChartOffset,
   DataKey,
-  GeometrySector,
   LayoutType,
   NumberDomain,
+  PolarViewBox,
   RangeObj,
   ScaleType,
   StackOffsetType,
@@ -1169,7 +1169,7 @@ export function inRange(
   y: number,
   scale: number,
   layout: LayoutType,
-  angleAxis: GeometrySector | undefined,
+  polarViewBox: PolarViewBox | undefined,
   offset: ChartOffset,
 ): RangeObj {
   const [scaledX, scaledY] = [x / scale, y / scale];
@@ -1184,8 +1184,8 @@ export function inRange(
     return isInRange ? { x: scaledX, y: scaledY } : null;
   }
 
-  if (angleAxis) {
-    return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
+  if (polarViewBox) {
+    return inRangeOfSector({ x: scaledX, y: scaledY }, polarViewBox);
   }
 
   return null;

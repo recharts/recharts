@@ -29,10 +29,11 @@ import {
   ChartOffset,
   DataKey,
   LayoutType,
+  PolarViewBox,
   TickItem,
   TooltipEventType,
 } from '../../util/types';
-import { findEntryInArray, getAnyElementOfObject, isNan } from '../../util/DataUtils';
+import { findEntryInArray, isNan } from '../../util/DataUtils';
 import { AxisMap, TooltipTrigger } from '../../chart/types';
 import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -327,8 +328,7 @@ export const combineActiveProps = (
   layout: LayoutType | undefined,
   xAxisMap: AxisMap | undefined,
   yAxisMap: AxisMap | undefined,
-  angleAxisMap: AxisMap | undefined,
-  radiusAxisMap: AxisMap | undefined,
+  polarViewBox: PolarViewBox | undefined,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
@@ -338,8 +338,7 @@ export const combineActiveProps = (
   if (!chartEvent || !scale || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
-  const angleAxis = getAnyElementOfObject(angleAxisMap);
-  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, angleAxis, offset);
+  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, polarViewBox, offset);
   if (!rangeObj) {
     return undefined;
   }

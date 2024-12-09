@@ -1,7 +1,7 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
 import { getPercentValue, isNullish } from './DataUtils';
 import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
-import { Coordinate, ChartOffset, GeometrySector, RangeObj } from './types';
+import { Coordinate, ChartOffset, RangeObj, PolarViewBox } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -105,7 +105,7 @@ export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinat
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 };
 
-export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector) => {
+export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBox) => {
   const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
 
   if (radius <= 0) {
@@ -122,7 +122,7 @@ export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: GeometrySector
   return { radius, angle: radianToDegree(angleInRadian), angleInRadian };
 };
 
-export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) => {
+export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBox) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -133,7 +133,7 @@ export const formatAngleOfSector = ({ startAngle, endAngle }: GeometrySector) =>
   };
 };
 
-const reverseFormatAngleOfSetor = (angle: number, { startAngle, endAngle }: GeometrySector) => {
+const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: PolarViewBox) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -141,9 +141,9 @@ const reverseFormatAngleOfSetor = (angle: number, { startAngle, endAngle }: Geom
   return angle + min * 360;
 };
 
-export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector): RangeObj | null => {
-  const { radius, angle } = getAngleOfPoint({ x, y }, sector);
-  const { innerRadius, outerRadius } = sector;
+export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBox): RangeObj | null => {
+  const { radius, angle } = getAngleOfPoint({ x, y }, viewBox);
+  const { innerRadius, outerRadius } = viewBox;
 
   if (radius < innerRadius || radius > outerRadius) {
     // @ts-expect-error usages of this method expect it to always return RangeObj, not boolean
@@ -155,7 +155,7 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector): R
     return true;
   }
 
-  const { startAngle, endAngle } = formatAngleOfSector(sector);
+  const { startAngle, endAngle } = formatAngleOfSector(viewBox);
   let formatAngle = angle;
   let inRange;
 
@@ -178,7 +178,7 @@ export const inRangeOfSector = ({ x, y }: Coordinate, sector: GeometrySector): R
   }
 
   if (inRange) {
-    return { ...sector, radius, angle: reverseFormatAngleOfSetor(formatAngle, sector) };
+    return { ...viewBox, radius, angle: reverseFormatAngleOfSector(formatAngle, viewBox) };
   }
 
   return null;
