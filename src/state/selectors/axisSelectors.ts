@@ -60,7 +60,7 @@ import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
-import { selectAngleAxis, selectPolarAxisRange, selectRadiusAxis } from './polarAxisSelectors';
+import { selectAngleAxis, selectAngleAxisRange, selectRadiusAxis, selectRadiusAxisRange } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
@@ -1257,8 +1257,9 @@ export const selectAxisRange = (
     case 'zAxis':
       return selectZAxisSettings(state, axisId)?.range;
     case 'angleAxis':
+      return selectAngleAxisRange(state);
     case 'radiusAxis':
-      return selectPolarAxisRange(state);
+      return selectRadiusAxisRange(state, axisId);
     default:
       return undefined;
   }

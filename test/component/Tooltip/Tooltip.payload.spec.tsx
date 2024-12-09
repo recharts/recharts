@@ -339,7 +339,7 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
   // I cannot figure out how to make RadialBar display anything else other than the index
   expectedTooltipTitle: '4',
-  expectedTooltipContent: ['uv : 300', 'My custom name : 1398', 'amt : 2400'],
+  expectedTooltipContent: ['uv : 200', 'My custom name : 9800', 'amt : 2400'],
 };
 
 const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
@@ -1764,7 +1764,7 @@ describe('Tooltip payload', () => {
         showTooltip(container, radialBarChartMouseHoverTooltipSelector, debug);
 
         const expectedTooltipTitle = '4';
-        const expectedTooltipContent = ['uv : 300', 'My custom name : 1398', 'amt : 2400'];
+        const expectedTooltipContent = ['uv : 200', 'My custom name : 9800', 'amt : 2400'];
         expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
       });
 

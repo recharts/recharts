@@ -132,7 +132,7 @@ export const selectOuterRadius: (state: RechartsRootState) => number | undefined
   },
 );
 
-const combinePolarAxisRange = (polarOptions: PolarChartOptions | undefined): AxisRange => {
+const combineAngleAxisRange = (polarOptions: PolarChartOptions | undefined): AxisRange => {
   if (polarOptions == null) {
     return [0, 0];
   }
@@ -140,27 +140,26 @@ const combinePolarAxisRange = (polarOptions: PolarChartOptions | undefined): Axi
   return [startAngle, endAngle];
 };
 
-export const selectPolarAxisRange: (state: RechartsRootState) => AxisRange = createSelector(
+export const selectAngleAxisRange: (state: RechartsRootState) => AxisRange = createSelector(
   [selectPolarOptions],
-  combinePolarAxisRange,
+  combineAngleAxisRange,
 );
 
 export const selectAngleAxisRangeWithReversed: (state: RechartsRootState, angleAxisId: AxisId) => AxisRange =
-  createSelector([selectAngleAxis, selectPolarAxisRange], combineAxisRangeWithReverse);
+  createSelector([selectAngleAxis, selectAngleAxisRange], combineAxisRangeWithReverse);
+
+export const selectRadiusAxisRange: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange = createSelector(
+  [selectMaxRadius, selectInnerRadius, selectOuterRadius],
+  (maxRadius, innerRadius, outerRadius) => {
+    if (maxRadius == null || innerRadius == null || outerRadius == null) {
+      return undefined;
+    }
+    return [innerRadius, outerRadius];
+  },
+);
 
 export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange =
-  createSelector(
-    [selectMaxRadius, selectInnerRadius, selectOuterRadius, selectRadiusAxis],
-    (maxRadius, innerRadius, outerRadius, radiusAxis) => {
-      if (maxRadius == null || innerRadius == null || outerRadius == null) {
-        return undefined;
-      }
-      if (radiusAxis.reversed) {
-        return [outerRadius, innerRadius];
-      }
-      return [innerRadius, outerRadius];
-    },
-  );
+  createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
 export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox = createSelector(
   [selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],

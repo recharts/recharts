@@ -122,7 +122,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -372,7 +372,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -830,7 +830,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -944,7 +944,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -1031,7 +1031,7 @@ describe('<PolarRadiusAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectRadiusAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 196]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
