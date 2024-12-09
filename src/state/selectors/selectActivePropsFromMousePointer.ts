@@ -3,16 +3,11 @@ import { RechartsRootState } from '../store';
 import { MousePointer } from '../../chart/generateCategoricalChart';
 import { ActiveTooltipProps } from '../tooltipSlice';
 import { selectChartCoordinates, selectContainerScale } from './containerSelectors';
-import {
-  selectChartLayout,
-  selectPolarAngleAxisMap,
-  selectPolarRadiusAxisMap,
-  selectXAxisMap,
-  selectYAxisMap,
-} from '../../context/chartLayoutContext';
+import { selectChartLayout, selectXAxisMap, selectYAxisMap } from '../../context/chartLayoutContext';
 import { selectTooltipAxisRangeWithReverse, selectTooltipAxisTicks, selectTooltipAxisType } from './tooltipSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { combineActiveProps, selectOrderedTooltipTicks } from './selectors';
+import { selectPolarViewBox } from './polarAxisSelectors';
 
 export const selectActivePropsFromMousePointer: (
   state: RechartsRootState,
@@ -24,8 +19,7 @@ export const selectActivePropsFromMousePointer: (
     selectChartLayout,
     selectXAxisMap,
     selectYAxisMap,
-    selectPolarAngleAxisMap,
-    selectPolarRadiusAxisMap,
+    selectPolarViewBox,
     selectTooltipAxisType,
     selectTooltipAxisRangeWithReverse,
     selectTooltipAxisTicks,

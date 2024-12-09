@@ -23,8 +23,6 @@ import {
   WheelEvent,
   JSX,
 } from 'react';
-import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
@@ -1382,18 +1380,6 @@ export type XAxisMap = {
 
 export type YAxisMap = {
   [axisId: string]: YAxisWithExtraData;
-};
-
-export type PolarAngleAxisMap = {
-  [axisId: string]: PolarAngleAxisProps;
-};
-
-export type PolarRadiusAxisMap = {
-  [axisId: string]: PolarRadiusAxisProps;
-};
-
-export type BaseAxisMap = {
-  [axisId: string]: BaseAxisProps;
 };
 
 export type RangeObj = {

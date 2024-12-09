@@ -1,20 +1,10 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import {
-  CartesianViewBox,
-  ChartOffset,
-  LayoutType,
-  Margin,
-  PolarAngleAxisMap,
-  PolarRadiusAxisMap,
-  Size,
-  XAxisMap,
-  YAxisMap,
-} from '../util/types';
+import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size, XAxisMap, YAxisMap } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setPolarAngleAxisMap, setPolarRadiusAxisMap, setXAxisMap, setYAxisMap } from '../state/axisSlice';
+import { setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
@@ -50,8 +40,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     state: {
       xAxisMap,
       yAxisMap,
-      angleAxisMap,
-      radiusAxisMap,
       activeLabel,
       activePayload,
       isTooltipActive,
@@ -87,8 +75,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
   if (!isPanorama) {
     dispatch(setXAxisMap(xAxisMap));
     dispatch(setYAxisMap(yAxisMap));
-    dispatch(setPolarAngleAxisMap(angleAxisMap));
-    dispatch(setPolarRadiusAxisMap(radiusAxisMap));
     dispatch(setLayout(layout));
     dispatch(setChartSize({ width, height }));
     dispatch(setMargin(margin));
@@ -141,26 +127,6 @@ export const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined =
  * Instead use `cartesianAxisSlice`
  */
 export const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
- */
-export const selectPolarAngleAxisMap = (state: RechartsRootState): PolarAngleAxisMap | undefined =>
-  state.axis.polarAngleAxisMap;
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `axisMapSlice`
- */
-export const selectPolarRadiusAxisMap = (state: RechartsRootState): PolarRadiusAxisMap | undefined =>
-  state.axis.polarRadiusAxisMap;
 
 export const useViewBox = (): CartesianViewBox => {
   const panorama = useIsPanorama();

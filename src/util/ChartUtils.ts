@@ -17,17 +17,7 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
-import {
-  findEntryInArray,
-  getAnyElementOfObject,
-  isNan,
-  isNullish,
-  isNumber,
-  isNumOrStr,
-  mathSign,
-  uniqueId,
-  upperFirst,
-} from './DataUtils';
+import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId, upperFirst } from './DataUtils';
 import { filterProps } from './ReactUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
@@ -43,13 +33,13 @@ import {
   DataKey,
   LayoutType,
   NumberDomain,
+  PolarViewBox,
   RangeObj,
   ScaleType,
   StackOffsetType,
   TickItem,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
-import { AxisMap } from '../chart/types';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendState } from '../state/legendSlice';
 import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
@@ -1179,8 +1169,7 @@ export function inRange(
   y: number,
   scale: number,
   layout: LayoutType,
-  angleAxisMap: AxisMap | undefined,
-  radiusAxisMap: AxisMap | undefined,
+  polarViewBox: PolarViewBox | undefined,
   offset: ChartOffset,
 ): RangeObj {
   const [scaledX, scaledY] = [x / scale, y / scale];
@@ -1195,9 +1184,8 @@ export function inRange(
     return isInRange ? { x: scaledX, y: scaledY } : null;
   }
 
-  if (angleAxisMap && radiusAxisMap) {
-    const angleAxis = getAnyElementOfObject(angleAxisMap);
-    return inRangeOfSector({ x: scaledX, y: scaledY }, angleAxis);
+  if (polarViewBox) {
+    return inRangeOfSector({ x: scaledX, y: scaledY }, polarViewBox);
   }
 
   return null;
