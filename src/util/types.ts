@@ -23,8 +23,6 @@ import {
   WheelEvent,
   JSX,
 } from 'react';
-import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
-import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
