@@ -21,57 +21,7 @@ const SPAN_STYLE = {
   border: 'none',
   whiteSpace: 'pre',
 };
-const STYLE_LIST = [
-  'minWidth',
-  'maxWidth',
-  'width',
-  'minHeight',
-  'maxHeight',
-  'height',
-  'top',
-  'left',
-  'fontSize',
-  'lineHeight',
-  'padding',
-  'margin',
-  'paddingLeft',
-  'paddingRight',
-  'paddingTop',
-  'paddingBottom',
-  'marginLeft',
-  'marginRight',
-  'marginTop',
-  'marginBottom',
-];
 const MEASUREMENT_SPAN_ID = 'recharts_measurement_span';
-
-function autoCompleteStyle(name: string, value: number) {
-  if (STYLE_LIST.indexOf(name) >= 0 && value === +value) {
-    return `${value}px`;
-  }
-
-  return value;
-}
-
-function camelToMiddleLine(text: string) {
-  const strs = text.split('');
-
-  const formatStrs = strs.reduce((result, entry) => {
-    if (entry === entry.toUpperCase()) {
-      return [...result, '-', entry.toLowerCase()];
-    }
-
-    return [...result, entry];
-  }, []);
-
-  return formatStrs.join('');
-}
-
-export const getStyleString = (style: CSSProperties) =>
-  Object.keys(style).reduce(
-    (result, s) => `${result}${camelToMiddleLine(s)}:${autoCompleteStyle(s, (style as Record<string, any>)[s])};`,
-    '',
-  );
 
 function removeInvalidKeys(obj: Record<string, any>) {
   const copyObj = { ...obj };

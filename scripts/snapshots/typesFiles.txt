@@ -78,7 +78,6 @@
   "types/polar/RadialBar.d.ts",
   "types/polar/defaultPolarAngleAxisProps.d.ts",
   "types/polar/defaultPolarRadiusAxisProps.d.ts",
-  "types/polar/types.d.ts",
   "types/shape",
   "types/shape/Cross.d.ts",
   "types/shape/Curve.d.ts",

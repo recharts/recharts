@@ -10,7 +10,6 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
-  TooltipSettingsState,
   TooltipState,
 } from '../tooltipSlice';
 import {
@@ -76,11 +75,6 @@ function getSliced<T>(
 }
 
 export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
-
-export const selectTooltipSettings: (state: RechartsRootState) => TooltipSettingsState = createSelector(
-  [selectTooltipState],
-  (tooltipState: TooltipState) => tooltipState.settings,
-);
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
