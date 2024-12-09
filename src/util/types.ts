@@ -24,7 +24,6 @@ import {
   JSX,
 } from 'react';
 import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
-import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
@@ -1384,10 +1383,6 @@ export type XAxisMap = {
 
 export type YAxisMap = {
   [axisId: string]: YAxisWithExtraData;
-};
-
-export type PolarRadiusAxisMap = {
-  [axisId: string]: PolarRadiusAxisProps;
 };
 
 export type RangeObj = {
