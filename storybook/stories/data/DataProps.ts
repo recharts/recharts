@@ -1,7 +1,3 @@
-export type TimeSeriesData = { date: string; value: number };
-
-export type CategoricalData = { category: string; value: number };
-
 // Used in stacked bar graph
 export type BoxPlotData = {
   min: number;
