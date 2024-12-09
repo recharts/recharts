@@ -78,7 +78,6 @@
   "lib/polar/RadialBar.js",
   "lib/polar/defaultPolarAngleAxisProps.js",
   "lib/polar/defaultPolarRadiusAxisProps.js",
-  "lib/polar/types.js",
   "lib/shape",
   "lib/shape/Cross.js",
   "lib/shape/Curve.js",

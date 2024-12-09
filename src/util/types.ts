@@ -23,7 +23,6 @@ import {
   WheelEvent,
   JSX,
 } from 'react';
-import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
 import { PolarAngleAxisProps } from '../polar/PolarAngleAxis';
 import { PolarRadiusAxisProps } from '../polar/PolarRadiusAxis';
 import type { Props as DotProps } from '../shape/Dot';
@@ -1073,8 +1072,6 @@ export interface GeometrySector {
   forceCornerRadius?: boolean;
   cornerIsExternal?: boolean;
 }
-
-export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | ((d: number) => string | number) | 'auto' | 'dataMin' | 'dataMax';
 

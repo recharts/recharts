@@ -5,7 +5,7 @@ export type StockPrice = {
   low: number;
 };
 
-const stockData = [
+const stockData: ReadonlyArray<StockPrice> = [
   {
     date: '2023-02-01',
     openClose: [22.86, 24.39],

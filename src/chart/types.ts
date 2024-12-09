@@ -121,20 +121,3 @@ export type YAxisWithExtraData = AxisPropsWithExtraComputedData & {
   axisType: 'yAxis';
   orientation: 'left' | 'right';
 };
-
-export type AxisObj = {
-  xAxis?: XAxisWithExtraData;
-  xAxisTicks?: Array<TickItem>;
-
-  yAxis?: YAxisWithExtraData;
-  yAxisTicks?: Array<TickItem>;
-
-  zAxis?: AxisPropsWithExtraComputedData;
-  zAxisTicks?: Array<TickItem>;
-
-  angleAxis?: AxisPropsWithExtraComputedData;
-  angleAxisTicks?: Array<TickItem>;
-
-  radiusAxis?: AxisPropsWithExtraComputedData;
-  radiusAxisTicks?: Array<TickItem>;
-};
