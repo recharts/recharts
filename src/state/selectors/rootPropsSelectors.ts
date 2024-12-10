@@ -8,3 +8,4 @@ export const selectBarCategoryGap = (state: RechartsRootState): string | number 
 export const selectRootBarSize = (state: RechartsRootState): string | number | undefined => state.rootProps.barSize;
 export const selectStackOffsetType = (state: RechartsRootState): StackOffsetType => state.rootProps.stackOffset;
 export const selectChartName = (state: RechartsRootState) => state.options.chartName;
+export const selectSyncId = (state: RechartsRootState) => state.rootProps.syncId;

@@ -11,6 +11,10 @@ export type UpdatableChartOptions = {
   stackOffset: StackOffsetType;
   barSize: string | number | undefined;
   maxBarSize: number | undefined;
+  /**
+   * Charts that share the same syncId will have their Tooltip and Brush synchronised.
+   */
+  syncId: number | string | undefined;
 };
 
 const initialState: UpdatableChartOptions = {
@@ -19,6 +23,7 @@ const initialState: UpdatableChartOptions = {
   stackOffset: 'none',
   barSize: undefined,
   maxBarSize: undefined,
+  syncId: undefined,
 };
 
 const rootPropsSlice = createSlice({
@@ -31,6 +36,7 @@ const rootPropsSlice = createSlice({
       state.barSize = action.payload.barSize;
       state.maxBarSize = action.payload.maxBarSize;
       state.stackOffset = action.payload.stackOffset;
+      state.syncId = action.payload.syncId;
     },
   },
 });
