@@ -1808,7 +1808,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(3);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,

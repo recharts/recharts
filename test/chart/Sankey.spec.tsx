@@ -42,16 +42,12 @@ describe('<Sankey />', () => {
   });
 
   describe('Sankey layout context', () => {
-    it('should provide viewBox, but not clipPathId nor any axes', () => {
+    it('should provide viewBox, but not clipPathId', () => {
       const clipPathSpy = vi.fn();
       const viewBoxSpy = vi.fn();
-      const xAxisMapSpy = vi.fn();
-      const yAxisMapSpy = vi.fn();
       const Comp = (): null => {
         clipPathSpy(useClipPathId());
         viewBoxSpy(useViewBox());
-        xAxisMapSpy(useAppSelector(state => state.axis.xAxisMap));
-        yAxisMapSpy(useAppSelector(state => state.axis.yAxisMap));
         return null;
       };
       render(

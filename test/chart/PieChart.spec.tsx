@@ -2,18 +2,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Mock, vi } from 'vitest';
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  Sector,
-  SectorProps,
-  Tooltip,
-} from '../../src';
+import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 
 function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
@@ -333,18 +322,16 @@ describe('<PieChart />', () => {
 
   describe('PieChart layout context', () => {
     it(
-      'should provide viewBox and clipPathId if there are no axes',
+      'should provide viewBox and clipPathId',
       testChartLayoutContext(
         props => (
           <PieChart width={100} height={50} barSize={20}>
             {props.children}
           </PieChart>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+        ({ clipPathId, viewBox }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );
@@ -360,26 +347,6 @@ describe('<PieChart />', () => {
         ({ width, height }) => {
           expect(width).toBe(100);
           expect(height).toBe(50);
-        },
-      ),
-    );
-
-    it(
-      'should provide axisMaps: undefined even if axes are specified',
-      testChartLayoutContext(
-        props => (
-          <PieChart width={100} height={50} barSize={20}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis />
-            {props.children}
-          </PieChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ x: 5, y: 5, width: 90, height: 40 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );

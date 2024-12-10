@@ -94,7 +94,6 @@
   "lib/state/ReportPolarOptions.js",
   "lib/state/SetGraphicalItem.js",
   "lib/state/SetTooltipEntrySettings.js",
-  "lib/state/axisSlice.js",
   "lib/state/brushSlice.js",
   "lib/state/cartesianAxisSlice.js",
   "lib/state/chartDataSlice.js",

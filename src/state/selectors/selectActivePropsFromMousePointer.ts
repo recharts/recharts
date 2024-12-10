@@ -3,7 +3,7 @@ import { RechartsRootState } from '../store';
 import { MousePointer } from '../../chart/generateCategoricalChart';
 import { ActiveTooltipProps } from '../tooltipSlice';
 import { selectChartCoordinates, selectContainerScale } from './containerSelectors';
-import { selectChartLayout, selectXAxisMap, selectYAxisMap } from '../../context/chartLayoutContext';
+import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectTooltipAxisRangeWithReverse, selectTooltipAxisTicks, selectTooltipAxisType } from './tooltipSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { combineActiveProps, selectOrderedTooltipTicks } from './selectors';
@@ -17,8 +17,6 @@ export const selectActivePropsFromMousePointer: (
     selectChartCoordinates,
     selectContainerScale,
     selectChartLayout,
-    selectXAxisMap,
-    selectYAxisMap,
     selectPolarViewBox,
     selectTooltipAxisType,
     selectTooltipAxisRangeWithReverse,

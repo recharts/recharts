@@ -1,10 +1,9 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size, XAxisMap, YAxisMap } from '../util/types';
+import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
@@ -37,16 +36,7 @@ export type ChartLayoutContextProviderProps = {
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
-    state: {
-      xAxisMap,
-      yAxisMap,
-      activeLabel,
-      activePayload,
-      isTooltipActive,
-      activeCoordinate,
-      updateId,
-      activeTooltipIndex,
-    },
+    state: { activeLabel, activePayload, isTooltipActive, activeCoordinate, updateId, activeTooltipIndex },
     clipPathId,
     children,
     width,
@@ -73,8 +63,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    */
   const isPanorama = useIsPanorama();
   if (!isPanorama) {
-    dispatch(setXAxisMap(xAxisMap));
-    dispatch(setYAxisMap(yAxisMap));
     dispatch(setLayout(layout));
     dispatch(setChartSize({ width, height }));
     dispatch(setMargin(margin));
@@ -109,24 +97,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
 export const useClipPathId = (): string | undefined => {
   return useContext(ClipPathIdContext);
 };
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `cartesianAxisSlice`
- */
-export const selectXAxisMap = (state: RechartsRootState): XAxisMap | undefined => state.axis.xAxisMap;
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated this is a temporary Redux slice for storing axismaps.
- * Redux is great and all but the axismaps are parsed from the DOM in generateCategoricalChart and then stored here.
- * This is a temporary workaround, so TODO delete this and come with something better.
- * Instead use `cartesianAxisSlice`
- */
-export const selectYAxisMap = (state: RechartsRootState): YAxisMap | undefined => state.axis.yAxisMap;
 
 export const useViewBox = (): CartesianViewBox => {
   const panorama = useIsPanorama();

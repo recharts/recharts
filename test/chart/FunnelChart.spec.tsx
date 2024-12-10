@@ -103,18 +103,16 @@ describe('<FunnelChart />', () => {
 
   describe('FunnelChart layout context', () => {
     it(
-      'should provide viewBox and clipPathId if there are no axes',
+      'should provide viewBox and clipPathId',
       testChartLayoutContext(
         props => (
           <FunnelChart width={100} height={50} barSize={20}>
             {props.children}
           </FunnelChart>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+        ({ clipPathId, viewBox }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );
@@ -133,7 +131,5 @@ describe('<FunnelChart />', () => {
         },
       ),
     );
-
-    // Funnel chart does not support any axes so there is no axes context test!
   });
 });

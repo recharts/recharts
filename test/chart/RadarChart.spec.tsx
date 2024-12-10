@@ -537,18 +537,16 @@ describe('<RadarChart />', () => {
 
   describe('RadarChart layout context', () => {
     it(
-      'should provide viewBox and clipPathId if there are no axes',
+      'should provide viewBox and clipPathId',
       testChartLayoutContext(
         props => (
           <RadarChart width={100} height={50} barSize={20}>
             {props.children}
           </RadarChart>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+        ({ clipPathId, viewBox }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );
@@ -564,26 +562,6 @@ describe('<RadarChart />', () => {
         ({ width, height }) => {
           expect(width).toBe(100);
           expect(height).toBe(50);
-        },
-      ),
-    );
-
-    it(
-      'should provide axisMaps: undefined even if axes are specified',
-      testChartLayoutContext(
-        props => (
-          <RadarChart width={100} height={50} barSize={20}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis />
-            {props.children}
-          </RadarChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ x: 5, y: 5, width: 90, height: 40 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );

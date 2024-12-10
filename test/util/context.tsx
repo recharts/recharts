@@ -7,13 +7,10 @@ import {
   useOffset,
   useViewBox,
 } from '../../src/context/chartLayoutContext';
-import { CartesianViewBox, ChartOffset, XAxisMap, YAxisMap } from '../../src/util/types';
-import { useAppSelector } from '../../src/state/hooks';
+import { CartesianViewBox, ChartOffset } from '../../src/util/types';
 
 type AllContextPropertiesMixed = {
   clipPathId: string | undefined;
-  xAxisMap: XAxisMap | undefined;
-  yAxisMap: YAxisMap | undefined;
   viewBox: CartesianViewBox | undefined;
   width: number;
   height: number;
@@ -43,11 +40,10 @@ export function testChartLayoutContext(
     function Spy() {
       const clipPathId = useClipPathId();
       const viewBox = useViewBox();
-      const { xAxisMap, yAxisMap } = useAppSelector(state => state.axis) || {};
       const width = useChartWidth();
       const height = useChartHeight();
       const offset = useOffset();
-      const context: AllContextPropertiesMixed = { clipPathId, viewBox, xAxisMap, yAxisMap, width, height, offset };
+      const context: AllContextPropertiesMixed = { clipPathId, viewBox, width, height, offset };
       assertions(context);
       return <></>;
     }

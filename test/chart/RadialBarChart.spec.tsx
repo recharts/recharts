@@ -1,19 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, test, it, expect, vi } from 'vitest';
-import {
-  Cell,
-  Customized,
-  Legend,
-  PolarAngleAxis,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-  Sector,
-  SectorProps,
-  Tooltip,
-} from '../../src';
+import { Cell, Customized, Legend, RadialBar, RadialBarChart, Sector, SectorProps, Tooltip } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { expectRadialBarLabels, expectRadialBars } from '../helper/expectRadialBars';
 import { selectRootBarSize } from '../../src/state/selectors/rootPropsSelectors';
@@ -604,18 +592,16 @@ describe('<RadialBarChart />', () => {
 
   describe('RadialBarChart layout context', () => {
     it(
-      'should provide viewBox and clipPathId if there are no axes',
+      'should provide viewBox and clipPathId',
       testChartLayoutContext(
         props => (
           <RadialBarChart width={100} height={50} barSize={20}>
             {props.children}
           </RadialBarChart>
         ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
+        ({ clipPathId, viewBox }) => {
           expect(clipPathId).toMatch(/recharts\d+-clip/);
           expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
         },
       ),
     );
@@ -657,25 +643,5 @@ describe('<RadialBarChart />', () => {
       expect(foreground).toBeInTheDocument();
       expect(foreground!.getAttribute('d')).toEqual(background!.getAttribute('d'));
     });
-
-    it(
-      'should provide axisMaps: undefined even if axes are specified',
-      testChartLayoutContext(
-        props => (
-          <RadialBarChart width={100} height={50} barSize={20}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="subject" />
-            <PolarRadiusAxis />
-            {props.children}
-          </RadialBarChart>
-        ),
-        ({ clipPathId, viewBox, xAxisMap, yAxisMap }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ x: 5, y: 5, width: 90, height: 40 });
-          expect(xAxisMap).toBe(undefined);
-          expect(yAxisMap).toBe(undefined);
-        },
-      ),
-    );
   });
 });
