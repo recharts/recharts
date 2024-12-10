@@ -46,16 +46,12 @@ describe('<Sunburst />', () => {
   });
 
   describe('SunburstChart layout context', () => {
-    it('should provide viewBox but not clipPathId if there are no axes', () => {
+    it('should provide viewBox but not clipPathId', () => {
       const clipPathSpy = vi.fn();
       const viewBoxSpy = vi.fn();
-      const xAxisMapSpy = vi.fn();
-      const yAxisMapSpy = vi.fn();
       const Comp = (): null => {
         clipPathSpy(useClipPathId());
         viewBoxSpy(useViewBox());
-        xAxisMapSpy(useAppSelector(state => state.axis.xAxisMap));
-        yAxisMapSpy(useAppSelector(state => state.axis.yAxisMap));
         return null;
       };
       render(
@@ -67,8 +63,6 @@ describe('<Sunburst />', () => {
       expect(clipPathSpy).toHaveBeenLastCalledWith(undefined);
       expect(viewBoxSpy).toHaveBeenLastCalledWith({ x: 0, y: 0, width: 100, height: 50 });
       expect(viewBoxSpy).toHaveBeenCalledTimes(3);
-      expect(xAxisMapSpy).toHaveBeenLastCalledWith({});
-      expect(yAxisMapSpy).toHaveBeenLastCalledWith({});
     });
 
     it('should set width and height in context', () => {

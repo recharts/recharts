@@ -1,16 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { castDraft } from 'immer';
 import { XAxisMap, YAxisMap } from '../util/types';
 
-type AxisState = {
-  xAxisMap: XAxisMap | undefined;
-  yAxisMap: YAxisMap | undefined;
-};
+type AxisState = unknown;
 
-const initialState: AxisState = {
-  xAxisMap: {},
-  yAxisMap: {},
-};
+const initialState: AxisState = {};
 
 /**
  * @deprecated this is a temporary Redux slice for storing axismaps.
@@ -22,11 +15,13 @@ const axisSlice = createSlice({
   name: 'axis',
   initialState,
   reducers: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setXAxisMap(state, action: PayloadAction<XAxisMap | undefined>) {
-      state.xAxisMap = castDraft(action.payload);
+      // state.xAxisMap = castDraft(action.payload);
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setYAxisMap(state, action: PayloadAction<YAxisMap | undefined>) {
-      state.yAxisMap = castDraft(action.payload);
+      // state.yAxisMap = castDraft(action.payload);
     },
   },
 });

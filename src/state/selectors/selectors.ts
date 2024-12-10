@@ -33,7 +33,7 @@ import {
   TooltipEventType,
 } from '../../util/types';
 import { findEntryInArray, isNan } from '../../util/DataUtils';
-import { AxisMap, TooltipTrigger } from '../../chart/types';
+import { TooltipTrigger } from '../../chart/types';
 import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxis, selectTooltipAxisTicks } from './tooltipSelectors';
@@ -320,8 +320,6 @@ export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
   scale: number | undefined,
   layout: LayoutType | undefined,
-  xAxisMap: AxisMap | undefined,
-  yAxisMap: AxisMap | undefined,
   polarViewBox: PolarViewBox | undefined,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
@@ -345,17 +343,6 @@ export const combineActiveProps = (
     tooltipAxisType,
     tooltipAxisRange,
   );
-
-  /*
-      if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
-        const xScale = getAnyElementOfObject(xAxisMap).scale;
-        const yScale = getAnyElementOfObject(yAxisMap).scale;
-        const xValue: number | null = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
-        const yValue: number | null = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
-
-        return { ...e, xValue, yValue };
-      }
-  */
 
   const activeCoordinate = getActiveCoordinate(layout, tooltipTicks, activeIndex, rangeObj);
 
