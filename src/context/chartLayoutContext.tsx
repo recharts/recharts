@@ -4,7 +4,6 @@ import type { CategoricalChartState } from '../chart/types';
 import { LegendPayloadProvider } from './legendPayloadContext';
 import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setXAxisMap, setYAxisMap } from '../state/axisSlice';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
@@ -37,16 +36,7 @@ export type ChartLayoutContextProviderProps = {
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
-    state: {
-      xAxisMap,
-      yAxisMap,
-      activeLabel,
-      activePayload,
-      isTooltipActive,
-      activeCoordinate,
-      updateId,
-      activeTooltipIndex,
-    },
+    state: { activeLabel, activePayload, isTooltipActive, activeCoordinate, updateId, activeTooltipIndex },
     clipPathId,
     children,
     width,
@@ -73,8 +63,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    */
   const isPanorama = useIsPanorama();
   if (!isPanorama) {
-    dispatch(setXAxisMap(xAxisMap));
-    dispatch(setYAxisMap(yAxisMap));
     dispatch(setLayout(layout));
     dispatch(setChartSize({ width, height }));
     dispatch(setMargin(margin));

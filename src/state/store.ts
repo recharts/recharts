@@ -2,7 +2,6 @@ import { Action, combineReducers, configureStore, Dispatch } from '@reduxjs/tool
 import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
-import { axisReducer } from './axisSlice';
 import { chartLayoutReducer } from './layoutSlice';
 import { mouseClickMiddleware, mouseMoveMiddleware } from './mouseEventsMiddleware';
 import { reduxDevtoolsJsonStringifyReplacer } from './reduxDevtoolsJsonStringifyReplacer';
@@ -16,7 +15,6 @@ import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
 
 const rootReducer = combineReducers({
-  axis: axisReducer,
   cartesianAxis: cartesianAxisReducer,
   polarAxis: polarAxisReducer,
   brush: brushReducer,
