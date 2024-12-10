@@ -94,7 +94,6 @@
   "es6/state/ReportPolarOptions.js",
   "es6/state/SetGraphicalItem.js",
   "es6/state/SetTooltipEntrySettings.js",
-  "es6/state/axisSlice.js",
   "es6/state/brushSlice.js",
   "es6/state/cartesianAxisSlice.js",
   "es6/state/chartDataSlice.js",
