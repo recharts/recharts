@@ -35,6 +35,8 @@ import {
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { selectSyncId } from '../../../src/state/selectors/rootPropsSelectors';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -288,22 +290,25 @@ describe('Tooltip synchronization', () => {
   describe.each([...cartesianTestCases, ...radialTestCases])(
     'as a child of $name',
     ({ name, Wrapper, mouseHoverSelector, tooltipContent }) => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <>
+          <div id="chartOne">
+            <Wrapper syncId="tooltipSync" dataKey="uv">
+              <Tooltip />
+              {children}
+            </Wrapper>
+          </div>
+          <div id="chartTwo">
+            <Wrapper syncId="tooltipSync" dataKey="pv">
+              <Tooltip />
+            </Wrapper>
+          </div>
+        </>
+      ));
+
       test(`${name} shows tooltip when synchronized with ${name}`, () => {
         const { chartOne: chartOneContent, chartTwo: chartTwoContent } = tooltipContent;
-        const { container, debug } = render(
-          <>
-            <div id="chartOne">
-              <Wrapper syncId="tooltipSync" dataKey="uv">
-                <Tooltip />
-              </Wrapper>
-            </div>
-            <div id="chartTwo">
-              <Wrapper syncId="tooltipSync" dataKey="pv">
-                <Tooltip />
-              </Wrapper>
-            </div>
-          </>,
-        );
+        const { container, debug } = renderTestCase();
         // use ids to separate the charts so the `.recharts-wrapper` class can be used to activate the tooltip
         const wrapperOne = container.querySelector('#chartOne');
         const wrapperTwo = container.querySelector('#chartTwo');
@@ -328,6 +333,11 @@ describe('Tooltip synchronization', () => {
           expect(tooltipContentName.textContent).toEqual(content.name);
           expect(tooltipContentValue.textContent).toEqual(content.value);
         });
+      });
+
+      test(`${name} should put the syncId into redux state`, () => {
+        const { spy } = renderTestCase(selectSyncId);
+        expect(spy).toHaveBeenLastCalledWith('tooltipSync');
       });
     },
   );

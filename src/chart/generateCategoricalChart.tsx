@@ -1784,6 +1784,7 @@ export const generateCategoricalChart = ({
           stackOffset={props.stackOffset ?? 'none'}
           barGap={props.barGap}
           barSize={props.barSize}
+          syncId={props.syncId}
         />
         <ReportPolarOptions
           cx={props.cx}

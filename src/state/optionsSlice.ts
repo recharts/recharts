@@ -9,6 +9,9 @@ import { isNan } from '../util/DataUtils';
  *
  * Changing these options can be done by swapping the root element
  * which will make a brand-new Redux store.
+ *
+ * If you want to store options that can be changed by the user,
+ * use UpdatableChartOptions in rootPropsSlice.ts.
  */
 export type ChartOptions = {
   chartName: string;

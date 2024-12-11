@@ -11,6 +11,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
   return function renderTestCase<T>(selector: Selector<RechartsRootState, T, never> = emptySelector): {
     container: HTMLElement;
     spy: Mock<(selectorResult: T) => void>;
+    debug: () => void;
   } {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
 
@@ -19,11 +20,11 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       return null;
     };
 
-    const { container } = render(
+    const { container, debug } = render(
       <Component>
         <Comp />
       </Component>,
     );
-    return { container, spy };
+    return { container, spy, debug };
   };
 }
