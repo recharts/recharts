@@ -12,3 +12,4 @@ export const selectChartName = (state: RechartsRootState) => state.options.chart
 
 export const selectSyncId = (state: RechartsRootState) => state.rootProps.syncId;
 export const selectSyncMethod = (state: RechartsRootState): SyncMethod => state.rootProps.syncMethod;
+export const selectEventEmitter = (state: RechartsRootState) => state.options.eventEmitter;

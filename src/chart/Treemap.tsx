@@ -77,6 +77,7 @@ const options: ChartOptions = {
   defaultTooltipEventType: 'item',
   validateTooltipEventTypes: ['item'],
   tooltipPayloadSearcher: treemapPayloadSearcher,
+  eventEmitter: undefined,
 };
 
 export const computeNode = ({
@@ -459,7 +460,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
       setActiveMouseOverItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
-        activeMouseOverCoordinate: activeCoordinate,
+        activeCoordinate,
       }),
     );
   };
@@ -472,7 +473,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
       setActiveClickItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
         activeDataKey: props.dataKey,
-        activeClickCoordinate: activeCoordinate,
+        activeCoordinate,
       }),
     );
   };

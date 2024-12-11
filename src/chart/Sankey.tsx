@@ -381,6 +381,7 @@ const options: ChartOptions = {
   defaultTooltipEventType: 'item',
   validateTooltipEventTypes: ['item'],
   tooltipPayloadSearcher: sankeyPayloadSearcher,
+  eventEmitter: undefined,
 };
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
@@ -604,7 +605,7 @@ function SankeyLinkElement({
         setActiveMouseOverItemIndex({
           activeIndex,
           activeDataKey: dataKey,
-          activeMouseOverCoordinate: activeCoordinate,
+          activeCoordinate,
         }),
       );
       onMouseEnter(props, e);
@@ -618,7 +619,7 @@ function SankeyLinkElement({
         setActiveClickItemIndex({
           activeIndex,
           activeDataKey: dataKey,
-          activeClickCoordinate: activeCoordinate,
+          activeCoordinate,
         }),
       );
       onClick(props, e);
@@ -739,7 +740,7 @@ function NodeElement({
         setActiveMouseOverItemIndex({
           activeIndex,
           activeDataKey: dataKey,
-          activeMouseOverCoordinate: activeCoordinate,
+          activeCoordinate,
         }),
       );
       onMouseEnter(props, e);
@@ -753,7 +754,7 @@ function NodeElement({
         setActiveClickItemIndex({
           activeIndex,
           activeDataKey: dataKey,
-          activeClickCoordinate: activeCoordinate,
+          activeCoordinate,
         }),
       );
       onClick(props, e);

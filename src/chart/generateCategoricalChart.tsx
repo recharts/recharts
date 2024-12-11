@@ -50,7 +50,7 @@ import {
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { shallowEqual } from '../util/ShallowEqual';
-import { eventCenter, SYNC_EVENT } from '../util/Events';
+import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
   AllowedAxisComponent,
@@ -1267,11 +1267,11 @@ export const generateCategoricalChart = ({
     }
 
     addListener() {
-      eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
+      eventCenter.on(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
     removeListener() {
-      eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
+      eventCenter.removeListener(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
     handleLegendBBoxUpdate = (box: BoundingBox | null) => {
@@ -1522,7 +1522,7 @@ export const generateCategoricalChart = ({
 
     triggerSyncEvent = (data: CategoricalChartState) => {
       if (this.props.syncId !== undefined) {
-        eventCenter.emit(SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
+        eventCenter.emit(GENERATOR_SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
       }
     };
 
@@ -1764,6 +1764,7 @@ export const generateCategoricalChart = ({
       defaultTooltipEventType,
       validateTooltipEventTypes,
       tooltipPayloadSearcher,
+      eventEmitter: undefined,
     };
     let polarOptions: PolarChartOptions;
     const { innerRadius = defaultProps.innerRadius, outerRadius = defaultProps.outerRadius } = props;

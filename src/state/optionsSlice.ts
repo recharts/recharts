@@ -19,6 +19,12 @@ export type ChartOptions = {
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   // Should this instead be a property of a graphical item? Do we want to mix items with different data types in one chart?
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined;
+  /**
+   * We use this to identify which chart is sending events when synchronising.
+   * Without it, we can't tell the difference between an action that arrived from another chart
+   * and an action that was dispatched by the chart itself.
+   */
+  eventEmitter: symbol | undefined;
 };
 
 export const arrayTooltipSearcher: TooltipPayloadSearcher = (
@@ -35,12 +41,21 @@ export const arrayTooltipSearcher: TooltipPayloadSearcher = (
 const initialState: ChartOptions = {
   chartName: '',
   tooltipPayloadSearcher: undefined,
+  eventEmitter: undefined,
 };
 
 const optionsSlice = createSlice({
   name: 'options',
   initialState,
-  reducers: {},
+  reducers: {
+    createEventEmitter: (state: ChartOptions) => {
+      if (state.eventEmitter == null) {
+        state.eventEmitter = Symbol('rechartsEventEmitter');
+      }
+    },
+  },
 });
 
 export const optionsReducer = optionsSlice.reducer;
+
+export const { createEventEmitter } = optionsSlice.actions;

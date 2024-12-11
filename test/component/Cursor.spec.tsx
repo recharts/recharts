@@ -33,6 +33,7 @@ const preloadedState: Partial<RechartsRootState> = {
   options: {
     chartName: '',
     tooltipPayloadSearcher: arrayTooltipSearcher,
+    eventEmitter: undefined,
   },
 };
 
@@ -158,6 +159,7 @@ describe('Cursor', () => {
         options: {
           chartName: 'ScatterChart',
           tooltipPayloadSearcher: arrayTooltipSearcher,
+          eventEmitter: undefined,
         },
         tooltip: {
           ...initialTooltipState,
