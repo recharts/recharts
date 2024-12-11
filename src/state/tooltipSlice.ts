@@ -150,6 +150,17 @@ export type TooltipState = {
     activeClickAxisDataKey: DataKey<any> | undefined;
   };
   /**
+   * This part of the state is the information coming from other charts.
+   * If there are two charts with the same syncId, events from one chart will be transferred
+   * to other charts. So this is what the other charts are reporting.
+   */
+  syncInteraction: {
+    active: boolean;
+    activeCoordinate: ChartCoordinate | undefined;
+    activeAxisIndex: TooltipIndex;
+    activeAxisDataKey: DataKey<any> | undefined;
+  };
+  /**
    * One graphical item will have one configuration;
    * hovering over multiple of them (for example with tooltipEventType===axis)
    * may render multiple tooltip payloads.
@@ -181,6 +192,12 @@ export const initialState: TooltipState = {
     activeMouseOverAxisDataKey: undefined,
     activeClickAxisIndex: null,
     activeClickAxisDataKey: undefined,
+  },
+  syncInteraction: {
+    active: false,
+    activeCoordinate: undefined,
+    activeAxisIndex: null,
+    activeAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
   settings: { shared: false, trigger: 'hover', axisId: 0 },
@@ -268,6 +285,20 @@ const tooltipSlice = createSlice({
       state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
       state.axisInteraction.activeClickCoordinate = action.payload.activeClickCoordinate;
     },
+    setSyncInteraction(
+      state,
+      action: PayloadAction<{
+        active: boolean;
+        activeCoordinate: ChartCoordinate | undefined;
+        activeAxisIndex: TooltipIndex;
+        activeAxisDataKey: DataKey<any> | undefined;
+      }>,
+    ) {
+      state.syncInteraction.active = action.payload.active;
+      state.syncInteraction.activeCoordinate = action.payload.activeCoordinate;
+      state.syncInteraction.activeAxisIndex = action.payload.activeAxisIndex;
+      state.syncInteraction.activeAxisDataKey = action.payload.activeAxisDataKey;
+    },
   },
 });
 
@@ -281,6 +312,7 @@ export const {
   setActiveClickItemIndex,
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,
+  setSyncInteraction,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;
