@@ -98,6 +98,7 @@ import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getD
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
+import { SyncMethod } from '../synchronisation/types';
 
 export interface MousePointer {
   pageX: number;
@@ -729,7 +730,7 @@ export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any
 
 export interface CategoricalChartProps {
   syncId?: number | string;
-  syncMethod?: 'index' | 'value' | ((ticks: TickItem[], data: CategoricalChartState) => number);
+  syncMethod?: SyncMethod;
   compact?: boolean;
   width?: number;
   height?: number;
@@ -1785,6 +1786,7 @@ export const generateCategoricalChart = ({
           barGap={props.barGap}
           barSize={props.barSize}
           syncId={props.syncId}
+          syncMethod={props.syncMethod ?? 'index'}
         />
         <ReportPolarOptions
           cx={props.cx}

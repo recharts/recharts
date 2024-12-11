@@ -8,6 +8,7 @@ import {
   selectBarGap,
   selectRootBarSize,
   selectRootMaxBarSize,
+  selectSyncMethod,
 } from '../../../src/state/selectors/rootPropsSelectors';
 import {
   shouldReturnFromInitialState,
@@ -208,6 +209,40 @@ describe('selectRootBarSize', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
+    expect(spy).toHaveBeenCalledTimes(5);
+  });
+});
+
+describe('selectSyncMethod', () => {
+  it('should return "index" by default', () => {
+    const store = createRechartsStore();
+    expect(store.getState().rootProps.syncMethod).toBe('index');
+  });
+
+  it('should return and update syncMethod defined on chart root', () => {
+    const spy = vi.fn();
+    const Comp = (): null => {
+      const result = useAppSelectorWithStableTest(selectSyncMethod);
+      spy(result);
+      return null;
+    };
+    const { rerender } = render(
+      <BarChart width={100} height={100} syncMethod="value">
+        <Comp />
+      </BarChart>,
+    );
+    expect(spy).toHaveBeenLastCalledWith('value');
+    expect(spy).toHaveBeenCalledTimes(3);
+
+    const fn = () => 1;
+
+    rerender(
+      <BarChart width={100} height={100} syncMethod={fn}>
+        <Customized component={Comp} />
+      </BarChart>,
+    );
+
+    expect(spy).toHaveBeenLastCalledWith(fn);
     expect(spy).toHaveBeenCalledTimes(5);
   });
 });

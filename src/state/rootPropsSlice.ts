@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StackOffsetType } from '../util/types';
+import { SyncMethod } from '../synchronisation/types';
 
 /**
  * These are chart options that users can choose - which means they can also
@@ -15,15 +16,17 @@ export type UpdatableChartOptions = {
    * Charts that share the same syncId will have their Tooltip and Brush synchronised.
    */
   syncId: number | string | undefined;
+  syncMethod: SyncMethod;
 };
 
-const initialState: UpdatableChartOptions = {
+export const initialState: UpdatableChartOptions = {
   barGap: 4,
   barCategoryGap: '10%',
   stackOffset: 'none',
   barSize: undefined,
   maxBarSize: undefined,
   syncId: undefined,
+  syncMethod: 'index',
 };
 
 const rootPropsSlice = createSlice({
@@ -37,6 +40,7 @@ const rootPropsSlice = createSlice({
       state.maxBarSize = action.payload.maxBarSize;
       state.stackOffset = action.payload.stackOffset;
       state.syncId = action.payload.syncId;
+      state.syncMethod = action.payload.syncMethod;
     },
   },
 });

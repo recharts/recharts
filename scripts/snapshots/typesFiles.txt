@@ -138,6 +138,8 @@
   "types/state/selectors/tooltipSelectors.d.ts",
   "types/state/store.d.ts",
   "types/state/tooltipSlice.d.ts",
+  "types/synchronisation",
+  "types/synchronisation/types.d.ts",
   "types/util",
   "types/util/ActiveShapeUtils.d.ts",
   "types/util/BarUtils.d.ts",
