@@ -36,7 +36,7 @@ import {
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
-import { selectSyncId } from '../../../src/state/selectors/rootPropsSelectors';
+import { selectSyncId, selectSyncMethod } from '../../../src/state/selectors/rootPropsSelectors';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -338,6 +338,11 @@ describe('Tooltip synchronization', () => {
       test(`${name} should put the syncId into redux state`, () => {
         const { spy } = renderTestCase(selectSyncId);
         expect(spy).toHaveBeenLastCalledWith('tooltipSync');
+      });
+
+      test(`${name} should select syncMethod`, () => {
+        const { spy } = renderTestCase(selectSyncMethod);
+        expect(spy).toHaveBeenLastCalledWith('index');
       });
     },
   );

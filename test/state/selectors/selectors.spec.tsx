@@ -135,6 +135,7 @@ const preloadedState: Partial<RechartsRootState> = {
   options: {
     tooltipPayloadSearcher: arrayTooltipSearcher,
     chartName: '',
+    eventEmitter: undefined,
   },
 };
 
@@ -210,6 +211,7 @@ describe('useTooltipEventType', () => {
           validateTooltipEventTypes,
           tooltipPayloadSearcher: arrayTooltipSearcher,
           chartName: '',
+          eventEmitter: undefined,
         },
       };
       render(
@@ -512,7 +514,7 @@ describe('selectActiveCoordinate', () => {
     store.dispatch(
       setMouseOverAxisIndex({
         activeIndex: '1',
-        activeMouseOverCoordinate: expected,
+        activeCoordinate: expected,
         activeDataKey: undefined,
       }),
     );
@@ -534,7 +536,7 @@ describe('selectActiveCoordinate', () => {
     store.dispatch(
       setMouseClickAxisIndex({
         activeIndex: '1',
-        activeClickCoordinate: expected,
+        activeCoordinate: expected,
         activeDataKey: undefined,
       }),
     );
@@ -556,7 +558,7 @@ describe('selectActiveCoordinate', () => {
     store.dispatch(
       setActiveMouseOverItemIndex({
         activeIndex: '1',
-        activeMouseOverCoordinate: expected,
+        activeCoordinate: expected,
         activeDataKey: undefined,
       }),
     );
@@ -580,7 +582,7 @@ describe('selectActiveCoordinate', () => {
     store.dispatch(
       setActiveClickItemIndex({
         activeIndex: '1',
-        activeClickCoordinate: expected,
+        activeCoordinate: expected,
         activeDataKey: undefined,
       }),
     );

@@ -4,6 +4,7 @@ import { mouseLeaveChart } from '../state/tooltipSlice';
 import { setContainer } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
+import { useChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 
 export type RechartsWrapperProps = {
   children: ReactNode;
@@ -18,6 +19,9 @@ export type RechartsWrapperProps = {
 export const RechartsWrapper = forwardRef(
   ({ children, width, height, className, style, wrapperEvents }: RechartsWrapperProps, ref: Ref<HTMLDivElement>) => {
     const dispatch = useAppDispatch();
+
+    useChartSynchronisation();
+
     const innerRef = (node: HTMLDivElement | null) => {
       dispatch(setContainer(node));
       if (typeof ref === 'function') {

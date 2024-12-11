@@ -912,6 +912,12 @@ describe('Tooltip visibility', () => {
           activeMouseOverDataKey: undefined,
           activeMouseOverIndex: null,
         },
+        syncInteraction: {
+          active: false,
+          activeAxisDataKey: undefined,
+          activeAxisIndex: null,
+          activeCoordinate: undefined,
+        },
         settings: {
           axisId: 0,
           shared: undefined,
@@ -971,6 +977,12 @@ describe('Tooltip visibility', () => {
           activeMouseOverCoordinate: undefined,
           activeMouseOverDataKey: undefined,
           activeMouseOverIndex: null,
+        },
+        syncInteraction: {
+          active: false,
+          activeAxisDataKey: undefined,
+          activeAxisIndex: null,
+          activeCoordinate: undefined,
         },
         settings: {
           axisId: 0,

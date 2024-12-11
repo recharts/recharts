@@ -20,7 +20,7 @@ mouseClickMiddleware.startListening({
         setMouseClickAxisIndex({
           activeIndex: activeProps.activeIndex,
           activeDataKey: undefined,
-          activeClickCoordinate: activeProps.activeCoordinate,
+          activeCoordinate: activeProps.activeCoordinate,
         }),
       );
     }
@@ -46,7 +46,7 @@ mouseMoveMiddleware.startListening({
           setMouseOverAxisIndex({
             activeIndex: activeProps.activeIndex,
             activeDataKey: undefined,
-            activeMouseOverCoordinate: activeProps.activeCoordinate,
+            activeCoordinate: activeProps.activeCoordinate,
           }),
         );
       } else {

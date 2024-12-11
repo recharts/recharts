@@ -50,7 +50,7 @@ import {
 } from '../util/ChartUtils';
 import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { shallowEqual } from '../util/ShallowEqual';
-import { eventCenter, SYNC_EVENT } from '../util/Events';
+import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
   AllowedAxisComponent,
@@ -98,6 +98,7 @@ import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getD
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
+import { SyncMethod } from '../synchronisation/types';
 
 export interface MousePointer {
   pageX: number;
@@ -729,7 +730,7 @@ export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any
 
 export interface CategoricalChartProps {
   syncId?: number | string;
-  syncMethod?: 'index' | 'value' | ((ticks: TickItem[], data: CategoricalChartState) => number);
+  syncMethod?: SyncMethod;
   compact?: boolean;
   width?: number;
   height?: number;
@@ -1266,11 +1267,11 @@ export const generateCategoricalChart = ({
     }
 
     addListener() {
-      eventCenter.on(SYNC_EVENT, this.handleReceiveSyncEvent);
+      eventCenter.on(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
     removeListener() {
-      eventCenter.removeListener(SYNC_EVENT, this.handleReceiveSyncEvent);
+      eventCenter.removeListener(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
     }
 
     handleLegendBBoxUpdate = (box: BoundingBox | null) => {
@@ -1521,7 +1522,7 @@ export const generateCategoricalChart = ({
 
     triggerSyncEvent = (data: CategoricalChartState) => {
       if (this.props.syncId !== undefined) {
-        eventCenter.emit(SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
+        eventCenter.emit(GENERATOR_SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
       }
     };
 
@@ -1763,6 +1764,7 @@ export const generateCategoricalChart = ({
       defaultTooltipEventType,
       validateTooltipEventTypes,
       tooltipPayloadSearcher,
+      eventEmitter: undefined,
     };
     let polarOptions: PolarChartOptions;
     const { innerRadius = defaultProps.innerRadius, outerRadius = defaultProps.outerRadius } = props;
@@ -1785,6 +1787,7 @@ export const generateCategoricalChart = ({
           barGap={props.barGap}
           barSize={props.barSize}
           syncId={props.syncId}
+          syncMethod={props.syncMethod ?? 'index'}
         />
         <ReportPolarOptions
           cx={props.cx}

@@ -74,7 +74,7 @@ export const useMouseEnterItemDispatch = <T extends TooltipPayloadType>(
       setActiveMouseOverItemIndex({
         activeIndex: String(index),
         activeDataKey: dataKey,
-        activeMouseOverCoordinate: data.tooltipPosition,
+        activeCoordinate: data.tooltipPosition,
       }),
     );
   };
@@ -105,7 +105,7 @@ export const useMouseClickItemDispatch = <T extends TooltipPayloadType>(
       setActiveClickItemIndex({
         activeIndex: String(index),
         activeDataKey: dataKey,
-        activeClickCoordinate: data.tooltipPosition,
+        activeCoordinate: data.tooltipPosition,
       }),
     );
   };

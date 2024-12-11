@@ -157,6 +157,7 @@ const preloadedState: Partial<RechartsRootState> = {
     defaultTooltipEventType: 'item',
     chartName: 'Sunburst',
     tooltipPayloadSearcher: payloadSearcher,
+    eventEmitter: undefined,
   },
 };
 
@@ -202,7 +203,7 @@ const SunburstChartImpl = ({
       setActiveMouseOverItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeMouseOverCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.name),
       }),
     );
   }
@@ -220,7 +221,7 @@ const SunburstChartImpl = ({
       setActiveClickItemIndex({
         activeIndex: node.tooltipIndex,
         activeDataKey: dataKey,
-        activeClickCoordinate: positions.get(node.name),
+        activeCoordinate: positions.get(node.name),
       }),
     );
   }

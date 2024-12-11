@@ -133,9 +133,7 @@ describe('selectAxisScale', () => {
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
     const result1 = selectAxisScale(store.getState(), 'xAxis', '0', false);
-    store.dispatch(
-      setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
-    );
+    store.dispatch(setActiveMouseOverItemIndex({ activeCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }));
     const result2 = selectAxisScale(store.getState(), 'xAxis', '0', false);
     expect(result1).toBe(result2);
   });
@@ -269,9 +267,7 @@ describe('selectAxisRangeWithReverse', () => {
     const store = createRechartsStore();
     const result1 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
     const xAxisRange1 = combineXAxisRange(store.getState(), '0', false);
-    store.dispatch(
-      setActiveMouseOverItemIndex({ activeMouseOverCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }),
-    );
+    store.dispatch(setActiveMouseOverItemIndex({ activeCoordinate: undefined, activeDataKey: 'x', activeIndex: '7' }));
     const result2 = selectAxisRangeWithReverse(store.getState(), 'xAxis', '0', false);
     const xAxisRange2 = combineXAxisRange(store.getState(), '0', false);
     expect(xAxisRange1).toBe(xAxisRange2);
