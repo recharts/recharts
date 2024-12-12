@@ -82,10 +82,8 @@ export interface BarProps extends InternalBarProps {
   activeBar?: ActiveShape<BarProps, SVGPathElement>;
   background?: ActiveShape<BarProps, SVGPathElement>;
   radius?: number | [number, number, number, number];
-
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
-
   isAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
@@ -95,8 +93,7 @@ export interface BarProps extends InternalBarProps {
   label?: ImplicitLabelType;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'> &
-  BarProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGPathElement>, 'radius' | 'name'> & BarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
