@@ -1,6 +1,7 @@
 import { expect } from 'vitest';
 import { fireEvent } from '@testing-library/react';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { Coordinate } from '../../../src/util/types';
 
 export function getTooltip(container: Element): HTMLElement {
   const allWrappers = container.querySelectorAll('.recharts-tooltip-wrapper');
@@ -57,6 +58,11 @@ export function showTooltip(container: Element, selector: string, debug?: () => 
   return showTooltipOnCoordinate(container, selector, defaultCoordinates, debug);
 }
 
+export function hideTooltip(container: Element, mouseHoverSelector: string): void {
+  const element = container.querySelector(mouseHoverSelector);
+  fireEvent.mouseLeave(element);
+}
+
 export function expectTooltipNotVisible(container: Element) {
   const tooltip = getTooltip(container);
   expect(tooltip).not.toBeVisible();
@@ -73,4 +79,31 @@ export function expectTooltipPayload(
   expect.soft(tooltip.querySelector('.recharts-tooltip-label').textContent).toBe(expectedTooltipTitle);
   const tooltipItems = tooltip.querySelectorAll('.recharts-tooltip-item');
   expect.soft(Array.from(tooltipItems).map(item => item.textContent)).toEqual(expectedTooltipContent);
+}
+
+/**
+ * Will expect the tooltip to be visible and at the expected coordinate.
+ * When using this function, remember to also mock the bounding rect call.
+ * Browsers do this automatically; jsdom, however, by default returns 0, 0 and Tooltip
+ * interprets that as "I should not be visible".
+ *
+ * Example mock might look like this:
+ * <code>
+ *
+ *       mockGetBoundingClientRect({
+ *         width: 10,
+ *         height: 10,
+ *       });
+ * </code>
+ *
+ * @param container parent where the Tooltip will be located
+ * @param expectedCoordinate x, y expected coordinate of the tooltip
+ * @returns void
+ */
+export function expectTooltipCoordinate(container: Element, expectedCoordinate: Coordinate): void {
+  const tooltip = getTooltip(container);
+  expect(tooltip).toBeInTheDocument();
+  expect(tooltip).toBeVisible();
+  const { transform } = tooltip.style;
+  expect(transform).toContain(`translate(${expectedCoordinate.x}px, ${expectedCoordinate.y}px)`);
 }
