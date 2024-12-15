@@ -3,15 +3,27 @@ import { StorybookArgs } from '../../StorybookArgs';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   Brush,
   CartesianGrid,
   Line,
   LineChart,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  RadialBar,
+  RadialBarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from '../../../src';
+import { PageData } from '../../../test/_data';
 
 const SynchronisationProps = {
   syncId: { control: 'text' },
@@ -34,24 +46,43 @@ export default {
   decorators: [],
 };
 
-const dataThatHappenToShareValues = [
-  { name: 'Page A', uv: 1000, pv: 2000, amt: 3000 },
-  { name: 'Page B', uv: 3000, pv: 3000, amt: 4000 },
-  { name: 'Page C', uv: 4000, pv: 5000, amt: 6000 },
-  { name: 'Page D', uv: 5000, pv: 6000, amt: 1000 },
-  { name: 'Page E', uv: 6000, pv: 1000, amt: 2000 },
-  { name: 'Page F', uv: 7000, pv: 2000, amt: 3000 },
-];
+function shift<T>(array: T[], amount: number): T[] {
+  return [...array.slice(amount), ...array.slice(0, amount)];
+}
+
+const data1 = PageData;
+
+const data2 = shift(data1, 1);
+
+const data3 = shift(data1, 2);
+
+const data4 = shift(data1, 3);
+
+const data5 = shift(data1, 4);
+
+const data6 = shift(data1, 5);
+
+const green = '#82ca9d';
+
+const purple = '#8884d8';
+
+const blue = '#2c5097';
+
+const red = '#d71e1e';
+
+const orange = '#ff7300';
+
+const pink = '#dd4a98';
 
 export const Synchronized = {
   render: (args: StorybookArgs) => {
     return (
       <>
         <ResponsiveContainer width="100%" height={200}>
-          <LineChart
+          <AreaChart
             width={500}
             height={200}
-            data={dataThatHappenToShareValues}
+            data={data1}
             {...args}
             margin={{
               top: 10,
@@ -63,9 +94,32 @@ export const Synchronized = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey="uv" stroke={green} fill={green} />
+            <Brush />
             <Tooltip />
-          </LineChart>
+          </AreaChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart
+            width={500}
+            height={200}
+            data={data2}
+            {...args}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="pv" stroke={purple} fill={purple} />
+            <Brush />
+            <Tooltip />
+          </BarChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
 
@@ -73,7 +127,7 @@ export const Synchronized = {
           <LineChart
             width={500}
             height={200}
-            data={dataThatHappenToShareValues}
+            data={data3}
             {...args}
             margin={{
               top: 10,
@@ -85,17 +139,16 @@ export const Synchronized = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Line type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
+            <Line type="monotone" dataKey="uv" stroke={blue} fill={blue} />
             <Brush />
             <Tooltip />
           </LineChart>
         </ResponsiveContainer>
 
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
+          <PieChart
             width={500}
             height={200}
-            data={dataThatHappenToShareValues}
             {...args}
             margin={{
               top: 10,
@@ -104,12 +157,51 @@ export const Synchronized = {
               bottom: 0,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Area type="monotone" dataKey="amt" stroke="#82ca9d" fill="#82ca9d" />
+            <Pie data={data4} dataKey="pv" fill={red} />
             <Tooltip />
-          </AreaChart>
+          </PieChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <RadarChart
+            width={500}
+            height={200}
+            data={data5}
+            {...args}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <PolarGrid strokeDasharray="3 3" />
+            <PolarRadiusAxis dataKey="uv" type="number" />
+            <PolarAngleAxis dataKey="name" type="category" />
+            <Radar dataKey="uv" stroke={orange} fill={orange} />
+            <Tooltip />
+          </RadarChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <RadialBarChart
+            width={500}
+            height={200}
+            data={data6}
+            {...args}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <PolarGrid strokeDasharray="3 3" />
+            <PolarRadiusAxis dataKey="name" type="category" />
+            <PolarAngleAxis dataKey="pv" type="number" />
+            <RadialBar dataKey="pv" stroke={pink} fill={pink} />
+            <Tooltip />
+          </RadialBarChart>
         </ResponsiveContainer>
       </>
     );
