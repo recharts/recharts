@@ -74,7 +74,7 @@ const orange = '#ff7300';
 
 const pink = '#dd4a98';
 
-export const Synchronized = {
+export const Synchronised = {
   render: (args: StorybookArgs) => {
     return (
       <>

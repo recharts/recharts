@@ -140,7 +140,6 @@ export function useTooltipChartSynchronisation(
       // despite the typescript annotation, the state sometimes returns activeLabel as a number
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
     });
-    console.log(`[${className}] sending sync event`, { syncAction, syncMethod });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
   }, [
     isReceivingSynchronisation,

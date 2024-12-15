@@ -74,7 +74,19 @@ export type ActiveTooltipProps = {
 };
 
 export type TooltipSettingsState = {
-  shared: boolean;
+  /**
+   * So this informs the "tooltip event type". Tooltip event type can be either "axis" or "item"
+   * and it is used for two things:
+   * 1. Sets the active area
+   * 2. Sets the background and cursor highlights
+   *
+   * Some charts only allow to have one type of tooltip event type, some allow both.
+   * Those charts that allow both will have one default, and the "shared" prop will be used to switch between them.
+   * Undefined means "use the chart default".
+   *
+   * Charts that only allow one tooltip event type, will ignore the shared prop.
+   */
+  shared: boolean | undefined;
   trigger: TooltipTrigger;
   axisId: AxisId;
   /**
@@ -84,8 +96,10 @@ export type TooltipSettingsState = {
    * With `active=true`, the tooltip will remain visible after mouse leave event.
    *
    * If you want to see the "active before user interaction" settings, see `defaultIndex`.
+   *
+   * Undefined means "depends on user interactions".
    */
-  active: boolean;
+  active: boolean | undefined;
   /**
    * If you want to set the tooltip to be active before user interaction, you can set this property.
    */
@@ -233,7 +247,7 @@ export const initialState: TooltipState = {
   },
   tooltipItemPayloads: [],
   settings: {
-    shared: false,
+    shared: undefined,
     trigger: 'hover',
     axisId: 0,
     active: false,
