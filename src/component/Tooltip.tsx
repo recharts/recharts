@@ -148,10 +148,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
 
   // TODO swap the other properties from generateCategoricalChart context, to redux
   const {
-    active: activeFromContext,
+    // active: activeFromContext,
     payload: payloadFromContext,
     coordinate: coordinateFromContext,
     label: labelFromContext,
+    // index: indexFromContext,
   } = useTooltipContext();
 
   const payloadFromRedux = useAppSelector(state =>
@@ -174,7 +175,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? (isTooltipActiveFromRedux || activeFromContext);
+  const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
