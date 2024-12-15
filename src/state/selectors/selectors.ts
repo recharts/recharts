@@ -159,21 +159,34 @@ export function selectTooltipPayloadConfigurations(
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
 ): ReadonlyArray<TooltipPayloadConfiguration> {
   const tooltipState = selectTooltipState(state);
   // if tooltip reacts to axis interaction, then we display all items at the same time.
   if (tooltipEventType === 'axis') {
     return tooltipState.tooltipItemPayloads;
   }
-  let filterByDataKey: DataKey<any> | undefined;
   /*
    * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
    * item means that only the hovered or clicked item will be present in the tooltip.
    */
+  if (tooltipState.tooltipItemPayloads.length === 0) {
+    // No point filtering if the payload is empty
+    return [];
+  }
+  let filterByDataKey: DataKey<any> | undefined;
   if (trigger === 'hover') {
     filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
   } else {
     filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+  }
+  if (filterByDataKey == null && defaultIndex != null) {
+    /*
+     * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
+     * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
+     * so we should display only one item at a time instead of all.
+     */
+    return [tooltipState.tooltipItemPayloads[0]];
   }
   return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
 }

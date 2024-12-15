@@ -1225,7 +1225,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select tooltip payload settings for every graphical item', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover'));
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
       expect(spy).toHaveBeenLastCalledWith([
         {
           dataDefinedOnItem: [

@@ -7,9 +7,10 @@ import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
 import { focusTestHelper } from '../helper/focus';
-import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { showTooltip, showTooltipOnCoordinate } from '../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -497,39 +498,86 @@ describe('<Pie />', () => {
     expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
   });
 
-  test('Pie event handlers', async () => {
-    expect.assertions(3);
+  describe('Pie event handlers', () => {
     const onMouseEnter = vi.fn();
     const onMouseLeave = vi.fn();
     const onClick = vi.fn();
-    const { container } = render(
-      <PieChart width={500} height={500}>
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={400} height={400}>
         <Pie
           isAnimationActive={false}
-          cx={250}
-          cy={250}
-          innerRadius={0}
-          outerRadius={200}
           data={sectorsData}
+          dataKey="cy"
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
-          dataKey="cy"
-        />
-      </PieChart>,
-    );
+        >
+          {children}
+        </Pie>
+      </PieChart>
+    ));
 
-    const sector = container.querySelectorAll('.recharts-layer')[4];
-    await userEvent.hover(sector);
-    await waitFor(() => {
+    beforeEach(() => {
+      onMouseEnter.mockClear();
+      onMouseLeave.mockClear();
+      onClick.mockClear();
+    });
+
+    it('should start with empty tooltip state', () => {
+      const { spy } = renderTestCase(state => state.tooltip.itemInteraction);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: false,
+        activeMouseOverCoordinate: undefined,
+        activeMouseOverDataKey: undefined,
+        activeMouseOverIndex: null,
+      });
+    });
+
+    it('should update tooltip state after hovering over a sector', async () => {
+      const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
+      showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenLastCalledWith({
+        activeClick: false,
+        activeClickCoordinate: undefined,
+        activeClickDataKey: undefined,
+        activeClickIndex: null,
+        activeHover: true,
+        activeMouseOverCoordinate: {
+          x: 263.1033255612459,
+          y: 154.15275032118709,
+        },
+        activeMouseOverDataKey: 'cy',
+        activeMouseOverIndex: '0',
+      });
+    });
+
+    test('should call external handlers', async () => {
+      const { container } = renderTestCase();
+
+      expect(onMouseEnter).toHaveBeenCalledTimes(0);
+      expect(onMouseLeave).toHaveBeenCalledTimes(0);
+      expect(onClick).toHaveBeenCalledTimes(0);
+
+      const sector = container.querySelectorAll('.recharts-layer')[4];
+      await userEvent.hover(sector);
       expect(onMouseEnter).toHaveBeenCalledTimes(1);
-    });
-    await userEvent.unhover(sector);
-    await waitFor(() => {
+
+      await userEvent.unhover(sector);
       expect(onMouseLeave).toHaveBeenCalledTimes(1);
-    });
-    await userEvent.click(sector);
-    await waitFor(() => {
+
+      await userEvent.click(sector);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      // click also includes enter in it? ok
+      expect(onMouseEnter).toHaveBeenCalledTimes(2);
+
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
       expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
