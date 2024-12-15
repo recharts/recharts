@@ -120,7 +120,7 @@ describe('<Line />', () => {
         direction: 'y',
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(4);
+    expect(spy).toHaveBeenCalledTimes(5);
   });
 
   it('should report its ErrorBars to state in vertical chart', () => {
@@ -145,7 +145,7 @@ describe('<Line />', () => {
         direction: 'x',
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(4);
+    expect(spy).toHaveBeenCalledTimes(5);
   });
 
   describe('Tooltip integration', () => {

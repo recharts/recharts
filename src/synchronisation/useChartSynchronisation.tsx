@@ -16,8 +16,9 @@ const originCoordinate: Coordinate = { x: 0, y: 0 };
 const noop = () => {};
 
 /**
- * Registers a listener for the SYNC_EVENT event, which is used to synchronise actions across multiple charts.
- * This is the receiving end of the synchronisation.
+ * Will receive synchronisation events from other charts.
+ *
+ * Reads syncMethod from state and decides how to synchronise the tooltip based on that.
  *
  * @returns void
  */
@@ -117,11 +118,18 @@ export function useTooltipChartSynchronisation(
   const { active: isReceivingSynchronisation } = useAppSelector(selectSynchronisedTooltipState);
   useEffect(() => {
     if (isReceivingSynchronisation) {
-      console.log(`[${className}] Chart is receiving synchronisation events, so it will not send any.`);
+      /*
+       * This chart currently has active tooltip, synchronised from another chart.
+       * Let's not send any outgoing synchronisation events while that's happening
+       * to avoid infinite loops.
+       */
       return;
     }
     if (syncId == null) {
-      console.log(`[${className}] No syncId set, so not sending synchronisation events.`);
+      /*
+       * syncId is not set, means that this chart is not synchronised with any other chart,
+       * means we don't need to send synchronisation events
+       */
       return;
     }
     const syncAction = setSyncInteraction({

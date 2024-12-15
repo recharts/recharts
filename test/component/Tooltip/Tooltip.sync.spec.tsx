@@ -45,6 +45,7 @@ import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectSyncId, selectSyncMethod } from '../../../src/state/selectors/rootPropsSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import {
+  selectActiveCoordinate,
   selectActiveIndex,
   selectIsTooltipActive,
   selectTooltipPayloadSearcher,
@@ -440,7 +441,52 @@ describe('Tooltip synchronization', () => {
       expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
     });
 
-    it.todo('should show the Tooltip on the correct coordinate');
+    it('should select the correct coordinate', () => {
+      const { container, spy, debug } = renderTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+      const wrapperOne = container.querySelector('#chartOne');
+
+      showTooltip(wrapperOne, lineChartMouseHoverTooltipSelector, debug);
+
+      expect(spy).toHaveBeenLastCalledWith({ x: 263, y: 200 });
+    });
+  });
+
+  describe('selectActiveCoordinate', () => {
+    it('should return undefined for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual(undefined);
+    });
+
+    it('should return coordinate after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 3, y: 4 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({ x: 3, y: 4 });
+    });
+
+    it('should return coordinate after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          coordinate: { x: 5, y: 6 },
+          dataKey: 'uv',
+          index: '1',
+          label: 'Page B',
+        }),
+      );
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({ x: 5, y: 6 });
+    });
   });
 
   describe('selectIsTooltipActive', () => {

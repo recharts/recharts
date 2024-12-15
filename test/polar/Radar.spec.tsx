@@ -153,7 +153,7 @@ describe('<Radar />', () => {
       );
 
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(6);
     });
   });
 });

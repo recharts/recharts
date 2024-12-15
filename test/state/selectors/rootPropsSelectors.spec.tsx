@@ -243,6 +243,6 @@ describe('selectSyncMethod', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(fn);
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(6);
   });
 });
