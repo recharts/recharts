@@ -23,7 +23,7 @@ export const Simple = {
       <ResponsiveContainer width="100%" height={400}>
         <PieChart {...args}>
           <Pie data={data} dataKey="uv" activeShape={activeShape} />
-          <Tooltip />
+          <Tooltip defaultIndex={3} />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </PieChart>
       </ResponsiveContainer>

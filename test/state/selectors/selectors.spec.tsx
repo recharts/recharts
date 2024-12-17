@@ -539,10 +539,10 @@ describe('selectActiveCoordinate', () => {
   it('should return undefined for initial state', () => {
     const initialState = createRechartsStore().getState();
     const expected: ChartCoordinate = undefined;
-    expect(selectActiveCoordinate(initialState, 'axis', 'hover')).toBe(expected);
-    expect(selectActiveCoordinate(initialState, 'axis', 'click')).toBe(expected);
-    expect(selectActiveCoordinate(initialState, 'item', 'hover')).toBe(expected);
-    expect(selectActiveCoordinate(initialState, 'item', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'axis', 'hover', undefined)).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'axis', 'click', undefined)).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'item', 'hover', undefined)).toBe(expected);
+    expect(selectActiveCoordinate(initialState, 'item', 'click', undefined)).toBe(expected);
   });
 
   it('should return coordinates when mouseOverAxisIndex is fired and keep them after mouseLeaveChart', () => {
@@ -550,7 +550,7 @@ describe('selectActiveCoordinate', () => {
 
     const initialState = createRechartsStore().getState();
     const expected: ChartCoordinate = { x: 100, y: 150 };
-    expect(selectActiveCoordinate(initialState, 'axis', 'hover')).toBe(undefined);
+    expect(selectActiveCoordinate(initialState, 'axis', 'hover', undefined)).toBe(undefined);
 
     store.dispatch(
       setMouseOverAxisIndex({
@@ -560,11 +560,11 @@ describe('selectActiveCoordinate', () => {
       }),
     );
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toBe(expected);
 
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toBe(expected);
   });
 
   it('should return coordinates when mouseClickAxisIndex is fired and keep them after mouseLeaveChart', () => {
@@ -572,7 +572,7 @@ describe('selectActiveCoordinate', () => {
 
     const initialState = createRechartsStore().getState();
     const expected: ChartCoordinate = { x: 100, y: 150 };
-    expect(selectActiveCoordinate(initialState, 'axis', 'click')).toBe(undefined);
+    expect(selectActiveCoordinate(initialState, 'axis', 'click', undefined)).toBe(undefined);
 
     store.dispatch(
       setMouseClickAxisIndex({
@@ -582,11 +582,11 @@ describe('selectActiveCoordinate', () => {
       }),
     );
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'click', undefined)).toBe(expected);
 
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'click', undefined)).toBe(expected);
   });
 
   it('should return coordinates when mouseOverItemIndex is fired and keep them after mouseLeaveItem', () => {
@@ -594,7 +594,7 @@ describe('selectActiveCoordinate', () => {
 
     const initialState = createRechartsStore().getState();
     const expected: ChartCoordinate = { x: 100, y: 150 };
-    expect(selectActiveCoordinate(initialState, 'item', 'hover')).toBe(undefined);
+    expect(selectActiveCoordinate(initialState, 'item', 'hover', undefined)).toBe(undefined);
 
     store.dispatch(
       setActiveMouseOverItemIndex({
@@ -604,13 +604,13 @@ describe('selectActiveCoordinate', () => {
       }),
     );
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(expected);
 
     // neither of these should reset coordinate
     store.dispatch(mouseLeaveItem());
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'hover')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(expected);
   });
 
   it('should return coordinates when mouseClickItemIndex is fired and keep them after mouseLeaveItem', () => {
@@ -618,7 +618,7 @@ describe('selectActiveCoordinate', () => {
 
     const initialState = createRechartsStore().getState();
     const expected: ChartCoordinate = { x: 100, y: 150 };
-    expect(selectActiveCoordinate(initialState, 'item', 'click')).toBe(undefined);
+    expect(selectActiveCoordinate(initialState, 'item', 'click', undefined)).toBe(undefined);
 
     store.dispatch(
       setActiveClickItemIndex({
@@ -628,13 +628,13 @@ describe('selectActiveCoordinate', () => {
       }),
     );
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'click', undefined)).toBe(expected);
 
     // neither of these should reset coordinate
     store.dispatch(mouseLeaveItem());
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'click')).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'click', undefined)).toBe(expected);
   });
 });
 
@@ -801,7 +801,7 @@ describe('selectIsTooltipActive', () => {
         store.dispatch(mouseLeaveItem());
         expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
           isActive: false,
-          activeIndex: null,
+          activeIndex: '1',
         });
       });
 

@@ -10,6 +10,7 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
+  TooltipSettingsState,
   TooltipState,
 } from '../tooltipSlice';
 import {
@@ -39,6 +40,9 @@ import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxis, selectTooltipAxisTicks } from './tooltipSelectors';
 import { AxisRange } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
+import { selectChartLayout } from '../../context/chartLayoutContext';
+import { selectChartOffset } from './selectChartOffset';
+import { selectChartHeight } from './containerSelectors';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -77,6 +81,8 @@ function getSliced<T>(
 
 export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
 
+export const selectTooltipSettings = (state: RechartsRootState): TooltipSettingsState => state.tooltip.settings;
+
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
 );
@@ -106,26 +112,95 @@ export function selectActiveIndex(
   return activeIndex;
 }
 
-export function selectActiveCoordinate(
+const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-): ChartCoordinate | undefined {
-  const tooltipState: TooltipState = selectTooltipState(state);
-  let activeCoordinate: ChartCoordinate;
-  if (tooltipEventType === 'item') {
-    if (trigger === 'hover') {
-      activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
-    } else {
-      activeCoordinate = tooltipState.itemInteraction.activeClickCoordinate;
+  defaultIndex: number | undefined,
+) => ChartCoordinate | undefined = createSelector(
+  [
+    selectChartHeight,
+    selectChartLayout,
+    selectChartOffset,
+    selectTooltipAxisTicks,
+    (_state, _tooltipEventType, _trigger, defaultIndex) => defaultIndex,
+  ],
+  (
+    height: number,
+    layout: LayoutType,
+    offset: ChartOffset | undefined,
+    tooltipTicks: ReadonlyArray<TickItem>,
+    defaultIndex: number | undefined,
+  ): ChartCoordinate | undefined => {
+    if (defaultIndex == null || offset == null) {
+      return undefined;
     }
-  } else if (trigger === 'hover') {
-    activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
-  } else {
-    activeCoordinate = tooltipState.axisInteraction.activeClickCoordinate;
-  }
-  return activeCoordinate;
-}
+    const tick = tooltipTicks?.[defaultIndex];
+    if (!tick) {
+      return undefined;
+    }
+    switch (layout) {
+      case 'horizontal': {
+        return {
+          x: tick.coordinate,
+          y: offset.top,
+        };
+      }
+      default: {
+        // This logic is not super sound - it conflates vertical, radial, centric layouts into just one. TODO improve!
+        return {
+          x: (offset.top + height) / 2,
+          y: tick.coordinate,
+        };
+      }
+    }
+  },
+);
+
+const pickTooltipEventType = (_state: RechartsRootState, tooltipEventType: TooltipEventType): TooltipEventType =>
+  tooltipEventType;
+
+const pickTrigger = (
+  _state: RechartsRootState,
+  _tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): TooltipTrigger => trigger;
+
+const pickDefaultIndex = (
+  _state: RechartsRootState,
+  _tooltipEventType: TooltipEventType,
+  _trigger: TooltipTrigger,
+  defaultIndex?: number | undefined,
+): number | undefined => defaultIndex;
+
+export const selectActiveCoordinate: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
+) => ChartCoordinate | undefined = createSelector(
+  [selectTooltipState, selectCoordinateForDefaultIndex, pickTooltipEventType, pickTrigger],
+  (
+    tooltipState: TooltipState,
+    defaultIndexCoordinate: ChartCoordinate,
+    tooltipEventType: TooltipEventType,
+    trigger: TooltipTrigger,
+  ): ChartCoordinate | undefined => {
+    let activeCoordinate: ChartCoordinate;
+    if (tooltipEventType === 'item') {
+      if (trigger === 'hover') {
+        activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
+      } else {
+        activeCoordinate = tooltipState.itemInteraction.activeClickCoordinate;
+      }
+    } else if (trigger === 'hover') {
+      activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
+    } else {
+      activeCoordinate = tooltipState.axisInteraction.activeClickCoordinate;
+    }
+    return activeCoordinate ?? defaultIndexCoordinate;
+  },
+);
 
 export const selectActiveLabel: (
   state: RechartsRootState,
@@ -155,41 +230,48 @@ function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: Readonl
   return dataDefinedOnChart;
 }
 
-export function selectTooltipPayloadConfigurations(
+export const selectTooltipPayloadConfigurations: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: number | undefined,
-): ReadonlyArray<TooltipPayloadConfiguration> {
-  const tooltipState = selectTooltipState(state);
-  // if tooltip reacts to axis interaction, then we display all items at the same time.
-  if (tooltipEventType === 'axis') {
-    return tooltipState.tooltipItemPayloads;
-  }
-  /*
-   * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
-   * item means that only the hovered or clicked item will be present in the tooltip.
-   */
-  if (tooltipState.tooltipItemPayloads.length === 0) {
-    // No point filtering if the payload is empty
-    return [];
-  }
-  let filterByDataKey: DataKey<any> | undefined;
-  if (trigger === 'hover') {
-    filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
-  } else {
-    filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
-  }
-  if (filterByDataKey == null && defaultIndex != null) {
+) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
+  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
+  (
+    tooltipState: TooltipState,
+    tooltipEventType: TooltipEventType,
+    trigger: TooltipTrigger,
+    defaultIndex: number | undefined,
+  ): ReadonlyArray<TooltipPayloadConfiguration> => {
+    // if tooltip reacts to axis interaction, then we display all items at the same time.
+    if (tooltipEventType === 'axis') {
+      return tooltipState.tooltipItemPayloads;
+    }
     /*
-     * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
-     * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
-     * so we should display only one item at a time instead of all.
+     * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
+     * item means that only the hovered or clicked item will be present in the tooltip.
      */
-    return [tooltipState.tooltipItemPayloads[0]];
-  }
-  return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
-}
+    if (tooltipState.tooltipItemPayloads.length === 0) {
+      // No point filtering if the payload is empty
+      return [];
+    }
+    let filterByDataKey: DataKey<any> | undefined;
+    if (trigger === 'hover') {
+      filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+    } else {
+      filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+    }
+    if (filterByDataKey == null && defaultIndex != null) {
+      /*
+       * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
+       * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
+       * so we should display only one item at a time instead of all.
+       */
+      return [tooltipState.tooltipItemPayloads[0]];
+    }
+    return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
+  },
+);
 
 export const combineTooltipPayload = (
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
@@ -287,45 +369,52 @@ export const selectIsTooltipActive: (
   trigger: TooltipTrigger,
   defaultIndex?: number | undefined,
 ) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
-  (state: RechartsRootState) => state,
-  (_state, tooltipEventType: TooltipEventType) => tooltipEventType,
-  (_state, _tooltipEventType, trigger: TooltipTrigger) => trigger,
-  (_state, _tooltipEventType, _trigger, defaultIndex?: number | undefined) => defaultIndex,
-  selectActiveCoordinate,
+  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex, selectTooltipSettings],
   (
-    state: RechartsRootState,
+    tooltipState: TooltipState,
     tooltipEventType: TooltipEventType,
     trigger: TooltipTrigger,
     defaultIndex: number | undefined,
-    coordinate: ChartCoordinate,
+    { active: activeFromProps }: TooltipSettingsState,
   ) => {
-    // if coordinate is undefined it has not yet been set, if it is null it has been "reset"
-    // we can change this later but not sure how else to maintain current functionality
-    if (coordinate === undefined && defaultIndex != null) {
-      return { isActive: true, activeIndex: String(defaultIndex) };
-    }
+    let isActive: boolean, activeIndex: string | undefined;
     if (tooltipEventType === 'axis') {
       if (trigger === 'hover') {
-        return {
-          isActive: state.tooltip.axisInteraction.activeHover,
-          activeIndex: state.tooltip.axisInteraction.activeMouseOverAxisIndex,
-        };
+        if (activeFromProps) {
+          isActive = tooltipState.axisInteraction.activeMouseOverAxisIndex != null;
+          activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+        } else {
+          isActive = tooltipState.axisInteraction.activeHover;
+          activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+        }
+      } else if (activeFromProps) {
+        isActive = tooltipState.axisInteraction.activeClickAxisIndex != null;
+        activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
+      } else {
+        isActive = tooltipState.axisInteraction.activeClick;
+        activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
       }
-      return {
-        isActive: state.tooltip.axisInteraction.activeClick,
-        activeIndex: state.tooltip.axisInteraction.activeClickAxisIndex,
-      };
+    } else if (trigger === 'hover') {
+      if (activeFromProps) {
+        isActive = tooltipState.itemInteraction.activeMouseOverIndex != null;
+        activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+      } else {
+        isActive = tooltipState.itemInteraction.activeHover;
+        activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+      }
+    } else if (activeFromProps) {
+      isActive = tooltipState.itemInteraction.activeClickIndex != null;
+      activeIndex = tooltipState.itemInteraction.activeClickIndex;
+    } else {
+      isActive = tooltipState.itemInteraction.activeClick;
+      activeIndex = tooltipState.itemInteraction.activeClickIndex;
     }
-    if (trigger === 'hover') {
-      return {
-        isActive: state.tooltip.itemInteraction.activeHover,
-        activeIndex: state.tooltip.itemInteraction.activeMouseOverIndex,
-      };
+
+    if (activeIndex == null && isActive === false && defaultIndex != null) {
+      return { isActive: true, activeIndex: String(defaultIndex) };
     }
-    return {
-      isActive: state.tooltip.itemInteraction.activeClick,
-      activeIndex: state.tooltip.itemInteraction.activeClickIndex,
-    };
+
+    return { isActive, activeIndex };
   },
 );
 

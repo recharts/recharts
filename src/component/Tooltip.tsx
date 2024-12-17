@@ -139,8 +139,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTooltipSettingsState({ shared, trigger, axisId }));
-  }, [dispatch, shared, trigger, axisId]);
+    dispatch(setTooltipSettingsState({ shared, trigger, axisId, active: activeFromProps }));
+  }, [dispatch, shared, trigger, axisId, activeFromProps]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
@@ -149,7 +149,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   // TODO swap the other properties from generateCategoricalChart context, to redux
   const {
     // active: activeFromContext,
-    payload: payloadFromContext,
+    // payload: payloadFromContext,
     coordinate: coordinateFromContext,
     label: labelFromContext,
     // index: indexFromContext,
@@ -164,10 +164,12 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
   );
 
-  const coordinateFromRedux = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger));
+  const coordinateFromRedux = useAppSelector(state =>
+    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex),
+  );
   // TODO remove the payloadFromContext fallback
   // until we move all chart types to redux and remove this there will be some noticable fallback behavior
-  const payload: TooltipPayload = payloadFromRedux?.length > 0 ? payloadFromRedux : payloadFromContext;
+  const payload: TooltipPayload = payloadFromRedux; // ?.length > 0 ? payloadFromRedux : payloadFromContext;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
@@ -196,6 +198,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
+  // TODO switch to redux coordinate once the Scatter tooltipPosition is in state too
   const finalCoord = coordinateFromRedux ?? coordinateFromContext;
   // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
   // TODO: update when moving synchronization to redux

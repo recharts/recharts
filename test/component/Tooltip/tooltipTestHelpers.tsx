@@ -89,12 +89,11 @@ export function expectTooltipPayload(
  *
  * Example mock might look like this:
  * <code>
- *
- *       mockGetBoundingClientRect({
- *         width: 10,
- *         height: 10,
- *       });
- * </code>
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+ </code>
  *
  * @param container parent where the Tooltip will be located
  * @param expectedCoordinate x, y expected coordinate of the tooltip

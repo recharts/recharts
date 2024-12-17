@@ -65,7 +65,18 @@ export type ActiveTooltipProps = {
   activeCoordinate: ChartCoordinate | undefined;
 };
 
-export type TooltipSettingsState = { shared: boolean; trigger: TooltipTrigger; axisId: AxisId };
+export type TooltipSettingsState = {
+  shared: boolean;
+  trigger: TooltipTrigger;
+  axisId: AxisId;
+  /**
+   * The `active` prop, despite its name, does not mean "always active".
+   * It means "active after user interaction has ended".
+   * By default, the tooltip is only active while the user is hovering over the chart.
+   * With `active=true`, the tooltip will remain visible after mouse leave event.
+   */
+  active: boolean;
+};
 
 /**
  * The tooltip interaction state stores:
@@ -168,7 +179,9 @@ export type TooltipState = {
    */
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>;
   /**
-   * Tooltip props or other settings that need redux access
+   * Tooltip props or other settings that need redux access.
+   * This assumes that there is always only one Tooltip. In case we want to start supporting multiple Tooltips,
+   * we have to change this to an array - and update all the places reading this state too.
    */
   settings: TooltipSettingsState;
 };
@@ -201,7 +214,12 @@ export const initialState: TooltipState = {
     activeAxisDataKey: undefined,
   },
   tooltipItemPayloads: [],
-  settings: { shared: false, trigger: 'hover', axisId: 0 },
+  settings: {
+    shared: false,
+    trigger: 'hover',
+    axisId: 0,
+    active: false,
+  },
 };
 
 const tooltipSlice = createSlice({
@@ -227,18 +245,18 @@ const tooltipSlice = createSlice({
       state.itemInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
     },
     mouseLeaveChart(state) {
-      // clear everything except for coordinate - we don't always want to animate from 0,0
+      /*
+       * Clear only the active flags. Why?
+       * 1. Keep Coordinate to preserve animation - next time the Tooltip appears, we want to render it from
+       * the last place where it was when it disappeared.
+       * 2. We want to keep all the properties anyway just in case the tooltip has `active=true` prop
+       * and continues being visible even after the mouse has left the chart.
+       */
       state.itemInteraction.activeHover = false;
-      state.itemInteraction.activeMouseOverIndex = null;
       state.axisInteraction.activeHover = false;
-      state.axisInteraction.activeMouseOverAxisDataKey = undefined;
-      state.axisInteraction.activeMouseOverAxisIndex = null;
     },
     mouseLeaveItem(state) {
-      // clear everything except for coordinate - we don't always want to animate from 0,0
       state.itemInteraction.activeHover = false;
-      state.itemInteraction.activeMouseOverIndex = null;
-      state.itemInteraction.activeMouseOverDataKey = undefined;
     },
     setActiveClickItemIndex(state, action: SynchronisedTooltipAction) {
       state.itemInteraction.activeClick = true;

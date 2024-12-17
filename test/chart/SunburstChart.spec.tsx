@@ -164,8 +164,8 @@ describe('<Sunburst />', () => {
           x: 583.3333333333334,
           y: 250,
         },
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: '[0]',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
