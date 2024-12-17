@@ -1225,7 +1225,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select tooltip payload settings for every graphical item', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover'));
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
       expect(spy).toHaveBeenLastCalledWith([
         {
           dataDefinedOnItem: [
@@ -1501,11 +1501,11 @@ describe('Tooltip payload', () => {
         activeIndex: '1',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
     });
 
     it('should select active coordinate', () => {
-      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
       expect(spy).toHaveBeenLastCalledWith(undefined);
       expect(spy).toHaveBeenCalledTimes(1);
 
@@ -1594,7 +1594,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select active coordinate', () => {
-      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover'));
+      const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'axis', 'hover', undefined));
       expect(spy).toHaveBeenLastCalledWith(undefined);
       expect(spy).toHaveBeenCalledTimes(1);
 
@@ -1629,7 +1629,7 @@ describe('Tooltip payload', () => {
         activeIndex: '3',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(5);
+      expect(spy).toHaveBeenCalledTimes(4);
     });
   });
 

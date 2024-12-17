@@ -13,6 +13,7 @@ import {
   combineGraphicalItemsSettings,
   combineNiceTicks,
   combineNumericalDomain,
+  itemAxisPredicate,
   selectBaseAxis,
   selectDomainDefinition,
   selectRealScaleType,
@@ -28,19 +29,6 @@ import { selectStackOffsetType } from './rootPropsSelectors';
 export type PolarAxisType = 'angleAxis' | 'radiusAxis';
 
 export const selectUnfilteredPolarItems = (state: RechartsRootState) => state.graphicalItems.polarItems;
-
-function itemAxisPredicate(axisType: PolarAxisType, axisId: AxisId) {
-  return (item: PolarGraphicalItemSettings) => {
-    switch (axisType) {
-      case 'angleAxis':
-        return item.angleAxisId === axisId;
-      case 'radiusAxis':
-        return item.radiusAxisId === axisId;
-      default:
-        return false;
-    }
-  };
-}
 
 const selectAxisPredicate: (
   _state: RechartsRootState,

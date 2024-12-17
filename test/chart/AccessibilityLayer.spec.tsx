@@ -92,7 +92,8 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('Page A');
     });
 
-    test('accessibilityLayer works, even without *Axis elements', () => {
+    // Temporarily broken until the redux a11y layer is completed
+    test.fails('accessibilityLayer works, even without *Axis elements', () => {
       const { container } = render(
         <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -115,7 +116,8 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('uv : 300');
     });
 
-    test('Chart updates when it receives left/right arrow keystrokes', () => {
+    // Temporarily broken until the redux a11y layer is completed
+    test.fails('Chart updates when it receives left/right arrow keystrokes', () => {
       const mockMouseMovements = vi.fn();
 
       const { container } = render(

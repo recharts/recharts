@@ -45,7 +45,12 @@ import {
 } from '../../util/isDomainSpecifiedByUser';
 import { AppliedChartData, ChartData, ChartDataState } from '../chartDataSlice';
 import { getPercentValue, hasDuplicate, isNan, isNumber, isNumOrStr, mathSign, upperFirst } from '../../util/DataUtils';
-import { CartesianGraphicalItemSettings, ErrorBarsSettings, GraphicalItemSettings } from '../graphicalItemsSlice';
+import {
+  CartesianGraphicalItemSettings,
+  ErrorBarsSettings,
+  GraphicalItemSettings,
+  PolarGraphicalItemSettings,
+} from '../graphicalItemsSlice';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 import { getNiceTickValues, getTickValuesFixedDomain } from '../../util/scale';
 import {
@@ -268,15 +273,19 @@ export const selectHasBar = (state: RechartsRootState): boolean => state.graphic
  * @returns Predicate function that return true for CartesianGraphicalItemSettings that are relevant to the specified axis
  */
 export function itemAxisPredicate(axisType: XorYorZType, axisId: AxisId) {
-  return (item: CartesianGraphicalItemSettings) => {
+  return (item: CartesianGraphicalItemSettings | PolarGraphicalItemSettings) => {
     switch (axisType) {
       case 'xAxis':
         // This is sensitive to the data type, as 0 !== '0'. I wonder if we should be more flexible. How does 2.x branch behave? TODO write test for that
-        return item.xAxisId === axisId;
+        return 'xAxisId' in item && item.xAxisId === axisId;
       case 'yAxis':
-        return item.yAxisId === axisId;
+        return 'yAxisId' in item && item.yAxisId === axisId;
       case 'zAxis':
-        return item.zAxisId === axisId;
+        return 'zAxisId' in item && item.zAxisId === axisId;
+      case 'angleAxis':
+        return 'angleAxisId' in item && item.angleAxisId === axisId;
+      case 'radiusAxis':
+        return 'radiusAxisId' in item && item.radiusAxisId === axisId;
       default:
         return false;
     }
@@ -592,7 +601,7 @@ export const combineAppliedNumericalValuesIncludingErrorValues = (
     return data
       .flatMap(entry => {
         return items.flatMap((item): AppliedChartDataWithErrorDomain | undefined => {
-          const relevantErrorBars = item.errorBars.filter(errorBar =>
+          const relevantErrorBars = item.errorBars?.filter(errorBar =>
             isErrorBarRelevantForAxisType(axisType, errorBar),
           );
           const valueByDataKey: unknown = getValueByDataKey(entry, axisSettings.dataKey ?? item.dataKey);

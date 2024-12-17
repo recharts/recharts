@@ -12,6 +12,7 @@ import {
   selectTooltipAxisTicks,
   selectTooltipAxisType,
 } from '../../src/state/selectors/tooltipSelectors';
+import { ObjectInspector } from './ObjectInspector';
 
 // TODO come up with better styling solution, perhaps reuse a component library
 const tableStyle: CSSProperties = { border: '1px solid black', borderCollapse: 'collapse' };
@@ -32,6 +33,8 @@ export function PolarChartInspector() {
   const tooltipAxisScale = useAppSelector(selectTooltipAxisScale);
   const tooltipAxisRealScaleType = useAppSelector(selectTooltipAxisRealScaleType);
   const tooltipAxisTicks = useAppSelector(selectTooltipAxisTicks);
+
+  const tooltipState = useAppSelector(state => state.tooltip);
 
   return (
     <table style={tableStyle}>
@@ -96,6 +99,12 @@ export function PolarChartInspector() {
           <th style={tableStyle}>Tooltip axis ticks</th>
           <td style={tableStyle}>
             <ArrayInspector arr={tooltipAxisTicks} />
+          </td>
+        </tr>
+        <tr style={tableStyle}>
+          <th style={tableStyle}>Tooltip state</th>
+          <td style={tableStyle}>
+            <ObjectInspector obj={tooltipState} />
           </td>
         </tr>
       </tbody>

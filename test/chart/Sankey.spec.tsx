@@ -172,8 +172,8 @@ describe('<Sankey />', () => {
           x: 80,
           y: 142.14339872499383,
         },
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'link-0',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
@@ -258,8 +258,8 @@ describe('<Sankey />', () => {
           x: 10,
           y: 139.51593144373072,
         },
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
+        activeMouseOverDataKey: 'value',
+        activeMouseOverIndex: 'node-0',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });

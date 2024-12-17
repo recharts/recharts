@@ -31,7 +31,19 @@ import {
 } from '../../src/state/selectors/axisSelectors';
 import { boxPlotData, PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { selectTooltipPayload } from '../../src/state/selectors/selectors';
+import {
+  selectActiveCoordinate,
+  selectTooltipPayload,
+  selectTooltipPayloadConfigurations,
+} from '../../src/state/selectors/selectors';
+import {
+  expectTooltipCoordinate,
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  showTooltip,
+} from '../component/Tooltip/tooltipTestHelpers';
+import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -1478,56 +1490,295 @@ describe('ScatterChart with multiple Y axes', () => {
 });
 
 describe('Tooltip integration', () => {
-  const renderTestCase = createSelectorTestCase(({ children }) => (
-    <ScatterChart width={100} height={100} data={PageData}>
-      <Scatter isAnimationActive={false} />
-      <XAxis dataKey="uv" />
-      <YAxis dataKey="pv" />
-      {children}
-    </ScatterChart>
-  ));
+  describe('with default Tooltip', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ScatterChart width={100} height={100} data={PageData}>
+        <Scatter isAnimationActive={false} />
+        <XAxis dataKey="uv" />
+        <YAxis dataKey="pv" />
+        <Tooltip isAnimationActive={false} />
+        {children}
+      </ScatterChart>
+    ));
 
-  it('should return tooltip payload', () => {
-    const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
-    expect(spy).toHaveBeenLastCalledWith([
-      {
-        color: undefined,
-        dataKey: 'uv',
-        fill: undefined,
-        hide: false,
-        name: 'uv',
-        nameKey: undefined,
-        payload: {
-          amt: 2400,
-          name: 'Page A',
-          pv: 2400,
-          uv: 400,
+    it('should return tooltip payload', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 400,
         },
-        stroke: undefined,
-        strokeWidth: undefined,
-        type: undefined,
-        unit: '',
-        value: 400,
-      },
-      {
-        color: undefined,
-        dataKey: 'pv',
-        fill: undefined,
-        hide: false,
-        name: 'pv',
-        nameKey: undefined,
-        payload: {
-          amt: 2400,
-          name: 'Page A',
-          pv: 2400,
-          uv: 400,
+        {
+          color: undefined,
+          dataKey: 'pv',
+          fill: undefined,
+          hide: false,
+          name: 'pv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
         },
-        stroke: undefined,
-        strokeWidth: undefined,
-        type: undefined,
-        unit: '',
-        value: 2400,
-      },
-    ]);
+      ]);
+    });
+
+    it('should not render tooltip before user interaction', () => {
+      const { container } = renderTestCase();
+      expectTooltipNotVisible(container);
+    });
+
+    it('should render tooltip after mouse hover', () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+      showTooltip(container, scatterChartMouseHoverTooltipSelector);
+
+      expectTooltipPayload(container, '', ['uv : 400', 'pv : 2400']);
+      expectTooltipCoordinate(container, { x: 77.5, y: 30.6 });
+    });
+  });
+
+  describe('with Tooltip and defaultIndex=number', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ScatterChart width={100} height={100} data={PageData}>
+        <Scatter isAnimationActive={false} />
+        <XAxis dataKey="uv" />
+        <YAxis dataKey="pv" />
+        <Tooltip defaultIndex={1} />
+        {children}
+      </ScatterChart>
+    ));
+
+    it.fails('should render tooltip before user interaction', () => {
+      // TODO the coordinate will fail until Scatter tooltipPosition is in state, TODO fix and enable this test
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+      expectTooltipPayload(container, '', ['uv : 300', 'pv : 4567']);
+      expectTooltipCoordinate(container, { x: 82.5, y: 32.5 });
+    });
+
+    it.fails('should select active coordinate', () => {
+      // this will fail until Scatter tooltipPosition is in state, TODO fix and enable this test
+      const { spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith({ x: 82.5, y: 32.5 });
+    });
+
+    it('should select tooltip data', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          dataDefinedOnItem: [
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page A',
+                  pv: 2400,
+                  uv: 400,
+                },
+                type: undefined,
+                unit: '',
+                value: 400,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page A',
+                  pv: 2400,
+                  uv: 400,
+                },
+                type: undefined,
+                unit: '',
+                value: 2400,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page B',
+                  pv: 4567,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 300,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page B',
+                  pv: 4567,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 4567,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page C',
+                  pv: 1398,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 300,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page C',
+                  pv: 1398,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 1398,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page D',
+                  pv: 9800,
+                  uv: 200,
+                },
+                type: undefined,
+                unit: '',
+                value: 200,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page D',
+                  pv: 9800,
+                  uv: 200,
+                },
+                type: undefined,
+                unit: '',
+                value: 9800,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page E',
+                  pv: 3908,
+                  uv: 278,
+                },
+                type: undefined,
+                unit: '',
+                value: 278,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page E',
+                  pv: 3908,
+                  uv: 278,
+                },
+                type: undefined,
+                unit: '',
+                value: 3908,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page F',
+                  pv: 4800,
+                  uv: 189,
+                },
+                type: undefined,
+                unit: '',
+                value: 189,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page F',
+                  pv: 4800,
+                  uv: 189,
+                },
+                type: undefined,
+                unit: '',
+                value: 4800,
+              },
+            ],
+          ],
+          settings: {
+            color: undefined,
+            dataKey: undefined,
+            fill: undefined,
+            hide: false,
+            name: undefined,
+            nameKey: undefined,
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+          },
+        },
+      ]);
+    });
   });
 });

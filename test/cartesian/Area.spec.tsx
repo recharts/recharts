@@ -518,7 +518,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const Comp = (): null => {
         legendSpy(useLegendPayload());
-        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover')));
+        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined)));
         return null;
       };
 
@@ -581,7 +581,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const Comp = (): null => {
         legendSpy(useLegendPayload());
-        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover')));
+        tooltipSpy(useAppSelector(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined)));
         return null;
       };
 
