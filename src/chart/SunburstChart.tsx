@@ -103,15 +103,28 @@ function getMaxDepthOf(node: SunburstData): number {
   return 1 + Math.max(...childDepths);
 }
 
+function convertMapToRecord<K extends keyof any, V>(map: Map<K, V>): Record<K, V> {
+  const record: Record<K, V> = {} as Record<K, V>;
+  map.forEach((value, key) => {
+    record[key] = value;
+  });
+  return record;
+}
+
 function getTooltipEntrySettings({
   dataKey,
   nameKey,
   data,
   stroke,
   fill,
-}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'>): TooltipPayloadConfiguration {
+  positions,
+}: Pick<SunburstChartProps, 'dataKey' | 'data' | 'stroke' | 'fill' | 'nameKey'> & {
+  positions: SunburstPositionMap;
+}): TooltipPayloadConfiguration {
   return {
     dataDefinedOnItem: data.children,
+    // Redux store will not accept a Map because it's not serializable
+    positions: convertMapToRecord(positions),
     // Sunburst does not support many of the properties as other charts do so there's plenty of defaults here
     settings: {
       stroke,
@@ -161,6 +174,8 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
+type SunburstPositionMap = Map<string, ChartCoordinate>;
+
 const SunburstChartImpl = ({
   className,
   data,
@@ -191,7 +206,7 @@ const SunburstChartImpl = ({
   const thickness = (outerRadius - innerRadius) / treeDepth;
 
   const sectors: React.ReactNode[] = [];
-  const positions = new Map<string, ChartCoordinate>([]);
+  const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
   const [cursorPortal, setCursorPortal] = useState<SVGElement | null>(null);
@@ -311,7 +326,10 @@ const SunburstChartImpl = ({
               }}
             />
             <Layer className={layerClass}>{sectors}</Layer>
-            <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ dataKey, data, stroke, fill, nameKey }} />
+            <SetTooltipEntrySettings
+              fn={getTooltipEntrySettings}
+              args={{ dataKey, data, stroke, fill, nameKey, positions }}
+            />
             {children}
           </Surface>
         </RechartsWrapper>

@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useMemo } from 'react';
 import Animate from 'react-smooth';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
@@ -14,15 +14,16 @@ import { Global } from '../util/Global';
 import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
-  LegendType,
-  TooltipType,
+  ActiveShape,
+  adaptEventsOfChild,
+  AnimationDuration,
   AnimationTiming,
   ChartOffset,
+  Coordinate,
   DataKey,
-  adaptEventsOfChild,
+  LegendType,
   PresentationAttributesAdaptChildEvent,
-  AnimationDuration,
-  ActiveShape,
+  TooltipType,
 } from '../util/types';
 import { FunnelTrapezoid, FunnelTrapezoidProps } from '../util/FunnelUtils';
 import {
@@ -33,7 +34,7 @@ import {
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
-import { selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
+import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 
@@ -41,6 +42,7 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
   payload?: any;
   isActive: boolean;
+  tooltipPosition: Coordinate;
 }
 
 /**
@@ -120,10 +122,13 @@ type FunnelTrapezoidsProps = {
   allOtherFunnelProps: Props;
 };
 
-function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
+function getTooltipEntrySettings(
+  props: Props & { trapezoids: ReadonlyArray<FunnelTrapezoidItem> },
+): TooltipPayloadConfiguration {
   const { dataKey, nameKey, stroke, strokeWidth, fill, name, hide, tooltipType, data } = props;
   return {
     dataDefinedOnItem: data,
+    positions: props.trapezoids.map(({ tooltipPosition }) => tooltipPosition),
     settings: {
       stroke,
       strokeWidth,
@@ -379,8 +384,8 @@ function FunnelImpl(props: Props) {
   const presentationProps = filterProps(props, false);
   const cells = findAllByType(props.children, Cell);
 
-  const { trapezoids } = useAppSelector(state =>
-    selectFunnelTrapezoids(state, {
+  const funnelSettings: ResolvedFunnelSettings = useMemo(
+    () => ({
       dataKey: props.dataKey,
       nameKey,
       data: props.data,
@@ -391,26 +396,44 @@ function FunnelImpl(props: Props) {
       cells,
       presentationProps,
     }),
+    [
+      props.dataKey,
+      nameKey,
+      props.data,
+      props.tooltipType,
+      lastShapeType,
+      props.reversed,
+      props.width,
+      cells,
+      presentationProps,
+    ],
   );
 
+  const { trapezoids } = useAppSelector(state => selectFunnelTrapezoids(state, funnelSettings));
+
   return (
-    <FunnelWithState
-      {...everythingElse}
-      stroke={stroke}
-      fill={fill}
-      nameKey={nameKey}
-      lastShapeType={lastShapeType}
-      animationId={updateId}
-      animationBegin={animationBegin}
-      animationDuration={animationDuration}
-      animationEasing={animationEasing}
-      isAnimationActive={isAnimationActive}
-      hide={hide}
-      legendType={legendType}
-      height={height}
-      width={width}
-      trapezoids={trapezoids}
-    />
+    <>
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, trapezoids }} />
+      {hide ? null : (
+        <FunnelWithState
+          {...everythingElse}
+          stroke={stroke}
+          fill={fill}
+          nameKey={nameKey}
+          lastShapeType={lastShapeType}
+          animationId={updateId}
+          animationBegin={animationBegin}
+          animationDuration={animationDuration}
+          animationEasing={animationEasing}
+          isAnimationActive={isAnimationActive}
+          hide={hide}
+          legendType={legendType}
+          height={height}
+          width={width}
+          trapezoids={trapezoids}
+        />
+      )}
+    </>
   );
 }
 
@@ -443,62 +466,64 @@ export function computeFunnelTrapezoids({
   const rowHeight = realHeight / len;
   const parentViewBox = { x: offset.left, y: offset.top, width: offset.width, height: offset.height };
 
-  let trapezoids = displayedData.map((entry: any, i: number): FunnelTrapezoidItem => {
-    const rawVal = getValueByDataKey(entry, dataKey, 0);
-    const name = getValueByDataKey(entry, nameKey, i);
-    let val = rawVal;
-    let nextVal;
+  let trapezoids: ReadonlyArray<FunnelTrapezoidItem> = displayedData.map(
+    (entry: any, i: number): FunnelTrapezoidItem => {
+      const rawVal = getValueByDataKey(entry, dataKey, 0);
+      const name = getValueByDataKey(entry, nameKey, i);
+      let val = rawVal;
+      let nextVal;
 
-    if (i !== len - 1) {
-      nextVal = getValueByDataKey(displayedData[i + 1], dataKey, 0);
+      if (i !== len - 1) {
+        nextVal = getValueByDataKey(displayedData[i + 1], dataKey, 0);
 
-      if (nextVal instanceof Array) {
-        [nextVal] = nextVal;
+        if (nextVal instanceof Array) {
+          [nextVal] = nextVal;
+        }
+      } else if (rawVal instanceof Array && rawVal.length === 2) {
+        [val, nextVal] = rawVal;
+      } else if (lastShapeType === 'rectangle') {
+        nextVal = val;
+      } else {
+        nextVal = 0;
       }
-    } else if (rawVal instanceof Array && rawVal.length === 2) {
-      [val, nextVal] = rawVal;
-    } else if (lastShapeType === 'rectangle') {
-      nextVal = val;
-    } else {
-      nextVal = 0;
-    }
 
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
-    const y = rowHeight * i + left + offsetY;
-    // @ts-expect-error getValueByDataKey does not validate the output type
-    const upperWidth = (val / maxValue) * realWidth;
-    const lowerWidth = (nextVal / maxValue) * realWidth;
-
-    const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
-    const tooltipPosition = {
-      x: x + upperWidth / 2,
-      y: y + rowHeight / 2,
-    };
-
-    return {
-      x,
-      y,
-      width: Math.max(upperWidth, lowerWidth),
-      upperWidth,
-      lowerWidth,
-      height: rowHeight,
       // @ts-expect-error getValueByDataKey does not validate the output type
-      name,
-      val,
-      tooltipPayload,
-      tooltipPosition,
-      ...omit(entry, 'width'),
-      payload: entry,
-      parentViewBox,
-      labelViewBox: {
-        x: x + (upperWidth - lowerWidth) / 4,
+      const x = ((maxValue - val) * realWidth) / (2 * maxValue) + top + 25 + offsetX;
+      const y = rowHeight * i + left + offsetY;
+      // @ts-expect-error getValueByDataKey does not validate the output type
+      const upperWidth = (val / maxValue) * realWidth;
+      const lowerWidth = (nextVal / maxValue) * realWidth;
+
+      const tooltipPayload = [{ name, value: val, payload: entry, dataKey, type: tooltipType }];
+      const tooltipPosition: Coordinate = {
+        x: x + upperWidth / 2,
+        y: y + rowHeight / 2,
+      };
+
+      return {
+        x,
         y,
-        width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
+        width: Math.max(upperWidth, lowerWidth),
+        upperWidth,
+        lowerWidth,
         height: rowHeight,
-      },
-    };
-  });
+        // @ts-expect-error getValueByDataKey does not validate the output type
+        name,
+        val,
+        tooltipPayload,
+        tooltipPosition,
+        ...omit(entry, 'width'),
+        payload: entry,
+        parentViewBox,
+        labelViewBox: {
+          x: x + (upperWidth - lowerWidth) / 4,
+          y,
+          width: Math.abs(upperWidth - lowerWidth) / 2 + Math.min(upperWidth, lowerWidth),
+          height: rowHeight,
+        },
+      };
+    },
+  );
 
   if (reversed) {
     trapezoids = trapezoids.map((entry: any, index: number) => {
@@ -530,17 +555,6 @@ export class Funnel extends PureComponent<Props> {
   static defaultProps = defaultFunnelProps;
 
   render() {
-    const { hide } = this.props;
-
-    if (hide) {
-      return <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />;
-    }
-
-    return (
-      <>
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <FunnelImpl {...this.props} />
-      </>
-    );
+    return <FunnelImpl {...this.props} />;
   }
 }

@@ -168,6 +168,7 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
   const { dataKey, data, stroke, strokeWidth, name, hide, fill, tooltipType } = props;
   return {
     dataDefinedOnItem: data,
+    positions: undefined,
     settings: {
       stroke,
       strokeWidth,

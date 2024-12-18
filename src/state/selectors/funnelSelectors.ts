@@ -13,7 +13,7 @@ type FunnelComposedData = {
   data: any[];
 };
 
-type ResolvedFunnelSettings = {
+export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
   data: any[];
   nameKey: DataKey<any>;
@@ -25,7 +25,10 @@ type ResolvedFunnelSettings = {
   presentationProps: Record<string, any>;
 };
 
-const pickFunnelSettings = (_state: RechartsRootState, funnelSettings: ResolvedFunnelSettings) => funnelSettings;
+const pickFunnelSettings = (
+  _state: RechartsRootState,
+  funnelSettings: ResolvedFunnelSettings,
+): ResolvedFunnelSettings => funnelSettings;
 
 export const selectFunnelTrapezoids: (
   state: RechartsRootState,

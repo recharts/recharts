@@ -19,6 +19,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
+  Coordinate,
   DataKey,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -60,6 +61,7 @@ export interface ScatterPointItem {
   node?: ScatterPointNode;
   payload?: any;
   tooltipPayload?: TooltipPayload;
+  tooltipPosition: Coordinate;
 }
 
 export type ScatterCustomizedShape = ActiveShape<ScatterPointItem, SVGPathElement & InnerSymbolsProp> | SymbolType;
@@ -229,6 +231,7 @@ function getTooltipEntrySettings(props: InputRequiredToComputeTooltipEntrySettin
   const { dataKey, points, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: points?.map((p: ScatterPointItem) => p.tooltipPayload),
+    positions: points?.map((p: ScatterPointItem) => p.tooltipPosition),
     settings: {
       stroke,
       strokeWidth,

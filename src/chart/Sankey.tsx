@@ -388,6 +388,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   const { dataKey, nameKey, stroke, strokeWidth, fill, name, data } = props;
   return {
     dataDefinedOnItem: data,
+    positions: undefined,
     settings: {
       stroke,
       strokeWidth,

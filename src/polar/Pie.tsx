@@ -262,6 +262,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
   const { dataKey, nameKey, sectors, stroke, strokeWidth, fill, name, hide, tooltipType } = props;
   return {
     dataDefinedOnItem: sectors?.map((p: PieSectorDataItem) => p.tooltipPayload),
+    positions: sectors?.map((p: PieSectorDataItem) => p.tooltipPosition),
     settings: {
       stroke,
       strokeWidth,
