@@ -44,6 +44,7 @@ import {
 } from '../component/Tooltip/tooltipTestHelpers';
 import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { TooltipPayloadConfiguration } from '../../src/state/tooltipSlice';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -1593,8 +1594,34 @@ describe('Tooltip integration', () => {
 
     it('should select tooltip data', () => {
       const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', 0));
-      expect(spy).toHaveBeenLastCalledWith([
+      const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         {
+          positions: [
+            {
+              x: 67.5,
+              y: 50.6,
+            },
+            {
+              x: 72.5,
+              y: 37.598,
+            },
+            {
+              x: 77.5,
+              y: 56.611999999999995,
+            },
+            {
+              x: 82.5,
+              y: 6.200000000000001,
+            },
+            {
+              x: 87.5,
+              y: 41.552,
+            },
+            {
+              x: 92.5,
+              y: 36.2,
+            },
+          ],
           dataDefinedOnItem: [
             [
               {
@@ -1778,7 +1805,8 @@ describe('Tooltip integration', () => {
             unit: '',
           },
         },
-      ]);
+      ];
+      expect(spy).toHaveBeenLastCalledWith(expected);
     });
   });
 });

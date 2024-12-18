@@ -1,7 +1,8 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
-import { ChartCoordinate, DataKey } from '../util/types';
+import { ChartCoordinate, Coordinate, DataKey } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
 import { SynchronisedTooltipAction } from '../synchronisation/SynchronisedAction';
 
@@ -58,6 +59,14 @@ export type TooltipPayloadConfiguration = {
    * data + activeIndex, pass it to the TooltipPayloadSearcher, and render the result in a Tooltip.
    */
   dataDefinedOnItem: unknown;
+  /**
+   * Opportunity for the graphical item to define its own Tooltip coordinates
+   * instead of relying on the axes.
+   *
+   * If undefined, then Recharts will use mouse interaction coordinates, or the axis coordinates,
+   * with some defaults (like, top/left of the chart).
+   */
+  positions: Record<TooltipIndex, Coordinate> | ReadonlyArray<Coordinate> | undefined;
 };
 
 export type ActiveTooltipProps = {
@@ -227,10 +236,10 @@ const tooltipSlice = createSlice({
   initialState,
   reducers: {
     addTooltipEntrySettings(state, action: PayloadAction<TooltipPayloadConfiguration>) {
-      state.tooltipItemPayloads.push(action.payload);
+      state.tooltipItemPayloads.push(castDraft(action.payload));
     },
     removeTooltipEntrySettings(state, action: PayloadAction<TooltipPayloadConfiguration>) {
-      const index = current(state).tooltipItemPayloads.indexOf(action.payload);
+      const index = current(state).tooltipItemPayloads.indexOf(castDraft(action.payload));
       if (index > -1) {
         state.tooltipItemPayloads.splice(index, 1);
       }

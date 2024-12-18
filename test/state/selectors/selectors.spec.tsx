@@ -84,6 +84,7 @@ const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
       },
     ],
   ],
+  positions: undefined,
 };
 
 const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
@@ -120,6 +121,7 @@ const exampleTooltipPayloadConfiguration2: TooltipPayloadConfiguration = {
       },
     ],
   ],
+  positions: undefined,
 };
 
 type TestCaseTooltipCombination = { tooltipEventType: TooltipEventType; trigger: TooltipTrigger };
@@ -250,6 +252,7 @@ describe('selectTooltipPayload', () => {
   it('should return settings and data from axis hover, if activeIndex is set for the item', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: undefined,
       dataDefinedOnItem: undefined,
     };
@@ -260,6 +263,7 @@ describe('selectTooltipPayload', () => {
       value: undefined,
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -296,6 +300,7 @@ describe('selectTooltipPayload', () => {
   it('should return settings and data if defaultIndex is provided', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings1: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: undefined,
       dataDefinedOnItem: undefined,
     };
@@ -306,6 +311,7 @@ describe('selectTooltipPayload', () => {
       value: undefined,
     };
     const tooltipSettings2: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -337,6 +343,7 @@ describe('selectTooltipPayload', () => {
   it('should fill in chartData, if it is not defined on the item for item hover', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -373,6 +380,7 @@ describe('selectTooltipPayload', () => {
   it('should return sliced data if set by Brush for item hover', () => {
     const store = createRechartsStore(preloadedState);
     const tooltipSettings: TooltipPayloadConfiguration = {
+      positions: undefined,
       settings: {
         stroke: 'red',
         fill: 'green',
@@ -455,6 +463,7 @@ describe('selectTooltipPayload', () => {
     const tooltipPayloadConfiguration: TooltipPayloadConfiguration = {
       settings: { nameKey: undefined },
       dataDefinedOnItem: [],
+      positions: undefined,
     };
     const chartDataState: ChartDataState = initialChartDataState;
     const tooltipAxis: BaseAxisProps = {

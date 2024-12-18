@@ -490,6 +490,7 @@ function getTooltipEntrySettings({
   const { dataKey, nameKey, stroke, fill } = props;
   return {
     dataDefinedOnItem: currentRoot,
+    positions: undefined, // TODO I think Treemap has the capability of computing positions and supporting defaultIndex? Except it doesn't yet
     settings: {
       stroke,
       strokeWidth: undefined,

@@ -125,6 +125,7 @@ function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
      * So, undefined it is.
      */
     dataDefinedOnItem: undefined,
+    positions: undefined,
     settings: {
       stroke,
       strokeWidth,
