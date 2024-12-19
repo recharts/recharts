@@ -35,7 +35,6 @@ import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
-  useTooltipContext,
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -47,6 +46,7 @@ import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
 import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -175,7 +175,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   const { shape, activeShape } = allOtherScatterProps;
   const baseProps = filterProps(allOtherScatterProps, false);
 
-  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -190,7 +190,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   return (
     <>
       {points.map((entry, i) => {
-        const isActive = isTooltipActive && activeShape && activeIndex === i;
+        const isActive = activeShape && activeIndex === String(i);
         const option = isActive ? activeShape : shape;
         const symbolProps = { key: `symbol-${i}`, ...baseProps, ...entry };
 

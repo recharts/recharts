@@ -78,6 +78,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { expectScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
+import { TooltipState } from '../../../src/state/tooltipSlice';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -591,16 +592,8 @@ describe('Tooltip visibility', () => {
 
     describe('defaultIndex prop', () => {
       it('should show tooltip from the beginning if defaultIndex is set to a valid value', context => {
-        if (name === 'RadialBarChart') {
-          /*
-           * RadialBarChart throws an error when called with defaultIndex!
-           * Error: Uncaught [TypeError: Cannot read properties of undefined (reading 'coordinate')]
-           * at CategoricalChartWrapper.displayDefaultTooltip
-           */
-          // IntelliJ (incorrectly) reports this as test failure - but CLI says it's skipped. Since CLI is the source of truth I leave this here.
-          context.skip();
-        }
         if (name === 'FunnelChart') {
+          // IntelliJ (incorrectly) reports the context.skip() as test failure - but CLI says it's skipped. Since CLI is the source of truth I leave this here.
           // FunnelChart throws an error when called with defaultIndex
           context.skip();
         }
@@ -891,7 +884,7 @@ describe('Tooltip visibility', () => {
     it('should select tooltip state before & after hover', () => {
       const { container, spy } = renderTestCase(selectTooltipState);
 
-      expect(spy).toHaveBeenLastCalledWith({
+      const expected: TooltipState = {
         axisInteraction: {
           activeClick: false,
           activeClickAxisDataKey: undefined,
@@ -922,6 +915,8 @@ describe('Tooltip visibility', () => {
           axisId: 0,
           shared: undefined,
           trigger: 'hover',
+          active: undefined,
+          defaultIndex: undefined,
         },
         tooltipItemPayloads: [
           {
@@ -938,9 +933,11 @@ describe('Tooltip visibility', () => {
               type: undefined,
               unit: '',
             },
+            positions: undefined,
           },
         ],
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expected);
 
       showTooltip(container, RadarChartTestCase.mouseHoverSelector);
 

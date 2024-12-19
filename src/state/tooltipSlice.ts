@@ -83,8 +83,14 @@ export type TooltipSettingsState = {
    * It means "active after user interaction has ended".
    * By default, the tooltip is only active while the user is hovering over the chart.
    * With `active=true`, the tooltip will remain visible after mouse leave event.
+   *
+   * If you want to see the "active before user interaction" settings, see `defaultIndex`.
    */
   active: boolean;
+  /**
+   * If you want to set the tooltip to be active before user interaction, you can set this property.
+   */
+  defaultIndex: TooltipIndex | undefined;
 };
 
 /**
@@ -228,6 +234,7 @@ export const initialState: TooltipState = {
     trigger: 'hover',
     axisId: 0,
     active: false,
+    defaultIndex: undefined,
   },
 };
 

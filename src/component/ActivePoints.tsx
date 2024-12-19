@@ -6,6 +6,8 @@ import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/useTooltipAxis';
 import { useTooltipContext } from '../context/tooltipContext';
 import { findEntryInArray, isNullish } from '../util/DataUtils';
+import { useAppSelector } from '../state/hooks';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export interface PointType {
   readonly x: number;
@@ -70,8 +72,9 @@ type ActivePointsProps = {
 
 export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
   const tooltipAxis = useTooltipAxis();
-  const { active, index: activeTooltipIndex, label: activeLabel } = useTooltipContext();
-  if (!active) {
+  const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
+  const { label: activeLabel } = useTooltipContext();
+  if (!activeTooltipIndex) {
     return null;
   }
 
@@ -85,7 +88,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
         : `payload.${tooltipAxisDataKey}`;
     activePoint = findEntryInArray(points, specifiedKey, activeLabel);
   } else {
-    activePoint = points?.[activeTooltipIndex];
+    activePoint = points?.[Number(activeTooltipIndex)];
   }
 
   if (isNullish(activePoint)) {
@@ -94,7 +97,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
 
   return renderActivePoint({
     point: activePoint,
-    childIndex: activeTooltipIndex,
+    childIndex: Number(activeTooltipIndex),
     mainColor,
     dataKey: itemDataKey,
     activeDot,
