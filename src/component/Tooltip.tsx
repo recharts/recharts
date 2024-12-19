@@ -139,8 +139,16 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setTooltipSettingsState({ shared, trigger, axisId, active: activeFromProps }));
-  }, [dispatch, shared, trigger, axisId, activeFromProps]);
+    dispatch(
+      setTooltipSettingsState({
+        shared,
+        trigger,
+        axisId,
+        active: activeFromProps,
+        defaultIndex: typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex,
+      }),
+    );
+  }, [dispatch, shared, trigger, axisId, activeFromProps, defaultIndex]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();

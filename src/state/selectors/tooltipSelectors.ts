@@ -47,6 +47,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { TooltipIndex, TooltipState } from '../tooltipSlice';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -304,4 +305,47 @@ export const selectTooltipAxisTicks = createSelector(
     selectTooltipAxisType,
   ],
   combineTicksOfTooltipAxis,
+);
+
+export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
+  [(state: RechartsRootState) => state.tooltip],
+  (tooltipState: TooltipState): TooltipIndex | undefined => {
+    const { settings } = tooltipState;
+
+    if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.activeAxisIndex != null) {
+      // Synchronised events always override other events
+      return tooltipState.syncInteraction.activeAxisIndex;
+    }
+    if (settings.trigger === 'click') {
+      if (settings.shared) {
+        if (tooltipState.axisInteraction.activeClickAxisIndex != null) {
+          if (tooltipState.axisInteraction.activeClick) {
+            return tooltipState.axisInteraction.activeClickAxisIndex;
+          }
+          return undefined;
+        }
+      } else if (tooltipState.itemInteraction.activeClickIndex != null) {
+        if (tooltipState.itemInteraction.activeClick) {
+          return tooltipState.itemInteraction.activeClickIndex;
+        }
+        return undefined;
+      }
+    } else if (settings.shared) {
+      if (tooltipState.axisInteraction.activeMouseOverAxisIndex != null) {
+        if (tooltipState.axisInteraction.activeHover) {
+          return tooltipState.axisInteraction.activeMouseOverAxisIndex;
+        }
+        return undefined;
+      }
+    } else if (tooltipState.itemInteraction.activeMouseOverIndex != null) {
+      if (tooltipState.itemInteraction.activeHover) {
+        return tooltipState.itemInteraction.activeMouseOverIndex;
+      }
+      return undefined;
+    }
+    if (settings.defaultIndex != null) {
+      return settings.defaultIndex;
+    }
+    return undefined;
+  },
 );

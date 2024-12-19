@@ -37,7 +37,6 @@ import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
-  useTooltipContext,
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -47,6 +46,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { RadialBarSettings, selectLegendPayload, selectRadialBarSectors } from '../state/selectors/radialBarSelectors';
 import { useAppSelector } from '../state/hooks';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -66,7 +66,7 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
   const baseProps = filterProps(others, false);
 
-  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -81,7 +81,7 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   return (
     <>
       {sectors.map((entry, i) => {
-        const isActive = isTooltipActive && activeShape && i === activeIndex;
+        const isActive = activeShape && activeIndex === String(i);
         // @ts-expect-error the types need a bit of attention
         const onMouseEnter = onMouseEnterFromContext(entry, i);
         // @ts-expect-error the types need a bit of attention

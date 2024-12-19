@@ -96,7 +96,7 @@ function getSliced<T>(
   return arr;
 }
 
-export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
+export const selectTooltipState = (state: RechartsRootState): TooltipState => state.tooltip;
 
 export const selectTooltipSettings = (state: RechartsRootState): TooltipSettingsState => state.tooltip.settings;
 
