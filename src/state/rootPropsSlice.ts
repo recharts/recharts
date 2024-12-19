@@ -17,6 +17,11 @@ export type UpdatableChartOptions = {
    */
   syncId: number | string | undefined;
   syncMethod: SyncMethod;
+  /**
+   * Useful for debugging which chart is which when synchronising.
+   * The className is also passed to the root element of the chart but that's done in the JSX, not through Redux.
+   */
+  className: string | undefined;
 };
 
 export const initialState: UpdatableChartOptions = {
@@ -27,6 +32,7 @@ export const initialState: UpdatableChartOptions = {
   maxBarSize: undefined,
   syncId: undefined,
   syncMethod: 'index',
+  className: undefined,
 };
 
 const rootPropsSlice = createSlice({
@@ -41,6 +47,7 @@ const rootPropsSlice = createSlice({
       state.stackOffset = action.payload.stackOffset;
       state.syncId = action.payload.syncId;
       state.syncMethod = action.payload.syncMethod;
+      state.className = action.payload.className;
     },
   },
 });

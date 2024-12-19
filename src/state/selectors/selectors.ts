@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import sortBy from 'lodash/sortBy';
+import { selectSynchronisedTooltipState } from '../../synchronisation/syncSelectors';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {
@@ -12,6 +13,7 @@ import {
   TooltipPayloadSearcher,
   TooltipSettingsState,
   TooltipState,
+  TooltipSyncState,
 } from '../tooltipSlice';
 import {
   calculateActiveTickIndex,
@@ -94,6 +96,10 @@ export function selectActiveIndex(
   defaultIndex: number | undefined,
 ): TooltipIndex {
   const tooltipState: TooltipState = selectTooltipState(state);
+  if (tooltipState.syncInteraction.active) {
+    // Chart synchronisation wins over everything else
+    return tooltipState.syncInteraction.index;
+  }
   let activeIndex: TooltipIndex;
   if (tooltipEventType === 'item') {
     if (trigger === 'hover') {
@@ -111,6 +117,24 @@ export function selectActiveIndex(
   }
   return activeIndex;
 }
+
+export const selectTooltipDataKey = (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): DataKey<any> | undefined => {
+  const tooltipState = selectTooltipState(state);
+  if (tooltipEventType === 'axis') {
+    if (trigger === 'hover') {
+      return tooltipState.axisInteraction.activeMouseOverAxisDataKey;
+    }
+    return tooltipState.axisInteraction.activeClickAxisDataKey;
+  }
+  if (trigger === 'hover') {
+    return tooltipState.itemInteraction.activeMouseOverDataKey;
+  }
+  return tooltipState.itemInteraction.activeClickDataKey;
+};
 
 export const selectTooltipPayloadConfigurations: (
   state: RechartsRootState,
@@ -155,7 +179,7 @@ export const selectTooltipPayloadConfigurations: (
   },
 );
 
-const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
+export const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
   state.options.tooltipPayloadSearcher;
 
 const selectCoordinateForDefaultIndex: (
@@ -368,14 +392,26 @@ export const selectIsTooltipActive: (
   trigger: TooltipTrigger,
   defaultIndex?: number | undefined,
 ) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
-  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex, selectTooltipSettings],
+  [
+    selectTooltipState,
+    pickTooltipEventType,
+    pickTrigger,
+    pickDefaultIndex,
+    selectTooltipSettings,
+    selectSynchronisedTooltipState,
+  ],
   (
     tooltipState: TooltipState,
     tooltipEventType: TooltipEventType,
     trigger: TooltipTrigger,
     defaultIndex: number | undefined,
     { active: activeFromProps }: TooltipSettingsState,
+    syncState: TooltipSyncState,
   ) => {
+    if (syncState.active) {
+      // Chart synchronisation wins over everything else
+      return { isActive: true, activeIndex: syncState.index };
+    }
     let isActive: boolean, activeIndex: string | undefined;
     if (tooltipEventType === 'axis') {
       if (trigger === 'hover') {

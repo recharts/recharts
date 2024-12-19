@@ -28,6 +28,7 @@ import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
@@ -174,6 +175,9 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    */
   const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
+  const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
+
+  useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
   const cursorPortal = useCursorPortal();
@@ -193,8 +197,6 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
-  const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
-
   const hasPayload = finalPayload.length > 0;
 
   const tooltipElement = (

@@ -299,7 +299,7 @@ export const combineTicksOfTooltipAxis = (
   );
 };
 
-export const selectTooltipAxisTicks = createSelector(
+export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | null = createSelector(
   [
     selectChartLayout,
     selectTooltipAxis,

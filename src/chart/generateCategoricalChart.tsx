@@ -1763,6 +1763,7 @@ export const generateCategoricalChart = ({
           barSize={props.barSize}
           syncId={props.syncId}
           syncMethod={props.syncMethod ?? 'index'}
+          className={props.className}
         />
         <ReportPolarOptions
           cx={props.cx}

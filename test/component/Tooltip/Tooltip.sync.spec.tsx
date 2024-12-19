@@ -25,7 +25,7 @@ import {
   YAxis,
 } from '../../../src';
 import { PageData } from '../../_data';
-import { getTooltip, showTooltip } from './tooltipTestHelpers';
+import { expectTooltipPayload, getTooltip, showTooltip } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -37,6 +37,13 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectSyncId, selectSyncMethod } from '../../../src/state/selectors/rootPropsSelectors';
+import { createRechartsStore } from '../../../src/state/store';
+import {
+  selectActiveIndex,
+  selectIsTooltipActive,
+  selectTooltipPayloadSearcher,
+} from '../../../src/state/selectors/selectors';
+import { setMouseOverAxisIndex, setSyncInteraction } from '../../../src/state/tooltipSlice';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -306,8 +313,7 @@ describe('Tooltip synchronization', () => {
         </>
       ));
 
-      // Temporarily broken until the redux synchronisation is completed
-      test.fails(`${name} shows tooltip when synchronized with ${name}`, () => {
+      test(`${name} shows tooltip when synchronized with ${name}`, () => {
         const { chartOne: chartOneContent, chartTwo: chartTwoContent } = tooltipContent;
         const { container, debug } = renderTestCase();
         // use ids to separate the charts so the `.recharts-wrapper` class can be used to activate the tooltip
@@ -347,6 +353,160 @@ describe('Tooltip synchronization', () => {
       });
     },
   );
+
+  describe('when syncMethod=value on the receiving chart', () => {
+    const data1 = [
+      { name: 'Page A', uv: 300 },
+      { name: 'Page B', uv: 400 },
+      { name: 'Page C', uv: 500 },
+      { name: 'Page D', uv: 600 },
+      { name: 'Page E', uv: 700 },
+      { name: 'Page F', uv: 800 },
+    ];
+
+    const data2 = [
+      { name: 'Page F', pv: 1800 },
+      { name: 'Page E', pv: 1700 },
+      { name: 'Page D', pv: 1600 },
+      { name: 'Page C', pv: 1500 },
+      { name: 'Page B', pv: 1400 },
+      { name: 'Page A', pv: 1300 },
+    ];
+
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      return (
+        <>
+          <div id="chartOne">
+            <LineChart syncId="tooltipSync" data={data1} width={400} height={400} className="chart-1">
+              <XAxis dataKey="name" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+            </LineChart>
+          </div>
+          <div id="chartTwo">
+            <LineChart
+              syncId="tooltipSync"
+              syncMethod="value"
+              data={data2}
+              width={400}
+              height={400}
+              className="chart-2"
+            >
+              <XAxis dataKey="name" />
+              <YAxis />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              {children}
+              <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+            </LineChart>
+          </div>
+        </>
+      );
+    });
+
+    test('should synchronize the data based on the tooltip label - not value of the data', () => {
+      const { container, debug } = renderTestCase();
+      const wrapperOne = container.querySelector('#chartOne');
+      const wrapperTwo = container.querySelector('#chartTwo');
+      showTooltip(wrapperOne, lineChartMouseHoverTooltipSelector, debug);
+
+      const tooltipOne = getTooltip(wrapperOne);
+      const tooltipTwo = getTooltip(wrapperTwo);
+      expect(tooltipOne).toBeVisible();
+      expect(tooltipTwo).toBeVisible();
+
+      expectTooltipPayload(wrapperOne, 'Page C', ['uv : 500']);
+      expectTooltipPayload(wrapperTwo, 'Page C', ['pv : 1500']);
+    });
+
+    it('should select tooltip payload searcher', () => {
+      const { spy } = renderTestCase(selectTooltipPayloadSearcher);
+      expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
+    });
+
+    it.todo('should show the Tooltip on the correct coordinate');
+  });
+
+  describe('selectIsTooltipActive', () => {
+    it('should return false for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: null,
+        isActive: false,
+      });
+    });
+
+    it('should return true after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 0, y: 0 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: '1',
+        isActive: true,
+      });
+    });
+
+    it('should return true after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          dataKey: 'uv',
+          index: '1',
+          label: 'Page B',
+        }),
+      );
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: '1',
+        isActive: true,
+      });
+    });
+  });
+
+  describe('selectActiveIndex', () => {
+    it('should return null for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual(null);
+    });
+
+    it('should return index after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 0, y: 0 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual('1');
+    });
+
+    it('should return index after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          dataKey: 'uv',
+          index: '2',
+          label: 'Page B',
+        }),
+      );
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual('2');
+    });
+  });
 });
 
 describe('brush synchronization', () => {
@@ -401,8 +561,7 @@ describe('Cursor synchronization', () => {
     ComposedChartWithLineTestCase,
     RadarChartTestCase,
   ])('as a child of $name with syncId', ({ Wrapper, mouseHoverSelector }) => {
-    // Temporarily broken until the redux synchronisation is completed
-    it.fails('should display cursor inside of the synchronized SVG', async () => {
+    it('should display cursor inside of the synchronized SVG', async () => {
       const { container, debug } = render(
         <>
           <Wrapper syncId="cursorSync" dataKey="uv">
