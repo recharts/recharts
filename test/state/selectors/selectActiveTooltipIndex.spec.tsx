@@ -7,6 +7,7 @@ import { PageData } from '../../_data';
 import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
 import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { radialBarChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('selectActiveTooltipIndex', () => {
   describe('in RadialChart', () => {
@@ -27,7 +28,7 @@ describe('selectActiveTooltipIndex', () => {
       it('should return index after mouse hover, and undefined again after mouse leave', () => {
         const { container, spy } = renderTestCase(selectActiveTooltipIndex);
         const trigger = showTooltip(container, '.recharts-radial-bar-sector');
-        expect(spy).toHaveBeenLastCalledWith('0');
+        expect(spy).toHaveBeenLastCalledWith('3');
         fireEvent.mouseLeave(trigger);
         expect(spy).toHaveBeenLastCalledWith(undefined);
       });
@@ -48,20 +49,20 @@ describe('selectActiveTooltipIndex', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <RadialBarChart width={300} height={300} data={PageData}>
           <RadialBar dataKey="uv" isAnimationActive={false} />
-          <Tooltip defaultIndex={3} />
+          <Tooltip defaultIndex={0} />
           {children}
         </RadialBarChart>
       ));
 
       it('should return the default index before any interaction', () => {
         const { spy } = renderTestCase(selectActiveTooltipIndex);
-        expect(spy).toHaveBeenLastCalledWith('3');
+        expect(spy).toHaveBeenLastCalledWith('0');
       });
 
       it('should return mouse hover index after mouse hover, and undefined again after mouse leave', () => {
         const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-        const trigger = showTooltip(container, '.recharts-radial-bar-sector');
-        expect(spy).toHaveBeenLastCalledWith('0');
+        const trigger = showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expect(spy).toHaveBeenLastCalledWith('3');
         fireEvent.mouseLeave(trigger);
         expect(spy).toHaveBeenLastCalledWith(undefined);
       });
@@ -70,10 +71,10 @@ describe('selectActiveTooltipIndex', () => {
         const { container, spy } = renderTestCase(selectActiveTooltipIndex);
         const trigger = container.querySelector('.recharts-radial-bar-sector');
         assertNotNull(trigger);
-        expect(spy).toHaveBeenLastCalledWith('3');
+        expect(spy).toHaveBeenLastCalledWith('0');
         expect(spy).toHaveBeenCalledTimes(3);
         fireEvent.click(trigger);
-        expect(spy).toHaveBeenLastCalledWith('3');
+        expect(spy).toHaveBeenLastCalledWith('0');
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -161,18 +162,18 @@ describe('selectActiveTooltipIndex', () => {
           expect(spy).toHaveBeenLastCalledWith(undefined);
         });
 
-        it('should return index after clicking on a sector, and continue returning that index after clicking again', () => {
+        it('should return index after clicking on a chart, and continue returning that index after clicking again', () => {
           const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-          const trigger = container.querySelector('.recharts-radial-bar-sector');
+          const trigger = container.querySelector(radialBarChartMouseHoverTooltipSelector);
           assertNotNull(trigger);
           expect(spy).toHaveBeenLastCalledWith(undefined);
           expect(spy).toHaveBeenCalledTimes(1);
-          fireEvent.click(trigger);
-          expect(spy).toHaveBeenLastCalledWith('0');
-          expect(spy).toHaveBeenCalledTimes(2);
-          fireEvent.click(trigger);
-          expect(spy).toHaveBeenLastCalledWith('0');
-          expect(spy).toHaveBeenCalledTimes(2);
+          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenCalledTimes(3);
+          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenCalledTimes(3);
         });
 
         it('should return undefined after mouse hover', () => {
@@ -188,36 +189,36 @@ describe('selectActiveTooltipIndex', () => {
         const renderTestCase = createSelectorTestCase(({ children }) => (
           <RadialBarChart width={300} height={300} data={PageData}>
             <RadialBar dataKey="uv" isAnimationActive={false} />
-            <Tooltip trigger="click" defaultIndex={3} />
+            <Tooltip trigger="click" defaultIndex={1} />
             {children}
           </RadialBarChart>
         ));
 
         it('should return the default index before any interaction', () => {
           const { spy } = renderTestCase(selectActiveTooltipIndex);
-          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenLastCalledWith('1');
         });
 
-        it('should return mouse hover index after clicking on a sector, and continue returning that index after clicking again', () => {
+        it('should return mouse hover index after clicking on the chart, and continue returning that index after clicking again', () => {
           const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-          const trigger = container.querySelector('.recharts-radial-bar-sector');
+          const trigger = container.querySelector(radialBarChartMouseHoverTooltipSelector);
           assertNotNull(trigger);
-          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenLastCalledWith('1');
           expect(spy).toHaveBeenCalledTimes(3);
-          fireEvent.click(trigger);
-          expect(spy).toHaveBeenLastCalledWith('0');
-          expect(spy).toHaveBeenCalledTimes(4);
-          fireEvent.click(trigger);
-          expect(spy).toHaveBeenLastCalledWith('0');
-          expect(spy).toHaveBeenCalledTimes(4);
+          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenCalledTimes(5);
+          fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenCalledTimes(5);
         });
 
         it('should ignore mouse hover events', () => {
           const { container, spy } = renderTestCase(selectActiveTooltipIndex);
-          const trigger = showTooltip(container, '.recharts-radial-bar-sector');
-          expect(spy).toHaveBeenLastCalledWith('3');
+          const trigger = showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+          expect(spy).toHaveBeenLastCalledWith('1');
           fireEvent.mouseLeave(trigger);
-          expect(spy).toHaveBeenLastCalledWith('3');
+          expect(spy).toHaveBeenLastCalledWith('1');
         });
       });
     });

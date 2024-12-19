@@ -22,13 +22,13 @@ import {
   selectActiveLabel,
   selectIsTooltipActive,
   selectTooltipPayload,
-  useTooltipEventType,
 } from '../state/selectors/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement

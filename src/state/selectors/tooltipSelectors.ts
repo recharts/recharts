@@ -39,7 +39,7 @@ import {
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { AxisId } from '../cartesianAxisSlice';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
-import { AxisDomain, CategoricalDomain, LayoutType, NumberDomain, TickItem } from '../../util/types';
+import { AxisDomain, CategoricalDomain, LayoutType, NumberDomain, TickItem, TooltipEventType } from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
@@ -48,6 +48,12 @@ import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { TooltipIndex, TooltipState } from '../tooltipSlice';
+
+import {
+  combineTooltipEventType,
+  selectDefaultTooltipEventType,
+  selectValidateTooltipEventTypes,
+} from './selectTooltipEventType';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -308,16 +314,26 @@ export const selectTooltipAxisTicks = createSelector(
 );
 
 export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
-  [(state: RechartsRootState) => state.tooltip],
-  (tooltipState: TooltipState): TooltipIndex | undefined => {
+  [(state: RechartsRootState) => state.tooltip, selectDefaultTooltipEventType, selectValidateTooltipEventTypes],
+  (
+    tooltipState: TooltipState,
+    defaultTooltipEventType: TooltipEventType,
+    validateTooltipEventType: ReadonlyArray<TooltipEventType>,
+  ): TooltipIndex | undefined => {
     const { settings } = tooltipState;
+
+    const tooltipEventType = combineTooltipEventType(
+      settings.shared,
+      defaultTooltipEventType,
+      validateTooltipEventType,
+    );
 
     if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.activeAxisIndex != null) {
       // Synchronised events always override other events
       return tooltipState.syncInteraction.activeAxisIndex;
     }
     if (settings.trigger === 'click') {
-      if (settings.shared) {
+      if (tooltipEventType === 'axis') {
         if (tooltipState.axisInteraction.activeClickAxisIndex != null) {
           if (tooltipState.axisInteraction.activeClick) {
             return tooltipState.axisInteraction.activeClickAxisIndex;
@@ -330,7 +346,7 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
         }
         return undefined;
       }
-    } else if (settings.shared) {
+    } else if (tooltipEventType === 'axis') {
       if (tooltipState.axisInteraction.activeMouseOverAxisIndex != null) {
         if (tooltipState.axisInteraction.activeHover) {
           return tooltipState.axisInteraction.activeMouseOverAxisIndex;
