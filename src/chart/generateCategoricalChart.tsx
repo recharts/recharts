@@ -928,7 +928,7 @@ export const generateCategoricalChart = ({
     }
 
     displayDefaultTooltip() {
-      const { children, data, height, layout } = this.props;
+      const { children, data } = this.props;
 
       const tooltipElem = findChildByType(children, Tooltip);
       // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
@@ -946,26 +946,11 @@ export const generateCategoricalChart = ({
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
       const activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
 
-      const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
-      const dependentAxisCoord = (this.state.offset.top + height) / 2;
-
-      const isHorizontal = layout === 'horizontal';
-      const activeCoordinate = isHorizontal
-        ? {
-            x: independentAxisCoord,
-            y: dependentAxisCoord,
-          }
-        : {
-            y: independentAxisCoord,
-            x: dependentAxisCoord,
-          };
-
       const nextState = {
         activeTooltipIndex: defaultIndex,
         isTooltipActive: true,
         activeLabel,
         activePayload,
-        activeCoordinate,
       };
 
       this.setState(nextState);
