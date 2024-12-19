@@ -35,6 +35,7 @@ import {
   selectActiveCoordinate,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
+  selectTooltipState,
 } from '../../src/state/selectors/selectors';
 import {
   expectTooltipCoordinate,
@@ -1575,21 +1576,491 @@ describe('Tooltip integration', () => {
       </ScatterChart>
     ));
 
-    it.fails('should render tooltip before user interaction', () => {
-      // TODO the coordinate will fail until Scatter tooltipPosition is in state, TODO fix and enable this test
+    it('should render tooltip before user interaction', () => {
       mockGetBoundingClientRect({
         width: 10,
         height: 10,
       });
       const { container } = renderTestCase();
       expectTooltipPayload(container, '', ['uv : 300', 'pv : 4567']);
-      expectTooltipCoordinate(container, { x: 82.5, y: 32.5 });
+      expectTooltipCoordinate(container, {
+        x: 82.5,
+        y: 47.598,
+      });
     });
 
-    it.fails('should select active coordinate', () => {
-      // this will fail until Scatter tooltipPosition is in state, TODO fix and enable this test
+    it('should select tooltip state', () => {
+      const { spy } = renderTestCase(selectTooltipState);
+      expect(spy).toHaveBeenLastCalledWith({
+        axisInteraction: {
+          activeClick: false,
+          activeClickAxisDataKey: undefined,
+          activeClickAxisIndex: null,
+          activeClickCoordinate: undefined,
+          activeHover: false,
+          activeMouseOverAxisDataKey: undefined,
+          activeMouseOverAxisIndex: null,
+          activeMouseOverCoordinate: undefined,
+        },
+        itemInteraction: {
+          activeClick: false,
+          activeClickCoordinate: undefined,
+          activeClickDataKey: undefined,
+          activeClickIndex: null,
+          activeHover: false,
+          activeMouseOverCoordinate: undefined,
+          activeMouseOverDataKey: undefined,
+          activeMouseOverIndex: null,
+        },
+        settings: {
+          active: undefined,
+          axisId: 0,
+          shared: undefined,
+          trigger: 'hover',
+        },
+        syncInteraction: {
+          active: false,
+          activeAxisDataKey: undefined,
+          activeAxisIndex: null,
+          activeCoordinate: undefined,
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: [
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page A',
+                    pv: 2400,
+                    uv: 400,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 400,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page A',
+                    pv: 2400,
+                    uv: 400,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 2400,
+                },
+              ],
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page B',
+                    pv: 4567,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 300,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page B',
+                    pv: 4567,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 4567,
+                },
+              ],
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page C',
+                    pv: 1398,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 300,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page C',
+                    pv: 1398,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 1398,
+                },
+              ],
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page D',
+                    pv: 9800,
+                    uv: 200,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 200,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page D',
+                    pv: 9800,
+                    uv: 200,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 9800,
+                },
+              ],
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page E',
+                    pv: 3908,
+                    uv: 278,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 278,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page E',
+                    pv: 3908,
+                    uv: 278,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 3908,
+                },
+              ],
+              [
+                {
+                  dataKey: 'uv',
+                  name: 'uv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page F',
+                    pv: 4800,
+                    uv: 189,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 189,
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page F',
+                    pv: 4800,
+                    uv: 189,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 4800,
+                },
+              ],
+            ],
+            positions: [
+              {
+                x: 67.5,
+                y: 50.6,
+              },
+              {
+                x: 72.5,
+                y: 37.598,
+              },
+              {
+                x: 77.5,
+                y: 56.611999999999995,
+              },
+              {
+                x: 82.5,
+                y: 6.200000000000001,
+              },
+              {
+                x: 87.5,
+                y: 41.552,
+              },
+              {
+                x: 92.5,
+                y: 36.2,
+              },
+            ],
+            settings: {
+              color: undefined,
+              dataKey: undefined,
+              fill: undefined,
+              hide: false,
+              name: undefined,
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ],
+      });
+    });
+
+    it('should select tooltip payload configurations', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', 0));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          dataDefinedOnItem: [
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page A',
+                  pv: 2400,
+                  uv: 400,
+                },
+                type: undefined,
+                unit: '',
+                value: 400,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page A',
+                  pv: 2400,
+                  uv: 400,
+                },
+                type: undefined,
+                unit: '',
+                value: 2400,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page B',
+                  pv: 4567,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 300,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page B',
+                  pv: 4567,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 4567,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page C',
+                  pv: 1398,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 300,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page C',
+                  pv: 1398,
+                  uv: 300,
+                },
+                type: undefined,
+                unit: '',
+                value: 1398,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page D',
+                  pv: 9800,
+                  uv: 200,
+                },
+                type: undefined,
+                unit: '',
+                value: 200,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page D',
+                  pv: 9800,
+                  uv: 200,
+                },
+                type: undefined,
+                unit: '',
+                value: 9800,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page E',
+                  pv: 3908,
+                  uv: 278,
+                },
+                type: undefined,
+                unit: '',
+                value: 278,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page E',
+                  pv: 3908,
+                  uv: 278,
+                },
+                type: undefined,
+                unit: '',
+                value: 3908,
+              },
+            ],
+            [
+              {
+                dataKey: 'uv',
+                name: 'uv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page F',
+                  pv: 4800,
+                  uv: 189,
+                },
+                type: undefined,
+                unit: '',
+                value: 189,
+              },
+              {
+                dataKey: 'pv',
+                name: 'pv',
+                payload: {
+                  amt: 2400,
+                  name: 'Page F',
+                  pv: 4800,
+                  uv: 189,
+                },
+                type: undefined,
+                unit: '',
+                value: 4800,
+              },
+            ],
+          ],
+          positions: [
+            {
+              x: 67.5,
+              y: 50.6,
+            },
+            {
+              x: 72.5,
+              y: 37.598,
+            },
+            {
+              x: 77.5,
+              y: 56.611999999999995,
+            },
+            {
+              x: 82.5,
+              y: 6.200000000000001,
+            },
+            {
+              x: 87.5,
+              y: 41.552,
+            },
+            {
+              x: 92.5,
+              y: 36.2,
+            },
+          ],
+          settings: {
+            color: undefined,
+            dataKey: undefined,
+            fill: undefined,
+            hide: false,
+            name: undefined,
+            nameKey: undefined,
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+          },
+        },
+      ]);
+    });
+
+    it('should select active coordinate', () => {
       const { spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', 0));
-      expect(spy).toHaveBeenLastCalledWith({ x: 82.5, y: 32.5 });
+      expect(spy).toHaveBeenLastCalledWith({
+        x: 67.5,
+        y: 50.6,
+      });
     });
 
     it('should select tooltip data', () => {

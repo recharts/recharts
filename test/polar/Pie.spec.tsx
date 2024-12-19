@@ -897,7 +897,7 @@ describe('<Pie />', () => {
           activeMouseOverIndex: null,
         });
         expectTooltipPayload(container, '', ['A : 250']);
-        expectTooltipCoordinate(container, { x: 212.5, y: 5 });
+        expectTooltipCoordinate(container, { x: 273.1033255612459, y: 164.15275032118709 });
       });
 
       it('should update tooltip state after hovering over a sector', async () => {
