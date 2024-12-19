@@ -49,9 +49,6 @@ export const useChartName = (): string => {
   return useAppSelector(selectChartName);
 };
 
-const selectDefaultTooltipEventType = (state: RechartsRootState) => state.options.defaultTooltipEventType;
-const selectValidateTooltipEventTypes = (state: RechartsRootState) => state.options.validateTooltipEventTypes;
-
 const pickTooltipEventType = (_state: RechartsRootState, tooltipEventType: TooltipEventType): TooltipEventType =>
   tooltipEventType;
 
@@ -68,20 +65,6 @@ const pickDefaultIndex = (
   defaultIndex?: number | undefined,
 ): number | undefined => defaultIndex;
 
-export function selectTooltipEventType(state: RechartsRootState, shared: boolean | undefined): TooltipEventType {
-  const defaultTooltipEventType = selectDefaultTooltipEventType(state);
-  const validateTooltipEventTypes = selectValidateTooltipEventTypes(state);
-  if (shared == null) {
-    return defaultTooltipEventType;
-  }
-  const eventType = shared ? 'axis' : 'item';
-  return validateTooltipEventTypes.includes(eventType) ? eventType : defaultTooltipEventType;
-}
-
-export function useTooltipEventType(shared: boolean | undefined): TooltipEventType {
-  return useAppSelector(state => selectTooltipEventType(state, shared));
-}
-
 function getSliced<T>(
   arr: unknown | ReadonlyArray<T>,
   startIndex: number,
@@ -96,7 +79,7 @@ function getSliced<T>(
   return arr;
 }
 
-export const selectTooltipState = (state: RechartsRootState) => state.tooltip;
+export const selectTooltipState = (state: RechartsRootState): TooltipState => state.tooltip;
 
 export const selectTooltipSettings = (state: RechartsRootState): TooltipSettingsState => state.tooltip.settings;
 

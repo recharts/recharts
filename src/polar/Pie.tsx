@@ -39,11 +39,11 @@ import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
-  useTooltipContext,
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -281,7 +281,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
 function PieSectors(props: PieSectorsProps) {
   const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
-  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -295,8 +295,8 @@ function PieSectors(props: PieSectorsProps) {
 
   return sectors.map((entry, i) => {
     if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-    const isSectorActive = isTooltipActive && activeShape && i === activeIndex;
-    const inactiveShape = activeIndex === -1 ? null : inactiveShapeProp;
+    const isSectorActive = activeShape && String(i) === activeIndex;
+    const inactiveShape = activeIndex ? inactiveShapeProp : null;
     const sectorOptions = isSectorActive ? activeShape : inactiveShape;
     const sectorProps = {
       ...entry,

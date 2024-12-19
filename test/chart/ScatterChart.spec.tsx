@@ -45,7 +45,7 @@ import {
 } from '../component/Tooltip/tooltipTestHelpers';
 import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { TooltipPayloadConfiguration } from '../../src/state/tooltipSlice';
+import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -1591,7 +1591,7 @@ describe('Tooltip integration', () => {
 
     it('should select tooltip state', () => {
       const { spy } = renderTestCase(selectTooltipState);
-      expect(spy).toHaveBeenLastCalledWith({
+      const expected: TooltipState = {
         axisInteraction: {
           activeClick: false,
           activeClickAxisDataKey: undefined,
@@ -1617,6 +1617,7 @@ describe('Tooltip integration', () => {
           axisId: 0,
           shared: undefined,
           trigger: 'hover',
+          defaultIndex: '1',
         },
         syncInteraction: {
           active: false,
@@ -1836,7 +1837,8 @@ describe('Tooltip integration', () => {
             },
           },
         ],
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expected);
     });
 
     it('should select tooltip payload configurations', () => {

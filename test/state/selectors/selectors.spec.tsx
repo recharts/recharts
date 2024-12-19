@@ -10,7 +10,6 @@ import {
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
   selectTooltipState,
-  useTooltipEventType,
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
@@ -49,6 +48,7 @@ import {
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
 import { selectActivePropsFromMousePointer } from '../../../src/state/selectors/selectActivePropsFromMousePointer';
+import { useTooltipEventType } from '../../../src/state/selectors/selectTooltipEventType';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {

@@ -43,7 +43,6 @@ import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
-  useTooltipContext,
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -55,6 +54,7 @@ import { BarSettings, selectBarRectangles } from '../state/selectors/barSelector
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -207,7 +207,7 @@ type BarBackgroundProps = {
 };
 
 function BarBackground(props: BarBackgroundProps) {
-  const { index: activeIndex } = useTooltipContext();
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
   const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd, allOtherBarProps } = props;
 
@@ -245,7 +245,7 @@ function BarBackground(props: BarBackgroundProps) {
 
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
-          isActive: i === activeIndex,
+          isActive: String(i) === activeIndex,
           ...rest,
           // @ts-expect-error BarRectangle props do not accept `fill` property.
           fill: '#eee',
@@ -279,7 +279,7 @@ function BarRectangles(props: BarRectanglesProps) {
   const baseProps = filterProps(rest, false);
   const { data, shape, dataKey, activeBar } = props;
 
-  const { index: activeIndex, active: isTooltipActive } = useTooltipContext();
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -298,7 +298,7 @@ function BarRectangles(props: BarRectanglesProps) {
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
-        const isActive = isTooltipActive && activeBar && i === activeIndex;
+        const isActive = activeBar && String(i) === activeIndex;
         const option = isActive ? activeBar : shape;
         const barRectangleProps = {
           ...baseProps,
