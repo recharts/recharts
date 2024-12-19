@@ -366,6 +366,9 @@ export const sankeyPayloadSearcher: TooltipPayloadSearcher<any, any> = (
   computedData: { links: SankeyLink[]; nodes: SankeyNode[] },
   nameKey,
 ): SankeyTooltipPayload | undefined => {
+  if (activeIndex == null || typeof activeIndex !== 'string') {
+    return undefined;
+  }
   const splitIndex = activeIndex.split('-');
   const [targetType, index] = splitIndex;
   const item = get(computedData, `${targetType}s[${index}]`);

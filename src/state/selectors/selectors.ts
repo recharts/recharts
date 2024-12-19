@@ -27,6 +27,7 @@ import {
   BaseAxisProps,
   ChartCoordinate,
   ChartOffset,
+  Coordinate,
   DataKey,
   LayoutType,
   PolarViewBox,
@@ -50,6 +51,22 @@ export const useChartName = (): string => {
 
 const selectDefaultTooltipEventType = (state: RechartsRootState) => state.options.defaultTooltipEventType;
 const selectValidateTooltipEventTypes = (state: RechartsRootState) => state.options.validateTooltipEventTypes;
+
+const pickTooltipEventType = (_state: RechartsRootState, tooltipEventType: TooltipEventType): TooltipEventType =>
+  tooltipEventType;
+
+const pickTrigger = (
+  _state: RechartsRootState,
+  _tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): TooltipTrigger => trigger;
+
+const pickDefaultIndex = (
+  _state: RechartsRootState,
+  _tooltipEventType: TooltipEventType,
+  _trigger: TooltipTrigger,
+  defaultIndex?: number | undefined,
+): number | undefined => defaultIndex;
 
 export function selectTooltipEventType(state: RechartsRootState, shared: boolean | undefined): TooltipEventType {
   const defaultTooltipEventType = selectDefaultTooltipEventType(state);
@@ -112,6 +129,52 @@ export function selectActiveIndex(
   return activeIndex;
 }
 
+export const selectTooltipPayloadConfigurations: (
+  state: RechartsRootState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+  defaultIndex: number | undefined,
+) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
+  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
+  (
+    tooltipState: TooltipState,
+    tooltipEventType: TooltipEventType,
+    trigger: TooltipTrigger,
+    defaultIndex: number | undefined,
+  ): ReadonlyArray<TooltipPayloadConfiguration> => {
+    // if tooltip reacts to axis interaction, then we display all items at the same time.
+    if (tooltipEventType === 'axis') {
+      return tooltipState.tooltipItemPayloads;
+    }
+    /*
+     * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
+     * item means that only the hovered or clicked item will be present in the tooltip.
+     */
+    if (tooltipState.tooltipItemPayloads.length === 0) {
+      // No point filtering if the payload is empty
+      return [];
+    }
+    let filterByDataKey: DataKey<any> | undefined;
+    if (trigger === 'hover') {
+      filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+    } else {
+      filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+    }
+    if (filterByDataKey == null && defaultIndex != null) {
+      /*
+       * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
+       * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
+       * so we should display only one item at a time instead of all.
+       */
+      return [tooltipState.tooltipItemPayloads[0]];
+    }
+    return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
+  },
+);
+
+const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
+  state.options.tooltipPayloadSearcher;
+
 const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
@@ -123,7 +186,9 @@ const selectCoordinateForDefaultIndex: (
     selectChartLayout,
     selectChartOffset,
     selectTooltipAxisTicks,
-    (_state, _tooltipEventType, _trigger, defaultIndex) => defaultIndex,
+    pickDefaultIndex,
+    selectTooltipPayloadConfigurations,
+    selectTooltipPayloadSearcher,
   ],
   (
     height: number,
@@ -131,9 +196,20 @@ const selectCoordinateForDefaultIndex: (
     offset: ChartOffset | undefined,
     tooltipTicks: ReadonlyArray<TickItem>,
     defaultIndex: number | undefined,
+    tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
+    tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
   ): ChartCoordinate | undefined => {
     if (defaultIndex == null || offset == null) {
       return undefined;
+    }
+    // With defaultIndex alone, we don't have enough information to decide _which_ of the multiple tooltips to display. So we choose the first one.
+    const firstConfiguration = tooltipConfigurations[0];
+    // @ts-expect-error we need to rethink the tooltipPayloadSearcher type
+    const maybePosition: Coordinate | undefined =
+      // @ts-expect-error defaultIndex really should be type TooltipIndex, not number, if we want to support all charts
+      firstConfiguration == null ? undefined : tooltipPayloadSearcher(firstConfiguration.positions, defaultIndex);
+    if (maybePosition != null) {
+      return maybePosition;
     }
     const tick = tooltipTicks?.[defaultIndex];
     if (!tick) {
@@ -156,22 +232,6 @@ const selectCoordinateForDefaultIndex: (
     }
   },
 );
-
-const pickTooltipEventType = (_state: RechartsRootState, tooltipEventType: TooltipEventType): TooltipEventType =>
-  tooltipEventType;
-
-const pickTrigger = (
-  _state: RechartsRootState,
-  _tooltipEventType: TooltipEventType,
-  trigger: TooltipTrigger,
-): TooltipTrigger => trigger;
-
-const pickDefaultIndex = (
-  _state: RechartsRootState,
-  _tooltipEventType: TooltipEventType,
-  _trigger: TooltipTrigger,
-  defaultIndex?: number | undefined,
-): number | undefined => defaultIndex;
 
 export const selectActiveCoordinate: (
   state: RechartsRootState,
@@ -229,49 +289,6 @@ function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: Readonl
   }
   return dataDefinedOnChart;
 }
-
-export const selectTooltipPayloadConfigurations: (
-  state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
-  trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
-) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
-  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
-  (
-    tooltipState: TooltipState,
-    tooltipEventType: TooltipEventType,
-    trigger: TooltipTrigger,
-    defaultIndex: number | undefined,
-  ): ReadonlyArray<TooltipPayloadConfiguration> => {
-    // if tooltip reacts to axis interaction, then we display all items at the same time.
-    if (tooltipEventType === 'axis') {
-      return tooltipState.tooltipItemPayloads;
-    }
-    /*
-     * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
-     * item means that only the hovered or clicked item will be present in the tooltip.
-     */
-    if (tooltipState.tooltipItemPayloads.length === 0) {
-      // No point filtering if the payload is empty
-      return [];
-    }
-    let filterByDataKey: DataKey<any> | undefined;
-    if (trigger === 'hover') {
-      filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
-    } else {
-      filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
-    }
-    if (filterByDataKey == null && defaultIndex != null) {
-      /*
-       * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
-       * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
-       * so we should display only one item at a time instead of all.
-       */
-      return [tooltipState.tooltipItemPayloads[0]];
-    }
-    return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
-  },
-);
 
 export const combineTooltipPayload = (
   tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
@@ -342,9 +359,6 @@ export const combineTooltipPayload = (
     return agg;
   }, init);
 };
-
-const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
-  state.options.tooltipPayloadSearcher;
 
 export const selectTooltipPayload: (
   state: RechartsRootState,

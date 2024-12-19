@@ -150,7 +150,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const {
     // active: activeFromContext,
     // payload: payloadFromContext,
-    coordinate: coordinateFromContext,
+    // coordinate: coordinateFromContext,
     label: labelFromContext,
     // index: indexFromContext,
   } = useTooltipContext();
@@ -198,8 +198,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
-  // TODO switch to redux coordinate once the Scatter tooltipPosition is in state too
-  const finalCoord = coordinateFromRedux ?? coordinateFromContext;
+  const finalCoord = coordinateFromRedux;
   // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
   // TODO: update when moving synchronization to redux
   // TODO: where should we put this check for tooltipEventType? Is anything else affected?

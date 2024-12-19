@@ -58,8 +58,6 @@ export interface CategoricalChartState {
 
   radiusAxisMap?: AxisMap;
 
-  formattedGraphicalItems?: any;
-
   /** active tooltip payload */
   activePayload?: TooltipPayloadType;
 

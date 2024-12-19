@@ -864,7 +864,6 @@ export const generateCategoricalChart = ({
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
     return {
-      formattedGraphicalItems: [],
       graphicalItems,
       offset,
       stackGroups,
@@ -929,7 +928,7 @@ export const generateCategoricalChart = ({
     }
 
     displayDefaultTooltip() {
-      const { children, data, height, layout } = this.props;
+      const { children, data } = this.props;
 
       const tooltipElem = findChildByType(children, Tooltip);
       // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
@@ -945,42 +944,13 @@ export const generateCategoricalChart = ({
       }
 
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      let activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
-
-      const independentAxisCoord = this.state.tooltipTicks[defaultIndex].coordinate;
-      const dependentAxisCoord = (this.state.offset.top + height) / 2;
-
-      const isHorizontal = layout === 'horizontal';
-      let activeCoordinate = isHorizontal
-        ? {
-            x: independentAxisCoord,
-            y: dependentAxisCoord,
-          }
-        : {
-            y: independentAxisCoord,
-            x: dependentAxisCoord,
-          };
-
-      // Unlike other chart types, scatter plot's tooltip positions rely on both X and Y coordinates. Only the scatter plot
-      // element knows its own Y coordinates.
-      // If there's a scatter plot, we'll want to grab that element for an interrogation.
-      const scatterPlotElement = this.state.formattedGraphicalItems.find(
-        ({ item }: { item: any }) => item.type.name === 'Scatter',
-      );
-      if (scatterPlotElement) {
-        activeCoordinate = {
-          ...activeCoordinate,
-          ...scatterPlotElement.props.points[defaultIndex].tooltipPosition,
-        };
-        activePayload = scatterPlotElement.props.points[defaultIndex].tooltipPayload;
-      }
+      const activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
 
       const nextState = {
         activeTooltipIndex: defaultIndex,
         isTooltipActive: true,
         activeLabel,
         activePayload,
-        activeCoordinate,
       };
 
       this.setState(nextState);
