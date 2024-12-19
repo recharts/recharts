@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
-import { Bar, BarChart, Pie, PieChart, Tooltip, XAxis, YAxis } from '../../../src';
+import { Bar, BarChart, Line, LineChart, Pie, PieChart, Tooltip, XAxis, YAxis } from '../../../src';
 import { PageData } from '../../_data';
-import { selectActiveIndex, selectTooltipPayload } from '../../../src/state/selectors/selectors';
-import { showTooltip } from './tooltipTestHelpers';
+import { selectActiveIndex, selectActiveLabel, selectTooltipPayload } from '../../../src/state/selectors/selectors';
+import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
 import { barChartMouseHoverTooltipSelector, pieChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
 
 describe('defaultIndex', () => {
@@ -13,8 +13,8 @@ describe('defaultIndex', () => {
       <BarChart width={800} height={400} data={PageData}>
         <XAxis dataKey="name" />
         <YAxis dataKey="uv" />
-        <Bar />
-        <Tooltip />
+        <Bar dataKey="uv" />
+        <Tooltip defaultIndex={3} />
         {children}
       </BarChart>
     ));
@@ -24,10 +24,10 @@ describe('defaultIndex', () => {
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,
-          dataKey: 'name',
+          dataKey: 'uv',
           fill: undefined,
           hide: false,
-          name: undefined,
+          name: 'uv',
           nameKey: undefined,
           payload: {
             amt: 2400,
@@ -39,7 +39,7 @@ describe('defaultIndex', () => {
           strokeWidth: undefined,
           type: undefined,
           unit: undefined,
-          value: 'Page D',
+          value: 200,
         },
       ]);
     });
@@ -50,10 +50,10 @@ describe('defaultIndex', () => {
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,
-          dataKey: 'name',
+          dataKey: 'uv',
           fill: undefined,
           hide: false,
-          name: undefined,
+          name: 'uv',
           nameKey: undefined,
           payload: {
             amt: 2400,
@@ -65,9 +65,62 @@ describe('defaultIndex', () => {
           strokeWidth: undefined,
           type: undefined,
           unit: undefined,
-          value: 'Page B',
+          value: 300,
         },
       ]);
+    });
+
+    it('should render tooltip before user interaction', () => {
+      const { container } = renderTestCase();
+      expectTooltipPayload(container, 'Page D', ['uv : 200']);
+    });
+  });
+
+  describe('in LineChart with multiple XAxes', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={400} height={400} data={PageData}>
+        <Line dataKey="uv" isAnimationActive={false} />
+        <XAxis dataKey="name" xAxisId="xaxis-name" />
+        <XAxis dataKey="pv" orientation="top" xAxisId="xaxis-pv" />
+        <YAxis dataKey="uv" />
+        <Tooltip defaultIndex={3} axisId="xaxis-name" />
+        {children}
+      </LineChart>
+    ));
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 3));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'uv',
+          fill: '#fff',
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page D',
+            pv: 9800,
+            uv: 200,
+          },
+          stroke: '#3182bd',
+          strokeWidth: 1,
+          type: undefined,
+          unit: undefined,
+          value: 200,
+        },
+      ]);
+    });
+
+    it('should select active label', () => {
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 3));
+      expect(spy).toHaveBeenLastCalledWith('Page D');
+    });
+
+    it('should render tooltip before user interaction', () => {
+      const { container } = renderTestCase();
+      expectTooltipPayload(container, 'Page D', ['uv : 200']);
     });
   });
 

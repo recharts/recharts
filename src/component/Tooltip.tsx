@@ -13,14 +13,14 @@ import { Global } from '../util/Global';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
-import { TooltipContextValue, useTooltipContext } from '../context/tooltipContext';
+import { TooltipContextValue } from '../context/tooltipContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
 import {
+  selectActiveCoordinate,
   selectActiveLabel,
   selectIsTooltipActive,
-  selectActiveCoordinate,
   selectTooltipPayload,
   useTooltipEventType,
 } from '../state/selectors/selectors';
@@ -146,15 +146,6 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
 
-  // TODO swap the other properties from generateCategoricalChart context, to redux
-  const {
-    // active: activeFromContext,
-    // payload: payloadFromContext,
-    // coordinate: coordinateFromContext,
-    label: labelFromContext,
-    // index: indexFromContext,
-  } = useTooltipContext();
-
   const payloadFromRedux = useAppSelector(state =>
     selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
   );
@@ -164,12 +155,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
   );
 
-  const coordinateFromRedux = useAppSelector(state =>
-    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex),
-  );
-  // TODO remove the payloadFromContext fallback
-  // until we move all chart types to redux and remove this there will be some noticable fallback behavior
-  const payload: TooltipPayload = payloadFromRedux; // ?.length > 0 ? payloadFromRedux : payloadFromContext;
+  const coordinate = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex));
+  const payload: TooltipPayload = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
    * The user can set `active=true` on the Tooltip in which case the Tooltip will stay always active,
@@ -198,11 +185,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       defaultUniqBy,
     );
   }
-  const finalCoord = coordinateFromRedux;
-  // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
-  // TODO: update when moving synchronization to redux
-  // TODO: where should we put this check for tooltipEventType? Is anything else affected?
-  const finalLabel = tooltipEventType === 'axis' ? (labelFromContext ?? labelFromRedux) : undefined;
+  const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
   const hasPayload = finalPayload.length > 0;
 
@@ -213,7 +196,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       animationEasing={animationEasing}
       isAnimationActive={isAnimationActive}
       active={finalIsActive}
-      coordinate={finalCoord}
+      coordinate={coordinate}
       hasPayload={hasPayload}
       offset={offset}
       position={position}
@@ -231,7 +214,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
         payload: finalPayload,
         label: finalLabel,
         active: finalIsActive,
-        coordinate: finalCoord,
+        coordinate,
         accessibilityLayer,
       })}
     </TooltipBoundingBox>
@@ -247,7 +230,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
           <Cursor
             cursor={cursor}
             tooltipEventType={tooltipEventType}
-            coordinate={finalCoord}
+            coordinate={coordinate}
             payload={payload}
             index={activeIndex}
           />,
