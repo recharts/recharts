@@ -19,7 +19,7 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
       <RadialBarChart {...args}>
         <RadialBar angleAxisId="axis-pv" radiusAxisId="axis-name" dataKey="pv" fillOpacity={0.3} fill="purple" />
         <Legend />
-        <Tooltip defaultIndex={3} />
+        <Tooltip defaultIndex={3} axisId="axis-name" />
         <PolarAngleAxis
           angleAxisId="axis-uv"
           dataKey="uv"

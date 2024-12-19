@@ -21,7 +21,7 @@ export const XAxisWithMultipleAxes = {
         <Line dataKey="uv" xAxisId="b" />
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
-        <Tooltip defaultIndex={2} />
+        <Tooltip defaultIndex={2} axisId="a" />
       </LineChart>
       <p>
         {`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a

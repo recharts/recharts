@@ -147,11 +147,12 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const tooltipEventType = useTooltipEventType(shared);
 
   // TODO swap the other properties from generateCategoricalChart context, to redux
+  // eslint-disable-next-line no-empty-pattern
   const {
     // active: activeFromContext,
     // payload: payloadFromContext,
     // coordinate: coordinateFromContext,
-    label: labelFromContext,
+    // label: labelFromContext,
     // index: indexFromContext,
   } = useTooltipContext();
 
@@ -199,10 +200,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     );
   }
   const finalCoord = coordinateFromRedux;
-  // temporarily prefer the label from context because currently cannot clear state from chart onMouseLeave of a sync'ed chart.
-  // TODO: update when moving synchronization to redux
-  // TODO: where should we put this check for tooltipEventType? Is anything else affected?
-  const finalLabel = tooltipEventType === 'axis' ? (labelFromContext ?? labelFromRedux) : undefined;
+  const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
   const hasPayload = finalPayload.length > 0;
 

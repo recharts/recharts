@@ -66,6 +66,7 @@ import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSel
 import {
   selectAllGraphicalItemsSettings,
   selectAllUnfilteredGraphicalItems,
+  selectTooltipAxis,
   selectTooltipAxisDomain,
   selectTooltipAxisDomainIncludingNiceTicks,
   selectTooltipAxisId,
@@ -338,7 +339,7 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
   // I cannot figure out how to make RadialBar display anything else other than the index
-  expectedTooltipTitle: '4',
+  expectedTooltipTitle: '3',
   expectedTooltipContent: ['uv : 200', 'My custom name : 9800', 'amt : 2400'],
 };
 
@@ -1751,37 +1752,122 @@ describe('Tooltip payload', () => {
     });
 
     describe('in RadialBarChart', () => {
-      it('when true, should render tooltip payload with data from all Bars', () => {
-        const { container, debug } = render(
+      describe('when shared=true', () => {
+        const renderTestCase = createSelectorTestCase(({ children }) => (
           <RadialBarChart height={600} width={600} data={PageData}>
             <RadialBar dataKey="uv" />
             <RadialBar dataKey="pv" name="My custom name" />
             <RadialBar dataKey="amt" />
             <Tooltip shared />
-          </RadialBarChart>,
-        );
+            {children}
+          </RadialBarChart>
+        ));
 
-        showTooltip(container, radialBarChartMouseHoverTooltipSelector, debug);
+        it('should select tooltip axis type', () => {
+          const { spy } = renderTestCase(selectTooltipAxisType);
+          expect(spy).toHaveBeenLastCalledWith('radiusAxis');
+        });
 
-        const expectedTooltipTitle = '4';
-        const expectedTooltipContent = ['uv : 200', 'My custom name : 9800', 'amt : 2400'];
-        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+        it('should select tooltip axis ID', () => {
+          const { spy } = renderTestCase(selectTooltipAxisId);
+          expect(spy).toHaveBeenLastCalledWith(0);
+        });
+
+        it('should select tooltip axis settings', () => {
+          const { spy } = renderTestCase(selectTooltipAxis);
+          expect(spy).toHaveBeenLastCalledWith({
+            allowDataOverflow: false,
+            allowDecimals: false,
+            allowDuplicatedCategory: true,
+            dataKey: undefined,
+            domain: undefined,
+            id: undefined,
+            includeHidden: false,
+            name: undefined,
+            reversed: false,
+            scale: 'auto',
+            tick: true,
+            tickCount: 5,
+            ticks: undefined,
+            type: 'category',
+            unit: undefined,
+          });
+        });
+
+        it('should select tooltip axis ticks', () => {
+          const { spy } = renderTestCase(selectTooltipAxisTicks);
+          expect(spy).toHaveBeenLastCalledWith([
+            {
+              coordinate: 19.666666666666668,
+              index: 0,
+              offset: 19.666666666666668,
+              value: 0,
+            },
+            {
+              coordinate: 59,
+              index: 1,
+              offset: 19.666666666666668,
+              value: 1,
+            },
+            {
+              coordinate: 98.33333333333334,
+              index: 2,
+              offset: 19.666666666666668,
+              value: 2,
+            },
+            {
+              coordinate: 137.66666666666666,
+              index: 3,
+              offset: 19.666666666666668,
+              value: 3,
+            },
+            {
+              coordinate: 177,
+              index: 4,
+              offset: 19.666666666666668,
+              value: 4,
+            },
+            {
+              coordinate: 216.33333333333334,
+              index: 5,
+              offset: 19.666666666666668,
+              value: 5,
+            },
+          ]);
+        });
+
+        it('should select active label', () => {
+          const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+          expect(spy).toHaveBeenLastCalledWith(2);
+        });
+
+        it('should render tooltip payload with data from all Bars', () => {
+          const { container, debug } = renderTestCase();
+
+          showTooltip(container, radialBarChartMouseHoverTooltipSelector, debug);
+
+          const expectedTooltipTitle = '3';
+          const expectedTooltipContent = ['uv : 200', 'My custom name : 9800', 'amt : 2400'];
+          expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+        });
       });
 
-      it('when false, should render tooltip payload with data from single Bar', () => {
-        const { container, debug } = render(
-          <RadialBarChart height={600} width={600} data={PageData}>
-            <RadialBar dataKey="uv" isAnimationActive={false} />
-            <RadialBar dataKey="pv" name="My custom name" isAnimationActive={false} />
-            <RadialBar dataKey="amt" isAnimationActive={false} />
-            <Tooltip shared={false} />
-          </RadialBarChart>,
-        );
+      describe('when false', () => {
+        it('should render tooltip payload with data from single Bar', () => {
+          const { container, debug } = render(
+            <RadialBarChart height={600} width={600} data={PageData}>
+              <RadialBar dataKey="uv" isAnimationActive={false} />
+              <RadialBar dataKey="pv" name="My custom name" isAnimationActive={false} />
+              <RadialBar dataKey="amt" isAnimationActive={false} />
+              <Tooltip shared={false} />
+            </RadialBarChart>,
+          );
 
-        showTooltip(container, radialBarMouseHoverTooltipSelector, debug);
-        const expectedTooltipTitle = '';
-        const expectedTooltipContent = ['uv : 400'];
-        expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+          showTooltip(container, radialBarMouseHoverTooltipSelector, debug);
+          const expectedTooltipTitle = '';
+          const expectedTooltipContent = ['uv : 400'];
+          expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
+        });
       });
     });
   });
