@@ -43,7 +43,7 @@ import { AxisRange } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartOffset } from './selectChartOffset';
-import { selectChartHeight } from './containerSelectors';
+import { selectChartHeight, selectChartWidth } from './containerSelectors';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -182,6 +182,7 @@ const selectCoordinateForDefaultIndex: (
   defaultIndex: number | undefined,
 ) => ChartCoordinate | undefined = createSelector(
   [
+    selectChartWidth,
     selectChartHeight,
     selectChartLayout,
     selectChartOffset,
@@ -191,6 +192,7 @@ const selectCoordinateForDefaultIndex: (
     selectTooltipPayloadSearcher,
   ],
   (
+    width: number,
     height: number,
     layout: LayoutType,
     offset: ChartOffset | undefined,
@@ -219,13 +221,13 @@ const selectCoordinateForDefaultIndex: (
       case 'horizontal': {
         return {
           x: tick.coordinate,
-          y: offset.top,
+          y: (offset.top + height) / 2,
         };
       }
       default: {
         // This logic is not super sound - it conflates vertical, radial, centric layouts into just one. TODO improve!
         return {
-          x: (offset.top + height) / 2,
+          x: (offset.left + width) / 2,
           y: tick.coordinate,
         };
       }
