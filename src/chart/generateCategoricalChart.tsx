@@ -56,10 +56,8 @@ import {
   AllowedAxisComponent,
   AxisType,
   BaseAxisProps,
-  CartesianViewBox,
   CategoricalChartOptions,
   ChartOffset,
-  Coordinate,
   DataKey,
   LayoutType,
   Margin,
@@ -116,8 +114,6 @@ const ORIENT_MAP = {
 };
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
-
-const originCoordinate: Coordinate = { x: 0, y: 0 };
 
 const getDisplayedData = (
   data: any[],
@@ -1498,7 +1494,6 @@ export const generateCategoricalChart = ({
     };
 
     applySyncEvent = (data: CategoricalChartState) => {
-      const { layout, syncMethod } = this.props;
       const { updateId } = this.state;
       const { dataStartIndex, dataEndIndex } = data;
 
@@ -1516,50 +1511,6 @@ export const generateCategoricalChart = ({
             this.state,
           ),
         });
-      } else if (data.activeTooltipIndex !== undefined) {
-        const { chartX, chartY } = data;
-        let { activeTooltipIndex } = data;
-        const { offset, tooltipTicks } = this.state;
-        if (!offset) {
-          return;
-        }
-        if (typeof syncMethod === 'function') {
-          // Call a callback function. If there is an application specific algorithm
-          activeTooltipIndex = syncMethod(tooltipTicks, data);
-        } else if (syncMethod === 'value') {
-          // Set activeTooltipIndex to the index with the same value as data.activeLabel
-          // For loop instead of findIndex because the latter is very slow in some browsers
-          activeTooltipIndex = -1; // in case we cannot find the element
-          for (let i = 0; i < tooltipTicks.length; i++) {
-            if (tooltipTicks[i].value === data.activeLabel) {
-              activeTooltipIndex = i;
-              break;
-            }
-          }
-        }
-        const viewBox: CartesianViewBox = { ...offset, x: offset.left, y: offset.top };
-        // When a categorical chart is combined with another chart, the value of chartX
-        // and chartY may beyond the boundaries.
-        const validateChartX = Math.min(chartX, viewBox.x + viewBox.width);
-        const validateChartY = Math.min(chartY, viewBox.y + viewBox.height);
-        const activeLabel = tooltipTicks[activeTooltipIndex] && tooltipTicks[activeTooltipIndex].value;
-        const activePayload: any = getTooltipContent(this.state, this.props.data, activeTooltipIndex);
-        const activeCoordinate = tooltipTicks[activeTooltipIndex]
-          ? {
-              x: layout === 'horizontal' ? tooltipTicks[activeTooltipIndex].coordinate : validateChartX,
-              y: layout === 'horizontal' ? validateChartY : tooltipTicks[activeTooltipIndex].coordinate,
-            }
-          : originCoordinate;
-
-        this.setState({
-          ...data,
-          activeLabel,
-          activeCoordinate,
-          activePayload,
-          activeTooltipIndex,
-        });
-      } else {
-        this.setState(data);
       }
     };
 
