@@ -4,10 +4,9 @@ import { filterProps } from '../util/ReactUtils';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/useTooltipAxis';
-import { useTooltipContext } from '../context/tooltipContext';
 import { findEntryInArray, isNullish } from '../util/DataUtils';
 import { useAppSelector } from '../state/hooks';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveLabel, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export interface PointType {
   readonly x: number;
@@ -73,7 +72,7 @@ type ActivePointsProps = {
 export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
   const tooltipAxis = useTooltipAxis();
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
-  const { label: activeLabel } = useTooltipContext();
+  const activeLabel = useAppSelector(selectActiveLabel);
   if (!activeTooltipIndex) {
     return null;
   }

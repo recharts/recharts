@@ -55,6 +55,8 @@ import {
   selectValidateTooltipEventTypes,
 } from './selectTooltipEventType';
 
+import { combineActiveLabel } from './combiners/combineActiveLabel';
+
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
 
@@ -364,4 +366,9 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
     }
     return undefined;
   },
+);
+
+export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(
+  [selectTooltipAxisTicks, selectActiveTooltipIndex],
+  combineActiveLabel,
 );
