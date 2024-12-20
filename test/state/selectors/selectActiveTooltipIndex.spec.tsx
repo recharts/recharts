@@ -170,10 +170,10 @@ describe('selectActiveTooltipIndex', () => {
           expect(spy).toHaveBeenCalledTimes(1);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expect(spy).toHaveBeenLastCalledWith('3');
-          expect(spy).toHaveBeenCalledTimes(3);
+          expect(spy).toHaveBeenCalledTimes(2);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expect(spy).toHaveBeenLastCalledWith('3');
-          expect(spy).toHaveBeenCalledTimes(3);
+          expect(spy).toHaveBeenCalledTimes(2);
         });
 
         it('should return undefined after mouse hover', () => {
@@ -207,10 +207,10 @@ describe('selectActiveTooltipIndex', () => {
           expect(spy).toHaveBeenCalledTimes(3);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expect(spy).toHaveBeenLastCalledWith('3');
-          expect(spy).toHaveBeenCalledTimes(5);
+          expect(spy).toHaveBeenCalledTimes(4);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expect(spy).toHaveBeenLastCalledWith('3');
-          expect(spy).toHaveBeenCalledTimes(5);
+          expect(spy).toHaveBeenCalledTimes(4);
         });
 
         it('should ignore mouse hover events', () => {

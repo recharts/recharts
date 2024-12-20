@@ -34,9 +34,6 @@ import {
   appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
-  calculateActiveTickIndex,
-  calculateTooltipPos,
-  getActiveCoordinate,
   getDomainOfDataByKey,
   getDomainOfStackGroups,
   getStackGroupsByAxisId,
@@ -62,10 +59,7 @@ import {
   LayoutType,
   Margin,
   MouseInfo,
-  RangeObj,
   StackOffsetType,
-  TickItem,
-  TooltipData,
   TooltipEventType,
   XAxisMap,
   YAxisMap,
@@ -195,43 +189,6 @@ const getTooltipContent = (
       return getTooltipItem(child, payload);
     })
     .filter(Boolean);
-};
-
-/**
- * Returns tooltip data based on a mouse position (as a parameter or in state)
- * @param  state      current state
- * @param  chartData  the data defined in chart
- * @param  layout     The layout type of chart
- * @param  rangeObj   coordinates
- * @return            Tooltip data
- */
-const getTooltipData = (
-  state: CategoricalChartState,
-  chartData: any[],
-  layout: LayoutType,
-  rangeObj?: RangeObj,
-): TooltipData | null => {
-  const rangeData: RangeObj = rangeObj || { x: state.chartX, y: state.chartY };
-
-  const pos: number | undefined = calculateTooltipPos(rangeData, layout);
-  const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = state;
-
-  const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis?.axisType, axis?.range);
-
-  if (activeIndex >= 0 && tooltipTicks) {
-    const activeLabel: TickItem['value'] | undefined = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
-    const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
-    const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
-
-    return {
-      activeTooltipIndex: activeIndex,
-      activeLabel,
-      activePayload,
-      activeCoordinate,
-    };
-  }
-
-  return null;
 };
 
 /**
@@ -1056,7 +1013,6 @@ export const generateCategoricalChart = ({
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
-          ...getTooltipData(prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
 
@@ -1189,15 +1145,6 @@ export const generateCategoricalChart = ({
         const yValue: number | null = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
 
         return { ...e, xValue, yValue };
-      }
-
-      const toolTipData = getTooltipData(this.state, this.props.data, this.props.layout, rangeObj);
-
-      if (toolTipData) {
-        return {
-          ...e,
-          ...toolTipData,
-        };
       }
 
       return null;
