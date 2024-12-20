@@ -25,7 +25,14 @@ import {
   YAxis,
 } from '../../../src';
 import { PageData } from '../../_data';
-import { getTooltip, showTooltip } from './tooltipTestHelpers';
+import {
+  expectTooltipCoordinate,
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  hideTooltip,
+  showTooltip,
+} from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -35,14 +42,24 @@ import {
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectSyncId, selectSyncMethod } from '../../../src/state/selectors/rootPropsSelectors';
+import { createRechartsStore } from '../../../src/state/store';
+import {
+  selectActiveCoordinate,
+  selectActiveIndex,
+  selectIsTooltipActive,
+  selectTooltipPayloadSearcher,
+} from '../../../src/state/selectors/selectors';
+import { setMouseOverAxisIndex, setSyncInteraction } from '../../../src/state/tooltipSlice';
+import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
   name: string;
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
-  Wrapper: ComponentType<{ children: ReactNode; syncId: string; dataKey: string }>;
+  Wrapper: ComponentType<{ children: ReactNode; syncId: string; dataKey: string; className?: string }>;
   tooltipContent: { chartOne: { name: string; value: string }; chartTwo: { name: string; value: string } };
 };
 
@@ -177,17 +194,24 @@ const RadarChartTestCase: TooltipSyncTestCase = {
 
 const RadialBarChartTestCase: TooltipSyncTestCase = {
   name: 'RadialBarChart',
-  Wrapper: ({ children, syncId, dataKey }) => (
-    <RadialBarChart height={600} width={600} data={PageData} syncId={syncId}>
+  Wrapper: ({ children, syncId, dataKey, className }) => (
+    <RadialBarChart height={600} width={600} data={PageData} syncId={syncId} className={className}>
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
-      <RadialBar name="Mike" dataKey={dataKey} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <RadialBar
+        name="Mike"
+        dataKey={dataKey}
+        stroke="#8884d8"
+        fill="#8884d8"
+        fillOpacity={0.6}
+        isAnimationActive={false}
+      />
       {children}
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '4567' } },
+  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '3908' } },
 };
 
 // TODO: fix synchronization in Pie, Scatter, Funnel. These currently accept syncId as a prop but do not work.
@@ -293,21 +317,20 @@ describe('Tooltip synchronization', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <>
           <div id="chartOne">
-            <Wrapper syncId="tooltipSync" dataKey="uv">
+            <Wrapper syncId="tooltipSync" dataKey="uv" className="chartOne">
               <Tooltip />
               {children}
             </Wrapper>
           </div>
           <div id="chartTwo">
-            <Wrapper syncId="tooltipSync" dataKey="pv">
+            <Wrapper syncId="tooltipSync" dataKey="pv" className="chartTwo">
               <Tooltip />
             </Wrapper>
           </div>
         </>
       ));
 
-      // Temporarily broken until the redux synchronisation is completed
-      test.fails(`${name} shows tooltip when synchronized with ${name}`, () => {
+      test(`${name} shows tooltip when synchronized with ${name}`, () => {
         const { chartOne: chartOneContent, chartTwo: chartTwoContent } = tooltipContent;
         const { container, debug } = renderTestCase();
         // use ids to separate the charts so the `.recharts-wrapper` class can be used to activate the tooltip
@@ -347,10 +370,322 @@ describe('Tooltip synchronization', () => {
       });
     },
   );
+
+  describe('when syncMethod=value on the receiving chart', () => {
+    const data1 = [
+      { name: 'Page A', uv: 300 },
+      { name: 'Page B', uv: 400 },
+      { name: 'Page C', uv: 500 },
+      { name: 'Page D', uv: 600 },
+      { name: 'Page E', uv: 700 },
+      { name: 'Page F', uv: 800 },
+    ];
+
+    const data2 = [
+      { name: 'Page F', pv: 1800 },
+      { name: 'Page E', pv: 1700 },
+      { name: 'Page D', pv: 1600 },
+      { name: 'Page C', pv: 1500 },
+      { name: 'Page B', pv: 1400 },
+      { name: 'Page A', pv: 1300 },
+    ];
+
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart syncId="tooltipSync" data={data1} width={400} height={400} className="chart-1">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart syncId="tooltipSync" syncMethod="value" data={data2} width={400} height={400} className="chart-2">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        </LineChart>
+      ),
+    );
+
+    test('should synchronize the data based on the tooltip label - not value of the data', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      expectTooltipPayload(wrapperA, 'Page C', ['uv : 500']);
+      expectTooltipPayload(wrapperB, 'Page C', ['pv : 1500']);
+
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+    });
+
+    it('should select tooltip payload searcher', () => {
+      const { spyA, spyB } = renderTestCase(selectTooltipPayloadSearcher);
+      expect(spyA).toHaveBeenLastCalledWith(expect.any(Function));
+      expect(spyB).toHaveBeenLastCalledWith(expect.any(Function));
+    });
+
+    it('should synchronise the y-coordinate', () => {
+      const { wrapperA, spyA, spyB, debug } = renderTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      expect(spyA).toHaveBeenLastCalledWith({ x: 197, y: 200 });
+      expect(spyB).toHaveBeenLastCalledWith({ x: 263, y: 200 });
+    });
+  });
+
+  describe('selectActiveCoordinate', () => {
+    it('should return undefined for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual(undefined);
+    });
+
+    it('should return coordinate after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 3, y: 4 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({ x: 3, y: 4 });
+    });
+
+    it('should return coordinate after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          coordinate: { x: 5, y: 6 },
+          dataKey: 'uv',
+          index: '1',
+          label: 'Page B',
+        }),
+      );
+      const actual = selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({ x: 5, y: 6 });
+    });
+  });
+
+  describe('selectIsTooltipActive', () => {
+    it('should return false for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: null,
+        isActive: false,
+      });
+    });
+
+    it('should return true after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 0, y: 0 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: '1',
+        isActive: true,
+      });
+    });
+
+    it('should return true after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          dataKey: 'uv',
+          index: '1',
+          label: 'Page B',
+          coordinate: { x: 0, y: 0 },
+        }),
+      );
+      const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual({
+        activeIndex: '1',
+        isActive: true,
+      });
+    });
+  });
+
+  describe('selectActiveIndex', () => {
+    it('should return null for initial state', () => {
+      const store = createRechartsStore();
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual(null);
+    });
+
+    it('should return index after mouseMoveAction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setMouseOverAxisIndex({
+          activeCoordinate: { x: 0, y: 0 },
+          activeDataKey: 'uv',
+          activeIndex: '1',
+        }),
+      );
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual('1');
+    });
+
+    it('should return index after setSyncInteraction', () => {
+      const store = createRechartsStore();
+      store.dispatch(
+        setSyncInteraction({
+          active: true,
+          dataKey: 'uv',
+          index: '2',
+          label: 'Page B',
+          coordinate: { x: 0, y: 0 },
+        }),
+      );
+      const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);
+      expect(actual).toEqual('2');
+    });
+  });
+
+  describe('as a child of RadialBarChart', () => {
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <RadialBarChartTestCase.Wrapper syncId="my-sync-id" dataKey="uv" className="radialbar-chart-1">
+          <Tooltip isAnimationActive={false} />
+          {children}
+        </RadialBarChartTestCase.Wrapper>
+      ),
+      ({ children }) => (
+        <RadialBarChartTestCase.Wrapper syncId="my-sync-id" dataKey="uv" className="radialbar-chart-2">
+          <Tooltip isAnimationActive={false} />
+          {children}
+        </RadialBarChartTestCase.Wrapper>
+      ),
+    );
+
+    it('should synchronise active index for graphical items', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(selectActiveTooltipIndex);
+
+      expect(spyA).toHaveBeenLastCalledWith(undefined);
+      expect(spyB).toHaveBeenLastCalledWith(undefined);
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenLastCalledWith('4');
+      expect(spyB).toHaveBeenLastCalledWith('4');
+    });
+
+    it('should synchronise active index for tooltip', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(state =>
+        selectIsTooltipActive(state, 'axis', 'hover', undefined),
+      );
+
+      expect(spyA).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenLastCalledWith({
+        activeIndex: '4',
+        isActive: true,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        activeIndex: '4',
+        isActive: true,
+      });
+    });
+
+    it('should synchronise tooltip coordinate', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      expect(spyA).toHaveBeenLastCalledWith(undefined);
+      expect(spyB).toHaveBeenLastCalledWith(undefined);
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenLastCalledWith({
+        // This is returning lot more information than it should
+        angle: 135,
+        clockWise: false,
+        cx: 300,
+        cy: 300,
+        endAngle: 360,
+        innerRadius: 0,
+        outerRadius: 236,
+        radius: 157.33333333333334,
+        startAngle: 0,
+        x: 188.74853309331652,
+        y: 188.7485330933165,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        angle: 135,
+        clockWise: false,
+        cx: 300,
+        cy: 300,
+        endAngle: 360,
+        innerRadius: 0,
+        outerRadius: 236,
+        radius: 157.33333333333334,
+        startAngle: 0,
+        x: 188.74853309331652,
+        y: 188.7485330933165,
+      });
+    });
+
+    test('should show and hide synchronised tooltip', () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { wrapperA, wrapperB } = renderTestCase();
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expectTooltipPayload(wrapperA, '4', ['Mike : 278']);
+      expectTooltipPayload(wrapperB, '4', ['Mike : 278']);
+
+      expectTooltipCoordinate(wrapperA, { x: 198.74853309331652, y: 198.7485330933165 });
+      expectTooltipCoordinate(wrapperB, { x: 198.74853309331652, y: 198.7485330933165 });
+
+      hideTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+    });
+  });
 });
 
 describe('brush synchronization', () => {
-  // This test will continue failing until tooltip synchronisation is in Redux. TODO add this to Redux then enable this test again
+  // This test will continue failing until brush synchronisation is in Redux. TODO add this to Redux then enable this test again
   it.fails('Should synchronize the data selected by (a single) Brush', async () => {
     const { container } = render(
       <>
@@ -401,8 +736,7 @@ describe('Cursor synchronization', () => {
     ComposedChartWithLineTestCase,
     RadarChartTestCase,
   ])('as a child of $name with syncId', ({ Wrapper, mouseHoverSelector }) => {
-    // Temporarily broken until the redux synchronisation is completed
-    it.fails('should display cursor inside of the synchronized SVG', async () => {
+    it('should display cursor inside of the synchronized SVG', async () => {
       const { container, debug } = render(
         <>
           <Wrapper syncId="cursorSync" dataKey="uv">

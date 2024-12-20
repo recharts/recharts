@@ -4774,7 +4774,7 @@ describe('<XAxis />', () => {
       expect(itemDataSpy).toHaveBeenLastCalledWith([]);
       expect(itemDataSpy).toHaveBeenCalledTimes(3);
       expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
     });
   });

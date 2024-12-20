@@ -4,7 +4,6 @@ import { TooltipTrigger } from '../chart/types';
 import type { NameType, Payload, ValueType } from '../component/DefaultTooltipContent';
 import { ChartCoordinate, Coordinate, DataKey } from '../util/types';
 import { AxisId } from './cartesianAxisSlice';
-import { SynchronisedTooltipAction } from '../synchronisation/SynchronisedAction';
 
 /**
  * One Tooltip can display multiple TooltipPayloadEntries at a time.
@@ -75,7 +74,19 @@ export type ActiveTooltipProps = {
 };
 
 export type TooltipSettingsState = {
-  shared: boolean;
+  /**
+   * So this informs the "tooltip event type". Tooltip event type can be either "axis" or "item"
+   * and it is used for two things:
+   * 1. Sets the active area
+   * 2. Sets the background and cursor highlights
+   *
+   * Some charts only allow to have one type of tooltip event type, some allow both.
+   * Those charts that allow both will have one default, and the "shared" prop will be used to switch between them.
+   * Undefined means "use the chart default".
+   *
+   * Charts that only allow one tooltip event type, will ignore the shared prop.
+   */
+  shared: boolean | undefined;
   trigger: TooltipTrigger;
   axisId: AxisId;
   /**
@@ -85,12 +96,22 @@ export type TooltipSettingsState = {
    * With `active=true`, the tooltip will remain visible after mouse leave event.
    *
    * If you want to see the "active before user interaction" settings, see `defaultIndex`.
+   *
+   * Undefined means "depends on user interactions".
    */
-  active: boolean;
+  active: boolean | undefined;
   /**
    * If you want to set the tooltip to be active before user interaction, you can set this property.
    */
   defaultIndex: TooltipIndex | undefined;
+};
+
+export type TooltipSyncState = {
+  active: boolean;
+  index: TooltipIndex;
+  dataKey: DataKey<any> | undefined;
+  label: string | undefined;
+  coordinate: Coordinate | undefined;
 };
 
 /**
@@ -181,12 +202,7 @@ export type TooltipState = {
    * If there are two charts with the same syncId, events from one chart will be transferred
    * to other charts. So this is what the other charts are reporting.
    */
-  syncInteraction: {
-    active: boolean;
-    activeCoordinate: ChartCoordinate | undefined;
-    activeAxisIndex: TooltipIndex;
-    activeAxisDataKey: DataKey<any> | undefined;
-  };
+  syncInteraction: TooltipSyncState;
   /**
    * One graphical item will have one configuration;
    * hovering over multiple of them (for example with tooltipEventType===axis)
@@ -224,18 +240,25 @@ export const initialState: TooltipState = {
   },
   syncInteraction: {
     active: false,
-    activeCoordinate: undefined,
-    activeAxisIndex: null,
-    activeAxisDataKey: undefined,
+    index: null,
+    dataKey: undefined,
+    label: undefined,
+    coordinate: undefined,
   },
   tooltipItemPayloads: [],
   settings: {
-    shared: false,
+    shared: undefined,
     trigger: 'hover',
     axisId: 0,
     active: false,
     defaultIndex: undefined,
   },
+};
+
+export type TooltipActionPayload = {
+  activeIndex: TooltipIndex;
+  activeDataKey: DataKey<any> | undefined;
+  activeCoordinate?: ChartCoordinate | undefined;
 };
 
 const tooltipSlice = createSlice({
@@ -254,7 +277,7 @@ const tooltipSlice = createSlice({
     setTooltipSettingsState(state, action: PayloadAction<TooltipSettingsState>) {
       state.settings = action.payload;
     },
-    setActiveMouseOverItemIndex(state, action: SynchronisedTooltipAction) {
+    setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.itemInteraction.activeHover = true;
       state.itemInteraction.activeMouseOverIndex = action.payload.activeIndex;
       state.itemInteraction.activeMouseOverDataKey = action.payload.activeDataKey;
@@ -274,28 +297,26 @@ const tooltipSlice = createSlice({
     mouseLeaveItem(state) {
       state.itemInteraction.activeHover = false;
     },
-    setActiveClickItemIndex(state, action: SynchronisedTooltipAction) {
+    setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.itemInteraction.activeClick = true;
       state.itemInteraction.activeClickIndex = action.payload.activeIndex;
       state.itemInteraction.activeClickDataKey = action.payload.activeDataKey;
       state.itemInteraction.activeClickCoordinate = action.payload.activeCoordinate;
     },
-    setMouseOverAxisIndex(state, action: SynchronisedTooltipAction) {
+    setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.axisInteraction.activeHover = true;
       state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
       state.axisInteraction.activeMouseOverAxisDataKey = action.payload.activeDataKey;
       state.axisInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
     },
-    setMouseClickAxisIndex(state, action: SynchronisedTooltipAction) {
+    setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.axisInteraction.activeClick = true;
       state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
       state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
       state.axisInteraction.activeClickCoordinate = action.payload.activeCoordinate;
     },
-    setSyncInteraction(state, action: SynchronisedTooltipAction) {
-      state.syncInteraction.activeCoordinate = action.payload.activeCoordinate;
-      state.syncInteraction.activeAxisIndex = action.payload.activeIndex;
-      state.syncInteraction.activeAxisDataKey = action.payload.activeDataKey;
+    setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
+      state.syncInteraction = action.payload;
     },
   },
 });

@@ -299,7 +299,7 @@ export const combineTicksOfTooltipAxis = (
   );
 };
 
-export const selectTooltipAxisTicks = createSelector(
+export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | null = createSelector(
   [
     selectChartLayout,
     selectTooltipAxis,
@@ -328,9 +328,9 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
       validateTooltipEventType,
     );
 
-    if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.activeAxisIndex != null) {
+    if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
       // Synchronised events always override other events
-      return tooltipState.syncInteraction.activeAxisIndex;
+      return tooltipState.syncInteraction.index;
     }
     if (settings.trigger === 'click') {
       if (tooltipEventType === 'axis') {

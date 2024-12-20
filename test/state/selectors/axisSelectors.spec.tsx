@@ -387,12 +387,12 @@ describe('selectAxisDomain', () => {
     expect(domainRightSpy).toHaveBeenLastCalledWith([0, 1520]);
     expect(domainRightIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1600]);
     expect(scaleRightSpy).toHaveBeenLastCalledWith([0, 1600]);
-    expect(domainLeftSpy).toHaveBeenCalledTimes(3);
-    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
-    expect(scaleLeftSpy).toHaveBeenCalledTimes(3);
-    expect(domainRightSpy).toHaveBeenCalledTimes(3);
-    expect(domainRightIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
-    expect(scaleRightSpy).toHaveBeenCalledTimes(3);
+    expect(domainLeftSpy).toHaveBeenCalledTimes(4);
+    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(4);
+    expect(scaleLeftSpy).toHaveBeenCalledTimes(4);
+    expect(domainRightSpy).toHaveBeenCalledTimes(4);
+    expect(domainRightIncludingNiceTicksSpy).toHaveBeenCalledTimes(4);
+    expect(scaleRightSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
@@ -2468,8 +2468,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(5);
+    expect(yAxisSpy).toHaveBeenCalledTimes(5);
   });
 
   it('should return bars settings if present in LineChart', () => {
@@ -2503,8 +2503,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(5);
+    expect(yAxisSpy).toHaveBeenCalledTimes(5);
   });
 
   it('should return bars settings if present in vertical LineChart', () => {
@@ -2538,8 +2538,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(4);
-    expect(yAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenCalledTimes(5);
+    expect(yAxisSpy).toHaveBeenCalledTimes(5);
   });
 
   it('should return bars settings if present in ScatterChart', () => {

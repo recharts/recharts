@@ -539,7 +539,7 @@ describe('<ReferenceLine />', () => {
       );
 
       expect(lineSpy).toHaveBeenLastCalledWith([]);
-      expect(lineSpy).toHaveBeenCalledTimes(5);
+      expect(lineSpy).toHaveBeenCalledTimes(6);
     });
   });
 

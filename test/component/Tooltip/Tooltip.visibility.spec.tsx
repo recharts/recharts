@@ -884,7 +884,7 @@ describe('Tooltip visibility', () => {
     it('should select tooltip state before & after hover', () => {
       const { container, spy } = renderTestCase(selectTooltipState);
 
-      const expected: TooltipState = {
+      const expectedBeforeHover: TooltipState = {
         axisInteraction: {
           activeClick: false,
           activeClickAxisDataKey: undefined,
@@ -907,9 +907,10 @@ describe('Tooltip visibility', () => {
         },
         syncInteraction: {
           active: false,
-          activeAxisDataKey: undefined,
-          activeAxisIndex: null,
-          activeCoordinate: undefined,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+          label: undefined,
         },
         settings: {
           axisId: 0,
@@ -921,6 +922,7 @@ describe('Tooltip visibility', () => {
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
+            positions: undefined,
             settings: {
               color: '#8884d8',
               dataKey: 'uv',
@@ -933,15 +935,14 @@ describe('Tooltip visibility', () => {
               type: undefined,
               unit: '',
             },
-            positions: undefined,
           },
         ],
       };
-      expect(spy).toHaveBeenLastCalledWith(expected);
+      expect(spy).toHaveBeenLastCalledWith(expectedBeforeHover);
 
       showTooltip(container, RadarChartTestCase.mouseHoverSelector);
 
-      expect(spy).toHaveBeenLastCalledWith({
+      const expectedAfterHover: TooltipState = {
         axisInteraction: {
           activeClick: false,
           activeClickAxisDataKey: undefined,
@@ -953,6 +954,7 @@ describe('Tooltip visibility', () => {
           activeMouseOverCoordinate: {
             // I don't think we need the whole axis to be included here but this is what the generator did
             angle: -210,
+            // @ts-expect-error typescript says this property should not be here at all
             clockWise: false,
             cx: 300,
             cy: 300,
@@ -977,18 +979,22 @@ describe('Tooltip visibility', () => {
         },
         syncInteraction: {
           active: false,
-          activeAxisDataKey: undefined,
-          activeAxisIndex: null,
-          activeCoordinate: undefined,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+          label: undefined,
         },
         settings: {
           axisId: 0,
           shared: undefined,
           trigger: 'hover',
+          active: undefined,
+          defaultIndex: undefined,
         },
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
+            positions: undefined,
             settings: {
               color: '#8884d8',
               dataKey: 'uv',
@@ -1003,7 +1009,8 @@ describe('Tooltip visibility', () => {
             },
           },
         ],
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedAfterHover);
     });
 
     it('should select active label', () => {

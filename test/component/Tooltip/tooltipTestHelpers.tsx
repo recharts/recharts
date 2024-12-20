@@ -23,18 +23,18 @@ const defaultCoordinates: MouseCoordinate = { clientX: 200, clientY: 200 };
  * Test helper that will simulate a mouse over event on a given element which should trigger the tooltip to show.
  *
  * @param container Element rendered in the test
- * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element
+ * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element. If undefined then uses the container element itself.
  * @param coordinates X, Y coordinate of the mouse event
  * @param debug Optional function that will be called if the tooltip trigger element is not found
  * @returns Tooltip trigger element
  */
 export function showTooltipOnCoordinate(
   container: Element,
-  selector: string,
+  selector: string | undefined,
   coordinates: MouseCoordinate | undefined,
   debug?: () => void,
 ): Element {
-  const tooltipTriggerElement = container.querySelector(selector);
+  const tooltipTriggerElement = selector != null ? container.querySelector(selector) : container;
   if (tooltipTriggerElement == null && debug != null) {
     debug();
   }
@@ -50,11 +50,11 @@ export function showTooltipOnCoordinate(
  * This function will use default coordinates of 200, 200.
  *
  * @param container Element rendered in the test
- * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element
+ * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element. If undefined then uses the container element itself.
  * @param debug Optional function that will be called if the tooltip trigger element is not found
  * @returns Tooltip trigger element
  */
-export function showTooltip(container: Element, selector: string, debug?: () => void): Element {
+export function showTooltip(container: Element, selector?: string, debug?: () => void): Element {
   return showTooltipOnCoordinate(container, selector, defaultCoordinates, debug);
 }
 
@@ -64,6 +64,7 @@ export function hideTooltip(container: Element, mouseHoverSelector: string): voi
 }
 
 export function expectTooltipNotVisible(container: Element) {
+  assertNotNull(container);
   const tooltip = getTooltip(container);
   expect(tooltip).not.toBeVisible();
 }

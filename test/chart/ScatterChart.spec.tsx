@@ -1621,9 +1621,10 @@ describe('Tooltip integration', () => {
         },
         syncInteraction: {
           active: false,
-          activeAxisDataKey: undefined,
-          activeAxisIndex: null,
-          activeCoordinate: undefined,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+          label: undefined,
         },
         tooltipItemPayloads: [
           {

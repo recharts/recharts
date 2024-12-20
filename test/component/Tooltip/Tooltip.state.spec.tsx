@@ -59,7 +59,7 @@ describe('Tooltip state integration', () => {
         active: false,
         axisId: 0,
         defaultIndex: undefined,
-        shared: false,
+        shared: undefined,
         trigger: 'hover',
       };
       expect(spy).toHaveBeenLastCalledWith(expected);

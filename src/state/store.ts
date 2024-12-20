@@ -13,7 +13,6 @@ import { legendReducer } from './legendSlice';
 import { rootPropsReducer } from './rootPropsSlice';
 import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
-import { chartSynchronisationMiddleware } from '../synchronisation/chartSynchronisationMiddleware';
 
 const rootReducer = combineReducers({
   cartesianAxis: cartesianAxisReducer,
@@ -37,11 +36,7 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-      }).concat([
-        mouseClickMiddleware.middleware,
-        mouseMoveMiddleware.middleware,
-        chartSynchronisationMiddleware.middleware,
-      ]),
+      }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware]),
     devTools: {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,

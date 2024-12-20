@@ -382,7 +382,7 @@ describe('<ReferenceDot />', () => {
       );
 
       expect(dotSpy).toHaveBeenLastCalledWith([]);
-      expect(dotSpy).toHaveBeenCalledTimes(5);
+      expect(dotSpy).toHaveBeenCalledTimes(6);
     });
   });
 });

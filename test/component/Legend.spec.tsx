@@ -1176,7 +1176,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(4);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(6);
 
       expectBars(container, [
         {
@@ -1239,7 +1239,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(6);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(9);
 
       expectBars(container, [
         {
@@ -1779,7 +1779,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(6);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1808,7 +1808,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1837,7 +1837,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(6);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1866,7 +1866,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(6);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -3575,7 +3575,7 @@ describe('<Legend />', () => {
         verticalAlign: 'bottom',
         width: 3,
       });
-      expect(legendSpy).toHaveBeenCalledTimes(3);
+      expect(legendSpy).toHaveBeenCalledTimes(4);
 
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
@@ -3590,7 +3590,7 @@ describe('<Legend />', () => {
         verticalAlign: 'bottom',
         width: 0,
       });
-      expect(legendSpy).toHaveBeenCalledTimes(5);
+      expect(legendSpy).toHaveBeenCalledTimes(7);
     });
   });
 });
