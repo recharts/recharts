@@ -1316,7 +1316,6 @@ export const generateCategoricalChart = ({
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
-        this.triggerSyncEvent(nextState);
 
         const { onMouseEnter } = this.props;
         if (typeof onMouseEnter === 'function') {
@@ -1330,7 +1329,6 @@ export const generateCategoricalChart = ({
       const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
 
       this.setState(nextState);
-      this.triggerSyncEvent(nextState);
 
       const { onMouseMove } = this.props;
       if (typeof onMouseMove === 'function') {
@@ -1387,7 +1385,6 @@ export const generateCategoricalChart = ({
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
-      this.triggerSyncEvent(nextState);
 
       const { onMouseLeave } = this.props;
       if (typeof onMouseLeave === 'function') {
@@ -1417,7 +1414,6 @@ export const generateCategoricalChart = ({
       if (mouse) {
         const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
         this.setState(nextState);
-        this.triggerSyncEvent(nextState);
 
         const { onClick } = this.props;
         if (typeof onClick === 'function') {
