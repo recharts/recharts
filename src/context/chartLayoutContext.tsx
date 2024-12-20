@@ -2,7 +2,6 @@ import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
 import { LegendPayloadProvider } from './legendPayloadContext';
-import { TooltipContextProvider, TooltipContextValue } from './tooltipContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
@@ -36,7 +35,7 @@ export type ChartLayoutContextProviderProps = {
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
   const {
-    state: { activeLabel, activePayload, isTooltipActive, activeCoordinate, updateId, activeTooltipIndex },
+    state: { updateId },
     clipPathId,
     children,
     width,
@@ -44,14 +43,6 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     margin,
     layout,
   } = props;
-
-  const tooltipContextValue: TooltipContextValue = {
-    label: activeLabel,
-    payload: activePayload,
-    coordinate: activeCoordinate,
-    active: isTooltipActive,
-    index: activeTooltipIndex,
-  };
 
   const dispatch = useAppDispatch();
 
@@ -85,9 +76,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
     <UpdateIdContext.Provider value={updateId}>
       <MarginContext.Provider value={margin}>
         <LegendPayloadProvider>
-          <ClipPathIdContext.Provider value={clipPathId}>
-            <TooltipContextProvider value={tooltipContextValue}>{children}</TooltipContextProvider>
-          </ClipPathIdContext.Provider>
+          <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
         </LegendPayloadProvider>
       </MarginContext.Provider>
     </UpdateIdContext.Provider>
