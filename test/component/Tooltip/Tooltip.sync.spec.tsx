@@ -52,6 +52,8 @@ import {
   selectTooltipPayloadSearcher,
 } from '../../../src/state/selectors/selectors';
 import { setMouseOverAxisIndex, setSyncInteraction } from '../../../src/state/tooltipSlice';
+import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -190,7 +192,6 @@ const RadarChartTestCase: TooltipSyncTestCase = {
   tooltipContent: { chartOne: { name: 'Mike', value: '189' }, chartTwo: { name: 'Mike', value: '4800' } },
 };
 
-// TODO RadialBar synchronisation is off by 1 for some reason, investigate and fix
 const RadialBarChartTestCase: TooltipSyncTestCase = {
   name: 'RadialBarChart',
   Wrapper: ({ children, syncId, dataKey, className }) => (
@@ -198,12 +199,19 @@ const RadialBarChartTestCase: TooltipSyncTestCase = {
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
-      <RadialBar name="Mike" dataKey={dataKey} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+      <RadialBar
+        name="Mike"
+        dataKey={dataKey}
+        stroke="#8884d8"
+        fill="#8884d8"
+        fillOpacity={0.6}
+        isAnimationActive={false}
+      />
       {children}
     </RadialBarChart>
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
-  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '4567' } },
+  tooltipContent: { chartOne: { name: 'Mike', value: '278' }, chartTwo: { name: 'Mike', value: '3908' } },
 };
 
 // TODO: fix synchronization in Pie, Scatter, Funnel. These currently accept syncId as a prop but do not work.
@@ -298,8 +306,7 @@ const cartesianTestCases: ReadonlyArray<TooltipSyncTestCase> = [
 const radialTestCases: ReadonlyArray<TooltipSyncTestCase> = [
   // PieChartTestCase,
   RadarChartTestCase,
-  // TODO RadialBar synchronisation is off by 1 for some reason, investigate and fix
-  // RadialBarChartTestCase,
+  RadialBarChartTestCase,
 ];
 
 // Tooltip sync does not work for PieChart, ScatterChart, FunnelChart, SunburstChart, SankeyChart, Treemap
@@ -559,51 +566,126 @@ describe('Tooltip synchronization', () => {
   });
 
   describe('as a child of RadialBarChart', () => {
-    const renderTestCase = createSelectorTestCase(({ children }) => (
-      <>
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
         <RadialBarChartTestCase.Wrapper syncId="my-sync-id" dataKey="uv" className="radialbar-chart-1">
-          <Tooltip />
-        </RadialBarChartTestCase.Wrapper>
-        <RadialBarChartTestCase.Wrapper syncId="my-sync-id" dataKey="pv" className="radialbar-chart-2">
-          <Tooltip />
+          <Tooltip isAnimationActive={false} />
           {children}
         </RadialBarChartTestCase.Wrapper>
-      </>
-    ));
+      ),
+      ({ children }) => (
+        <RadialBarChartTestCase.Wrapper syncId="my-sync-id" dataKey="uv" className="radialbar-chart-2">
+          <Tooltip isAnimationActive={false} />
+          {children}
+        </RadialBarChartTestCase.Wrapper>
+      ),
+    );
 
-    // TODO RadialBarChart synchronisation still has some problems, investigate and fix
-    test.fails('should show and hide synchronised tooltip', () => {
-      const { container } = renderTestCase();
+    it('should synchronise active index for graphical items', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(selectActiveTooltipIndex);
 
-      const wrapperOne = container.querySelector('.radialbar-chart-1');
-      const wrapperTwo = container.querySelector('.radialbar-chart-2');
+      expect(spyA).toHaveBeenLastCalledWith(undefined);
+      expect(spyB).toHaveBeenLastCalledWith(undefined);
 
-      expectTooltipNotVisible(wrapperOne);
-      expectTooltipNotVisible(wrapperTwo);
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 
-      showTooltip(wrapperOne);
+      expect(spyA).toHaveBeenLastCalledWith('4');
+      expect(spyB).toHaveBeenLastCalledWith('4');
+    });
 
-      const tooltipOne = getTooltip(wrapperOne);
-      const tooltipTwo = getTooltip(wrapperTwo);
-      expect(tooltipOne).toBeVisible();
-      expect(tooltipTwo).toBeVisible();
+    it('should synchronise active index for tooltip', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(state =>
+        selectIsTooltipActive(state, 'axis', 'hover', undefined),
+      );
 
-      expectTooltipPayload(wrapperOne, '4', ['Mike : 278']);
-      expectTooltipPayload(wrapperTwo, '4', ['pv : 4800']);
+      expect(spyA).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        activeIndex: null,
+        isActive: false,
+      });
 
-      expectTooltipCoordinate(wrapperOne, { x: 207, y: 210 });
-      expectTooltipCoordinate(wrapperTwo, { x: 273, y: 210 });
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 
-      hideTooltip(wrapperOne, '');
+      expect(spyA).toHaveBeenLastCalledWith({
+        activeIndex: '4',
+        isActive: true,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        activeIndex: '4',
+        isActive: true,
+      });
+    });
 
-      expectTooltipNotVisible(wrapperOne);
-      expectTooltipNotVisible(wrapperTwo);
+    it('should synchronise tooltip coordinate', () => {
+      const { wrapperA, spyA, spyB } = renderTestCase(state =>
+        selectActiveCoordinate(state, 'axis', 'hover', undefined),
+      );
+
+      expect(spyA).toHaveBeenLastCalledWith(undefined);
+      expect(spyB).toHaveBeenLastCalledWith(undefined);
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expect(spyA).toHaveBeenLastCalledWith({
+        // This is returning lot more information than it should
+        angle: 135,
+        clockWise: false,
+        cx: 300,
+        cy: 300,
+        endAngle: 360,
+        innerRadius: 0,
+        outerRadius: 236,
+        radius: 157.33333333333334,
+        startAngle: 0,
+        x: 188.74853309331652,
+        y: 188.7485330933165,
+      });
+      expect(spyB).toHaveBeenLastCalledWith({
+        angle: 135,
+        clockWise: false,
+        cx: 300,
+        cy: 300,
+        endAngle: 360,
+        innerRadius: 0,
+        outerRadius: 236,
+        radius: 157.33333333333334,
+        startAngle: 0,
+        x: 188.74853309331652,
+        y: 188.7485330933165,
+      });
+    });
+
+    test('should show and hide synchronised tooltip', () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { wrapperA, wrapperB } = renderTestCase();
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+
+      showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expectTooltipPayload(wrapperA, '4', ['Mike : 278']);
+      expectTooltipPayload(wrapperB, '4', ['Mike : 278']);
+
+      expectTooltipCoordinate(wrapperA, { x: 198.74853309331652, y: 198.7485330933165 });
+      expectTooltipCoordinate(wrapperB, { x: 198.74853309331652, y: 198.7485330933165 });
+
+      hideTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
+
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
     });
   });
 });
 
 describe('brush synchronization', () => {
-  // This test will continue failing until tooltip synchronisation is in Redux. TODO add this to Redux then enable this test again
+  // This test will continue failing until brush synchronisation is in Redux. TODO add this to Redux then enable this test again
   it.fails('Should synchronize the data selected by (a single) Brush', async () => {
     const { container } = render(
       <>
