@@ -25,7 +25,13 @@ import {
   YAxis,
 } from '../../../src';
 import { PageData } from '../../_data';
-import { expectTooltipPayload, getTooltip, showTooltip } from './tooltipTestHelpers';
+import {
+  expectTooltipNotVisible,
+  expectTooltipPayload,
+  getTooltip,
+  hideTooltip,
+  showTooltip,
+} from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
   barChartMouseHoverTooltipSelector,
@@ -49,7 +55,7 @@ type TooltipSyncTestCase = {
   // For identifying which test is running
   name: string;
   mouseHoverSelector: MouseHoverTooltipTriggerSelector;
-  Wrapper: ComponentType<{ children: ReactNode; syncId: string; dataKey: string }>;
+  Wrapper: ComponentType<{ children: ReactNode; syncId: string; dataKey: string; className?: string }>;
   tooltipContent: { chartOne: { name: string; value: string }; chartTwo: { name: string; value: string } };
 };
 
@@ -184,8 +190,8 @@ const RadarChartTestCase: TooltipSyncTestCase = {
 
 const RadialBarChartTestCase: TooltipSyncTestCase = {
   name: 'RadialBarChart',
-  Wrapper: ({ children, syncId, dataKey }) => (
-    <RadialBarChart height={600} width={600} data={PageData} syncId={syncId}>
+  Wrapper: ({ children, syncId, dataKey, className }) => (
+    <RadialBarChart height={600} width={600} data={PageData} syncId={syncId} className={className}>
       <PolarGrid />
       <PolarAngleAxis dataKey="name" />
       <PolarRadiusAxis />
@@ -300,13 +306,13 @@ describe('Tooltip synchronization', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
         <>
           <div id="chartOne">
-            <Wrapper syncId="tooltipSync" dataKey="uv">
+            <Wrapper syncId="tooltipSync" dataKey="uv" className="chartOne">
               <Tooltip />
               {children}
             </Wrapper>
           </div>
           <div id="chartTwo">
-            <Wrapper syncId="tooltipSync" dataKey="pv">
+            <Wrapper syncId="tooltipSync" dataKey="pv" className="chartTwo">
               <Tooltip />
             </Wrapper>
           </div>
@@ -412,6 +418,9 @@ describe('Tooltip synchronization', () => {
       const wrapperTwo = container.querySelector('#chartTwo');
       showTooltip(wrapperOne, lineChartMouseHoverTooltipSelector, debug);
 
+      expectTooltipNotVisible(wrapperOne);
+      expectTooltipNotVisible(wrapperTwo);
+
       const tooltipOne = getTooltip(wrapperOne);
       const tooltipTwo = getTooltip(wrapperTwo);
       expect(tooltipOne).toBeVisible();
@@ -419,6 +428,11 @@ describe('Tooltip synchronization', () => {
 
       expectTooltipPayload(wrapperOne, 'Page C', ['uv : 500']);
       expectTooltipPayload(wrapperTwo, 'Page C', ['pv : 1500']);
+
+      hideTooltip(wrapperOne, lineChartMouseHoverTooltipSelector);
+
+      expectTooltipNotVisible(wrapperOne);
+      expectTooltipNotVisible(wrapperTwo);
     });
 
     it('should select tooltip payload searcher', () => {
@@ -463,6 +477,7 @@ describe('Tooltip synchronization', () => {
           dataKey: 'uv',
           index: '1',
           label: 'Page B',
+          coordinate: { x: 0, y: 0 },
         }),
       );
       const actual = selectIsTooltipActive(store.getState(), 'axis', 'hover', undefined);
@@ -501,6 +516,7 @@ describe('Tooltip synchronization', () => {
           dataKey: 'uv',
           index: '2',
           label: 'Page B',
+          coordinate: { x: 0, y: 0 },
         }),
       );
       const actual = selectActiveIndex(store.getState(), 'axis', 'hover', undefined);

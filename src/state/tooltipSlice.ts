@@ -97,6 +97,7 @@ export type TooltipSyncState = {
   index: TooltipIndex;
   dataKey: DataKey<any> | undefined;
   label: string | undefined;
+  coordinate: Coordinate | undefined;
 };
 
 /**
@@ -228,6 +229,7 @@ export const initialState: TooltipState = {
     index: null,
     dataKey: undefined,
     label: undefined,
+    coordinate: undefined,
   },
   tooltipItemPayloads: [],
   settings: {

@@ -12,7 +12,7 @@ export { eventCenter };
  */
 export const GENERATOR_SYNC_EVENT = 'recharts.syncMouseEvents';
 
-export const TOOLTIP_SYNC_EVENT = 'recharts.syncEvent';
+export const TOOLTIP_SYNC_EVENT = 'recharts.syncEvent.tooltip';
 
 interface EventTypes {
   [GENERATOR_SYNC_EVENT](syncId: number | string, data: CategoricalChartState, emitter: symbol): void;

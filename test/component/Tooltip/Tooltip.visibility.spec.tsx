@@ -907,9 +907,10 @@ describe('Tooltip visibility', () => {
         },
         syncInteraction: {
           active: false,
-          activeAxisDataKey: undefined,
-          activeAxisIndex: null,
-          activeCoordinate: undefined,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+          label: undefined,
         },
         settings: {
           axisId: 0,
@@ -921,6 +922,7 @@ describe('Tooltip visibility', () => {
         tooltipItemPayloads: [
           {
             dataDefinedOnItem: undefined,
+            positions: undefined,
             settings: {
               color: '#8884d8',
               dataKey: 'uv',

@@ -1844,7 +1844,7 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(barPositionsSpy).toHaveBeenCalledTimes(3);
+      expect(barPositionsSpy).toHaveBeenCalledTimes(4);
 
       expectBars(container, [
         {
@@ -2978,8 +2978,7 @@ describe('<BarChart />', () => {
       expect(tooltips4[1]).not.toBeVisible();
     });
 
-    // Temporarily broken until the redux synchronisation is completed
-    it.fails('should render two connected charts when given same syncId', () => {
+    it('should render two connected charts when given same syncId', () => {
       const { container } = render(
         <>
           <BarChart syncId={1} width={100} height={50} data={data}>

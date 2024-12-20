@@ -255,6 +255,14 @@ export const selectActiveCoordinate: (
     tooltipEventType: TooltipEventType,
     trigger: TooltipTrigger,
   ): ChartCoordinate | undefined => {
+    if (tooltipState.syncInteraction.active) {
+      /*
+       * Chart synchronisation wins over everything else.
+       * The synchronisation hook already validates the coordinates to make sure they are within the current chart bounds,
+       * so that we can just return them here.
+       */
+      return tooltipState.syncInteraction.coordinate;
+    }
     let activeCoordinate: ChartCoordinate;
     if (tooltipEventType === 'item') {
       if (trigger === 'hover') {
