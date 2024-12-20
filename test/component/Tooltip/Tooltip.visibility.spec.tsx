@@ -935,7 +935,6 @@ describe('Tooltip visibility', () => {
               type: undefined,
               unit: '',
             },
-            positions: undefined,
           },
         ],
       };
@@ -990,6 +989,7 @@ describe('Tooltip visibility', () => {
           shared: undefined,
           trigger: 'hover',
           active: undefined,
+          defaultIndex: undefined,
         },
         tooltipItemPayloads: [
           {
