@@ -42,7 +42,7 @@ import {
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
-import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { selectSyncId, selectSyncMethod } from '../../../src/state/selectors/rootPropsSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import {
@@ -383,72 +383,61 @@ describe('Tooltip synchronization', () => {
       { name: 'Page A', pv: 1300 },
     ];
 
-    const renderTestCase = createSelectorTestCase(({ children }) => {
-      return (
-        <>
-          <div id="chartOne">
-            <LineChart syncId="tooltipSync" data={data1} width={400} height={400} className="chart-1">
-              <XAxis dataKey="name" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            </LineChart>
-          </div>
-          <div id="chartTwo">
-            <LineChart
-              syncId="tooltipSync"
-              syncMethod="value"
-              data={data2}
-              width={400}
-              height={400}
-              className="chart-2"
-            >
-              <XAxis dataKey="name" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              {children}
-              <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-            </LineChart>
-          </div>
-        </>
-      );
-    });
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart syncId="tooltipSync" data={data1} width={400} height={400} className="chart-1">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart syncId="tooltipSync" syncMethod="value" data={data2} width={400} height={400} className="chart-2">
+          <XAxis dataKey="name" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          {children}
+          <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        </LineChart>
+      ),
+    );
 
     test('should synchronize the data based on the tooltip label - not value of the data', () => {
-      const { container, debug } = renderTestCase();
-      const wrapperOne = container.querySelector('#chartOne');
-      const wrapperTwo = container.querySelector('#chartTwo');
+      const { wrapperA, wrapperB, debug } = renderTestCase();
 
-      expectTooltipNotVisible(wrapperOne);
-      expectTooltipNotVisible(wrapperTwo);
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
 
-      showTooltip(wrapperOne, lineChartMouseHoverTooltipSelector, debug);
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
 
-      expectTooltipPayload(wrapperOne, 'Page C', ['uv : 500']);
-      expectTooltipPayload(wrapperTwo, 'Page C', ['pv : 1500']);
+      expectTooltipPayload(wrapperA, 'Page C', ['uv : 500']);
+      expectTooltipPayload(wrapperB, 'Page C', ['pv : 1500']);
 
-      hideTooltip(wrapperOne, lineChartMouseHoverTooltipSelector);
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
 
-      expectTooltipNotVisible(wrapperOne);
-      expectTooltipNotVisible(wrapperTwo);
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
     });
 
     it('should select tooltip payload searcher', () => {
-      const { spy } = renderTestCase(selectTooltipPayloadSearcher);
-      expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
+      const { spyA, spyB } = renderTestCase(selectTooltipPayloadSearcher);
+      expect(spyA).toHaveBeenLastCalledWith(expect.any(Function));
+      expect(spyB).toHaveBeenLastCalledWith(expect.any(Function));
     });
 
-    it('should select the correct coordinate', () => {
-      const { container, spy, debug } = renderTestCase(state =>
+    it('should synchronise the y-coordinate', () => {
+      const { wrapperA, spyA, spyB, debug } = renderTestCase(state =>
         selectActiveCoordinate(state, 'axis', 'hover', undefined),
       );
-      const wrapperOne = container.querySelector('#chartOne');
 
-      showTooltip(wrapperOne, lineChartMouseHoverTooltipSelector, debug);
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
 
-      expect(spy).toHaveBeenLastCalledWith({ x: 263, y: 200 });
+      expect(spyA).toHaveBeenLastCalledWith({ x: 197, y: 200 });
+      expect(spyB).toHaveBeenLastCalledWith({ x: 263, y: 200 });
     });
   });
 

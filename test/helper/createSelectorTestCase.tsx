@@ -28,3 +28,58 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     return { container, spy, debug };
   };
 }
+
+/**
+ * Create a test case for two components and renders the same spy inside both of them.
+ * Useful for testing synchronisation!
+ *
+ * @param ComponentA first component to render
+ * @param ComponentB second component to render
+ * @returns a function that renders the test case
+ */
+export function createSynchronisedSelectorTestCase(
+  ComponentA: ComponentType<{ children: ReactNode }>,
+  ComponentB: ComponentType<{ children: ReactNode }>,
+) {
+  return function renderTestCase<T>(selector: Selector<RechartsRootState, T, never> = emptySelector): {
+    container: Element;
+    wrapperA: Element;
+    wrapperB: Element;
+    spyA: Mock<(selectorResult: T) => void>;
+    spyB: Mock<(selectorResult: T) => void>;
+    debug: () => void;
+  } {
+    const spyA: Mock<(selectorResult: T) => void> = vi.fn();
+    const spyB: Mock<(selectorResult: T) => void> = vi.fn();
+
+    const CompA = (): null => {
+      spyA(useAppSelectorWithStableTest(selector));
+      return null;
+    };
+
+    const CompB = (): null => {
+      spyB(useAppSelectorWithStableTest(selector));
+      return null;
+    };
+
+    const { container, debug } = render(
+      <>
+        <div id="wrapperA">
+          <ComponentA>
+            <CompA />
+          </ComponentA>
+        </div>
+        <div id="wrapperB">
+          <ComponentB>
+            <CompB />
+          </ComponentB>
+        </div>
+      </>,
+    );
+
+    const wrapperA = container.querySelector('#wrapperA')!;
+    const wrapperB = container.querySelector('#wrapperB')!;
+
+    return { container, spyA, spyB, debug, wrapperA, wrapperB };
+  };
+}
