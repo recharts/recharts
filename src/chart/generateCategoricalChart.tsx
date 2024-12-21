@@ -22,26 +22,15 @@ import {
 
 import { Brush } from '../cartesian/Brush';
 import { getOffset } from '../util/DOMUtils';
-import {
-  findEntryInArray,
-  getAnyElementOfObject,
-  hasDuplicate,
-  isNullish,
-  isNumber,
-  uniqueId,
-} from '../util/DataUtils';
+import { getAnyElementOfObject, hasDuplicate, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
-  calculateActiveTickIndex,
-  calculateTooltipPos,
-  getActiveCoordinate,
   getDomainOfDataByKey,
   getDomainOfStackGroups,
   getStackGroupsByAxisId,
   getTicksOfAxis,
-  getTooltipItem,
   inRange,
   isAxisLTR,
   isCategoricalAxis,
@@ -62,10 +51,7 @@ import {
   LayoutType,
   Margin,
   MouseInfo,
-  RangeObj,
   StackOffsetType,
-  TickItem,
-  TooltipData,
   TooltipEventType,
   XAxisMap,
   YAxisMap,
@@ -141,97 +127,6 @@ const getDisplayedData = (
   }
 
   return [];
-};
-
-/**
- * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
- * @param  {Object} state          Current state
- * @param  {Array}  chartData      The data defined in chart
- * @param  {Number} activeIndex    Active index of data
- * @param  {String} activeLabel    Active label of data
- * @return {Array}                 The content of tooltip
- */
-const getTooltipContent = (
-  state: CategoricalChartState,
-  chartData: any[],
-  activeIndex: number,
-  activeLabel?: string,
-): any[] => {
-  const { graphicalItems, tooltipAxis } = state;
-  const displayedData = getDisplayedData(chartData, state);
-
-  if (activeIndex < 0 || !graphicalItems || !graphicalItems.length || activeIndex >= displayedData.length) {
-    return null;
-  }
-  // get data by activeIndex when the axis don't allow duplicated category
-  return graphicalItems
-    .map(child => {
-      /**
-       * Fixes: https://github.com/recharts/recharts/issues/3669
-       * Defaulting to chartData below to fix an edge case where the tooltip does not include data from all charts
-       * when a separate dataset is passed to chart prop data and specified on Line/Area/etc prop data
-       */
-      let data = child.props.data ?? chartData;
-
-      if (data && state.dataStartIndex + state.dataEndIndex !== 0) {
-        data = data.slice(state.dataStartIndex, state.dataEndIndex + 1);
-      }
-
-      let payload;
-
-      if (tooltipAxis.dataKey && !tooltipAxis.allowDuplicatedCategory) {
-        // graphic child has data props
-        const entries = data === undefined ? displayedData : data;
-        payload = findEntryInArray(entries, tooltipAxis.dataKey, activeLabel);
-      } else {
-        payload = (data && data[activeIndex]) || displayedData[activeIndex];
-      }
-
-      if (!payload) {
-        return null;
-      }
-
-      // @ts-expect-error missing types
-      return getTooltipItem(child, payload);
-    })
-    .filter(Boolean);
-};
-
-/**
- * Returns tooltip data based on a mouse position (as a parameter or in state)
- * @param  state      current state
- * @param  chartData  the data defined in chart
- * @param  layout     The layout type of chart
- * @param  rangeObj   coordinates
- * @return            Tooltip data
- */
-const getTooltipData = (
-  state: CategoricalChartState,
-  chartData: any[],
-  layout: LayoutType,
-  rangeObj?: RangeObj,
-): TooltipData | null => {
-  const rangeData: RangeObj = rangeObj || { x: state.chartX, y: state.chartY };
-
-  const pos: number | undefined = calculateTooltipPos(rangeData, layout);
-  const { orderedTooltipTicks: ticks, tooltipAxis: axis, tooltipTicks } = state;
-
-  const activeIndex = calculateActiveTickIndex(pos, ticks, tooltipTicks, axis?.axisType, axis?.range);
-
-  if (activeIndex >= 0 && tooltipTicks) {
-    const activeLabel: TickItem['value'] | undefined = tooltipTicks[activeIndex] && tooltipTicks[activeIndex].value;
-    const activePayload = getTooltipContent(state, chartData, activeIndex, activeLabel);
-    const activeCoordinate = getActiveCoordinate(layout, ticks, activeIndex, rangeData);
-
-    return {
-      activeTooltipIndex: activeIndex,
-      activeLabel,
-      activePayload,
-      activeCoordinate,
-    };
-  }
-
-  return null;
 };
 
 /**
@@ -924,7 +819,7 @@ export const generateCategoricalChart = ({
     }
 
     displayDefaultTooltip() {
-      const { children, data } = this.props;
+      const { children } = this.props;
 
       const tooltipElem = findChildByType(children, Tooltip);
       // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
@@ -945,13 +840,12 @@ export const generateCategoricalChart = ({
       }
 
       const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      const activePayload = getTooltipContent(this.state, data, defaultIndex, activeLabel);
-
       const nextState = {
         activeTooltipIndex: defaultIndex,
         isTooltipActive: true,
         activeLabel,
-        activePayload,
+        // @ts-expect-error we're about to remove this
+        activePayload: null,
       };
 
       this.setState(nextState);
@@ -1056,7 +950,6 @@ export const generateCategoricalChart = ({
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
-          ...getTooltipData(prevState, data, layout),
           updateId: prevState.updateId + 1,
         };
 
@@ -1189,15 +1082,6 @@ export const generateCategoricalChart = ({
         const yValue: number | null = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
 
         return { ...e, xValue, yValue };
-      }
-
-      const toolTipData = getTooltipData(this.state, this.props.data, this.props.layout, rangeObj);
-
-      if (toolTipData) {
-        return {
-          ...e,
-          ...toolTipData,
-        };
       }
 
       return null;

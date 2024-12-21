@@ -114,6 +114,7 @@
   "lib/state/selectors/barSelectors.js",
   "lib/state/selectors/brushSelectors.js",
   "lib/state/selectors/combiners",
+  "lib/state/selectors/combiners/combineActiveLabel.js",
   "lib/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "lib/state/selectors/containerSelectors.js",
   "lib/state/selectors/dataSelectors.js",

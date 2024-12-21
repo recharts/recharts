@@ -11,9 +11,8 @@ import { TooltipBoundingBox } from './TooltipBoundingBox';
 
 import { Global } from '../util/Global';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
-import { AllowInDimension, AnimationDuration, AnimationTiming, Coordinate } from '../util/types';
+import { AllowInDimension, AnimationDuration, AnimationTiming, ChartCoordinate, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
-import { TooltipContextValue } from '../context/tooltipContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
@@ -39,8 +38,13 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
   return entry.dataKey;
 }
 
-type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> &
-  Pick<TooltipContextValue, 'label' | 'payload' | 'coordinate' | 'active'> & { accessibilityLayer: boolean };
+type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
+  label: string;
+  payload: any[];
+  coordinate: ChartCoordinate;
+  active: boolean;
+  accessibilityLayer: boolean;
+};
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
   content: ContentType<TValue, TName>,

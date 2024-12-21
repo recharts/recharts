@@ -114,6 +114,7 @@
   "types/state/selectors/barSelectors.d.ts",
   "types/state/selectors/brushSelectors.d.ts",
   "types/state/selectors/combiners",
+  "types/state/selectors/combiners/combineActiveLabel.d.ts",
   "types/state/selectors/combiners/combineAxisRangeWithReverse.d.ts",
   "types/state/selectors/containerSelectors.d.ts",
   "types/state/selectors/dataSelectors.d.ts",

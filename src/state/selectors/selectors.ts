@@ -36,7 +36,7 @@ import {
   TickItem,
   TooltipEventType,
 } from '../../util/types';
-import { findEntryInArray, isNan } from '../../util/DataUtils';
+import { findEntryInArray } from '../../util/DataUtils';
 import { TooltipTrigger } from '../../chart/types';
 import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
@@ -46,6 +46,7 @@ import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartOffset } from './selectChartOffset';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
+import { combineActiveLabel } from './combiners/combineActiveLabel';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -284,17 +285,7 @@ export const selectActiveLabel: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: number | undefined,
-) => string | undefined = createSelector(
-  selectTooltipAxisTicks,
-  selectActiveIndex,
-  (tooltipTicks: ReadonlyArray<TickItem>, activeIndex: TooltipIndex): string | undefined => {
-    const n = Number(activeIndex);
-    if (isNan(n) || activeIndex == null) {
-      return undefined;
-    }
-    return n >= 0 ? tooltipTicks?.[n]?.value : undefined;
-  },
-);
+) => string | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
 
 function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
