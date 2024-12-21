@@ -175,38 +175,6 @@ export const calculateActiveTickIndex = (
   return index;
 };
 
-/**
- * @deprecated render child components as children instead of reading DOM elements and passing them around
- * Get the main color of each graphic item
- * @param  {ReactElement} item A graphic item
- * @return {String}            Color
- */
-export const getMainColorOfGraphicItem = (item: {
-  type: { displayName: string };
-  props: { stroke: string; fill: string };
-}) => {
-  const {
-    type: { displayName },
-  } = item as any; // TODO: check if displayName is valid.
-  const { stroke, fill } = item.props;
-  let result;
-
-  switch (displayName) {
-    case 'Line':
-      result = stroke;
-      break;
-    case 'Area':
-    case 'Radar':
-      result = stroke && stroke !== 'none' ? stroke : fill;
-      break;
-    default:
-      result = fill;
-      break;
-  }
-
-  return result;
-};
-
 export type BarPositionPosition = {
   /**
    * Offset is returned always from zero position.
