@@ -18,7 +18,6 @@ import {
 
 import { ReactElement } from 'react';
 import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId, upperFirst } from './DataUtils';
-import { filterProps } from './ReactUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
@@ -1072,46 +1071,6 @@ export const parseDomainOfCategoryAxis = <T>(
   }
 
   return specifiedDomain;
-};
-
-/**
- * @deprecated instead use {@link getTooltipEntry}
- * @param graphicalItem do not use
- * @param payload do not use
- * @return do not use
- */
-export const getTooltipItem = (
-  graphicalItem: {
-    type: { displayName: string };
-    props: {
-      stroke: string;
-      fill: string;
-      dataKey: DataKey<any>;
-      name: string;
-      unit: string;
-      formatter: any;
-      tooltipType: any;
-      chartType: any;
-      hide: boolean;
-    };
-  },
-  payload: any,
-) => {
-  const { dataKey, name, unit, formatter, tooltipType, chartType, hide } = graphicalItem.props;
-
-  return {
-    ...filterProps(graphicalItem, false),
-    dataKey,
-    unit,
-    formatter,
-    name: name || dataKey,
-    color: getMainColorOfGraphicItem(graphicalItem),
-    value: getValueByDataKey(payload, dataKey),
-    type: tooltipType,
-    payload,
-    chartType,
-    hide,
-  };
 };
 
 export function getTooltipEntry({
