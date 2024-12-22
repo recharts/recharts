@@ -114,10 +114,48 @@ export type TooltipSyncState = {
   coordinate: Coordinate | undefined;
 };
 
+/**
+ * A generic state for user interaction with the chart.
+ * User interaction can come through multiple channels: mouse events, keyboard events, or hardcoded in props, or synchronised from other charts.
+ *
+ * Each of the interaction states is represented as TooltipInteractionState,
+ * and then the selectors and Tooltip will decide which of the interaction states to use.
+ */
 export type TooltipInteractionState = {
+  /**
+   * If user interaction is in progress or not.
+   * Why is this its own property? Why is this not computed from the index?
+   * Certainly if index !== -1 then the tooltip is active, right?
+   * Well not so fast. Recharts allows Tooltips can be set to `active=true`
+   * which means the tooltip remains displayed after the user stops interacting.
+   * - This implies that we cannot set index to <empty value> after interaction ends,
+   *   because the chart must remember the last position just in case the `active` prop on Tooltip is set to true.
+   */
   active: boolean;
+  /**
+   * This is the current data index that is set for the chart.
+   * This can come from mouse events, keyboard events, or hardcoded in props
+   * in property `defaultIndex` on Tooltip.
+   */
   index: TooltipIndex;
+  /**
+   * DataKey filter.
+   *
+   * In case of multiple graphical items, this is the dataKey that is set for the item.
+   * Very useful for `Tooltip.shared=false`, where activeIndex can display multiple values,
+   * but we only want to display one of them.
+   *
+   * If we want to interact with all the graphical items, then this is undefined.
+   * This is the case for eventTooltipType === 'axis' for example.
+   */
   dataKey: DataKey<any> | undefined;
+  /**
+   * The Coordinate where user last interacted with the chart. This needs saved so we can continue to render the tooltip at that point.
+   * This is undefined on several occasions:
+   * - before the user started interacting with the chart,
+   * - when the chart is controlled programmatically through `defaultIndex` prop
+   * - when the chart is controlled using keyboard interactions
+   */
   coordinate: Coordinate | undefined;
 };
 
@@ -141,22 +179,6 @@ export type TooltipState = {
    */
   itemInteraction: {
     click: TooltipInteractionState;
-    /**
-     * If user interaction with an item is in progress or not.
-     * Why is this its own property? Why is this not computed from the index?
-     * Certainly if index !== -1 then the tooltip is active, right?
-     * Well not so fast. Recharts allows Tooltips can be set to `active=true`
-     * which means the tooltip remains displayed after the user stops interacting.
-     * - This implies that we cannot set index to -1 after interaction ends,
-     *   because the chart must remember the last position just in case the `active` prop on Tooltip is set to true.
-     * If we decide to change the behaviour of the tooltip in the future
-     * then we might find we do not need this property but as far as keeping 2x behaviour intact, this is necessary.
-     */
-    // activeClick: boolean;
-    /**
-     * The ChartCoordinate last clicked by the user. This needs saved so we can continue to render the tooltip at that point.
-     */
-    // activeClickCoordinate: ChartCoordinate | undefined;
     /**
      * Why is hover activation separate from click activation? Because they are independent:
      * If a click is set, then mouseLeave should not clear it.
@@ -187,14 +209,6 @@ export type TooltipState = {
      * If there is nothing hovering over a chart item right now then this is undefined.
      */
     activeMouseOverDataKey: DataKey<any> | undefined;
-    /**
-     * Same as the index above but this one only gets set by clicking on a chart item.
-     */
-    // activeClickIndex: TooltipIndex;
-    /**
-     * Same as the dataKey above but this one only gets set by clicking on a chart item.
-     */
-    // activeClickDataKey: DataKey<any> | undefined;
   };
   /**
    * This is the state of interaction with the bar background - which will get mapped
