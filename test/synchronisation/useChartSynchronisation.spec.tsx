@@ -78,8 +78,8 @@ describe('useTooltipChartSynchronisation', () => {
             y: 200,
           },
           dataKey: undefined,
-          index: '1',
-          label: '1',
+          index: null,
+          label: undefined,
         }),
         expect.any(Symbol),
       );

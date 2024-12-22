@@ -142,6 +142,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     axisId,
   } = props;
   const dispatch = useAppDispatch();
+  const defaultIndexAsString: string | undefined =
+    typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex;
 
   useEffect(() => {
     dispatch(
@@ -150,25 +152,30 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
         trigger,
         axisId,
         active: activeFromProps,
-        defaultIndex: typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex,
+        defaultIndex: defaultIndexAsString,
       }),
     );
-  }, [dispatch, shared, trigger, axisId, activeFromProps, defaultIndex]);
+  }, [dispatch, shared, trigger, axisId, activeFromProps, defaultIndexAsString]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
 
+  const { activeIndex, isActive } = useAppSelector(state =>
+    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
+  );
+
   const payloadFromRedux = useAppSelector(state =>
-    selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
+    selectTooltipPayload(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const labelFromRedux = useAppSelector(state => selectActiveLabel(state, tooltipEventType, trigger, defaultIndex));
-  const { isActive: isTooltipActiveFromRedux, activeIndex } = useAppSelector(state =>
-    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
+  const labelFromRedux = useAppSelector(state =>
+    selectActiveLabel(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const coordinate = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex));
+  const coordinate = useAppSelector(state =>
+    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
+  );
   const payload: TooltipPayload = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
@@ -177,7 +184,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux;
+  const finalIsActive = activeFromProps ?? isActive;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 

@@ -47,7 +47,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { TooltipIndex, TooltipState } from '../tooltipSlice';
+import { TooltipIndex, TooltipInteractionState } from '../tooltipSlice';
 
 import {
   combineTooltipEventType,
@@ -56,6 +56,10 @@ import {
 } from './selectTooltipEventType';
 
 import { combineActiveLabel } from './combiners/combineActiveLabel';
+
+import { selectTooltipSettings } from './selectTooltipSettings';
+
+import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -315,58 +319,36 @@ export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray
   combineTicksOfTooltipAxis,
 );
 
-export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
-  [(state: RechartsRootState) => state.tooltip, selectDefaultTooltipEventType, selectValidateTooltipEventTypes],
-  (
-    tooltipState: TooltipState,
-    defaultTooltipEventType: TooltipEventType,
-    validateTooltipEventType: ReadonlyArray<TooltipEventType>,
-  ): TooltipIndex | undefined => {
-    const { settings } = tooltipState;
-
-    const tooltipEventType = combineTooltipEventType(
-      settings.shared,
-      defaultTooltipEventType,
-      validateTooltipEventType,
-    );
-
-    if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
-      // Synchronised events always override other events
-      return tooltipState.syncInteraction.index;
-    }
-    if (settings.trigger === 'click') {
-      if (tooltipEventType === 'axis') {
-        if (tooltipState.axisInteraction.activeClickAxisIndex != null) {
-          if (tooltipState.axisInteraction.activeClick) {
-            return tooltipState.axisInteraction.activeClickAxisIndex;
-          }
-          return undefined;
-        }
-      } else if (tooltipState.itemInteraction.activeClickIndex != null) {
-        if (tooltipState.itemInteraction.activeClick) {
-          return tooltipState.itemInteraction.activeClickIndex;
-        }
-        return undefined;
-      }
-    } else if (tooltipEventType === 'axis') {
-      if (tooltipState.axisInteraction.activeMouseOverAxisIndex != null) {
-        if (tooltipState.axisInteraction.activeHover) {
-          return tooltipState.axisInteraction.activeMouseOverAxisIndex;
-        }
-        return undefined;
-      }
-    } else if (tooltipState.itemInteraction.activeMouseOverIndex != null) {
-      if (tooltipState.itemInteraction.activeHover) {
-        return tooltipState.itemInteraction.activeMouseOverIndex;
-      }
-      return undefined;
-    }
-    if (settings.defaultIndex != null) {
-      return settings.defaultIndex;
-    }
-    return undefined;
-  },
+const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | undefined = createSelector(
+  [selectDefaultTooltipEventType, selectValidateTooltipEventTypes, selectTooltipSettings],
+  (defaultTooltipEventType, validateTooltipEventType, settings) =>
+    combineTooltipEventType(settings.shared, defaultTooltipEventType, validateTooltipEventType),
 );
+
+const selectTooltipInteractionState: (state: RechartsRootState) => TooltipInteractionState | undefined = createSelector(
+  [
+    (state: RechartsRootState) => state.tooltip,
+    selectTooltipEventType,
+    (state: RechartsRootState) => state.tooltip.settings.trigger,
+    (state: RechartsRootState) => state.tooltip.settings.defaultIndex,
+  ],
+  combineTooltipInteractionState,
+);
+
+export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteraction: TooltipInteractionState): TooltipIndex | undefined => tooltipInteraction?.index,
+);
+
+// export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
+//   [selectTooltipInteractionState],
+//   (tooltipInteraction: TooltipInteractionState): TooltipIndex | undefined => {
+//     if (tooltipInteraction.active && tooltipInteraction.index != null) {
+//       return tooltipInteraction.index;
+//     }
+//     return undefined;
+//   },
+// );
 
 export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxisTicks, selectActiveTooltipIndex],

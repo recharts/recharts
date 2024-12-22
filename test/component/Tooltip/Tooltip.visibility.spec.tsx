@@ -743,7 +743,7 @@ describe('Tooltip visibility', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith('Page C');
     });
 
@@ -771,7 +771,7 @@ describe('Tooltip visibility', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(1);
 
       showTooltipOnCoordinate(
         container,
@@ -783,7 +783,7 @@ describe('Tooltip visibility', () => {
         activeIndex: '3',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -886,24 +886,38 @@ describe('Tooltip visibility', () => {
 
       const expectedBeforeHover: TooltipState = {
         axisInteraction: {
-          activeClick: false,
-          activeClickAxisDataKey: undefined,
-          activeClickAxisIndex: null,
-          activeClickCoordinate: undefined,
-          activeHover: false,
-          activeMouseOverAxisDataKey: undefined,
-          activeMouseOverAxisIndex: null,
-          activeMouseOverCoordinate: undefined,
+          click: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
+          hover: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
         },
         itemInteraction: {
-          activeClick: false,
-          activeClickCoordinate: undefined,
-          activeClickDataKey: undefined,
-          activeClickIndex: null,
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
+          click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+        },
+        keyboardInteraction: {
+          active: false,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
         },
         syncInteraction: {
           active: false,
@@ -944,38 +958,52 @@ describe('Tooltip visibility', () => {
 
       const expectedAfterHover: TooltipState = {
         axisInteraction: {
-          activeClick: false,
-          activeClickAxisDataKey: undefined,
-          activeClickAxisIndex: null,
-          activeClickCoordinate: undefined,
-          activeHover: true,
-          activeMouseOverAxisDataKey: undefined,
-          activeMouseOverAxisIndex: '5',
-          activeMouseOverCoordinate: {
-            // I don't think we need the whole axis to be included here but this is what the generator did
-            angle: -210,
-            // @ts-expect-error typescript says this property should not be here at all
-            clockWise: false,
-            cx: 300,
-            cy: 300,
-            endAngle: -270,
-            innerRadius: 0,
-            outerRadius: 236,
-            radius: 141.4213562373095,
-            startAngle: 90,
-            x: 177.5255128608411,
-            y: 229.28932188134524,
+          click: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
+          hover: {
+            active: true,
+            dataKey: undefined,
+            index: '5',
+            coordinate: {
+              // I don't think we need the whole axis to be included here but this is what the generator did
+              // @ts-expect-error typescript says this property should not be here at all
+              angle: -210,
+              clockWise: false,
+              cx: 300,
+              cy: 300,
+              endAngle: -270,
+              innerRadius: 0,
+              outerRadius: 236,
+              radius: 141.4213562373095,
+              startAngle: 90,
+              x: 177.5255128608411,
+              y: 229.28932188134524,
+            },
           },
         },
         itemInteraction: {
-          activeClick: false,
-          activeClickCoordinate: undefined,
-          activeClickDataKey: undefined,
-          activeClickIndex: null,
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
+          click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+        },
+        keyboardInteraction: {
+          active: false,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
         },
         syncInteraction: {
           active: false,
@@ -1014,7 +1042,7 @@ describe('Tooltip visibility', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith('Page C');
     });
 
@@ -1198,7 +1226,7 @@ describe('Tooltip visibility', () => {
       });
 
       it('should select active label when given explicit index', () => {
-        const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+        const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
         expect(spy).toHaveBeenLastCalledWith(2400);
       });
 
@@ -1280,7 +1308,7 @@ describe('Tooltip visibility', () => {
           activeIndex: null,
           isActive: false,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
 
         showTooltip(container, composedChartMouseHoverTooltipSelector);
 
@@ -1288,7 +1316,7 @@ describe('Tooltip visibility', () => {
           activeIndex: '0',
           isActive: true,
         });
-        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render tooltip payload for hidden items', () => {

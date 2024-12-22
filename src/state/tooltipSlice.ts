@@ -106,12 +106,66 @@ export type TooltipSettingsState = {
   defaultIndex: TooltipIndex | undefined;
 };
 
-export type TooltipSyncState = {
+/**
+ * A generic state for user interaction with the chart.
+ * User interaction can come through multiple channels: mouse events, keyboard events, or hardcoded in props, or synchronised from other charts.
+ *
+ * Each of the interaction states is represented as TooltipInteractionState,
+ * and then the selectors and Tooltip will decide which of the interaction states to use.
+ */
+export type TooltipInteractionState = {
+  /**
+   * If user interaction is in progress or not.
+   * Why is this its own property? Why is this not computed from the index?
+   * Certainly if index !== -1 then the tooltip is active, right?
+   * Well not so fast. Recharts allows Tooltips can be set to `active=true`
+   * which means the tooltip remains displayed after the user stops interacting.
+   * - This implies that we cannot set index to <empty value> after interaction ends,
+   *   because the chart must remember the last position just in case the `active` prop on Tooltip is set to true.
+   */
   active: boolean;
+  /**
+   * This is the current data index that is set for the chart.
+   * This can come from mouse events, keyboard events, or hardcoded in props
+   * in property `defaultIndex` on Tooltip.
+   */
   index: TooltipIndex;
+  /**
+   * DataKey filter.
+   *
+   * In case of multiple graphical items, this is the dataKey that is set for the item.
+   * Very useful for `Tooltip.shared=false`, where activeIndex can display multiple values,
+   * but we only want to display one of them.
+   *
+   * If we want to interact with all the graphical items, then this is undefined.
+   * This is the case for eventTooltipType === 'axis' for example.
+   */
   dataKey: DataKey<any> | undefined;
-  label: string | undefined;
+  /**
+   * The Coordinate where user last interacted with the chart. This needs saved so we can continue to render the tooltip at that point.
+   * This is undefined on several occasions:
+   * - before the user started interacting with the chart,
+   * - when the chart is controlled programmatically through `defaultIndex` prop
+   * - when the chart is controlled using keyboard interactions
+   */
   coordinate: Coordinate | undefined;
+};
+
+export type TooltipSyncState = TooltipInteractionState & {
+  /**
+   * Tooltip syncronisation is a feature that allows multiple charts to share the same interaction state.
+   * This comes with one specialty - the syncMethod. `syncMethod=value` allows the user to synchronise charts
+   * based on the active label (which is rendered as the title of the Tooltip).
+   * To allow that, we need the label to be stored in the sync state.
+   */
+  label: string | undefined;
+};
+
+export const noInteraction: TooltipInteractionState = {
+  active: false,
+  index: null,
+  dataKey: undefined,
+  coordinate: undefined,
 };
 
 /**
@@ -126,60 +180,13 @@ export type TooltipState = {
    * This is the state of interactions with individual graphical items.
    */
   itemInteraction: {
-    /**
-     * If user interaction with an item is in progress or not.
-     * Why is this its own property? Why is this not computed from the index?
-     * Certainly if index !== -1 then the tooltip is active, right?
-     * Well not so fast. Recharts allows Tooltips can be set to `active=true`
-     * which means the tooltip remains displayed after the user stops interacting.
-     * - This implies that we cannot set index to -1 after interaction ends,
-     *   because the chart must remember the last position just in case the `active` prop on Tooltip is set to true.
-     * If we decide to change the behaviour of the tooltip in the future
-     * then we might find we do not need this property but as far as keeping 2x behaviour intact, this is necessary.
-     */
-    activeClick: boolean;
-    /**
-     * The ChartCoordinate last clicked by the user. This needs saved so we can continue to render the tooltip at that point.
-     */
-    activeClickCoordinate: ChartCoordinate | undefined;
+    click: TooltipInteractionState;
     /**
      * Why is hover activation separate from click activation? Because they are independent:
      * If a click is set, then mouseLeave should not clear it.
      * - the opposite is technically true too - but it's difficult to click on things without also hovering.
      */
-    activeHover: boolean;
-    /**
-     * The ChartCoordinate last hovered by the user. Render the Tooltip at this coordinate as it updates on mouse movement.
-     */
-    activeMouseOverCoordinate: ChartCoordinate;
-    /**
-     * This is the current data index that is set for the chart.
-     * This can come from mouse events, keyboard events, or hardcoded in props
-     * in property `defaultIndex` on Tooltip.
-     *
-     * This is only set for mouse hover.
-     *
-     * If there is nothing hovering over a chart item right now then this is -1.
-     */
-    activeMouseOverIndex: TooltipIndex;
-    /**
-     * In case of multiple graphical items, this is the dataKey that is set for the item.
-     * Very useful for `Tooltip.shared=false`, where activeIndex can display multiple values,
-     * but we only want to display one of them.
-     *
-     * This is only set for mouse hover.
-     *
-     * If there is nothing hovering over a chart item right now then this is undefined.
-     */
-    activeMouseOverDataKey: DataKey<any> | undefined;
-    /**
-     * Same as the index above but this one only gets set by clicking on a chart item.
-     */
-    activeClickIndex: TooltipIndex;
-    /**
-     * Same as the dataKey above but this one only gets set by clicking on a chart item.
-     */
-    activeClickDataKey: DataKey<any> | undefined;
+    hover: TooltipInteractionState;
   };
   /**
    * This is the state of interaction with the bar background - which will get mapped
@@ -188,15 +195,10 @@ export type TooltipState = {
    * Axis interaction is independent of item interaction so the state must also be independent.
    */
   axisInteraction: {
-    activeClick: boolean;
-    activeClickCoordinate: ChartCoordinate | undefined;
-    activeHover: boolean;
-    activeMouseOverCoordinate: ChartCoordinate;
-    activeMouseOverAxisIndex: TooltipIndex;
-    activeMouseOverAxisDataKey: DataKey<any> | undefined;
-    activeClickAxisIndex: TooltipIndex;
-    activeClickAxisDataKey: DataKey<any> | undefined;
+    click: TooltipInteractionState;
+    hover: TooltipInteractionState;
   };
+  keyboardInteraction: TooltipInteractionState;
   /**
    * This part of the state is the information coming from other charts.
    * If there are two charts with the same syncId, events from one chart will be transferred
@@ -219,25 +221,14 @@ export type TooltipState = {
 
 export const initialState: TooltipState = {
   itemInteraction: {
-    activeClick: false,
-    activeClickCoordinate: undefined,
-    activeHover: false,
-    activeMouseOverCoordinate: undefined,
-    activeMouseOverIndex: null,
-    activeMouseOverDataKey: undefined,
-    activeClickIndex: null,
-    activeClickDataKey: undefined,
+    click: noInteraction,
+    hover: noInteraction,
   },
   axisInteraction: {
-    activeClick: false,
-    activeClickCoordinate: undefined,
-    activeHover: false,
-    activeMouseOverCoordinate: undefined,
-    activeMouseOverAxisIndex: null,
-    activeMouseOverAxisDataKey: undefined,
-    activeClickAxisIndex: null,
-    activeClickAxisDataKey: undefined,
+    click: noInteraction,
+    hover: noInteraction,
   },
+  keyboardInteraction: noInteraction,
   syncInteraction: {
     active: false,
     index: null,
@@ -278,10 +269,10 @@ const tooltipSlice = createSlice({
       state.settings = action.payload;
     },
     setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.itemInteraction.activeHover = true;
-      state.itemInteraction.activeMouseOverIndex = action.payload.activeIndex;
-      state.itemInteraction.activeMouseOverDataKey = action.payload.activeDataKey;
-      state.itemInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
+      state.itemInteraction.hover.active = true;
+      state.itemInteraction.hover.index = action.payload.activeIndex;
+      state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     mouseLeaveChart(state) {
       /*
@@ -291,29 +282,29 @@ const tooltipSlice = createSlice({
        * 2. We want to keep all the properties anyway just in case the tooltip has `active=true` prop
        * and continues being visible even after the mouse has left the chart.
        */
-      state.itemInteraction.activeHover = false;
-      state.axisInteraction.activeHover = false;
+      state.itemInteraction.hover.active = false;
+      state.axisInteraction.hover.active = false;
     },
     mouseLeaveItem(state) {
-      state.itemInteraction.activeHover = false;
+      state.itemInteraction.hover.active = false;
     },
     setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.itemInteraction.activeClick = true;
-      state.itemInteraction.activeClickIndex = action.payload.activeIndex;
-      state.itemInteraction.activeClickDataKey = action.payload.activeDataKey;
-      state.itemInteraction.activeClickCoordinate = action.payload.activeCoordinate;
+      state.itemInteraction.click.active = true;
+      state.itemInteraction.click.index = action.payload.activeIndex;
+      state.itemInteraction.click.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.axisInteraction.activeHover = true;
-      state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
-      state.axisInteraction.activeMouseOverAxisDataKey = action.payload.activeDataKey;
-      state.axisInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
+      state.axisInteraction.hover.active = true;
+      state.axisInteraction.hover.index = action.payload.activeIndex;
+      state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.axisInteraction.activeClick = true;
-      state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
-      state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
-      state.axisInteraction.activeClickCoordinate = action.payload.activeCoordinate;
+      state.axisInteraction.click.active = true;
+      state.axisInteraction.click.index = action.payload.activeIndex;
+      state.axisInteraction.click.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;

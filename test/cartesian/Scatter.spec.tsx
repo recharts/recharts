@@ -215,7 +215,7 @@ describe('<Scatter />', () => {
     ));
 
     it('should return tooltip payload', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,

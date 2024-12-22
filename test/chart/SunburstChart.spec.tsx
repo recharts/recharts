@@ -98,14 +98,18 @@ describe('<Sunburst />', () => {
         </SunburstChart>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
-        activeHover: false,
-        activeMouseOverCoordinate: undefined,
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
+        hover: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
 
@@ -115,57 +119,69 @@ describe('<Sunburst />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
         },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
+        hover: {
+          active: true,
+          index: '[0]',
+          dataKey: 'value',
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
+        click: {
+          active: true,
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
+          dataKey: 'value',
+          index: '[0]',
         },
-        activeClickDataKey: 'value',
-        activeClickIndex: '[0]',
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
+        hover: {
+          active: true,
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
+          dataKey: 'value',
+          index: '[0]',
         },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
+        click: {
+          active: true,
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
+          dataKey: 'value',
+          index: '[0]',
         },
-        activeClickDataKey: 'value',
-        activeClickIndex: '[0]',
-        activeHover: false,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
+        hover: {
+          active: false,
+          index: '[0]',
+          dataKey: 'value',
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
         },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
