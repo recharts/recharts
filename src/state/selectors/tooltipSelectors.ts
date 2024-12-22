@@ -47,7 +47,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { TooltipIndex, TooltipInteractionState, TooltipState } from '../tooltipSlice';
+import { TooltipIndex, TooltipInteractionState } from '../tooltipSlice';
 
 import {
   combineTooltipEventType,
@@ -58,6 +58,8 @@ import {
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 
 import { selectTooltipSettings } from './selectTooltipSettings';
+
+import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -324,54 +326,13 @@ const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | u
 );
 
 const selectTooltipInteractionState: (state: RechartsRootState) => TooltipInteractionState | undefined = createSelector(
-  [state => state.tooltip, selectTooltipEventType],
-  (tooltipState: TooltipState, tooltipEventType: TooltipEventType | undefined): TooltipInteractionState | undefined => {
-    const { trigger } = tooltipState.settings;
-
-    if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
-      // Synchronised events always override other events
-      return tooltipState.syncInteraction;
-    }
-
-    if (trigger === 'click') {
-      if (tooltipEventType === 'axis') {
-        if (tooltipState.axisInteraction.click.index != null) {
-          if (tooltipState.axisInteraction.click.active) {
-            return tooltipState.axisInteraction.click;
-          }
-          return undefined;
-        }
-      } else if (tooltipState.itemInteraction.click.index != null) {
-        if (tooltipState.itemInteraction.click.active) {
-          return tooltipState.itemInteraction.click;
-        }
-        return undefined;
-      }
-    } else if (tooltipEventType === 'axis') {
-      if (tooltipState.axisInteraction.hover.index != null) {
-        if (tooltipState.axisInteraction.hover.active) {
-          return tooltipState.axisInteraction.hover;
-        }
-        return undefined;
-      }
-    } else if (tooltipState.itemInteraction.hover.index != null) {
-      if (tooltipState.itemInteraction.hover.active) {
-        return tooltipState.itemInteraction.hover;
-      }
-      return undefined;
-    }
-
-    if (tooltipState.settings.defaultIndex != null) {
-      return {
-        active: true,
-        coordinate: undefined,
-        dataKey: undefined,
-        index: tooltipState.settings.defaultIndex,
-      };
-    }
-
-    return undefined;
-  },
+  [
+    (state: RechartsRootState) => state.tooltip,
+    selectTooltipEventType,
+    (state: RechartsRootState) => state.tooltip.settings.trigger,
+    (state: RechartsRootState) => state.tooltip.settings.defaultIndex,
+  ],
+  combineTooltipInteractionState,
 );
 
 export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(

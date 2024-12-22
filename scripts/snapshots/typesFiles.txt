@@ -116,6 +116,7 @@
   "types/state/selectors/combiners",
   "types/state/selectors/combiners/combineActiveLabel.d.ts",
   "types/state/selectors/combiners/combineAxisRangeWithReverse.d.ts",
+  "types/state/selectors/combiners/combineTooltipInteractionState.d.ts",
   "types/state/selectors/containerSelectors.d.ts",
   "types/state/selectors/dataSelectors.d.ts",
   "types/state/selectors/funnelSelectors.d.ts",
