@@ -585,8 +585,8 @@ describe('Tooltip synchronization', () => {
     it('should synchronise active index for graphical items', () => {
       const { wrapperA, spyA, spyB } = renderTestCase(selectActiveTooltipIndex);
 
-      expect(spyA).toHaveBeenLastCalledWith(undefined);
-      expect(spyB).toHaveBeenLastCalledWith(undefined);
+      expect(spyA).toHaveBeenLastCalledWith(null);
+      expect(spyB).toHaveBeenLastCalledWith(null);
 
       showTooltip(wrapperA, radialBarChartMouseHoverTooltipSelector);
 

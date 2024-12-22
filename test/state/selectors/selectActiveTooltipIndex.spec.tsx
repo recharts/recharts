@@ -22,7 +22,7 @@ describe('selectActiveTooltipIndex', () => {
 
       it('should return undefined before any interaction', () => {
         const { spy } = renderTestCase(selectActiveTooltipIndex);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return index after mouse hover, and undefined again after mouse leave', () => {
@@ -30,17 +30,17 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = showTooltip(container, '.recharts-radial-bar-sector');
         expect(spy).toHaveBeenLastCalledWith('3');
         fireEvent.mouseLeave(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return undefined after clicking on a sector', () => {
         const { container, spy } = renderTestCase(selectActiveTooltipIndex);
         const trigger = container.querySelector('.recharts-radial-bar-sector');
         assertNotNull(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
         expect(spy).toHaveBeenCalledTimes(1);
         fireEvent.click(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
         expect(spy).toHaveBeenCalledTimes(1);
       });
     });
@@ -64,7 +64,7 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = showTooltip(container, radialBarChartMouseHoverTooltipSelector);
         expect(spy).toHaveBeenLastCalledWith('3');
         fireEvent.mouseLeave(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return the default index after clicking on a sector', () => {
@@ -90,7 +90,7 @@ describe('selectActiveTooltipIndex', () => {
 
       it('should return undefined before any interaction', () => {
         const { spy } = renderTestCase(selectActiveTooltipIndex);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return index after mouse hover, and undefined again after mouse leave', () => {
@@ -98,17 +98,17 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = showTooltip(container, '.recharts-radial-bar-sector');
         expect(spy).toHaveBeenLastCalledWith('0');
         fireEvent.mouseLeave(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return undefined after clicking on a sector', () => {
         const { container, spy } = renderTestCase(selectActiveTooltipIndex);
         const trigger = container.querySelector('.recharts-radial-bar-sector');
         assertNotNull(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
         expect(spy).toHaveBeenCalledTimes(1);
         fireEvent.click(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
         expect(spy).toHaveBeenCalledTimes(1);
       });
     });
@@ -132,7 +132,7 @@ describe('selectActiveTooltipIndex', () => {
         const trigger = showTooltip(container, '.recharts-radial-bar-sector');
         expect(spy).toHaveBeenLastCalledWith('0');
         fireEvent.mouseLeave(trigger);
-        expect(spy).toHaveBeenLastCalledWith(undefined);
+        expect(spy).toHaveBeenLastCalledWith(null);
       });
 
       it('should return the default index after clicking on a sector', () => {
@@ -159,14 +159,14 @@ describe('selectActiveTooltipIndex', () => {
 
         it('should return undefined before any interaction', () => {
           const { spy } = renderTestCase(selectActiveTooltipIndex);
-          expect(spy).toHaveBeenLastCalledWith(undefined);
+          expect(spy).toHaveBeenLastCalledWith(null);
         });
 
         it('should return index after clicking on a chart, and continue returning that index after clicking again', () => {
           const { container, spy } = renderTestCase(selectActiveTooltipIndex);
           const trigger = container.querySelector(radialBarChartMouseHoverTooltipSelector);
           assertNotNull(trigger);
-          expect(spy).toHaveBeenLastCalledWith(undefined);
+          expect(spy).toHaveBeenLastCalledWith(null);
           expect(spy).toHaveBeenCalledTimes(1);
           fireEvent.click(trigger, { clientX: 200, clientY: 200 });
           expect(spy).toHaveBeenLastCalledWith('3');
@@ -179,9 +179,9 @@ describe('selectActiveTooltipIndex', () => {
         it('should return undefined after mouse hover', () => {
           const { container, spy } = renderTestCase(selectActiveTooltipIndex);
           const trigger = showTooltip(container, '.recharts-radial-bar-sector');
-          expect(spy).toHaveBeenLastCalledWith(undefined);
+          expect(spy).toHaveBeenLastCalledWith(null);
           fireEvent.mouseLeave(trigger);
-          expect(spy).toHaveBeenLastCalledWith(undefined);
+          expect(spy).toHaveBeenLastCalledWith(null);
         });
       });
 

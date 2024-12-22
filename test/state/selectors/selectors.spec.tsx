@@ -509,8 +509,9 @@ describe('selectActiveIndex', () => {
     expect(selectActiveIndex(initialState, 'item', 'click', '7')).toBe(expected);
   });
 
-  it('should ignore defaultIndex if item hover index is set', () => {
+  it('should ignore defaultIndex if item hover index is set and active', () => {
     const state = produceState(draft => {
+      draft.tooltip.itemInteraction.hover.active = true;
       draft.tooltip.itemInteraction.hover.index = '7';
     });
     expect(selectActiveIndex(state, 'axis', 'hover', '8')).toBe('8' satisfies TooltipIndex);
@@ -521,6 +522,7 @@ describe('selectActiveIndex', () => {
 
   it('should return item hover index', () => {
     const state = produceState(draft => {
+      draft.tooltip.itemInteraction.hover.active = true;
       draft.tooltip.itemInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
@@ -528,6 +530,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return item click index', () => {
     const state = produceState(draft => {
+      draft.tooltip.itemInteraction.click.active = true;
       draft.tooltip.itemInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
@@ -535,6 +538,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return axis hover index', () => {
     const state = produceState(draft => {
+      draft.tooltip.axisInteraction.hover.active = true;
       draft.tooltip.axisInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
@@ -542,6 +546,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return axis click index', () => {
     const state = produceState(draft => {
+      draft.tooltip.axisInteraction.click.active = true;
       draft.tooltip.axisInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
