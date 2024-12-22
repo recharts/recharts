@@ -106,14 +106,6 @@ export type TooltipSettingsState = {
   defaultIndex: TooltipIndex | undefined;
 };
 
-export type TooltipSyncState = {
-  active: boolean;
-  index: TooltipIndex;
-  dataKey: DataKey<any> | undefined;
-  label: string | undefined;
-  coordinate: Coordinate | undefined;
-};
-
 /**
  * A generic state for user interaction with the chart.
  * User interaction can come through multiple channels: mouse events, keyboard events, or hardcoded in props, or synchronised from other charts.
@@ -157,6 +149,16 @@ export type TooltipInteractionState = {
    * - when the chart is controlled using keyboard interactions
    */
   coordinate: Coordinate | undefined;
+};
+
+export type TooltipSyncState = TooltipInteractionState & {
+  /**
+   * Tooltip syncronisation is a feature that allows multiple charts to share the same interaction state.
+   * This comes with one specialty - the syncMethod. `syncMethod=value` allows the user to synchronise charts
+   * based on the active label (which is rendered as the title of the Tooltip).
+   * To allow that, we need the label to be stored in the sync state.
+   */
+  label: string | undefined;
 };
 
 const noInteraction: TooltipInteractionState = {
