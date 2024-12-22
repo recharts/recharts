@@ -73,13 +73,10 @@ describe('useTooltipChartSynchronisation', () => {
         'my-sync-id',
         setSyncInteraction({
           active: false,
-          coordinate: {
-            x: 202.5,
-            y: 200,
-          },
+          coordinate: undefined,
           dataKey: undefined,
-          index: '1',
-          label: '1',
+          index: null,
+          label: undefined,
         }),
         expect.any(Symbol),
       );

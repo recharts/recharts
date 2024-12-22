@@ -57,6 +57,15 @@ export function useSynchronisedEventsFromOtherCharts() {
           }
           const tickByValue = tooltipTicks.find(tick => tick.value === action.payload.label);
           if (tickByValue == null) {
+            dispatch(
+              setSyncInteraction({
+                active: false,
+                coordinate: undefined,
+                dataKey: undefined,
+                index: null,
+                label: undefined,
+              }),
+            );
             return;
           }
           const { x, y } = action.payload.coordinate;
