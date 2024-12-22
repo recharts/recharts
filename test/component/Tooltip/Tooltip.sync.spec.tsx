@@ -32,6 +32,7 @@ import {
   getTooltip,
   hideTooltip,
   showTooltip,
+  showTooltipOnCoordinate,
 } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -681,6 +682,90 @@ describe('Tooltip synchronization', () => {
       expectTooltipNotVisible(wrapperA);
       expectTooltipNotVisible(wrapperB);
     });
+  });
+
+  describe('in two LineCharts where first one has Tooltip active=true and the other has no active prop', () => {
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id">
+          <Line isAnimationActive={false} name="BookOne" type="monotone" dataKey="uv" />
+          <XAxis dataKey="name" />
+          <Tooltip active />
+          {children}
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id">
+          <Line isAnimationActive={false} name="BookTwo" type="monotone" dataKey="uv" />
+          <XAxis dataKey="name" />
+          <Tooltip />
+          {children}
+        </LineChart>
+      ),
+    );
+
+    it('should start with both tooltips hidden', () => {
+      const { wrapperA, wrapperB } = renderTestCase();
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+    });
+
+    it('should show both tooltips when hovering over chart A', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+      expectTooltipPayload(wrapperA, 'Page C', ['BookOne : 300']);
+      expectTooltipPayload(wrapperB, 'Page C', ['BookTwo : 300']);
+    });
+
+    it('should continue showing both tooltips after mouse leaves the chart A - because of the active prop!', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+      expectTooltipPayload(wrapperA, 'Page C', ['BookOne : 300']);
+      expectTooltipPayload(wrapperB, 'Page C', ['BookTwo : 300']);
+    });
+
+    it('should show both tooltips when hovering over chart B', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperB, lineChartMouseHoverTooltipSelector, debug);
+      expectTooltipPayload(wrapperA, 'Page C', ['BookOne : 300']);
+      expectTooltipPayload(wrapperB, 'Page C', ['BookTwo : 300']);
+    });
+
+    it('should hide both tooltips after mouse leaves the chart B - because it has no active prop', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperB, lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(wrapperB, lineChartMouseHoverTooltipSelector);
+      expectTooltipNotVisible(wrapperA);
+      expectTooltipNotVisible(wrapperB);
+    });
+
+    it('after switching charts from B to A, it should follow the mouse and update coordinates on both charts', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperB, lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(wrapperB, lineChartMouseHoverTooltipSelector);
+      showTooltipOnCoordinate(wrapperA, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
+
+      expectTooltipPayload(wrapperA, 'Page B', ['BookOne : 300']);
+      expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
+    });
+
+    /*
+     * This test fails because Recharts decides that the chart A has active=true,
+     * therefore the last synchronised value should stay on forever.
+     */
+    it.fails(
+      'after switching charts from A to B, it should follow the mouse and update coordinates on both charts',
+      () => {
+        const { wrapperA, wrapperB, debug } = renderTestCase();
+        showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+        hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+        showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
+
+        expectTooltipPayload(wrapperA, 'Page B', ['BookOne : 300']);
+        expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
+      },
+    );
   });
 });
 
