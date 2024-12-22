@@ -896,14 +896,16 @@ describe('Tooltip visibility', () => {
           activeMouseOverCoordinate: undefined,
         },
         itemInteraction: {
-          activeClick: false,
-          activeClickCoordinate: undefined,
-          activeClickDataKey: undefined,
-          activeClickIndex: null,
           activeHover: false,
           activeMouseOverCoordinate: undefined,
           activeMouseOverDataKey: undefined,
           activeMouseOverIndex: null,
+          click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
         },
         syncInteraction: {
           active: false,
@@ -968,14 +970,16 @@ describe('Tooltip visibility', () => {
           },
         },
         itemInteraction: {
-          activeClick: false,
-          activeClickCoordinate: undefined,
-          activeClickDataKey: undefined,
-          activeClickIndex: null,
           activeHover: false,
           activeMouseOverCoordinate: undefined,
           activeMouseOverDataKey: undefined,
           activeMouseOverIndex: null,
+          click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
         },
         syncInteraction: {
           active: false,

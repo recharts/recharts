@@ -528,7 +528,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return item click index', () => {
     const state = produceState(draft => {
-      draft.tooltip.itemInteraction.activeClickIndex = '7';
+      draft.tooltip.itemInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
     expect(selectActiveIndex(state, 'item', 'click', 11)).toBe(expected);

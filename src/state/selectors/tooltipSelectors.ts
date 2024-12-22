@@ -342,9 +342,9 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
           }
           return undefined;
         }
-      } else if (tooltipState.itemInteraction.activeClickIndex != null) {
-        if (tooltipState.itemInteraction.activeClick) {
-          return tooltipState.itemInteraction.activeClickIndex;
+      } else if (tooltipState.itemInteraction.click.index != null) {
+        if (tooltipState.itemInteraction.click.active) {
+          return tooltipState.itemInteraction.click.index;
         }
         return undefined;
       }

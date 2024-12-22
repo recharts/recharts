@@ -106,14 +106,16 @@ describe('<Sankey />', () => {
         </Sankey>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
         activeHover: false,
         activeMouseOverCoordinate: undefined,
         activeMouseOverDataKey: undefined,
         activeMouseOverIndex: null,
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
 
@@ -123,10 +125,6 @@ describe('<Sankey />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
         activeHover: true,
         activeMouseOverCoordinate: {
           x: 80,
@@ -134,19 +132,18 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'link-0',
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 80,
-          y: 142.14339872499383,
-        },
-        activeClickDataKey: 'value',
-        activeClickIndex: 'link-0',
         activeHover: true,
         activeMouseOverCoordinate: {
           x: 80,
@@ -154,19 +151,21 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'link-0',
+        click: {
+          active: true,
+          coordinate: {
+            x: 80,
+            y: 142.14339872499383,
+          },
+          dataKey: 'value',
+          index: 'link-0',
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 80,
-          y: 142.14339872499383,
-        },
-        activeClickDataKey: 'value',
-        activeClickIndex: 'link-0',
         activeHover: false,
         activeMouseOverCoordinate: {
           x: 80,
@@ -174,6 +173,15 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'link-0',
+        click: {
+          active: true,
+          coordinate: {
+            x: 80,
+            y: 142.14339872499383,
+          },
+          dataKey: 'value',
+          index: 'link-0',
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });
@@ -192,14 +200,16 @@ describe('<Sankey />', () => {
         </Sankey>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
         activeHover: false,
         activeMouseOverCoordinate: undefined,
         activeMouseOverDataKey: undefined,
         activeMouseOverIndex: null,
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
 
@@ -209,10 +219,6 @@ describe('<Sankey />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: false,
-        activeClickCoordinate: undefined,
-        activeClickDataKey: undefined,
-        activeClickIndex: null,
         activeHover: true,
         activeMouseOverCoordinate: {
           x: 10,
@@ -220,19 +226,18 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'node-0',
+        click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
 
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 10,
-          y: 139.51593144373072,
-        },
-        activeClickDataKey: 'value',
-        activeClickIndex: 'node-0',
         activeHover: true,
         activeMouseOverCoordinate: {
           x: 10,
@@ -240,19 +245,21 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'node-0',
+        click: {
+          active: true,
+          coordinate: {
+            x: 10,
+            y: 139.51593144373072,
+          },
+          dataKey: 'value',
+          index: 'node-0',
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeClick: true,
-        activeClickCoordinate: {
-          x: 10,
-          y: 139.51593144373072,
-        },
-        activeClickDataKey: 'value',
-        activeClickIndex: 'node-0',
         activeHover: false,
         activeMouseOverCoordinate: {
           x: 10,
@@ -260,6 +267,15 @@ describe('<Sankey />', () => {
         },
         activeMouseOverDataKey: 'value',
         activeMouseOverIndex: 'node-0',
+        click: {
+          active: true,
+          coordinate: {
+            x: 10,
+            y: 139.51593144373072,
+          },
+          dataKey: 'value',
+          index: 'node-0',
+        },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
     });

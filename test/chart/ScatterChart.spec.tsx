@@ -1603,14 +1603,16 @@ describe('Tooltip integration', () => {
           activeMouseOverCoordinate: undefined,
         },
         itemInteraction: {
-          activeClick: false,
-          activeClickCoordinate: undefined,
-          activeClickDataKey: undefined,
-          activeClickIndex: null,
           activeHover: false,
           activeMouseOverCoordinate: undefined,
           activeMouseOverDataKey: undefined,
           activeMouseOverIndex: null,
+          click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
         },
         settings: {
           active: undefined,

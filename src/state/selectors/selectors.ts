@@ -106,7 +106,7 @@ export function selectActiveIndex(
     if (trigger === 'hover') {
       activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
     } else {
-      activeIndex = tooltipState.itemInteraction.activeClickIndex;
+      activeIndex = tooltipState.itemInteraction.click.index;
     }
   } else if (trigger === 'hover') {
     activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
@@ -134,7 +134,7 @@ export const selectTooltipDataKey = (
   if (trigger === 'hover') {
     return tooltipState.itemInteraction.activeMouseOverDataKey;
   }
-  return tooltipState.itemInteraction.activeClickDataKey;
+  return tooltipState.itemInteraction.click.dataKey;
 };
 
 export const selectTooltipPayloadConfigurations: (
@@ -166,7 +166,7 @@ export const selectTooltipPayloadConfigurations: (
     if (trigger === 'hover') {
       filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
     } else {
-      filterByDataKey = tooltipState.itemInteraction.activeClickDataKey;
+      filterByDataKey = tooltipState.itemInteraction.click.dataKey;
     }
     if (filterByDataKey == null && defaultIndex != null) {
       /*
@@ -269,7 +269,7 @@ export const selectActiveCoordinate: (
       if (trigger === 'hover') {
         activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
       } else {
-        activeCoordinate = tooltipState.itemInteraction.activeClickCoordinate;
+        activeCoordinate = tooltipState.itemInteraction.click.coordinate;
       }
     } else if (trigger === 'hover') {
       activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
@@ -437,11 +437,11 @@ export const selectIsTooltipActive: (
         activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
       }
     } else if (activeFromProps) {
-      isActive = tooltipState.itemInteraction.activeClickIndex != null;
-      activeIndex = tooltipState.itemInteraction.activeClickIndex;
+      isActive = tooltipState.itemInteraction.click.index != null;
+      activeIndex = tooltipState.itemInteraction.click.index;
     } else {
-      isActive = tooltipState.itemInteraction.activeClick;
-      activeIndex = tooltipState.itemInteraction.activeClickIndex;
+      isActive = tooltipState.itemInteraction.click.active;
+      activeIndex = tooltipState.itemInteraction.click.index;
     }
 
     if (activeIndex == null && isActive === false && defaultIndex != null) {

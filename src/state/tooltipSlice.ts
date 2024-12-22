@@ -114,6 +114,20 @@ export type TooltipSyncState = {
   coordinate: Coordinate | undefined;
 };
 
+export type TooltipInteractionState = {
+  active: boolean;
+  index: TooltipIndex;
+  dataKey: DataKey<any> | undefined;
+  coordinate: Coordinate | undefined;
+};
+
+const noInteraction: TooltipInteractionState = {
+  active: false,
+  index: null,
+  dataKey: undefined,
+  coordinate: undefined,
+};
+
 /**
  * The tooltip interaction state stores:
  *
@@ -126,6 +140,7 @@ export type TooltipState = {
    * This is the state of interactions with individual graphical items.
    */
   itemInteraction: {
+    click: TooltipInteractionState;
     /**
      * If user interaction with an item is in progress or not.
      * Why is this its own property? Why is this not computed from the index?
@@ -137,11 +152,11 @@ export type TooltipState = {
      * If we decide to change the behaviour of the tooltip in the future
      * then we might find we do not need this property but as far as keeping 2x behaviour intact, this is necessary.
      */
-    activeClick: boolean;
+    // activeClick: boolean;
     /**
      * The ChartCoordinate last clicked by the user. This needs saved so we can continue to render the tooltip at that point.
      */
-    activeClickCoordinate: ChartCoordinate | undefined;
+    // activeClickCoordinate: ChartCoordinate | undefined;
     /**
      * Why is hover activation separate from click activation? Because they are independent:
      * If a click is set, then mouseLeave should not clear it.
@@ -175,11 +190,11 @@ export type TooltipState = {
     /**
      * Same as the index above but this one only gets set by clicking on a chart item.
      */
-    activeClickIndex: TooltipIndex;
+    // activeClickIndex: TooltipIndex;
     /**
      * Same as the dataKey above but this one only gets set by clicking on a chart item.
      */
-    activeClickDataKey: DataKey<any> | undefined;
+    // activeClickDataKey: DataKey<any> | undefined;
   };
   /**
    * This is the state of interaction with the bar background - which will get mapped
@@ -219,14 +234,15 @@ export type TooltipState = {
 
 export const initialState: TooltipState = {
   itemInteraction: {
-    activeClick: false,
-    activeClickCoordinate: undefined,
+    click: noInteraction,
+    // activeClick: false,
+    // activeClickCoordinate: undefined,
     activeHover: false,
     activeMouseOverCoordinate: undefined,
     activeMouseOverIndex: null,
     activeMouseOverDataKey: undefined,
-    activeClickIndex: null,
-    activeClickDataKey: undefined,
+    // activeClickIndex: null,
+    // activeClickDataKey: undefined,
   },
   axisInteraction: {
     activeClick: false,
@@ -298,10 +314,10 @@ const tooltipSlice = createSlice({
       state.itemInteraction.activeHover = false;
     },
     setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.itemInteraction.activeClick = true;
-      state.itemInteraction.activeClickIndex = action.payload.activeIndex;
-      state.itemInteraction.activeClickDataKey = action.payload.activeDataKey;
-      state.itemInteraction.activeClickCoordinate = action.payload.activeCoordinate;
+      state.itemInteraction.click.active = true;
+      state.itemInteraction.click.index = action.payload.activeIndex;
+      state.itemInteraction.click.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.axisInteraction.activeHover = true;
