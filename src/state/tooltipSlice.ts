@@ -194,10 +194,7 @@ export type TooltipState = {
    */
   axisInteraction: {
     click: TooltipInteractionState;
-    activeHover: boolean;
-    activeMouseOverCoordinate: ChartCoordinate;
-    activeMouseOverAxisIndex: TooltipIndex;
-    activeMouseOverAxisDataKey: DataKey<any> | undefined;
+    hover: TooltipInteractionState;
   };
   /**
    * This part of the state is the information coming from other charts.
@@ -226,10 +223,7 @@ export const initialState: TooltipState = {
   },
   axisInteraction: {
     click: noInteraction,
-    activeHover: false,
-    activeMouseOverCoordinate: undefined,
-    activeMouseOverAxisIndex: null,
-    activeMouseOverAxisDataKey: undefined,
+    hover: noInteraction,
   },
   syncInteraction: {
     active: false,
@@ -285,7 +279,7 @@ const tooltipSlice = createSlice({
        * and continues being visible even after the mouse has left the chart.
        */
       state.itemInteraction.hover.active = false;
-      state.axisInteraction.activeHover = false;
+      state.axisInteraction.hover.active = false;
     },
     mouseLeaveItem(state) {
       state.itemInteraction.hover.active = false;
@@ -297,10 +291,10 @@ const tooltipSlice = createSlice({
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.axisInteraction.activeHover = true;
-      state.axisInteraction.activeMouseOverAxisIndex = action.payload.activeIndex;
-      state.axisInteraction.activeMouseOverAxisDataKey = action.payload.activeDataKey;
-      state.axisInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
+      state.axisInteraction.hover.active = true;
+      state.axisInteraction.hover.index = action.payload.activeIndex;
+      state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.axisInteraction.click.active = true;

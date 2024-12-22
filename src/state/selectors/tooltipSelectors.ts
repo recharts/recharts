@@ -349,9 +349,9 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
         return undefined;
       }
     } else if (tooltipEventType === 'axis') {
-      if (tooltipState.axisInteraction.activeMouseOverAxisIndex != null) {
-        if (tooltipState.axisInteraction.activeHover) {
-          return tooltipState.axisInteraction.activeMouseOverAxisIndex;
+      if (tooltipState.axisInteraction.hover.index != null) {
+        if (tooltipState.axisInteraction.hover.active) {
+          return tooltipState.axisInteraction.hover.index;
         }
         return undefined;
       }

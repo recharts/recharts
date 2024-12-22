@@ -535,7 +535,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return axis hover index', () => {
     const state = produceState(draft => {
-      draft.tooltip.axisInteraction.activeMouseOverAxisIndex = '7';
+      draft.tooltip.axisInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
     expect(selectActiveIndex(state, 'axis', 'hover', 13)).toBe(expected);

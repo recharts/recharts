@@ -1599,10 +1599,12 @@ describe('Tooltip integration', () => {
             index: null,
             coordinate: undefined,
           },
-          activeHover: false,
-          activeMouseOverAxisDataKey: undefined,
-          activeMouseOverAxisIndex: null,
-          activeMouseOverCoordinate: undefined,
+          hover: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
         },
         itemInteraction: {
           click: {

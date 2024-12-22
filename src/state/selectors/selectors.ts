@@ -109,7 +109,7 @@ export function selectActiveIndex(
       activeIndex = tooltipState.itemInteraction.click.index;
     }
   } else if (trigger === 'hover') {
-    activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+    activeIndex = tooltipState.axisInteraction.hover.index;
   } else {
     activeIndex = tooltipState.axisInteraction.click.index;
   }
@@ -127,7 +127,7 @@ export const selectTooltipDataKey = (
   const tooltipState = selectTooltipState(state);
   if (tooltipEventType === 'axis') {
     if (trigger === 'hover') {
-      return tooltipState.axisInteraction.activeMouseOverAxisDataKey;
+      return tooltipState.axisInteraction.hover.dataKey;
     }
     return tooltipState.axisInteraction.click.dataKey;
   }
@@ -272,7 +272,7 @@ export const selectActiveCoordinate: (
         activeCoordinate = tooltipState.itemInteraction.click.coordinate;
       }
     } else if (trigger === 'hover') {
-      activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
+      activeCoordinate = tooltipState.axisInteraction.hover.coordinate;
     } else {
       activeCoordinate = tooltipState.axisInteraction.click.coordinate;
     }
@@ -415,11 +415,11 @@ export const selectIsTooltipActive: (
     if (tooltipEventType === 'axis') {
       if (trigger === 'hover') {
         if (activeFromProps) {
-          isActive = tooltipState.axisInteraction.activeMouseOverAxisIndex != null;
-          activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+          isActive = tooltipState.axisInteraction.hover.index != null;
+          activeIndex = tooltipState.axisInteraction.hover.index;
         } else {
-          isActive = tooltipState.axisInteraction.activeHover;
-          activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
+          isActive = tooltipState.axisInteraction.hover.active;
+          activeIndex = tooltipState.axisInteraction.hover.index;
         }
       } else if (activeFromProps) {
         isActive = tooltipState.axisInteraction.click.index != null;
