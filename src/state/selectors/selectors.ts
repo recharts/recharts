@@ -91,9 +91,9 @@ export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, 
   sortBy(ticks, o => o.coordinate),
 );
 
-const selectTooltipInteractionState: (
+export const selectTooltipInteractionState: (
   state: RechartsRootState,
-  shared: boolean,
+  tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => TooltipInteractionState | undefined = createSelector(
@@ -101,34 +101,15 @@ const selectTooltipInteractionState: (
   combineTooltipInteractionState,
 );
 
-export function selectActiveIndex(
+export const selectActiveIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
-): TooltipIndex {
-  const tooltipState: TooltipState = selectTooltipState(state);
-  if (tooltipState.syncInteraction.active) {
-    // Chart synchronisation wins over everything else
-    return tooltipState.syncInteraction.index;
-  }
-  let activeIndex: TooltipIndex;
-  if (tooltipEventType === 'item') {
-    if (trigger === 'hover') {
-      activeIndex = tooltipState.itemInteraction.hover.index;
-    } else {
-      activeIndex = tooltipState.itemInteraction.click.index;
-    }
-  } else if (trigger === 'hover') {
-    activeIndex = tooltipState.axisInteraction.hover.index;
-  } else {
-    activeIndex = tooltipState.axisInteraction.click.index;
-  }
-  if (activeIndex == null && defaultIndex != null) {
-    return `${defaultIndex}`;
-  }
-  return activeIndex;
-}
+  defaultIndex: TooltipIndex | undefined,
+) => TooltipIndex | undefined = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteraction: TooltipInteractionState | undefined) => tooltipInteraction?.index,
+);
 
 export const selectTooltipDataKey = (
   state: RechartsRootState,
@@ -294,7 +275,7 @@ export const selectActiveLabel: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => string | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
 
 function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
@@ -382,7 +363,7 @@ export const selectTooltipPayload: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => TooltipPayload | undefined = createSelector(
   [
     selectTooltipPayloadConfigurations,

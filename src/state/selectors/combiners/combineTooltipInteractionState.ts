@@ -1,47 +1,48 @@
-import { TooltipIndex, TooltipInteractionState, TooltipState } from '../../tooltipSlice';
+import { noInteraction, TooltipIndex, TooltipInteractionState, TooltipState } from '../../tooltipSlice';
 import { TooltipEventType } from '../../../util/types';
 import { TooltipTrigger } from '../../../chart/types';
+
+function chooseAppropriateMouseInteraction(
+  tooltipState: TooltipState,
+  tooltipEventType: TooltipEventType,
+  trigger: TooltipTrigger,
+): TooltipInteractionState | undefined {
+  if (tooltipEventType === 'axis') {
+    if (trigger === 'click') {
+      return tooltipState.axisInteraction.click;
+    }
+    return tooltipState.axisInteraction.hover;
+  }
+  if (trigger === 'click') {
+    return tooltipState.itemInteraction.click;
+  }
+  return tooltipState.itemInteraction.hover;
+}
+
+function hasBeenActivePreviously(tooltipInteractionState: TooltipInteractionState): boolean {
+  return tooltipInteractionState.index != null;
+}
 
 export const combineTooltipInteractionState = (
   tooltipState: TooltipState,
   tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-): TooltipInteractionState | undefined => {
+): TooltipInteractionState => {
   if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
-    // Synchronised events always override other events
+    // Synchronised events always override other events. But also, active prop on the receiving end does not impact the synchronised tooltip. But maybe it should!?!
     return tooltipState.syncInteraction;
   }
 
-  if (trigger === 'click') {
-    if (tooltipEventType === 'axis') {
-      if (tooltipState.axisInteraction.click.index != null) {
-        if (tooltipState.axisInteraction.click.active) {
-          return tooltipState.axisInteraction.click;
-        }
-        return undefined;
-      }
-    } else if (tooltipState.itemInteraction.click.index != null) {
-      if (tooltipState.itemInteraction.click.active) {
-        return tooltipState.itemInteraction.click;
-      }
-      return undefined;
-    }
-  } else if (tooltipEventType === 'axis') {
-    if (tooltipState.axisInteraction.hover.index != null) {
-      if (tooltipState.axisInteraction.hover.active) {
-        return tooltipState.axisInteraction.hover;
-      }
-      return undefined;
-    }
-  } else if (tooltipState.itemInteraction.hover.index != null) {
-    if (tooltipState.itemInteraction.hover.active) {
-      return tooltipState.itemInteraction.hover;
-    }
-    return undefined;
+  const appropriateMouseInteraction = chooseAppropriateMouseInteraction(tooltipState, tooltipEventType, trigger);
+
+  if (appropriateMouseInteraction.active) {
+    return appropriateMouseInteraction;
   }
 
-  if (defaultIndex != null) {
+  const activeFromProps = tooltipState.settings.active === true;
+
+  if (!hasBeenActivePreviously(appropriateMouseInteraction) && defaultIndex != null) {
     return {
       active: true,
       coordinate: undefined,
@@ -50,5 +51,12 @@ export const combineTooltipInteractionState = (
     };
   }
 
-  return undefined;
+  if (activeFromProps) {
+    return {
+      ...appropriateMouseInteraction,
+      active: true,
+    };
+  }
+
+  return noInteraction;
 };

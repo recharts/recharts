@@ -340,6 +340,16 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
   (tooltipInteraction: TooltipInteractionState): TooltipIndex | undefined => tooltipInteraction?.index,
 );
 
+// export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
+//   [selectTooltipInteractionState],
+//   (tooltipInteraction: TooltipInteractionState): TooltipIndex | undefined => {
+//     if (tooltipInteraction.active && tooltipInteraction.index != null) {
+//       return tooltipInteraction.index;
+//     }
+//     return undefined;
+//   },
+// );
+
 export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxisTicks, selectActiveTooltipIndex],
   combineActiveLabel,

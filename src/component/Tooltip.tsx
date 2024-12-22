@@ -16,12 +16,7 @@ import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { Cursor, CursorDefinition } from './Cursor';
-import {
-  selectActiveCoordinate,
-  selectActiveLabel,
-  selectIsTooltipActive,
-  selectTooltipPayload,
-} from '../state/selectors/selectors';
+import { selectActiveLabel, selectTooltipInteractionState, selectTooltipPayload } from '../state/selectors/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -161,18 +156,24 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
 
+  const { active, index, coordinate } = useAppSelector(state =>
+    selectTooltipInteractionState(state, tooltipEventType, trigger, defaultIndexAsString),
+  );
+
   const payloadFromRedux = useAppSelector(state =>
-    selectTooltipPayload(state, tooltipEventType, trigger, defaultIndex),
+    selectTooltipPayload(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const labelFromRedux = useAppSelector(state => selectActiveLabel(state, tooltipEventType, trigger, defaultIndex));
-  const { isActive: isTooltipActiveFromRedux, activeIndex } = useAppSelector(state =>
-    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
+  const labelFromRedux = useAppSelector(state =>
+    selectActiveLabel(state, tooltipEventType, trigger, defaultIndexAsString),
   );
+  // const { isActive: isTooltipActiveFromRedux, activeIndex } = useAppSelector(state =>
+  //   selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
+  // );
 
-  const coordinate = useAppSelector(state =>
-    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
-  );
+  // const coordinate = useAppSelector(state =>
+  //   selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
+  // );
   const payload: TooltipPayload = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*
@@ -181,11 +182,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? isTooltipActiveFromRedux;
+  const finalIsActive = activeFromProps ?? active;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
-  useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);
+  useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, index, finalIsActive);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
   const cursorPortal = useCursorPortal();
@@ -250,7 +251,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
             tooltipEventType={tooltipEventType}
             coordinate={coordinate}
             payload={payload}
-            index={activeIndex}
+            index={index}
           />,
           cursorPortal,
         )}

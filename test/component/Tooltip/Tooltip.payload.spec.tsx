@@ -1154,7 +1154,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select Tooltip payload when given defaultIndex', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: '#3182bd',
@@ -1480,7 +1480,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith(2);
     });
 
@@ -1590,7 +1590,7 @@ describe('Tooltip payload', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith('Page C');
     });
 
@@ -1837,7 +1837,7 @@ describe('Tooltip payload', () => {
         });
 
         it('should select active label', () => {
-          const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+          const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
           expect(spy).toHaveBeenLastCalledWith(2);
         });
 

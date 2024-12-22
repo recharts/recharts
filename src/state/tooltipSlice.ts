@@ -161,7 +161,7 @@ export type TooltipSyncState = TooltipInteractionState & {
   label: string | undefined;
 };
 
-const noInteraction: TooltipInteractionState = {
+export const noInteraction: TooltipInteractionState = {
   active: false,
   index: null,
   dataKey: undefined,

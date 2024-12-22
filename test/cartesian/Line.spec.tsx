@@ -157,7 +157,7 @@ describe('<Line />', () => {
     ));
 
     it('should select tooltip payload', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 0));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: '#3182bd',

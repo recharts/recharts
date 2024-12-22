@@ -743,7 +743,7 @@ describe('Tooltip visibility', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith('Page C');
     });
 
@@ -1042,7 +1042,7 @@ describe('Tooltip visibility', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
       expect(spy).toHaveBeenLastCalledWith('Page C');
     });
 
@@ -1226,7 +1226,7 @@ describe('Tooltip visibility', () => {
       });
 
       it('should select active label when given explicit index', () => {
-        const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 2));
+        const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '2'));
         expect(spy).toHaveBeenLastCalledWith(2400);
       });
 

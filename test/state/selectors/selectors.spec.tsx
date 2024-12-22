@@ -342,7 +342,7 @@ describe('selectTooltipPayload', () => {
     };
     store.dispatch(addTooltipEntrySettings(tooltipSettings1));
     store.dispatch(addTooltipEntrySettings(tooltipSettings2));
-    expect(selectTooltipPayload(store.getState(), 'axis', 'hover', 1)).toEqual([expectedEntry1, expectedEntry2]);
+    expect(selectTooltipPayload(store.getState(), 'axis', 'hover', '1')).toEqual([expectedEntry1, expectedEntry2]);
   });
 
   it('should fill in chartData, if it is not defined on the item for item hover', () => {
@@ -503,20 +503,20 @@ describe('selectActiveIndex', () => {
   it('should return defaultIndex if it is defined', () => {
     const initialState = createRechartsStore().getState();
     const expected: TooltipIndex = '7';
-    expect(selectActiveIndex(initialState, 'axis', 'hover', 7)).toBe(expected);
-    expect(selectActiveIndex(initialState, 'axis', 'click', 7)).toBe(expected);
-    expect(selectActiveIndex(initialState, 'item', 'hover', 7)).toBe(expected);
-    expect(selectActiveIndex(initialState, 'item', 'click', 7)).toBe(expected);
+    expect(selectActiveIndex(initialState, 'axis', 'hover', '7')).toBe(expected);
+    expect(selectActiveIndex(initialState, 'axis', 'click', '7')).toBe(expected);
+    expect(selectActiveIndex(initialState, 'item', 'hover', '7')).toBe(expected);
+    expect(selectActiveIndex(initialState, 'item', 'click', '7')).toBe(expected);
   });
 
   it('should ignore defaultIndex if item hover index is set', () => {
     const state = produceState(draft => {
       draft.tooltip.itemInteraction.hover.index = '7';
     });
-    expect(selectActiveIndex(state, 'axis', 'hover', 8)).toBe('8' satisfies TooltipIndex);
-    expect(selectActiveIndex(state, 'axis', 'click', 8)).toBe('8' satisfies TooltipIndex);
-    expect(selectActiveIndex(state, 'item', 'hover', 8)).toBe('7' satisfies TooltipIndex);
-    expect(selectActiveIndex(state, 'item', 'click', 8)).toBe('8' satisfies TooltipIndex);
+    expect(selectActiveIndex(state, 'axis', 'hover', '8')).toBe('8' satisfies TooltipIndex);
+    expect(selectActiveIndex(state, 'axis', 'click', '8')).toBe('8' satisfies TooltipIndex);
+    expect(selectActiveIndex(state, 'item', 'hover', '8')).toBe('7' satisfies TooltipIndex);
+    expect(selectActiveIndex(state, 'item', 'click', '8')).toBe('8' satisfies TooltipIndex);
   });
 
   it('should return item hover index', () => {
@@ -524,28 +524,28 @@ describe('selectActiveIndex', () => {
       draft.tooltip.itemInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
-    expect(selectActiveIndex(state, 'item', 'hover', 9)).toBe(expected);
+    expect(selectActiveIndex(state, 'item', 'hover', '9')).toBe(expected);
   });
   it('should return item click index', () => {
     const state = produceState(draft => {
       draft.tooltip.itemInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
-    expect(selectActiveIndex(state, 'item', 'click', 11)).toBe(expected);
+    expect(selectActiveIndex(state, 'item', 'click', '11')).toBe(expected);
   });
   it('should return axis hover index', () => {
     const state = produceState(draft => {
       draft.tooltip.axisInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
-    expect(selectActiveIndex(state, 'axis', 'hover', 13)).toBe(expected);
+    expect(selectActiveIndex(state, 'axis', 'hover', '13')).toBe(expected);
   });
   it('should return axis click index', () => {
     const state = produceState(draft => {
       draft.tooltip.axisInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
-    expect(selectActiveIndex(state, 'axis', 'click', 17)).toBe(expected);
+    expect(selectActiveIndex(state, 'axis', 'click', '17')).toBe(expected);
   });
 });
 

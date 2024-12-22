@@ -20,7 +20,7 @@ describe('defaultIndex', () => {
     ));
 
     it('should select tooltip payload', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 3));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '3'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,
@@ -89,7 +89,7 @@ describe('defaultIndex', () => {
     ));
 
     it('should select tooltip axis ticks', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', 3));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '3'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: '#3182bd',
@@ -114,7 +114,7 @@ describe('defaultIndex', () => {
     });
 
     it('should select active label', () => {
-      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', 3));
+      const { spy } = renderTestCase(state => selectActiveLabel(state, 'axis', 'hover', '3'));
       expect(spy).toHaveBeenLastCalledWith('Page D');
     });
 
@@ -133,7 +133,7 @@ describe('defaultIndex', () => {
     ));
 
     it('should select active index as the default', () => {
-      const { spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', 3));
+      const { spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', '3'));
       expect(spy).toHaveBeenLastCalledWith('3');
     });
 
@@ -143,13 +143,13 @@ describe('defaultIndex', () => {
     });
 
     it('should update the active index after mouse hover', () => {
-      const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', 3));
+      const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', '3'));
       showTooltip(container, pieChartMouseHoverTooltipSelector);
       expect(spy).toHaveBeenLastCalledWith('0');
     });
 
     it('should select tooltip payload', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', 3));
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '3'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,
@@ -174,7 +174,7 @@ describe('defaultIndex', () => {
     });
 
     it('should update the payload after mouse hover', () => {
-      const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', 3));
+      const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '3'));
       showTooltip(container, pieChartMouseHoverTooltipSelector);
       expect(spy).toHaveBeenLastCalledWith([
         {
