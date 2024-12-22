@@ -193,14 +193,11 @@ export type TooltipState = {
    * Axis interaction is independent of item interaction so the state must also be independent.
    */
   axisInteraction: {
-    activeClick: boolean;
-    activeClickCoordinate: ChartCoordinate | undefined;
+    click: TooltipInteractionState;
     activeHover: boolean;
     activeMouseOverCoordinate: ChartCoordinate;
     activeMouseOverAxisIndex: TooltipIndex;
     activeMouseOverAxisDataKey: DataKey<any> | undefined;
-    activeClickAxisIndex: TooltipIndex;
-    activeClickAxisDataKey: DataKey<any> | undefined;
   };
   /**
    * This part of the state is the information coming from other charts.
@@ -228,14 +225,11 @@ export const initialState: TooltipState = {
     hover: noInteraction,
   },
   axisInteraction: {
-    activeClick: false,
-    activeClickCoordinate: undefined,
+    click: noInteraction,
     activeHover: false,
     activeMouseOverCoordinate: undefined,
     activeMouseOverAxisIndex: null,
     activeMouseOverAxisDataKey: undefined,
-    activeClickAxisIndex: null,
-    activeClickAxisDataKey: undefined,
   },
   syncInteraction: {
     active: false,
@@ -309,10 +303,10 @@ const tooltipSlice = createSlice({
       state.axisInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.axisInteraction.activeClick = true;
-      state.axisInteraction.activeClickAxisIndex = action.payload.activeIndex;
-      state.axisInteraction.activeClickAxisDataKey = action.payload.activeDataKey;
-      state.axisInteraction.activeClickCoordinate = action.payload.activeCoordinate;
+      state.axisInteraction.click.active = true;
+      state.axisInteraction.click.index = action.payload.activeIndex;
+      state.axisInteraction.click.dataKey = action.payload.activeDataKey;
+      state.axisInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;

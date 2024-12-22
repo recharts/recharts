@@ -542,7 +542,7 @@ describe('selectActiveIndex', () => {
   });
   it('should return axis click index', () => {
     const state = produceState(draft => {
-      draft.tooltip.axisInteraction.activeClickAxisIndex = '7';
+      draft.tooltip.axisInteraction.click.index = '7';
     });
     const expected: TooltipIndex = '7';
     expect(selectActiveIndex(state, 'axis', 'click', 17)).toBe(expected);

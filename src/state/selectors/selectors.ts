@@ -111,7 +111,7 @@ export function selectActiveIndex(
   } else if (trigger === 'hover') {
     activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
   } else {
-    activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
+    activeIndex = tooltipState.axisInteraction.click.index;
   }
   if (activeIndex == null && defaultIndex != null) {
     return `${defaultIndex}`;
@@ -129,7 +129,7 @@ export const selectTooltipDataKey = (
     if (trigger === 'hover') {
       return tooltipState.axisInteraction.activeMouseOverAxisDataKey;
     }
-    return tooltipState.axisInteraction.activeClickAxisDataKey;
+    return tooltipState.axisInteraction.click.dataKey;
   }
   if (trigger === 'hover') {
     return tooltipState.itemInteraction.hover.dataKey;
@@ -274,7 +274,7 @@ export const selectActiveCoordinate: (
     } else if (trigger === 'hover') {
       activeCoordinate = tooltipState.axisInteraction.activeMouseOverCoordinate;
     } else {
-      activeCoordinate = tooltipState.axisInteraction.activeClickCoordinate;
+      activeCoordinate = tooltipState.axisInteraction.click.coordinate;
     }
     return activeCoordinate ?? defaultIndexCoordinate;
   },
@@ -422,11 +422,11 @@ export const selectIsTooltipActive: (
           activeIndex = tooltipState.axisInteraction.activeMouseOverAxisIndex;
         }
       } else if (activeFromProps) {
-        isActive = tooltipState.axisInteraction.activeClickAxisIndex != null;
-        activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
+        isActive = tooltipState.axisInteraction.click.index != null;
+        activeIndex = tooltipState.axisInteraction.click.index;
       } else {
-        isActive = tooltipState.axisInteraction.activeClick;
-        activeIndex = tooltipState.axisInteraction.activeClickAxisIndex;
+        isActive = tooltipState.axisInteraction.click.active;
+        activeIndex = tooltipState.axisInteraction.click.index;
       }
     } else if (trigger === 'hover') {
       if (activeFromProps) {

@@ -336,9 +336,9 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
     }
     if (settings.trigger === 'click') {
       if (tooltipEventType === 'axis') {
-        if (tooltipState.axisInteraction.activeClickAxisIndex != null) {
-          if (tooltipState.axisInteraction.activeClick) {
-            return tooltipState.axisInteraction.activeClickAxisIndex;
+        if (tooltipState.axisInteraction.click.index != null) {
+          if (tooltipState.axisInteraction.click.active) {
+            return tooltipState.axisInteraction.click.index;
           }
           return undefined;
         }

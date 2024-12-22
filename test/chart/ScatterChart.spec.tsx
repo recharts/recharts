@@ -1593,10 +1593,12 @@ describe('Tooltip integration', () => {
       const { spy } = renderTestCase(selectTooltipState);
       const expected: TooltipState = {
         axisInteraction: {
-          activeClick: false,
-          activeClickAxisDataKey: undefined,
-          activeClickAxisIndex: null,
-          activeClickCoordinate: undefined,
+          click: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
           activeHover: false,
           activeMouseOverAxisDataKey: undefined,
           activeMouseOverAxisIndex: null,

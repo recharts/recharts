@@ -886,10 +886,12 @@ describe('Tooltip visibility', () => {
 
       const expectedBeforeHover: TooltipState = {
         axisInteraction: {
-          activeClick: false,
-          activeClickAxisDataKey: undefined,
-          activeClickAxisIndex: null,
-          activeClickCoordinate: undefined,
+          click: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
           activeHover: false,
           activeMouseOverAxisDataKey: undefined,
           activeMouseOverAxisIndex: null,
@@ -948,10 +950,12 @@ describe('Tooltip visibility', () => {
 
       const expectedAfterHover: TooltipState = {
         axisInteraction: {
-          activeClick: false,
-          activeClickAxisDataKey: undefined,
-          activeClickAxisIndex: null,
-          activeClickCoordinate: undefined,
+          click: {
+            active: false,
+            dataKey: undefined,
+            index: null,
+            coordinate: undefined,
+          },
           activeHover: true,
           activeMouseOverAxisDataKey: undefined,
           activeMouseOverAxisIndex: '5',
