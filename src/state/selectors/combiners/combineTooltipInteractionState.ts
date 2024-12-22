@@ -42,19 +42,19 @@ export const combineTooltipInteractionState = (
 
   const activeFromProps = tooltipState.settings.active === true;
 
-  if (!hasBeenActivePreviously(appropriateMouseInteraction) && defaultIndex != null) {
+  if (hasBeenActivePreviously(appropriateMouseInteraction)) {
+    if (activeFromProps) {
+      return {
+        ...appropriateMouseInteraction,
+        active: true,
+      };
+    }
+  } else if (defaultIndex != null) {
     return {
       active: true,
       coordinate: undefined,
       dataKey: undefined,
       index: defaultIndex,
-    };
-  }
-
-  if (activeFromProps) {
-    return {
-      ...appropriateMouseInteraction,
-      active: true,
     };
   }
 

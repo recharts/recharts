@@ -822,11 +822,23 @@ describe('selectIsTooltipActive', () => {
         store.dispatch(mouseLeaveItem());
         expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
-          activeIndex: '1',
+          activeIndex: null,
         });
       });
 
-      it.todo('should return false after mouse leaves the chart element');
+      it('should return false after mouse leaves the chart element', () => {
+        const store = createRechartsStore();
+        store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
+          isActive: true,
+          activeIndex: '1',
+        });
+        store.dispatch(mouseLeaveChart());
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
+          isActive: false,
+          activeIndex: null,
+        });
+      });
     });
 
     describe('tooltipEventType: axis', () => {

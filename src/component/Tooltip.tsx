@@ -19,7 +19,7 @@ import { Cursor, CursorDefinition } from './Cursor';
 import {
   selectActiveCoordinate,
   selectActiveLabel,
-  selectTooltipInteractionState,
+  selectIsTooltipActive,
   selectTooltipPayload,
 } from '../state/selectors/selectors';
 import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
@@ -161,8 +161,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   const accessibilityLayer = useAccessibilityLayer();
   const tooltipEventType = useTooltipEventType(shared);
 
-  const { active, index } = useAppSelector(state =>
-    selectTooltipInteractionState(state, tooltipEventType, trigger, defaultIndexAsString),
+  const { activeIndex, isActive } = useAppSelector(state =>
+    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
   const payloadFromRedux = useAppSelector(state =>
@@ -184,11 +184,11 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    *
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
-  const finalIsActive = activeFromProps ?? active;
+  const finalIsActive = activeFromProps ?? isActive;
   const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
-  useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, index, finalIsActive);
+  useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
   const cursorPortal = useCursorPortal();
@@ -253,7 +253,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
             tooltipEventType={tooltipEventType}
             coordinate={coordinate}
             payload={payload}
-            index={index}
+            index={activeIndex}
           />,
           cursorPortal,
         )}

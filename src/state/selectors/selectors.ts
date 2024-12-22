@@ -1,6 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
 import sortBy from 'lodash/sortBy';
-import { selectSynchronisedTooltipState } from '../../synchronisation/syncSelectors';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {
@@ -12,9 +11,7 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
-  TooltipSettingsState,
   TooltipState,
-  TooltipSyncState,
 } from '../tooltipSlice';
 import {
   calculateActiveTickIndex,
@@ -48,7 +45,6 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartOffset } from './selectChartOffset';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
-import { selectTooltipSettings } from './selectTooltipSettings';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 
 export const useChartName = (): string => {
@@ -382,64 +378,9 @@ export const selectIsTooltipActive: (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
-  [
-    selectTooltipState,
-    pickTooltipEventType,
-    pickTrigger,
-    pickDefaultIndex,
-    selectTooltipSettings,
-    selectSynchronisedTooltipState,
-  ],
-  (
-    tooltipState: TooltipState,
-    tooltipEventType: TooltipEventType,
-    trigger: TooltipTrigger,
-    defaultIndex: TooltipIndex | undefined,
-    { active: activeFromProps }: TooltipSettingsState,
-    syncState: TooltipSyncState,
-  ) => {
-    if (syncState.active) {
-      // Chart synchronisation wins over everything else
-      return { isActive: true, activeIndex: syncState.index };
-    }
-    let isActive: boolean, activeIndex: string | undefined;
-    if (tooltipEventType === 'axis') {
-      if (trigger === 'hover') {
-        if (activeFromProps) {
-          isActive = tooltipState.axisInteraction.hover.index != null;
-          activeIndex = tooltipState.axisInteraction.hover.index;
-        } else {
-          isActive = tooltipState.axisInteraction.hover.active;
-          activeIndex = tooltipState.axisInteraction.hover.index;
-        }
-      } else if (activeFromProps) {
-        isActive = tooltipState.axisInteraction.click.index != null;
-        activeIndex = tooltipState.axisInteraction.click.index;
-      } else {
-        isActive = tooltipState.axisInteraction.click.active;
-        activeIndex = tooltipState.axisInteraction.click.index;
-      }
-    } else if (trigger === 'hover') {
-      if (activeFromProps) {
-        isActive = tooltipState.itemInteraction.hover.index != null;
-        activeIndex = tooltipState.itemInteraction.hover.index;
-      } else {
-        isActive = tooltipState.itemInteraction.hover.active;
-        activeIndex = tooltipState.itemInteraction.hover.index;
-      }
-    } else if (activeFromProps) {
-      isActive = tooltipState.itemInteraction.click.index != null;
-      activeIndex = tooltipState.itemInteraction.click.index;
-    } else {
-      isActive = tooltipState.itemInteraction.click.active;
-      activeIndex = tooltipState.itemInteraction.click.index;
-    }
-
-    if (activeIndex == null && isActive === false && defaultIndex != null) {
-      return { isActive: true, activeIndex: String(defaultIndex) };
-    }
-
-    return { isActive, activeIndex };
+  [selectTooltipInteractionState],
+  (tooltipInteractionState: TooltipInteractionState) => {
+    return { isActive: tooltipInteractionState.active, activeIndex: tooltipInteractionState.index };
   },
 );
 
