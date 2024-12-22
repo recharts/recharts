@@ -896,11 +896,13 @@ describe('Tooltip visibility', () => {
           activeMouseOverCoordinate: undefined,
         },
         itemInteraction: {
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
           click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
             active: false,
             index: null,
             dataKey: undefined,
@@ -970,11 +972,13 @@ describe('Tooltip visibility', () => {
           },
         },
         itemInteraction: {
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
           click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
             active: false,
             index: null,
             dataKey: undefined,

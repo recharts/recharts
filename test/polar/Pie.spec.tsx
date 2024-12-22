@@ -582,11 +582,13 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith({
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
           click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
             active: false,
             index: null,
             dataKey: undefined,
@@ -605,18 +607,20 @@ describe('<Pie />', () => {
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith({
-          activeHover: true,
-          activeMouseOverCoordinate: {
-            x: 263.1033255612459,
-            y: 154.15275032118709,
-          },
-          activeMouseOverDataKey: 'cy',
-          activeMouseOverIndex: '0',
           click: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+          },
+          hover: {
+            active: true,
+            index: '0',
+            dataKey: 'cy',
+            coordinate: {
+              x: 263.1033255612459,
+              y: 154.15275032118709,
+            },
           },
         });
 
@@ -891,11 +895,13 @@ describe('<Pie />', () => {
         const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith({
-          activeHover: false,
-          activeMouseOverCoordinate: undefined,
-          activeMouseOverDataKey: undefined,
-          activeMouseOverIndex: null,
           click: {
+            active: false,
+            index: null,
+            dataKey: undefined,
+            coordinate: undefined,
+          },
+          hover: {
             active: false,
             index: null,
             dataKey: undefined,
@@ -915,18 +921,20 @@ describe('<Pie />', () => {
         showTooltipOnCoordinate(container, pieChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
         expect(spy).toHaveBeenCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith({
-          activeHover: true,
-          activeMouseOverCoordinate: {
-            x: 263.1033255612459,
-            y: 154.15275032118709,
-          },
-          activeMouseOverDataKey: 'cy',
-          activeMouseOverIndex: '0',
           click: {
             active: false,
             index: null,
             dataKey: undefined,
             coordinate: undefined,
+          },
+          hover: {
+            active: true,
+            index: '0',
+            dataKey: 'cy',
+            coordinate: {
+              x: 263.1033255612459,
+              y: 154.15275032118709,
+            },
           },
         });
 

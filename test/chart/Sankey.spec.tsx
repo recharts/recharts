@@ -106,11 +106,13 @@ describe('<Sankey />', () => {
         </Sankey>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: undefined,
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
         click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
+        hover: {
           active: false,
           index: null,
           dataKey: undefined,
@@ -125,18 +127,20 @@ describe('<Sankey />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 80,
-          y: 142.14339872499383,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'link-0',
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+        },
+        hover: {
+          active: true,
+          index: 'link-0',
+          dataKey: 'value',
+          coordinate: {
+            x: 80,
+            y: 142.14339872499383,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
@@ -144,13 +148,6 @@ describe('<Sankey />', () => {
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 80,
-          y: 142.14339872499383,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'link-0',
         click: {
           active: true,
           coordinate: {
@@ -159,6 +156,15 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'link-0',
+        },
+        hover: {
+          active: true,
+          index: 'link-0',
+          dataKey: 'value',
+          coordinate: {
+            x: 80,
+            y: 142.14339872499383,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(3);
@@ -166,13 +172,6 @@ describe('<Sankey />', () => {
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: {
-          x: 80,
-          y: 142.14339872499383,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'link-0',
         click: {
           active: true,
           coordinate: {
@@ -181,6 +180,15 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'link-0',
+        },
+        hover: {
+          active: false,
+          index: 'link-0',
+          dataKey: 'value',
+          coordinate: {
+            x: 80,
+            y: 142.14339872499383,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);
@@ -200,11 +208,13 @@ describe('<Sankey />', () => {
         </Sankey>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: undefined,
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
         click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
+        hover: {
           active: false,
           index: null,
           dataKey: undefined,
@@ -219,18 +229,20 @@ describe('<Sankey />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 10,
-          y: 139.51593144373072,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'node-0',
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+        },
+        hover: {
+          active: true,
+          index: 'node-0',
+          dataKey: 'value',
+          coordinate: {
+            x: 10,
+            y: 139.51593144373072,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
@@ -238,14 +250,16 @@ describe('<Sankey />', () => {
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 10,
-          y: 139.51593144373072,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'node-0',
         click: {
+          active: true,
+          coordinate: {
+            x: 10,
+            y: 139.51593144373072,
+          },
+          dataKey: 'value',
+          index: 'node-0',
+        },
+        hover: {
           active: true,
           coordinate: {
             x: 10,
@@ -260,13 +274,6 @@ describe('<Sankey />', () => {
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: {
-          x: 10,
-          y: 139.51593144373072,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: 'node-0',
         click: {
           active: true,
           coordinate: {
@@ -275,6 +282,15 @@ describe('<Sankey />', () => {
           },
           dataKey: 'value',
           index: 'node-0',
+        },
+        hover: {
+          active: false,
+          index: 'node-0',
+          dataKey: 'value',
+          coordinate: {
+            x: 10,
+            y: 139.51593144373072,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);

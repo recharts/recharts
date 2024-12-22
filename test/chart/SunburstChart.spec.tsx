@@ -98,11 +98,13 @@ describe('<Sunburst />', () => {
         </SunburstChart>,
       );
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: undefined,
-        activeMouseOverDataKey: undefined,
-        activeMouseOverIndex: null,
         click: {
+          active: false,
+          index: null,
+          dataKey: undefined,
+          coordinate: undefined,
+        },
+        hover: {
           active: false,
           index: null,
           dataKey: undefined,
@@ -117,18 +119,20 @@ describe('<Sunburst />', () => {
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
         click: {
           active: false,
           index: null,
           dataKey: undefined,
           coordinate: undefined,
+        },
+        hover: {
+          active: true,
+          index: '[0]',
+          dataKey: 'value',
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(2);
@@ -136,14 +140,16 @@ describe('<Sunburst />', () => {
       fireEvent.click(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: true,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
         click: {
+          active: true,
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
+          dataKey: 'value',
+          index: '[0]',
+        },
+        hover: {
           active: true,
           coordinate: {
             x: 583.3333333333334,
@@ -158,13 +164,6 @@ describe('<Sunburst />', () => {
       fireEvent.mouseLeave(tooltipTriggerElement);
 
       expect(tooltipStateSpy).toHaveBeenLastCalledWith({
-        activeHover: false,
-        activeMouseOverCoordinate: {
-          x: 583.3333333333334,
-          y: 250,
-        },
-        activeMouseOverDataKey: 'value',
-        activeMouseOverIndex: '[0]',
         click: {
           active: true,
           coordinate: {
@@ -173,6 +172,15 @@ describe('<Sunburst />', () => {
           },
           dataKey: 'value',
           index: '[0]',
+        },
+        hover: {
+          active: false,
+          index: '[0]',
+          dataKey: 'value',
+          coordinate: {
+            x: 583.3333333333334,
+            y: 250,
+          },
         },
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(4);

@@ -35,7 +35,7 @@ import {
   setDataStartEndIndexes,
 } from '../../../src/state/chartDataSlice';
 import { TooltipTrigger } from '../../../src/chart/types';
-import { produceState } from '../produceState';
+import { produceState } from '../../helper/produceState';
 import { arrayTooltipSearcher } from '../../../src/state/optionsSlice';
 import { MousePointer } from '../../../src/chart/generateCategoricalChart';
 import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
@@ -511,7 +511,7 @@ describe('selectActiveIndex', () => {
 
   it('should ignore defaultIndex if item hover index is set', () => {
     const state = produceState(draft => {
-      draft.tooltip.itemInteraction.activeMouseOverIndex = '7';
+      draft.tooltip.itemInteraction.hover.index = '7';
     });
     expect(selectActiveIndex(state, 'axis', 'hover', 8)).toBe('8' satisfies TooltipIndex);
     expect(selectActiveIndex(state, 'axis', 'click', 8)).toBe('8' satisfies TooltipIndex);
@@ -521,7 +521,7 @@ describe('selectActiveIndex', () => {
 
   it('should return item hover index', () => {
     const state = produceState(draft => {
-      draft.tooltip.itemInteraction.activeMouseOverIndex = '7';
+      draft.tooltip.itemInteraction.hover.index = '7';
     });
     const expected: TooltipIndex = '7';
     expect(selectActiveIndex(state, 'item', 'hover', 9)).toBe(expected);

@@ -184,31 +184,7 @@ export type TooltipState = {
      * If a click is set, then mouseLeave should not clear it.
      * - the opposite is technically true too - but it's difficult to click on things without also hovering.
      */
-    activeHover: boolean;
-    /**
-     * The ChartCoordinate last hovered by the user. Render the Tooltip at this coordinate as it updates on mouse movement.
-     */
-    activeMouseOverCoordinate: ChartCoordinate;
-    /**
-     * This is the current data index that is set for the chart.
-     * This can come from mouse events, keyboard events, or hardcoded in props
-     * in property `defaultIndex` on Tooltip.
-     *
-     * This is only set for mouse hover.
-     *
-     * If there is nothing hovering over a chart item right now then this is -1.
-     */
-    activeMouseOverIndex: TooltipIndex;
-    /**
-     * In case of multiple graphical items, this is the dataKey that is set for the item.
-     * Very useful for `Tooltip.shared=false`, where activeIndex can display multiple values,
-     * but we only want to display one of them.
-     *
-     * This is only set for mouse hover.
-     *
-     * If there is nothing hovering over a chart item right now then this is undefined.
-     */
-    activeMouseOverDataKey: DataKey<any> | undefined;
+    hover: TooltipInteractionState;
   };
   /**
    * This is the state of interaction with the bar background - which will get mapped
@@ -249,14 +225,7 @@ export type TooltipState = {
 export const initialState: TooltipState = {
   itemInteraction: {
     click: noInteraction,
-    // activeClick: false,
-    // activeClickCoordinate: undefined,
-    activeHover: false,
-    activeMouseOverCoordinate: undefined,
-    activeMouseOverIndex: null,
-    activeMouseOverDataKey: undefined,
-    // activeClickIndex: null,
-    // activeClickDataKey: undefined,
+    hover: noInteraction,
   },
   axisInteraction: {
     activeClick: false,
@@ -308,10 +277,10 @@ const tooltipSlice = createSlice({
       state.settings = action.payload;
     },
     setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
-      state.itemInteraction.activeHover = true;
-      state.itemInteraction.activeMouseOverIndex = action.payload.activeIndex;
-      state.itemInteraction.activeMouseOverDataKey = action.payload.activeDataKey;
-      state.itemInteraction.activeMouseOverCoordinate = action.payload.activeCoordinate;
+      state.itemInteraction.hover.active = true;
+      state.itemInteraction.hover.index = action.payload.activeIndex;
+      state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
+      state.itemInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     mouseLeaveChart(state) {
       /*
@@ -321,11 +290,11 @@ const tooltipSlice = createSlice({
        * 2. We want to keep all the properties anyway just in case the tooltip has `active=true` prop
        * and continues being visible even after the mouse has left the chart.
        */
-      state.itemInteraction.activeHover = false;
+      state.itemInteraction.hover.active = false;
       state.axisInteraction.activeHover = false;
     },
     mouseLeaveItem(state) {
-      state.itemInteraction.activeHover = false;
+      state.itemInteraction.hover.active = false;
     },
     setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.itemInteraction.click.active = true;

@@ -104,7 +104,7 @@ export function selectActiveIndex(
   let activeIndex: TooltipIndex;
   if (tooltipEventType === 'item') {
     if (trigger === 'hover') {
-      activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+      activeIndex = tooltipState.itemInteraction.hover.index;
     } else {
       activeIndex = tooltipState.itemInteraction.click.index;
     }
@@ -132,7 +132,7 @@ export const selectTooltipDataKey = (
     return tooltipState.axisInteraction.activeClickAxisDataKey;
   }
   if (trigger === 'hover') {
-    return tooltipState.itemInteraction.activeMouseOverDataKey;
+    return tooltipState.itemInteraction.hover.dataKey;
   }
   return tooltipState.itemInteraction.click.dataKey;
 };
@@ -164,7 +164,7 @@ export const selectTooltipPayloadConfigurations: (
     }
     let filterByDataKey: DataKey<any> | undefined;
     if (trigger === 'hover') {
-      filterByDataKey = tooltipState.itemInteraction.activeMouseOverDataKey;
+      filterByDataKey = tooltipState.itemInteraction.hover.dataKey;
     } else {
       filterByDataKey = tooltipState.itemInteraction.click.dataKey;
     }
@@ -267,7 +267,7 @@ export const selectActiveCoordinate: (
     let activeCoordinate: ChartCoordinate;
     if (tooltipEventType === 'item') {
       if (trigger === 'hover') {
-        activeCoordinate = tooltipState.itemInteraction.activeMouseOverCoordinate;
+        activeCoordinate = tooltipState.itemInteraction.hover.coordinate;
       } else {
         activeCoordinate = tooltipState.itemInteraction.click.coordinate;
       }
@@ -430,11 +430,11 @@ export const selectIsTooltipActive: (
       }
     } else if (trigger === 'hover') {
       if (activeFromProps) {
-        isActive = tooltipState.itemInteraction.activeMouseOverIndex != null;
-        activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+        isActive = tooltipState.itemInteraction.hover.index != null;
+        activeIndex = tooltipState.itemInteraction.hover.index;
       } else {
-        isActive = tooltipState.itemInteraction.activeHover;
-        activeIndex = tooltipState.itemInteraction.activeMouseOverIndex;
+        isActive = tooltipState.itemInteraction.hover.active;
+        activeIndex = tooltipState.itemInteraction.hover.index;
       }
     } else if (activeFromProps) {
       isActive = tooltipState.itemInteraction.click.index != null;

@@ -6,7 +6,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
-import { initialState as initialTooltipState } from '../../src/state/tooltipSlice';
+import { produceState } from '../helper/produceState';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -37,23 +37,11 @@ const preloadedState: Partial<RechartsRootState> = {
   },
 };
 
-const preloadedRadialState: Partial<RechartsRootState> = {
-  ...preloadedState,
-  layout: {
-    layoutType: 'radial',
-    container: undefined,
-    width: 0,
-    height: 0,
-    margin: { top: 11, right: 22, bottom: 33, left: 4 },
-  },
-  tooltip: {
-    ...initialTooltipState,
-    itemInteraction: {
-      activeHover: true,
-      ...initialTooltipState.itemInteraction,
-    },
-  },
-};
+const preloadedRadialState: Partial<RechartsRootState> = produceState(draft => {
+  draft.layout.layoutType = 'radial';
+  draft.layout.margin = { top: 11, right: 22, bottom: 33, left: 4 };
+  draft.tooltip.itemInteraction.hover.active = true;
+});
 
 describe('Cursor', () => {
   describe('Internal component', () => {
@@ -154,21 +142,11 @@ describe('Cursor', () => {
     });
 
     it('should render cross cursor for scatter chart', () => {
-      const preloadedScatterState: Partial<RechartsRootState> = {
-        ...preloadedState,
-        options: {
-          chartName: 'ScatterChart',
-          tooltipPayloadSearcher: arrayTooltipSearcher,
-          eventEmitter: undefined,
-        },
-        tooltip: {
-          ...initialTooltipState,
-          itemInteraction: {
-            activeHover: true,
-            ...initialTooltipState.itemInteraction,
-          },
-        },
-      };
+      const preloadedScatterState: Partial<RechartsRootState> = produceState(draft => {
+        draft.options.chartName = 'ScatterChart';
+        draft.options.tooltipPayloadSearcher = arrayTooltipSearcher;
+        draft.tooltip.itemInteraction.hover.active = true;
+      });
       const { container } = render(
         <RechartsStoreProvider preloadedState={preloadedScatterState}>
           <svg width={100} height={100}>
