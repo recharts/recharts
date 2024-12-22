@@ -1857,7 +1857,7 @@ describe('Tooltip integration', () => {
     });
 
     it('should select tooltip payload configurations', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', 0));
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           dataDefinedOnItem: [
@@ -2073,7 +2073,7 @@ describe('Tooltip integration', () => {
     });
 
     it('should select active coordinate', () => {
-      const { spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', 0));
+      const { spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith({
         x: 67.5,
         y: 50.6,
@@ -2081,7 +2081,7 @@ describe('Tooltip integration', () => {
     });
 
     it('should select tooltip data', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', 0));
+      const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'item', 'hover', '0'));
       const expected: ReadonlyArray<TooltipPayloadConfiguration> = [
         {
           positions: [

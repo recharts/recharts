@@ -142,6 +142,8 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     axisId,
   } = props;
   const dispatch = useAppDispatch();
+  const defaultIndexAsString: string | undefined =
+    typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex;
 
   useEffect(() => {
     dispatch(
@@ -150,10 +152,10 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
         trigger,
         axisId,
         active: activeFromProps,
-        defaultIndex: typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex,
+        defaultIndex: defaultIndexAsString,
       }),
     );
-  }, [dispatch, shared, trigger, axisId, activeFromProps, defaultIndex]);
+  }, [dispatch, shared, trigger, axisId, activeFromProps, defaultIndexAsString]);
 
   const viewBox = useViewBox();
   const accessibilityLayer = useAccessibilityLayer();
@@ -165,10 +167,12 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
 
   const labelFromRedux = useAppSelector(state => selectActiveLabel(state, tooltipEventType, trigger, defaultIndex));
   const { isActive: isTooltipActiveFromRedux, activeIndex } = useAppSelector(state =>
-    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndex),
+    selectIsTooltipActive(state, tooltipEventType, trigger, defaultIndexAsString),
   );
 
-  const coordinate = useAppSelector(state => selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndex));
+  const coordinate = useAppSelector(state =>
+    selectActiveCoordinate(state, tooltipEventType, trigger, defaultIndexAsString),
+  );
   const payload: TooltipPayload = payloadFromRedux;
   const tooltipPortalFromContext = useTooltipPortal();
   /*

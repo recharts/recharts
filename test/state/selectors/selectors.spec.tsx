@@ -720,14 +720,14 @@ describe('selectTooltipPayloadConfigurations', () => {
 
   describe('with defaultIndex', () => {
     it('should return the first configuration if the tooltipEventType is item and the defaultIndex is set, before user started interacting with the chart', () => {
-      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', 1)).toEqual([
+      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', '1')).toEqual([
         exampleTooltipPayloadConfiguration1,
       ]);
     });
 
     it('should return configuration that matches the dataKey after user has started interacting', () => {
       exampleStore.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey2' }));
-      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', 1)).toEqual([
+      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', '1')).toEqual([
         exampleTooltipPayloadConfiguration2,
       ]);
     });
@@ -736,7 +736,7 @@ describe('selectTooltipPayloadConfigurations', () => {
       exampleStore.dispatch(
         setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey-notPresentInPayloads' }),
       );
-      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', 1)).toEqual([]);
+      expect(selectTooltipPayloadConfigurations(exampleStore.getState(), 'item', 'hover', '1')).toEqual([]);
     });
   });
 });
@@ -748,7 +748,9 @@ describe('selectIsTooltipActive', () => {
       it('should return undefined when outside of Redux state', () => {
         expect.assertions(1);
         const Comp = (): null => {
-          const result = useAppSelectorWithStableTest(state => selectIsTooltipActive(state, tooltipEventType, trigger));
+          const result = useAppSelectorWithStableTest(state =>
+            selectIsTooltipActive(state, tooltipEventType, trigger, undefined),
+          );
           expect(result).toBe(undefined);
           return null;
         };
@@ -757,7 +759,7 @@ describe('selectIsTooltipActive', () => {
 
       it('should return false from initial state', () => {
         const store = createRechartsStore();
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -765,7 +767,7 @@ describe('selectIsTooltipActive', () => {
 
       it('should return true if a defaultIndex has been set', () => {
         const store = createRechartsStore();
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, 1)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, '1')).toEqual({
           isActive: true,
           activeIndex: '1',
         });
@@ -781,7 +783,7 @@ describe('selectIsTooltipActive', () => {
         // in browser, this is difficult to reproduce - one usually has to mouse over first before clicking
         const store = createRechartsStore();
         store.dispatch(setActiveClickItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -791,7 +793,7 @@ describe('selectIsTooltipActive', () => {
         // in browser, this is difficult to reproduce - one usually has to mouse over first before clicking
         const store = createRechartsStore();
         store.dispatch(setMouseClickAxisIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -803,17 +805,17 @@ describe('selectIsTooltipActive', () => {
       it('should return true if user is hovering over a graphical item but not axis', () => {
         const store = createRechartsStore();
         store.dispatch(setMouseOverAxisIndex({ activeIndex: '1', activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
         store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
         store.dispatch(mouseLeaveItem());
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: '1',
         });
@@ -828,22 +830,22 @@ describe('selectIsTooltipActive', () => {
           and then continue returning true when user hovers over and then leaves a graphical item`, () => {
         const store = createRechartsStore();
         store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
         store.dispatch(setMouseOverAxisIndex({ activeIndex: '1', activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
         store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
         store.dispatch(mouseLeaveItem());
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
@@ -860,7 +862,7 @@ describe('selectIsTooltipActive', () => {
       it('should return false if user is hovering over a graphical item', () => {
         const store = createRechartsStore();
         store.dispatch(setActiveMouseOverItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -869,7 +871,7 @@ describe('selectIsTooltipActive', () => {
       it('should return false if user is hovering over an axis', () => {
         const store = createRechartsStore();
         store.dispatch(setMouseOverAxisIndex({ activeIndex: null, activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -882,22 +884,22 @@ describe('selectIsTooltipActive', () => {
           because recharts does not allow ever turning off a tooltip that was triggered by a click`, () => {
         const store = createRechartsStore();
         store.dispatch(setActiveClickItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
         store.dispatch(setActiveClickItemIndex({ activeIndex: '2', activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });
         store.dispatch(mouseLeaveItem());
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });
         store.dispatch(setMouseClickAxisIndex({ activeIndex: '1', activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });
@@ -906,7 +908,7 @@ describe('selectIsTooltipActive', () => {
       it('should return false if user is clicking on an axis', () => {
         const store = createRechartsStore();
         store.dispatch(setMouseClickAxisIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: false,
           activeIndex: null,
         });
@@ -918,22 +920,22 @@ describe('selectIsTooltipActive', () => {
       it('should return true if user is clicking on an axis, and continue returning true forever', () => {
         const store = createRechartsStore();
         store.dispatch(setMouseClickAxisIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '1',
         });
         store.dispatch(setMouseClickAxisIndex({ activeIndex: '2', activeDataKey: undefined, activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });
         store.dispatch(mouseLeaveItem());
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });
         store.dispatch(setActiveClickItemIndex({ activeIndex: '1', activeDataKey: 'dataKey1', activeCoordinate }));
-        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger)).toEqual({
+        expect(selectIsTooltipActive(store.getState(), tooltipEventType, trigger, undefined)).toEqual({
           isActive: true,
           activeIndex: '2',
         });

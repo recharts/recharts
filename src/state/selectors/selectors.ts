@@ -7,6 +7,7 @@ import {
   ActiveTooltipProps,
   TooltipEntrySettings,
   TooltipIndex,
+  TooltipInteractionState,
   TooltipPayload,
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
@@ -48,6 +49,7 @@ import { selectChartOffset } from './selectChartOffset';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { selectTooltipSettings } from './selectTooltipSettings';
+import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -66,8 +68,8 @@ const pickDefaultIndex = (
   _state: RechartsRootState,
   _tooltipEventType: TooltipEventType,
   _trigger: TooltipTrigger,
-  defaultIndex?: number | undefined,
-): number | undefined => defaultIndex;
+  defaultIndex?: TooltipIndex | undefined,
+): TooltipIndex | undefined => defaultIndex;
 
 function getSliced<T>(
   arr: unknown | ReadonlyArray<T>,
@@ -87,6 +89,16 @@ export const selectTooltipState = (state: RechartsRootState): TooltipState => st
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
+);
+
+const selectTooltipInteractionState: (
+  state: RechartsRootState,
+  shared: boolean,
+  trigger: TooltipTrigger,
+  defaultIndex: TooltipIndex | undefined,
+) => TooltipInteractionState | undefined = createSelector(
+  [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
+  combineTooltipInteractionState,
 );
 
 export function selectActiveIndex(
@@ -140,14 +152,14 @@ export const selectTooltipPayloadConfigurations: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
   [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
   (
     tooltipState: TooltipState,
     tooltipEventType: TooltipEventType,
     trigger: TooltipTrigger,
-    defaultIndex: number | undefined,
+    defaultIndex: TooltipIndex | undefined,
   ): ReadonlyArray<TooltipPayloadConfiguration> => {
     // if tooltip reacts to axis interaction, then we display all items at the same time.
     if (tooltipEventType === 'axis') {
@@ -186,7 +198,7 @@ const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => ChartCoordinate | undefined = createSelector(
   [
     selectChartWidth,
@@ -204,7 +216,7 @@ const selectCoordinateForDefaultIndex: (
     layout: LayoutType,
     offset: ChartOffset | undefined,
     tooltipTicks: ReadonlyArray<TickItem>,
-    defaultIndex: number | undefined,
+    defaultIndex: TooltipIndex | undefined,
     tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
     tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
   ): ChartCoordinate | undefined => {
@@ -215,12 +227,11 @@ const selectCoordinateForDefaultIndex: (
     const firstConfiguration = tooltipConfigurations[0];
     // @ts-expect-error we need to rethink the tooltipPayloadSearcher type
     const maybePosition: Coordinate | undefined =
-      // @ts-expect-error defaultIndex really should be type TooltipIndex, not number, if we want to support all charts
       firstConfiguration == null ? undefined : tooltipPayloadSearcher(firstConfiguration.positions, defaultIndex);
     if (maybePosition != null) {
       return maybePosition;
     }
-    const tick = tooltipTicks?.[defaultIndex];
+    const tick = tooltipTicks?.[Number(defaultIndex)];
     if (!tick) {
       return undefined;
     }
@@ -246,7 +257,7 @@ export const selectActiveCoordinate: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => ChartCoordinate | undefined = createSelector(
   [selectTooltipState, selectCoordinateForDefaultIndex, pickTooltipEventType, pickTrigger],
   (
@@ -388,7 +399,7 @@ export const selectIsTooltipActive: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
-  defaultIndex?: number | undefined,
+  defaultIndex: TooltipIndex | undefined,
 ) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
   [
     selectTooltipState,
@@ -402,7 +413,7 @@ export const selectIsTooltipActive: (
     tooltipState: TooltipState,
     tooltipEventType: TooltipEventType,
     trigger: TooltipTrigger,
-    defaultIndex: number | undefined,
+    defaultIndex: TooltipIndex | undefined,
     { active: activeFromProps }: TooltipSettingsState,
     syncState: TooltipSyncState,
   ) => {
