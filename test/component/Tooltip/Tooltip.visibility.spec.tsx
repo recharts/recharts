@@ -913,6 +913,12 @@ describe('Tooltip visibility', () => {
             coordinate: undefined,
           },
         },
+        keyboardInteraction: {
+          active: false,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+        },
         syncInteraction: {
           active: false,
           dataKey: undefined,
@@ -992,6 +998,12 @@ describe('Tooltip visibility', () => {
             dataKey: undefined,
             coordinate: undefined,
           },
+        },
+        keyboardInteraction: {
+          active: false,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
         },
         syncInteraction: {
           active: false,

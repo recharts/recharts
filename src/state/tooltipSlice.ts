@@ -198,6 +198,7 @@ export type TooltipState = {
     click: TooltipInteractionState;
     hover: TooltipInteractionState;
   };
+  keyboardInteraction: TooltipInteractionState;
   /**
    * This part of the state is the information coming from other charts.
    * If there are two charts with the same syncId, events from one chart will be transferred
@@ -227,6 +228,7 @@ export const initialState: TooltipState = {
     click: noInteraction,
     hover: noInteraction,
   },
+  keyboardInteraction: noInteraction,
   syncInteraction: {
     active: false,
     index: null,

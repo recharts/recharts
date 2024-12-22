@@ -1620,6 +1620,12 @@ describe('Tooltip integration', () => {
             coordinate: undefined,
           },
         },
+        keyboardInteraction: {
+          active: false,
+          dataKey: undefined,
+          index: null,
+          coordinate: undefined,
+        },
         settings: {
           active: undefined,
           axisId: 0,
