@@ -136,6 +136,7 @@
   "es6/state/selectors/selectAllAxes.js",
   "es6/state/selectors/selectChartOffset.js",
   "es6/state/selectors/selectTooltipEventType.js",
+  "es6/state/selectors/selectTooltipSettings.js",
   "es6/state/selectors/selectors.js",
   "es6/state/selectors/tooltipSelectors.js",
   "es6/state/store.js",

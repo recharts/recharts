@@ -57,6 +57,8 @@ import {
 
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 
+import { selectTooltipSettings } from './selectTooltipSettings';
+
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
 
@@ -315,20 +317,20 @@ export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray
   combineTicksOfTooltipAxis,
 );
 
-export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
-  [(state: RechartsRootState) => state.tooltip, selectDefaultTooltipEventType, selectValidateTooltipEventTypes],
-  (
-    tooltipState: TooltipState,
-    defaultTooltipEventType: TooltipEventType,
-    validateTooltipEventType: ReadonlyArray<TooltipEventType>,
-  ): TooltipIndex | undefined => {
-    const { settings } = tooltipState;
+const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | undefined = createSelector(
+  [selectDefaultTooltipEventType, selectValidateTooltipEventTypes, selectTooltipSettings],
+  (defaultTooltipEventType, validateTooltipEventType, settings) =>
+    combineTooltipEventType(settings.shared, defaultTooltipEventType, validateTooltipEventType),
+);
 
-    const tooltipEventType = combineTooltipEventType(
-      settings.shared,
-      defaultTooltipEventType,
-      validateTooltipEventType,
-    );
+// const selectTooltipInteractionState: (state: RechartsRootState) => TooltipInteractionState | undefined = createSelector(
+//   [state => state.tooltip],
+// );
+
+export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
+  [(state: RechartsRootState) => state.tooltip, selectTooltipEventType],
+  (tooltipState: TooltipState, tooltipEventType: TooltipEventType | undefined): TooltipIndex | undefined => {
+    const { settings } = tooltipState;
 
     if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
       // Synchronised events always override other events

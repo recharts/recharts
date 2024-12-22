@@ -47,6 +47,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartOffset } from './selectChartOffset';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
+import { selectTooltipSettings } from './selectTooltipSettings';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -83,8 +84,6 @@ function getSliced<T>(
 }
 
 export const selectTooltipState = (state: RechartsRootState): TooltipState => state.tooltip;
-
-export const selectTooltipSettings = (state: RechartsRootState): TooltipSettingsState => state.tooltip.settings;
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
