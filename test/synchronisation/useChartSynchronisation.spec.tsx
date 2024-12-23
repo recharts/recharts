@@ -73,10 +73,7 @@ describe('useTooltipChartSynchronisation', () => {
         'my-sync-id',
         setSyncInteraction({
           active: false,
-          coordinate: {
-            x: 202.5,
-            y: 200,
-          },
+          coordinate: undefined,
           dataKey: undefined,
           index: null,
           label: undefined,

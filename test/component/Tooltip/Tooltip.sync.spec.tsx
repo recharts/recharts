@@ -754,18 +754,17 @@ describe('Tooltip synchronization', () => {
      * This test fails because Recharts decides that the chart A has active=true,
      * therefore the last synchronised value should stay on forever.
      */
-    it.fails(
-      'after switching charts from A to B, it should follow the mouse and update coordinates on both charts',
-      () => {
-        const { wrapperA, wrapperB, debug } = renderTestCase();
-        showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
-        hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
-        showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
+    it('after switching charts from A to B, it should follow the mouse and update coordinates on the second chart, but remember the previous index on the first chart because it has active=true', () => {
+      const { wrapperA, wrapperB, debug } = renderTestCase();
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+      showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
 
-        expectTooltipPayload(wrapperA, 'Page B', ['BookOne : 300']);
-        expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
-      },
-    );
+      // Chart A keeps the same Tooltip thanks to active=true
+      expectTooltipPayload(wrapperA, 'Page C', ['BookOne : 300']);
+      // Chart B has new Tooltip from the new mouse interaction
+      expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
+    });
   });
 });
 
