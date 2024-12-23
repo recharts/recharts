@@ -28,8 +28,7 @@ jobs:
         run: npm run test-coverage
 
       - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           slug: recharts/recharts
           files: ./coverage/coverage-final.json
-          token: ${{ secrets.CODECOV_TOKEN }}
