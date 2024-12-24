@@ -3,6 +3,7 @@ import { setKeyboardInteraction } from './tooltipSlice';
 import { AppDispatch, RechartsRootState } from './store';
 import { selectTooltipAxisTicks } from './selectors/tooltipSelectors';
 import { selectCoordinateForDefaultIndex } from './selectors/selectors';
+import { selectChartDirection } from './selectors/axisSelectors';
 
 export const keyDownAction = createAction<KeyboardEvent['key']>('keyDown');
 export const focusAction = createAction('focus');
@@ -41,7 +42,10 @@ keyboardEventsMiddleware.startListening({
       return;
     }
 
-    const nextIndex = key === 'ArrowRight' ? currentIndex + 1 : currentIndex - 1;
+    const direction = selectChartDirection(state);
+    const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
+    const movement = key === 'ArrowRight' ? 1 : -1;
+    const nextIndex = currentIndex + movement * directionMultiplier;
     if (nextIndex >= tooltipTicks.length || nextIndex < 0) {
       return;
     }

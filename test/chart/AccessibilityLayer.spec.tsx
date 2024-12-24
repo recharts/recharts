@@ -485,8 +485,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
     };
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
+    test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
       const { container } = render(<DirectionSwitcher />);
 
       const svg = container.querySelector('svg');
