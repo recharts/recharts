@@ -1,6 +1,6 @@
 import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
-import { mouseLeaveChart } from '../state/tooltipSlice';
+import { mouseLeaveChart, onFocusAction } from '../state/tooltipSlice';
 import { setContainer } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
@@ -45,6 +45,9 @@ export const RechartsWrapper = forwardRef(
       dispatch(mouseMoveAction(e));
       wrapperEvents?.onMouseMove?.(e);
     };
+    const onFocus = () => {
+      dispatch(onFocusAction());
+    };
     return (
       // TODO fix these two a11y violations - we should probably add AccessibilityManager in here ?
       // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
@@ -57,6 +60,7 @@ export const RechartsWrapper = forwardRef(
         onMouseMove={myOnMouseMove}
         onMouseEnter={myOnMouseEnter}
         onMouseLeave={myOnMouseLeave}
+        onFocus={onFocus}
         ref={innerRef}
       >
         {children}

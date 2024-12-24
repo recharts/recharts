@@ -35,6 +35,10 @@ export const combineTooltipInteractionState = (
     return appropriateMouseInteraction;
   }
 
+  if (tooltipState.keyboardInteraction.active) {
+    return tooltipState.keyboardInteraction;
+  }
+
   if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
     return tooltipState.syncInteraction;
   }

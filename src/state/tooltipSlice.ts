@@ -313,6 +313,12 @@ const tooltipSlice = createSlice({
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
     },
+    onFocusAction(state) {
+      state.keyboardInteraction.active = true;
+      if (state.keyboardInteraction.index == null) {
+        state.keyboardInteraction.index = '0';
+      }
+    },
   },
 });
 
@@ -327,6 +333,7 @@ export const {
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,
   setSyncInteraction,
+  onFocusAction,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;
