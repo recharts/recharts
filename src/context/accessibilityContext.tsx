@@ -1,7 +1,3 @@
-import { createContext, useContext } from 'react';
+import { useAppSelector } from '../state/hooks';
 
-const AccessibilityContext = createContext<boolean>(true);
-
-export const AccessibilityContextProvider = AccessibilityContext.Provider;
-
-export const useAccessibilityLayer = () => useContext(AccessibilityContext);
+export const useAccessibilityLayer = () => useAppSelector(state => state.rootProps.accessibilityLayer);

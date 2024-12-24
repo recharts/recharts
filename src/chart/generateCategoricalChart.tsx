@@ -58,7 +58,6 @@ import {
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
-import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
@@ -1432,53 +1431,51 @@ export const generateCategoricalChart = ({
                     <LegendPortalContext.Provider value={this.state.legendPortal}>
                       <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
                         <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-                            <ChartLayoutContextProvider
-                              state={this.state}
-                              width={this.props.width}
-                              height={this.props.height}
-                              clipPathId={this.clipPathId}
-                              margin={this.props.margin}
-                              layout={this.props.layout}
+                          <ChartLayoutContextProvider
+                            state={this.state}
+                            width={this.props.width}
+                            height={this.props.height}
+                            clipPathId={this.clipPathId}
+                            margin={this.props.margin}
+                            layout={this.props.layout}
+                          >
+                            <RechartsWrapper
+                              className={className}
+                              style={style}
+                              wrapperEvents={wrapperEvents}
+                              width={width}
+                              height={height}
+                              ref={(node: HTMLDivElement) => {
+                                this.container = node;
+                                if (this.state.tooltipPortal == null) {
+                                  this.setState({ tooltipPortal: node });
+                                }
+                                if (this.state.legendPortal == null) {
+                                  this.setState({ legendPortal: node });
+                                }
+                              }}
                             >
-                              <RechartsWrapper
-                                className={className}
-                                style={style}
-                                wrapperEvents={wrapperEvents}
+                              <Surface
+                                {...attrs}
                                 width={width}
                                 height={height}
-                                ref={(node: HTMLDivElement) => {
-                                  this.container = node;
-                                  if (this.state.tooltipPortal == null) {
-                                    this.setState({ tooltipPortal: node });
-                                  }
-                                  if (this.state.legendPortal == null) {
-                                    this.setState({ legendPortal: node });
-                                  }
-                                }}
+                                title={title}
+                                desc={desc}
+                                style={FULL_WIDTH_AND_HEIGHT}
                               >
-                                <Surface
-                                  {...attrs}
-                                  width={width}
-                                  height={height}
-                                  title={title}
-                                  desc={desc}
-                                  style={FULL_WIDTH_AND_HEIGHT}
-                                >
-                                  <ClipPath clipPathId={this.clipPathId} />
-                                  <g
-                                    className="recharts-cursor-portal"
-                                    ref={(node: SVGElement) => {
-                                      if (this.state.cursorPortal == null) {
-                                        this.setState({ cursorPortal: node });
-                                      }
-                                    }}
-                                  />
-                                  {children}
-                                </Surface>
-                              </RechartsWrapper>
-                            </ChartLayoutContextProvider>
-                          </AccessibilityContextProvider>
+                                <ClipPath clipPathId={this.clipPathId} />
+                                <g
+                                  className="recharts-cursor-portal"
+                                  ref={(node: SVGElement) => {
+                                    if (this.state.cursorPortal == null) {
+                                      this.setState({ cursorPortal: node });
+                                    }
+                                  }}
+                                />
+                                {children}
+                              </Surface>
+                            </RechartsWrapper>
+                          </ChartLayoutContextProvider>
                         </BrushUpdateDispatchContext.Provider>
                       </LegendBoundingBoxContext.Provider>
                     </LegendPortalContext.Provider>
