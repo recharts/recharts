@@ -13,7 +13,6 @@ import {
   MIN_VALUE_REG,
   parseSpecifiedDomain,
   getTicksOfAxis,
-  isAxisLTR,
   AxisPropsNeededForTicksGenerator,
   isCategoricalAxis,
 } from '../../src/util/ChartUtils';
@@ -706,56 +705,6 @@ describe('getDomainOfErrorBars', () => {
       expect(getDomainOfErrorBars([...data, errorNull], scatter, 'x', undefined, 'xAxis')).toEqual([-14, 17]);
     });
   });
-});
-
-test('isLTR', () => {
-  // Axis with reversed=false
-  expect(
-    isAxisLTR({
-      0: { reversed: false },
-    }),
-  ).toBeTruthy();
-  // Axis with reversed=true
-  expect(
-    isAxisLTR({
-      0: { reversed: true },
-    }),
-  ).toBeFalsy();
-  // Custom XAxisId, reversed=false
-  expect(
-    isAxisLTR({
-      custom: { reversed: false },
-    }),
-  ).toBeTruthy();
-  // Custom XAxisId, reversed=true
-  expect(
-    isAxisLTR({
-      custom: { reversed: true },
-    }),
-  ).toBeFalsy();
-  // Multiple axes, both reversed=true
-  expect(
-    isAxisLTR({
-      0: { reversed: true },
-      1: { reversed: true },
-    }),
-  ).toBeFalsy();
-  // Multiple axes, both reversed=false
-  expect(
-    isAxisLTR({
-      0: { reversed: false },
-      1: { reversed: false },
-    }),
-  ).toBeTruthy();
-  // Multiple axes, different reversed values
-  expect(
-    isAxisLTR({
-      0: { reversed: true },
-      1: { reversed: false },
-    }),
-  ).toBeFalsy();
-  // Empty set of axes
-  expect(isAxisLTR({})).toBeTruthy();
 });
 
 describe('isCategoricalAxis', () => {

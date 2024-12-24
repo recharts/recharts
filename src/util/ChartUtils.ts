@@ -1076,21 +1076,6 @@ export function getTooltipNameProp(
   return undefined;
 }
 
-export interface Reversible {
-  reversed: boolean;
-}
-
-export const isAxisLTR = (axisMap: { [key: string]: Reversible }) => {
-  const axes = Object.values(axisMap ?? {});
-  // If there are no <XAxis /> elements in the chart, then the chart is left-to-right (returning true).
-  if (axes.length === 0) {
-    return true;
-  }
-  // If there are any cases of reversed=true, then the chart is right-to-left (returning false).
-  // Otherwise, the chart is left-to-right (returning true)
-  return !axes.some(({ reversed }) => reversed);
-};
-
 export function inRange(
   x: number,
   y: number,
