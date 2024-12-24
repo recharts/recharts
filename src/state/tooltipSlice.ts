@@ -270,6 +270,7 @@ const tooltipSlice = createSlice({
     },
     setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.keyboardInteraction.active = false;
       state.itemInteraction.hover.active = true;
       state.itemInteraction.hover.index = action.payload.activeIndex;
       state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
@@ -292,6 +293,7 @@ const tooltipSlice = createSlice({
     setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.itemInteraction.click.active = true;
+      state.keyboardInteraction.active = false;
       state.itemInteraction.click.index = action.payload.activeIndex;
       state.itemInteraction.click.dataKey = action.payload.activeDataKey;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
@@ -299,12 +301,14 @@ const tooltipSlice = createSlice({
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.syncInteraction.active = false;
       state.axisInteraction.hover.active = true;
+      state.keyboardInteraction.active = false;
       state.axisInteraction.hover.index = action.payload.activeIndex;
       state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
       state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.syncInteraction.active = false;
+      state.keyboardInteraction.active = false;
       state.axisInteraction.click.active = true;
       state.axisInteraction.click.index = action.payload.activeIndex;
       state.axisInteraction.click.dataKey = action.payload.activeDataKey;
@@ -312,6 +316,12 @@ const tooltipSlice = createSlice({
     },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
+    },
+    setKeyboardInteraction(state, action: PayloadAction<TooltipActionPayload & { active: boolean }>) {
+      state.keyboardInteraction.active = action.payload.active;
+      state.keyboardInteraction.index = action.payload.activeIndex;
+      state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
+      state.keyboardInteraction.dataKey = action.payload.activeDataKey;
     },
   },
 });
@@ -327,6 +337,7 @@ export const {
   setMouseOverAxisIndex,
   setMouseClickAxisIndex,
   setSyncInteraction,
+  setKeyboardInteraction,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;

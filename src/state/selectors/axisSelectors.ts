@@ -1834,3 +1834,29 @@ export const selectZAxisWithScale = createSelector(
     };
   },
 );
+
+/**
+ * We are also going to need to implement polar chart directions if we want to support keyboard controls for those.
+ */
+export type AxisDirection = 'left-to-right' | 'right-to-left' | 'top-to-bottom' | 'bottom-to-top';
+
+export const selectChartDirection: (state: RechartsRootState) => AxisDirection | undefined = createSelector(
+  [selectChartLayout, selectAllXAxes, selectAllYAxes],
+  (
+    layout: LayoutType,
+    allXAxes: ReadonlyArray<XAxisSettings>,
+    allYAxes: ReadonlyArray<YAxisSettings>,
+  ): AxisDirection => {
+    switch (layout) {
+      case 'horizontal': {
+        return allXAxes.some(axis => axis.reversed) ? 'right-to-left' : 'left-to-right';
+      }
+      case 'vertical': {
+        return allYAxes.some(axis => axis.reversed) ? 'bottom-to-top' : 'top-to-bottom';
+      }
+      default: {
+        return undefined;
+      }
+    }
+  },
+);

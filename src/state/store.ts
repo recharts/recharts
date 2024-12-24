@@ -13,6 +13,7 @@ import { legendReducer } from './legendSlice';
 import { rootPropsReducer } from './rootPropsSlice';
 import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
+import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 
 const rootReducer = combineReducers({
   cartesianAxis: cartesianAxisReducer,
@@ -36,7 +37,7 @@ export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-      }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware]),
+      }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware, keyboardEventsMiddleware.middleware]),
     devTools: {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,

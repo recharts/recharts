@@ -32,7 +32,6 @@ import {
   getStackGroupsByAxisId,
   getTicksOfAxis,
   inRange,
-  isAxisLTR,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
   parseSpecifiedDomain,
@@ -56,11 +55,9 @@ import {
   XAxisMap,
   YAxisMap,
 } from '../util/types';
-import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
-import { AccessibilityContextProvider } from '../context/accessibilityContext';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
@@ -770,8 +767,6 @@ export const generateCategoricalChart = ({
 
     clipPathId: string;
 
-    accessibilityManager = new AccessibilityManager();
-
     throttleTriggeredAfterMouseMove: DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>;
 
     // todo join specific chart propTypes
@@ -803,18 +798,6 @@ export const generateCategoricalChart = ({
     componentDidMount() {
       this.addListener();
 
-      this.accessibilityManager.setDetails({
-        container: this.container,
-        offset: {
-          left: this.props.margin.left ?? 0,
-          top: this.props.margin.top ?? 0,
-        },
-        coordinateList: this.state.tooltipTicks,
-        mouseHandlerCallback: this.triggeredAfterMouseMove,
-        layout: this.props.layout,
-        // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
-        ltr: isAxisLTR(this.state.xAxisMap),
-      });
       this.displayDefaultTooltip();
     }
 
@@ -849,49 +832,6 @@ export const generateCategoricalChart = ({
       };
 
       this.setState(nextState);
-
-      // Make sure that anyone who keyboard-only users who tab to the chart will start their
-      // cursors at defaultIndex
-      this.accessibilityManager.setIndex(defaultIndex);
-    }
-
-    getSnapshotBeforeUpdate(
-      prevProps: Readonly<CategoricalChartProps>,
-      prevState: Readonly<CategoricalChartState>,
-    ): null {
-      if (!this.props.accessibilityLayer) {
-        return null;
-      }
-
-      if (this.state.tooltipTicks !== prevState.tooltipTicks) {
-        this.accessibilityManager.setDetails({
-          coordinateList: this.state.tooltipTicks,
-        });
-      }
-
-      if (this.state.xAxisMap !== prevState.xAxisMap) {
-        this.accessibilityManager.setDetails({
-          ltr: isAxisLTR(this.state.xAxisMap),
-        });
-      }
-
-      if (this.props.layout !== prevProps.layout) {
-        this.accessibilityManager.setDetails({
-          layout: this.props.layout,
-        });
-      }
-
-      if (this.props.margin !== prevProps.margin) {
-        this.accessibilityManager.setDetails({
-          offset: {
-            left: this.props.margin.left ?? 0,
-            top: this.props.margin.top ?? 0,
-          },
-        });
-      }
-
-      // Something has to be returned for getSnapshotBeforeUpdate
-      return null;
     }
 
     static getDerivedStateFromProps(
@@ -1472,16 +1412,6 @@ export const generateCategoricalChart = ({
         attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
         attrs.role = this.props.role ?? 'application';
-        attrs.onKeyDown = (e: any) => {
-          this.accessibilityManager.keyboardEvent(e);
-          // 'onKeyDown' is not currently a supported prop that can be passed through
-          // if it's added, this should be added: this.props.onKeyDown(e);
-        };
-        attrs.onFocus = () => {
-          this.accessibilityManager.focus();
-          // 'onFocus' is not currently a supported prop that can be passed through
-          // if it's added, the focus event should be forwarded to the prop
-        };
       }
 
       const wrapperEvents = this.parseEventsOfWrapper();
@@ -1501,53 +1431,51 @@ export const generateCategoricalChart = ({
                     <LegendPortalContext.Provider value={this.state.legendPortal}>
                       <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
                         <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                          <AccessibilityContextProvider value={this.props.accessibilityLayer}>
-                            <ChartLayoutContextProvider
-                              state={this.state}
-                              width={this.props.width}
-                              height={this.props.height}
-                              clipPathId={this.clipPathId}
-                              margin={this.props.margin}
-                              layout={this.props.layout}
+                          <ChartLayoutContextProvider
+                            state={this.state}
+                            width={this.props.width}
+                            height={this.props.height}
+                            clipPathId={this.clipPathId}
+                            margin={this.props.margin}
+                            layout={this.props.layout}
+                          >
+                            <RechartsWrapper
+                              className={className}
+                              style={style}
+                              wrapperEvents={wrapperEvents}
+                              width={width}
+                              height={height}
+                              ref={(node: HTMLDivElement) => {
+                                this.container = node;
+                                if (this.state.tooltipPortal == null) {
+                                  this.setState({ tooltipPortal: node });
+                                }
+                                if (this.state.legendPortal == null) {
+                                  this.setState({ legendPortal: node });
+                                }
+                              }}
                             >
-                              <RechartsWrapper
-                                className={className}
-                                style={style}
-                                wrapperEvents={wrapperEvents}
+                              <Surface
+                                {...attrs}
                                 width={width}
                                 height={height}
-                                ref={(node: HTMLDivElement) => {
-                                  this.container = node;
-                                  if (this.state.tooltipPortal == null) {
-                                    this.setState({ tooltipPortal: node });
-                                  }
-                                  if (this.state.legendPortal == null) {
-                                    this.setState({ legendPortal: node });
-                                  }
-                                }}
+                                title={title}
+                                desc={desc}
+                                style={FULL_WIDTH_AND_HEIGHT}
                               >
-                                <Surface
-                                  {...attrs}
-                                  width={width}
-                                  height={height}
-                                  title={title}
-                                  desc={desc}
-                                  style={FULL_WIDTH_AND_HEIGHT}
-                                >
-                                  <ClipPath clipPathId={this.clipPathId} />
-                                  <g
-                                    className="recharts-cursor-portal"
-                                    ref={(node: SVGElement) => {
-                                      if (this.state.cursorPortal == null) {
-                                        this.setState({ cursorPortal: node });
-                                      }
-                                    }}
-                                  />
-                                  {children}
-                                </Surface>
-                              </RechartsWrapper>
-                            </ChartLayoutContextProvider>
-                          </AccessibilityContextProvider>
+                                <ClipPath clipPathId={this.clipPathId} />
+                                <g
+                                  className="recharts-cursor-portal"
+                                  ref={(node: SVGElement) => {
+                                    if (this.state.cursorPortal == null) {
+                                      this.setState({ cursorPortal: node });
+                                    }
+                                  }}
+                                />
+                                {children}
+                              </Surface>
+                            </RechartsWrapper>
+                          </ChartLayoutContextProvider>
                         </BrushUpdateDispatchContext.Provider>
                       </LegendBoundingBoxContext.Provider>
                     </LegendPortalContext.Provider>
@@ -1587,6 +1515,7 @@ export const generateCategoricalChart = ({
     return (
       <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
         <ReportChartProps
+          accessibilityLayer={props.accessibilityLayer}
           barCategoryGap={props.barCategoryGap ?? '10%'}
           maxBarSize={props.maxBarSize}
           stackOffset={props.stackOffset ?? 'none'}

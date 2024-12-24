@@ -15,8 +15,9 @@ import {
   YAxis,
 } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { getTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { expectTooltipNotVisible, expectTooltipPayload, getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { PageData } from '../_data';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 function assertChartA11yAttributes(svg: Element) {
   expect(svg).not.toBeNull();
@@ -47,20 +48,19 @@ function arrowLeft(container: Element) {
 function assertNoKeyboardInteractions(container: HTMLElement) {
   const svg = container.querySelector('svg');
   assertNotNull(svg);
-  const tooltip = getTooltip(container);
-  expect(tooltip).toHaveTextContent('');
+  expectTooltipNotVisible(container);
   act(() => {
     svg.focus();
   });
-  expect(tooltip).toHaveTextContent('');
+  expectTooltipNotVisible(container);
   arrowRight(svg);
-  expect(tooltip).toHaveTextContent('');
+  expectTooltipNotVisible(container);
   arrowLeft(svg);
-  expect(tooltip).toHaveTextContent('');
+  expectTooltipNotVisible(container);
 }
 
 describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s', accessibilityLayer => {
-  describe('AreaChart', () => {
+  describe('AreaChart horizontal', () => {
     test('Add tabindex and role to the svg element', () => {
       const { container } = render(
         <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
@@ -72,8 +72,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       assertChartA11yAttributes(svg);
     });
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('When chart receives focus, show the tooltip for the first point', () => {
+    test('When chart receives focus, show the tooltip for the first point', () => {
       const { container } = render(
         <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -84,17 +83,15 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </AreaChart>,
       );
 
-      // Confirm that the tooltip container exists, but isn't displaying anything
-      const tooltip = getTooltip(container);
-      expect(tooltip.textContent).toBe('');
+      expectTooltipNotVisible(container);
 
       // Once the chart receives focus, the tooltip should display
       act(() => container.querySelector('svg')?.focus());
-      expect(tooltip).toHaveTextContent('Page A');
+
+      expectTooltipPayload(container, 'Page A', ['uv : 400']);
     });
 
-    // Temporarily broken until the redux a11y layer is completed
-    test.fails('accessibilityLayer works, even without *Axis elements', () => {
+    test('accessibilityLayer works, even without *Axis elements', () => {
       const { container } = render(
         <AreaChart width={100} height={50} data={PageData} accessibilityLayer={accessibilityLayer}>
           <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
@@ -194,30 +191,6 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       });
       expect(tooltip).toHaveTextContent('Page E');
       expect(mockMouseMovements.mock.instances).toHaveLength(8);
-    });
-
-    test('Vertical chart ignores arrow keys because vertical charts are not supported (why?)', () => {
-      const mockMouseMovements = vi.fn();
-
-      const { container } = render(
-        <AreaChart
-          layout="vertical"
-          width={100}
-          height={50}
-          data={PageData}
-          accessibilityLayer
-          onMouseMove={mockMouseMovements}
-        >
-          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-          <Tooltip />
-          <Legend />
-          <XAxis dataKey="name" />
-          <YAxis />
-        </AreaChart>,
-      );
-
-      assertNoKeyboardInteractions(container);
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
     });
 
     // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
@@ -409,8 +382,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
     //    happen, it would take a while for someone to notice, and could be potentially hard to
     //    reproduce or debug. It's not that hard to test, and could potentially save someone some
     //    stress down the line. That trade-off feels worth it!
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('When chart is forced to rerender without a redraw, arrow keys still work', () => {
+    test('When chart is forced to rerender without a redraw, arrow keys still work', () => {
       const { container } = render(<Counter />);
 
       expect(container.querySelectorAll('button')).toHaveLength(1);
@@ -464,8 +436,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
     };
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('When a tooltip is removed, the AccessibilityLayer does not throw', () => {
+    test('When a tooltip is removed, the AccessibilityLayer does not throw', () => {
       const { container } = render(<BugExample />);
 
       const svg = container.querySelector('svg');
@@ -514,8 +485,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
     };
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
+    test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
       const { container } = render(<DirectionSwitcher />);
 
       const svg = container.querySelector('svg');
@@ -690,30 +660,6 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
 
       assertNoKeyboardInteractions(container);
     });
-
-    test('Vertical chart ignores arrow keys', () => {
-      const mockMouseMovements = vi.fn();
-
-      const { container } = render(
-        <AreaChart
-          layout="vertical"
-          width={100}
-          height={50}
-          data={PageData}
-          accessibilityLayer
-          onMouseMove={mockMouseMovements}
-        >
-          <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-          <Tooltip />
-          <Legend />
-          <XAxis dataKey="name" />
-          <YAxis />
-        </AreaChart>,
-      );
-
-      assertNoKeyboardInteractions(container);
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
-    });
   });
 
   describe('FunnelChart', () => {
@@ -765,5 +711,110 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
 
       assertNoKeyboardInteractions(container);
     });
+  });
+});
+
+describe('AreaChart horizontal', () => {
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <AreaChart width={100} height={50} data={PageData}>
+      <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      <Tooltip />
+      <Legend />
+      <XAxis dataKey="name" />
+      <YAxis />
+      {children}
+    </AreaChart>
+  ));
+
+  test('When chart receives focus, show the tooltip for the first point', () => {
+    const { container } = renderTestCase();
+
+    expectTooltipNotVisible(container);
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+
+  test('when arrow right is pressed, tooltip moves to second data point', () => {
+    const { container } = renderTestCase();
+
+    expectTooltipNotVisible(container);
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+  });
+
+  test('should stay on the first index after pressing left', () => {
+    const { container } = renderTestCase();
+
+    expectTooltipNotVisible(container);
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    arrowLeft(svg);
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+  });
+
+  test('after it arrives at the end of the available data and then press arrow right again, it will continue showing the last item', () => {
+    const { container } = renderTestCase();
+
+    expectTooltipNotVisible(container);
+    const svg = container.querySelector('svg');
+    assertNotNull(svg);
+
+    act(() => svg.focus());
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page D', ['uv : 200']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page E', ['uv : 278']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page F', ['uv : 189']);
+
+    arrowRight(svg);
+    expectTooltipPayload(container, 'Page F', ['uv : 189']);
+  });
+});
+
+describe('AreaChart vertical', () => {
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <AreaChart width={100} height={50} data={PageData} layout="vertical">
+      <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+      <Tooltip />
+      <Legend />
+      <XAxis type="number" />
+      <YAxis dataKey="name" type="category" />
+      {children}
+    </AreaChart>
+  ));
+
+  test('When chart receives focus, show the tooltip for the first point', () => {
+    const { container } = renderTestCase();
+
+    expectTooltipNotVisible(container);
+
+    // Once the chart receives focus, the tooltip should display
+    act(() => container.querySelector('svg')?.focus());
+
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
   });
 });
