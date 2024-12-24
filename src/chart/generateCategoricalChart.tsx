@@ -32,7 +32,6 @@ import {
   getStackGroupsByAxisId,
   getTicksOfAxis,
   inRange,
-  isAxisLTR,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
   parseSpecifiedDomain,
@@ -56,7 +55,6 @@ import {
   XAxisMap,
   YAxisMap,
 } from '../util/types';
-import { AccessibilityManager } from './AccessibilityManager';
 import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
@@ -770,8 +768,6 @@ export const generateCategoricalChart = ({
 
     clipPathId: string;
 
-    accessibilityManager = new AccessibilityManager();
-
     throttleTriggeredAfterMouseMove: DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>;
 
     // todo join specific chart propTypes
@@ -803,18 +799,6 @@ export const generateCategoricalChart = ({
     componentDidMount() {
       this.addListener();
 
-      this.accessibilityManager.setDetails({
-        container: this.container,
-        offset: {
-          left: this.props.margin.left ?? 0,
-          top: this.props.margin.top ?? 0,
-        },
-        coordinateList: this.state.tooltipTicks,
-        mouseHandlerCallback: this.triggeredAfterMouseMove,
-        layout: this.props.layout,
-        // Check all (0+) <XAxis /> elements to see if ANY have reversed={true}. If so, this will be treated as an RTL chart
-        ltr: isAxisLTR(this.state.xAxisMap),
-      });
       this.displayDefaultTooltip();
     }
 
@@ -849,49 +833,6 @@ export const generateCategoricalChart = ({
       };
 
       this.setState(nextState);
-
-      // Make sure that anyone who keyboard-only users who tab to the chart will start their
-      // cursors at defaultIndex
-      this.accessibilityManager.setIndex(defaultIndex);
-    }
-
-    getSnapshotBeforeUpdate(
-      prevProps: Readonly<CategoricalChartProps>,
-      prevState: Readonly<CategoricalChartState>,
-    ): null {
-      if (!this.props.accessibilityLayer) {
-        return null;
-      }
-
-      if (this.state.tooltipTicks !== prevState.tooltipTicks) {
-        this.accessibilityManager.setDetails({
-          coordinateList: this.state.tooltipTicks,
-        });
-      }
-
-      if (this.state.xAxisMap !== prevState.xAxisMap) {
-        this.accessibilityManager.setDetails({
-          ltr: isAxisLTR(this.state.xAxisMap),
-        });
-      }
-
-      if (this.props.layout !== prevProps.layout) {
-        this.accessibilityManager.setDetails({
-          layout: this.props.layout,
-        });
-      }
-
-      if (this.props.margin !== prevProps.margin) {
-        this.accessibilityManager.setDetails({
-          offset: {
-            left: this.props.margin.left ?? 0,
-            top: this.props.margin.top ?? 0,
-          },
-        });
-      }
-
-      // Something has to be returned for getSnapshotBeforeUpdate
-      return null;
     }
 
     static getDerivedStateFromProps(
@@ -1472,16 +1413,6 @@ export const generateCategoricalChart = ({
         attrs.tabIndex = this.props.tabIndex ?? 0;
         // Set role to img by default (can be overwritten)
         attrs.role = this.props.role ?? 'application';
-        attrs.onKeyDown = (e: any) => {
-          this.accessibilityManager.keyboardEvent(e);
-          // 'onKeyDown' is not currently a supported prop that can be passed through
-          // if it's added, this should be added: this.props.onKeyDown(e);
-        };
-        attrs.onFocus = () => {
-          this.accessibilityManager.focus();
-          // 'onFocus' is not currently a supported prop that can be passed through
-          // if it's added, the focus event should be forwarded to the prop
-        };
       }
 
       const wrapperEvents = this.parseEventsOfWrapper();
