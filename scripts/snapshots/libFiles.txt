@@ -19,7 +19,6 @@
   "lib/cartesian/getEquidistantTicks.js",
   "lib/cartesian/getTicks.js",
   "lib/chart",
-  "lib/chart/AccessibilityManager.js",
   "lib/chart/AreaChart.js",
   "lib/chart/BarChart.js",
   "lib/chart/ComposedChart.js",

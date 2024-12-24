@@ -19,7 +19,6 @@
   "es6/cartesian/getEquidistantTicks.js",
   "es6/cartesian/getTicks.js",
   "es6/chart",
-  "es6/chart/AccessibilityManager.js",
   "es6/chart/AreaChart.js",
   "es6/chart/BarChart.js",
   "es6/chart/ComposedChart.js",

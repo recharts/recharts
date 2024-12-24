@@ -19,7 +19,6 @@
   "types/cartesian/getEquidistantTicks.d.ts",
   "types/cartesian/getTicks.d.ts",
   "types/chart",
-  "types/chart/AccessibilityManager.d.ts",
   "types/chart/AreaChart.d.ts",
   "types/chart/BarChart.d.ts",
   "types/chart/ComposedChart.d.ts",
