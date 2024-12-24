@@ -1587,6 +1587,7 @@ export const generateCategoricalChart = ({
     return (
       <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
         <ReportChartProps
+          accessibilityLayer={props.accessibilityLayer}
           barCategoryGap={props.barCategoryGap ?? '10%'}
           maxBarSize={props.maxBarSize}
           stackOffset={props.stackOffset ?? 'none'}

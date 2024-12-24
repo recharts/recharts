@@ -7,32 +7,34 @@ import { SyncMethod } from '../synchronisation/types';
  * choose to change them which should trigger a re-render.
  */
 export type UpdatableChartOptions = {
-  barGap: number | string;
+  accessibilityLayer: boolean;
   barCategoryGap: number | string;
-  stackOffset: StackOffsetType;
+  barGap: number | string;
   barSize: string | number | undefined;
-  maxBarSize: number | undefined;
-  /**
-   * Charts that share the same syncId will have their Tooltip and Brush synchronised.
-   */
-  syncId: number | string | undefined;
-  syncMethod: SyncMethod;
   /**
    * Useful for debugging which chart is which when synchronising.
    * The className is also passed to the root element of the chart but that's done in the JSX, not through Redux.
    */
   className: string | undefined;
+  maxBarSize: number | undefined;
+  stackOffset: StackOffsetType;
+  /**
+   * Charts that share the same syncId will have their Tooltip and Brush synchronised.
+   */
+  syncId: number | string | undefined;
+  syncMethod: SyncMethod;
 };
 
 export const initialState: UpdatableChartOptions = {
-  barGap: 4,
+  accessibilityLayer: true,
   barCategoryGap: '10%',
-  stackOffset: 'none',
+  barGap: 4,
   barSize: undefined,
+  className: undefined,
   maxBarSize: undefined,
+  stackOffset: 'none',
   syncId: undefined,
   syncMethod: 'index',
-  className: undefined,
 };
 
 const rootPropsSlice = createSlice({
@@ -40,6 +42,7 @@ const rootPropsSlice = createSlice({
   initialState,
   reducers: {
     updateOptions: (state: UpdatableChartOptions, action: PayloadAction<UpdatableChartOptions>) => {
+      state.accessibilityLayer = action.payload.accessibilityLayer;
       state.barCategoryGap = action.payload.barCategoryGap;
       state.barGap = action.payload.barGap ?? initialState.barGap;
       state.barSize = action.payload.barSize;

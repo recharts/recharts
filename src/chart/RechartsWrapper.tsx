@@ -1,10 +1,11 @@
 import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
-import { mouseLeaveChart, onFocusAction } from '../state/tooltipSlice';
+import { mouseLeaveChart } from '../state/tooltipSlice';
 import { setContainer } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
+import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
 
 export type RechartsWrapperProps = {
   children: ReactNode;
@@ -46,11 +47,15 @@ export const RechartsWrapper = forwardRef(
       wrapperEvents?.onMouseMove?.(e);
     };
     const onFocus = () => {
-      dispatch(onFocusAction());
+      dispatch(focusAction());
+    };
+    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
+      dispatch(keyDownAction(e.key));
     };
     return (
       // TODO fix these two a11y violations - we should probably add AccessibilityManager in here ?
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
       <div
         className={clsx('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', width, height, ...style }}
@@ -61,6 +66,7 @@ export const RechartsWrapper = forwardRef(
         onMouseEnter={myOnMouseEnter}
         onMouseLeave={myOnMouseLeave}
         onFocus={onFocus}
+        onKeyDown={onKeyDown}
         ref={innerRef}
       >
         {children}

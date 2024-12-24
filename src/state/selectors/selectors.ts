@@ -171,7 +171,7 @@ export const selectTooltipPayloadConfigurations: (
 export const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
   state.options.tooltipPayloadSearcher;
 
-const selectCoordinateForDefaultIndex: (
+export const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,

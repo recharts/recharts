@@ -99,6 +99,7 @@
   "types/state/chartDataSlice.d.ts",
   "types/state/graphicalItemsSlice.d.ts",
   "types/state/hooks.d.ts",
+  "types/state/keyboardEventsMiddleware.d.ts",
   "types/state/layoutSlice.d.ts",
   "types/state/legendSlice.d.ts",
   "types/state/mouseEventsMiddleware.d.ts",

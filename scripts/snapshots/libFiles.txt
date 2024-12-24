@@ -99,6 +99,7 @@
   "lib/state/chartDataSlice.js",
   "lib/state/graphicalItemsSlice.js",
   "lib/state/hooks.js",
+  "lib/state/keyboardEventsMiddleware.js",
   "lib/state/layoutSlice.js",
   "lib/state/legendSlice.js",
   "lib/state/mouseEventsMiddleware.js",

@@ -99,6 +99,7 @@
   "es6/state/chartDataSlice.js",
   "es6/state/graphicalItemsSlice.js",
   "es6/state/hooks.js",
+  "es6/state/keyboardEventsMiddleware.js",
   "es6/state/layoutSlice.js",
   "es6/state/legendSlice.js",
   "es6/state/mouseEventsMiddleware.js",
