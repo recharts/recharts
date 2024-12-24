@@ -236,34 +236,12 @@ export const selectActiveCoordinate: (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ) => ChartCoordinate | undefined = createSelector(
-  [selectTooltipState, selectCoordinateForDefaultIndex, pickTooltipEventType, pickTrigger],
+  [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (
-    tooltipState: TooltipState,
+    tooltipInteractionState: TooltipInteractionState,
     defaultIndexCoordinate: ChartCoordinate,
-    tooltipEventType: TooltipEventType,
-    trigger: TooltipTrigger,
   ): ChartCoordinate | undefined => {
-    if (tooltipState.syncInteraction.active) {
-      /*
-       * Chart synchronisation wins over everything else.
-       * The synchronisation hook already validates the coordinates to make sure they are within the current chart bounds,
-       * so that we can just return them here.
-       */
-      return tooltipState.syncInteraction.coordinate;
-    }
-    let activeCoordinate: ChartCoordinate;
-    if (tooltipEventType === 'item') {
-      if (trigger === 'hover') {
-        activeCoordinate = tooltipState.itemInteraction.hover.coordinate;
-      } else {
-        activeCoordinate = tooltipState.itemInteraction.click.coordinate;
-      }
-    } else if (trigger === 'hover') {
-      activeCoordinate = tooltipState.axisInteraction.hover.coordinate;
-    } else {
-      activeCoordinate = tooltipState.axisInteraction.click.coordinate;
-    }
-    return activeCoordinate ?? defaultIndexCoordinate;
+    return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );
 

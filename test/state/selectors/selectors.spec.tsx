@@ -564,7 +564,7 @@ describe('selectActiveCoordinate', () => {
     expect(selectActiveCoordinate(initialState, 'item', 'click', undefined)).toBe(expected);
   });
 
-  it('should return coordinates when mouseOverAxisIndex is fired and keep them after mouseLeaveChart', () => {
+  it('should return coordinates when mouseOverAxisIndex is fired and stop returning them after mouseLeaveChart', () => {
     const store = createRechartsStore(preloadedState);
 
     const initialState = createRechartsStore().getState();
@@ -583,7 +583,9 @@ describe('selectActiveCoordinate', () => {
 
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toBe(undefined);
+    // the selector stops returning the coordinates but they should still be present in store for the next animation
+    expect(store.getState().tooltip.axisInteraction.hover.coordinate).toEqual(expected);
   });
 
   it('should return coordinates when mouseClickAxisIndex is fired and keep them after mouseLeaveChart', () => {
@@ -625,11 +627,13 @@ describe('selectActiveCoordinate', () => {
 
     expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(expected);
 
-    // neither of these should reset coordinate
+    // neither of these reset the coordinates but the selector stops returning them
     store.dispatch(mouseLeaveItem());
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(expected);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(undefined);
+    // the selector stops returning the coordinates but they should still be present in store for the next animation
+    expect(store.getState().tooltip.itemInteraction.hover.coordinate).toBe(expected);
   });
 
   it('should return coordinates when mouseClickItemIndex is fired and keep them after mouseLeaveItem', () => {

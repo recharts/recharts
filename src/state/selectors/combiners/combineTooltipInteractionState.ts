@@ -29,15 +29,14 @@ export const combineTooltipInteractionState = (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ): TooltipInteractionState => {
-  if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
-    // Synchronised events always override other events. But also, active prop on the receiving end does not impact the synchronised tooltip. But maybe it should!?!
-    return tooltipState.syncInteraction;
-  }
-
   const appropriateMouseInteraction = chooseAppropriateMouseInteraction(tooltipState, tooltipEventType, trigger);
 
   if (appropriateMouseInteraction.active) {
     return appropriateMouseInteraction;
+  }
+
+  if (tooltipState.syncInteraction.active && tooltipState.syncInteraction.index != null) {
+    return tooltipState.syncInteraction;
   }
 
   const activeFromProps = tooltipState.settings.active === true;

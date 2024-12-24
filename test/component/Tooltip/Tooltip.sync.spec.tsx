@@ -55,6 +55,7 @@ import {
 import { setMouseOverAxisIndex, setSyncInteraction } from '../../../src/state/tooltipSlice';
 import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syncSelectors';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running
@@ -687,7 +688,7 @@ describe('Tooltip synchronization', () => {
   describe('in two LineCharts where first one has Tooltip active=true and the other has no active prop', () => {
     const renderTestCase = createSynchronisedSelectorTestCase(
       ({ children }) => (
-        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id">
+        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id" className="BookOne">
           <Line isAnimationActive={false} name="BookOne" type="monotone" dataKey="uv" />
           <XAxis dataKey="name" />
           <Tooltip active />
@@ -695,7 +696,7 @@ describe('Tooltip synchronization', () => {
         </LineChart>
       ),
       ({ children }) => (
-        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id">
+        <LineChart width={400} height={400} data={PageData} syncId="example-sync-id" className="BookTwo">
           <Line isAnimationActive={false} name="BookTwo" type="monotone" dataKey="uv" />
           <XAxis dataKey="name" />
           <Tooltip />
@@ -711,8 +712,12 @@ describe('Tooltip synchronization', () => {
     });
 
     it('should show both tooltips when hovering over chart A', () => {
-      const { wrapperA, wrapperB, debug } = renderTestCase();
+      const { wrapperA, wrapperB, spyA, spyB, debug } = renderTestCase(selectActiveTooltipIndex);
       showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+
+      expect(spyA).toHaveBeenLastCalledWith('2');
+      expect(spyB).toHaveBeenLastCalledWith('2');
+
       expectTooltipPayload(wrapperA, 'Page C', ['BookOne : 300']);
       expectTooltipPayload(wrapperB, 'Page C', ['BookTwo : 300']);
     });
@@ -750,22 +755,110 @@ describe('Tooltip synchronization', () => {
       expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
     });
 
-    /*
-     * This test fails because Recharts decides that the chart A has active=true,
-     * therefore the last synchronised value should stay on forever.
-     */
-    it.fails(
-      'after switching charts from A to B, it should follow the mouse and update coordinates on both charts',
-      () => {
-        const { wrapperA, wrapperB, debug } = renderTestCase();
-        showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
-        hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
-        showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
+    it('after switching charts from A to B, it should follow the mouse and update coordinates on both charts', () => {
+      const { wrapperA, wrapperB, spyA, spyB, debug } = renderTestCase(selectActiveTooltipIndex);
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+      showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
 
-        expectTooltipPayload(wrapperA, 'Page B', ['BookOne : 300']);
-        expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
-      },
-    );
+      expect(spyA).toHaveBeenLastCalledWith('1');
+      expect(spyB).toHaveBeenLastCalledWith('1');
+
+      expectTooltipPayload(wrapperA, 'Page B', ['BookOne : 300']);
+      expectTooltipPayload(wrapperB, 'Page B', ['BookTwo : 300']);
+    });
+
+    it('should clear synchronisation state after switching from A to B', () => {
+      const { wrapperA, wrapperB, spyA, spyB, debug } = renderTestCase(selectSynchronisedTooltipState);
+
+      expect(spyA).toHaveBeenLastCalledWith({
+        active: false,
+        coordinate: undefined,
+        dataKey: undefined,
+        index: null,
+        label: undefined,
+      });
+      expect(spyA).toHaveBeenCalledTimes(2);
+      expect(spyB).toHaveBeenLastCalledWith({
+        active: false,
+        coordinate: undefined,
+        dataKey: undefined,
+        index: null,
+        label: undefined,
+      });
+      expect(spyB).toHaveBeenCalledTimes(1);
+
+      showTooltip(wrapperA, lineChartMouseHoverTooltipSelector, debug);
+      // chart A is the target of mouse events so its sync state stays undefined
+      expect(spyA).toHaveBeenLastCalledWith({
+        active: false,
+        coordinate: undefined,
+        dataKey: undefined,
+        index: null,
+        label: undefined,
+      });
+      expect(spyA).toHaveBeenCalledTimes(2);
+      // chart B is now receiving synchronisation
+      expect(spyB).toHaveBeenLastCalledWith({
+        active: true,
+        coordinate: {
+          x: 161,
+          y: 200,
+        },
+        dataKey: undefined,
+        index: '2',
+        label: 'Page C',
+      });
+      expect(spyB).toHaveBeenCalledTimes(2);
+
+      hideTooltip(wrapperA, lineChartMouseHoverTooltipSelector);
+      expect(spyA).toHaveBeenLastCalledWith({
+        active: false,
+        coordinate: undefined,
+        dataKey: undefined,
+        index: null,
+        label: undefined,
+      });
+      expect(spyA).toHaveBeenCalledTimes(2);
+      // thanks to the active=true prop, the synchronised state remains on the chart B even though the active is on chart A
+      expect(spyB).toHaveBeenLastCalledWith({
+        active: true,
+        coordinate: {
+          x: 161,
+          y: 200,
+        },
+        dataKey: undefined,
+        index: '2',
+        label: 'Page C',
+      });
+      expect(spyB).toHaveBeenCalledTimes(2);
+
+      showTooltipOnCoordinate(wrapperB, lineChartMouseHoverTooltipSelector, { clientX: 100, clientY: 100 }, debug);
+      // chart A has now received new synchronisation state from mouse events on chart B
+      expect(spyA).toHaveBeenLastCalledWith({
+        active: true,
+        coordinate: {
+          x: 83,
+          y: 100,
+        },
+        dataKey: undefined,
+        index: '1',
+        label: 'Page B',
+      });
+      expect(spyA).toHaveBeenCalledTimes(3);
+      expect(spyB).toHaveBeenLastCalledWith({
+        // Thanks to mouse events, synchronisation on this chart is now turned off so that it can start sending events to other charts
+        active: false,
+        coordinate: {
+          x: 161,
+          y: 200,
+        },
+        dataKey: undefined,
+        index: '2',
+        label: 'Page C',
+      });
+      expect(spyB).toHaveBeenCalledTimes(3);
+    });
   });
 });
 

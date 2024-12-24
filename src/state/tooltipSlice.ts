@@ -269,6 +269,7 @@ const tooltipSlice = createSlice({
       state.settings = action.payload;
     },
     setActiveMouseOverItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
+      state.syncInteraction.active = false;
       state.itemInteraction.hover.active = true;
       state.itemInteraction.hover.index = action.payload.activeIndex;
       state.itemInteraction.hover.dataKey = action.payload.activeDataKey;
@@ -289,18 +290,21 @@ const tooltipSlice = createSlice({
       state.itemInteraction.hover.active = false;
     },
     setActiveClickItemIndex(state, action: PayloadAction<TooltipActionPayload>) {
+      state.syncInteraction.active = false;
       state.itemInteraction.click.active = true;
       state.itemInteraction.click.index = action.payload.activeIndex;
       state.itemInteraction.click.dataKey = action.payload.activeDataKey;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
+      state.syncInteraction.active = false;
       state.axisInteraction.hover.active = true;
       state.axisInteraction.hover.index = action.payload.activeIndex;
       state.axisInteraction.hover.dataKey = action.payload.activeDataKey;
       state.axisInteraction.hover.coordinate = action.payload.activeCoordinate;
     },
     setMouseClickAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
+      state.syncInteraction.active = false;
       state.axisInteraction.click.active = true;
       state.axisInteraction.click.index = action.payload.activeIndex;
       state.axisInteraction.click.dataKey = action.payload.activeDataKey;
