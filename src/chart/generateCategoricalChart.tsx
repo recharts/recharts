@@ -3,18 +3,9 @@ import get from 'lodash/get';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 
-import {
-  filterProps,
-  findChildByType,
-  getReactEventByType,
-  isChildrenEqual,
-  validateWidthHeight,
-} from '../util/ReactUtils';
-
-import { Brush } from '../cartesian/Brush';
+import { filterProps, getReactEventByType, isChildrenEqual, validateWidthHeight } from '../util/ReactUtils';
 import { isNullish, uniqueId } from '../util/DataUtils';
 import { shallowEqual } from '../util/ShallowEqual';
-import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
   CategoricalChartOptions,
@@ -26,7 +17,6 @@ import {
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { CategoricalChartState } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
-import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
@@ -48,37 +38,6 @@ export interface ChartPointer {
 }
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
-
-/**
- * Returns default, reset state for the categorical chart.
- * @param {Object} props Props object to use when creating the default state
- * @return {Object} Whole new state
- */
-export const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
-  const { children } = props;
-  const brushItem = findChildByType(children, Brush);
-  let startIndex = 0;
-  let endIndex = 0;
-  if (props.data && props.data.length !== 0) {
-    endIndex = props.data.length - 1;
-  }
-
-  if (brushItem && brushItem.props) {
-    if (brushItem.props.startIndex >= 0) {
-      startIndex = brushItem.props.startIndex;
-    }
-    if (brushItem.props.endIndex >= 0) {
-      endIndex = brushItem.props.endIndex;
-    }
-  }
-
-  return {
-    chartX: 0,
-    chartY: 0,
-    dataStartIndex: startIndex,
-    dataEndIndex: endIndex,
-  };
-};
 
 export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
 
@@ -135,8 +94,6 @@ export const generateCategoricalChart = ({
   class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
-    readonly eventEmitterSymbol = Symbol('rechartsEventEmitter');
-
     clipPathId: string;
 
     // todo join specific chart propTypes
@@ -162,19 +119,14 @@ export const generateCategoricalChart = ({
       this.state = {};
     }
 
-    componentDidMount() {
-      this.addListener();
-    }
-
     static getDerivedStateFromProps(
       nextProps: CategoricalChartProps,
       prevState: CategoricalChartState,
     ): CategoricalChartState {
       const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
-      const { dataStartIndex, dataEndIndex } = prevState;
 
       if (prevState.updateId === undefined) {
-        const defaultState = createDefaultState(nextProps);
+        const defaultState = {};
         return {
           ...defaultState,
           updateId: 0,
@@ -199,15 +151,7 @@ export const generateCategoricalChart = ({
         stackOffset !== prevState.prevStackOffset ||
         !shallowEqual(margin, prevState.prevMargin)
       ) {
-        const defaultState = createDefaultState(nextProps);
-
-        // Fixes https://github.com/recharts/recharts/issues/2143
-        const keepFromPrevState = {
-          // (chartX, chartY) are (0,0) in default state, but we want to keep the last mouse position to avoid
-          // any flickering
-          chartX: prevState.chartX,
-          chartY: prevState.chartY,
-        };
+        const defaultState = {};
 
         const updatesToState = {
           // Update the current tooltip data (in case it changes without mouse interaction)
@@ -216,7 +160,6 @@ export const generateCategoricalChart = ({
 
         const newState = {
           ...defaultState,
-          ...keepFromPrevState,
           ...updatesToState,
         };
 
@@ -233,30 +176,17 @@ export const generateCategoricalChart = ({
         };
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
-        // specifically check for Brush - if it exists and the start and end indexes are different, re-render with the new ones
-        const brush = findChildByType(children, Brush);
-
-        const startIndex = brush ? (brush.props?.startIndex ?? dataStartIndex) : dataStartIndex;
-        const endIndex = brush ? (brush.props?.endIndex ?? dataEndIndex) : dataEndIndex;
-        const hasDifferentStartOrEndIndex = startIndex !== dataStartIndex || endIndex !== dataEndIndex;
-
         // update configuration in children
         const hasGlobalData = !isNullish(data);
-        const newUpdateId = hasGlobalData && !hasDifferentStartOrEndIndex ? prevState.updateId : prevState.updateId + 1;
+        const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
 
         return {
           updateId: newUpdateId,
           prevChildren: children,
-          dataStartIndex: startIndex,
-          dataEndIndex: endIndex,
         };
       }
 
       return null;
-    }
-
-    componentWillUnmount() {
-      this.removeListener();
     }
 
     parseEventsOfWrapper() {
@@ -267,39 +197,6 @@ export const generateCategoricalChart = ({
         ...outerEvents,
       };
     }
-
-    addListener() {
-      eventCenter.on(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
-    }
-
-    removeListener() {
-      eventCenter.removeListener(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
-    }
-
-    handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState, emitter: symbol) => {
-      if (this.props.syncId === cId) {
-        if (emitter === this.eventEmitterSymbol && typeof this.props.syncMethod !== 'function') {
-          return;
-        }
-
-        this.applySyncEvent(data);
-      }
-    };
-
-    handleBrushChange = ({ startIndex, endIndex }: BrushStartEndIndex) => {
-      // Only trigger changes if the extents of the brush have actually changed
-      if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
-        this.setState(() => ({
-          dataStartIndex: startIndex,
-          dataEndIndex: endIndex,
-        }));
-
-        this.triggerSyncEvent({
-          dataStartIndex: startIndex,
-          dataEndIndex: endIndex,
-        });
-      }
-    };
 
     handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
       const eventName = getReactEventByType(e);
@@ -314,24 +211,6 @@ export const generateCategoricalChart = ({
         }
 
         event(mouse ?? {}, e);
-      }
-    };
-
-    triggerSyncEvent = (data: CategoricalChartState) => {
-      if (this.props.syncId !== undefined) {
-        eventCenter.emit(GENERATOR_SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
-      }
-    };
-
-    applySyncEvent = (data: CategoricalChartState) => {
-      const { dataStartIndex, dataEndIndex } = data;
-
-      if (data.dataStartIndex !== undefined || data.dataEndIndex !== undefined) {
-        this.setState({
-          dataStartIndex,
-          dataEndIndex,
-          ...{},
-        });
       }
     };
 
@@ -376,53 +255,51 @@ export const generateCategoricalChart = ({
           <CursorPortalContext.Provider value={this.state.cursorPortal}>
             <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
               <LegendPortalContext.Provider value={this.state.legendPortal}>
-                <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                  <ChartLayoutContextProvider
-                    state={this.state}
-                    width={this.props.width}
-                    height={this.props.height}
-                    clipPathId={this.clipPathId}
-                    margin={this.props.margin}
-                    layout={this.props.layout}
+                <ChartLayoutContextProvider
+                  state={this.state}
+                  width={this.props.width}
+                  height={this.props.height}
+                  clipPathId={this.clipPathId}
+                  margin={this.props.margin}
+                  layout={this.props.layout}
+                >
+                  <RechartsWrapper
+                    className={className}
+                    style={style}
+                    wrapperEvents={wrapperEvents}
+                    width={width}
+                    height={height}
+                    ref={(node: HTMLDivElement) => {
+                      this.container = node;
+                      if (this.state.tooltipPortal == null) {
+                        this.setState({ tooltipPortal: node });
+                      }
+                      if (this.state.legendPortal == null) {
+                        this.setState({ legendPortal: node });
+                      }
+                    }}
                   >
-                    <RechartsWrapper
-                      className={className}
-                      style={style}
-                      wrapperEvents={wrapperEvents}
+                    <Surface
+                      {...attrs}
                       width={width}
                       height={height}
-                      ref={(node: HTMLDivElement) => {
-                        this.container = node;
-                        if (this.state.tooltipPortal == null) {
-                          this.setState({ tooltipPortal: node });
-                        }
-                        if (this.state.legendPortal == null) {
-                          this.setState({ legendPortal: node });
-                        }
-                      }}
+                      title={title}
+                      desc={desc}
+                      style={FULL_WIDTH_AND_HEIGHT}
                     >
-                      <Surface
-                        {...attrs}
-                        width={width}
-                        height={height}
-                        title={title}
-                        desc={desc}
-                        style={FULL_WIDTH_AND_HEIGHT}
-                      >
-                        <ClipPath clipPathId={this.clipPathId} />
-                        <g
-                          className="recharts-cursor-portal"
-                          ref={(node: SVGElement) => {
-                            if (this.state.cursorPortal == null) {
-                              this.setState({ cursorPortal: node });
-                            }
-                          }}
-                        />
-                        {children}
-                      </Surface>
-                    </RechartsWrapper>
-                  </ChartLayoutContextProvider>
-                </BrushUpdateDispatchContext.Provider>
+                      <ClipPath clipPathId={this.clipPathId} />
+                      <g
+                        className="recharts-cursor-portal"
+                        ref={(node: SVGElement) => {
+                          if (this.state.cursorPortal == null) {
+                            this.setState({ cursorPortal: node });
+                          }
+                        }}
+                      />
+                      {children}
+                    </Surface>
+                  </RechartsWrapper>
+                </ChartLayoutContextProvider>
               </LegendPortalContext.Provider>
             </TooltipPortalContext.Provider>
           </CursorPortalContext.Provider>

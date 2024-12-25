@@ -550,7 +550,9 @@ export const HighlightAndZoom = {
             width={800}
             height={400}
             data={data}
+            // @ts-expect-error we're changing CategoricalChartState and activeLabel is no longer going to be there - what do we do with this story?
             onMouseDown={e => setZoomGraph(prev => ({ ...prev, refAreaLeft: e.activeLabel }))}
+            // @ts-expect-error we're changing CategoricalChartState and activeLabel is no longer going to be there - what do we do with this story?
             onMouseMove={e => zoomGraph.refAreaLeft && setZoomGraph(prev => ({ ...prev, refAreaRight: e.activeLabel }))}
             onMouseUp={() => zoom()}
           >
