@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   Series,
   stack as shapeStack,
@@ -13,7 +12,7 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
-import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId, upperFirst } from './DataUtils';
+import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import {
@@ -27,7 +26,6 @@ import {
   NumberDomain,
   PolarViewBox,
   RangeObj,
-  ScaleType,
   StackOffsetType,
   TickItem,
 } from './types';
@@ -345,73 +343,6 @@ export const getTicksOfAxis = (
   );
 };
 
-export type ParseScaleAxisInput = {
-  scale: string | ScaleType | RechartsScale;
-  type: BaseAxisProps['type'];
-  layout: 'radial' | unknown;
-  axisType: 'radiusAxis' | 'angleAxis' | unknown;
-};
-
-type ParsedScaleReturn = {
-  scale: RechartsScale | undefined;
-  realScaleType: string | undefined;
-};
-
-/**
- * Parse the scale function of axis
- * @param  {Object}   axis          The option of axis
- * @param  {String}   chartType     The displayName of chart
- * @param  {Boolean}  hasBar        if it has a bar
- * @return {object}               The scale function and resolved name
- */
-export const parseScale = (
-  axis: ParseScaleAxisInput,
-  chartType: string | undefined,
-  hasBar: boolean = false,
-): ParsedScaleReturn => {
-  const { scale, type, layout, axisType } = axis;
-  if (scale === 'auto') {
-    if (layout === 'radial' && axisType === 'radiusAxis') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
-    }
-    if (layout === 'radial' && axisType === 'angleAxis') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
-    }
-
-    if (
-      type === 'category' &&
-      chartType &&
-      (chartType.indexOf('LineChart') >= 0 ||
-        chartType.indexOf('AreaChart') >= 0 ||
-        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
-    ) {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
-    }
-    if (type === 'category') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
-    }
-
-    // @ts-expect-error we need to wrap the d3 scales in unified interface
-    return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
-  }
-  if (typeof scale === 'string') {
-    const name = `scale${upperFirst(scale)}`;
-
-    return {
-      scale: ((d3Scales as Record<string, any>)[name] || d3Scales.scalePoint)(),
-      realScaleType: (d3Scales as Record<string, any>)[name] ? name : 'point',
-    };
-  }
-
-  // @ts-expect-error we need to wrap the d3 scales in unified interface
-  return typeof scale === 'function'
-    ? { scale, realScaleType: undefined }
-    : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
-};
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {
   const domain = scale.domain();
