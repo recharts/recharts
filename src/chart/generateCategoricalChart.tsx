@@ -4,7 +4,6 @@ import sortBy from 'lodash/sortBy';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 import { Tooltip } from '../component/Tooltip';
-import { Legend } from '../component/Legend';
 
 import {
   filterProps,
@@ -18,7 +17,6 @@ import {
 import { Brush } from '../cartesian/Brush';
 import { getAnyElementOfObject, isNullish, uniqueId } from '../util/DataUtils';
 import {
-  appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
   getStackGroupsByAxisId,
@@ -29,17 +27,14 @@ import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
   CategoricalChartOptions,
-  ChartOffset,
   DataKey,
   LayoutType,
   Margin,
   StackOffsetType,
   TooltipEventType,
-  XAxisMap,
-  YAxisMap,
 } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
+import { AxisMap, CategoricalChartState, TooltipTrigger } from './types';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
 import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { ChartDataContextProvider } from '../context/chartDataContext';
@@ -131,87 +126,6 @@ const getAxisNameByLayout = (layout: LayoutType) => {
   return { numericAxisName: 'angleAxis', cateAxisName: 'radiusAxis' } as const;
 };
 
-/**
- * @deprecated do not use; this depends on reading DOM elements directly. Instead, use {@link selectChartOffset}
- *
- * Calculate the offset of main part in the svg element
- * @param  {Object} params.props          Latest props
- * @param  {Array}  params.graphicalItems The instances of item
- * @param  {Object} params.xAxisMap       The configuration of x-axis
- * @param  {Object} params.yAxisMap       The configuration of y-axis
- * @param  {Object} prevLegendBBox        The boundary box of legend
- * @return {Object} The offset of main part in the svg element
- */
-const calculateOffset = (
-  {
-    props,
-    xAxisMap = {},
-    yAxisMap = {},
-  }: {
-    props: { width: number; height: number; children: any; margin?: Margin };
-    xAxisMap?: XAxisMap;
-    yAxisMap?: YAxisMap;
-  },
-  prevLegendBBox?: BoundingBox | null,
-): ChartOffset => {
-  const { width, height, children } = props;
-  const margin = props.margin || {};
-  const brushItem = findChildByType(children, Brush);
-  const legendItem = findChildByType(children, Legend);
-
-  const offsetH = Object.keys(yAxisMap).reduce(
-    (result, id) => {
-      const entry: YAxisWithExtraData = yAxisMap[id];
-      const { orientation } = entry;
-
-      if (!entry.mirror && !entry.hide) {
-        return { ...result, [orientation]: result[orientation] + entry.width };
-      }
-
-      return result;
-    },
-    { left: margin.left || 0, right: margin.right || 0 },
-  );
-
-  const offsetV = Object.keys(xAxisMap).reduce(
-    (result, id) => {
-      const entry: XAxisWithExtraData = xAxisMap[id];
-      const { orientation } = entry;
-
-      if (!entry.mirror && !entry.hide) {
-        return { ...result, [orientation]: get(result, `${orientation}`) + entry.height };
-      }
-
-      return result;
-    },
-    { top: margin.top || 0, bottom: margin.bottom || 0 },
-  );
-
-  let offset: ChartOffset = { ...offsetV, ...offsetH };
-
-  const brushBottom = offset.bottom;
-
-  if (brushItem) {
-    offset.bottom += brushItem.props.height || Brush.defaultProps.height;
-  }
-
-  if (legendItem && prevLegendBBox) {
-    // @ts-expect-error some properties are optional but should be required
-    offset = appendOffsetOfLegend(offset, { ...legendItem.props, ...prevLegendBBox });
-  }
-
-  const offsetWidth = width - offset.left - offset.right;
-  const offsetHeight = height - offset.top - offset.bottom;
-
-  return {
-    brushBottom,
-    ...offset,
-    // never return negative values for height and width
-    width: Math.max(offsetWidth, 0),
-    height: Math.max(offsetHeight, 0),
-  };
-};
-
 type AxisMapMap = {
   [axisMapId: string]: AxisMap;
 };
@@ -286,14 +200,7 @@ export const generateCategoricalChart = ({
    * @param {Object} prevState      Prev state
    * @return {Object} state New state to set
    */
-  const updateStateOfAxisMapsOffsetAndStackGroups = (
-    {
-      props,
-    }: {
-      props: CategoricalChartProps;
-    },
-    prevState?: CategoricalChartState,
-  ): any => {
+  const updateStateOfAxisMapsOffsetAndStackGroups = ({ props }: { props: CategoricalChartProps }): any => {
     if (!validateWidthHeight({ width: props.width, height: props.height })) {
       return null;
     }
@@ -311,26 +218,11 @@ export const generateCategoricalChart = ({
     );
     const axisObj: AxisMapMap = {};
 
-    const offset: ChartOffset = calculateOffset(
-      {
-        xAxisMap: {},
-        yAxisMap: {},
-        props: {
-          width: props.width,
-          height: props.height,
-          margin: props.margin,
-          children: props.children,
-        },
-      },
-      prevState?.legendBBox,
-    );
-
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
     return {
       graphicalItems,
-      offset,
       stackGroups,
       ...ticksObj,
       ...axisObj,
@@ -418,13 +310,10 @@ export const generateCategoricalChart = ({
         return {
           ...defaultState,
           updateId: 0,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...defaultState,
-            },
-            prevState,
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: nextProps,
+            ...defaultState,
+          }),
 
           prevDataKey: dataKey,
           prevData: data,
@@ -472,13 +361,10 @@ export const generateCategoricalChart = ({
 
         return {
           ...newState,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...newState,
-            },
-            prevState,
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: nextProps,
+            ...newState,
+          }),
           prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
@@ -503,13 +389,10 @@ export const generateCategoricalChart = ({
 
         return {
           updateId: newUpdateId,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...prevState,
-            },
-            prevState,
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: nextProps,
+            ...prevState,
+          }),
           prevChildren: children,
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
@@ -591,12 +474,9 @@ export const generateCategoricalChart = ({
       if (box) {
         this.setState({
           legendBBox: box,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            { ...this.state, legendBBox: box },
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props,
+          }),
         });
       }
     };
@@ -617,12 +497,9 @@ export const generateCategoricalChart = ({
         this.setState(() => ({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            this.state,
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props,
+          }),
         }));
 
         this.triggerSyncEvent({
@@ -763,12 +640,9 @@ export const generateCategoricalChart = ({
         this.setState({
           dataStartIndex,
           dataEndIndex,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            this.state,
-          ),
+          ...updateStateOfAxisMapsOffsetAndStackGroups({
+            props: this.props,
+          }),
         });
       }
     };
