@@ -171,7 +171,6 @@
   "lib/util/cursor/getCursorPoints.js",
   "lib/util/cursor/getCursorRectangle.js",
   "lib/util/cursor/getRadialCursorPoints.js",
-  "lib/util/getDomainOfErrorBars.js",
   "lib/util/getEveryNthWithCondition.js",
   "lib/util/isDomainSpecifiedByUser.js",
   "lib/util/isWellBehavedNumber.js",
