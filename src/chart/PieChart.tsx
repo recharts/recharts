@@ -2,12 +2,10 @@
  * @fileOverview Pie Chart
  */
 import { generateCategoricalChart } from './generateCategoricalChart';
-import { Pie } from '../polar/Pie';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const PieChart = generateCategoricalChart({
   chartName: 'PieChart',
-  GraphicalChild: Pie,
   validateTooltipEventTypes: ['item'],
   defaultTooltipEventType: 'item',
   defaultProps: {
