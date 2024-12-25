@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { PayloadAction } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
-import { eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Events';
+import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Events';
 import { createEventEmitter } from '../state/optionsSlice';
 import { setSyncInteraction, TooltipSyncState } from '../state/tooltipSlice';
 import { selectTooltipDataKey } from '../state/selectors/selectors';
@@ -11,18 +11,13 @@ import { TooltipTrigger } from '../chart/types';
 import { selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
 import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
+import { BrushStartEndIndex } from '../context/brushUpdateContext';
+import { setDataStartEndIndexes } from '../state/chartDataSlice';
 
 const originCoordinate: Coordinate = { x: 0, y: 0 };
 const noop = () => {};
 
-/**
- * Will receive synchronisation events from other charts.
- *
- * Reads syncMethod from state and decides how to synchronise the tooltip based on that.
- *
- * @returns void
- */
-export function useSynchronisedEventsFromOtherCharts() {
+function useTooltipSyncEventsListener() {
   const mySyncId = useAppSelector(selectSyncId);
   const myEventEmitter = useAppSelector(selectEventEmitter);
   const dispatch = useAppDispatch();
@@ -32,11 +27,6 @@ export function useSynchronisedEventsFromOtherCharts() {
   const viewBox = useViewBox();
 
   const className = useAppSelector(state => state.rootProps.className);
-
-  useEffect(() => {
-    dispatch(createEventEmitter());
-  }, [dispatch]);
-
   useEffect(() => {
     if (mySyncId == null) {
       // This chart is not synchronised with any other chart so we don't need to listen for any events.
@@ -97,6 +87,50 @@ export function useSynchronisedEventsFromOtherCharts() {
   }, [className, dispatch, myEventEmitter, mySyncId, syncMethod, tooltipTicks, layout, viewBox]);
 }
 
+function useBrushSyncEventsListener() {
+  const mySyncId = useAppSelector(selectSyncId);
+  const myEventEmitter = useAppSelector(selectEventEmitter);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (mySyncId == null) {
+      // This chart is not synchronised with any other chart so we don't need to listen for any events.
+      return noop;
+    }
+
+    const listener = (incomingSyncId: number | string, action: BrushStartEndIndex, emitter: symbol) => {
+      if (myEventEmitter === emitter) {
+        // We don't want to dispatch actions that we sent ourselves.
+        return;
+      }
+      if (mySyncId === incomingSyncId) {
+        dispatch(setDataStartEndIndexes(action));
+      }
+    };
+    eventCenter.on(BRUSH_SYNC_EVENT, listener);
+
+    return () => {
+      eventCenter.off(BRUSH_SYNC_EVENT, listener);
+    };
+  }, [dispatch, myEventEmitter, mySyncId]);
+}
+
+/**
+ * Will receive synchronisation events from other charts.
+ *
+ * Reads syncMethod from state and decides how to synchronise the tooltip based on that.
+ *
+ * @returns void
+ */
+export function useSynchronisedEventsFromOtherCharts() {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(createEventEmitter());
+  }, [dispatch]);
+
+  useTooltipSyncEventsListener();
+  useBrushSyncEventsListener();
+}
+
 /**
  * Will send events to other charts.
  * If syncId is undefined, no events will be sent.
@@ -123,7 +157,6 @@ export function useTooltipChartSynchronisation(
   const eventEmitterSymbol = useAppSelector(selectEventEmitter);
   const syncId = useAppSelector(selectSyncId);
   const syncMethod = useAppSelector(selectSyncMethod);
-  const className = useAppSelector(state => state.rootProps.className);
   const { active: isReceivingSynchronisation } = useAppSelector(selectSynchronisedTooltipState);
   useEffect(() => {
     if (isReceivingSynchronisation) {
@@ -159,7 +192,21 @@ export function useTooltipChartSynchronisation(
     eventEmitterSymbol,
     syncId,
     syncMethod,
-    className,
     isTooltipActive,
   ]);
+}
+
+export function useBrushChartSynchronisation() {
+  const syncId = useAppSelector(selectSyncId);
+  const eventEmitterSymbol = useAppSelector(selectEventEmitter);
+  const brushStartIndex = useAppSelector(state => state.chartData.dataStartIndex);
+  const brushEndIndex = useAppSelector(state => state.chartData.dataEndIndex);
+
+  useEffect(() => {
+    if (syncId == null) {
+      return;
+    }
+    const syncAction: BrushStartEndIndex = { startIndex: brushStartIndex, endIndex: brushEndIndex };
+    eventCenter.emit(BRUSH_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);
+  }, [brushEndIndex, brushStartIndex, eventEmitterSymbol, syncId]);
 }
