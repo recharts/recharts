@@ -931,57 +931,6 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 /**
- * @deprecated instead use `parseNumericalUserDomain`
- * @param specifiedDomain do not use
- * @param dataDomain do not use
- * @param allowDataOverflow do not use
- * @returns do not use
- */
-export const parseSpecifiedDomain = (
-  specifiedDomain: /* AxisDomain */ any,
-  dataDomain: any,
-  allowDataOverflow?: boolean,
-) => {
-  if (typeof specifiedDomain === 'function') {
-    return specifiedDomain(dataDomain, allowDataOverflow);
-  }
-
-  if (!Array.isArray(specifiedDomain)) {
-    return dataDomain;
-  }
-
-  const domain = [];
-
-  /* eslint-disable prefer-destructuring */
-  if (isNumber(specifiedDomain[0])) {
-    domain[0] = allowDataOverflow ? specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
-  } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
-    const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
-
-    domain[0] = dataDomain[0] - value;
-  } else if (typeof specifiedDomain[0] === 'function') {
-    domain[0] = specifiedDomain[0](dataDomain[0]);
-  } else {
-    domain[0] = dataDomain[0];
-  }
-
-  if (isNumber(specifiedDomain[1])) {
-    domain[1] = allowDataOverflow ? specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
-  } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
-    const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
-
-    domain[1] = dataDomain[1] + value;
-  } else if (typeof specifiedDomain[1] === 'function') {
-    domain[1] = specifiedDomain[1](dataDomain[1]);
-  } else {
-    domain[1] = dataDomain[1];
-  }
-  /* eslint-enable prefer-destructuring */
-
-  return domain;
-};
-
-/**
  * Calculate the size between two category
  * @param  {Object} axis  The options of axis
  * @param  {Array}  ticks The ticks of axis

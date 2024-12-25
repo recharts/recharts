@@ -11,7 +11,6 @@ import {
   getValueByDataKey,
   MAX_VALUE_REG,
   MIN_VALUE_REG,
-  parseSpecifiedDomain,
   getTicksOfAxis,
   AxisPropsNeededForTicksGenerator,
   isCategoricalAxis,
@@ -197,64 +196,6 @@ describe('getBandSizeOfAxis', () => {
     };
     const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
     expect(getBandSizeOfAxis(axis, ticks)).toBe(2);
-  });
-});
-
-describe('parseSpecifiedDomain', () => {
-  const domain: [number, number] = [20, 100];
-  it('DataUtils.parseSpecifiedDomain(1, domain) should return domain ', () => {
-    expect(parseSpecifiedDomain(1, domain)).toBe(domain);
-  });
-
-  it('DataUtils.parseSpecifiedDomain(["auto", "auto"], domain) should return domain ', () => {
-    const result = parseSpecifiedDomain(['auto', 'auto'], domain);
-    expect(result).toEqual(domain);
-  });
-
-  it('DataUtils.parseSpecifiedDomain(["7", "8"], domain) should return domain', () => {
-    const result = parseSpecifiedDomain(['7', '8'], domain);
-    expect(result).toEqual(domain);
-  });
-
-  it('DataUtils.parseSpecifiedDomain([-1, 120], domain) should return input value ', () => {
-    const result = parseSpecifiedDomain([-1, 120], domain);
-    expect(result).toEqual([-1, 120]);
-  });
-
-  it('works with ["dataMin - 10", "dataMax + 10"], domain)', () => {
-    const result = parseSpecifiedDomain(['dataMin - 10', 'dataMax + 10'], domain);
-    expect(result).toEqual([10, 110]);
-  });
-
-  it('returns the original domain with ["dataMax - 10", "dataMin + 10"], domain)', () => {
-    const result = parseSpecifiedDomain(['dataMax - 10', 'dataMin + 10'], domain);
-    expect(result).toEqual(domain);
-  });
-
-  it('returns the original domain when given ["dataMin", "dataMax"])', () => {
-    const result = parseSpecifiedDomain(['dataMin', 'dataMax'], domain);
-    expect(result).toEqual(domain);
-  });
-
-  it('also returns the original domain when given ["dataMax", "dataMin"])', () => {
-    const result = parseSpecifiedDomain(['dataMax', 'dataMin'], domain);
-    expect(result).toEqual(domain);
-  });
-
-  it('works with functions ', () => {
-    const result = parseSpecifiedDomain(
-      [(dataMin: number) => 0 - Math.abs(dataMin), (dataMax: number) => dataMax * 2],
-      domain,
-    );
-    expect(result).toEqual([-20, 200]);
-  });
-
-  it('DataUtils.parseSpecifiedDomain(callback, domain) should execute the callback and return computed value ', () => {
-    const result = parseSpecifiedDomain(
-      ([dataMin, dataMax]: [number, number], _allowDataOverflow: boolean) => [dataMin / 4, dataMax * 4],
-      domain,
-    );
-    expect(result).toEqual([5, 400]);
   });
 });
 
