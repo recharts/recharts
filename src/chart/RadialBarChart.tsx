@@ -2,9 +2,6 @@
  * @fileOverview Radar Bar Chart
  */
 import { generateCategoricalChart } from './generateCategoricalChart';
-import { PolarAngleAxis } from '../polar/PolarAngleAxis';
-import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
-import { formatAxisMap } from '../util/PolarUtils';
 import { RadialBar } from '../polar/RadialBar';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
@@ -13,11 +10,6 @@ export const RadialBarChart = generateCategoricalChart({
   GraphicalChild: RadialBar,
   defaultTooltipEventType: 'axis',
   validateTooltipEventTypes: ['axis', 'item'],
-  axisComponents: [
-    { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
-    { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
-  ],
-  formatAxisMap,
   defaultProps: {
     layout: 'radial',
     startAngle: 0,

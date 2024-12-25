@@ -1,10 +1,5 @@
-import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import max from 'lodash/max';
-import min from 'lodash/min';
 import sortBy from 'lodash/sortBy';
-import * as d3Scales from 'victory-vendor/d3-scale';
 import {
   Series,
   stack as shapeStack,
@@ -17,16 +12,13 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
-import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId, upperFirst } from './DataUtils';
+import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
-import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
-  AxisDomainType,
   AxisTick,
   AxisType,
   BaseAxisProps,
-  CategoricalDomain,
   ChartCoordinate,
   ChartOffset,
   DataKey,
@@ -34,7 +26,6 @@ import {
   NumberDomain,
   PolarViewBox,
   RangeObj,
-  ScaleType,
   StackOffsetType,
   TickItem,
 } from './types';
@@ -57,35 +48,6 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
   }
 
   return defaultValue;
-}
-
-/**
- * Get domain of data by key.
- * @param  {Array}   data      The data displayed in the chart
- * @param  {String}  key       The unique key of a group of data
- * @param  {String}  type      The type of axis
- * @param  {Boolean} filterNil Whether or not filter nil values
- * @return {Array} Domain of data
- */
-export function getDomainOfDataByKey<T>(
-  data: Array<T>,
-  key: DataKey<T>,
-  type: AxisDomainType,
-  filterNil?: boolean,
-): NumberDomain | CategoricalDomain {
-  const flattenData: unknown[] = flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
-
-  if (type === 'number') {
-    // @ts-expect-error parseFloat type only accepts strings
-    const domain: number[] = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
-
-    return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
-  }
-
-  const validateData = filterNil ? flattenData.filter(entry => !isNullish(entry)) : flattenData;
-
-  // Supports x-axis of Date type
-  return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
 }
 
 export const calculateActiveTickIndex = (
@@ -213,36 +175,6 @@ export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendSta
   }
 
   return offset;
-};
-
-/**
- * This method actually completely ignores the direction!
- * @deprecated instead use `isErrorBarRelevantForAxisType` through `selectErrorBarsSettings`
- * @param layout of the chart
- * @param axisType of the axis
- * @param direction is ignored!
- * @return if true then is relevant, if false then irrelevant
- */
-export const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (isNullish(axisType)) {
-    return true;
-  }
-
-  if (layout === 'horizontal') {
-    return axisType === 'yAxis';
-  }
-  if (layout === 'vertical') {
-    return axisType === 'xAxis';
-  }
-
-  if (direction === 'x') {
-    return axisType === 'xAxis';
-  }
-  if (direction === 'y') {
-    return axisType === 'yAxis';
-  }
-
-  return true;
 };
 
 export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType) =>
@@ -411,73 +343,6 @@ export const getTicksOfAxis = (
   );
 };
 
-export type ParseScaleAxisInput = {
-  scale: string | ScaleType | RechartsScale;
-  type: BaseAxisProps['type'];
-  layout: 'radial' | unknown;
-  axisType: 'radiusAxis' | 'angleAxis' | unknown;
-};
-
-type ParsedScaleReturn = {
-  scale: RechartsScale | undefined;
-  realScaleType: string | undefined;
-};
-
-/**
- * Parse the scale function of axis
- * @param  {Object}   axis          The option of axis
- * @param  {String}   chartType     The displayName of chart
- * @param  {Boolean}  hasBar        if it has a bar
- * @return {object}               The scale function and resolved name
- */
-export const parseScale = (
-  axis: ParseScaleAxisInput,
-  chartType: string | undefined,
-  hasBar: boolean = false,
-): ParsedScaleReturn => {
-  const { scale, type, layout, axisType } = axis;
-  if (scale === 'auto') {
-    if (layout === 'radial' && axisType === 'radiusAxis') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
-    }
-    if (layout === 'radial' && axisType === 'angleAxis') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
-    }
-
-    if (
-      type === 'category' &&
-      chartType &&
-      (chartType.indexOf('LineChart') >= 0 ||
-        chartType.indexOf('AreaChart') >= 0 ||
-        (chartType.indexOf('ComposedChart') >= 0 && !hasBar))
-    ) {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scalePoint(), realScaleType: 'point' };
-    }
-    if (type === 'category') {
-      // @ts-expect-error we need to wrap the d3 scales in unified interface
-      return { scale: d3Scales.scaleBand(), realScaleType: 'band' };
-    }
-
-    // @ts-expect-error we need to wrap the d3 scales in unified interface
-    return { scale: d3Scales.scaleLinear(), realScaleType: 'linear' };
-  }
-  if (typeof scale === 'string') {
-    const name = `scale${upperFirst(scale)}`;
-
-    return {
-      scale: ((d3Scales as Record<string, any>)[name] || d3Scales.scalePoint)(),
-      realScaleType: (d3Scales as Record<string, any>)[name] ? name : 'point',
-    };
-  }
-
-  // @ts-expect-error we need to wrap the d3 scales in unified interface
-  return typeof scale === 'function'
-    ? { scale, realScaleType: undefined }
-    : { scale: d3Scales.scalePoint(), realScaleType: 'point' };
-};
 const EPS = 1e-4;
 export const checkDomainOfScale = (scale: any) => {
   const domain = scale.domain();
@@ -766,47 +631,6 @@ export const getStackGroupsByAxisId = (
   }, axisStackGroupsInitialValue);
 };
 
-/**
- * Configure the scale function of axis
- * @param {Object} scale The scale function
- * @param {Object} opts  The configuration of axis
- * @return {Object}      null
- */
-export const getTicksOfScale = (scale: any, opts: any) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
-  const scaleType = realScaleType || opts.scale;
-
-  if (scaleType !== 'auto' && scaleType !== 'linear') {
-    return null;
-  }
-
-  if (
-    tickCount &&
-    type === 'number' &&
-    originalDomain &&
-    (originalDomain[0] === 'auto' || originalDomain[1] === 'auto')
-  ) {
-    // Calculate the ticks by the number of grid when the axis is a number axis
-    const domain = scale.domain();
-    if (!domain.length) {
-      return null;
-    }
-
-    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
-
-    scale.domain([min(tickValues), max(tickValues)]);
-    return { niceTicks: tickValues };
-  }
-  if (tickCount && type === 'number') {
-    const domain = scale.domain();
-    const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
-
-    return { niceTicks: tickValues };
-  }
-
-  return null;
-};
-
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,
   ticks,
@@ -931,57 +755,6 @@ export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 
 /**
- * @deprecated instead use `parseNumericalUserDomain`
- * @param specifiedDomain do not use
- * @param dataDomain do not use
- * @param allowDataOverflow do not use
- * @returns do not use
- */
-export const parseSpecifiedDomain = (
-  specifiedDomain: /* AxisDomain */ any,
-  dataDomain: any,
-  allowDataOverflow?: boolean,
-) => {
-  if (typeof specifiedDomain === 'function') {
-    return specifiedDomain(dataDomain, allowDataOverflow);
-  }
-
-  if (!Array.isArray(specifiedDomain)) {
-    return dataDomain;
-  }
-
-  const domain = [];
-
-  /* eslint-disable prefer-destructuring */
-  if (isNumber(specifiedDomain[0])) {
-    domain[0] = allowDataOverflow ? specifiedDomain[0] : Math.min(specifiedDomain[0], dataDomain[0]);
-  } else if (MIN_VALUE_REG.test(specifiedDomain[0])) {
-    const value = +MIN_VALUE_REG.exec(specifiedDomain[0])[1];
-
-    domain[0] = dataDomain[0] - value;
-  } else if (typeof specifiedDomain[0] === 'function') {
-    domain[0] = specifiedDomain[0](dataDomain[0]);
-  } else {
-    domain[0] = dataDomain[0];
-  }
-
-  if (isNumber(specifiedDomain[1])) {
-    domain[1] = allowDataOverflow ? specifiedDomain[1] : Math.max(specifiedDomain[1], dataDomain[1]);
-  } else if (MAX_VALUE_REG.test(specifiedDomain[1])) {
-    const value = +MAX_VALUE_REG.exec(specifiedDomain[1])[1];
-
-    domain[1] = dataDomain[1] + value;
-  } else if (typeof specifiedDomain[1] === 'function') {
-    domain[1] = specifiedDomain[1](dataDomain[1]);
-  } else {
-    domain[1] = dataDomain[1];
-  }
-  /* eslint-enable prefer-destructuring */
-
-  return domain;
-};
-
-/**
  * Calculate the size between two category
  * @param  {Object} axis  The options of axis
  * @param  {Array}  ticks The ticks of axis
@@ -1016,29 +789,6 @@ export const getBandSizeOfAxis = (
   }
 
   return isBar ? undefined : 0;
-};
-/**
- * @deprecated this is reading defaultProps - do not use, try to come up with different approach.
- *
- * parse the domain of a category axis when a domain is specified
- * @param   {Array}        specifiedDomain  The domain specified by users
- * @param   {Array}        calculatedDomain The domain calculated by dateKey
- * @param   {ReactElement} axisChild        The axis ReactElement
- * @returns {Array}        domains
- */
-export const parseDomainOfCategoryAxis = <T>(
-  specifiedDomain: ReadonlyArray<T> | undefined,
-  calculatedDomain: ReadonlyArray<T>,
-  axisChild: ReactElement,
-): ReadonlyArray<T> => {
-  if (!specifiedDomain || !specifiedDomain.length) {
-    return calculatedDomain;
-  }
-  if (isEqual(specifiedDomain, get(axisChild, 'type.defaultProps.domain'))) {
-    return calculatedDomain;
-  }
-
-  return specifiedDomain;
 };
 
 export function getTooltipEntry({

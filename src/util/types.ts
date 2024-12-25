@@ -3,7 +3,6 @@ import {
   AriaAttributes,
   ClipboardEvent,
   Component,
-  ComponentType,
   CompositionEvent,
   DragEvent,
   FocusEvent,
@@ -43,7 +42,6 @@ import { AxisRange } from '../state/selectors/axisSelectors';
  */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
 export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
-export type PolarLayoutType = 'radial' | 'centric';
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type AxisDomainType = 'number' | 'category';
 export type DataKey<T> = string | number | ((obj: T) => any);
@@ -1303,15 +1301,11 @@ export const adaptEventsOfChild = (
  */
 export type TooltipEventType = 'axis' | 'item';
 
-export type AllowedAxisComponent = { axisType: AxisType; AxisComp: ComponentType };
-
 export interface CategoricalChartOptions {
   chartName: string;
   GraphicalChild?: any;
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
-  axisComponents?: ReadonlyArray<AllowedAxisComponent>;
-  formatAxisMap?: any;
   defaultProps?: any;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
 }
@@ -1389,18 +1383,4 @@ export type RangeObj = {
   cy?: number;
   angle?: number;
   radius?: number;
-};
-
-export type MouseInfo = {
-  xValue?: number | null;
-  yValue?: number | null;
-  chartX?: number;
-  chartY?: number;
-};
-
-export type TooltipData = {
-  activeTooltipIndex: number;
-  activeLabel: TickItem['value'] | undefined;
-  activeCoordinate: ChartCoordinate;
-  activePayload: any[];
 };

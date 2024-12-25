@@ -1,6 +1,4 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import { getPercentValue, isNullish } from './DataUtils';
-import { parseScale, checkDomainOfScale, getTicksOfScale } from './ChartUtils';
 import { Coordinate, ChartOffset, RangeObj, PolarViewBox } from './types';
 
 export const RADIAN = Math.PI / 180;
@@ -28,75 +26,6 @@ export const getMaxRadius = (
     Math.abs(width - (offset.left || 0) - (offset.right || 0)),
     Math.abs(height - (offset.top || 0) - (offset.bottom || 0)),
   ) / 2;
-
-/**
- * Calculate the scale function, position, width, height of axes
- * @param  {Object} props     Latest props
- * @param  {Object} axisMap   The configuration of axes
- * @param  {Object} offset    The offset of main part in the svg element
- * @param  {Object} axisType  The type of axes, radius-axis or angle-axis
- * @param  {String} chartName The name of chart
- * @return {Object} Configuration
- */
-export const formatAxisMap = (
-  props: any,
-  axisMap: any,
-  offset: ChartOffset,
-  axisType: 'angleAxis' | 'radiusAxis',
-  chartName: string,
-) => {
-  const { width, height } = props;
-  let { startAngle, endAngle } = props;
-  const cx = getPercentValue(props.cx, width, width / 2);
-  const cy = getPercentValue(props.cy, height, height / 2);
-  const maxRadius = getMaxRadius(width, height, offset);
-  const innerRadius = getPercentValue(props.innerRadius, maxRadius, 0);
-  const outerRadius = getPercentValue(props.outerRadius, maxRadius, maxRadius * 0.8);
-  const ids = Object.keys(axisMap);
-
-  return ids.reduce((result, id) => {
-    const axis = axisMap[id];
-    const { domain, reversed } = axis;
-    let range;
-
-    if (isNullish(axis.range)) {
-      if (axisType === 'angleAxis') {
-        range = [startAngle, endAngle];
-      } else if (axisType === 'radiusAxis') {
-        range = [innerRadius, outerRadius];
-      }
-
-      if (reversed) {
-        range = [range[1], range[0]];
-      }
-    } else {
-      ({ range } = axis);
-      [startAngle, endAngle] = range;
-    }
-
-    const { realScaleType, scale } = parseScale(axis, chartName);
-    scale.domain(domain).range(range);
-    checkDomainOfScale(scale);
-    const ticks = getTicksOfScale(scale, { ...axis, realScaleType });
-
-    const finalAxis = {
-      ...axis,
-      ...ticks,
-      range,
-      radius: outerRadius,
-      realScaleType,
-      scale,
-      cx,
-      cy,
-      innerRadius,
-      outerRadius,
-      startAngle,
-      endAngle,
-    };
-
-    return { ...result, [id]: finalAxis };
-  }, {});
-};
 
 export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinate) => {
   const { x: x1, y: y1 } = point;

@@ -636,10 +636,6 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues: (
   combineAppliedNumericalValuesIncludingErrorValues,
 );
 
-export function getDefaultDomainByAxisType(axisType: 'number' | string) {
-  return axisType === 'number' ? [0, 'auto'] : undefined;
-}
-
 function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date {
   const { value } = item;
   if (isNumOrStr(value) || value instanceof Date) {

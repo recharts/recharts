@@ -1,37 +1,7 @@
 import { MAX_VALUE_REG, MIN_VALUE_REG } from './ChartUtils';
 import { isNumber } from './DataUtils';
-import { AxisDomain, AxisDomainType, NumberDomain } from './types';
+import { AxisDomain, NumberDomain } from './types';
 import { isWellBehavedNumber } from './isWellBehavedNumber';
-
-/**
- * @deprecated instead use `numericalDomainSpecifiedWithoutRequiringData`
- *
- * Takes a domain and user props to determine whether he provided the domain via props or if we need to calculate it.
- * @param   {AxisDomain}  domain              The potential domain from props
- * @param   {Boolean}     allowDataOverflow   from props
- * @param   {String}      axisType            from props
- * @returns {Boolean}                         `true` if domain is specified by user
- */
-export function isDomainSpecifiedByUser(
-  domain: AxisDomain,
-  allowDataOverflow: boolean,
-  axisType: AxisDomainType,
-): boolean {
-  if (axisType === 'number' && allowDataOverflow === true && Array.isArray(domain)) {
-    const domainStart: unknown | null | undefined = domain?.[0];
-    const domainEnd: unknown | null | undefined = domain?.[1];
-
-    /*
-     * The `isNumber` check is needed because the user could also provide strings like "dataMin" via the domain props.
-     * In such case, we have to compute the domain from the data.
-     */
-    if (!!domainStart && !!domainEnd && isNumber(domainStart) && isNumber(domainEnd)) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 export function isWellFormedNumberDomain(v: unknown): v is NumberDomain {
   if (Array.isArray(v) && v.length === 2) {
@@ -91,14 +61,8 @@ export function numericalDomainSpecifiedWithoutRequiringData(
     return undefined;
   }
   if (typeof userDomain === 'function') {
-    try {
-      const result = userDomain(undefined, allowDataOverflow);
-      if (isWellFormedNumberDomain(result)) {
-        return result;
-      }
-    } catch {
-      /* ignore the exception and compute domain from data later */
-    }
+    // The user function expects the data to be provided as an argument
+    return undefined;
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
@@ -107,21 +71,15 @@ export function numericalDomainSpecifiedWithoutRequiringData(
     if (isWellBehavedNumber(providedMin)) {
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
-      try {
-        finalMin = providedMin(undefined);
-      } catch {
-        /* ignore the exception and compute domain from data later */
-      }
+      // The user function expects the data to be provided as an argument
+      return undefined;
     }
 
     if (isWellBehavedNumber(providedMax)) {
       finalMax = providedMax;
     } else if (typeof providedMax === 'function') {
-      try {
-        finalMax = providedMax(undefined);
-      } catch {
-        /* ignore the exception and compute domain from data later */
-      }
+      // The user function expects the data to be provided as an argument
+      return undefined;
     }
 
     const candidate = [finalMin, finalMax];
@@ -161,7 +119,7 @@ export function parseNumericalUserDomain(
     // Cannot compute data overflow if the data is not provided
     return undefined;
   }
-  if (typeof userDomain === 'function') {
+  if (typeof userDomain === 'function' && dataDomain != null) {
     try {
       const result = userDomain(dataDomain, allowDataOverflow);
       if (isWellFormedNumberDomain(result)) {
@@ -183,7 +141,9 @@ export function parseNumericalUserDomain(
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
       try {
-        finalMin = providedMin(dataDomain?.[0]);
+        if (dataDomain != null) {
+          finalMin = providedMin(dataDomain?.[0]);
+        }
       } catch {
         /* ignore the exception and compute domain from data later */
       }
@@ -203,7 +163,9 @@ export function parseNumericalUserDomain(
       finalMax = providedMax;
     } else if (typeof providedMax === 'function') {
       try {
-        finalMax = providedMax(dataDomain?.[1]);
+        if (dataDomain != null) {
+          finalMax = providedMax(dataDomain?.[1]);
+        }
       } catch {
         /* ignore the exception and compute domain from data later */
       }
