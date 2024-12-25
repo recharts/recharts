@@ -5,7 +5,6 @@ import { Area, Bar, ErrorBar, Line, Scatter } from '../../src';
 import {
   calculateActiveTickIndex,
   getBandSizeOfAxis,
-  getDomainOfDataByKey,
   getDomainOfStackGroups,
   getTicksOfScale,
   getValueByDataKey,
@@ -417,49 +416,6 @@ describe('MAX_VALUE_REG ', () => {
 
   it('.exec("dataMax + 233,") is false', () => {
     expect(MAX_VALUE_REG.test('dataMax + 233,')).toBe(false);
-  });
-});
-
-describe('getDomainOfDataByKey', () => {
-  describe('with type === "number"', () => {
-    const data = [
-      {
-        x: 1,
-        y: 4,
-        actual: 35.4,
-        benchmark: 35.4,
-      },
-      {
-        x: 2,
-        y: 3,
-        actual: 40,
-      },
-      {
-        x: 3,
-        y: 2,
-        actual: 40.7,
-      },
-      {
-        x: 4,
-        y: 1,
-        actual: 42.5,
-      },
-      {
-        x: 5,
-        y: 0,
-        benchmark: 31.86,
-      },
-    ];
-
-    it('should calculate the correct domain for a simple linear set', () => {
-      expect(getDomainOfDataByKey(data, 'x', 'number')).toEqual([1, 5]);
-      expect(getDomainOfDataByKey(data, 'y', 'number')).toEqual([0, 4]);
-    });
-
-    it('should calculate the correct domain even if there is no data for certain items in the set', () => {
-      expect(getDomainOfDataByKey(data, 'actual', 'number')).toEqual([35.4, 42.5]);
-      expect(getDomainOfDataByKey(data, 'benchmark', 'number')).toEqual([31.86, 35.4]);
-    });
   });
 });
 

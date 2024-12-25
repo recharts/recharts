@@ -1,4 +1,3 @@
-import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
 import max from 'lodash/max';
 import min from 'lodash/min';
@@ -21,11 +20,9 @@ import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uni
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
-  AxisDomainType,
   AxisTick,
   AxisType,
   BaseAxisProps,
-  CategoricalDomain,
   ChartCoordinate,
   ChartOffset,
   DataKey,
@@ -56,35 +53,6 @@ export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?:
   }
 
   return defaultValue;
-}
-
-/**
- * Get domain of data by key.
- * @param  {Array}   data      The data displayed in the chart
- * @param  {String}  key       The unique key of a group of data
- * @param  {String}  type      The type of axis
- * @param  {Boolean} filterNil Whether or not filter nil values
- * @return {Array} Domain of data
- */
-export function getDomainOfDataByKey<T>(
-  data: Array<T>,
-  key: DataKey<T>,
-  type: AxisDomainType,
-  filterNil?: boolean,
-): NumberDomain | CategoricalDomain {
-  const flattenData: unknown[] = flatMap(data, (entry: T): unknown => getValueByDataKey(entry, key));
-
-  if (type === 'number') {
-    // @ts-expect-error parseFloat type only accepts strings
-    const domain: number[] = flattenData.filter(entry => isNumber(entry) || parseFloat(entry));
-
-    return domain.length ? [min(domain), max(domain)] : [Infinity, -Infinity];
-  }
-
-  const validateData = filterNil ? flattenData.filter(entry => !isNullish(entry)) : flattenData;
-
-  // Supports x-axis of Date type
-  return validateData.map(entry => (isNumOrStr(entry) || entry instanceof Date ? entry : ''));
 }
 
 export const calculateActiveTickIndex = (
