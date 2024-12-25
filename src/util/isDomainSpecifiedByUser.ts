@@ -91,14 +91,8 @@ export function numericalDomainSpecifiedWithoutRequiringData(
     return undefined;
   }
   if (typeof userDomain === 'function') {
-    try {
-      const result = userDomain(undefined, allowDataOverflow);
-      if (isWellFormedNumberDomain(result)) {
-        return result;
-      }
-    } catch {
-      /* ignore the exception and compute domain from data later */
-    }
+    // The user function expects the data to be provided as an argument
+    return undefined;
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
@@ -107,21 +101,15 @@ export function numericalDomainSpecifiedWithoutRequiringData(
     if (isWellBehavedNumber(providedMin)) {
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
-      try {
-        finalMin = providedMin(undefined);
-      } catch {
-        /* ignore the exception and compute domain from data later */
-      }
+      // The user function expects the data to be provided as an argument
+      return undefined;
     }
 
     if (isWellBehavedNumber(providedMax)) {
       finalMax = providedMax;
     } else if (typeof providedMax === 'function') {
-      try {
-        finalMax = providedMax(undefined);
-      } catch {
-        /* ignore the exception and compute domain from data later */
-      }
+      // The user function expects the data to be provided as an argument
+      return undefined;
     }
 
     const candidate = [finalMin, finalMax];
@@ -161,7 +149,7 @@ export function parseNumericalUserDomain(
     // Cannot compute data overflow if the data is not provided
     return undefined;
   }
-  if (typeof userDomain === 'function') {
+  if (typeof userDomain === 'function' && dataDomain != null) {
     try {
       const result = userDomain(dataDomain, allowDataOverflow);
       if (isWellFormedNumberDomain(result)) {
@@ -183,7 +171,9 @@ export function parseNumericalUserDomain(
       finalMin = providedMin;
     } else if (typeof providedMin === 'function') {
       try {
-        finalMin = providedMin(dataDomain?.[0]);
+        if (dataDomain != null) {
+          finalMin = providedMin(dataDomain?.[0]);
+        }
       } catch {
         /* ignore the exception and compute domain from data later */
       }
@@ -203,7 +193,9 @@ export function parseNumericalUserDomain(
       finalMax = providedMax;
     } else if (typeof providedMax === 'function') {
       try {
-        finalMax = providedMax(dataDomain?.[1]);
+        if (dataDomain != null) {
+          finalMax = providedMax(dataDomain?.[1]);
+        }
       } catch {
         /* ignore the exception and compute domain from data later */
       }

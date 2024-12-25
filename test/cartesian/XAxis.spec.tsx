@@ -2862,7 +2862,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        // expect(domainPropSpy).toHaveBeenCalledTimes(12); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
+        expect(domainPropSpy).toHaveBeenCalledTimes(2); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
         rerender(
@@ -2943,10 +2943,10 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        // expect(spyMin).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
-        // expect(spyMax).toHaveBeenCalledTimes(12); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
-        expect(spyMin).toHaveBeenCalledWith(100);
-        expect(spyMax).toHaveBeenCalledWith(170);
+        expect(spyMin).toHaveBeenCalledTimes(2); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
+        expect(spyMax).toHaveBeenCalledTimes(2); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
+        expect(spyMin).toHaveBeenLastCalledWith(100);
+        expect(spyMax).toHaveBeenLastCalledWith(170);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
       });
 

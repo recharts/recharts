@@ -35,9 +35,7 @@ import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
-  AllowedAxisComponent,
   AxisType,
-  BaseAxisProps,
   CategoricalChartOptions,
   ChartOffset,
   DataKey,
@@ -83,11 +81,6 @@ export interface ChartPointer {
   chartX: number;
   chartY: number;
 }
-
-const ORIENT_MAP = {
-  xAxis: ['bottom', 'top'],
-  yAxis: ['left', 'right'],
-};
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
@@ -303,167 +296,6 @@ export const getAxisMapByAxes = (
   }, {});
 };
 
-/**
- * @deprecated this is relying on direct DOM access, do not use
- *
- * Get the configuration of axis by the options of item,
- * this kind of axis does not display in chart
- * @param  {Object} props         Latest props
- * @param  {Array} graphicalItems The instances of item
- * @param  {ReactElement} Axis    Axis Component
- * @param  {String} axisType      The type of axis, xAxis - x-axis, yAxis - y-axis
- * @param  {String} axisIdKey     The unique id of an axis
- * @param  {Object} stackGroups   The items grouped by axisId and stackId
- * @param {Number} dataStartIndex The start index of the data series when a brush is applied
- * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
- * @return {Object}               Configuration
- */
-const getAxisMapByItems = (
-  props: CategoricalChartProps,
-  {
-    graphicalItems,
-    Axis,
-    axisType,
-    axisIdKey,
-    stackGroups,
-    dataStartIndex,
-    dataEndIndex,
-  }: {
-    axisIdKey: string;
-    axisType?: AxisType;
-    Axis?: React.ComponentType<BaseAxisProps>;
-    graphicalItems: ReadonlyArray<ReactElement>;
-    stackGroups: AxisStackGroups;
-    dataStartIndex: number;
-    dataEndIndex: number;
-  },
-): AxisMap => {
-  const { layout, children } = props;
-  const displayedData = getDisplayedData(props.data, {
-    graphicalItems,
-    dataStartIndex,
-    dataEndIndex,
-  });
-  const len = displayedData.length;
-  const isCategorical = isCategoricalAxis(layout, axisType);
-  let index = -1;
-
-  // The default type of x-axis is category axis,
-  // The default contents of x-axis is the serial numbers of data
-  // The default type of y-axis is number axis
-  // The default contents of y-axis is the domain of data
-  return graphicalItems.reduce((result: AxisMap, child: ReactElement): AxisMap => {
-    const axisId = child.props[axisIdKey];
-
-    const originalDomain = getDefaultDomainByAxisType('number');
-
-    if (!result[axisId]) {
-      index++;
-      let domain;
-
-      if (isCategorical) {
-        domain = range(0, len);
-      } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack) {
-        domain = getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
-        domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
-      } else {
-        domain = parseSpecifiedDomain(
-          originalDomain,
-          getDomainOfItemsWithSameAxis(
-            displayedData,
-            graphicalItems.filter((item: ReactElement) => item.props[axisIdKey] === axisId && !item.props.hide),
-            'number',
-            layout,
-          ),
-          Axis.defaultProps.allowDataOverflow,
-        );
-        domain = detectReferenceElementsDomain(children, domain, axisId, axisType);
-      }
-
-      return {
-        ...result,
-        [axisId]: {
-          axisType,
-          ...Axis.defaultProps,
-          hide: true,
-          orientation: get(ORIENT_MAP, `${axisType}.${index % 2}`, null),
-          domain,
-          originalDomain,
-          isCategorical,
-          layout,
-          // specify scale when no Axis
-          // scale: isCategorical ? 'band' : 'linear',
-        },
-      };
-    }
-
-    return result;
-  }, {});
-};
-
-/**
- * @deprecated this is relying on direct DOM access, do not use
- *
- * Get the configuration of all x-axis or y-axis
- * @param  {Object} props          Latest props
- * @param  {String} axisType       The type of axis
- * @param  {React.ComponentType}  [AxisComp]      Axis Component
- * @param  {Array}  graphicalItems The instances of item
- * @param  {Object} stackGroups    The items grouped by axisId and stackId
- * @param {Number} dataStartIndex  The start index of the data series when a brush is applied
- * @param {Number} dataEndIndex    The end index of the data series when a brush is applied
- * @return {Object}          Configuration
- */
-const getAxisMap = (
-  props: CategoricalChartProps,
-  {
-    axisType = 'xAxis',
-    AxisComp,
-    graphicalItems,
-    stackGroups,
-    dataStartIndex,
-    dataEndIndex,
-  }: {
-    axisType?: AxisType;
-    AxisComp?: React.ComponentType;
-    graphicalItems: ReadonlyArray<ReactElement>;
-    stackGroups: AxisStackGroups;
-    dataStartIndex: number;
-    dataEndIndex: number;
-  },
-): AxisMap => {
-  const { children } = props;
-  const axisIdKey = `${axisType}Id`;
-  // Get all the instance of Axis
-  const axes = findAllByType(children, AxisComp);
-
-  let axisMap: AxisMap = {};
-
-  if (axes && axes.length) {
-    axisMap = getAxisMapByAxes(props, {
-      axes,
-      graphicalItems,
-      axisType,
-      axisIdKey,
-      stackGroups,
-      dataStartIndex,
-      dataEndIndex,
-    });
-  } else if (graphicalItems && graphicalItems.length) {
-    axisMap = getAxisMapByItems(props, {
-      Axis: AxisComp,
-      graphicalItems,
-      axisType,
-      axisIdKey,
-      stackGroups,
-      dataStartIndex,
-      dataEndIndex,
-    });
-  }
-
-  return axisMap;
-};
-
 const tooltipTicksGenerator = (axisMap: AxisMap) => {
   const axis: AxisPropsNeededForTicksGenerator = getAnyElementOfObject(axisMap);
   const tooltipTicks = getTicksOfAxis(axis, false, true);
@@ -658,8 +490,6 @@ export const generateCategoricalChart = ({
   GraphicalChild,
   defaultTooltipEventType = 'axis',
   validateTooltipEventTypes = ['axis'],
-  axisComponents,
-  formatAxisMap,
   defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
@@ -682,13 +512,8 @@ export const generateCategoricalChart = ({
   const updateStateOfAxisMapsOffsetAndStackGroups = (
     {
       props,
-      dataStartIndex,
-      dataEndIndex,
     }: {
       props: CategoricalChartProps;
-      dataStartIndex?: number;
-      dataEndIndex?: number;
-      updateId: number;
     },
     prevState?: CategoricalChartState,
   ): any => {
@@ -707,27 +532,12 @@ export const generateCategoricalChart = ({
       stackOffset,
       reverseStackOrder,
     );
-    const axisObj: AxisMapMap = axisComponents.reduce((result: AxisMapMap, entry: AllowedAxisComponent): AxisMapMap => {
-      const name = `${entry.axisType}Map`;
-
-      return {
-        ...result,
-        [name]: getAxisMap(props, {
-          ...entry,
-          graphicalItems,
-          stackGroups: entry.axisType === numericAxisName && stackGroups,
-          dataStartIndex,
-          dataEndIndex,
-        }),
-      };
-    }, {});
+    const axisObj: AxisMapMap = {};
 
     const offset: ChartOffset = calculateOffset(
       {
-        // @ts-expect-error axisObj only returns type AxisMap, not XAxisMap
-        xAxisMap: axisObj?.xAxisMap,
-        // @ts-expect-error axisObj only returns type AxisMap, not YAxisMap
-        yAxisMap: axisObj?.yAxisMap,
+        xAxisMap: {},
+        yAxisMap: {},
         props: {
           width: props.width,
           height: props.height,
@@ -738,9 +548,6 @@ export const generateCategoricalChart = ({
       prevState?.legendBBox,
     );
 
-    Object.keys(axisObj).forEach(key => {
-      axisObj[key] = formatAxisMap(props, axisObj[key], offset, key.replace('Map', ''), chartName);
-    });
     const cateAxisMap = axisObj[`${cateAxisName}Map`];
     const ticksObj = tooltipTicksGenerator(cateAxisMap);
 
@@ -838,7 +645,6 @@ export const generateCategoricalChart = ({
             {
               props: nextProps,
               ...defaultState,
-              updateId: 0,
             },
             prevState,
           ),
@@ -924,9 +730,6 @@ export const generateCategoricalChart = ({
             {
               props: nextProps,
               ...prevState,
-              updateId: newUpdateId,
-              dataStartIndex: startIndex,
-              dataEndIndex: endIndex,
             },
             prevState,
           ),
@@ -1009,16 +812,11 @@ export const generateCategoricalChart = ({
 
     handleLegendBBoxUpdate = (box: BoundingBox | null) => {
       if (box) {
-        const { dataStartIndex, dataEndIndex, updateId } = this.state;
-
         this.setState({
           legendBBox: box,
           ...updateStateOfAxisMapsOffsetAndStackGroups(
             {
               props: this.props,
-              dataStartIndex,
-              dataEndIndex,
-              updateId,
             },
             { ...this.state, legendBBox: box },
           ),
@@ -1039,17 +837,12 @@ export const generateCategoricalChart = ({
     handleBrushChange = ({ startIndex, endIndex }: BrushStartEndIndex) => {
       // Only trigger changes if the extents of the brush have actually changed
       if (startIndex !== this.state.dataStartIndex || endIndex !== this.state.dataEndIndex) {
-        const { updateId } = this.state;
-
         this.setState(() => ({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
           ...updateStateOfAxisMapsOffsetAndStackGroups(
             {
               props: this.props,
-              dataStartIndex: startIndex,
-              dataEndIndex: endIndex,
-              updateId,
             },
             this.state,
           ),
@@ -1187,7 +980,6 @@ export const generateCategoricalChart = ({
     };
 
     applySyncEvent = (data: CategoricalChartState) => {
-      const { updateId } = this.state;
       const { dataStartIndex, dataEndIndex } = data;
 
       if (data.dataStartIndex !== undefined || data.dataEndIndex !== undefined) {
@@ -1197,9 +989,6 @@ export const generateCategoricalChart = ({
           ...updateStateOfAxisMapsOffsetAndStackGroups(
             {
               props: this.props,
-              dataStartIndex,
-              dataEndIndex,
-              updateId,
             },
             this.state,
           ),

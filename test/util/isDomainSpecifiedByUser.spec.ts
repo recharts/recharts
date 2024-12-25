@@ -91,15 +91,12 @@ describe('isDomainSpecifiedByUser', () => {
 });
 
 describe('parsing axis domain provided by user', () => {
-  // These are valid domains without any further questions
+  // These are valid domains without any further questions and without the need for calculated data domain as an input
   const validCases: MyTestCases = [
     { domain: [-100, 100], expected: [-100, 100] },
-    { domain: [() => 1, () => 2], expected: [1, 2] },
-    { domain: () => [3, 4], expected: [3, 4] },
     { domain: [-5, 0], expected: [-5, 0] },
     { domain: [0, 100], expected: [0, 100] },
     { domain: [100, 100], expected: [100, 100] },
-    { domain: [() => 1, 9], expected: [1, 9] },
     /*
      * I am surprised, but in Recharts it is valid to have domain where first element is larger than the second!
      * This also makes the axis reversed.
@@ -144,6 +141,9 @@ describe('parsing axis domain provided by user', () => {
    * These are valid - but only when the calculated chart data is present.
    */
   const casesValidOnlyWhenDataDomainIsGiven: MyTestCases = [
+    { domain: [() => 1, () => 2], expected: [1, 2] },
+    { domain: () => [3, 4], expected: [3, 4] },
+    { domain: [() => 1, 9], expected: [1, 9] },
     { domain: [100, NaN], expected: [100, 100] },
     { domain: [NaN, 200], expected: [-100, 200] },
     { domain: [11, 'auto'], expected: [11, 100] },
