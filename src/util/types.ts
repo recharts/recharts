@@ -24,7 +24,6 @@ import {
 } from 'react';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
-import { XAxisWithExtraData, YAxisWithExtraData } from '../chart/types';
 import { RechartsScale } from './ChartUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
 
@@ -1367,14 +1366,6 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | ((props: unknown) => JSX.Element)
   | SVGProps<ElementType>
   | boolean;
-
-export type XAxisMap = {
-  [axisId: string]: XAxisWithExtraData;
-};
-
-export type YAxisMap = {
-  [axisId: string]: YAxisWithExtraData;
-};
 
 export type RangeObj = {
   x?: number;

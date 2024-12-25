@@ -3,19 +3,15 @@ import {
   AxisTick,
   AxisType,
   BaseAxisProps,
-  ChartCoordinate,
   ChartOffset,
   DataKey,
   LayoutType,
   Margin,
   StackOffsetType,
   TickItem,
-  XAxisMap,
-  YAxisMap,
 } from '../util/types';
 import { AxisStackGroups, RechartsScale } from '../util/ChartUtils';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
-import { TooltipPayloadType } from '../context/tooltipContext';
 
 export type AxisMap = {
   [axisId: string]: AxisPropsWithExtraComputedData;
@@ -30,17 +26,9 @@ export interface CategoricalChartState {
 
   dataEndIndex?: number;
 
-  activeTooltipIndex?: number;
-
   isTooltipActive?: boolean;
 
   updateId?: number;
-
-  xAxisMap?: XAxisMap;
-
-  yAxisMap?: YAxisMap;
-
-  zAxisMap?: AxisMap;
 
   orderedTooltipTicks?: any;
 
@@ -50,16 +38,11 @@ export interface CategoricalChartState {
 
   graphicalItems?: ReadonlyArray<ReactElement>;
 
-  activeCoordinate?: ChartCoordinate;
-
   offset?: ChartOffset;
 
   angleAxisMap?: AxisMap;
 
   radiusAxisMap?: AxisMap;
-
-  /** active tooltip payload */
-  activePayload?: TooltipPayloadType;
 
   /** Active label of data */
   activeLabel?: string;
@@ -108,14 +91,4 @@ export type AxisPropsWithExtraComputedData = Omit<BaseAxisProps, 'scale'> & {
   realScaleType?: 'scaleBand' | 'band' | 'point' | 'linear';
   x: number;
   y: number;
-};
-
-export type XAxisWithExtraData = AxisPropsWithExtraComputedData & {
-  axisType: 'xAxis';
-  orientation: 'top' | 'bottom';
-};
-
-export type YAxisWithExtraData = AxisPropsWithExtraComputedData & {
-  axisType: 'yAxis';
-  orientation: 'left' | 'right';
 };

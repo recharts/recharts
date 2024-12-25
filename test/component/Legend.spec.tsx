@@ -1,7 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
-import { mockHTMLElementProperty } from '../helper/mockHTMLElementProperty';
 import {
   Area,
   AreaChart,
@@ -26,9 +25,6 @@ import {
 } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { LegendPayloadProvider } from '../../src/context/legendPayloadContext';
-import { exampleLegendPayload, MockLegendPayload } from '../helper/MockLegendPayload';
-import { LegendBoundingBoxContext } from '../../src/context/legendBoundingBoxContext';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
@@ -371,78 +367,6 @@ describe('<Legend />', () => {
     });
   });
 
-  describe('onBBoxUpdate', () => {
-    function LegendPortalWrapper({ children }: { children: React.ReactElement }) {
-      const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
-
-      return (
-        <>
-          <LegendPortalContext.Provider value={portalRef}>{children}</LegendPortalContext.Provider>
-          <div
-            data-testid="my-custom-portal-target"
-            style={{ height: 30, width: 300 }}
-            ref={node => {
-              if (portalRef == null && node != null) {
-                setPortalRef(node);
-              }
-            }}
-          />
-        </>
-      );
-    }
-
-    it('should call onBBoxUpdate once on mount', () => {
-      const onBBoxUpdate = vi.fn();
-      mockGetBoundingClientRect({ width: 50, height: 15 });
-      render(
-        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
-          <Legend />
-        </LegendBoundingBoxContext.Provider>,
-        { wrapper: LegendPortalWrapper },
-      );
-      expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
-      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
-    });
-
-    it('should call onBBoxUpdate if the payload changes', () => {
-      const onBBoxUpdate = vi.fn();
-      mockGetBoundingClientRect({ width: 50, height: 15 });
-
-      const { rerender } = render(
-        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
-          <LegendPayloadProvider>
-            <Legend />
-          </LegendPayloadProvider>
-        </LegendBoundingBoxContext.Provider>,
-        { wrapper: LegendPortalWrapper },
-      );
-
-      expect(onBBoxUpdate).toHaveBeenCalledTimes(1);
-      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 15 }));
-      mockGetBoundingClientRect({ width: 50, height: 25 });
-      rerender(
-        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
-          <LegendPayloadProvider>
-            <MockLegendPayload payload={exampleLegendPayload} />
-            <Legend />
-          </LegendPayloadProvider>
-        </LegendBoundingBoxContext.Provider>,
-      );
-      expect(onBBoxUpdate).toHaveBeenCalledTimes(2);
-      mockGetBoundingClientRect({ width: 50, height: 0 });
-      rerender(
-        <LegendBoundingBoxContext.Provider value={onBBoxUpdate}>
-          <LegendPayloadProvider>
-            <MockLegendPayload payload={[]} />
-            <Legend />
-          </LegendPayloadProvider>
-        </LegendBoundingBoxContext.Provider>,
-      );
-      expect(onBBoxUpdate).toHaveBeenCalledTimes(3);
-      expect(onBBoxUpdate).toHaveBeenCalledWith(expect.objectContaining({ width: 50, height: 0 }));
-    });
-  });
-
   describe('custom content as a react element', () => {
     it('should render result', () => {
       const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
@@ -535,7 +459,6 @@ describe('<Legend />', () => {
           right: 30,
           top: 5,
         },
-        onBBoxUpdate: expect.any(Function),
         payload: [
           {
             color: '#8884d8',
@@ -709,46 +632,6 @@ describe('<Legend />', () => {
             "a function for the dataKey of a chart's cartesian components. " +
             'Ex: <Bar name="Name of my Data"/>',
         );
-      });
-
-      test('it should get the correct BBox when scaled 2x', () => {
-        const mockRect = {
-          width: 300,
-          height: 30,
-        };
-        const scale = 2;
-        mockGetBoundingClientRect(mockRect, false);
-        mockHTMLElementProperty('offsetHeight', mockRect.height * scale);
-        mockHTMLElementProperty('offsetWidth', mockRect.width * scale);
-        const handleUpdate = vi.fn();
-
-        function Example() {
-          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
-
-          return (
-            <>
-              <LegendPortalContext.Provider value={portalRef}>
-                <LegendBoundingBoxContext.Provider value={handleUpdate}>
-                  <Legend height={30} width={300} />
-                </LegendBoundingBoxContext.Provider>
-              </LegendPortalContext.Provider>
-              <div
-                data-testid="my-custom-portal-target"
-                style={{ height: 30, width: 300 }}
-                ref={node => {
-                  if (portalRef == null && node != null) {
-                    setPortalRef(node);
-                  }
-                }}
-              />
-            </>
-          );
-        }
-
-        render(<Example />);
-
-        expect(handleUpdate.mock.calls[0][0].height).toEqual(mockRect.height * scale);
-        expect(handleUpdate.mock.calls[0][0].width).toEqual(mockRect.width * scale);
       });
 
       it('should render one line legend item for each Line, with default class and style attributes', () => {
@@ -962,7 +845,6 @@ describe('<Legend />', () => {
             right: 30,
             top: 5,
           },
-          onBBoxUpdate: expect.any(Function),
           payload: [
             {
               color: '#8884d8',

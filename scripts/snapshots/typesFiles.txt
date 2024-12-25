@@ -60,7 +60,6 @@
   "types/context/brushUpdateContext.d.ts",
   "types/context/chartDataContext.d.ts",
   "types/context/chartLayoutContext.d.ts",
-  "types/context/legendBoundingBoxContext.d.ts",
   "types/context/legendPayloadContext.d.ts",
   "types/context/legendPortalContext.d.ts",
   "types/context/tooltipContext.d.ts",
