@@ -152,7 +152,6 @@ describe('<XAxis />', () => {
     const eventIndex = 0;
     const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
 
-    // click
     fireEvent.click(firstTick);
     expect(onClickFn).toHaveBeenCalledWith(eventData, eventIndex, eventExpect);
   });
@@ -2862,7 +2861,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(domainPropSpy).toHaveBeenCalledTimes(2); // this is called 12 times with data defined on chart root and 14 times when data defined on graphical items
+        expect(domainPropSpy).toHaveBeenCalledTimes(2);
         expect(domainPropSpy).toHaveBeenCalledWith([100, 170], true);
 
         rerender(
@@ -2898,8 +2897,7 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        // hah that's quite a few calls isn't it. TODO let's see if it improves once we remove the old, generateCategoricalChart code path
-        // expect(domainPropSpy).toHaveBeenCalledTimes(27); // TODO also not stable, sometimes 24 and sometimes 27 because of different code paths when data is defined on root vs graphical item
+        expect(domainPropSpy).toHaveBeenCalledTimes(4);
         expect(domainPropSpy).toHaveBeenLastCalledWith([100, 170], false);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
       });
@@ -2943,8 +2941,8 @@ describe('<XAxis />', () => {
             y: '273',
           },
         ]);
-        expect(spyMin).toHaveBeenCalledTimes(2); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
-        expect(spyMax).toHaveBeenCalledTimes(2); // TODO this is not stable, sometimes it reports 12 and sometimes it reports 14, because of different code paths when data is defined on root vs graphical item
+        expect(spyMin).toHaveBeenCalledTimes(2);
+        expect(spyMax).toHaveBeenCalledTimes(2);
         expect(spyMin).toHaveBeenLastCalledWith(100);
         expect(spyMax).toHaveBeenLastCalledWith(170);
         expect(reduxDomainSpy).toHaveBeenLastCalledWith([-500, 500]);
