@@ -2,10 +2,6 @@ import React, { Component, forwardRef, ReactElement } from 'react';
 import range from 'lodash/range';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import throttle from 'lodash/throttle';
-
-// eslint-disable-next-line no-restricted-imports
-import type { DebouncedFunc } from 'lodash';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 import { Tooltip } from '../component/Tooltip';
@@ -21,7 +17,6 @@ import {
 } from '../util/ReactUtils';
 
 import { Brush } from '../cartesian/Brush';
-import { getOffset } from '../util/DOMUtils';
 import { getAnyElementOfObject, hasDuplicate, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
@@ -31,7 +26,6 @@ import {
   getDomainOfStackGroups,
   getStackGroupsByAxisId,
   getTicksOfAxis,
-  inRange,
   isCategoricalAxis,
   parseDomainOfCategoryAxis,
   parseSpecifiedDomain,
@@ -49,7 +43,6 @@ import {
   DataKey,
   LayoutType,
   Margin,
-  MouseInfo,
   StackOffsetType,
   TooltipEventType,
   XAxisMap,
@@ -767,8 +760,6 @@ export const generateCategoricalChart = ({
 
     clipPathId: string;
 
-    throttleTriggeredAfterMouseMove: DebouncedFunc<typeof CategoricalChartWrapper.prototype.triggeredAfterMouseMove>;
-
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       accessibilityLayer: true,
@@ -788,9 +779,6 @@ export const generateCategoricalChart = ({
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-
-      // trigger 60fps
-      this.throttleTriggeredAfterMouseMove = throttle(this.triggeredAfterMouseMove, props.throttleDelay ?? 1000 / 60);
 
       this.state = {};
     }
@@ -965,7 +953,6 @@ export const generateCategoricalChart = ({
 
     componentWillUnmount() {
       this.removeListener();
-      this.throttleTriggeredAfterMouseMove.cancel();
     }
 
     /**
@@ -985,48 +972,6 @@ export const generateCategoricalChart = ({
       return defaultTooltipEventType;
     }
 
-    /**
-     * Get the information of mouse in chart, return null when the mouse is not in the chart
-     * @param  {MousePointer} event    The event object
-     * @return Monster object with a little bit of everything in it
-     */
-    getMouseInfo(event: MousePointer): MouseInfo | null {
-      if (!this.container) {
-        return null;
-      }
-
-      const element = this.container;
-      const boundingRect: DOMRect = element.getBoundingClientRect();
-      const containerOffset = getOffset(boundingRect);
-      const e = {
-        chartX: Math.round(event.pageX - containerOffset.left),
-        chartY: Math.round(event.pageY - containerOffset.top),
-      };
-
-      const scale = boundingRect.width / element.offsetWidth || 1;
-
-      const angleAxis = getAnyElementOfObject(this.state.angleAxisMap);
-
-      const rangeObj = inRange(e.chartX, e.chartY, scale, this.props.layout, angleAxis, this.state.offset);
-      if (!rangeObj) {
-        return null;
-      }
-
-      const { xAxisMap, yAxisMap } = this.state;
-      const tooltipEventType = this.getTooltipEventType();
-
-      if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
-        const xScale = getAnyElementOfObject(xAxisMap).scale;
-        const yScale = getAnyElementOfObject(yAxisMap).scale;
-        const xValue: number | null = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
-        const yValue: number | null = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
-
-        return { ...e, xValue, yValue };
-      }
-
-      return null;
-    }
-
     parseEventsOfWrapper() {
       const { children } = this.props;
       const tooltipEventType = this.getTooltipEventType();
@@ -1034,17 +979,10 @@ export const generateCategoricalChart = ({
       let tooltipEvents: any = {};
 
       if (tooltipItem && tooltipEventType === 'axis') {
-        if (tooltipItem.props.trigger === 'click') {
+        if (tooltipItem.props.trigger !== 'click') {
           tooltipEvents = {
-            onClick: this.handleClick,
-          };
-        } else {
-          tooltipEvents = {
-            onMouseEnter: this.handleMouseEnter,
             onDoubleClick: this.handleDoubleClick,
-            onMouseMove: this.handleMouseMove,
             onMouseLeave: this.handleMouseLeave,
-            onTouchMove: this.handleTouchMove,
             onTouchStart: this.handleTouchStart,
             onTouchEnd: this.handleTouchEnd,
             onContextMenu: this.handleContextMenu,
@@ -1125,38 +1063,6 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * The handler of mouse entering chart.
-     * This handler is used for `tooltipEventType: axis` and Tooltip.trigger: 'hover'
-     * @param  e Event object
-     * @return undefined
-     */
-    handleMouseEnter = (e: React.MouseEvent) => {
-      const mouse = this.getMouseInfo(e);
-
-      if (mouse) {
-        const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
-        this.setState(nextState);
-
-        const { onMouseEnter } = this.props;
-        if (typeof onMouseEnter === 'function') {
-          onMouseEnter(nextState, e);
-        }
-      }
-    };
-
-    triggeredAfterMouseMove = (e: MousePointer): any => {
-      const mouse = this.getMouseInfo(e);
-      const nextState: CategoricalChartState = mouse ? { ...mouse, isTooltipActive: true } : { isTooltipActive: false };
-
-      this.setState(nextState);
-
-      const { onMouseMove } = this.props;
-      if (typeof onMouseMove === 'function') {
-        onMouseMove(nextState, e);
-      }
-    };
-
-    /**
      * The handler of mouse entering a graphical item, such as bar, pie, scatter, funnel, ...
      * This handler is used for `tooltipEventType: item` and both `Tooltip.trigger: hover` and `Tooltip.trigger: click`
      * @param el The active graphical element
@@ -1184,24 +1090,12 @@ export const generateCategoricalChart = ({
     };
 
     /**
-     * The handler of mouse moving in chart
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e Event object
-     * @return undefined
-     */
-    handleMouseMove = (e: MousePointer & Partial<Omit<React.MouseEvent, keyof MousePointer>>): void => {
-      e.persist();
-      this.throttleTriggeredAfterMouseMove(e);
-    };
-
-    /**
      * The handler if mouse leaving chart
      * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
      * @param e Event object
      * @return undefined
      */
     handleMouseLeave = (e: React.MouseEvent) => {
-      this.throttleTriggeredAfterMouseMove.cancel();
       const nextState: CategoricalChartState = { isTooltipActive: false };
 
       this.setState(nextState);
@@ -1219,26 +1113,12 @@ export const generateCategoricalChart = ({
       if (eventName && typeof event === 'function') {
         let mouse;
         if (/.*touch.*/i.test(eventName)) {
-          mouse = this.getMouseInfo((e as React.TouchEvent).changedTouches[0]);
+          mouse = null;
         } else {
-          mouse = this.getMouseInfo(e as React.MouseEvent);
+          mouse = null;
         }
 
         event(mouse ?? {}, e);
-      }
-    };
-
-    handleClick = (e: React.MouseEvent) => {
-      const mouse = this.getMouseInfo(e);
-
-      if (mouse) {
-        const nextState: CategoricalChartState = { ...mouse, isTooltipActive: true };
-        this.setState(nextState);
-
-        const { onClick } = this.props;
-        if (typeof onClick === 'function') {
-          onClick(nextState, e);
-        }
       }
     };
 
@@ -1246,7 +1126,7 @@ export const generateCategoricalChart = ({
       const { onMouseDown } = this.props;
 
       if (typeof onMouseDown === 'function') {
-        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        const nextState: CategoricalChartState = null;
         onMouseDown(nextState, e);
       }
     };
@@ -1255,19 +1135,8 @@ export const generateCategoricalChart = ({
       const { onMouseUp } = this.props;
 
       if (typeof onMouseUp === 'function') {
-        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        const nextState: CategoricalChartState = null;
         onMouseUp(nextState, e);
-      }
-    };
-
-    /**
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e touch event
-     * @return undefined
-     */
-    handleTouchMove = (e: React.TouchEvent) => {
-      if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.throttleTriggeredAfterMouseMove(e.changedTouches[0]);
       }
     };
 
@@ -1297,7 +1166,7 @@ export const generateCategoricalChart = ({
       const { onDoubleClick } = this.props;
 
       if (typeof onDoubleClick === 'function') {
-        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        const nextState: CategoricalChartState = null;
         onDoubleClick(nextState, e);
       }
     };
@@ -1306,7 +1175,7 @@ export const generateCategoricalChart = ({
       const { onContextMenu } = this.props;
 
       if (typeof onContextMenu === 'function') {
-        const nextState: CategoricalChartState = this.getMouseInfo(e);
+        const nextState: CategoricalChartState = null;
         onContextMenu(nextState, e);
       }
     };
