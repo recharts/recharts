@@ -182,36 +182,6 @@ export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendSta
   return offset;
 };
 
-/**
- * This method actually completely ignores the direction!
- * @deprecated instead use `isErrorBarRelevantForAxisType` through `selectErrorBarsSettings`
- * @param layout of the chart
- * @param axisType of the axis
- * @param direction is ignored!
- * @return if true then is relevant, if false then irrelevant
- */
-export const isErrorBarRelevantForAxis = (layout?: LayoutType, axisType?: AxisType, direction?: 'x' | 'y'): boolean => {
-  if (isNullish(axisType)) {
-    return true;
-  }
-
-  if (layout === 'horizontal') {
-    return axisType === 'yAxis';
-  }
-  if (layout === 'vertical') {
-    return axisType === 'xAxis';
-  }
-
-  if (direction === 'x') {
-    return axisType === 'xAxis';
-  }
-  if (direction === 'y') {
-    return axisType === 'yAxis';
-  }
-
-  return true;
-};
-
 export const isCategoricalAxis = (layout: LayoutType, axisType: AxisType) =>
   (layout === 'horizontal' && axisType === 'xAxis') ||
   (layout === 'vertical' && axisType === 'yAxis') ||
