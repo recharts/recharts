@@ -1,24 +1,19 @@
 import React, { ComponentType, memo } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { scaleLinear } from 'victory-vendor/d3-scale';
 import {
   ChartLayoutContextProvider,
   ChartLayoutContextProviderProps,
   useClipPathId,
   useOffset,
 } from '../../src/context/chartLayoutContext';
-import { CategoricalChartState, XAxisWithExtraData, YAxisWithExtraData } from '../../src/chart/types';
-import { XAxisMap, YAxisMap } from '../../src/util/types';
+import { CategoricalChartState } from '../../src/chart/types';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
-import { RechartsScale } from '../../src/util/ChartUtils';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('ChartLayoutContextProvider', () => {
-  const minimalState: CategoricalChartState = {
-    offset: {},
-  };
+  const minimalState: CategoricalChartState = {};
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     state: minimalState,
@@ -192,49 +187,13 @@ describe('ChartLayoutContextProvider', () => {
     });
   });
 
-  // @ts-expect-error we need to wrap the d3 scales in unified interface
-  const linear: RechartsScale = scaleLinear();
-  const exampleXAxis1: XAxisWithExtraData = {
-    isCategorical: false,
-    x: 0,
-    y: 0,
-    axisType: 'xAxis',
-    mirror: false,
-    orientation: 'bottom',
-    reversed: false,
-    scale: linear,
-    width: 200,
-    height: 10,
-  };
   describe('XAxis state', () => {
-    const exampleXAxisMap: XAxisMap = {
-      a: exampleXAxis1,
-    };
-
-    const exampleXAxis2: XAxisWithExtraData = {
-      isCategorical: false,
-      x: 0,
-      y: 0,
-      axisType: 'xAxis',
-      mirror: false,
-      orientation: 'bottom',
-      reversed: false,
-      scale: linear,
-      width: 300,
-      height: 40,
-    };
-    const exampleXAxisMap2: XAxisMap = {
-      a: exampleXAxis2,
-    };
-
     const mockState1: CategoricalChartState = {
       ...minimalState,
-      xAxisMap: exampleXAxisMap,
     };
 
     const mockState2: CategoricalChartState = {
       ...minimalState,
-      xAxisMap: exampleXAxisMap2,
     };
 
     describe('vanilla children', () => {
@@ -328,35 +287,12 @@ describe('ChartLayoutContextProvider', () => {
   });
 
   describe('YAxis state', () => {
-    const exampleYAxis1: YAxisWithExtraData = {
-      isCategorical: false,
-      x: 0,
-      y: 0,
-      axisType: 'yAxis',
-      mirror: false,
-      orientation: 'left',
-      reversed: false,
-
-      scale: linear,
-      width: 200,
-      height: 10,
-    };
-    const exampleYAxisMap: YAxisMap = {
-      m: exampleYAxis1,
-    };
-
-    const exampleYAxisMap2: YAxisMap = {
-      m: { ...exampleYAxis1 },
-    };
-
     const mockState1: CategoricalChartState = {
       ...minimalState,
-      yAxisMap: exampleYAxisMap,
     };
 
     const mockState2: CategoricalChartState = {
       ...minimalState,
-      yAxisMap: exampleYAxisMap2,
     };
 
     describe('vanilla children', () => {

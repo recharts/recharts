@@ -65,20 +65,6 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
   return value;
 };
 
-export const getAnyElementOfObject = (obj: any) => {
-  if (!obj) {
-    return null;
-  }
-
-  const keys = Object.keys(obj);
-
-  if (keys && keys.length) {
-    return obj[keys[0]];
-  }
-
-  return null;
-};
-
 export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
   if (!Array.isArray(ary)) {
     return false;

@@ -11,7 +11,6 @@ import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
 
 export const ClipPathIdContext = createContext<string | undefined>(undefined);
-export const MarginContext = createContext<Margin>({ top: 5, right: 5, bottom: 5, left: 5 });
 // is the updateId necessary? Can we do without? Perhaps hook dependencies are better than explicit updateId.
 const UpdateIdContext = createContext<number>(0);
 
@@ -74,11 +73,9 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    */
   return (
     <UpdateIdContext.Provider value={updateId}>
-      <MarginContext.Provider value={margin}>
-        <LegendPayloadProvider>
-          <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
-        </LegendPayloadProvider>
-      </MarginContext.Provider>
+      <LegendPayloadProvider>
+        <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
+      </LegendPayloadProvider>
     </UpdateIdContext.Provider>
   );
 };

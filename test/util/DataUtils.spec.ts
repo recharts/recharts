@@ -1,6 +1,5 @@
 import {
   getPercentValue,
-  getAnyElementOfObject,
   hasDuplicate,
   mathSign,
   isPercent,
@@ -128,25 +127,6 @@ describe('getPercentValue', () => {
   it('should return defaultValue if percent is neither number not string', () => {
     /** @see noteNeverCasting */
     expect(getPercentValue(false as never, 0, 5)).toEqual(5);
-  });
-});
-
-describe('getAnyElementOfObject', () => {
-  it('should return null without input', () => {
-    // @ts-expect-error this test requires to test the function call without parameter
-    expect(getAnyElementOfObject()).toBe(null);
-  });
-
-  it('should return null with input {}', () => {
-    expect(getAnyElementOfObject({})).toBe(null);
-  });
-
-  it('should return the first element if an array is supplied ', () => {
-    expect(getAnyElementOfObject(['foo'])).toBe('foo');
-  });
-
-  it('should return the first key if an object is supplied', () => {
-    expect(getAnyElementOfObject({ foo: 'foo', bar: 'bar' })).toBe('foo');
   });
 });
 

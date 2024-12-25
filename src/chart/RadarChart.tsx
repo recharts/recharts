@@ -1,10 +1,8 @@
 import { generateCategoricalChart } from './generateCategoricalChart';
-import { Radar } from '../polar/Radar';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const RadarChart = generateCategoricalChart({
   chartName: 'RadarChart',
-  GraphicalChild: Radar,
   defaultProps: {
     layout: 'centric',
     startAngle: 90,

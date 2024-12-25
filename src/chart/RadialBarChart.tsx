@@ -2,12 +2,10 @@
  * @fileOverview Radar Bar Chart
  */
 import { generateCategoricalChart } from './generateCategoricalChart';
-import { RadialBar } from '../polar/RadialBar';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const RadialBarChart = generateCategoricalChart({
   chartName: 'RadialBarChart',
-  GraphicalChild: RadialBar,
   defaultTooltipEventType: 'axis',
   validateTooltipEventTypes: ['axis', 'item'],
   defaultProps: {

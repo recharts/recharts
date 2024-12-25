@@ -1,14 +1,10 @@
 import React, { Component, forwardRef } from 'react';
 import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
-import { Tooltip } from '../component/Tooltip';
-import { Legend } from '../component/Legend';
 
 import {
   filterProps,
-  findAllByType,
   findChildByType,
   getReactEventByType,
   isChildrenEqual,
@@ -16,45 +12,25 @@ import {
 } from '../util/ReactUtils';
 
 import { Brush } from '../cartesian/Brush';
-import { getAnyElementOfObject, isNullish, uniqueId } from '../util/DataUtils';
-import {
-  appendOffsetOfLegend,
-  AxisPropsNeededForTicksGenerator,
-  AxisStackGroups,
-  getStackGroupsByAxisId,
-  getTicksOfAxis,
-} from '../util/ChartUtils';
+import { isNullish, uniqueId } from '../util/DataUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
   CategoricalChartOptions,
-  ChartOffset,
   DataKey,
   LayoutType,
   Margin,
   StackOffsetType,
-  TooltipEventType,
-  XAxisMap,
-  YAxisMap,
 } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
-import { BoundingBox } from '../util/useGetBoundingClientRect';
-import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
+import { CategoricalChartState } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
-import {
-  ActivateTooltipAction,
-  MouseClickItemDispatchContext,
-  MouseEnterItemDispatchContext,
-  MouseLeaveItemDispatchContext,
-  TooltipPayloadType,
-} from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
@@ -73,24 +49,13 @@ export interface ChartPointer {
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
-const tooltipTicksGenerator = (axisMap: AxisMap) => {
-  const axis: AxisPropsNeededForTicksGenerator = getAnyElementOfObject(axisMap);
-  const tooltipTicks = getTicksOfAxis(axis, false, true);
-
-  return {
-    tooltipTicks,
-    orderedTooltipTicks: sortBy(tooltipTicks, o => o.coordinate),
-    tooltipAxis: axis,
-  };
-};
-
 /**
  * Returns default, reset state for the categorical chart.
  * @param {Object} props Props object to use when creating the default state
  * @return {Object} Whole new state
  */
 export const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
-  const { children, defaultShowTooltip } = props;
+  const { children } = props;
   const brushItem = findChildByType(children, Brush);
   let startIndex = 0;
   let endIndex = 0;
@@ -112,108 +77,7 @@ export const createDefaultState = (props: CategoricalChartProps): CategoricalCha
     chartY: 0,
     dataStartIndex: startIndex,
     dataEndIndex: endIndex,
-    activeTooltipIndex: -1,
-    isTooltipActive: Boolean(defaultShowTooltip),
   };
-};
-
-const getAxisNameByLayout = (layout: LayoutType) => {
-  if (layout === 'horizontal') {
-    return { numericAxisName: 'yAxis', cateAxisName: 'xAxis' } as const;
-  }
-  if (layout === 'vertical') {
-    return { numericAxisName: 'xAxis', cateAxisName: 'yAxis' } as const;
-  }
-  if (layout === 'centric') {
-    return { numericAxisName: 'radiusAxis', cateAxisName: 'angleAxis' } as const;
-  }
-
-  return { numericAxisName: 'angleAxis', cateAxisName: 'radiusAxis' } as const;
-};
-
-/**
- * @deprecated do not use; this depends on reading DOM elements directly. Instead, use {@link selectChartOffset}
- *
- * Calculate the offset of main part in the svg element
- * @param  {Object} params.props          Latest props
- * @param  {Array}  params.graphicalItems The instances of item
- * @param  {Object} params.xAxisMap       The configuration of x-axis
- * @param  {Object} params.yAxisMap       The configuration of y-axis
- * @param  {Object} prevLegendBBox        The boundary box of legend
- * @return {Object} The offset of main part in the svg element
- */
-const calculateOffset = (
-  {
-    props,
-    xAxisMap = {},
-    yAxisMap = {},
-  }: {
-    props: { width: number; height: number; children: any; margin?: Margin };
-    xAxisMap?: XAxisMap;
-    yAxisMap?: YAxisMap;
-  },
-  prevLegendBBox?: BoundingBox | null,
-): ChartOffset => {
-  const { width, height, children } = props;
-  const margin = props.margin || {};
-  const brushItem = findChildByType(children, Brush);
-  const legendItem = findChildByType(children, Legend);
-
-  const offsetH = Object.keys(yAxisMap).reduce(
-    (result, id) => {
-      const entry: YAxisWithExtraData = yAxisMap[id];
-      const { orientation } = entry;
-
-      if (!entry.mirror && !entry.hide) {
-        return { ...result, [orientation]: result[orientation] + entry.width };
-      }
-
-      return result;
-    },
-    { left: margin.left || 0, right: margin.right || 0 },
-  );
-
-  const offsetV = Object.keys(xAxisMap).reduce(
-    (result, id) => {
-      const entry: XAxisWithExtraData = xAxisMap[id];
-      const { orientation } = entry;
-
-      if (!entry.mirror && !entry.hide) {
-        return { ...result, [orientation]: get(result, `${orientation}`) + entry.height };
-      }
-
-      return result;
-    },
-    { top: margin.top || 0, bottom: margin.bottom || 0 },
-  );
-
-  let offset: ChartOffset = { ...offsetV, ...offsetH };
-
-  const brushBottom = offset.bottom;
-
-  if (brushItem) {
-    offset.bottom += brushItem.props.height || Brush.defaultProps.height;
-  }
-
-  if (legendItem && prevLegendBBox) {
-    // @ts-expect-error some properties are optional but should be required
-    offset = appendOffsetOfLegend(offset, { ...legendItem.props, ...prevLegendBBox });
-  }
-
-  const offsetWidth = width - offset.left - offset.right;
-  const offsetHeight = height - offset.top - offset.bottom;
-
-  return {
-    brushBottom,
-    ...offset,
-    // never return negative values for height and width
-    width: Math.max(offsetWidth, 0),
-    height: Math.max(offsetHeight, 0),
-  };
-};
-
-type AxisMapMap = {
-  [axisMapId: string]: AxisMap;
 };
 
 export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
@@ -237,7 +101,6 @@ export interface CategoricalChartProps {
   style?: any;
   className?: string;
   children?: any;
-  defaultShowTooltip?: boolean;
   onClick?: CategoricalChartFunc;
   onMouseLeave?: CategoricalChartFunc;
   onMouseEnter?: CategoricalChartFunc;
@@ -264,79 +127,11 @@ export interface CategoricalChartProps {
 
 export const generateCategoricalChart = ({
   chartName,
-  GraphicalChild,
   defaultTooltipEventType = 'axis',
   validateTooltipEventTypes = ['axis'],
   defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
-  /**
-   * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
-   *
-   * The AxisMaps are expensive to render on large data sets
-   * so provide the ability to store them in state and only update them when necessary
-   * they are dependent upon the start and end index of
-   * the brush so it's important that this method is called _after_
-   * the state is updated with any new start/end indices
-   *
-   * @param {Object} props          The props object to be used for updating the axismaps
-   * dataStartIndex: The start index of the data series when a brush is applied
-   * dataEndIndex: The end index of the data series when a brush is applied
-   * updateId: The update id
-   * @param {Object} prevState      Prev state
-   * @return {Object} state New state to set
-   */
-  const updateStateOfAxisMapsOffsetAndStackGroups = (
-    {
-      props,
-    }: {
-      props: CategoricalChartProps;
-    },
-    prevState?: CategoricalChartState,
-  ): any => {
-    if (!validateWidthHeight({ width: props.width, height: props.height })) {
-      return null;
-    }
-
-    const { children, layout, stackOffset, data, reverseStackOrder } = props;
-    const { numericAxisName, cateAxisName } = getAxisNameByLayout(layout);
-    const graphicalItems = findAllByType(children, GraphicalChild);
-    const stackGroups: AxisStackGroups = getStackGroupsByAxisId(
-      data,
-      graphicalItems,
-      `${numericAxisName}Id`,
-      `${cateAxisName}Id`,
-      stackOffset,
-      reverseStackOrder,
-    );
-    const axisObj: AxisMapMap = {};
-
-    const offset: ChartOffset = calculateOffset(
-      {
-        xAxisMap: {},
-        yAxisMap: {},
-        props: {
-          width: props.width,
-          height: props.height,
-          margin: props.margin,
-          children: props.children,
-        },
-      },
-      prevState?.legendBBox,
-    );
-
-    const cateAxisMap = axisObj[`${cateAxisName}Map`];
-    const ticksObj = tooltipTicksGenerator(cateAxisMap);
-
-    return {
-      graphicalItems,
-      offset,
-      stackGroups,
-      ...ticksObj,
-      ...axisObj,
-    };
-  };
-
   class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
     static displayName = chartName;
 
@@ -369,41 +164,6 @@ export const generateCategoricalChart = ({
 
     componentDidMount() {
       this.addListener();
-
-      this.displayDefaultTooltip();
-    }
-
-    displayDefaultTooltip() {
-      const { children } = this.props;
-
-      const tooltipElem = findChildByType(children, Tooltip);
-      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
-      if (!tooltipElem) {
-        return;
-      }
-
-      const { defaultIndex } = tooltipElem.props;
-
-      // Protect against runtime errors
-      if (
-        typeof defaultIndex !== 'number' ||
-        defaultIndex < 0 ||
-        this.state.tooltipTicks == null ||
-        defaultIndex > this.state.tooltipTicks.length - 1
-      ) {
-        return;
-      }
-
-      const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      const nextState = {
-        activeTooltipIndex: defaultIndex,
-        isTooltipActive: true,
-        activeLabel,
-        // @ts-expect-error we're about to remove this
-        activePayload: null,
-      };
-
-      this.setState(nextState);
     }
 
     static getDerivedStateFromProps(
@@ -418,13 +178,7 @@ export const generateCategoricalChart = ({
         return {
           ...defaultState,
           updateId: 0,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...defaultState,
-            },
-            prevState,
-          ),
+          ...{},
 
           prevDataKey: dataKey,
           prevData: data,
@@ -453,10 +207,6 @@ export const generateCategoricalChart = ({
           // any flickering
           chartX: prevState.chartX,
           chartY: prevState.chartY,
-
-          // The tooltip should stay active when it was active in the previous render. If this is not
-          // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
-          isTooltipActive: prevState.isTooltipActive,
         };
 
         const updatesToState = {
@@ -472,13 +222,6 @@ export const generateCategoricalChart = ({
 
         return {
           ...newState,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...newState,
-            },
-            prevState,
-          ),
           prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
@@ -503,13 +246,6 @@ export const generateCategoricalChart = ({
 
         return {
           updateId: newUpdateId,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: nextProps,
-              ...prevState,
-            },
-            prevState,
-          ),
           prevChildren: children,
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
@@ -519,63 +255,16 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    componentDidUpdate(prevProps: CategoricalChartProps) {
-      // Check to see if the Tooltip updated. If so, re-check default tooltip position
-      if (
-        !isChildrenEqual(
-          [findChildByType(prevProps.children, Tooltip)],
-          [findChildByType(this.props.children, Tooltip)],
-        )
-      ) {
-        this.displayDefaultTooltip();
-      }
-    }
-
     componentWillUnmount() {
       this.removeListener();
     }
 
-    /**
-     * @deprecated instead use `useTooltipEventType` hook
-     *
-     * @returns do not use
-     */
-    getTooltipEventType(): TooltipEventType {
-      const tooltipItem = findChildByType(this.props.children, Tooltip);
-
-      if (tooltipItem && typeof tooltipItem.props.shared === 'boolean') {
-        const eventType = tooltipItem.props.shared ? 'axis' : 'item';
-
-        return validateTooltipEventTypes.indexOf(eventType) >= 0 ? eventType : defaultTooltipEventType;
-      }
-
-      return defaultTooltipEventType;
-    }
-
     parseEventsOfWrapper() {
-      const { children } = this.props;
-      const tooltipEventType = this.getTooltipEventType();
-      const tooltipItem = findChildByType(children, Tooltip);
-      let tooltipEvents: any = {};
-
-      if (tooltipItem && tooltipEventType === 'axis') {
-        if (tooltipItem.props.trigger !== 'click') {
-          tooltipEvents = {
-            onDoubleClick: this.handleDoubleClick,
-            onMouseLeave: this.handleMouseLeave,
-            onTouchStart: this.handleTouchStart,
-            onTouchEnd: this.handleTouchEnd,
-            onContextMenu: this.handleContextMenu,
-          };
-        }
-      }
-
       // @ts-expect-error adaptEventHandlers expects DOM Event but generateCategoricalChart works with React UIEvents
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
         ...outerEvents,
-        ...tooltipEvents,
       };
     }
 
@@ -586,20 +275,6 @@ export const generateCategoricalChart = ({
     removeListener() {
       eventCenter.removeListener(GENERATOR_SYNC_EVENT, this.handleReceiveSyncEvent);
     }
-
-    handleLegendBBoxUpdate = (box: BoundingBox | null) => {
-      if (box) {
-        this.setState({
-          legendBBox: box,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            { ...this.state, legendBBox: box },
-          ),
-        });
-      }
-    };
 
     handleReceiveSyncEvent = (cId: number | string, data: CategoricalChartState, emitter: symbol) => {
       if (this.props.syncId === cId) {
@@ -617,62 +292,12 @@ export const generateCategoricalChart = ({
         this.setState(() => ({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            this.state,
-          ),
         }));
 
         this.triggerSyncEvent({
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
         });
-      }
-    };
-
-    /**
-     * The handler of mouse entering a graphical item, such as bar, pie, scatter, funnel, ...
-     * This handler is used for `tooltipEventType: item` and both `Tooltip.trigger: hover` and `Tooltip.trigger: click`
-     * @param el The active graphical element
-     * @param index 0-based index of the active graphical element
-     * @return undefined
-     */
-    handleItemMouseEnter: ActivateTooltipAction<TooltipPayloadType> = (el, index) => {
-      this.setState(() => ({
-        activeTooltipIndex: index,
-        isTooltipActive: true,
-        activePayload: el.tooltipPayload,
-        activeCoordinate: el.tooltipPosition || { x: el.cx, y: el.cy },
-      }));
-    };
-
-    /**
-     * The handler of mouse leaving a graphical item.
-     * This handler is used for `tooltipEventType: item` and `Tooltip.trigger: hover`
-     * @return undefined
-     */
-    handleItemMouseLeave = () => {
-      this.setState(() => ({
-        isTooltipActive: false,
-      }));
-    };
-
-    /**
-     * The handler if mouse leaving chart
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e Event object
-     * @return undefined
-     */
-    handleMouseLeave = (e: React.MouseEvent) => {
-      const nextState: CategoricalChartState = { isTooltipActive: false };
-
-      this.setState(nextState);
-
-      const { onMouseLeave } = this.props;
-      if (typeof onMouseLeave === 'function') {
-        onMouseLeave(nextState, e);
       }
     };
 
@@ -692,64 +317,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    handleMouseDown = (e: React.MouseEvent | React.Touch) => {
-      const { onMouseDown } = this.props;
-
-      if (typeof onMouseDown === 'function') {
-        const nextState: CategoricalChartState = null;
-        onMouseDown(nextState, e);
-      }
-    };
-
-    handleMouseUp = (e: React.MouseEvent | React.Touch) => {
-      const { onMouseUp } = this.props;
-
-      if (typeof onMouseUp === 'function') {
-        const nextState: CategoricalChartState = null;
-        onMouseUp(nextState, e);
-      }
-    };
-
-    /**
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e touch event
-     * @return undefined
-     */
-    handleTouchStart = (e: React.TouchEvent) => {
-      if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseDown(e.changedTouches[0]);
-      }
-    };
-
-    /**
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e touch event
-     * @return undefined
-     */
-    handleTouchEnd = (e: React.TouchEvent) => {
-      if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseUp(e.changedTouches[0]);
-      }
-    };
-
-    handleDoubleClick = (e: React.MouseEvent) => {
-      const { onDoubleClick } = this.props;
-
-      if (typeof onDoubleClick === 'function') {
-        const nextState: CategoricalChartState = null;
-        onDoubleClick(nextState, e);
-      }
-    };
-
-    handleContextMenu = (e: React.MouseEvent) => {
-      const { onContextMenu } = this.props;
-
-      if (typeof onContextMenu === 'function') {
-        const nextState: CategoricalChartState = null;
-        onContextMenu(nextState, e);
-      }
-    };
-
     triggerSyncEvent = (data: CategoricalChartState) => {
       if (this.props.syncId !== undefined) {
         eventCenter.emit(GENERATOR_SYNC_EVENT, this.props.syncId, data, this.eventEmitterSymbol);
@@ -763,57 +330,10 @@ export const generateCategoricalChart = ({
         this.setState({
           dataStartIndex,
           dataEndIndex,
-          ...updateStateOfAxisMapsOffsetAndStackGroups(
-            {
-              props: this.props,
-            },
-            this.state,
-          ),
+          ...{},
         });
       }
     };
-
-    getGraphicalItemClickHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'click') {
-        return this.handleItemMouseEnter;
-      }
-      return null;
-    }
-
-    getGraphicalItemMouseEnterHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'hover' || trigger == null) {
-        return this.handleItemMouseEnter;
-      }
-      return null;
-    }
-
-    getGraphicalItemMouseLeaveHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'hover' || trigger == null) {
-        return this.handleItemMouseLeave;
-      }
-      return null;
-    }
 
     render() {
       if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
@@ -850,75 +370,62 @@ export const generateCategoricalChart = ({
       }
 
       const wrapperEvents = this.parseEventsOfWrapper();
-      const tooltipEventType = this.getTooltipEventType();
-      const tooltipItem = findChildByType(this.props.children, Tooltip);
-      const onItemClick = this.getGraphicalItemClickHandler(tooltipEventType, tooltipItem?.props?.trigger);
-      const onItemMouseEnter = this.getGraphicalItemMouseEnterHandler(tooltipEventType, tooltipItem?.props?.trigger);
-      const onItemMouseLeave = this.getGraphicalItemMouseLeaveHandler(tooltipEventType, tooltipItem?.props?.trigger);
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
-          <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
-            <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
-              <MouseClickItemDispatchContext.Provider value={onItemClick}>
-                <CursorPortalContext.Provider value={this.state.cursorPortal}>
-                  <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-                    <LegendPortalContext.Provider value={this.state.legendPortal}>
-                      <LegendBoundingBoxContext.Provider value={this.handleLegendBBoxUpdate}>
-                        <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                          <ChartLayoutContextProvider
-                            state={this.state}
-                            width={this.props.width}
-                            height={this.props.height}
-                            clipPathId={this.clipPathId}
-                            margin={this.props.margin}
-                            layout={this.props.layout}
-                          >
-                            <RechartsWrapper
-                              className={className}
-                              style={style}
-                              wrapperEvents={wrapperEvents}
-                              width={width}
-                              height={height}
-                              ref={(node: HTMLDivElement) => {
-                                this.container = node;
-                                if (this.state.tooltipPortal == null) {
-                                  this.setState({ tooltipPortal: node });
-                                }
-                                if (this.state.legendPortal == null) {
-                                  this.setState({ legendPortal: node });
-                                }
-                              }}
-                            >
-                              <Surface
-                                {...attrs}
-                                width={width}
-                                height={height}
-                                title={title}
-                                desc={desc}
-                                style={FULL_WIDTH_AND_HEIGHT}
-                              >
-                                <ClipPath clipPathId={this.clipPathId} />
-                                <g
-                                  className="recharts-cursor-portal"
-                                  ref={(node: SVGElement) => {
-                                    if (this.state.cursorPortal == null) {
-                                      this.setState({ cursorPortal: node });
-                                    }
-                                  }}
-                                />
-                                {children}
-                              </Surface>
-                            </RechartsWrapper>
-                          </ChartLayoutContextProvider>
-                        </BrushUpdateDispatchContext.Provider>
-                      </LegendBoundingBoxContext.Provider>
-                    </LegendPortalContext.Provider>
-                  </TooltipPortalContext.Provider>
-                </CursorPortalContext.Provider>
-              </MouseClickItemDispatchContext.Provider>
-            </MouseLeaveItemDispatchContext.Provider>
-          </MouseEnterItemDispatchContext.Provider>
+          <CursorPortalContext.Provider value={this.state.cursorPortal}>
+            <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+              <LegendPortalContext.Provider value={this.state.legendPortal}>
+                <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+                  <ChartLayoutContextProvider
+                    state={this.state}
+                    width={this.props.width}
+                    height={this.props.height}
+                    clipPathId={this.clipPathId}
+                    margin={this.props.margin}
+                    layout={this.props.layout}
+                  >
+                    <RechartsWrapper
+                      className={className}
+                      style={style}
+                      wrapperEvents={wrapperEvents}
+                      width={width}
+                      height={height}
+                      ref={(node: HTMLDivElement) => {
+                        this.container = node;
+                        if (this.state.tooltipPortal == null) {
+                          this.setState({ tooltipPortal: node });
+                        }
+                        if (this.state.legendPortal == null) {
+                          this.setState({ legendPortal: node });
+                        }
+                      }}
+                    >
+                      <Surface
+                        {...attrs}
+                        width={width}
+                        height={height}
+                        title={title}
+                        desc={desc}
+                        style={FULL_WIDTH_AND_HEIGHT}
+                      >
+                        <ClipPath clipPathId={this.clipPathId} />
+                        <g
+                          className="recharts-cursor-portal"
+                          ref={(node: SVGElement) => {
+                            if (this.state.cursorPortal == null) {
+                              this.setState({ cursorPortal: node });
+                            }
+                          }}
+                        />
+                        {children}
+                      </Surface>
+                    </RechartsWrapper>
+                  </ChartLayoutContextProvider>
+                </BrushUpdateDispatchContext.Provider>
+              </LegendPortalContext.Provider>
+            </TooltipPortalContext.Provider>
+          </CursorPortalContext.Provider>
         </>
       );
     }

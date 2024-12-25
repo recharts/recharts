@@ -1,4 +1,4 @@
-import React, { CSSProperties, PureComponent, useContext, useEffect } from 'react';
+import React, { CSSProperties, PureComponent, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
@@ -9,7 +9,6 @@ import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
 import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
-import { LegendBoundingBoxContext } from '../context/legendBoundingBoxContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
 
@@ -97,7 +96,7 @@ export type Props = DefaultProps & {
    * If portal is defined, then Legend will use this element as a target
    * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal
    *
-   * If this is undefined then Legendd renders inside the recharts-wrapper element.
+   * If this is undefined then Legend renders inside the recharts-wrapper element.
    */
   portal?: HTMLElement | null;
 };
@@ -131,10 +130,9 @@ function LegendWrapper(props: Props) {
   const legendPortalFromContext = useLegendPortal();
   const margin = useMargin();
   const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
-  const onBBoxUpdate = useContext(LegendBoundingBoxContext);
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
-  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(onBBoxUpdate, [contextPayload]);
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
@@ -165,8 +163,6 @@ function LegendWrapper(props: Props) {
         {...props}
         {...widthOrHeight}
         margin={margin}
-        // This doesn't need the bboxupdate callback at all - I pass it for the sake of not changing anything in the API
-        onBBoxUpdate={onBBoxUpdate}
         chartWidth={chartWidth}
         chartHeight={chartHeight}
         contextPayload={contextPayload}

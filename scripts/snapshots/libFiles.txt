@@ -60,7 +60,6 @@
   "lib/context/brushUpdateContext.js",
   "lib/context/chartDataContext.js",
   "lib/context/chartLayoutContext.js",
-  "lib/context/legendBoundingBoxContext.js",
   "lib/context/legendPayloadContext.js",
   "lib/context/legendPortalContext.js",
   "lib/context/tooltipContext.js",
