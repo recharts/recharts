@@ -4,7 +4,6 @@
 import { generateCategoricalChart } from './generateCategoricalChart';
 import { PolarAngleAxis } from '../polar/PolarAngleAxis';
 import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
-import { formatAxisMap } from '../util/PolarUtils';
 import { Pie } from '../polar/Pie';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
@@ -17,7 +16,6 @@ export const PieChart = generateCategoricalChart({
     { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
     { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
   ],
-  formatAxisMap,
   defaultProps: {
     layout: 'centric',
     startAngle: 0,

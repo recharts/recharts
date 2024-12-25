@@ -6,7 +6,6 @@ import { Scatter } from '../cartesian/Scatter';
 import { XAxis } from '../cartesian/XAxis';
 import { YAxis } from '../cartesian/YAxis';
 import { ZAxis } from '../cartesian/ZAxis';
-import { formatAxisMap } from '../util/CartesianUtils';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const ScatterChart = generateCategoricalChart({
@@ -19,6 +18,5 @@ export const ScatterChart = generateCategoricalChart({
     { axisType: 'yAxis', AxisComp: YAxis },
     { axisType: 'zAxis', AxisComp: ZAxis },
   ],
-  formatAxisMap,
   tooltipPayloadSearcher: arrayTooltipSearcher,
 });

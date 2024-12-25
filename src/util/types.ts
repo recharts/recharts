@@ -1311,7 +1311,6 @@ export interface CategoricalChartOptions {
   defaultTooltipEventType?: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   axisComponents?: ReadonlyArray<AllowedAxisComponent>;
-  formatAxisMap?: any;
   defaultProps?: any;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
 }
