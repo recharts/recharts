@@ -3,7 +3,6 @@ import {
   calculateActiveTickIndex,
   getBandSizeOfAxis,
   getDomainOfStackGroups,
-  getTicksOfScale,
   getValueByDataKey,
   MAX_VALUE_REG,
   MIN_VALUE_REG,
@@ -283,36 +282,6 @@ describe('getValueByDataKey', () => {
     },
   ])('should return result of function getter if data object is %s', d => {
     expect(getValueByDataKey(d, () => 1, 7)).toEqual(1);
-  });
-});
-
-describe('getTicksOfScale', () => {
-  it('of linear scale with auto domain', () => {
-    const scale = scaleLinear();
-    const opts = {
-      scale: 'linear',
-      type: 'number',
-      tickCount: 5,
-      originalDomain: ['auto', 'auto'],
-      allowDecimals: true,
-    };
-    const result = getTicksOfScale(scale, opts);
-
-    expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
-  });
-
-  it('of linear scale with specified domain', () => {
-    const scale = scaleLinear();
-    const opts = {
-      scale: 'linear',
-      type: 'number',
-      tickCount: 5,
-      originalDomain: [0, 100],
-      allowDecimals: true,
-    };
-    const result = getTicksOfScale(scale, opts);
-
-    expect(result?.niceTicks).toEqual([0, 0.25, 0.5, 0.75, 1]);
   });
 });
 

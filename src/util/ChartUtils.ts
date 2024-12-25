@@ -1,6 +1,4 @@
 import get from 'lodash/get';
-import max from 'lodash/max';
-import min from 'lodash/min';
 import sortBy from 'lodash/sortBy';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import {
@@ -18,7 +16,6 @@ import { ReactElement } from 'react';
 import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId, upperFirst } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
-import { getNiceTickValues, getTickValuesFixedDomain } from './scale';
 import {
   AxisTick,
   AxisType,
@@ -701,47 +698,6 @@ export const getStackGroupsByAxisId = (
 
     return { ...result, [axisId]: group };
   }, axisStackGroupsInitialValue);
-};
-
-/**
- * Configure the scale function of axis
- * @param {Object} scale The scale function
- * @param {Object} opts  The configuration of axis
- * @return {Object}      null
- */
-export const getTicksOfScale = (scale: any, opts: any) => {
-  const { realScaleType, type, tickCount, originalDomain, allowDecimals } = opts;
-  const scaleType = realScaleType || opts.scale;
-
-  if (scaleType !== 'auto' && scaleType !== 'linear') {
-    return null;
-  }
-
-  if (
-    tickCount &&
-    type === 'number' &&
-    originalDomain &&
-    (originalDomain[0] === 'auto' || originalDomain[1] === 'auto')
-  ) {
-    // Calculate the ticks by the number of grid when the axis is a number axis
-    const domain = scale.domain();
-    if (!domain.length) {
-      return null;
-    }
-
-    const tickValues = getNiceTickValues(domain, tickCount, allowDecimals);
-
-    scale.domain([min(tickValues), max(tickValues)]);
-    return { niceTicks: tickValues };
-  }
-  if (tickCount && type === 'number') {
-    const domain = scale.domain();
-    const tickValues = getTickValuesFixedDomain(domain, tickCount, allowDecimals);
-
-    return { niceTicks: tickValues };
-  }
-
-  return null;
 };
 
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
