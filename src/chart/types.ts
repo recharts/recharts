@@ -1,6 +1,5 @@
-import { DataKey, LayoutType, Margin, StackOffsetType, TickItem } from '../util/types';
+import { DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { AxisStackGroups } from '../util/ChartUtils';
-import { BoundingBox } from '../util/useGetBoundingClientRect';
 
 export interface CategoricalChartState {
   chartX?: number;
@@ -11,13 +10,7 @@ export interface CategoricalChartState {
 
   dataEndIndex?: number;
 
-  isTooltipActive?: boolean;
-
   updateId?: number;
-
-  orderedTooltipTicks?: any;
-
-  tooltipTicks?: TickItem[];
 
   /** Active label of data */
   activeLabel?: string;
@@ -27,8 +20,6 @@ export interface CategoricalChartState {
   xValue?: number;
 
   yValue?: number;
-
-  legendBBox?: BoundingBox | null;
 
   prevDataKey?: DataKey<any>;
   prevData?: any[];

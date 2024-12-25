@@ -13,9 +13,7 @@ import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../sr
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('ChartLayoutContextProvider', () => {
-  const minimalState: CategoricalChartState = {
-    offset: {},
-  };
+  const minimalState: CategoricalChartState = {};
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
     margin: { top: 0, right: 0, bottom: 0, left: 0 },
     state: minimalState,

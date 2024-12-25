@@ -2,7 +2,6 @@ import React, { Component, forwardRef } from 'react';
 import get from 'lodash/get';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
-import { Tooltip } from '../component/Tooltip';
 
 import {
   filterProps,
@@ -23,23 +22,15 @@ import {
   LayoutType,
   Margin,
   StackOffsetType,
-  TooltipEventType,
 } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { CategoricalChartState, TooltipTrigger } from './types';
+import { CategoricalChartState } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { BrushStartEndIndex, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
-import {
-  ActivateTooltipAction,
-  MouseClickItemDispatchContext,
-  MouseEnterItemDispatchContext,
-  MouseLeaveItemDispatchContext,
-  TooltipPayloadType,
-} from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
@@ -64,7 +55,7 @@ const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
  * @return {Object} Whole new state
  */
 export const createDefaultState = (props: CategoricalChartProps): CategoricalChartState => {
-  const { children, defaultShowTooltip } = props;
+  const { children } = props;
   const brushItem = findChildByType(children, Brush);
   let startIndex = 0;
   let endIndex = 0;
@@ -86,7 +77,6 @@ export const createDefaultState = (props: CategoricalChartProps): CategoricalCha
     chartY: 0,
     dataStartIndex: startIndex,
     dataEndIndex: endIndex,
-    isTooltipActive: Boolean(defaultShowTooltip),
   };
 };
 
@@ -111,7 +101,6 @@ export interface CategoricalChartProps {
   style?: any;
   className?: string;
   children?: any;
-  defaultShowTooltip?: boolean;
   onClick?: CategoricalChartFunc;
   onMouseLeave?: CategoricalChartFunc;
   onMouseEnter?: CategoricalChartFunc;
@@ -175,41 +164,6 @@ export const generateCategoricalChart = ({
 
     componentDidMount() {
       this.addListener();
-
-      this.displayDefaultTooltip();
-    }
-
-    displayDefaultTooltip() {
-      const { children } = this.props;
-
-      const tooltipElem = findChildByType(children, Tooltip);
-      // If the chart doesn't include a <Tooltip /> element, there's no tooltip to display
-      if (!tooltipElem) {
-        return;
-      }
-
-      const { defaultIndex } = tooltipElem.props;
-
-      // Protect against runtime errors
-      if (
-        typeof defaultIndex !== 'number' ||
-        defaultIndex < 0 ||
-        this.state.tooltipTicks == null ||
-        defaultIndex > this.state.tooltipTicks.length - 1
-      ) {
-        return;
-      }
-
-      const activeLabel = this.state.tooltipTicks[defaultIndex] && this.state.tooltipTicks[defaultIndex].value;
-      const nextState = {
-        activeTooltipIndex: defaultIndex,
-        isTooltipActive: true,
-        activeLabel,
-        // @ts-expect-error we're about to remove this
-        activePayload: null,
-      };
-
-      this.setState(nextState);
     }
 
     static getDerivedStateFromProps(
@@ -253,10 +207,6 @@ export const generateCategoricalChart = ({
           // any flickering
           chartX: prevState.chartX,
           chartY: prevState.chartY,
-
-          // The tooltip should stay active when it was active in the previous render. If this is not
-          // the case, the tooltip disappears and immediately re-appears, causing a flickering effect
-          isTooltipActive: prevState.isTooltipActive,
         };
 
         const updatesToState = {
@@ -272,7 +222,6 @@ export const generateCategoricalChart = ({
 
         return {
           ...newState,
-          ...{},
           prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
@@ -297,7 +246,6 @@ export const generateCategoricalChart = ({
 
         return {
           updateId: newUpdateId,
-          ...{},
           prevChildren: children,
           dataStartIndex: startIndex,
           dataEndIndex: endIndex,
@@ -307,63 +255,16 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    componentDidUpdate(prevProps: CategoricalChartProps) {
-      // Check to see if the Tooltip updated. If so, re-check default tooltip position
-      if (
-        !isChildrenEqual(
-          [findChildByType(prevProps.children, Tooltip)],
-          [findChildByType(this.props.children, Tooltip)],
-        )
-      ) {
-        this.displayDefaultTooltip();
-      }
-    }
-
     componentWillUnmount() {
       this.removeListener();
     }
 
-    /**
-     * @deprecated instead use `useTooltipEventType` hook
-     *
-     * @returns do not use
-     */
-    getTooltipEventType(): TooltipEventType {
-      const tooltipItem = findChildByType(this.props.children, Tooltip);
-
-      if (tooltipItem && typeof tooltipItem.props.shared === 'boolean') {
-        const eventType = tooltipItem.props.shared ? 'axis' : 'item';
-
-        return validateTooltipEventTypes.indexOf(eventType) >= 0 ? eventType : defaultTooltipEventType;
-      }
-
-      return defaultTooltipEventType;
-    }
-
     parseEventsOfWrapper() {
-      const { children } = this.props;
-      const tooltipEventType = this.getTooltipEventType();
-      const tooltipItem = findChildByType(children, Tooltip);
-      let tooltipEvents: any = {};
-
-      if (tooltipItem && tooltipEventType === 'axis') {
-        if (tooltipItem.props.trigger !== 'click') {
-          tooltipEvents = {
-            onDoubleClick: this.handleDoubleClick,
-            onMouseLeave: this.handleMouseLeave,
-            onTouchStart: this.handleTouchStart,
-            onTouchEnd: this.handleTouchEnd,
-            onContextMenu: this.handleContextMenu,
-          };
-        }
-      }
-
       // @ts-expect-error adaptEventHandlers expects DOM Event but generateCategoricalChart works with React UIEvents
       const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
 
       return {
         ...outerEvents,
-        ...tooltipEvents,
       };
     }
 
@@ -400,47 +301,6 @@ export const generateCategoricalChart = ({
       }
     };
 
-    /**
-     * The handler of mouse entering a graphical item, such as bar, pie, scatter, funnel, ...
-     * This handler is used for `tooltipEventType: item` and both `Tooltip.trigger: hover` and `Tooltip.trigger: click`
-     * @param el The active graphical element
-     * @param index 0-based index of the active graphical element
-     * @return undefined
-     */
-    handleItemMouseEnter: ActivateTooltipAction<TooltipPayloadType> = () => {
-      this.setState(() => ({
-        isTooltipActive: true,
-      }));
-    };
-
-    /**
-     * The handler of mouse leaving a graphical item.
-     * This handler is used for `tooltipEventType: item` and `Tooltip.trigger: hover`
-     * @return undefined
-     */
-    handleItemMouseLeave = () => {
-      this.setState(() => ({
-        isTooltipActive: false,
-      }));
-    };
-
-    /**
-     * The handler if mouse leaving chart
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e Event object
-     * @return undefined
-     */
-    handleMouseLeave = (e: React.MouseEvent) => {
-      const nextState: CategoricalChartState = { isTooltipActive: false };
-
-      this.setState(nextState);
-
-      const { onMouseLeave } = this.props;
-      if (typeof onMouseLeave === 'function') {
-        onMouseLeave(nextState, e);
-      }
-    };
-
     handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
       const eventName = getReactEventByType(e);
 
@@ -454,64 +314,6 @@ export const generateCategoricalChart = ({
         }
 
         event(mouse ?? {}, e);
-      }
-    };
-
-    handleMouseDown = (e: React.MouseEvent | React.Touch) => {
-      const { onMouseDown } = this.props;
-
-      if (typeof onMouseDown === 'function') {
-        const nextState: CategoricalChartState = null;
-        onMouseDown(nextState, e);
-      }
-    };
-
-    handleMouseUp = (e: React.MouseEvent | React.Touch) => {
-      const { onMouseUp } = this.props;
-
-      if (typeof onMouseUp === 'function') {
-        const nextState: CategoricalChartState = null;
-        onMouseUp(nextState, e);
-      }
-    };
-
-    /**
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e touch event
-     * @return undefined
-     */
-    handleTouchStart = (e: React.TouchEvent) => {
-      if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseDown(e.changedTouches[0]);
-      }
-    };
-
-    /**
-     * This handler is used for `tooltipEventType: axis` and `Tooltip.trigger: hover`
-     * @param e touch event
-     * @return undefined
-     */
-    handleTouchEnd = (e: React.TouchEvent) => {
-      if (e.changedTouches != null && e.changedTouches.length > 0) {
-        this.handleMouseUp(e.changedTouches[0]);
-      }
-    };
-
-    handleDoubleClick = (e: React.MouseEvent) => {
-      const { onDoubleClick } = this.props;
-
-      if (typeof onDoubleClick === 'function') {
-        const nextState: CategoricalChartState = null;
-        onDoubleClick(nextState, e);
-      }
-    };
-
-    handleContextMenu = (e: React.MouseEvent) => {
-      const { onContextMenu } = this.props;
-
-      if (typeof onContextMenu === 'function') {
-        const nextState: CategoricalChartState = null;
-        onContextMenu(nextState, e);
       }
     };
 
@@ -532,48 +334,6 @@ export const generateCategoricalChart = ({
         });
       }
     };
-
-    getGraphicalItemClickHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'click') {
-        return this.handleItemMouseEnter;
-      }
-      return null;
-    }
-
-    getGraphicalItemMouseEnterHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'hover' || trigger == null) {
-        return this.handleItemMouseEnter;
-      }
-      return null;
-    }
-
-    getGraphicalItemMouseLeaveHandler(
-      tooltipEventType: TooltipEventType,
-      trigger: TooltipTrigger | undefined,
-    ): ActivateTooltipAction<TooltipPayloadType> | null {
-      if (tooltipEventType === 'axis') {
-        return null;
-      }
-
-      if (trigger === 'hover' || trigger == null) {
-        return this.handleItemMouseLeave;
-      }
-      return null;
-    }
 
     render() {
       if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
@@ -610,73 +370,62 @@ export const generateCategoricalChart = ({
       }
 
       const wrapperEvents = this.parseEventsOfWrapper();
-      const tooltipEventType = this.getTooltipEventType();
-      const tooltipItem = findChildByType(this.props.children, Tooltip);
-      const onItemClick = this.getGraphicalItemClickHandler(tooltipEventType, tooltipItem?.props?.trigger);
-      const onItemMouseEnter = this.getGraphicalItemMouseEnterHandler(tooltipEventType, tooltipItem?.props?.trigger);
-      const onItemMouseLeave = this.getGraphicalItemMouseLeaveHandler(tooltipEventType, tooltipItem?.props?.trigger);
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
-          <MouseEnterItemDispatchContext.Provider value={onItemMouseEnter}>
-            <MouseLeaveItemDispatchContext.Provider value={onItemMouseLeave}>
-              <MouseClickItemDispatchContext.Provider value={onItemClick}>
-                <CursorPortalContext.Provider value={this.state.cursorPortal}>
-                  <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-                    <LegendPortalContext.Provider value={this.state.legendPortal}>
-                      <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
-                        <ChartLayoutContextProvider
-                          state={this.state}
-                          width={this.props.width}
-                          height={this.props.height}
-                          clipPathId={this.clipPathId}
-                          margin={this.props.margin}
-                          layout={this.props.layout}
-                        >
-                          <RechartsWrapper
-                            className={className}
-                            style={style}
-                            wrapperEvents={wrapperEvents}
-                            width={width}
-                            height={height}
-                            ref={(node: HTMLDivElement) => {
-                              this.container = node;
-                              if (this.state.tooltipPortal == null) {
-                                this.setState({ tooltipPortal: node });
-                              }
-                              if (this.state.legendPortal == null) {
-                                this.setState({ legendPortal: node });
-                              }
-                            }}
-                          >
-                            <Surface
-                              {...attrs}
-                              width={width}
-                              height={height}
-                              title={title}
-                              desc={desc}
-                              style={FULL_WIDTH_AND_HEIGHT}
-                            >
-                              <ClipPath clipPathId={this.clipPathId} />
-                              <g
-                                className="recharts-cursor-portal"
-                                ref={(node: SVGElement) => {
-                                  if (this.state.cursorPortal == null) {
-                                    this.setState({ cursorPortal: node });
-                                  }
-                                }}
-                              />
-                              {children}
-                            </Surface>
-                          </RechartsWrapper>
-                        </ChartLayoutContextProvider>
-                      </BrushUpdateDispatchContext.Provider>
-                    </LegendPortalContext.Provider>
-                  </TooltipPortalContext.Provider>
-                </CursorPortalContext.Provider>
-              </MouseClickItemDispatchContext.Provider>
-            </MouseLeaveItemDispatchContext.Provider>
-          </MouseEnterItemDispatchContext.Provider>
+          <CursorPortalContext.Provider value={this.state.cursorPortal}>
+            <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+              <LegendPortalContext.Provider value={this.state.legendPortal}>
+                <BrushUpdateDispatchContext.Provider value={this.handleBrushChange}>
+                  <ChartLayoutContextProvider
+                    state={this.state}
+                    width={this.props.width}
+                    height={this.props.height}
+                    clipPathId={this.clipPathId}
+                    margin={this.props.margin}
+                    layout={this.props.layout}
+                  >
+                    <RechartsWrapper
+                      className={className}
+                      style={style}
+                      wrapperEvents={wrapperEvents}
+                      width={width}
+                      height={height}
+                      ref={(node: HTMLDivElement) => {
+                        this.container = node;
+                        if (this.state.tooltipPortal == null) {
+                          this.setState({ tooltipPortal: node });
+                        }
+                        if (this.state.legendPortal == null) {
+                          this.setState({ legendPortal: node });
+                        }
+                      }}
+                    >
+                      <Surface
+                        {...attrs}
+                        width={width}
+                        height={height}
+                        title={title}
+                        desc={desc}
+                        style={FULL_WIDTH_AND_HEIGHT}
+                      >
+                        <ClipPath clipPathId={this.clipPathId} />
+                        <g
+                          className="recharts-cursor-portal"
+                          ref={(node: SVGElement) => {
+                            if (this.state.cursorPortal == null) {
+                              this.setState({ cursorPortal: node });
+                            }
+                          }}
+                        />
+                        {children}
+                      </Surface>
+                    </RechartsWrapper>
+                  </ChartLayoutContextProvider>
+                </BrushUpdateDispatchContext.Provider>
+              </LegendPortalContext.Provider>
+            </TooltipPortalContext.Provider>
+          </CursorPortalContext.Provider>
         </>
       );
     }
