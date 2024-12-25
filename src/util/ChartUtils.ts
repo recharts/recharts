@@ -1,6 +1,5 @@
 import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 import max from 'lodash/max';
 import min from 'lodash/min';
 import sortBy from 'lodash/sortBy';
@@ -965,29 +964,6 @@ export const getBandSizeOfAxis = (
   }
 
   return isBar ? undefined : 0;
-};
-/**
- * @deprecated this is reading defaultProps - do not use, try to come up with different approach.
- *
- * parse the domain of a category axis when a domain is specified
- * @param   {Array}        specifiedDomain  The domain specified by users
- * @param   {Array}        calculatedDomain The domain calculated by dateKey
- * @param   {ReactElement} axisChild        The axis ReactElement
- * @returns {Array}        domains
- */
-export const parseDomainOfCategoryAxis = <T>(
-  specifiedDomain: ReadonlyArray<T> | undefined,
-  calculatedDomain: ReadonlyArray<T>,
-  axisChild: ReactElement,
-): ReadonlyArray<T> => {
-  if (!specifiedDomain || !specifiedDomain.length) {
-    return calculatedDomain;
-  }
-  if (isEqual(specifiedDomain, get(axisChild, 'type.defaultProps.domain'))) {
-    return calculatedDomain;
-  }
-
-  return specifiedDomain;
 };
 
 export function getTooltipEntry({
