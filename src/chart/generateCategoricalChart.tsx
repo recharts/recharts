@@ -1,5 +1,4 @@
-import React, { Component, forwardRef, ReactElement } from 'react';
-import range from 'lodash/range';
+import React, { Component, forwardRef } from 'react';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import { LegendPortalContext } from '../context/legendPortalContext';
@@ -17,25 +16,18 @@ import {
 } from '../util/ReactUtils';
 
 import { Brush } from '../cartesian/Brush';
-import { getAnyElementOfObject, hasDuplicate, isNullish, isNumber, uniqueId } from '../util/DataUtils';
+import { getAnyElementOfObject, isNullish, uniqueId } from '../util/DataUtils';
 import {
   appendOffsetOfLegend,
   AxisPropsNeededForTicksGenerator,
   AxisStackGroups,
-  getDomainOfDataByKey,
-  getDomainOfStackGroups,
   getStackGroupsByAxisId,
   getTicksOfAxis,
-  isCategoricalAxis,
-  parseDomainOfCategoryAxis,
-  parseSpecifiedDomain,
 } from '../util/ChartUtils';
-import { detectReferenceElementsDomain } from '../util/DetectReferenceElementsDomain';
 import { shallowEqual } from '../util/ShallowEqual';
 import { eventCenter, GENERATOR_SYNC_EVENT } from '../util/Events';
 import {
   adaptEventHandlers,
-  AxisType,
   CategoricalChartOptions,
   ChartOffset,
   DataKey,
@@ -46,7 +38,6 @@ import {
   XAxisMap,
   YAxisMap,
 } from '../util/types';
-import { isDomainSpecifiedByUser } from '../util/isDomainSpecifiedByUser';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { AxisMap, CategoricalChartState, TooltipTrigger, XAxisWithExtraData, YAxisWithExtraData } from './types';
 import { BoundingBox } from '../util/useGetBoundingClientRect';
@@ -65,8 +56,6 @@ import {
   TooltipPayloadType,
 } from '../context/tooltipContext';
 import { RechartsWrapper } from './RechartsWrapper';
-import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
-import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
@@ -83,218 +72,6 @@ export interface ChartPointer {
 }
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
-
-const getDisplayedData = (
-  data: any[],
-  {
-    graphicalItems,
-    dataStartIndex,
-    dataEndIndex,
-  }: Pick<CategoricalChartState, 'graphicalItems' | 'dataStartIndex' | 'dataEndIndex'>,
-): any[] => {
-  const itemsData = (graphicalItems ?? []).reduce<any[]>((result, child) => {
-    const itemData = child.props.data;
-
-    if (itemData && itemData.length) {
-      return [...result, ...itemData];
-    }
-
-    return result;
-  }, []);
-  if (itemsData.length > 0) {
-    return itemsData;
-  }
-
-  if (data && data.length && isNumber(dataStartIndex) && isNumber(dataEndIndex)) {
-    return data.slice(dataStartIndex, dataEndIndex + 1);
-  }
-
-  return [];
-};
-
-/**
- * @deprecated this indirectly depends on the list of all children read from DOM. Use Redux instead.
- * Get the configuration of axis by the options of axis instance
- * @param  {Object} props         Latest props
- * @param {Array}  axes           The instance of axes
- * @param  {Array} graphicalItems The instances of item
- * @param  {String} axisType      The type of axis, xAxis - x-axis, yAxis - y-axis
- * @param  {String} axisIdKey     The unique id of an axis
- * @param  {Object} stackGroups   The items grouped by axisId and stackId
- * @param {Number} dataStartIndex The start index of the data series when a brush is applied
- * @param {Number} dataEndIndex   The end index of the data series when a brush is applied
- * @return {Object}      Configuration
- */
-export const getAxisMapByAxes = (
-  props: CategoricalChartProps,
-  {
-    axes,
-    graphicalItems,
-    axisType,
-    axisIdKey,
-    stackGroups,
-    dataStartIndex,
-    dataEndIndex,
-  }: {
-    axes: ReadonlyArray<ReactElement>;
-    graphicalItems: ReadonlyArray<ReactElement>;
-    axisType: AxisType;
-    axisIdKey: string;
-    stackGroups: AxisStackGroups;
-    dataStartIndex: number;
-    dataEndIndex: number;
-  },
-): AxisMap => {
-  const { layout, children, stackOffset } = props;
-  const isCategorical = isCategoricalAxis(layout, axisType);
-
-  return axes.reduce((result: AxisMap, child: ReactElement): AxisMap => {
-    const { type, dataKey, allowDataOverflow, allowDuplicatedCategory, scale, ticks, includeHidden } = child.props;
-    const axisId = child.props[axisIdKey];
-
-    // Eliminate duplicated axes
-    if (result[axisId]) {
-      return result;
-    }
-
-    const displayedData = getDisplayedData(props.data, {
-      graphicalItems: graphicalItems.filter(item => item.props[axisIdKey] === axisId),
-      dataStartIndex,
-      dataEndIndex,
-    });
-    const len = displayedData.length;
-
-    let domain, duplicateDomain, categoricalDomain;
-
-    /*
-     * This is a hack to short-circuit the domain creation here to enhance performance.
-     * Usually, the data is used to determine the domain, but when the user specifies
-     * a domain upfront (via props), there is no need to calculate the domain start and end,
-     * which is very expensive for a larger amount of data.
-     * The only thing that would prohibit short-circuiting is when the user doesn't allow data overflow,
-     * because the axis is supposed to ignore the specified domain that way.
-     */
-    if (isDomainSpecifiedByUser(child.props.domain, allowDataOverflow, type)) {
-      domain = parseSpecifiedDomain(child.props.domain, null, allowDataOverflow);
-      /* The chart can be categorical and have the domain specified in numbers
-       * we still need to calculate the categorical domain
-       * TODO: refactor this more
-       */
-      if (isCategorical && (type === 'number' || scale !== 'auto')) {
-        categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
-      }
-    }
-
-    // if the domain is defaulted we need this for `originalDomain` as well
-    const defaultDomain = getDefaultDomainByAxisType(type);
-
-    // we didn't create the domain from user's props above, so we need to calculate it
-    if (!domain || domain.length === 0) {
-      const childDomain = child.props.domain ?? defaultDomain;
-
-      if (dataKey) {
-        // has dataKey in <Axis />
-        domain = getDomainOfDataByKey(displayedData, dataKey, type);
-
-        if (type === 'category' && isCategorical) {
-          // the field type is category data and this axis is categorical axis
-          const duplicate = hasDuplicate(domain);
-
-          if (allowDuplicatedCategory && duplicate) {
-            duplicateDomain = domain;
-            // When category axis has duplicated text, serial numbers are used to generate scale
-            domain = range(0, len);
-          } else if (!allowDuplicatedCategory) {
-            // remove duplicated category
-            domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
-              (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 ? finalDomain : [...finalDomain, entry],
-              [],
-            );
-          }
-        } else if (type === 'category') {
-          // the field type is category data and this axis is numerical axis
-          if (!allowDuplicatedCategory) {
-            domain = parseDomainOfCategoryAxis(childDomain, domain, child).reduce(
-              (finalDomain: any, entry: any) =>
-                finalDomain.indexOf(entry) >= 0 || entry === '' || isNullish(entry)
-                  ? finalDomain
-                  : [...finalDomain, entry],
-              [],
-            );
-          } else {
-            // eliminate undefined or null or empty string
-            domain = domain.filter((entry: any) => entry !== '' && !isNullish(entry));
-          }
-        } else if (type === 'number') {
-          // the field type is numerical
-          const errorBarsDomain = parseErrorBarsOfAxis(
-            displayedData,
-            graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
-            dataKey,
-            axisType,
-            layout,
-          );
-
-          if (errorBarsDomain) {
-            domain = errorBarsDomain;
-          }
-        }
-
-        if (isCategorical && (type === 'number' || scale !== 'auto')) {
-          categoricalDomain = getDomainOfDataByKey(displayedData, dataKey, 'category');
-        }
-      } else if (isCategorical) {
-        // the axis is a categorical axis
-        domain = range(0, len);
-      } else if (stackGroups && stackGroups[axisId] && stackGroups[axisId].hasStack && type === 'number') {
-        // when stackOffset is 'expand', the domain may be calculated as [0, 1.000000000002]
-        domain =
-          stackOffset === 'expand'
-            ? [0, 1]
-            : getDomainOfStackGroups(stackGroups[axisId].stackGroups, dataStartIndex, dataEndIndex);
-      } else {
-        domain = getDomainOfItemsWithSameAxis(
-          displayedData,
-          graphicalItems.filter(item => item.props[axisIdKey] === axisId && (includeHidden || !item.props.hide)),
-          type,
-          layout,
-          true,
-        );
-      }
-
-      if (type === 'number') {
-        // To detect wether there is any reference lines whose props ifOverflow is extendDomain
-        domain = detectReferenceElementsDomain(children, domain, axisId, axisType, ticks);
-
-        if (childDomain) {
-          domain = parseSpecifiedDomain(childDomain, domain, allowDataOverflow);
-        }
-      } else if (type === 'category' && childDomain) {
-        const axisDomain = childDomain;
-        const isDomainValid = domain.every((entry: string | number) => axisDomain.indexOf(entry) >= 0);
-
-        if (isDomainValid) {
-          domain = axisDomain;
-        }
-      }
-    }
-
-    return {
-      ...result,
-      [axisId]: {
-        ...child.props,
-        axisType,
-        domain,
-        categoricalDomain,
-        duplicateDomain,
-        originalDomain: child.props.domain ?? defaultDomain,
-        isCategorical,
-        layout,
-      },
-    };
-  }, {});
-};
 
 const tooltipTicksGenerator = (axisMap: AxisMap) => {
   const axis: AxisPropsNeededForTicksGenerator = getAnyElementOfObject(axisMap);
