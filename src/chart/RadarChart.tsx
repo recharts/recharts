@@ -1,16 +1,10 @@
 import { generateCategoricalChart } from './generateCategoricalChart';
 import { Radar } from '../polar/Radar';
-import { PolarAngleAxis } from '../polar/PolarAngleAxis';
-import { PolarRadiusAxis } from '../polar/PolarRadiusAxis';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 export const RadarChart = generateCategoricalChart({
   chartName: 'RadarChart',
   GraphicalChild: Radar,
-  axisComponents: [
-    { axisType: 'angleAxis', AxisComp: PolarAngleAxis },
-    { axisType: 'radiusAxis', AxisComp: PolarRadiusAxis },
-  ],
   defaultProps: {
     layout: 'centric',
     startAngle: 90,
