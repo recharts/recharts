@@ -155,7 +155,6 @@
   "es6/util/CssPrefixUtils.js",
   "es6/util/DOMUtils.js",
   "es6/util/DataUtils.js",
-  "es6/util/DetectReferenceElementsDomain.js",
   "es6/util/Events.js",
   "es6/util/FunnelUtils.js",
   "es6/util/Global.js",

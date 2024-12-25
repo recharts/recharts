@@ -155,7 +155,6 @@
   "lib/util/CssPrefixUtils.js",
   "lib/util/DOMUtils.js",
   "lib/util/DataUtils.js",
-  "lib/util/DetectReferenceElementsDomain.js",
   "lib/util/Events.js",
   "lib/util/FunnelUtils.js",
   "lib/util/Global.js",

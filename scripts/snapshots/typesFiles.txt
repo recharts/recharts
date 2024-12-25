@@ -155,7 +155,6 @@
   "types/util/CssPrefixUtils.d.ts",
   "types/util/DOMUtils.d.ts",
   "types/util/DataUtils.d.ts",
-  "types/util/DetectReferenceElementsDomain.d.ts",
   "types/util/Events.d.ts",
   "types/util/FunnelUtils.d.ts",
   "types/util/Global.d.ts",
