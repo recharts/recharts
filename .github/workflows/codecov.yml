@@ -32,3 +32,4 @@ jobs:
         with:
           slug: recharts/recharts
           files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
