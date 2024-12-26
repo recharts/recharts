@@ -31,6 +31,7 @@ import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
+import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -869,6 +870,8 @@ function BrushInternal(props: Props) {
     // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
     dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
   }, [dispatch, endIndexFromProps, startIndexFromProps]);
+
+  useBrushChartSynchronisation();
 
   const onChange = useCallback(
     (nextState: BrushStartEndIndex) => {

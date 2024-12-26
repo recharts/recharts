@@ -12,7 +12,7 @@ import {
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
-import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign, uniqueId } from './DataUtils';
+import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
 import {
@@ -516,21 +516,12 @@ export const getStackedData = (
   return stack(data);
 };
 
-type AxisId = string;
 export type StackId = string | number | symbol;
 
 /**
  * @deprecated do not use - depends on passing around DOM elements
  */
-export type ParentStackGroup = {
-  hasStack: boolean;
-  stackGroups: Record<StackId, ChildStackGroup>;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export type GenericChildStackGroup<T> = {
+type GenericChildStackGroup<T> = {
   numericAxisId: string;
   cateAxisId: string;
   items: Array<ReactElement>;
@@ -540,96 +531,7 @@ export type GenericChildStackGroup<T> = {
 /**
  * @deprecated do not use - depends on passing around DOM elements
  */
-export type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export type AxisStackGroups = Record<AxisId, ParentStackGroup>;
-
-// eslint-disable-next-line valid-jsdoc
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-export const getStackGroupsByAxisId = (
-  data: ReadonlyArray<Record<string, unknown>> | undefined,
-  _items: Array<ReactElement>,
-  numericAxisId: string,
-  cateAxisId: string,
-  offsetType: StackOffsetType,
-  reverseStackOrder: boolean,
-): AxisStackGroups => {
-  if (!data) {
-    return null;
-  }
-
-  // reversing items to affect render order (for layering)
-  const items = reverseStackOrder ? _items.reverse() : _items;
-
-  const parentStackGroupsInitialValue: Record<AxisId, ParentStackGroup> = {};
-
-  const stackGroups: Record<AxisId, ParentStackGroup> = items.reduce((result, item) => {
-    const { stackId, hide } = item.props;
-
-    if (hide) {
-      return result;
-    }
-
-    const axisId: AxisId = item.props[numericAxisId];
-    const parentGroup: ParentStackGroup = result[axisId] || { hasStack: false, stackGroups: {} };
-
-    if (isNumOrStr(stackId)) {
-      const childGroup: ChildStackGroup = parentGroup.stackGroups[stackId] || {
-        numericAxisId,
-        cateAxisId,
-        items: [],
-      };
-
-      childGroup.items.push(item);
-
-      parentGroup.hasStack = true;
-
-      parentGroup.stackGroups[stackId] = childGroup;
-    } else {
-      parentGroup.stackGroups[uniqueId('_stackId_')] = {
-        numericAxisId,
-        cateAxisId,
-        items: [item],
-      };
-    }
-
-    return { ...result, [axisId]: parentGroup };
-  }, parentStackGroupsInitialValue);
-
-  const axisStackGroupsInitialValue: AxisStackGroups = {};
-
-  return Object.keys(stackGroups).reduce((result, axisId) => {
-    const group = stackGroups[axisId];
-
-    if (group.hasStack) {
-      const stackGroupsInitialValue: Record<StackId, ChildStackGroup> = {};
-      group.stackGroups = Object.keys(group.stackGroups).reduce((res, stackId) => {
-        const g = group.stackGroups[stackId];
-
-        return {
-          ...res,
-          [stackId]: {
-            numericAxisId,
-            cateAxisId,
-            items: g.items,
-            stackedData: getStackedData(
-              data,
-              g.items.map(item => item.props.dataKey),
-              offsetType,
-            ),
-          },
-        };
-      }, stackGroupsInitialValue);
-    }
-
-    return { ...result, [axisId]: group };
-  }, axisStackGroupsInitialValue);
-};
+type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
 
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,

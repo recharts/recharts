@@ -863,8 +863,7 @@ describe('Tooltip synchronization', () => {
 });
 
 describe('brush synchronization', () => {
-  // This test will continue failing until brush synchronisation is in Redux. TODO add this to Redux then enable this test again
-  it.fails('Should synchronize the data selected by (a single) Brush', async () => {
+  it('Should synchronize the data selected by (a single) Brush', async () => {
     const { container } = render(
       <>
         <LineChart width={600} height={300} data={PageData} syncId="brushSync">
