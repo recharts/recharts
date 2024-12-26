@@ -1,5 +1,4 @@
 import { DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
-import { AxisStackGroups } from '../util/ChartUtils';
 
 export interface CategoricalChartState {
   updateId?: number;
@@ -12,7 +11,6 @@ export interface CategoricalChartState {
   prevStackOffset?: StackOffsetType;
   prevMargin?: Margin;
   prevChildren?: any;
-  stackGroups?: AxisStackGroups;
 
   tooltipPortal?: HTMLElement | null;
   cursorPortal?: SVGElement | null;

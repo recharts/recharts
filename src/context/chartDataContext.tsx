@@ -43,8 +43,9 @@ const selectChartData = (state: RechartsRootState): ChartData | undefined => sta
  * For example: <PieChart><Pie data={data} />
  *
  * Some charts also allow setting both - data on the parent, and data on the children at the same time!
+ * However, this particular selector will only return the ones defined on the parent.
  *
- * @deprecated use redux selector instead
+ * @deprecated use one of the other selectors instead - which one, depends on how do you identify the applicable graphical items.
  *
  * @return data array for some charts and undefined for other
  */
