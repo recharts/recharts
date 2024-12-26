@@ -125,7 +125,7 @@ describe('<RadialBar />', () => {
     });
 
     it('should select radius axis ticks', () => {
-      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         {
           coordinate: 16.333333333333332,
@@ -167,7 +167,7 @@ describe('<RadialBar />', () => {
     });
 
     it('should select barBandSize', () => {
-      const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0));
+      const { spy } = renderTestCase(state => selectBandSizeOfPolarAxis(state, 0, 0, false));
       expect(spy).toHaveBeenLastCalledWith(32.666666666666664);
     });
 
@@ -511,7 +511,7 @@ describe('<RadialBar />', () => {
 
     it.fails('should select radius axis ticks', () => {
       // this selects different ticks than generator, TODO find out why
-      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         {
           coordinate: 0,
@@ -852,7 +852,7 @@ describe('<RadialBar />', () => {
     });
 
     it('should select radius axis ticks for axis', () => {
-      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         { coordinate: 24.5, index: 0, offset: 24.5, value: 0 },
         { coordinate: 73.5, index: 1, offset: 24.5, value: 1 },
@@ -862,7 +862,7 @@ describe('<RadialBar />', () => {
     });
 
     it('should select radius axis ticks for graphical item', () => {
-      const { spy } = renderTestCase(state => selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         { coordinate: 0, value: 0, index: 0, offset: 0 },
         { coordinate: 49, value: 1, index: 1, offset: 0 },

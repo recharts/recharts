@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { Bar, BarChart, Customized, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, ErrorBar, Line, LineChart, Scatter, ScatterChart, XAxis, YAxis } from '../../src';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { expectXAxisTicks, expectYAxisTicks } from '../helper/expectAxisTicks';
 import { AxisDomainType } from '../../src/util/types';
@@ -12,6 +12,7 @@ import {
 } from '../../src/state/selectors/axisSelectors';
 import { expectBars } from '../helper/expectBars';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 type ExpectedErrorBarLine = {
   x1: string;
@@ -1647,14 +1648,15 @@ describe('<ErrorBar />', () => {
     it('should extend YAxis domain', () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
-        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0)));
+        const isPanorama = useIsPanorama();
+        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, isPanorama)));
         return null;
       };
       const { container, rerender } = render(
         <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
           <Bar isAnimationActive={false} dataKey="uv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -1694,7 +1696,7 @@ describe('<ErrorBar />', () => {
           <Bar isAnimationActive={false} dataKey="uv">
             <ErrorBar dataKey="uvError" />
           </Bar>
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectErrorBars(container, [
@@ -1806,14 +1808,15 @@ describe('<ErrorBar />', () => {
     it('should extend YAxis domain when data is defined on the graphical item', () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
-        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0)));
+        const isPanorama = useIsPanorama();
+        axisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 0, isPanorama)));
         return null;
       };
       const { container, rerender } = render(
         <LineChart width={500} height={500}>
           <YAxis dataKey="uv" />
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -1854,7 +1857,7 @@ describe('<ErrorBar />', () => {
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError}>
             <ErrorBar dataKey="uvError" />
           </Line>
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -1966,7 +1969,8 @@ describe('<ErrorBar />', () => {
     it('should extend XAxis domain', () => {
       const xAxisDomainSpy = vi.fn();
       const Comp = (): null => {
-        xAxisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        const isPanorama = useIsPanorama();
+        xAxisDomainSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, isPanorama)));
         return null;
       };
       const { container, rerender } = render(
@@ -1974,7 +1978,7 @@ describe('<ErrorBar />', () => {
           <XAxis dataKey="uv" type="number" />
           <Bar isAnimationActive={false} dataKey="uv" />
           <YAxis type="category" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -2050,7 +2054,7 @@ describe('<ErrorBar />', () => {
             <ErrorBar isAnimationActive animationEasing="linear" dataKey="uvError" />
           </Bar>
           <YAxis type="category" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectErrorBars(container, [
@@ -2195,14 +2199,15 @@ describe('<ErrorBar />', () => {
     it('should extend XAxis domain when data is defined on the graphical item', () => {
       const xAxisSpy = vi.fn();
       const Comp = (): null => {
-        xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        const isPanorama = useIsPanorama();
+        xAxisSpy(useAppSelector(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, isPanorama)));
         return null;
       };
       const { container, rerender } = render(
         <LineChart width={500} height={500}>
           <XAxis dataKey="uv" type="number" />
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError} />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -2243,7 +2248,7 @@ describe('<ErrorBar />', () => {
           <Line isAnimationActive={false} dataKey="uv" data={dataWithError}>
             <ErrorBar dataKey="uvError" direction="x" />
           </Line>
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
       expectErrorBars(container, [
@@ -2364,8 +2369,13 @@ describe('<ErrorBar />', () => {
       const yValuesSpy = vi.fn();
 
       const Comp = (): null => {
-        xValuesSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'xAxis', 0)));
-        yValuesSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
+        const isPanorama = useIsPanorama();
+        xValuesSpy(
+          useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'xAxis', 0, isPanorama)),
+        );
+        yValuesSpy(
+          useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
+        );
         return null;
       };
       const { container } = render(
@@ -2386,7 +2396,7 @@ describe('<ErrorBar />', () => {
             <ErrorBar dataKey="errorY" direction="y" />
           </Scatter>
 
-          <Customized component={<Comp />} />
+          <Comp />
         </ScatterChart>,
       );
 

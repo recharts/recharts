@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
 import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 const RADIAN = Math.PI / 180;
 const eps = 1e-5;
@@ -213,8 +214,8 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
     ...viewBox,
     radius: viewBox.outerRadius,
   };
-
-  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId));
+  const isPanorama = useIsPanorama();
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
 
   if (!ticks || !ticks.length) {
     return null;

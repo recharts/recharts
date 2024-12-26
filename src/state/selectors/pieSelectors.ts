@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { CellProps, LegendType } from '../..';
 import { computePieSectors, PieCoordinate, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import { ChartOffset, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
@@ -46,7 +46,7 @@ export const selectDisplayedData: (
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ChartData | undefined = createSelector(
-  [selectChartDataWithIndexes, pickPieSettings, pickCells],
+  [selectChartDataAndAlwaysIgnoreIndexes, pickPieSettings, pickCells],
   ({ chartData }: ChartDataState, pieSettings: ResolvedPieSettings, cells): ChartData | undefined => {
     let displayedData: ChartData | undefined;
     if (pieSettings?.data?.length > 0) {

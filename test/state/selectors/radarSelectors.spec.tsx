@@ -17,7 +17,7 @@ import { Customized, PolarAngleAxis, Radar, RadarChart } from '../../../src';
 import { exampleRadarData } from '../../_data';
 
 describe('selectRadarPoints', () => {
-  const selector = (state: RechartsRootState) => selectRadarPoints(state, 0, 0, 'value');
+  const selector = (state: RechartsRootState) => selectRadarPoints(state, 0, 0, false, 'value');
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);

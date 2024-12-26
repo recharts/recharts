@@ -24,6 +24,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { selectRadarPoints } from '../state/selectors/radarSelectors';
 import { useAppSelector } from '../state/hooks';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 interface RadarPoint {
   x: number;
@@ -431,9 +432,9 @@ class RadarWithState extends PureComponent<Props, State> {
 
 function RadarImpl(props: Props) {
   const { ref, ...everythingElse } = props;
-
+  const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
-    selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, props.dataKey),
+    selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.dataKey),
   );
 
   return (

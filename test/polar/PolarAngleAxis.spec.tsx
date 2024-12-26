@@ -23,6 +23,7 @@ import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
 import { expectScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -178,7 +179,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith([
           {
             coordinate: 90,
@@ -233,7 +234,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select nice ticks', () => {
-        const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith(undefined);
         expect(spy).toHaveBeenCalledTimes(1);
       });
@@ -716,7 +717,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith([
           {
             coordinate: 90,
@@ -747,7 +748,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select nice ticks', () => {
-        const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectNiceTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith(undefined);
         expect(spy).toHaveBeenCalledTimes(1);
       });
@@ -1622,7 +1623,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith([
           { coordinate: 0, value: 400, offset: -0 },
           { coordinate: 34.12322274881516, value: 380, offset: -0 },
@@ -1733,7 +1734,7 @@ describe('<PolarAngleAxis />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
         expect(spy).toHaveBeenLastCalledWith([
           { coordinate: 0, offset: -0, value: 0 },
           { coordinate: 45, offset: -0, value: 50 },
@@ -2308,7 +2309,7 @@ describe('<PolarAngleAxis />', () => {
       const { rerender } = render(
         <RadarChart width={1} height={2}>
           <PolarAngleAxis />
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
       const expectedAxis: AngleAxisSettings = {
@@ -2332,7 +2333,7 @@ describe('<PolarAngleAxis />', () => {
 
       rerender(
         <RadarChart width={1} height={2}>
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
       expect(angleAxisSpy).toHaveBeenLastCalledWith(implicitAngleAxis);
@@ -2347,14 +2348,20 @@ describe('<PolarAngleAxis />', () => {
       const angleAxisTicksSpy = vi.fn();
       const angleAxisNiceTicksSpy = vi.fn();
       const Comp = (): null => {
+        const isPanorama = useIsPanorama();
+
         axisSettingsSpy(useAppSelectorWithStableTest(state => selectAngleAxis(state, 'angle-id')));
         angleAxisRangeSpy(useAppSelectorWithStableTest(state => selectAngleAxisRangeWithReversed(state, 'angle-id')));
         angleAxisDomainSpy(
           useAppSelectorWithStableTest(state => selectPolarAxisDomain(state, 'angleAxis', 'angle-id')),
         );
         angleAxisScaleSpy(useAppSelectorWithStableTest(state => selectPolarAxisScale(state, 'angleAxis', 'angle-id')));
-        angleAxisTicksSpy(useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 'angle-id')));
-        angleAxisNiceTicksSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'angleAxis', 'angle-id')));
+        angleAxisTicksSpy(
+          useAppSelectorWithStableTest(state => selectPolarAxisTicks(state, 'angleAxis', 'angle-id', isPanorama)),
+        );
+        angleAxisNiceTicksSpy(
+          useAppSelectorWithStableTest(state => selectNiceTicks(state, 'angleAxis', 'angle-id', isPanorama)),
+        );
         return null;
       };
       const exampleTicks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

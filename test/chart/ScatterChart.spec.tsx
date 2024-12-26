@@ -6,7 +6,6 @@ import {
   Brush,
   CartesianGrid,
   ComposedChart,
-  Customized,
   Legend,
   Scatter,
   ScatterChart,
@@ -46,6 +45,7 @@ import {
 import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -265,8 +265,11 @@ describe('ScatterChart with joint line', () => {
     const zAxisScaleSpy = vi.fn();
     const zAxisDataSpy = vi.fn();
     const Comp = (): null => {
+      const isPanorama = useIsPanorama();
       zAxisScaleSpy(useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 0, false)));
-      zAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0)));
+      zAxisDataSpy(
+        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
+      );
       return null;
     };
 
@@ -280,7 +283,7 @@ describe('ScatterChart with joint line', () => {
         <Scatter name="A school" data={data01} fill="#8884d8" line shape="cross" />
         <Scatter name="B school" data={data02} fill="#82ca9d" line shape="diamond" />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-        <Customized component={<Comp />} />
+        <Comp />
       </ScatterChart>,
     );
 
@@ -859,16 +862,19 @@ describe('ScatterChart of two dimension data', () => {
     const zAxisSettingsSpy = vi.fn();
     const zAxisDomainSpy = vi.fn();
     const Comp = (): null => {
-      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0)));
-      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0)));
+      const isPanorama = useIsPanorama();
+      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0, isPanorama)));
+      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0, isPanorama)));
       zAxisAppliedDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0)),
+        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
       );
       zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
-      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0)));
+      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0, isPanorama)));
       yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
-      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
-      yAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
+      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama)));
+      yAxisDataSpy(
+        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
+      );
       return null;
     };
 
@@ -881,7 +887,7 @@ describe('ScatterChart of two dimension data', () => {
         <XAxis />
         <YAxis />
 
-        <Customized component={<Comp />} />
+        <Comp />
       </ComposedChart>,
     );
 
@@ -1005,16 +1011,19 @@ describe('ScatterChart of two dimension data', () => {
     const zAxisSettingsSpy = vi.fn();
     const zAxisDomainSpy = vi.fn();
     const Comp = (): null => {
-      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0)));
-      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0)));
+      const isPanorama = useIsPanorama();
+      displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'zAxis', 0, isPanorama)));
+      stackGroupsDomainSpy(useAppSelector(state => selectDomainOfStackGroups(state, 'zAxis', 0, isPanorama)));
       zAxisAppliedDataSpy(
-        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0)),
+        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'zAxis', 0, isPanorama)),
       );
       zAxisSettingsSpy(useAppSelector(state => selectBaseAxis(state, 'zAxis', 0)));
-      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0)));
-      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, false)));
-      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0)));
-      yAxisDataSpy(useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0)));
+      zAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 0, isPanorama)));
+      yAxisTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'yAxis', 0, isPanorama)));
+      yAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama)));
+      yAxisDataSpy(
+        useAppSelector(state => selectAllAppliedNumericalValuesIncludingErrorValues(state, 'yAxis', 0, isPanorama)),
+      );
       return null;
     };
 
@@ -1034,7 +1043,7 @@ describe('ScatterChart of two dimension data', () => {
         <XAxis />
         <YAxis />
 
-        <Customized component={<Comp />} />
+        <Comp />
       </ComposedChart>,
     );
 

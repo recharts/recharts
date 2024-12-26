@@ -467,7 +467,7 @@ describe('Tooltip payload', () => {
     ));
 
     it('should select xaxis domain', () => {
-      const { spy } = renderTestCase(state => selectAxisDomain(state, 'xAxis', 0));
+      const { spy } = renderTestCase(state => selectAxisDomain(state, 'xAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
     });
 

@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { AxisId, BaseCartesianAxis } from '../cartesianAxisSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import {
   AppliedChartDataWithErrorDomain,
   combineAppliedValues,
@@ -56,7 +56,7 @@ export const selectPolarDisplayedData: (
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => ChartData | undefined = createSelector(
-  [selectPolarGraphicalItemsData, selectChartDataWithIndexes],
+  [selectPolarGraphicalItemsData, selectChartDataAndAlwaysIgnoreIndexes],
   combineDisplayedData,
 );
 

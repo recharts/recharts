@@ -577,7 +577,7 @@ describe('<PolarGrid />', () => {
     });
 
     it('should select radius axis ticks', () => {
-      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         {
           coordinate: 14.5,
@@ -663,7 +663,7 @@ describe('<PolarGrid />', () => {
     });
 
     it('should select angle ticks', () => {
-      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0));
+      const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 0, false));
       expect(spy).toHaveBeenLastCalledWith([
         { coordinate: 0, value: 0, offset: -0 },
         { coordinate: 40, value: 1, offset: -0 },
@@ -826,7 +826,7 @@ describe('<PolarGrid />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-pv'));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-pv', false));
         expect(spy).toHaveBeenLastCalledWith([
           {
             coordinate: 0,
@@ -895,7 +895,7 @@ describe('<PolarGrid />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv'));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-uv', false));
         expect(spy).toHaveBeenLastCalledWith([
           {
             coordinate: 0,
@@ -1130,7 +1130,7 @@ describe('<PolarGrid />', () => {
       });
 
       it('should select ticks', () => {
-        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 'axis-name'));
+        const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'radiusAxis', 'axis-name', false));
         expect(spy).toHaveBeenLastCalledWith([
           {
             coordinate: 8.28571428571428,

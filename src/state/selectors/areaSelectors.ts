@@ -6,7 +6,7 @@ import { selectAxisWithScale, selectStackGroups, selectTicksOfGraphicalItem, Sta
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
 import { Point as CurvePoint } from '../../shape/Curve';
@@ -55,16 +55,16 @@ const selectGraphicalItemStackedData = (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
-  _isPanorama: boolean,
+  isPanorama: boolean,
   areaSettings: AreaSettings,
 ) => {
   const layout = selectChartLayout(state);
   const isXAxisCategorical = isCategoricalAxis(layout, 'xAxis');
   let stackGroups: Record<StackId, StackGroup> | undefined;
   if (isXAxisCategorical) {
-    stackGroups = selectStackGroups(state, 'yAxis', yAxisId);
+    stackGroups = selectStackGroups(state, 'yAxis', yAxisId, isPanorama);
   } else {
-    stackGroups = selectStackGroups(state, 'xAxis', xAxisId);
+    stackGroups = selectStackGroups(state, 'xAxis', xAxisId, isPanorama);
   }
   if (stackGroups == null) {
     return undefined;
@@ -96,7 +96,7 @@ export const selectArea: (
     selectXAxisTicks,
     selectYAxisTicks,
     selectGraphicalItemStackedData,
-    selectChartDataWithIndexes,
+    selectChartDataWithIndexesIfNotInPanorama,
     selectBandSize,
     pickAreaSettings,
   ],

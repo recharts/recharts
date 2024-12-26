@@ -37,7 +37,7 @@ import {
   ZAxisSettings,
 } from '../cartesianAxisSlice';
 import { RechartsRootState } from '../store';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexes, selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import {
   isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
@@ -386,8 +386,15 @@ export const combineDisplayedData = (
  *
  * This function will discard the original indexes, so it is also not useful for anything that depends on ordering.
  */
-export const selectDisplayedData: (state: RechartsRootState, axisType: XorYorZType, axisId: AxisId) => ChartData =
-  createSelector([selectCartesianGraphicalItemsData, selectChartDataWithIndexes], combineDisplayedData);
+export const selectDisplayedData: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => ChartData = createSelector(
+  [selectCartesianGraphicalItemsData, selectChartDataWithIndexesIfNotInPanorama],
+  combineDisplayedData,
+);
 
 export const combineAppliedValues = (
   data: ChartData,
@@ -415,6 +422,7 @@ export const selectAllAppliedValues: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => AppliedChartData = createSelector(
   [selectDisplayedData, selectBaseAxis, selectCartesianItemsSettings],
   combineAppliedValues,
@@ -564,6 +572,7 @@ export const selectStackGroups: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => Record<StackId, StackGroup> | undefined = createSelector(
   [selectDisplayedData, selectCartesianItemsSettings, selectStackOffsetType],
   combineStackGroups,
@@ -628,6 +637,7 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => ReadonlyArray<AppliedChartDataWithErrorDomain> = createSelector(
   selectDisplayedData,
   selectBaseAxis,
@@ -833,6 +843,7 @@ const selectNumericalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => NumberDomain | undefined = createSelector(
   [
     selectBaseAxis,
@@ -886,6 +897,7 @@ export const selectAxisDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => NumberDomain | CategoricalDomain | undefined = createSelector(
   [
     selectBaseAxis,
@@ -1020,6 +1032,7 @@ export const selectNiceTicks: (
   state: RechartsRootState,
   axisType: XorYType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => ReadonlyArray<number> | undefined = createSelector(
   [selectAxisDomain, selectAxisSettings, selectRealScaleType],
   combineNiceTicks,
@@ -1057,6 +1070,7 @@ export const selectAxisDomainIncludingNiceTicks: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => NumberDomain | CategoricalDomain = createSelector(
   [selectBaseAxis, selectAxisDomain, selectNiceTicks, pickAxisType],
   combineAxisDomainWithNiceTicks,
@@ -1072,6 +1086,7 @@ export const selectSmallestDistanceBetweenValues: (
   state: RechartsRootState,
   axisType: XorYType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => number | undefined = createSelector(
   selectAllAppliedValues,
   selectBaseAxis,
@@ -1532,6 +1547,7 @@ export const selectDuplicateDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
   [selectChartLayout, selectAllAppliedValues, selectBaseAxis, pickAxisType],
   combineDuplicateDomain,
@@ -1558,6 +1574,7 @@ export const selectCategoricalDomain: (
   state: RechartsRootState,
   axisType: XorYorZType,
   axisId: AxisId,
+  isPanorama: boolean,
 ) => ReadonlyArray<unknown> | undefined = createSelector(
   [selectChartLayout, selectAllAppliedValues, selectAxisSettings, pickAxisType],
   combineCategoricalDomain,

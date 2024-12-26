@@ -4,7 +4,7 @@ import { computeFunnelTrapezoids, FunnelTrapezoidItem } from '../../cartesian/Fu
 import { ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { selectChartOffset } from './selectChartOffset';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 
@@ -43,7 +43,7 @@ export const selectFunnelTrapezoids: (
     presentationProps,
   }: ResolvedFunnelSettings,
 ) => FunnelComposedData = createSelector(
-  [selectChartOffset, pickFunnelSettings, selectChartDataWithIndexes],
+  [selectChartOffset, pickFunnelSettings, selectChartDataAndAlwaysIgnoreIndexes],
   (
     offset,
     { data, dataKey, nameKey, tooltipType, lastShapeType, reversed, customWidth, cells, presentationProps },

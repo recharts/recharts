@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { exampleRadarData, PageData } from '../_data';
-import { Customized, PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
+import { PolarRadiusAxis, Radar, RadarChart, RadialBar, RadialBarChart } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
@@ -20,6 +20,7 @@ import {
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
 import { expectScale } from '../helper/expectScale';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 type ExpectedRadiusAxisTick = {
   x: string;
@@ -1098,7 +1099,7 @@ describe('<PolarRadiusAxis />', () => {
       const { rerender } = render(
         <RadarChart width={1} height={2}>
           <PolarRadiusAxis />
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
@@ -1122,7 +1123,7 @@ describe('<PolarRadiusAxis />', () => {
 
       rerender(
         <RadarChart width={1} height={2}>
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
       expect(radiusAxisSpy).toHaveBeenLastCalledWith(implicitRadiusAxis);
@@ -1134,9 +1135,10 @@ describe('<PolarRadiusAxis />', () => {
       const radiusAxisRangeSpy = vi.fn();
       const radiusAxisDomainSpy = vi.fn();
       const Comp = (): null => {
+        const isPanorama = useIsPanorama();
         radiusAxisSpy(useAppSelector(state => selectRadiusAxis(state, 'radius-id')));
         radiusAxisRangeSpy(useAppSelector(state => selectRadiusAxisRangeWithReversed(state, 'radius-id')));
-        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id')));
+        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id', isPanorama)));
         return null;
       };
       const exampleTicks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -1159,7 +1161,7 @@ describe('<PolarRadiusAxis />', () => {
             allowDecimals
             domain={[100, 500]}
           />
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
       const expectedAxis: RadiusAxisSettings = {
@@ -1193,7 +1195,8 @@ describe('<PolarRadiusAxis />', () => {
       const radiusAxisDomainSpy = vi.fn();
       const realScaleTypeSpy = vi.fn();
       const Comp = (): null => {
-        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id')));
+        const isPanorama = useIsPanorama();
+        radiusAxisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'radiusAxis', 'radius-id', isPanorama)));
         realScaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 'radius-id')));
         return null;
       };
@@ -1202,7 +1205,7 @@ describe('<PolarRadiusAxis />', () => {
         <RadarChart width={300} height={200} data={exampleRadarData}>
           <Radar dataKey="value" radiusAxisId="radius-id" />
           <PolarRadiusAxis dataKey="value" radiusAxisId="radius-id" />
-          <Customized component={Comp} />
+          <Comp />
         </RadarChart>,
       );
 
