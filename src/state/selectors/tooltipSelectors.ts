@@ -113,6 +113,12 @@ export const selectTooltipGraphicalItemsData = createSelector(
   combineGraphicalItemsData,
 );
 
+/**
+ * Data for tooltip always use the data with indexes set by a Brush,
+ * and never accept the isPanorama flag:
+ * because Tooltip never displays inside of the panorama anyway
+ * so we don't need to worry what would happen there.
+ */
 export const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData = createSelector(
   [selectTooltipGraphicalItemsData, selectChartDataWithIndexes],
   combineDisplayedData,

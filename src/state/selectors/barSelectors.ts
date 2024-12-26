@@ -19,7 +19,7 @@ import { DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { MinPointSize } from '../../util/BarUtils';
 import { selectChartOffset } from './selectChartOffset';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
@@ -118,12 +118,13 @@ const selectBarStackGroups = (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
+  isPanorama: boolean,
 ): Record<StackId, StackGroup> | undefined => {
   const layout = selectChartLayout(state);
   if (layout === 'horizontal') {
-    return selectStackGroups(state, 'yAxis', yAxisId);
+    return selectStackGroups(state, 'yAxis', yAxisId, isPanorama);
   }
-  return selectStackGroups(state, 'xAxis', xAxisId);
+  return selectStackGroups(state, 'xAxis', xAxisId, isPanorama);
 };
 
 export const selectBarCartesianAxisSize = (state: RechartsRootState, xAxisId: AxisId, yAxisId: AxisId) => {
@@ -464,7 +465,7 @@ export const selectBarRectangles: (
     selectYAxisTicks,
     selectBarPosition,
     selectChartLayout,
-    selectChartDataWithIndexes,
+    selectChartDataWithIndexesIfNotInPanorama,
     selectAxisBandSize,
     selectStackedDataOfItem,
     pickBarSettings,

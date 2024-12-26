@@ -8,6 +8,9 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectDisplayedData } from '../../src/state/selectors/axisSelectors';
 import { pageData } from '../../storybook/stories/data';
 import { useViewBox } from '../../src/context/chartLayoutContext';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 type ExpectedBrush = {
   x: string;
@@ -46,6 +49,67 @@ describe('<Brush />', () => {
     { date: '2023-01-13', value: 10, name: 'M' },
     { date: '2023-01-14', value: 10, name: 'N' },
   ];
+
+  describe('with panorama', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <LineChart width={400} height={100} data={data}>
+        <Line dataKey="value" dot isAnimationActive={false} />
+        <Brush dataKey="value" x={100} y={50} width={400} height={40}>
+          <LineChart>
+            <Line dataKey="value" dot isAnimationActive={false} />
+          </LineChart>
+        </Brush>
+        {children}
+      </LineChart>
+    ));
+
+    function selectAllDotsInMainChart(container: Element) {
+      return container.querySelectorAll('.recharts-line-dot:not(.recharts-brush *)');
+    }
+
+    function selectAllDotsInPanorama(container: Element) {
+      return container.querySelectorAll('.recharts-brush .recharts-line-dot');
+    }
+
+    it('should render two lines, one for the big chart another in the panorama', () => {
+      const { container } = renderTestCase();
+
+      const dotsInPanorama = selectAllDotsInPanorama(container);
+      expect(dotsInPanorama).toHaveLength(data.length);
+
+      const dotsInMainChart = selectAllDotsInMainChart(container);
+      expect(dotsInMainChart).toHaveLength(data.length);
+    });
+
+    it('should hide dots in the main chart after moving the slider, but keep all dots in the panorama visible', () => {
+      const { container, spy } = renderTestCase(selectChartDataWithIndexes);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: data,
+        dataStartIndex: 0,
+        dataEndIndex: data.length - 1,
+        computedData: undefined,
+      });
+
+      const slider = container.querySelector('.recharts-brush-traveller') as SVGRectElement;
+      fireEvent.mouseDown(slider);
+      fireEvent.mouseMove(slider, { clientX: 200 });
+      fireEvent.mouseUp(slider);
+
+      expect(spy).toHaveBeenLastCalledWith({
+        chartData: data,
+        dataStartIndex: 6,
+        dataEndIndex: data.length - 1,
+        computedData: undefined,
+      });
+
+      const dotsInPanorama = selectAllDotsInPanorama(container);
+      expect(dotsInPanorama).toHaveLength(data.length);
+
+      const dotsInMainChart = selectAllDotsInMainChart(container);
+      expect(dotsInMainChart).toHaveLength(data.length - 6);
+    });
+  });
 
   test('Render 2 travelers and 1 slide in simple Brush', () => {
     const { container } = render(
@@ -439,12 +503,14 @@ describe('<Brush />', () => {
       const panoramaDataSpy = vi.fn();
 
       const RootComp = (): null => {
-        rootDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0)));
+        const isPanorama = useIsPanorama();
+        rootDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0, isPanorama)));
         return null;
       };
 
       const PanoramaComp = (): null => {
-        panoramaDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 1)));
+        const isPanorama = useIsPanorama();
+        panoramaDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 1, isPanorama)));
         return null;
       };
 

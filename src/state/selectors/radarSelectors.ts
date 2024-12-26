@@ -5,7 +5,7 @@ import { BaseAxisWithScale } from './axisSelectors';
 import { selectPolarAxisScale, selectPolarAxisTicks } from './polarScaleSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartDataState } from '../chartDataSlice';
 import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -41,8 +41,13 @@ export const selectRadiusAxisForBandSize: (
   },
 );
 
-const selectRadiusAxisTicks = (state: RechartsRootState, radiusAxisId: AxisId): ReadonlyArray<TickItem> | undefined => {
-  return selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId);
+const selectRadiusAxisTicks = (
+  state: RechartsRootState,
+  radiusAxisId: AxisId,
+  _angleAxisId: AxisId,
+  isPanorama: boolean,
+): ReadonlyArray<TickItem> | undefined => {
+  return selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, isPanorama);
 };
 
 const selectAngleAxisForRadar = (
@@ -78,8 +83,9 @@ const selectAngleAxisTicks = (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
+  isPanorama: boolean,
 ): ReadonlyArray<TickItem> | undefined => {
-  return selectPolarAxisTicks(state, 'angleAxis', angleAxisId);
+  return selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama);
 };
 
 export const selectAngleAxisWithScaleAndViewport: (
@@ -106,6 +112,7 @@ const pickDataKey = (
   _state: RechartsRootState,
   _radiusAxisId: AxisId,
   _angleAxisId: AxisId,
+  _isPanorama: boolean,
   radarDataKey: DataKey<any> | undefined,
 ): DataKey<any> | undefined => radarDataKey;
 
@@ -113,6 +120,7 @@ const selectBandSizeOfAxis: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,
+  isPanorama: boolean,
   radarDataKey: DataKey<any> | undefined,
 ) => number | undefined = createSelector(
   [
@@ -140,12 +148,13 @@ export const selectRadarPoints: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,
+  isPanorama: boolean,
   radarDataKey: DataKey<any> | undefined,
 ) => RadarComposedData = createSelector(
   [
     selectRadiusAxisForRadar,
     selectAngleAxisWithScaleAndViewport,
-    selectChartDataWithIndexes,
+    selectChartDataAndAlwaysIgnoreIndexes,
     pickDataKey,
     selectBandSizeOfAxis,
   ],

@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { ReactElement } from 'react';
 import { Series } from 'victory-vendor/d3-shape';
 import { computeRadialBarDataItems, RadialBarDataItem } from '../../polar/RadialBar';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataWithIndexes } from './dataSelectors';
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
@@ -72,8 +72,10 @@ export const selectRadiusAxisWithScale: (state: RechartsRootState, radiusAxisId:
 export const selectRadiusAxisTicks = (
   state: RechartsRootState,
   radiusAxisId: AxisId,
+  _angleAxisId: AxisId,
+  isPanorama: boolean,
 ): ReadonlyArray<TickItem> | undefined => {
-  return selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', radiusAxisId);
+  return selectPolarGraphicalItemAxisTicks(state, 'radiusAxis', radiusAxisId, isPanorama);
 };
 
 const selectAngleAxisForRadialBar = (
@@ -106,8 +108,9 @@ const selectAngleAxisTicks = (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
+  isPanorama: boolean,
 ): ReadonlyArray<TickItem> | undefined => {
-  return selectPolarAxisTicks(state, 'angleAxis', angleAxisId);
+  return selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama);
 };
 
 const pickRadialBarSettings = (
@@ -121,6 +124,7 @@ export const selectBandSizeOfPolarAxis: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
   angleAxisId: AxisId,
+  isPanorama: boolean,
 ) => number | undefined = createSelector(
   [selectChartLayout, selectRadiusAxisWithScale, selectRadiusAxisTicks, selectAngleAxisWithScale, selectAngleAxisTicks],
   (
@@ -405,7 +409,7 @@ export const selectRadialBarSectors: (
 
 export const selectLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
   createSelector(
-    [selectChartDataWithIndexes, (s, l) => l],
+    [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
     ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {
       if (chartData == null) {
         return [];

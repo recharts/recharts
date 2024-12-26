@@ -9,7 +9,7 @@ export type PolarAngles = Array<number>;
 export type PolarRadius = Array<number>;
 
 const selectAngleAxisTicks = (state: RechartsRootState, anglexisId: AxisId) =>
-  selectPolarAxisTicks(state, 'angleAxis', anglexisId);
+  selectPolarAxisTicks(state, 'angleAxis', anglexisId, false);
 
 export const selectPolarGridAngles: (state: RechartsRootState, angleAxisId: AxisId) => PolarAngles = createSelector(
   [selectAngleAxisTicks],
@@ -23,7 +23,7 @@ export const selectPolarGridAngles: (state: RechartsRootState, angleAxisId: Axis
 );
 
 const selectRadiusAxisTicks = (state: RechartsRootState, radiusAxisId: AxisId) =>
-  selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId);
+  selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, false);
 
 export const selectPolarGridRadii: (state: RechartsRootState, radiusAxisId: AxisId) => PolarRadius | undefined =
   createSelector([selectRadiusAxisTicks], (ticks: ReadonlyArray<CartesianTickItem> | undefined): PolarRadius => {

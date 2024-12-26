@@ -47,6 +47,7 @@ import {
 } from '../../src/state/selectors/barSelectors';
 import { selectChartOffset } from '../../src/state/selectors/selectChartOffset';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 describe('<XAxis />', () => {
   const data = [
@@ -359,7 +360,7 @@ describe('<XAxis />', () => {
           <YAxis />
           <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -441,7 +442,7 @@ describe('<XAxis />', () => {
           <YAxis />
           <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
 
@@ -521,7 +522,7 @@ describe('<XAxis />', () => {
         <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} padding="gap" />
         <YAxis dataKey="y" />
         <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-        <Customized component={<Comp />} />
+        <Comp />
       </BarChart>,
     );
 
@@ -1299,7 +1300,7 @@ describe('<XAxis />', () => {
         <XAxis dataKey="x" type="number" domain={[50, 150]} />
         <YAxis dataKey="y" />
         <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-        <Customized component={<Comp />} />
+        <Comp />
       </BarChart>,
     );
 
@@ -1505,7 +1506,7 @@ describe('<XAxis />', () => {
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
         <Tooltip defaultIndex={2} />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
 
@@ -1823,7 +1824,7 @@ describe('<XAxis />', () => {
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
         <Tooltip defaultIndex={2} />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
 
@@ -4358,7 +4359,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="category" />
           <Brush startIndex={1} endIndex={4} />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectXAxisTicks(container, [
@@ -4424,7 +4425,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="category" />
           <Brush />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectXAxisTicks(container, [
@@ -4504,7 +4505,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="category" />
           <Brush startIndex={1} endIndex={4} />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -4688,8 +4689,9 @@ describe('<XAxis />', () => {
       const displayedDataSpy = vi.fn();
       const itemDataSpy = vi.fn();
       const Comp = (): null => {
+        const isPanorama = useIsPanorama();
         axisSettingsSpy(useAppSelector(state => selectAxisSettings(state, 'xAxis', 0)));
-        displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0)));
+        displayedDataSpy(useAppSelector(state => selectDisplayedData(state, 'xAxis', 0, isPanorama)));
         itemDataSpy(useAppSelector(state => selectCartesianGraphicalItemsData(state, 'xAxis', 0)));
         return null;
       };
@@ -4713,7 +4715,7 @@ describe('<XAxis />', () => {
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
-          <Customized component={<Comp />} />
+          <Comp />
           <Customized component={<ExpectAxisDomain assert={axisDomainSpy} axisType="xAxis" />} />
         </LineChart>,
       );

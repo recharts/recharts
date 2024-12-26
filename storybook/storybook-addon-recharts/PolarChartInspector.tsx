@@ -27,7 +27,7 @@ export function PolarChartInspector() {
   const radiusAxisRealScaleType = useAppSelector(state => selectRealScaleType(state, 'radiusAxis', 0));
   const radiusAxisDisplayedData = useAppSelector(state => selectPolarDisplayedData(state, 'radiusAxis', 0));
   const radiusAxisAppliedValues = useAppSelector(state => selectPolarAppliedValues(state, 'radiusAxis', 0));
-  const radiusAxisTicks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', 0));
+  const radiusAxisTicks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', 0, false));
 
   const tooltipAxisType = useAppSelector(selectTooltipAxisType);
   const tooltipAxisScale = useAppSelector(selectTooltipAxisScale);

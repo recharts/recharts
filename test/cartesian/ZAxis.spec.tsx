@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
-import { CartesianGrid, Customized, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
+import { CartesianGrid, Scatter, ScatterChart, Surface, Tooltip, XAxis, YAxis, ZAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import {
@@ -12,6 +12,7 @@ import {
   selectZAxisWithScale,
 } from '../../src/state/selectors/axisSelectors';
 import { ZAxisSettings } from '../../src/state/cartesianAxisSlice';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 describe('<ZAxis />', () => {
   const data = [
@@ -92,8 +93,9 @@ describe('<ZAxis />', () => {
       const axisDomainSpy = vi.fn();
       const axisScaleSpy = vi.fn();
       const Comp = (): null => {
+        const isPanorama = useIsPanorama();
         axisSettingsSpy(useAppSelector(state => selectZAxisSettings(state, 'zaxis id')));
-        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 'zaxis id')));
+        axisDomainSpy(useAppSelector(state => selectAxisDomain(state, 'zAxis', 'zaxis id', isPanorama)));
         const axis = useAppSelector(state => selectZAxisWithScale(state, 'zAxis', 'zaxis id', false));
         const realScaleType = useAppSelector(state => selectRealScaleType(state, 'zAxis', 'zaxis id'));
         axisScaleSpy({
@@ -111,7 +113,7 @@ describe('<ZAxis />', () => {
           <CartesianGrid />
           <Scatter data={data} name="pageData" zAxisId="zaxis id" />
           <Tooltip />
-          <Customized component={Comp} />
+          <Comp />
         </ScatterChart>,
       );
       const expected: ZAxisSettings = {

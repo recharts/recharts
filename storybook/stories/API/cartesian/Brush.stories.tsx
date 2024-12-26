@@ -2,7 +2,17 @@ import React from 'react';
 import { fireEvent, within, expect } from '@storybook/test';
 import { Args } from '@storybook/react';
 import { pageData } from '../../data';
-import { Brush, ResponsiveContainer, ComposedChart, Line, Area, Bar, Scatter, ScatterChart } from '../../../../src';
+import {
+  Brush,
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+} from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 
 const GeneralProps: Args = {
@@ -107,7 +117,7 @@ export const PanoramaWithLine = {
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart data={pageData}>
         <Line dataKey="uv" />
-
+        <Tooltip />
         <Brush {...args}>
           <ComposedChart data={pageData}>
             <Line dataKey="uv" />

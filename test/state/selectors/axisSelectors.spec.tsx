@@ -64,6 +64,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
+import { useIsPanorama } from '../../../src/context/PanoramaContext';
 
 const defaultAxisId: AxisId = 0;
 
@@ -87,7 +88,7 @@ describe('selectAxisScale', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
@@ -106,7 +107,7 @@ describe('selectAxisScale', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
@@ -125,7 +126,7 @@ describe('selectAxisScale', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
   });
@@ -151,7 +152,7 @@ describe('selectAxisScale', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expectXAxisTicks(container, [
@@ -235,7 +236,7 @@ describe('selectBaseAxis', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
   });
@@ -258,7 +259,7 @@ describe('selectAxisRangeWithReverse', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
   });
@@ -277,7 +278,7 @@ describe('selectAxisRangeWithReverse', () => {
 
 describe('selectAxisDomain', () => {
   const selector: Selector<RechartsRootState, ReturnType<typeof selectAxisDomain>, []> = state =>
-    selectAxisDomain(state, 'xAxis', '0');
+    selectAxisDomain(state, 'xAxis', '0', false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);
@@ -285,7 +286,8 @@ describe('selectAxisDomain', () => {
   it('should return undefined if there is no data in the chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
       spy(result);
       return null;
     };
@@ -293,7 +295,7 @@ describe('selectAxisDomain', () => {
       <BarChart data={[]} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledWith(undefined);
@@ -303,7 +305,8 @@ describe('selectAxisDomain', () => {
   it('should gather data from all graphical items that match the axis ID', () => {
     const axisDomainSpy = vi.fn();
     const Comp = (): null => {
-      axisDomainSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', defaultAxisId)));
+      const isPanorama = useIsPanorama();
+      axisDomainSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', defaultAxisId, isPanorama)));
       return null;
     };
     render(
@@ -311,7 +314,7 @@ describe('selectAxisDomain', () => {
         <Line data={data1} />
         <Line data={data2} />
         <XAxis dataKey="y" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(axisDomainSpy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
@@ -321,8 +324,9 @@ describe('selectAxisDomain', () => {
   it('should be stable', () => {
     expect.assertions(3);
     const Comp = (): null => {
-      const result1 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
-      const result2 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result1 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId, isPanorama));
+      const result2 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId, isPanorama));
       expect(result1).toBe(result2);
       return null;
     };
@@ -331,7 +335,7 @@ describe('selectAxisDomain', () => {
         <Line data={data1} />
         <Line data={data2} />
         <XAxis dataKey="y" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
   });
@@ -344,17 +348,18 @@ describe('selectAxisDomain', () => {
     const domainLeftIncludingNiceTicksSpy = vi.fn();
     const domainRightIncludingNiceTicksSpy = vi.fn();
     const Comp = (): null => {
-      domainLeftSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'yAxis', 'left')));
+      const isPanorama = useIsPanorama();
+      domainLeftSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'yAxis', 'left', isPanorama)));
       domainLeftIncludingNiceTicksSpy(
-        useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'left')),
+        useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'left', isPanorama)),
       );
-      domainRightSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'yAxis', 'right')));
+      domainRightSpy(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'yAxis', 'right', isPanorama)));
       domainRightIncludingNiceTicksSpy(
-        useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'right')),
+        useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'yAxis', 'right', isPanorama)),
       );
-      const scaleLeft = useAppSelectorWithStableTest(state => selectAxisScale(state, 'yAxis', 'left', false));
+      const scaleLeft = useAppSelectorWithStableTest(state => selectAxisScale(state, 'yAxis', 'left', isPanorama));
       scaleLeftSpy(scaleLeft?.domain());
-      const scaleRight = useAppSelectorWithStableTest(state => selectAxisScale(state, 'yAxis', 'right', false));
+      const scaleRight = useAppSelectorWithStableTest(state => selectAxisScale(state, 'yAxis', 'right', isPanorama));
       scaleRightSpy(scaleRight?.domain());
       return null;
     };
@@ -378,7 +383,7 @@ describe('selectAxisDomain', () => {
         <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
         <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
         <Tooltip />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(domainLeftSpy).toHaveBeenLastCalledWith([0, 1200]);
@@ -529,14 +534,15 @@ describe('selectAxisDomain', () => {
     it('should return highest and lowest number of the chart root data based on the axis dataKey', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="uv" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 400]);
@@ -572,14 +578,15 @@ describe('selectAxisDomain', () => {
     it('should return undefined if the data is not numerical', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="name" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(undefined);
@@ -591,14 +598,15 @@ describe('selectAxisDomain', () => {
       const data = [{ x: Symbol.for('unit test') }];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       render(
         <BarChart data={data} width={100} height={100}>
           <XAxis dataKey="x" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([100, 9999]);
@@ -622,14 +630,15 @@ describe('selectAxisDomain', () => {
       ];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={data} width={100} height={100}>
           <XAxis dataKey="x" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 9999]);
@@ -666,7 +675,8 @@ describe('selectAxisDomain', () => {
         compute min, max of the combination, and then readjust it based on nice ticks`, () => {
       const axisDomainSpy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 0));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 0, isPanorama));
         axisDomainSpy(result);
         return null;
       };
@@ -729,7 +739,7 @@ describe('selectAxisDomain', () => {
           />
           <XAxis dataKey="x" type="number" />
           <YAxis dataKey="y" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </ComposedChart>,
       );
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 210]);
@@ -767,14 +777,15 @@ describe('selectAxisDomain', () => {
     it('should return all strings', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="name" type={type} />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
@@ -817,14 +828,15 @@ describe('selectAxisDomain', () => {
       allowDuplicatedCategory => {
         const spy = vi.fn();
         const Comp = (): null => {
-          const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+          const isPanorama = useIsPanorama();
+          const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
           spy(result);
           return null;
         };
         const { container } = render(
           <BarChart data={PageData} width={100} height={100}>
             <XAxis dataKey="uv" type={type} allowDuplicatedCategory={allowDuplicatedCategory} />
-            <Customized component={Comp} />
+            <Comp />
           </BarChart>,
         );
         expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5]);
@@ -866,14 +878,15 @@ describe('selectAxisDomain', () => {
     it('should filter out duplicates when allowDuplicatedCategory = false', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={PageData} width={100} height={100}>
           <XAxis dataKey="uv" type={type} allowDuplicatedCategory={false} />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([400, 300, 200, 278, 189]);
@@ -909,7 +922,8 @@ describe('selectAxisDomain', () => {
     it('with allowDuplicatedCategory=true, and the data has duplicates, it should return domain as array indexes', () => {
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         domainSpy(result);
         return null;
       };
@@ -934,7 +948,7 @@ describe('selectAxisDomain', () => {
       const { container } = render(
         <BarChart data={monthsWithDuplicatesData} width={100} height={100}>
           <XAxis dataKey="x" type={type} allowDuplicatedCategory />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(domainSpy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
@@ -1026,7 +1040,10 @@ describe('selectAxisDomain', () => {
       const domainSpy = vi.fn();
       const scaleSpy = vi.fn();
       const Comp = (): null => {
-        domainSpy(useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0)));
+        const isPanorama = useIsPanorama();
+        domainSpy(
+          useAppSelectorWithStableTest(state => selectAxisDomainIncludingNiceTicks(state, 'xAxis', 0, isPanorama)),
+        );
         const scale = useAppSelectorWithStableTest(state => selectAxisScale(state, 'xAxis', 0, false));
         scaleSpy(scale?.domain());
         return null;
@@ -1034,7 +1051,7 @@ describe('selectAxisDomain', () => {
       const { container } = render(
         <BarChart data={misbehavedData} width={100} height={100}>
           <XAxis dataKey="x" type={type} allowDuplicatedCategory />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(domainSpy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
@@ -1087,14 +1104,15 @@ describe('selectAxisDomain', () => {
       const data = [{ x: 'Jan' }, { x: 'Feb' }, { x: 'Mar' }, { x: 'Apr' }, { x: 'May' }, { x: 'Jun' }];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={data} width={100} height={100}>
           <XAxis dataKey="x" type={type} allowDuplicatedCategory />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']);
@@ -1135,14 +1153,15 @@ describe('selectAxisDomain', () => {
     it('with allowDuplicatedCategory=false, should return domain as deduplicated strings', () => {
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={misbehavedData} width={100} height={100}>
           <XAxis dataKey="x" type={type} allowDuplicatedCategory={false} />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']);
@@ -1194,14 +1213,15 @@ describe('selectAxisDomain', () => {
       const data = [{ x: 'Monday' }, { x: 'Tuesday' }, { x: 'Wednesday' }];
       const spy = vi.fn();
       const Comp = (): null => {
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0'));
+        const isPanorama = useIsPanorama();
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
         spy(result);
         return null;
       };
       const { container } = render(
         <BarChart data={data} width={100} height={100}>
           <XAxis type={type} allowDuplicatedCategory={false} />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith([0, 1, 2]);
@@ -1240,7 +1260,7 @@ describe('selectHasBar', () => {
     const { container, rerender } = render(
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeVisible();
@@ -1249,7 +1269,7 @@ describe('selectHasBar', () => {
     // returns false after Bar is removed from DOM
     rerender(
       <BarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeNull();
@@ -1266,7 +1286,7 @@ describe('selectHasBar', () => {
     const { container } = render(
       <BarChart data={PageData} width={100} height={100}>
         <Line dataKey="uv" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelector('.recharts-bar')).toBeNull();
@@ -1284,7 +1304,7 @@ describe('selectHasBar', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
         <Bar dataKey="pv" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-bar')).toHaveLength(2);
@@ -1292,7 +1312,7 @@ describe('selectHasBar', () => {
     rerender(
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="uv" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-bar')).toHaveLength(1);
@@ -1309,7 +1329,7 @@ describe('selectHasBar', () => {
     const { container, rerender } = render(
       <RadialBarChart data={PageData} width={100} height={100}>
         <RadialBar dataKey="uv" />
-        <Customized component={Comp} />
+        <Comp />
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeVisible();
@@ -1318,7 +1338,7 @@ describe('selectHasBar', () => {
     // returns false after the only RadialBar is removed from DOM
     rerender(
       <RadialBarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
@@ -1334,7 +1354,7 @@ describe('selectHasBar', () => {
     };
     const { container } = render(
       <RadialBarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </RadialBarChart>,
     );
     expect(container.querySelector('.recharts-radial-bar-sectors')).toBeNull();
@@ -1358,7 +1378,7 @@ describe('selectCalculatedPadding', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="name" padding={{ left: 11, right: 13 }} />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0);
@@ -1374,7 +1394,7 @@ describe('selectCalculatedPadding', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="pv" padding="gap" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(1.247917162580338);
@@ -1390,7 +1410,7 @@ describe('selectCalculatedPadding', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="pv" padding="no-gap" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0.9955652016293147);
@@ -1406,7 +1426,7 @@ describe('selectCalculatedPadding', () => {
     render(
       <BarChart data={[PageData[0]]} width={100} height={100}>
         <XAxis dataKey="pv" padding="no-gap" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0);
@@ -1422,7 +1442,7 @@ describe('selectCalculatedPadding', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="pv" padding={{ left: 11, right: 13 }} type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0);
@@ -1430,7 +1450,7 @@ describe('selectCalculatedPadding', () => {
 });
 
 describe('selectSmallestDistanceBetweenValues', () => {
-  const selector = (state: RechartsRootState) => selectSmallestDistanceBetweenValues(state, 'xAxis', 0);
+  const selector = (state: RechartsRootState) => selectSmallestDistanceBetweenValues(state, 'xAxis', 0, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);
@@ -1446,7 +1466,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
       <BarChart data={[]} width={100} height={100}>
         <Bar dataKey="uv" />
         <XAxis dataKey="name" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledWith(undefined);
@@ -1464,7 +1484,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
       <BarChart data={PageData} width={100} height={100}>
         <Bar dataKey="pv" />
         <XAxis dataKey="name" type={type} />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenCalledWith(undefined);
@@ -1480,7 +1500,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="pv" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0.02773149250178529);
@@ -1496,7 +1516,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="pv" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0.02773149250178529);
@@ -1512,7 +1532,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
     render(
       <BarChart data={[]} width={100} height={100}>
         <XAxis dataKey="pv" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(Infinity);
@@ -1528,7 +1548,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
     render(
       <BarChart data={[PageData[0]]} width={100} height={100}>
         <XAxis dataKey="pv" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(Infinity);
@@ -1544,7 +1564,7 @@ describe('selectSmallestDistanceBetweenValues', () => {
     render(
       <BarChart data={PageData} width={100} height={100}>
         <XAxis dataKey="uv" type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(0);
@@ -1589,7 +1609,7 @@ describe('selectCartesianGraphicalItemsData', () => {
     };
     render(
       <BarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
@@ -1607,7 +1627,7 @@ describe('selectCartesianGraphicalItemsData', () => {
     };
     render(
       <BarChart data={PageData} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
         <Bar dataKey="pv" />
         <Bar dataKey="uv" />
       </BarChart>,
@@ -1633,7 +1653,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Line data={[40, 50, 60]} />
         <Scatter data={[7, 8, 9]} />
         <Scatter data={[70, 80, 90]} />
-        <Customized component={Comp} />
+        <Comp />
       </ComposedChart>,
     );
     // as opposed to the tooltip data selector - this one stores all original data without transformation.
@@ -1663,7 +1683,7 @@ describe('selectCartesianGraphicalItemsData', () => {
         <Scatter />
         <Scatter data={[{ x: 70 }, { x: 80 }, { x: 90 }]} />
         <XAxis />
-        <Customized component={Comp} />
+        <Comp />
         <Customized component={<ExpectAxisDomain axisType="xAxis" assert={domainSpy} />} />
       </ComposedChart>,
     );
@@ -1743,7 +1763,7 @@ describe('selectCartesianGraphicalItemsData', () => {
     };
     render(
       <PieChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
         <Pie data={[{ x: 1 }, { x: 2 }, { x: 3 }]} dataKey="x" />
         <Pie data={[{ y: 10 }, { y: 20 }, { y: 30 }]} dataKey="y" />
       </PieChart>,
@@ -1758,7 +1778,7 @@ describe('selectCartesianGraphicalItemsData', () => {
 });
 
 describe('selectDisplayedData', () => {
-  const selector = (state: RechartsRootState) => selectDisplayedData(state, 'xAxis', defaultAxisId);
+  const selector = (state: RechartsRootState) => selectDisplayedData(state, 'xAxis', defaultAxisId, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, []);
@@ -1772,7 +1792,7 @@ describe('selectDisplayedData', () => {
     };
     render(
       <BarChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
@@ -1790,7 +1810,7 @@ describe('selectDisplayedData', () => {
       <LineChart width={100} height={100}>
         <Line data={data1} />
         <Line data={data2} />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -1869,16 +1889,16 @@ describe('selectDisplayedData', () => {
       <LineChart width={100} height={100}>
         <Line data={data1} />
         <Line data={data2} />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
   });
 
   it('should not recompute when an irrelevant property in the state changes', () => {
     const store = createRechartsStore();
-    const result1 = selectDisplayedData(store.getState(), 'xAxis', '0');
+    const result1 = selectDisplayedData(store.getState(), 'xAxis', '0', false);
     store.dispatch(setLegendSize({ width: 10, height: 20 }));
-    const result2 = selectDisplayedData(store.getState(), 'xAxis', '0');
+    const result2 = selectDisplayedData(store.getState(), 'xAxis', '0', false);
     expect(result1).toBe(result2);
   });
 
@@ -1893,7 +1913,7 @@ describe('selectDisplayedData', () => {
       <LineChart width={100} height={100}>
         <Line dataKey="x" data={data1} />
         <Line dataKey="y" data={data2} />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -1964,7 +1984,10 @@ describe('selectDisplayedData', () => {
   it('should return data defined in all graphical items based on the input dataKey, and default axis ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
       spy(result);
       return null;
     };
@@ -1973,7 +1996,7 @@ describe('selectDisplayedData', () => {
         <Line data={data1} />
         <Line data={data2} />
         <XAxis dataKey="x" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -1997,10 +2020,17 @@ describe('selectDisplayedData', () => {
     const axisDomainSpy1 = vi.fn();
     const axisDomainSpy2 = vi.fn();
     const Comp = (): null => {
-      displayedDataSpy1(useAppSelectorWithStableTest(state => selectDisplayedData(state, 'xAxis', 'my axis id')));
-      displayedDataSpy2(useAppSelectorWithStableTest(state => selectDisplayedData(state, 'xAxis', 'some other ID')));
-      axisDomainSpy1(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 'my axis id')));
-      axisDomainSpy2(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 'some other ID')));
+      const isPanorama = useIsPanorama();
+      displayedDataSpy1(
+        useAppSelectorWithStableTest(state => selectDisplayedData(state, 'xAxis', 'my axis id', isPanorama)),
+      );
+      displayedDataSpy2(
+        useAppSelectorWithStableTest(state => selectDisplayedData(state, 'xAxis', 'some other ID', isPanorama)),
+      );
+      axisDomainSpy1(useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 'my axis id', isPanorama)));
+      axisDomainSpy2(
+        useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 'some other ID', isPanorama)),
+      );
       return null;
     };
     const { container } = render(
@@ -2009,7 +2039,7 @@ describe('selectDisplayedData', () => {
         <XAxis dataKey="x" xAxisId="my axis id" />
         <Line data={data1} xAxisId="some other ID" />
         <XAxis dataKey="y" xAxisId="some other ID" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     const allAxes = container.querySelectorAll('.recharts-xAxis');
@@ -2089,7 +2119,7 @@ describe('selectDisplayedData', () => {
         <Line data={data1} />
         <Line data={data2} />
         <XAxis dataKey="y" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(displayedDataSpy).toHaveBeenLastCalledWith(mockData);
@@ -2107,7 +2137,7 @@ describe('selectDisplayedData', () => {
       <LineChart data={data1} width={100} height={100}>
         <Line />
         <XAxis dataKey="x" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -2148,15 +2178,16 @@ describe('selectDisplayedData', () => {
   it('should return data defined in the chart root regardless of the axis ID match', () => {
     const displayedDataSpy = vi.fn();
     const Comp = (): null => {
+      const isPanorama = useIsPanorama();
       const result = useAppSelectorWithStableTest(state =>
-        selectDisplayedData(state, 'xAxis', 'axis with this ID is not present'),
+        selectDisplayedData(state, 'xAxis', 'axis with this ID is not present', isPanorama),
       );
       displayedDataSpy(result);
       return null;
     };
     render(
       <LineChart data={data1} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis dataKey="x" />
       </LineChart>,
     );
@@ -2207,7 +2238,7 @@ describe('selectDisplayedData', () => {
         <Line />
         <Brush startIndex={1} endIndex={4} />
         <XAxis dataKey="x" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -2241,7 +2272,7 @@ describe('selectDisplayedData', () => {
 });
 
 describe('selectAllAppliedValues', () => {
-  const selector = (state: RechartsRootState) => selectAllAppliedValues(state, 'xAxis', defaultAxisId);
+  const selector = (state: RechartsRootState) => selectAllAppliedValues(state, 'xAxis', defaultAxisId, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, []);
@@ -2249,13 +2280,16 @@ describe('selectAllAppliedValues', () => {
   it('should return empty array in an empty chart', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
       spy(result);
       return null;
     };
     render(
       <BarChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
@@ -2265,14 +2299,17 @@ describe('selectAllAppliedValues', () => {
   it('should return empty array if there is no axis with matching ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
       spy(result);
       return null;
     };
     render(
       <LineChart width={100} height={100}>
         <Line />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
@@ -2282,7 +2319,10 @@ describe('selectAllAppliedValues', () => {
   it('should return all data defined in all graphical items based on the input dataKey, and default axis ID', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
       spy(result);
       return null;
     };
@@ -2291,7 +2331,7 @@ describe('selectAllAppliedValues', () => {
         <Line data={[{ x: 1 }, { x: 2 }, { x: 3 }]} />
         <Line data={[{ x: 10 }, { x: 20 }, { x: 30 }]} />
         <XAxis dataKey="x" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -2308,7 +2348,10 @@ describe('selectAllAppliedValues', () => {
   it('should return data defined in the chart root', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectAllAppliedValues(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state =>
+        selectAllAppliedValues(state, 'xAxis', defaultAxisId, isPanorama),
+      );
       spy(result);
       return null;
     };
@@ -2316,7 +2359,7 @@ describe('selectAllAppliedValues', () => {
       <LineChart data={data1} width={100} height={100}>
         <Line />
         <XAxis dataKey="x" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([
@@ -2332,15 +2375,16 @@ describe('selectAllAppliedValues', () => {
   it('should return values as full input objects if the axis ID does not match anything in the data', () => {
     const displayedDataSpy = vi.fn();
     const Comp = (): null => {
+      const isPanorama = useIsPanorama();
       const result = useAppSelectorWithStableTest(state =>
-        selectAllAppliedValues(state, 'xAxis', 'axis with this ID is not present'),
+        selectAllAppliedValues(state, 'xAxis', 'axis with this ID is not present', isPanorama),
       );
       displayedDataSpy(result);
       return null;
     };
     render(
       <LineChart data={data1} width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis dataKey="this dataKey is not present in the input data" />
       </LineChart>,
     );
@@ -2406,7 +2450,7 @@ describe('selectErrorBarsSettings', () => {
     render(
       <BarChart width={100} height={100}>
         <Bar isAnimationActive={false} />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
@@ -2428,7 +2472,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="data-y" direction="y" />
         </Line>
         <XAxis type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     // There are ErrorBars but they are specified for another XAxis
@@ -2452,7 +2496,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Bar>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis type="number" />
       </BarChart>,
     );
@@ -2487,7 +2531,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Line>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis type="number" />
       </LineChart>,
     );
@@ -2522,7 +2566,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Line>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis type="number" />
       </LineChart>,
     );
@@ -2558,7 +2602,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
         </Scatter>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis type="number" />
       </ScatterChart>,
     );
@@ -2629,7 +2673,7 @@ describe('selectErrorBarsSettings', () => {
           <ErrorBar dataKey="e" direction="x" />
           <ErrorBar dataKey="f" direction="y" />
         </Scatter>
-        <Customized component={Comp} />
+        <Comp />
         <XAxis type="number" />
         <YAxis dataKey="x" />
       </ComposedChart>,
@@ -2701,7 +2745,7 @@ describe('selectErrorBarsSettings', () => {
 });
 
 describe('selectNiceTicks', () => {
-  const selector = (state: RechartsRootState) => selectNiceTicks(state, 'xAxis', defaultAxisId);
+  const selector = (state: RechartsRootState) => selectNiceTicks(state, 'xAxis', defaultAxisId, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);
@@ -2709,14 +2753,15 @@ describe('selectNiceTicks', () => {
   it('should return undefined in a chart with no XAxis', () => {
     const spy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama));
       spy(result);
       return null;
     };
     render(
       <BarChart width={100} height={100}>
         <Bar isAnimationActive={false} />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(undefined);
@@ -2727,15 +2772,16 @@ describe('selectNiceTicks', () => {
     const xAxisSpy = vi.fn();
     const yAxisSpy = vi.fn();
     const Comp = (): null => {
-      xAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', 'foo')));
-      yAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'yAxis', 'bar')));
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', 'foo', isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'yAxis', 'bar', isPanorama)));
       return null;
     };
     render(
       <LineChart width={100} height={100} data={pageData}>
         <Line isAnimationActive={false} />
         <XAxis type="number" />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     // There is an XAxis but it has a different ID
@@ -2755,7 +2801,8 @@ describe('selectNiceTicks', () => {
   it.each(casesThatProduceNiceTicks)('should return nice ticks when domain=%s', ({ domain, expectedTicks }) => {
     const niceTicksSpy = vi.fn();
     const Comp = (): null => {
-      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId));
+      const isPanorama = useIsPanorama();
+      const result = useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama));
       niceTicksSpy(result);
       return null;
     };
@@ -2763,7 +2810,7 @@ describe('selectNiceTicks', () => {
       <LineChart width={100} height={100} data={pageData}>
         <Line dataKey="pv" isAnimationActive={false} />
         <XAxis type="number" dataKey="uv" domain={domain} />
-        <Customized component={Comp} />
+        <Comp />
       </LineChart>,
     );
     expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
@@ -2794,7 +2841,7 @@ describe('mergeDomains', () => {
 });
 
 describe('selectStackGroups', () => {
-  const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0);
+  const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, {});
@@ -2802,12 +2849,13 @@ describe('selectStackGroups', () => {
   it('should return empty object in an empty BarChart', () => {
     const stackGroupsSpy = vi.fn();
     const Comp = (): null => {
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0)));
+      const isPanorama = useIsPanorama();
+      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
       return null;
     };
     render(
       <BarChart width={100} height={100}>
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
@@ -2817,7 +2865,8 @@ describe('selectStackGroups', () => {
   it('should return object keyed by stack IDs, with bar settings and stacked data', () => {
     const stackGroupsSpy = vi.fn();
     const Comp = (): null => {
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0)));
+      const isPanorama = useIsPanorama();
+      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
       return null;
     };
     render(
@@ -2826,7 +2875,7 @@ describe('selectStackGroups', () => {
         <Bar dataKey="pv" stackId="a" />
         <Bar dataKey="uv" stackId="b" />
         <Bar dataKey="amt" stackId="b" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     // This fails because d3 likes to put extra properties in the stack array that vitest doesn't serialize.
@@ -2930,7 +2979,8 @@ describe('selectStackGroups', () => {
   it('should return empty object for Bars without stackId', () => {
     const stackGroupsSpy = vi.fn();
     const Comp = (): null => {
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0)));
+      const isPanorama = useIsPanorama();
+      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
       return null;
     };
     render(
@@ -2938,7 +2988,7 @@ describe('selectStackGroups', () => {
         <Bar dataKey="uv" />
         <Bar dataKey="pv" />
         <Bar dataKey="amt" />
-        <Customized component={Comp} />
+        <Comp />
       </BarChart>,
     );
     expect(stackGroupsSpy).toHaveBeenLastCalledWith({});

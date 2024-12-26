@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { computeLinePoints, LinePointItem } from '../../cartesian/Line';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
-import { selectChartDataWithIndexes } from './dataSelectors';
+import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectAxisWithScale, selectTicksOfGraphicalItem } from './axisSelectors';
 import { DataKey } from '../../util/types';
@@ -59,7 +59,7 @@ export const selectLinePoints: (
     selectYAxisTicks,
     pickLineSettings,
     selectBandSize,
-    selectChartDataWithIndexes,
+    selectChartDataWithIndexesIfNotInPanorama,
   ],
   (
     layout,

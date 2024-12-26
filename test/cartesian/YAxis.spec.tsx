@@ -11,7 +11,6 @@ import {
   CartesianGrid,
   Tooltip,
   YAxis,
-  Customized,
   ReferenceDot,
   ReferenceArea,
   ReferenceLine,
@@ -25,6 +24,7 @@ import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../src/s
 import { YAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { IfOverflow } from '../../src/util/IfOverflow';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 describe('<YAxis />', () => {
   const data = [
@@ -53,7 +53,8 @@ describe('<YAxis />', () => {
   it('should render ticks from Area with range', () => {
     const domainSpy = vi.fn();
     const Comp = (): null => {
-      const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+      const isPanorama = useIsPanorama();
+      const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
       domainSpy(domain);
       return null;
     };
@@ -73,7 +74,7 @@ describe('<YAxis />', () => {
         <YAxis />
         <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
         <Tooltip defaultIndex={4} active />
-        <Customized component={<Comp />} />
+        <Comp />
       </AreaChart>,
     );
 
@@ -704,7 +705,8 @@ describe('<YAxis />', () => {
     it.each([undefined, true, false])('should show ticks for visibleData when includeHidden=%s', includeHidden => {
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -713,7 +715,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden={includeHidden} />
           <Bar dataKey="pv" />
           <Bar dataKey="uv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -749,7 +751,8 @@ describe('<YAxis />', () => {
     it.each([false, undefined])('should exclude hidden items domain when includeHidden=%s', includeHidden => {
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -758,7 +761,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden={includeHidden} />
           <Bar dataKey="pv" hide />
           <Bar dataKey="uv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -794,7 +797,8 @@ describe('<YAxis />', () => {
     it('should include hidden data domain when includeHidden=true', () => {
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -803,7 +807,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden />
           <Bar dataKey="pv" hide />
           <Bar dataKey="uv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -922,7 +926,7 @@ describe('<YAxis />', () => {
             minTickGap={8}
             tickFormatter={fakeTickFormatter}
           />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
@@ -970,7 +974,7 @@ describe('<YAxis />', () => {
       const { rerender } = render(
         <BarChart width={100} height={100}>
           <YAxis yAxisId="foo" scale="log" type="number" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       const expectedSettings1: YAxisSettings = {
@@ -1010,7 +1014,7 @@ describe('<YAxis />', () => {
         <BarChart width={100} height={100}>
           <YAxis yAxisId="foo" scale="log" type="number" />
           <YAxis yAxisId="bar" scale="utc" type="category" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
       const expectedSettings2: {
@@ -1080,7 +1084,7 @@ describe('<YAxis />', () => {
       rerender(
         <BarChart width={100} height={100}>
           <YAxis yAxisId="bar" scale="utc" type="category" />
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
 
@@ -1119,7 +1123,7 @@ describe('<YAxis />', () => {
       });
       rerender(
         <BarChart width={100} height={100}>
-          <Customized component={Comp} />
+          <Comp />
         </BarChart>,
       );
 
@@ -1142,7 +1146,8 @@ describe('<YAxis />', () => {
         ];
         const domainSpy = vi.fn();
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           domainSpy(domain);
           return null;
         };
@@ -1150,7 +1155,7 @@ describe('<YAxis />', () => {
           <BarChart width={100} height={100} data={stackedData} stackOffset={stackOffset}>
             <YAxis />
             <Bar dataKey="x" stackId="a" />
-            <Customized component={<Comp />} />
+            <Comp />
           </BarChart>,
         );
         expectYAxisTicks(container, [
@@ -1186,7 +1191,7 @@ describe('<YAxis />', () => {
             <YAxis />
             <Bar dataKey="x" stackId="a" />
             <Bar dataKey="y" stackId="a" />
-            <Customized component={<Comp />} />
+            <Comp />
           </BarChart>,
         );
         expectYAxisTicks(container, [
@@ -1229,7 +1234,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1238,7 +1244,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden={includeHidden} />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" hide />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1280,7 +1286,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1289,7 +1296,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" hide />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1327,7 +1334,7 @@ describe('<YAxis />', () => {
           <YAxis includeHidden />
           <Bar dataKey="x" />
           <Bar dataKey="y" hide />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
 
@@ -1370,7 +1377,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1379,7 +1387,7 @@ describe('<YAxis />', () => {
           <YAxis />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1422,7 +1430,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1431,7 +1440,7 @@ describe('<YAxis />', () => {
           <YAxis />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1473,7 +1482,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1482,7 +1492,7 @@ describe('<YAxis />', () => {
           <YAxis />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1524,7 +1534,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1533,7 +1544,7 @@ describe('<YAxis />', () => {
           <YAxis />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1575,7 +1586,8 @@ describe('<YAxis />', () => {
       ];
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1584,7 +1596,7 @@ describe('<YAxis />', () => {
           <YAxis />
           <Bar dataKey="x" stackId="a" />
           <Bar dataKey="y" stackId="a" />
-          <Customized component={<Comp />} />
+          <Comp />
         </BarChart>,
       );
       expectYAxisTicks(container, [
@@ -1629,7 +1641,8 @@ describe('<YAxis />', () => {
     it('should render usual domain when without reference elements', () => {
       const domainSpy = vi.fn();
       const Comp = (): null => {
-        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+        const isPanorama = useIsPanorama();
+        const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
         domainSpy(domain);
         return null;
       };
@@ -1637,7 +1650,7 @@ describe('<YAxis />', () => {
         <LineChart width={100} height={100} data={pageData}>
           <YAxis />
           <Line dataKey="pv" />
-          <Customized component={<Comp />} />
+          <Comp />
         </LineChart>,
       );
       expectYAxisTicks(container, [
@@ -1676,7 +1689,8 @@ describe('<YAxis />', () => {
         domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
       }) => {
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           props.domainSpy(domain);
           return null;
         };
@@ -1686,7 +1700,7 @@ describe('<YAxis />', () => {
             <Line dataKey="pv" />
             {/* the r prop is ignored from domain extension - perhaps it should expand the domain too? */}
             <ReferenceDot x={9999} y={2000} r={500} ifOverflow={props.ifOverflow} />
-            <Customized component={<Comp />} />
+            <Comp />
           </LineChart>
         );
       };
@@ -1764,7 +1778,8 @@ describe('<YAxis />', () => {
         domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
       }) => {
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           props.domainSpy(domain);
           return null;
         };
@@ -1773,7 +1788,7 @@ describe('<YAxis />', () => {
             <YAxis />
             <Line dataKey="pv" />
             <ReferenceArea x1={-10} x2={3000} y1={-100} y2={5000} ifOverflow={props.ifOverflow} />
-            <Customized component={<Comp />} />
+            <Comp />
           </LineChart>
         );
       };
@@ -1849,7 +1864,8 @@ describe('<YAxis />', () => {
       it('should render ticks following the domain of the area', () => {
         const axisDomainSpy = vi.fn();
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           axisDomainSpy(domain);
           return null;
         };
@@ -1877,7 +1893,7 @@ describe('<YAxis />', () => {
               strokeOpacity={0.3}
               ifOverflow="extendDomain"
             />
-            <Customized component={<Comp />} />
+            <Comp />
           </ComposedChart>,
         );
         expect(axisDomainSpy).toHaveBeenLastCalledWith([-1000, 1890]);
@@ -1917,7 +1933,8 @@ describe('<YAxis />', () => {
         domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
       }) => {
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           props.domainSpy(domain);
           return null;
         };
@@ -1926,7 +1943,7 @@ describe('<YAxis />', () => {
             <YAxis />
             <Line dataKey="pv" />
             <ReferenceLine y={2000} ifOverflow={props.ifOverflow} />
-            <Customized component={<Comp />} />
+            <Comp />
           </LineChart>
         );
       };
@@ -2004,7 +2021,8 @@ describe('<YAxis />', () => {
         domainSpy: (domain: NumberDomain | CategoricalDomain) => void;
       }) => {
         const Comp = (): null => {
-          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0));
+          const isPanorama = useIsPanorama();
+          const domain = useAppSelector(state => selectAxisDomain(state, 'yAxis', 0, isPanorama));
           props.domainSpy(domain);
           return null;
         };
@@ -2019,7 +2037,7 @@ describe('<YAxis />', () => {
               ]}
               ifOverflow={props.ifOverflow}
             />
-            <Customized component={<Comp />} />
+            <Comp />
           </LineChart>
         );
       };

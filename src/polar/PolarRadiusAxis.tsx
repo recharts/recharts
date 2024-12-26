@@ -190,7 +190,7 @@ export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInput
 
   const { tick, axisLine } = props;
 
-  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId));
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, false));
 
   if (!ticks || !ticks.length) {
     return null;
