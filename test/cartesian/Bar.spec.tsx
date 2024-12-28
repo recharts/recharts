@@ -2,7 +2,7 @@ import React, { ComponentType, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import uniqueId from 'lodash/uniqueId';
-import { Bar, Customized, Legend, LegendType, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,
   AreaChartCase,
@@ -13,10 +13,14 @@ import {
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
-import { expectBars } from '../helper/expectBars';
+import { expectBarIsActive, expectBarIsNotActive, expectBars, getAllBars } from '../helper/expectBars';
 import { ChartData } from '../../src/state/chartDataSlice';
 import { expectLabels } from '../helper/expectLabel';
 import { LayoutType } from '../../src/util/types';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { expectTooltipPayload, showTooltipOnCoordinate } from '../component/Tooltip/tooltipTestHelpers';
+import { selectActiveTooltipIndex } from '../../src/state/selectors/tooltipSelectors';
+import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -1302,5 +1306,134 @@ describe.each(chartsThatDoNotSupportBar)('<Bar /> as a child of $testName', ({ C
     );
 
     expect(container.querySelectorAll('.recharts-bar-rectangle')).toHaveLength(0);
+  });
+});
+
+describe('mouse interactions in stacked bar: https://github.com/recharts/recharts/issues/5124', () => {
+  const stackedData = [{ x: 1, y: 2 }];
+
+  describe('with Tooltip shared=true', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      return (
+        <BarChart data={stackedData} width={100} height={100}>
+          <Bar activeBar dataKey="x" stackId="1" isAnimationActive={false} />
+          <Bar activeBar dataKey="y" stackId="1" isAnimationActive={false} />
+          <Tooltip shared isAnimationActive={false} />
+          {children}
+        </BarChart>
+      );
+    });
+
+    it('should render two bars on the same index', () => {
+      const { container } = renderTestCase();
+      expectBars(container, [
+        {
+          d: 'M 14,65.00000000000001 h 72 v 29.999999999999986 h -72 Z',
+          height: '29.999999999999986',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '65.00000000000001',
+        },
+        {
+          d: 'M 14,5 h 72 v 60.000000000000014 h -72 Z',
+          height: '60.000000000000014',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '5',
+        },
+      ]);
+    });
+
+    it('should render all bars inactive before user interaction', () => {
+      const { container } = renderTestCase();
+      const bars = getAllBars(container);
+      expectBarIsNotActive(bars[0]);
+      expectBarIsNotActive(bars[1]);
+      expect(bars).toHaveLength(2);
+    });
+
+    it('should show tooltip when hovering over a chart', () => {
+      const { container, spy } = renderTestCase(selectActiveTooltipIndex);
+      expect(spy).toHaveBeenLastCalledWith(null);
+
+      showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+      expect(spy).toHaveBeenLastCalledWith('0');
+      expectTooltipPayload(container, '0', ['x : 1', 'y : 2']);
+    });
+
+    it('should make both bars active when hovering over the chart', () => {
+      const { container } = renderTestCase();
+
+      showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+
+      const bars = getAllBars(container);
+      expectBarIsActive(bars[0]);
+      expectBarIsActive(bars[1]);
+    });
+  });
+
+  describe('with Tooltip shared=false', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      return (
+        <BarChart data={stackedData} width={100} height={100}>
+          <Bar activeBar dataKey="x" stackId="1" isAnimationActive={false} />
+          <Bar activeBar dataKey="y" stackId="1" isAnimationActive={false} />
+          <Tooltip shared={false} isAnimationActive={false} />
+          {children}
+        </BarChart>
+      );
+    });
+
+    it('should render two bars on the same index', () => {
+      const { container } = renderTestCase();
+      expectBars(container, [
+        {
+          d: 'M 14,65.00000000000001 h 72 v 29.999999999999986 h -72 Z',
+          height: '29.999999999999986',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '65.00000000000001',
+        },
+        {
+          d: 'M 14,5 h 72 v 60.000000000000014 h -72 Z',
+          height: '60.000000000000014',
+          radius: '0',
+          width: '72',
+          x: '14',
+          y: '5',
+        },
+      ]);
+    });
+
+    it('should render all bars inactive before user interaction', () => {
+      const { container } = renderTestCase();
+      const bars = getAllBars(container);
+
+      expectBarIsNotActive(bars[0]);
+      expectBarIsNotActive(bars[1]);
+      expect(bars).toHaveLength(2);
+    });
+
+    it('should show tooltip when hovering over a bar', () => {
+      const { container, spy } = renderTestCase(selectActiveTooltipIndex);
+      expect(spy).toHaveBeenLastCalledWith(null);
+
+      const bars = getAllBars(container);
+      showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
+      expect(spy).toHaveBeenLastCalledWith('0');
+      expectTooltipPayload(container, '', ['x : 1']);
+    });
+
+    it('should make the first bar active - but not the second one - when hovering over it', () => {
+      const { container } = renderTestCase();
+      const bars = getAllBars(container);
+
+      showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
+      expectBarIsActive(bars[0]);
+      expectBarIsNotActive(bars[1]);
+    });
   });
 });

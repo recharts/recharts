@@ -54,7 +54,7 @@ import { BarSettings, selectBarRectangles } from '../state/selectors/barSelector
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -280,6 +280,8 @@ function BarRectangles(props: BarRectanglesProps) {
   const { data, shape, dataKey, activeBar } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
+
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -298,7 +300,16 @@ function BarRectangles(props: BarRectanglesProps) {
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
-        const isActive = activeBar && String(i) === activeIndex;
+        /*
+         * Bars support stacking, meaning that there can be multiple bars at the same x value.
+         * With Tooltip shared=false we only want to highlight the currently active Bar, not all.
+         *
+         * Also, if the tooltip is shared, we want to highlight all bars at the same x value
+         * regardless of the dataKey.
+         *
+         * With shared Tooltip, the activeDataKey is undefined.
+         */
+        const isActive = activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
         const option = isActive ? activeBar : shape;
         const barRectangleProps = {
           ...baseProps,
