@@ -399,6 +399,14 @@ interface State {
   prevX?: number;
   prevTravellerWidth?: number;
   prevUpdateId?: string | number;
+
+  /**
+   * Used to prevent re-setting of traveller position unless controlled via props.
+   * This is not perfect as mouseout events will still cause the traveller to move position
+   * but only when start/endIndex are controlled via props.
+   * */
+  prevStartIndexControlledFromProps?: number;
+  prevEndIndexControlledFromProps?: number;
 }
 
 type TravellerProps = {
@@ -451,7 +459,8 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
-type BrushWithStateProps = Props & PropertiesFromContext;
+type BrushWithStateProps = Props &
+  PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   constructor(props: BrushWithStateProps) {
@@ -470,7 +479,17 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   travellerDragStartHandlers?: Record<BrushTravellerId, (event: MouseOrTouchEvent) => void>;
 
   static getDerivedStateFromProps(nextProps: BrushWithStateProps, prevState: State): State {
-    const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = nextProps;
+    const {
+      data,
+      width,
+      x,
+      travellerWidth,
+      updateId,
+      startIndex,
+      endIndex,
+      startIndexControlledFromProps,
+      endIndexControlledFromProps,
+    } = nextProps;
 
     if (data !== prevState.prevData || updateId !== prevState.prevUpdateId) {
       return {
@@ -512,15 +531,30 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       !prevState.isTextActive
     ) {
       /*
-       * If the startIndex and endIndex are controlled from the outside,
+       * If the startIndex or endIndex are controlled from the outside,
        * we need to keep the startX and end up to date.
        * Also we do not want to do that while user is interacting in the brush,
        * because this will trigger re-render and interrupt the drag&drop.
        */
-      return {
-        startX: prevState.scale(nextProps.startIndex),
-        endX: prevState.scale(nextProps.endIndex),
-      };
+      if (
+        startIndexControlledFromProps != null &&
+        prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
+      ) {
+        return {
+          startX: prevState.scale(startIndexControlledFromProps),
+          prevStartIndexControlledFromProps: startIndexControlledFromProps,
+        };
+      }
+
+      if (
+        endIndexControlledFromProps != null &&
+        prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
+      ) {
+        return {
+          endX: prevState.scale(endIndexControlledFromProps),
+          prevEndIndexControlledFromProps: endIndexControlledFromProps,
+        };
+      }
     }
 
     return null;
@@ -896,7 +930,14 @@ function BrushInternal(props: Props) {
     onChange,
   };
   const { ref, ...allOtherProps } = props;
-  return <BrushWithState {...allOtherProps} {...contextProperties} />;
+  return (
+    <BrushWithState
+      {...allOtherProps}
+      {...contextProperties}
+      startIndexControlledFromProps={startIndexFromProps ?? undefined}
+      endIndexControlledFromProps={endIndexFromProps ?? undefined}
+    />
+  );
 }
 
 function BrushSettingsDispatcher(props: BrushSettings): null {
