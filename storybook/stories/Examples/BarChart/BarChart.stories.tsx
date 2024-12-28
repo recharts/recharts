@@ -81,9 +81,9 @@ export const Stacked = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
-          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-          <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
-          <Tooltip />
+          <Bar dataKey="pv" stackId="a" fill="#8884d8" activeBar={{ fill: 'gold' }} />
+          <Bar dataKey="uv" stackId="a" fill="#82ca9d" activeBar={{ fill: 'silver' }} />
+          <Tooltip shared={false} />
         </BarChart>
       </ResponsiveContainer>
     );

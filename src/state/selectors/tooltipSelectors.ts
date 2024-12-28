@@ -39,7 +39,15 @@ import {
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { AxisId } from '../cartesianAxisSlice';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
-import { AxisDomain, CategoricalDomain, LayoutType, NumberDomain, TickItem, TooltipEventType } from '../../util/types';
+import {
+  AxisDomain,
+  CategoricalDomain,
+  DataKey,
+  LayoutType,
+  NumberDomain,
+  TickItem,
+  TooltipEventType,
+} from '../../util/types';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { GraphicalItemSettings } from '../graphicalItemsSlice';
@@ -116,7 +124,7 @@ export const selectTooltipGraphicalItemsData = createSelector(
 /**
  * Data for tooltip always use the data with indexes set by a Brush,
  * and never accept the isPanorama flag:
- * because Tooltip never displays inside of the panorama anyway
+ * because Tooltip never displays inside the panorama anyway
  * so we don't need to worry what would happen there.
  */
 export const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData = createSelector(
@@ -349,4 +357,15 @@ export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipInde
 export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxisTicks, selectActiveTooltipIndex],
   combineActiveLabel,
+);
+
+export const selectActiveTooltipDataKey: (state: RechartsRootState) => DataKey<any> | undefined = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteraction: TooltipInteractionState): DataKey<any> | undefined => {
+    if (!tooltipInteraction) {
+      return undefined;
+    }
+
+    return tooltipInteraction.dataKey;
+  },
 );
