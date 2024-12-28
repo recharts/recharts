@@ -29,6 +29,7 @@ import {
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
+  Coordinate,
   DataKey,
   LegendType,
   PresentationAttributesAdaptChildEvent,
@@ -65,6 +66,7 @@ export interface BarRectangleItem extends RectangleProps {
     width?: number;
     height?: number;
   };
+  tooltipPosition: Coordinate;
 }
 
 export interface BarProps {
@@ -230,7 +232,7 @@ function BarBackground(props: BarBackgroundProps) {
   return (
     <>
       {data.map((entry: BarRectangleItem, i: number) => {
-        const { value, background: backgroundFromDataEntry, ...rest } = entry;
+        const { value, background: backgroundFromDataEntry, tooltipPosition, ...rest } = entry;
 
         if (!backgroundFromDataEntry) {
           return null;
@@ -643,7 +645,7 @@ export function computeBarRectangles({
   const stackedDomain: ReadonlyArray<number> = stackedData ? numericAxis.scale.domain() : null;
   const baseValue = getBaseValueOfBar({ numericAxis });
 
-  return displayedData.map((entry, index) => {
+  return displayedData.map((entry, index): BarRectangleItem => {
     let value, x, y, width, height, background;
 
     if (stackedData) {
@@ -710,6 +712,7 @@ export function computeBarRectangles({
       value: stackedData ? value : value[1],
       payload: entry,
       background,
+      tooltipPosition: { x: x + width / 2, y: y + height / 2 },
       ...(cells && cells[index] && cells[index].props),
     };
   });
