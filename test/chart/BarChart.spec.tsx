@@ -2035,6 +2035,10 @@ describe('<BarChart />', () => {
           topWhisker: 200,
         },
         size: 150,
+        tooltipPosition: {
+          x: 120,
+          y: 55,
+        },
         topBox: 200,
         topWhisker: 200,
         value: [450, 650],
@@ -2064,6 +2068,10 @@ describe('<BarChart />', () => {
           topWhisker: 100,
         },
         size: 250,
+        tooltipPosition: {
+          x: 230,
+          y: 15,
+        },
         topBox: 100,
         topWhisker: 100,
         value: [700, 800],
@@ -2093,6 +2101,10 @@ describe('<BarChart />', () => {
           topWhisker: 200,
         },
         size: 350,
+        tooltipPosition: {
+          x: 340,
+          y: 25,
+        },
         topBox: 200,
         topWhisker: 200,
         value: [600, 800],

@@ -18,9 +18,15 @@ import { ChartData } from '../../src/state/chartDataSlice';
 import { expectLabels } from '../helper/expectLabel';
 import { LayoutType } from '../../src/util/types';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { expectTooltipPayload, showTooltipOnCoordinate } from '../component/Tooltip/tooltipTestHelpers';
-import { selectActiveTooltipIndex } from '../../src/state/selectors/tooltipSelectors';
+import {
+  expectTooltipCoordinate,
+  expectTooltipPayload,
+  showTooltipOnCoordinate,
+} from '../component/Tooltip/tooltipTestHelpers';
+import { selectActiveTooltipIndex, selectTooltipAxisTicks } from '../../src/state/selectors/tooltipSelectors';
 import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
 
 type TestCase = {
   ChartElement: ComponentType<{
@@ -1363,6 +1369,20 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       expectTooltipPayload(container, '0', ['x : 1', 'y : 2']);
     });
 
+    it('should show tooltip somewhere close to the mouse cursor', () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+
+      showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 10, clientY: 10 });
+      expectTooltipCoordinate(container, { x: 60, y: 20 });
+
+      showTooltipOnCoordinate(container, barChartMouseHoverTooltipSelector, { clientX: 20, clientY: 20 });
+      expectTooltipCoordinate(container, { x: 60, y: 30 });
+    });
+
     it('should make both bars active when hovering over the chart', () => {
       const { container } = renderTestCase();
 
@@ -1425,6 +1445,171 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
       expect(spy).toHaveBeenLastCalledWith('0');
       expectTooltipPayload(container, '', ['x : 1']);
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 50,
+          index: 0,
+          offset: 45,
+          value: 0,
+        },
+      ]);
+    });
+
+    it('should update tooltip interaction state after mouse hover', () => {
+      const { container, spy } = renderTestCase(state => state.tooltip);
+      const expectedStateBeforeHover: TooltipState = {
+        axisInteraction: {
+          click: noInteraction,
+          hover: noInteraction,
+        },
+        itemInteraction: {
+          click: noInteraction,
+          hover: noInteraction,
+        },
+        keyboardInteraction: noInteraction,
+        settings: {
+          active: undefined,
+          axisId: 0,
+          defaultIndex: undefined,
+          shared: false,
+          trigger: 'hover',
+        },
+        syncInteraction: {
+          ...noInteraction,
+          label: undefined,
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: undefined,
+              dataKey: 'x',
+              fill: undefined,
+              hide: false,
+              name: 'x',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: undefined,
+              dataKey: 'y',
+              fill: undefined,
+              hide: false,
+              name: 'y',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+        ],
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedStateBeforeHover);
+
+      const bars = getAllBars(container);
+      showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
+
+      const expectedStateAfterHover: TooltipState = {
+        axisInteraction: {
+          click: noInteraction,
+          hover: noInteraction,
+        },
+        itemInteraction: {
+          click: noInteraction,
+          hover: {
+            active: true,
+            coordinate: {
+              x: 50,
+              y: 80,
+            },
+            dataKey: 'x',
+            index: '0',
+          },
+        },
+        keyboardInteraction: noInteraction,
+        settings: {
+          active: undefined,
+          axisId: 0,
+          defaultIndex: undefined,
+          shared: false,
+          trigger: 'hover',
+        },
+        syncInteraction: {
+          ...noInteraction,
+          label: undefined,
+        },
+        tooltipItemPayloads: [
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: undefined,
+              dataKey: 'x',
+              fill: undefined,
+              hide: false,
+              name: 'x',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: undefined,
+              dataKey: 'y',
+              fill: undefined,
+              hide: false,
+              name: 'y',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+        ],
+      };
+      expect(spy).toHaveBeenLastCalledWith(expectedStateAfterHover);
+    });
+
+    it('should show tooltip somewhere close to the mouse cursor', () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+
+      const bars = getAllBars(container);
+      showTooltipOnCoordinate(bars[0], undefined, { clientX: 10, clientY: 10 });
+      expectTooltipCoordinate(container, { x: 60, y: 60 });
+
+      showTooltipOnCoordinate(bars[0], undefined, { clientX: 20, clientY: 20 });
+      /*
+       * okay so it shows the tooltip at the same place as the last time, not the new mouse position
+       * - fine, it's sticking to the item, not the mouse.
+       */
+      expectTooltipCoordinate(container, { x: 60, y: 60 });
+
+      // let's hover over the second bar and check the coordinate again
+      showTooltipOnCoordinate(bars[1], undefined, { clientX: 20, clientY: 20 });
+      expectTooltipCoordinate(container, { x: 60, y: 45.00000000000001 });
     });
 
     it('should make the first bar active - but not the second one - when hovering over it', () => {
