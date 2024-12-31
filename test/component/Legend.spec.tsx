@@ -3452,6 +3452,7 @@ describe('<Legend />', () => {
       );
 
       const expectedAfterFirstRender: LegendState = {
+        payload: [],
         settings: {
           align: 'center',
           layout: 'horizontal',
@@ -3472,6 +3473,7 @@ describe('<Legend />', () => {
       );
 
       const expectedAfterSecondRender: LegendState = {
+        payload: [],
         settings: {
           align: 'center',
           layout: 'horizontal',

@@ -15,6 +15,7 @@ import {
 describe('selectLegendState', () => {
   shouldReturnUndefinedOutOfContext(selectLegendState);
   shouldReturnFromInitialState(selectLegendState, {
+    payload: [],
     settings: {
       layout: 'horizontal',
       align: 'center',
@@ -41,6 +42,7 @@ describe('selectLegendState', () => {
       </BarChart>,
     );
     const expected: LegendState = {
+      payload: [],
       size: { width: 17, height: 71 },
       settings: {
         align: 'left',

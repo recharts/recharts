@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { LayoutType, Size } from '../util/types';
-import type { HorizontalAlignmentType, VerticalAlignmentType } from '../component/DefaultLegendContent';
+import {
+  HorizontalAlignmentType,
+  Payload as LegendPayload,
+  VerticalAlignmentType,
+} from '../component/DefaultLegendContent';
 
 export type LegendSettings = {
   layout: LayoutType;
@@ -11,6 +15,11 @@ export type LegendSettings = {
 export type LegendState = {
   settings: LegendSettings;
   size: Size;
+  /**
+   * This is a 2D array of LegendPayloads. The first dimension is for each graphical item.
+   * Some items may have multiple legend items, so the second dimension is for each legend item.
+   */
+  payload: ReadonlyArray<ReadonlyArray<LegendPayload>>;
 };
 
 const initialState: LegendState = {
@@ -23,6 +32,7 @@ const initialState: LegendState = {
     width: 0,
     height: 0,
   },
+  payload: [],
 };
 
 const legendSlice = createSlice({

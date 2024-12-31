@@ -24,6 +24,7 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
         verticalAlign: 'bottom',
         layout: 'vertical',
@@ -44,6 +45,7 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
         layout: 'horizontal',
         verticalAlign: 'middle',
@@ -64,6 +66,7 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
         layout: 'horizontal',
         verticalAlign: 'middle',
@@ -85,10 +88,11 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
+        align: 'left',
         layout: 'horizontal',
         verticalAlign: 'bottom',
-        align: 'left',
       },
       size: {
         width: 100,
@@ -105,10 +109,11 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
+        align: 'center',
         layout: 'vertical',
         verticalAlign: 'bottom',
-        align: 'center',
       },
       size: {
         width: 100,
@@ -125,6 +130,7 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
+      payload: [],
       settings: {
         align: 'center',
         layout: 'vertical',
@@ -154,6 +160,7 @@ describe('appendOffsetOfLegend', () => {
         width: 100,
         height: 200,
       },
+      payload: [],
     };
 
     const result = appendOffsetOfLegend(offset, props);
