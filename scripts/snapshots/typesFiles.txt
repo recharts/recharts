@@ -91,6 +91,7 @@
   "types/state/ReportChartProps.d.ts",
   "types/state/ReportPolarOptions.d.ts",
   "types/state/SetGraphicalItem.d.ts",
+  "types/state/SetLegendPayload.d.ts",
   "types/state/SetTooltipEntrySettings.d.ts",
   "types/state/brushSlice.d.ts",
   "types/state/cartesianAxisSlice.d.ts",

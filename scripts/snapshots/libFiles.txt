@@ -91,6 +91,7 @@
   "lib/state/ReportChartProps.js",
   "lib/state/ReportPolarOptions.js",
   "lib/state/SetGraphicalItem.js",
+  "lib/state/SetLegendPayload.js",
   "lib/state/SetTooltipEntrySettings.js",
   "lib/state/brushSlice.js",
   "lib/state/cartesianAxisSlice.js",
