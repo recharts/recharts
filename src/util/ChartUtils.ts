@@ -155,7 +155,10 @@ export type BarPositionPosition = {
 
 export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendState): ChartOffset => {
   if (legendState) {
-    const { width: boxWidth, height: boxHeight, align, verticalAlign, layout } = legendState;
+    const {
+      size: { width: boxWidth, height: boxHeight },
+      settings: { align, verticalAlign, layout },
+    } = legendState;
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&

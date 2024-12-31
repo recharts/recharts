@@ -33,6 +33,7 @@ import { selectLegendState } from '../../src/state/selectors/legendSelectors';
 import { LegendPortalContext } from '../../src/context/legendPortalContext';
 import { dataWithSpecialNameAndFillProperties } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { LegendState } from '../../src/state/legendSlice';
 
 function assertHasLegend(container: Element): ReadonlyArray<Element> {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -3450,13 +3451,18 @@ describe('<Legend />', () => {
         </BarChart>,
       );
 
-      expect(legendSpy).toHaveBeenLastCalledWith({
-        align: 'center',
-        height: 11,
-        layout: 'horizontal',
-        verticalAlign: 'bottom',
-        width: 3,
-      });
+      const expectedAfterFirstRender: LegendState = {
+        settings: {
+          align: 'center',
+          layout: 'horizontal',
+          verticalAlign: 'bottom',
+        },
+        size: {
+          height: 11,
+          width: 3,
+        },
+      };
+      expect(legendSpy).toHaveBeenLastCalledWith(expectedAfterFirstRender);
       expect(legendSpy).toHaveBeenCalledTimes(4);
 
       rerender(
@@ -3465,13 +3471,18 @@ describe('<Legend />', () => {
         </BarChart>,
       );
 
-      expect(legendSpy).toHaveBeenLastCalledWith({
-        align: 'center',
-        height: 0,
-        layout: 'horizontal',
-        verticalAlign: 'bottom',
-        width: 0,
-      });
+      const expectedAfterSecondRender: LegendState = {
+        settings: {
+          align: 'center',
+          layout: 'horizontal',
+          verticalAlign: 'bottom',
+        },
+        size: {
+          height: 0,
+          width: 0,
+        },
+      };
+      expect(legendSpy).toHaveBeenLastCalledWith(expectedAfterSecondRender);
       expect(legendSpy).toHaveBeenCalledTimes(7);
     });
   });

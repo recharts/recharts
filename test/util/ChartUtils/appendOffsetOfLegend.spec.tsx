@@ -24,11 +24,15 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
-      verticalAlign: 'bottom',
-      layout: 'vertical',
-      align: 'left',
-      width: 100,
-      height: 200,
+      settings: {
+        verticalAlign: 'bottom',
+        layout: 'vertical',
+        align: 'left',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     const result = appendOffsetOfLegend(offset, props);
     expect(result).toEqual({ bottom: 9, left: 105 });
@@ -40,11 +44,15 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-      align: 'left',
-      width: 100,
-      height: 200,
+      settings: {
+        layout: 'horizontal',
+        verticalAlign: 'middle',
+        align: 'left',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     const result = appendOffsetOfLegend(offset, props);
     expect(result).toEqual({ bottom: 9, left: 105 });
@@ -56,11 +64,15 @@ describe('appendOffsetOfLegend', () => {
       left: 5,
     };
     const props: LegendState = {
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-      align: 'left',
-      width: 100,
-      height: 200,
+      settings: {
+        layout: 'horizontal',
+        verticalAlign: 'middle',
+        align: 'left',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     appendOffsetOfLegend(offset, props);
 
@@ -73,11 +85,15 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
-      layout: 'horizontal',
-      verticalAlign: 'bottom',
-      align: 'left',
-      width: 100,
-      height: 200,
+      settings: {
+        layout: 'horizontal',
+        verticalAlign: 'bottom',
+        align: 'left',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     const result = appendOffsetOfLegend(offset, props);
     expect(result).toEqual({ bottom: 209, right: 14 });
@@ -89,11 +105,15 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
-      layout: 'horizontal',
-      verticalAlign: 'bottom',
-      align: 'center',
-      width: 100,
-      height: 200,
+      settings: {
+        layout: 'vertical',
+        verticalAlign: 'bottom',
+        align: 'center',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     const result = appendOffsetOfLegend(offset, props);
     expect(result).toEqual({ bottom: 209, right: 14 });
@@ -105,11 +125,15 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
-      verticalAlign: 'middle',
-      layout: 'vertical',
-      align: 'center',
-      width: 100,
-      height: 200,
+      settings: {
+        align: 'center',
+        layout: 'vertical',
+        verticalAlign: 'middle',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
     const result = appendOffsetOfLegend(offset, props);
     expect(result).toEqual({ bottom: 9, right: 14 });
@@ -121,11 +145,15 @@ describe('appendOffsetOfLegend', () => {
       right: 14,
     };
     const props: LegendState = {
-      align: 'left',
-      layout: 'horizontal',
-      verticalAlign: 'middle',
-      width: 100,
-      height: 200,
+      settings: {
+        align: 'left',
+        layout: 'horizontal',
+        verticalAlign: 'middle',
+      },
+      size: {
+        width: 100,
+        height: 200,
+      },
     };
 
     const result = appendOffsetOfLegend(offset, props);
