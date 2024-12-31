@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size } from '../util/types';
 import type { CategoricalChartState } from '../chart/types';
-import { LegendPayloadProvider } from './legendPayloadContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
@@ -73,9 +72,7 @@ export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProp
    */
   return (
     <UpdateIdContext.Provider value={updateId}>
-      <LegendPayloadProvider>
-        <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
-      </LegendPayloadProvider>
+      <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>
     </UpdateIdContext.Provider>
   );
 };

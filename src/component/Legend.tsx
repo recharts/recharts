@@ -1,7 +1,7 @@
 import React, { CSSProperties, PureComponent, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
-import { DefaultLegendContent, Payload, Props as DefaultProps } from './DefaultLegendContent';
+import { DefaultLegendContent, LegendPayload, Props as DefaultProps } from './DefaultLegendContent';
 
 import { isNumber } from '../util/DataUtils';
 import { LayoutType, Margin, Size } from '../util/types';
@@ -12,7 +12,7 @@ import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayout
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
 
-function defaultUniqBy(entry: Payload) {
+function defaultUniqBy(entry: LegendPayload) {
   return entry.value;
 }
 
@@ -20,7 +20,7 @@ type ContentProps = Props & {
   margin: Margin;
   chartWidth: number;
   chartHeight: number;
-  contextPayload: Payload[];
+  contextPayload: ReadonlyArray<LegendPayload>;
 };
 
 function LegendContent(props: ContentProps) {
@@ -90,7 +90,7 @@ export type Props = DefaultProps & {
   wrapperStyle?: CSSProperties;
   width?: number;
   height?: number;
-  payloadUniqBy?: UniqueOption<Payload>;
+  payloadUniqBy?: UniqueOption<LegendPayload>;
   onBBoxUpdate?: (box: BoundingBox | null) => void;
   /**
    * If portal is defined, then Legend will use this element as a target

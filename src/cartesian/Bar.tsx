@@ -38,8 +38,7 @@ import {
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -56,6 +55,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -173,11 +173,6 @@ const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => 
     },
   ];
 };
-
-function SetBarLegend(props: Props): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromBarData, props);
-  return null;
-}
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   const { dataKey, stroke, strokeWidth, fill, name, hide, unit } = props;
@@ -739,7 +734,7 @@ export class Bar extends PureComponent<Props> {
         barSize={this.props.barSize}
       >
         <ReportBar />
-        <SetBarLegend {...this.props} />
+        <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <BarImpl {...this.props} />
       </CartesianGraphicalItemContext>

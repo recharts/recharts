@@ -15,11 +15,16 @@ import {
 describe('selectLegendState', () => {
   shouldReturnUndefinedOutOfContext(selectLegendState);
   shouldReturnFromInitialState(selectLegendState, {
-    width: 0,
-    height: 0,
-    align: 'center',
-    layout: 'horizontal',
-    verticalAlign: 'middle',
+    payload: [],
+    settings: {
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'middle',
+    },
+    size: {
+      width: 0,
+      height: 0,
+    },
   });
 
   it('should return Legend settings', () => {
@@ -37,11 +42,13 @@ describe('selectLegendState', () => {
       </BarChart>,
     );
     const expected: LegendState = {
-      width: 17,
-      height: 71,
-      align: 'left',
-      layout: 'vertical',
-      verticalAlign: 'top',
+      payload: [],
+      size: { width: 17, height: 71 },
+      settings: {
+        align: 'left',
+        layout: 'vertical',
+        verticalAlign: 'top',
+      },
     };
     expect(legendSettingsSpy).toHaveBeenLastCalledWith(expected);
     expect(legendSettingsSpy).toHaveBeenCalledTimes(4);

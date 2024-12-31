@@ -42,7 +42,7 @@ import {
   selectUnfilteredPolarItems,
 } from './polarSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
-import { Payload as LegendPayload } from '../../component/DefaultLegendContent';
+import { LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
@@ -407,7 +407,7 @@ export const selectRadialBarSectors: (
   },
 );
 
-export const selectLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
+export const selectRadialBarLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
   createSelector(
     [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
     ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {

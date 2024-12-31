@@ -32,7 +32,6 @@ import {
   LayoutType,
   DataKey,
 } from '../util/types';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -44,9 +43,14 @@ import { ReportBar } from '../state/ReportBar';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
-import { RadialBarSettings, selectLegendPayload, selectRadialBarSectors } from '../state/selectors/radialBarSelectors';
+import {
+  RadialBarSettings,
+  selectRadialBarLegendPayload,
+  selectRadialBarSectors,
+} from '../state/selectors/radialBarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -154,14 +158,9 @@ interface State {
   readonly prevAnimationId?: string | number;
 }
 
-function identity<T>(value: T): T {
-  return value;
-}
-
-function SetRadialBarPayloadLegend(props: RadialBarProps): null {
-  const data = useAppSelector(state => selectLegendPayload(state, props.legendType));
-  useLegendPayloadDispatch(identity, data);
-  return null;
+function SetRadialBarPayloadLegend(props: RadialBarProps) {
+  const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
+  return <SetLegendPayload legendPayload={legendPayload} />;
 }
 
 function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {

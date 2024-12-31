@@ -22,8 +22,7 @@ import {
   TooltipType,
 } from '../util/types';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -36,6 +35,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useAppSelector } from '../state/hooks';
 import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -157,11 +157,6 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
     },
   ];
 };
-
-function SetAreaLegend(props: Props): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
-  return null;
-}
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
@@ -803,7 +798,7 @@ export class Area extends PureComponent<Props, State> {
         hide={this.props.hide}
         barSize={undefined}
       >
-        <SetAreaLegend {...this.props} />
+        <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <AreaImpl {...this.props} />
       </CartesianGraphicalItemContext>

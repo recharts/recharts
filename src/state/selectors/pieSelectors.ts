@@ -8,7 +8,7 @@ import { ChartData, ChartDataState } from '../chartDataSlice';
 import { ChartOffset, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
 import { selectChartOffset } from './selectChartOffset';
-import type { Payload as LegendPayload } from '../../component/DefaultLegendContent';
+import type { LegendPayload } from '../../component/DefaultLegendContent';
 import { getValueByDataKey } from '../../util/ChartUtils';
 
 export type ResolvedPieSettings = {

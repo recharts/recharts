@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { LayoutType, Size } from '../util/types';
-import type { HorizontalAlignmentType, VerticalAlignmentType } from '../component/DefaultLegendContent';
+import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
 
 export type LegendSettings = {
   layout: LayoutType;
@@ -8,14 +9,27 @@ export type LegendSettings = {
   verticalAlign: VerticalAlignmentType;
 };
 
-export type LegendState = LegendSettings & Size;
+export type LegendState = {
+  settings: LegendSettings;
+  size: Size;
+  /**
+   * This is a 2D array of LegendPayloads. The first dimension is for each graphical item.
+   * Some items may have multiple legend items, so the second dimension is for each legend item.
+   */
+  payload: ReadonlyArray<ReadonlyArray<LegendPayload>>;
+};
 
 const initialState: LegendState = {
-  width: 0,
-  height: 0,
-  layout: 'horizontal',
-  align: 'center',
-  verticalAlign: 'middle',
+  settings: {
+    layout: 'horizontal',
+    align: 'center',
+    verticalAlign: 'middle',
+  },
+  size: {
+    width: 0,
+    height: 0,
+  },
+  payload: [],
 };
 
 const legendSlice = createSlice({
@@ -23,17 +37,26 @@ const legendSlice = createSlice({
   initialState,
   reducers: {
     setLegendSize(state, action: PayloadAction<Size>) {
-      state.width = action.payload.width;
-      state.height = action.payload.height;
+      state.size.width = action.payload.width;
+      state.size.height = action.payload.height;
     },
     setLegendSettings(state, action: PayloadAction<LegendSettings>) {
-      state.align = action.payload.align;
-      state.layout = action.payload.layout;
-      state.verticalAlign = action.payload.verticalAlign;
+      state.settings.align = action.payload.align;
+      state.settings.layout = action.payload.layout;
+      state.settings.verticalAlign = action.payload.verticalAlign;
+    },
+    addLegendPayload(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
+      state.payload.push(castDraft(action.payload));
+    },
+    removeLegendPayload(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
+      const index = current(state).payload.indexOf(castDraft(action.payload));
+      if (index > -1) {
+        state.payload.splice(index, 1);
+      }
     },
   },
 });
 
-export const { setLegendSize, setLegendSettings } = legendSlice.actions;
+export const { setLegendSize, setLegendSettings, addLegendPayload, removeLegendPayload } = legendSlice.actions;
 
 export const legendReducer = legendSlice.reducer;
