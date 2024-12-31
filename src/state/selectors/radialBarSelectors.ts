@@ -42,7 +42,7 @@ import {
   selectUnfilteredPolarItems,
 } from './polarSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
-import { Payload as LegendPayload } from '../../component/DefaultLegendContent';
+import { LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {

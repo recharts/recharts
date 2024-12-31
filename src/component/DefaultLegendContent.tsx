@@ -20,9 +20,9 @@ export type ContentType = ReactElement | ((props: Props) => ReactNode);
 export type IconType = Exclude<LegendType, 'none'>;
 export type HorizontalAlignmentType = 'center' | 'left' | 'right';
 export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
-export type Formatter = (value: any, entry: Payload, index: number) => ReactNode;
+export type Formatter = (value: any, entry: LegendPayload, index: number) => ReactNode;
 
-export interface Payload {
+export interface LegendPayload {
   value: any;
   id?: string;
   type?: LegendType;
@@ -47,12 +47,12 @@ interface InternalProps {
   /**
    * @deprecated Legend.payload prop is not doing anything. Legend is set from data on other graphical elements like Bar, Line, and Area.
    */
-  payload?: Array<Payload>;
+  payload?: Array<LegendPayload>;
   inactiveColor?: string;
   formatter?: Formatter;
-  onMouseEnter?: (data: Payload, index: number, event: MouseEvent) => void;
-  onMouseLeave?: (data: Payload, index: number, event: MouseEvent) => void;
-  onClick?: (data: Payload, index: number, event: MouseEvent) => void;
+  onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  onMouseLeave?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  onClick?: (data: LegendPayload, index: number, event: MouseEvent) => void;
 }
 
 export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;
@@ -74,7 +74,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
    * @param iconType if defined, it will always render this icon. If undefined then it uses icon from data.type
    * @return Path element
    */
-  renderIcon(data: Payload, iconType: IconType | undefined) {
+  renderIcon(data: LegendPayload, iconType: IconType | undefined) {
     const { inactiveColor } = this.props;
     const halfSize = SIZE / 2;
     const sixthSize = SIZE / 6;

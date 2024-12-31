@@ -38,7 +38,7 @@ import {
 } from '../util/types';
 import { ImplicitLabelType } from '../component/Label';
 import { BarRectangle, BarRectangleProps, MinPointSize, minPointSizeCallback } from '../util/BarUtils';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,

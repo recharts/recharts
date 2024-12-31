@@ -1,6 +1,6 @@
 import { ReactElement, useCallback } from 'react';
 import { useLegendPayloadDispatch } from '../../src/context/legendPayloadContext';
-import { Payload as LegendPayload } from '../../src/component/DefaultLegendContent';
+import { LegendPayload } from '../../src/component/DefaultLegendContent';
 
 export const exampleLegendPayload: LegendPayload[] = [
   {

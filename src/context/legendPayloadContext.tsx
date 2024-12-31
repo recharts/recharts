@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import { LegendPayload } from '../component/DefaultLegendContent';
 
 type PayloadSupplier = () => Array<LegendPayload>;
 

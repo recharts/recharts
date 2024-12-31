@@ -22,7 +22,7 @@ import {
   TooltipType,
 } from '../util/types';
 import { filterProps, hasClipDot } from '../util/ReactUtils';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';

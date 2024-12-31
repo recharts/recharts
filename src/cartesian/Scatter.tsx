@@ -29,7 +29,7 @@ import {
 import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,

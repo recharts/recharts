@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { LayoutType, Size } from '../util/types';
-import {
-  HorizontalAlignmentType,
-  Payload as LegendPayload,
-  VerticalAlignmentType,
-} from '../component/DefaultLegendContent';
+import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
 
 export type LegendSettings = {
   layout: LayoutType;

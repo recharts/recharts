@@ -17,7 +17,7 @@ import { LabelList } from '../component/LabelList';
 import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
-import type { Payload as LegendPayload } from '../component/DefaultLegendContent';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
