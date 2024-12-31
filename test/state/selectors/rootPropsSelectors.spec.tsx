@@ -59,7 +59,7 @@ describe('selectRootMaxBarSize', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(6);
   });
 });
 
