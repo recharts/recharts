@@ -11,7 +11,11 @@ type UniqueFunc<T> = (entry: T) => unknown;
  */
 export type UniqueOption<T> = boolean | UniqueFunc<T>;
 
-export function getUniqPayload<T>(payload: Array<T>, option: UniqueOption<T>, defaultUniqBy: UniqueFunc<T>): Array<T> {
+export function getUniqPayload<T>(
+  payload: ReadonlyArray<T>,
+  option: UniqueOption<T>,
+  defaultUniqBy: UniqueFunc<T>,
+): ReadonlyArray<T> {
   if (option === true) {
     return uniqBy(payload, defaultUniqBy);
   }

@@ -20,7 +20,7 @@ type ContentProps = Props & {
   margin: Margin;
   chartWidth: number;
   chartHeight: number;
-  contextPayload: LegendPayload[];
+  contextPayload: ReadonlyArray<LegendPayload>;
 };
 
 function LegendContent(props: ContentProps) {

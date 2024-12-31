@@ -1,5 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { LegendPayload } from '../component/DefaultLegendContent';
+import { useAppSelector } from '../state/hooks';
+import { selectLegendPayload } from '../state/selectors/legendSelectors';
 
 type PayloadSupplier = () => Array<LegendPayload>;
 
@@ -40,9 +42,8 @@ export const LegendPayloadProvider = ({ children }: { children: React.ReactNode 
  * Use this hook in Legend, or anywhere else where you want to read the current Legend items.
  * @return all Legend items ready to be rendered
  */
-export function useLegendPayload(): Array<LegendPayload> {
-  const allSuppliers = useContext(LegendPayloadContext);
-  return allSuppliers.flatMap((supplier: PayloadSupplier) => supplier());
+export function useLegendPayload(): ReadonlyArray<LegendPayload> {
+  return useAppSelector(selectLegendPayload);
 }
 
 /**
@@ -53,6 +54,8 @@ export function useLegendPayload(): Array<LegendPayload> {
  * @param computeLegendPayload function that accepts input and returns Legend payload array
  * @param input input to computeLegendPayload function
  * @returns void - this does not return anything, only use it to write legend items
+ *
+ * @deprecated instead use SetLegendPayload
  */
 export function useLegendPayloadDispatch<Input>(
   computeLegendPayload: (input1: Input) => Array<LegendPayload>,
@@ -79,15 +82,4 @@ export function useLegendPayloadDispatch<Input>(
     };
   }, [input, addSupplier, removeSupplier, computeLegendPayload]);
   return null;
-}
-
-export function useSetLegendPayload(legendPayload: Array<LegendPayload>): void {
-  const { addSupplier, removeSupplier } = useContext(LegendPayloadDispatchContext);
-  useEffect(() => {
-    const supplier = () => legendPayload;
-    addSupplier(supplier);
-    return () => {
-      removeSupplier(supplier);
-    };
-  }, [addSupplier, removeSupplier, legendPayload]);
 }

@@ -12,6 +12,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     container: HTMLElement;
     spy: Mock<(selectorResult: T) => void>;
     debug: () => void;
+    rerender: (ui: ReactNode) => void;
   } {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
 
@@ -20,12 +21,12 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       return null;
     };
 
-    const { container, debug } = render(
+    const { container, debug, rerender } = render(
       <Component>
         <Comp />
       </Component>,
     );
-    return { container, spy, debug };
+    return { container, spy, debug, rerender };
   };
 }
 

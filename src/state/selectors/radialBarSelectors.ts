@@ -407,7 +407,7 @@ export const selectRadialBarSectors: (
   },
 );
 
-export const selectLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
+export const selectRadialBarLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
   createSelector(
     [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
     ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {

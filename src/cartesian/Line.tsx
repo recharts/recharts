@@ -24,7 +24,6 @@ import {
   TooltipType,
 } from '../util/types';
 import type { LegendPayload } from '../component/DefaultLegendContent';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
@@ -36,6 +35,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -145,11 +145,6 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
     },
   ];
 };
-
-function SetLineLegend(props: Props): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromAreaData, props);
-  return null;
-}
 
 function getTooltipEntrySettings(props: Props): TooltipPayloadConfiguration {
   const { dataKey, data, stroke, strokeWidth, fill, name, hide, unit } = props;
@@ -673,7 +668,7 @@ export class Line extends PureComponent<Props> {
         hide={this.props.hide}
         barSize={undefined}
       >
-        <SetLineLegend {...this.props} />
+        <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <LineImpl {...this.props} />
       </CartesianGraphicalItemContext>

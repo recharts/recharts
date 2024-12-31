@@ -512,6 +512,56 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(spy).toHaveBeenLastCalledWith(expected);
     });
 
+    it('should add a record to Legend payload, and remove it when the element is removed', () => {
+      const legendSpy = vi.fn();
+      const Comp = (): null => {
+        legendSpy(useLegendPayload());
+        return null;
+      };
+
+      const { rerender } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" />
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith([
+        {
+          color: '#3182bd',
+          dataKey: 'value',
+          inactive: false,
+          payload: {
+            activeDot: true,
+            animationBegin: 0,
+            animationDuration: 1500,
+            animationEasing: 'ease',
+            connectNulls: false,
+            dataKey: 'value',
+            dot: false,
+            fill: '#3182bd',
+            fillOpacity: 0.6,
+            hide: false,
+            isAnimationActive: true,
+            legendType: 'line',
+            stroke: '#3182bd',
+            xAxisId: 0,
+            yAxisId: 0,
+          },
+          type: 'line',
+          value: 'value',
+        },
+      ]);
+
+      rerender(
+        <ChartElement data={data}>
+          <Customized component={<Comp />} />
+        </ChartElement>,
+      );
+
+      expect(legendSpy).toHaveBeenLastCalledWith([]);
+    });
+
     it('should add a record to Legend and Tooltip payloads', () => {
       const legendSpy = vi.fn();
       const tooltipSpy = vi.fn();

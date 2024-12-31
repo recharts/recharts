@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { castDraft } from 'immer';
 import { LayoutType, Size } from '../util/types';
 import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
 
@@ -44,9 +45,18 @@ const legendSlice = createSlice({
       state.settings.layout = action.payload.layout;
       state.settings.verticalAlign = action.payload.verticalAlign;
     },
+    addLegendPayload(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
+      state.payload.push(castDraft(action.payload));
+    },
+    removeLegendPayload(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
+      const index = current(state).payload.indexOf(castDraft(action.payload));
+      if (index > -1) {
+        state.payload.splice(index, 1);
+      }
+    },
   },
 });
 
-export const { setLegendSize, setLegendSettings } = legendSlice.actions;
+export const { setLegendSize, setLegendSettings, addLegendPayload, removeLegendPayload } = legendSlice.actions;
 
 export const legendReducer = legendSlice.reducer;

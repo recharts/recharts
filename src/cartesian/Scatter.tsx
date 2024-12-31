@@ -30,7 +30,6 @@ import { TooltipType } from '../component/DefaultTooltipContent';
 import { ScatterSymbol } from '../util/ScatterUtils';
 import { InnerSymbolsProp } from '../shape/Symbols';
 import type { LegendPayload } from '../component/DefaultLegendContent';
-import { useLegendPayloadDispatch } from '../context/legendPayloadContext';
 import {
   useMouseClickItemDispatch,
   useMouseEnterItemDispatch,
@@ -47,6 +46,7 @@ import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelect
 import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { SetLegendPayload } from '../state/SetLegendPayload';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -159,11 +159,6 @@ const computeLegendPayloadFromScatterProps = (props: Props): Array<LegendPayload
     },
   ];
 };
-
-function SetScatterLegend(props: Props): null {
-  useLegendPayloadDispatch(computeLegendPayloadFromScatterProps, props);
-  return null;
-}
 
 type ScatterSymbolsProps = {
   points: ReadonlyArray<ScatterPointItem>;
@@ -632,7 +627,7 @@ export class Scatter extends Component<Props> {
         hide={this.props.hide}
         barSize={undefined}
       >
-        <SetScatterLegend {...this.props} />
+        <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(this.props)} />
         <ScatterImpl {...this.props} />
       </CartesianGraphicalItemContext>
     );

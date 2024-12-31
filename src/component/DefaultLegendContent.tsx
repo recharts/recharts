@@ -47,7 +47,7 @@ interface InternalProps {
   /**
    * @deprecated Legend.payload prop is not doing anything. Legend is set from data on other graphical elements like Bar, Line, and Area.
    */
-  payload?: Array<LegendPayload>;
+  payload?: ReadonlyArray<LegendPayload>;
   inactiveColor?: string;
   formatter?: Formatter;
   onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent) => void;

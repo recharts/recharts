@@ -29,7 +29,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
-import { selectLegendState } from '../../src/state/selectors/legendSelectors';
+import { selectLegendPayload, selectLegendState } from '../../src/state/selectors/legendSelectors';
 import { LegendPortalContext } from '../../src/context/legendPortalContext';
 import { dataWithSpecialNameAndFillProperties } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -446,7 +446,7 @@ describe('<Legend />', () => {
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
         </LineChart>,
       );
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith({
         align: 'center',
         chartHeight: 300,
@@ -832,7 +832,7 @@ describe('<Legend />', () => {
             <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           </LineChart>,
         );
-        expect.soft(spy).toHaveBeenCalledTimes(3);
+        expect.soft(spy).toHaveBeenCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith({
           align: 'center',
           chartHeight: 300,
@@ -1059,7 +1059,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([485, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(6);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(5);
 
       expectBars(container, [
         {
@@ -1122,7 +1122,7 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
 
       expect(yAxisRangeSpy).toHaveBeenLastCalledWith([495, 5]);
-      expect(yAxisRangeSpy).toHaveBeenCalledTimes(9);
+      expect(yAxisRangeSpy).toHaveBeenCalledTimes(8);
 
       expectBars(container, [
         {
@@ -1662,7 +1662,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(6);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1720,7 +1720,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(6);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1749,7 +1749,7 @@ describe('<Legend />', () => {
             spy(offset);
           },
         )();
-        expect(spy).toHaveBeenCalledTimes(6);
+        expect(spy).toHaveBeenCalledTimes(5);
         expect(spy).toHaveBeenLastCalledWith({
           brushBottom: 5,
           top: 5,
@@ -1792,32 +1792,51 @@ describe('<Legend />', () => {
   });
 
   describe('as a child of AreaChart', () => {
-    it('should render one rect legend item for each Area, with default class and style attributes', () => {
-      const { container, getByText } = render(
+    describe('with two Areas', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey="percent" />
           <Area dataKey="value" />
-        </AreaChart>,
-      );
-      expect(getByText('value')).toBeInTheDocument();
-      expect(getByText('percent')).toBeInTheDocument();
+          {children}
+        </AreaChart>
+      ));
 
-      const legendItems = assertHasLegend(container);
-      expect(legendItems).toHaveLength(2);
+      it('should render one legend item for each Area', () => {
+        const { container } = renderTestCase();
+        expectLegendLabels(container, [
+          {
+            fill: 'none',
+            textContent: 'percent',
+          },
+          {
+            fill: 'none',
+            textContent: 'value',
+          },
+        ]);
+      });
 
-      expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
-      expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
-      expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
-      expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
-      expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+      it('should add class and style attributes to each element', () => {
+        const { container } = renderTestCase();
 
-      // in absence of explicit `legendType`, Area should default to line
-      const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
-        tc => tc.legendType === 'line',
-      );
-      assertExpectedAttributes(container, selector, expectedAttributes);
+        const legendItems = assertHasLegend(container);
+        expect(legendItems).toHaveLength(2);
+
+        expect.soft(legendItems[0].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[0].getAttribute('class')).toBe('recharts-legend-item legend-item-0');
+        expect.soft(legendItems[0].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+        expect.soft(legendItems[1].getAttributeNames()).toEqual(['class', 'style']);
+        expect.soft(legendItems[1].getAttribute('class')).toBe('recharts-legend-item legend-item-1');
+        expect.soft(legendItems[1].getAttribute('style')).toBe('display: inline-block; margin-right: 10px;');
+      });
+
+      it('should render Line symbols and colors in absence of explicit legendType', () => {
+        const { container } = renderTestCase();
+        const { selector, expectedAttributes } = expectedLegendTypeSymbolsWithColor('#3182bd').find(
+          tc => tc.legendType === 'line',
+        );
+        assertExpectedAttributes(container, selector, expectedAttributes);
+      });
     });
 
     it('should render a legend item even if the dataKey does not match anything from the data', () => {
@@ -1890,24 +1909,57 @@ describe('<Legend />', () => {
       expect(legendItems[0].textContent).toBe('');
     });
 
-    it('should set legend item from `name` prop on Area, and update it after rerender', () => {
-      const { rerender, queryByText } = render(
+    describe('with `name` prop on Area', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
           <Area dataKey="percent" name="%" />
-        </AreaChart>,
-      );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).toBeInTheDocument();
-      rerender(
-        <AreaChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Area dataKey="percent" name="Percent" />
-        </AreaChart>,
-      );
-      expect.soft(queryByText('percent')).not.toBeInTheDocument();
-      expect.soft(queryByText('%')).not.toBeInTheDocument();
-      expect.soft(queryByText('Percent')).toBeInTheDocument();
+          {children}
+        </AreaChart>
+      ));
+
+      it('should set legend item from `name` prop on Area, and update it after rerender', () => {
+        const { container, rerender } = renderTestCase();
+        expectLegendLabels(container, [{ fill: 'none', textContent: '%' }]);
+        rerender(
+          <AreaChart width={500} height={500} data={numericalData}>
+            <Legend />
+            <Area dataKey="percent" name="Percent" />
+          </AreaChart>,
+        );
+        expectLegendLabels(container, [{ fill: 'none', textContent: 'Percent' }]);
+      });
+
+      it('should select legend payload', () => {
+        const { spy } = renderTestCase(selectLegendPayload);
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            inactive: false,
+            dataKey: 'percent',
+            type: 'line',
+            color: '#3182bd',
+            value: '%',
+            payload: {
+              dataKey: 'percent',
+              name: '%',
+              activeDot: true,
+              animationBegin: 0,
+              animationDuration: 1500,
+              animationEasing: 'ease',
+              connectNulls: false,
+              dot: false,
+              fill: '#3182bd',
+              fillOpacity: 0.6,
+              hide: false,
+              isAnimationActive: true,
+              legendType: 'line',
+              stroke: '#3182bd',
+              xAxisId: 0,
+              yAxisId: 0,
+            },
+          },
+        ]);
+      });
     });
 
     it('should not implicitly read `name` and `fill` properties from the data array', () => {

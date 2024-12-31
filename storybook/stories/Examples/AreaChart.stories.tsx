@@ -2,7 +2,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
 import { pageData, rangeData } from '../data';
-import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area } from '../../../src';
+import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area, Legend } from '../../../src';
 
 export default {
   component: AreaChart,
@@ -59,6 +59,7 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip active defaultIndex={2} />
+          <Legend />
         </AreaChart>
       </ResponsiveContainer>
     );
