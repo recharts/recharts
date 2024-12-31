@@ -38,7 +38,7 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
   return entry.dataKey;
 }
 
-type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
+export type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
   label: string;
   payload: any[];
   coordinate: ChartCoordinate;
