@@ -1,6 +1,7 @@
 import { CSSProperties } from 'react';
 import { Global } from './Global';
 import { Size } from './types';
+import { RechartsDOMRect } from '../state/layoutSlice';
 
 interface StringCache {
   widthCache: Record<string, any>;
@@ -81,7 +82,7 @@ export interface ContainerOffset {
   left: number;
 }
 
-export const getOffset = (rect: ContainerOffset): ContainerOffset => {
+export const getOffset = (rect: RechartsDOMRect): ContainerOffset => {
   return {
     top: rect.top + window.scrollY - document.documentElement.clientTop,
     left: rect.left + window.scrollX - document.documentElement.clientLeft,
