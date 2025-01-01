@@ -1,4 +1,5 @@
 import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
+import { WritableDraft } from 'immer';
 import { AxisId } from './cartesianAxisSlice';
 import { IfOverflow } from '../util/IfOverflow';
 
@@ -42,28 +43,28 @@ export const referenceElementsSlice = createSlice({
   name: 'referenceElements',
   initialState,
   reducers: {
-    addDot: (state, action: PayloadAction<ReferenceDotSettings>) => {
+    addDot: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceDotSettings>) => {
       state.dots.push(action.payload);
     },
-    removeDot: (state, action: PayloadAction<ReferenceDotSettings>) => {
+    removeDot: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceDotSettings>) => {
       const index = current(state).dots.findIndex(dot => dot === action.payload);
       if (index !== -1) {
         state.dots.splice(index, 1);
       }
     },
-    addArea: (state, action: PayloadAction<ReferenceAreaSettings>) => {
+    addArea: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceAreaSettings>) => {
       state.areas.push(action.payload);
     },
-    removeArea: (state, action: PayloadAction<ReferenceAreaSettings>) => {
+    removeArea: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceAreaSettings>) => {
       const index = current(state).areas.findIndex(area => area === action.payload);
       if (index !== -1) {
         state.areas.splice(index, 1);
       }
     },
-    addLine: (state, action: PayloadAction<ReferenceLineSettings>) => {
+    addLine: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceLineSettings>) => {
       state.lines.push(action.payload);
     },
-    removeLine: (state, action: PayloadAction<ReferenceLineSettings>) => {
+    removeLine: (state: WritableDraft<ReferenceElementState>, action: PayloadAction<ReferenceLineSettings>) => {
       const index = current(state).lines.findIndex(line => line === action.payload);
       if (index !== -1) {
         state.lines.splice(index, 1);
