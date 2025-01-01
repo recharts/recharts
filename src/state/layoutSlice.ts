@@ -21,7 +21,7 @@ export interface RechartsHTMLContainer {
   offsetWidth: number;
 }
 
-type ChartLayout = {
+type ChartLayoutState = {
   layoutType: LayoutType;
   container: RechartsHTMLContainer | null;
   width: number;
@@ -29,7 +29,7 @@ type ChartLayout = {
   margin: Margin;
 };
 
-const initialState: ChartLayout = {
+const initialState: ChartLayoutState = {
   layoutType: 'horizontal',
   container: null,
   width: 0,
