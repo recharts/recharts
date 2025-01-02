@@ -166,6 +166,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
       );
 
       const color = entry.inactive ? inactiveColor : entry.color;
+      const finalValue = finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue;
 
       return (
         <li
@@ -175,11 +176,17 @@ export class DefaultLegendContent extends PureComponent<Props> {
           key={`legend-item-${i}`}
           {...adaptEventsOfChild(this.props, entry, i)}
         >
-          <Surface width={iconSize} height={iconSize} viewBox={viewBox} style={svgStyle}>
+          <Surface
+            width={iconSize}
+            height={iconSize}
+            viewBox={viewBox}
+            style={svgStyle}
+            aria-label={`${finalValue} legend icon`}
+          >
             {this.renderIcon(entry, iconType)}
           </Surface>
           <span className="recharts-legend-item-text" style={{ color }}>
-            {finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue}
+            {finalValue}
           </span>
         </li>
       );

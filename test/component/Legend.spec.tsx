@@ -609,6 +609,7 @@ describe('<Legend />', () => {
         const surface = legendItem.getElementsByClassName('recharts-surface')[0];
         expect(surface.getAttribute('height')).toBe('14');
         expect(surface.getAttribute('width')).toBe('14');
+        expect(surface.getAttribute('aria-label')).toBe('My Line Data legend icon');
       });
 
       test(`Renders '' if sibling's dataKey is a function and name is not provided`, () => {
