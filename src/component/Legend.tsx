@@ -7,7 +7,7 @@ import { isNumber } from '../util/DataUtils';
 import { LayoutType, Margin, Size } from '../util/types';
 import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { useLegendPayload } from '../context/legendPayloadContext';
-import { BoundingBox, useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
+import { ElementOffset, useElementOffset } from '../util/useElementOffset';
 import { useChartHeight, useChartWidth, useMargin } from '../context/chartLayoutContext';
 import { LegendSettings, setLegendSettings, setLegendSize } from '../state/legendSlice';
 import { useAppDispatch } from '../state/hooks';
@@ -55,7 +55,7 @@ function getDefaultPosition(
   margin: Margin,
   chartWidth: number,
   chartHeight: number,
-  box: BoundingBox,
+  box: ElementOffset,
 ) {
   const { layout, align, verticalAlign } = props;
   let hPos, vPos;
@@ -91,7 +91,7 @@ export type Props = DefaultProps & {
   width?: number;
   height?: number;
   payloadUniqBy?: UniqueOption<LegendPayload>;
-  onBBoxUpdate?: (box: BoundingBox | null) => void;
+  onBBoxUpdate?: (box: ElementOffset | null) => void;
   /**
    * If portal is defined, then Legend will use this element as a target
    * for rendering using React Portal: https://react.dev/reference/react-dom/createPortal
@@ -132,7 +132,7 @@ function LegendWrapper(props: Props) {
   const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
-  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect([contextPayload]);
+  const [lastBoundingBox, updateBoundingBox] = useElementOffset([contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);

@@ -4,7 +4,7 @@ import { ComposedChart, ResponsiveContainer } from '../../../src';
 import { useChartHeight, useChartWidth } from '../../../src/context/chartLayoutContext';
 import { selectContainerOffset } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
-import { ContainerOffset } from '../../../src/util/DOMUtils';
+import { ElementOffset } from '../../../src/util/useElementOffset';
 
 /**
  * Renders a line with arrows on left and right.
@@ -157,7 +157,7 @@ function Crosshair({ x, y }: { x: number; y: number }) {
 
 function CrosshairWrapper() {
   const [mousePosition, setMousePosition] = useState<null | { pageX: number; pageY: number }>(null);
-  const offset: ContainerOffset | undefined = useAppSelector(selectContainerOffset);
+  const offset: ElementOffset | undefined = useAppSelector(selectContainerOffset);
   if (offset == null) {
     return null;
   }

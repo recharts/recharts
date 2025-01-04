@@ -14,7 +14,7 @@ import { getUniqPayload, UniqueOption } from '../util/payload/getUniqPayload';
 import { AllowInDimension, AnimationDuration, AnimationTiming, ChartCoordinate, Coordinate } from '../util/types';
 import { useViewBox } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
-import { useGetBoundingClientRect } from '../util/useGetBoundingClientRect';
+import { useElementOffset } from '../util/useElementOffset';
 import { Cursor, CursorDefinition } from './Cursor';
 import {
   selectActiveCoordinate,
@@ -185,7 +185,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
   const finalIsActive = activeFromProps ?? isActive;
-  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect([payload, finalIsActive]);
+  const [lastBoundingBox, updateBoundingBox] = useElementOffset([payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
   useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);

@@ -1,11 +1,12 @@
-import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref } from 'react';
+import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref, useEffect } from 'react';
 import clsx from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
-import { setContainer } from '../state/layoutSlice';
+import { setContainer, setOffset } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
+import { useElementOffset } from '../util/useElementOffset';
 
 export type RechartsWrapperProps = {
   children: ReactNode;
@@ -17,17 +18,29 @@ export type RechartsWrapperProps = {
   wrapperEvents?: DOMAttributes<HTMLDivElement>;
 };
 
+const useReportChartOffset = () => {
+  const dispatch = useAppDispatch();
+  const [lastOffset, setLastOffset] = useElementOffset();
+  useEffect(() => {
+    dispatch(setOffset(lastOffset));
+  }, [dispatch, lastOffset]);
+  return setLastOffset;
+};
+
 export const RechartsWrapper = forwardRef(
   ({ children, width, height, className, style, wrapperEvents }: RechartsWrapperProps, ref: Ref<HTMLDivElement>) => {
     const dispatch = useAppDispatch();
 
     useSynchronisedEventsFromOtherCharts();
 
+    const setLastOffset = useReportChartOffset();
+
     const innerRef = (node: HTMLDivElement | null) => {
       dispatch(setContainer(node));
       if (typeof ref === 'function') {
         ref(node);
       }
+      setLastOffset(node);
     };
     const myOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseClickAction(e));
