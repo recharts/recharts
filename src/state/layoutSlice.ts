@@ -2,23 +2,34 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { LayoutType, Margin, Size } from '../util/types';
 
+/**
+ * This is a subset of DOMRect returned by getBoundingClientRect().
+ * We don't use the straight `DOMRect` type for two reasons:
+ *
+ * 1. We don't use all the properties from it, and
+ * 2. DOMRect type has `toJSON` method that I am too lazy to mock everywhere and also is not serializable, so I don't want to store it in Redux state.
+ */
+export type RechartsDOMRect = {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+};
+
 export interface RechartsHTMLContainer {
-  getBoundingClientRect: () => DOMRect;
+  getBoundingClientRect: () => RechartsDOMRect;
   offsetWidth: number;
 }
 
-type ChartLayout = {
+type ChartLayoutState = {
   layoutType: LayoutType;
-  /**
-   * Why not DOMRect? Because resize
-   */
   container: RechartsHTMLContainer | null;
   width: number;
   height: number;
   margin: Margin;
 };
 
-const initialState: ChartLayout = {
+const initialState: ChartLayoutState = {
   layoutType: 'horizontal',
   container: null,
   width: 0,

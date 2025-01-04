@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RechartsRootState } from '../store';
 import { ContainerOffset, getOffset } from '../../util/DOMUtils';
-import { RechartsHTMLContainer } from '../layoutSlice';
+import { RechartsDOMRect, RechartsHTMLContainer } from '../layoutSlice';
 import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
 import { Margin } from '../../util/types';
 
@@ -23,13 +23,13 @@ export const selectRootContainer = (state: RechartsRootState): RechartsHTMLConta
  * @param state RechartsRootState
  * @return DOMRect
  */
-export const selectRootContainerDomRect: (state: RechartsRootState) => DOMRect | undefined = (
+export const selectRootContainerDomRect: (state: RechartsRootState) => RechartsDOMRect | undefined = (
   state: RechartsRootState,
 ) => selectRootContainer(state)?.getBoundingClientRect();
 
 export const selectContainerOffset: (state: RechartsRootState) => ContainerOffset | undefined = createSelector(
   selectRootContainerDomRect,
-  (rect: DOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
+  (rect: RechartsDOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
 );
 
 export const selectChartWidth = (state: RechartsRootState): number => state.layout.width;
@@ -39,7 +39,7 @@ export const selectChartHeight = (state: RechartsRootState): number => state.lay
 export const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) => ChartPointer | undefined =
   createSelector(
     selectContainerOffset,
-    (_, event) => event,
+    (_state: RechartsRootState, event: MousePointer): MousePointer => event,
     (containerOffset: ContainerOffset | undefined, event: MousePointer): ChartPointer | undefined => {
       if (!containerOffset) {
         return undefined;
