@@ -185,7 +185,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
    * If the `active` prop is not defined then it will show and hide based on mouse or keyboard activity.
    */
   const finalIsActive = activeFromProps ?? isActive;
-  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [payload, finalIsActive]);
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect([payload, finalIsActive]);
   const finalLabel = tooltipEventType === 'axis' ? labelFromRedux : undefined;
 
   useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);

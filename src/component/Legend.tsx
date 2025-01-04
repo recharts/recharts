@@ -132,7 +132,7 @@ function LegendWrapper(props: Props) {
   const { width: widthFromProps, height: heightFromProps, wrapperStyle, portal: portalFromProps } = props;
   // The contextPayload is not used directly inside the hook, but we need the onBBoxUpdate call
   // when the payload changes, therefore it's here as a dependency.
-  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect(undefined, [contextPayload]);
+  const [lastBoundingBox, updateBoundingBox] = useGetBoundingClientRect([contextPayload]);
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const maxWidth = chartWidth - (margin.left || 0) - (margin.right || 0);
