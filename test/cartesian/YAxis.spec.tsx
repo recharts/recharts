@@ -930,7 +930,7 @@ describe('<YAxis />', () => {
         </BarChart>,
       );
       expect(container.querySelector('.yAxis')).toBeVisible();
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       const expectedSettings: YAxisSettings = {
         angle: 17,
         minTickGap: 8,

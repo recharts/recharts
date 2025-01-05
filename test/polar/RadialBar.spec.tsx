@@ -1053,7 +1053,7 @@ describe('<RadialBar />', () => {
       );
 
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(6);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
     });
   });
 });

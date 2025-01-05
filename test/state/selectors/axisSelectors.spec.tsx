@@ -92,7 +92,7 @@ describe('selectAxisScale', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenCalledWith(expect.any(Function));
   });
 
@@ -111,7 +111,7 @@ describe('selectAxisScale', () => {
       </BarChart>,
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
   });
 
@@ -318,11 +318,11 @@ describe('selectAxisDomain', () => {
       </LineChart>,
     );
     expect(axisDomainSpy).toHaveBeenLastCalledWith([481, 672, 721, 446, 598, 774, 687, 762, 439, 569]);
-    expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+    expect(axisDomainSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should be stable', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     const Comp = (): null => {
       const isPanorama = useIsPanorama();
       const result1 = useAppSelector(state => selectAxisDomain(state, 'xAxis', defaultAxisId, isPanorama));
@@ -392,12 +392,12 @@ describe('selectAxisDomain', () => {
     expect(domainRightSpy).toHaveBeenLastCalledWith([0, 1520]);
     expect(domainRightIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1600]);
     expect(scaleRightSpy).toHaveBeenLastCalledWith([0, 1600]);
-    expect(domainLeftSpy).toHaveBeenCalledTimes(4);
-    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(4);
-    expect(scaleLeftSpy).toHaveBeenCalledTimes(4);
-    expect(domainRightSpy).toHaveBeenCalledTimes(4);
-    expect(domainRightIncludingNiceTicksSpy).toHaveBeenCalledTimes(4);
-    expect(scaleRightSpy).toHaveBeenCalledTimes(4);
+    expect(domainLeftSpy).toHaveBeenCalledTimes(3);
+    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
+    expect(scaleLeftSpy).toHaveBeenCalledTimes(3);
+    expect(domainRightSpy).toHaveBeenCalledTimes(3);
+    expect(domainRightIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
+    expect(scaleRightSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
@@ -1633,7 +1633,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return all data defined on graphical items', () => {
@@ -1661,7 +1661,7 @@ describe('selectCartesianGraphicalItemsData', () => {
       // the arrayContaining is there because it ignores elements order.
       expect.arrayContaining([7, 8, 9, 70, 80, 90, 1, 2, 3, 10, 20, 30, 4, 5, 6, 40, 50, 60]),
     );
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return nothing for graphical items that do not have any explicit data prop on them', () => {
@@ -1875,7 +1875,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should be stable', () => {
@@ -1978,7 +1978,7 @@ describe('selectDisplayedData', () => {
         z: 1305,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in all graphical items based on the input dataKey, and default axis ID', () => {
@@ -2011,7 +2011,7 @@ describe('selectDisplayedData', () => {
       { value: 293 },
       { value: 244 },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in graphical items with matching axis ID', () => {
@@ -2100,12 +2100,12 @@ describe('selectDisplayedData', () => {
     ]);
     expect(axisDomainSpy1).toHaveBeenLastCalledWith([280, 294, 239, 293, 244]);
     expect(axisDomainSpy2).toHaveBeenLastCalledWith([481, 672, 721, 446, 598]);
-    expect(axisDomainSpy1).toHaveBeenCalledTimes(3);
-    expect(axisDomainSpy2).toHaveBeenCalledTimes(3);
+    expect(axisDomainSpy1).toHaveBeenCalledTimes(2);
+    expect(axisDomainSpy2).toHaveBeenCalledTimes(2);
     expect(displayedDataSpy1).toHaveBeenLastCalledWith(data2);
     expect(displayedDataSpy2).toHaveBeenLastCalledWith(data1);
-    expect(displayedDataSpy1).toHaveBeenCalledTimes(3);
-    expect(displayedDataSpy2).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy1).toHaveBeenCalledTimes(2);
+    expect(displayedDataSpy2).toHaveBeenCalledTimes(2);
   });
 
   it('should gather data from all graphical items that match the axis ID', () => {
@@ -2123,7 +2123,7 @@ describe('selectDisplayedData', () => {
       </LineChart>,
     );
     expect(displayedDataSpy).toHaveBeenLastCalledWith(mockData);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in the chart root', () => {
@@ -2172,7 +2172,7 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in the chart root regardless of the axis ID match', () => {
@@ -2223,7 +2223,7 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should slice chart root data by dataStartIndex and dataEndIndex', () => {
@@ -2267,7 +2267,7 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -2313,7 +2313,7 @@ describe('selectAllAppliedValues', () => {
       </LineChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return all data defined in all graphical items based on the input dataKey, and default axis ID', () => {
@@ -2342,7 +2342,7 @@ describe('selectAllAppliedValues', () => {
       { value: 20 },
       { value: 30 },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return data defined in the chart root', () => {
@@ -2369,7 +2369,7 @@ describe('selectAllAppliedValues', () => {
       { value: 140 },
       { value: 131 },
     ]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return values as full input objects if the axis ID does not match anything in the data', () => {
@@ -2430,7 +2430,7 @@ describe('selectAllAppliedValues', () => {
         },
       },
     ]);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(3);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -2454,7 +2454,7 @@ describe('selectErrorBarsSettings', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith([]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty array if there is no axis with matching ID', () => {
@@ -2478,8 +2478,8 @@ describe('selectErrorBarsSettings', () => {
     // There are ErrorBars but they are specified for another XAxis
     expect(xAxisSpy).toHaveBeenLastCalledWith([]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(3);
-    expect(yAxisSpy).toHaveBeenCalledTimes(3);
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return bars settings if present in BarChart', () => {
@@ -2512,8 +2512,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(5);
-    expect(yAxisSpy).toHaveBeenCalledTimes(5);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return bars settings if present in LineChart', () => {
@@ -2547,8 +2547,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(5);
-    expect(yAxisSpy).toHaveBeenCalledTimes(5);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return bars settings if present in vertical LineChart', () => {
@@ -2582,8 +2582,8 @@ describe('selectErrorBarsSettings', () => {
         direction: 'y',
       },
     ]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(5);
-    expect(yAxisSpy).toHaveBeenCalledTimes(5);
+    expect(xAxisSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisSpy).toHaveBeenCalledTimes(3);
   });
 
   it('should return bars settings if present in ScatterChart', () => {
@@ -2814,7 +2814,7 @@ describe('selectNiceTicks', () => {
       </LineChart>,
     );
     expect(niceTicksSpy).toHaveBeenLastCalledWith(expectedTicks);
-    expect(niceTicksSpy).toHaveBeenCalledTimes(3);
+    expect(niceTicksSpy).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -2973,7 +2973,7 @@ describe('selectStackGroups', () => {
     //     ],
     //   },
     // });
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(3);
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty object for Bars without stackId', () => {
@@ -2992,6 +2992,6 @@ describe('selectStackGroups', () => {
       </BarChart>,
     );
     expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(3);
+    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
   });
 });

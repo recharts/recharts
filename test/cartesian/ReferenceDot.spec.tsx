@@ -371,7 +371,7 @@ describe('<ReferenceDot />', () => {
           ifOverflow: 'extendDomain',
         },
       ]);
-      expect(dotSpy).toHaveBeenCalledTimes(3);
+      expect(dotSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <LineChart width={100} height={100}>
@@ -382,7 +382,7 @@ describe('<ReferenceDot />', () => {
       );
 
       expect(dotSpy).toHaveBeenLastCalledWith([]);
-      expect(dotSpy).toHaveBeenCalledTimes(6);
+      expect(dotSpy).toHaveBeenCalledTimes(4);
     });
   });
 });

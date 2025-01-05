@@ -527,7 +527,7 @@ describe('<XAxis />', () => {
     );
 
     expect(barBandSizeSpy).toHaveBeenLastCalledWith(28.16326530612244);
-    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(2);
 
     expect(offsetSpy).toHaveBeenLastCalledWith({
       brushBottom: 35,
@@ -538,10 +538,10 @@ describe('<XAxis />', () => {
       width: 230,
       height: 260,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
 
     expect(yAxisRangeSpy).toHaveBeenLastCalledWith([265, 5]);
-    expect(yAxisRangeSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisRangeSpy).toHaveBeenCalledTimes(2);
 
     expect(barTicksSpy).toHaveBeenLastCalledWith([
       {
@@ -581,7 +581,7 @@ describe('<XAxis />', () => {
         value: 110,
       },
     ]);
-    expect(barTicksSpy).toHaveBeenCalledTimes(3);
+    expect(barTicksSpy).toHaveBeenCalledTimes(2);
 
     expectBars(container, [
       {
@@ -1313,7 +1313,7 @@ describe('<XAxis />', () => {
         stackId: undefined,
       },
     ]);
-    expect(barSizeListSpy).toHaveBeenCalledTimes(3);
+    expect(barSizeListSpy).toHaveBeenCalledTimes(2);
 
     expect(yAxisTicksSpy).toHaveBeenLastCalledWith([
       {
@@ -1342,10 +1342,10 @@ describe('<XAxis />', () => {
         value: 200,
       },
     ]);
-    expect(yAxisTicksSpy).toHaveBeenCalledTimes(3);
+    expect(yAxisTicksSpy).toHaveBeenCalledTimes(2);
 
     expect(barBandSizeSpy).toHaveBeenLastCalledWith(0);
-    expect(barBandSizeSpy).toHaveBeenCalledTimes(3);
+    expect(barBandSizeSpy).toHaveBeenCalledTimes(2);
 
     expect(barPositionsSpy).toHaveBeenLastCalledWith([
       {
@@ -1357,7 +1357,7 @@ describe('<XAxis />', () => {
         stackId: undefined,
       },
     ]);
-    expect(barPositionsSpy).toHaveBeenCalledTimes(3);
+    expect(barPositionsSpy).toHaveBeenCalledTimes(2);
 
     expect(chartDataSpy).toHaveBeenLastCalledWith({
       chartData: [
@@ -1370,7 +1370,7 @@ describe('<XAxis />', () => {
       dataEndIndex: 0,
       dataStartIndex: 0,
     });
-    expect(chartDataSpy).toHaveBeenCalledTimes(3);
+    expect(chartDataSpy).toHaveBeenCalledTimes(2);
 
     expectBars(container, [
       {
@@ -1958,7 +1958,7 @@ describe('<XAxis />', () => {
         </BarChart>,
       );
       expect(container.querySelector('.xAxis')).toBeVisible();
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
       const expectedSettings: XAxisSettings = {
         angle: 13,
         minTickGap: 9,
@@ -4774,7 +4774,7 @@ describe('<XAxis />', () => {
       expect(itemDataSpy).toHaveBeenLastCalledWith([]);
       expect(itemDataSpy).toHaveBeenCalledTimes(3);
       expect(displayedDataSpy).toHaveBeenLastCalledWith(pageData);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(4);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 2520]);
     });
   });

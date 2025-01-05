@@ -815,7 +815,7 @@ describe('<LineChart />', () => {
           value: undefined,
         },
       ]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 });

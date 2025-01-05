@@ -1385,7 +1385,7 @@ describe('Tooltip payload', () => {
           },
         },
       ]);
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
 
     it('should select Tooltip payload after mouse hover', () => {

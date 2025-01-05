@@ -478,7 +478,7 @@ describe('<ReferenceArea />', () => {
           <ReferenceArea x1="201106" x2="201110" fill="#666" shape={spy} radius={10} strokeWidth={3} />
         </BarChart>,
       );
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith({
         clipPath: undefined,
         fill: '#666',
@@ -588,7 +588,7 @@ describe('<ReferenceArea />', () => {
           yAxisId: 0,
         },
       ]);
-      expect(areaSpy).toHaveBeenCalledTimes(3);
+      expect(areaSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <BarChart width={200} height={200} data={data}>
@@ -600,7 +600,7 @@ describe('<ReferenceArea />', () => {
       );
 
       expect(areaSpy).toHaveBeenLastCalledWith([]);
-      expect(areaSpy).toHaveBeenCalledTimes(6);
+      expect(areaSpy).toHaveBeenCalledTimes(4);
     });
   });
 });
