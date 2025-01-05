@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ComposedChart, ResponsiveContainer } from '../../../src';
 import { useChartHeight, useChartWidth } from '../../../src/context/chartLayoutContext';
-import { selectContainerOffset } from '../../../src/state/selectors/containerSelectors';
+import { selectContainerOffset, selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
 import { ElementOffset } from '../../../src/util/useElementOffset';
 
@@ -179,6 +179,19 @@ function CrosshairWrapper() {
   );
 }
 
+function ShowScale() {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  const scale = useAppSelector(selectContainerScale);
+  return (
+    <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+      <text x={width * 0.9} y={height * 0.9} textAnchor="end" dominantBaseline="hanging" stroke="black">
+        {`scale: ${scale}`}
+      </text>
+    </svg>
+  );
+}
+
 export default {
   component: ComposedChart,
   docs: {
@@ -203,6 +216,7 @@ export const WithResponsiveContainer = {
           {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
           <ChartSizeDimensions />
           <CrosshairWrapper />
+          <ShowScale />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -220,6 +234,7 @@ export const WithStaticDimensions = {
         {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
         <ChartSizeDimensions />
         <CrosshairWrapper />
+        <ShowScale />
       </ComposedChart>
     );
   },
