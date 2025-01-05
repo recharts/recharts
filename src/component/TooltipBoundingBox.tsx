@@ -1,7 +1,7 @@
 import React, { CSSProperties, PureComponent, ReactNode } from 'react';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
-import { BoundingBox, SetBoundingBox } from '../util/useGetBoundingClientRect';
+import { ElementOffset, SetElementOffset } from '../util/useElementOffset';
 
 export type TooltipBoundingBoxProps = {
   active: boolean;
@@ -18,8 +18,8 @@ export type TooltipBoundingBoxProps = {
   useTranslate3d: boolean;
   viewBox: CartesianViewBox;
   wrapperStyle: CSSProperties;
-  lastBoundingBox: BoundingBox;
-  innerRef: SetBoundingBox;
+  lastBoundingBox: ElementOffset;
+  innerRef: SetElementOffset;
   hasPortalFromProps: boolean;
 };
 

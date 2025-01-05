@@ -185,5 +185,5 @@
   "lib/util/tooltip",
   "lib/util/tooltip/translate.js",
   "lib/util/types.js",
-  "lib/util/useGetBoundingClientRect.js",
+  "lib/util/useElementOffset.js",
 ]

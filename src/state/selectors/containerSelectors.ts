@@ -1,12 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RechartsRootState } from '../store';
-import { ContainerOffset, getOffset } from '../../util/DOMUtils';
 import { RechartsDOMRect, RechartsHTMLContainer } from '../layoutSlice';
 import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
 import { Margin } from '../../util/types';
+import { ElementOffset } from '../../util/useElementOffset';
 
-export const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined =>
-  state.layout.container;
+const selectRootContainer = (state: RechartsRootState): RechartsHTMLContainer | undefined => state.layout.container;
 
 /**
  * This selector is not stable, and it is important that it is not stable
@@ -27,10 +26,9 @@ export const selectRootContainerDomRect: (state: RechartsRootState) => RechartsD
   state: RechartsRootState,
 ) => selectRootContainer(state)?.getBoundingClientRect();
 
-export const selectContainerOffset: (state: RechartsRootState) => ContainerOffset | undefined = createSelector(
-  selectRootContainerDomRect,
-  (rect: RechartsDOMRect | undefined): ContainerOffset | undefined => rect && getOffset(rect),
-);
+export const selectContainerOffset: (state: RechartsRootState) => ElementOffset | undefined = (
+  state: RechartsRootState,
+): ElementOffset => state.layout.offset;
 
 export const selectChartWidth = (state: RechartsRootState): number => state.layout.width;
 
@@ -40,7 +38,7 @@ export const selectChartCoordinates: (state: RechartsRootState, event: MousePoin
   createSelector(
     selectContainerOffset,
     (_state: RechartsRootState, event: MousePointer): MousePointer => event,
-    (containerOffset: ContainerOffset | undefined, event: MousePointer): ChartPointer | undefined => {
+    (containerOffset: ElementOffset | undefined, event: MousePointer): ChartPointer | undefined => {
       if (!containerOffset) {
         return undefined;
       }
@@ -52,13 +50,13 @@ export const selectChartCoordinates: (state: RechartsRootState, event: MousePoin
   );
 
 export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
-  selectRootContainer,
+  selectContainerOffset,
   selectRootContainerDomRect,
-  (container: RechartsHTMLContainer | undefined, rect: DOMRect | undefined): number => {
-    if (!rect?.width || !container?.offsetWidth) {
+  (offset: ElementOffset | undefined, rect: DOMRect | undefined): number => {
+    if (!rect?.width || !offset?.width) {
       return 1;
     }
-    return rect.width / container.offsetWidth;
+    return rect.width / offset.width;
   },
 );
 

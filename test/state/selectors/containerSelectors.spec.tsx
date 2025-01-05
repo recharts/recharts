@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { getMockDomRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
-import { RechartsHTMLContainer, setContainer } from '../../../src/state/layoutSlice';
+import { RechartsHTMLContainer, setContainer, setOffset } from '../../../src/state/layoutSlice';
 import {
   selectContainerScale,
   selectMargin,
@@ -26,7 +26,6 @@ describe('selectRootContainerDomRect', () => {
       height: 4,
     });
     const mockElement: RechartsHTMLContainer = {
-      offsetWidth: 5,
       getBoundingClientRect: () => mockRect,
     };
     store.dispatch(setContainer(mockElement));
@@ -49,7 +48,6 @@ describe('selectRootContainerDomRect', () => {
       height: 8,
     });
     const mockElement: RechartsHTMLContainer = {
-      offsetWidth: 9,
       getBoundingClientRect: spy,
     };
     spy.mockReturnValue(mockRect);
@@ -73,10 +71,10 @@ describe('selectContainerScale', () => {
       height: 4,
     });
     const mockElement: RechartsHTMLContainer = {
-      offsetWidth: 3,
       getBoundingClientRect: () => mockRect,
     };
     store.dispatch(setContainer(mockElement));
+    store.dispatch(setOffset({ top: 10, left: 20, width: 3, height: 30 }));
     expect(selectContainerScale(store.getState())).toBe(1);
   });
 
@@ -107,10 +105,10 @@ describe('selectContainerScale', () => {
       height: 4,
     });
     const mockElement: RechartsHTMLContainer = {
-      offsetWidth: 5,
       getBoundingClientRect: () => mockRect,
     };
     store.dispatch(setContainer(mockElement));
+    store.dispatch(setOffset({ top: 10, left: 20, width: 5, height: 30 }));
     expect(selectContainerScale(store.getState())).toBe(3 / 5);
   });
 
@@ -127,7 +125,6 @@ describe('selectContainerScale', () => {
       width: 0,
     });
     const mockElement: RechartsHTMLContainer = {
-      offsetWidth: 0,
       getBoundingClientRect: () => mockRect,
     };
     store.dispatch(setContainer(mockElement));

@@ -185,5 +185,5 @@
   "types/util/tooltip",
   "types/util/tooltip/translate.d.ts",
   "types/util/types.d.ts",
-  "types/util/useGetBoundingClientRect.d.ts",
+  "types/util/useElementOffset.d.ts",
 ]

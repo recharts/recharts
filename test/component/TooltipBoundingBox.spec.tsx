@@ -7,7 +7,12 @@ import { TooltipBoundingBox, TooltipBoundingBoxProps } from '../../src/component
 describe('TooltipBoundingBox', () => {
   const defaultProps: TooltipBoundingBoxProps = {
     innerRef(): void {},
-    lastBoundingBox: { width: 0, height: 0 },
+    lastBoundingBox: {
+      width: 0,
+      height: 0,
+      left: 0,
+      top: 0,
+    },
     active: true,
     hasPayload: true,
     children: 'Hello world!',
