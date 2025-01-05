@@ -360,7 +360,7 @@ describe('<ReferenceLine />', () => {
         <ReferenceLine y={20} ifOverflow="visible" shape={spy} viewBox={viewBox} />
       </BarChart>,
     );
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({
       clipPath: undefined,
       fill: 'none',
@@ -528,7 +528,7 @@ describe('<ReferenceLine />', () => {
           yAxisId: 0,
         },
       ]);
-      expect(lineSpy).toHaveBeenCalledTimes(3);
+      expect(lineSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <BarChart width={1100} height={250}>
@@ -539,7 +539,7 @@ describe('<ReferenceLine />', () => {
       );
 
       expect(lineSpy).toHaveBeenLastCalledWith([]);
-      expect(lineSpy).toHaveBeenCalledTimes(6);
+      expect(lineSpy).toHaveBeenCalledTimes(4);
     });
   });
 

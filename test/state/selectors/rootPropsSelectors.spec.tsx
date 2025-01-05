@@ -49,7 +49,7 @@ describe('selectRootMaxBarSize', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(10);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     rerender(
       <BarChart width={100} height={100} maxBarSize={20}>
@@ -59,7 +59,7 @@ describe('selectRootMaxBarSize', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
-    expect(spy).toHaveBeenCalledTimes(6);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -95,7 +95,7 @@ describe('selectBarGap', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(10);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     rerender(
       <BarChart width={100} height={100} barGap={20}>
@@ -104,7 +104,7 @@ describe('selectBarGap', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -155,7 +155,7 @@ describe('selectBarCategoryGap', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(10);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     rerender(
       <BarChart width={100} height={100} barCategoryGap={20}>
@@ -164,7 +164,7 @@ describe('selectBarCategoryGap', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -200,7 +200,7 @@ describe('selectRootBarSize', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith(10);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     rerender(
       <BarChart width={100} height={100} barSize={20}>
@@ -209,7 +209,7 @@ describe('selectRootBarSize', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(20);
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -232,7 +232,7 @@ describe('selectSyncMethod', () => {
       </BarChart>,
     );
     expect(spy).toHaveBeenLastCalledWith('value');
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     const fn = () => 1;
 
@@ -243,6 +243,6 @@ describe('selectSyncMethod', () => {
     );
 
     expect(spy).toHaveBeenLastCalledWith(fn);
-    expect(spy).toHaveBeenCalledTimes(6);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });

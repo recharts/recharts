@@ -186,4 +186,5 @@
   "es6/util/tooltip/translate.js",
   "es6/util/types.js",
   "es6/util/useElementOffset.js",
+  "es6/util/useReportScale.js",
 ]

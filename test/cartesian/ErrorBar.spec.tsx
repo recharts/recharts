@@ -1689,7 +1689,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
       rerender(
         <BarChart data={dataWithError} width={500} height={500}>
           <YAxis dataKey="uv" />
@@ -1802,7 +1802,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(8);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should extend YAxis domain when data is defined on the graphical item', () => {
@@ -1849,7 +1849,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <LineChart width={500} height={500}>
@@ -1963,7 +1963,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(axisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(axisDomainSpy).toHaveBeenCalledTimes(8);
+      expect(axisDomainSpy).toHaveBeenCalledTimes(5);
     });
 
     it('should extend XAxis domain', () => {
@@ -2011,7 +2011,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(xAxisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(2);
       expectBars(container, [
         {
           d: 'M 65,16.5 h 252.94117647058823 v 92 h -252.94117647058823 Z',
@@ -2159,7 +2159,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisDomainSpy).toHaveBeenLastCalledWith([0, 3600]);
-      expect(xAxisDomainSpy).toHaveBeenCalledTimes(8);
+      expect(xAxisDomainSpy).toHaveBeenCalledTimes(5);
       expectBars(container, [
         {
           d: 'M 65,16.5 h 238.8888888888889 v 92 h -238.8888888888889 Z',
@@ -2240,7 +2240,7 @@ describe('<ErrorBar />', () => {
         },
       ]);
       expect(xAxisSpy).toHaveBeenLastCalledWith([0, 3400]);
-      expect(xAxisSpy).toHaveBeenCalledTimes(3);
+      expect(xAxisSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <LineChart width={500} height={500}>

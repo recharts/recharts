@@ -294,7 +294,7 @@ describe('<BarChart />', () => {
         zAxisId: 0,
       };
       expect(barSpy).toHaveBeenLastCalledWith([expectedBar]);
-      expect(barSpy).toHaveBeenCalledTimes(3);
+      expect(barSpy).toHaveBeenCalledTimes(2);
 
       expect(sizeListSpy).toHaveBeenLastCalledWith([
         {
@@ -303,7 +303,7 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(sizeListSpy).toHaveBeenCalledTimes(3);
+      expect(sizeListSpy).toHaveBeenCalledTimes(2);
 
       expectBars(container, [
         {
@@ -1007,7 +1007,7 @@ describe('<BarChart />', () => {
           },
         ];
         expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1024,7 +1024,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisOneBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisOneBarsSpy).toHaveBeenCalledTimes(2);
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
             isPanorama: false,
@@ -1040,7 +1040,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(2);
 
         expectBars(container, [
           {
@@ -1191,7 +1191,7 @@ describe('<BarChart />', () => {
           },
         ];
         expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1221,7 +1221,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1251,7 +1251,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisRightBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisRightBarsSpy).toHaveBeenCalledTimes(2);
 
         expect(barSizeListLeftSpy).toHaveBeenLastCalledWith([
           {
@@ -1265,7 +1265,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(3);
+        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(2);
 
         expect(barSizeListRightSpy).toHaveBeenLastCalledWith([
           {
@@ -1279,7 +1279,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barSizeListRightSpy).toHaveBeenCalledTimes(3);
+        expect(barSizeListRightSpy).toHaveBeenCalledTimes(2);
 
         expect(barPositionsLeftSpy).toHaveBeenLastCalledWith([
           {
@@ -1299,7 +1299,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(3);
+        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(2);
 
         expect(barPositionsRightSpy).toHaveBeenLastCalledWith([
           {
@@ -1319,7 +1319,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barPositionsRightSpy).toHaveBeenCalledTimes(3);
+        expect(barPositionsRightSpy).toHaveBeenCalledTimes(2);
 
         expectBars(container, [
           {
@@ -1446,7 +1446,7 @@ describe('<BarChart />', () => {
           },
         ];
         expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1476,7 +1476,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisOneBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisOneBarsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1506,7 +1506,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisTwoBarsSpy).toHaveBeenCalledTimes(2);
 
         expectBars(container, [
           {
@@ -1657,7 +1657,7 @@ describe('<BarChart />', () => {
           },
         ];
         expect(allCartesianGraphicalItemsSpy).toHaveBeenLastCalledWith(expectedItems);
-        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(3);
+        expect(allCartesianGraphicalItemsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1674,7 +1674,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisLeftBarsSpy).toHaveBeenCalledTimes(2);
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
@@ -1691,7 +1691,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
         ]);
-        expect(axisRightBarsSpy).toHaveBeenCalledTimes(3);
+        expect(axisRightBarsSpy).toHaveBeenCalledTimes(2);
 
         expect(barSizeListLeftSpy).toHaveBeenLastCalledWith([
           {
@@ -1700,7 +1700,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(3);
+        expect(barSizeListLeftSpy).toHaveBeenCalledTimes(2);
 
         expect(barSizeListRightSpy).toHaveBeenLastCalledWith([
           {
@@ -1709,7 +1709,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barSizeListRightSpy).toHaveBeenCalledTimes(3);
+        expect(barSizeListRightSpy).toHaveBeenCalledTimes(2);
 
         expect(barPositionsLeftSpy).toHaveBeenLastCalledWith([
           {
@@ -1721,7 +1721,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(3);
+        expect(barPositionsLeftSpy).toHaveBeenCalledTimes(2);
 
         expect(barPositionsRightSpy).toHaveBeenLastCalledWith([
           {
@@ -1733,7 +1733,7 @@ describe('<BarChart />', () => {
             stackId: undefined,
           },
         ]);
-        expect(barPositionsRightSpy).toHaveBeenCalledTimes(3);
+        expect(barPositionsRightSpy).toHaveBeenCalledTimes(2);
 
         expectBars(container, [
           {
@@ -1844,7 +1844,7 @@ describe('<BarChart />', () => {
           stackId: undefined,
         },
       ]);
-      expect(barPositionsSpy).toHaveBeenCalledTimes(4);
+      expect(barPositionsSpy).toHaveBeenCalledTimes(3);
 
       expectBars(container, [
         {

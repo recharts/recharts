@@ -244,7 +244,7 @@ describe('AreaChart', () => {
         value: 'Page G',
       },
     ]);
-    expect(xAxisTicksSpy).toHaveBeenCalledTimes(3);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(2);
 
     // For some reason this assertion always fails but never shows what's the difference.
     // expect(areaSpy).toHaveBeenLastCalledWith({

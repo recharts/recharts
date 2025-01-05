@@ -24,6 +24,6 @@ describe('selectBrushHeight', () => {
       </BarChart>,
     );
     expect(heightSpy).toHaveBeenLastCalledWith(7);
-    expect(heightSpy).toHaveBeenCalledTimes(3);
+    expect(heightSpy).toHaveBeenCalledTimes(2);
   });
 });

@@ -446,7 +446,7 @@ describe('useOffset', () => {
       height: 120,
       width: 40,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should include explicit brush height in bottom property', () => {
@@ -470,7 +470,7 @@ describe('useOffset', () => {
       height: 147,
       width: 240,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should include default width of YAxis', () => {
@@ -495,7 +495,7 @@ describe('useOffset', () => {
       top: 10,
       width: 120,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should include explicit width of YAxis', () => {
@@ -520,7 +520,7 @@ describe('useOffset', () => {
       top: 10,
       width: 178,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should exclude hidden YAxis dimensions', () => {
@@ -545,7 +545,7 @@ describe('useOffset', () => {
       top: 10,
       width: 240,
     });
-    expect(offsetSpy).toHaveBeenCalledTimes(3);
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should include default height of XAxis', () => {

@@ -924,7 +924,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
             <Bar isAnimationActive={false} label={spy} dataKey="value" />
           </ChartElement>,
         );
-        expect(spy).toHaveBeenCalledTimes(2 * data.length);
+        expect(spy).toHaveBeenCalledTimes(data.length);
         expect(spy).toBeCalledWith(
           {
             content: spy,

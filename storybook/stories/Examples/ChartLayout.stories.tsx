@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ComposedChart, ResponsiveContainer } from '../../../src';
 import { useChartHeight, useChartWidth } from '../../../src/context/chartLayoutContext';
-import { selectContainerOffset } from '../../../src/state/selectors/containerSelectors';
+import { selectContainerOffset, selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
 import { ElementOffset } from '../../../src/util/useElementOffset';
 
@@ -158,12 +158,13 @@ function Crosshair({ x, y }: { x: number; y: number }) {
 function CrosshairWrapper() {
   const [mousePosition, setMousePosition] = useState<null | { pageX: number; pageY: number }>(null);
   const offset: ElementOffset | undefined = useAppSelector(selectContainerOffset);
+  const scale: number = useAppSelector(selectContainerScale);
   if (offset == null) {
     return null;
   }
 
   const onMouseMove = (event: React.MouseEvent) => {
-    setMousePosition({ pageX: event.pageX, pageY: event.pageY });
+    setMousePosition({ pageX: event.pageX / scale, pageY: event.pageY / scale });
   };
   const onMouseLeave = () => {
     setMousePosition(null);
@@ -175,6 +176,19 @@ function CrosshairWrapper() {
       {mousePosition != null && (
         <Crosshair x={Math.round(mousePosition.pageX - offset.left)} y={Math.round(mousePosition.pageY - offset.top)} />
       )}
+    </svg>
+  );
+}
+
+function ShowScale() {
+  const width = useChartWidth();
+  const height = useChartHeight();
+  const scale = useAppSelector(selectContainerScale);
+  return (
+    <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+      <text x={width * 0.9} y={height * 0.9} textAnchor="end" dominantBaseline="hanging" stroke="black">
+        {`scale: ${scale}`}
+      </text>
     </svg>
   );
 }
@@ -203,6 +217,7 @@ export const WithResponsiveContainer = {
           {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
           <ChartSizeDimensions />
           <CrosshairWrapper />
+          <ShowScale />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -220,6 +235,7 @@ export const WithStaticDimensions = {
         {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
         <ChartSizeDimensions />
         <CrosshairWrapper />
+        <ShowScale />
       </ComposedChart>
     );
   },
