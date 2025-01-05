@@ -49,15 +49,17 @@ export const selectChartCoordinates: (state: RechartsRootState, event: MousePoin
     },
   );
 
-export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
-  selectContainerOffset,
-  selectRootContainerDomRect,
-  (offset: ElementOffset | undefined, rect: DOMRect | undefined): number => {
-    if (!rect?.width || !offset?.width) {
-      return 1;
-    }
-    return rect.width / offset.width;
-  },
-);
+export const selectContainerScale: (state: RechartsRootState) => number = state => state.layout.scale;
+
+// export const selectContainerScale: (state: RechartsRootState) => number | undefined = createSelector(
+//   selectContainerOffset,
+//   selectRootContainerDomRect,
+//   (offset: ElementOffset | undefined, rect: DOMRect | undefined): number => {
+//     if (!rect?.width || !offset?.width) {
+//       return 1;
+//     }
+//     return rect.width / offset.width;
+//   },
+// );
 
 export const selectMargin = (state: RechartsRootState): Margin | undefined => state.layout.margin;

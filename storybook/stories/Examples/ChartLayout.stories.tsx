@@ -158,12 +158,13 @@ function Crosshair({ x, y }: { x: number; y: number }) {
 function CrosshairWrapper() {
   const [mousePosition, setMousePosition] = useState<null | { pageX: number; pageY: number }>(null);
   const offset: ElementOffset | undefined = useAppSelector(selectContainerOffset);
+  const scale: number = useAppSelector(selectContainerScale);
   if (offset == null) {
     return null;
   }
 
   const onMouseMove = (event: React.MouseEvent) => {
-    setMousePosition({ pageX: event.pageX, pageY: event.pageY });
+    setMousePosition({ pageX: event.pageX / scale, pageY: event.pageY / scale });
   };
   const onMouseLeave = () => {
     setMousePosition(null);

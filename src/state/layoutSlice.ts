@@ -28,6 +28,11 @@ type ChartLayoutState = {
   height: number;
   margin: Margin;
   offset: ElementOffset;
+  /**
+   * How much is the chart zoomed in.
+   * Used for scaling the mouse coordinates to the chart coordinates.
+   */
+  scale: number;
 };
 
 const initialState: ChartLayoutState = {
@@ -37,6 +42,7 @@ const initialState: ChartLayoutState = {
   height: 0,
   margin: { top: 5, right: 5, bottom: 5, left: 5 },
   offset: { top: 0, left: 0, width: 0, height: 0 },
+  scale: 1,
 };
 
 const chartLayoutSlice = createSlice({
@@ -59,9 +65,12 @@ const chartLayoutSlice = createSlice({
     setOffset(state, action: PayloadAction<ElementOffset>) {
       state.offset = action.payload;
     },
+    setScale(state, action: PayloadAction<number>) {
+      state.scale = action.payload;
+    },
   },
 });
 
-export const { setMargin, setLayout, setContainer, setChartSize, setOffset } = chartLayoutSlice.actions;
+export const { setMargin, setLayout, setContainer, setChartSize, setOffset, setScale } = chartLayoutSlice.actions;
 
 export const chartLayoutReducer = chartLayoutSlice.reducer;

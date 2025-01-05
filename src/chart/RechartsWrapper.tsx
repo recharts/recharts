@@ -7,6 +7,7 @@ import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddlewar
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
 import { useElementOffset } from '../util/useElementOffset';
+import { useReportScale } from '../util/useReportScale';
 
 export type RechartsWrapperProps = {
   children: ReactNode;
@@ -35,12 +36,15 @@ export const RechartsWrapper = forwardRef(
 
     const setLastOffset = useReportChartOffset();
 
+    const setScaleRef = useReportScale();
+
     const innerRef = (node: HTMLDivElement | null) => {
       dispatch(setContainer(node));
+      setLastOffset(node);
+      setScaleRef(node);
       if (typeof ref === 'function') {
         ref(node);
       }
-      setLastOffset(node);
     };
     const myOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseClickAction(e));

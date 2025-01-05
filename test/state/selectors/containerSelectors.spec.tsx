@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { getMockDomRect } from '../../helper/mockGetBoundingClientRect';
+import { getMockDomRect, mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
 import { RechartsHTMLContainer, setContainer, setOffset } from '../../../src/state/layoutSlice';
 import {
@@ -10,8 +10,10 @@ import {
   selectRootContainerDomRect,
 } from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
-import { BarChart, Customized } from '../../../src';
+import { BarChart, ComposedChart, Customized } from '../../../src';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
+import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
+import { mockHTMLElementProperty } from '../../helper/mockHTMLElementProperty';
 
 describe('selectRootContainerDomRect', () => {
   shouldReturnUndefinedOutOfContext(selectRootContainerDomRect);
@@ -97,19 +99,23 @@ describe('selectContainerScale', () => {
      * rect: 150, offsetWidth: 100, scale: 1.5
      * So there we go.
      */
-    const store = createRechartsStore();
-    const mockRect: DOMRect = getMockDomRect({
-      x: 1,
-      y: 2,
-      width: 3,
-      height: 4,
-    });
-    const mockElement: RechartsHTMLContainer = {
-      getBoundingClientRect: () => mockRect,
-    };
-    store.dispatch(setContainer(mockElement));
-    store.dispatch(setOffset({ top: 10, left: 20, width: 5, height: 30 }));
-    expect(selectContainerScale(store.getState())).toBe(3 / 5);
+    mockGetBoundingClientRect(
+      {
+        x: 1,
+        y: 2,
+        width: 3,
+        height: 4,
+      },
+      false,
+    );
+    mockHTMLElementProperty('offsetWidth', 5);
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ComposedChart width={5} height={6}>
+        {children}
+      </ComposedChart>
+    ));
+    const { spy } = renderTestCase(selectContainerScale);
+    expect(spy).toHaveBeenLastCalledWith(3 / 5);
   });
 
   it('should return scale: 1 in jsdom because jsdom returns zeroes everywhere', () => {
