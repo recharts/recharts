@@ -1,83 +1,29 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { getMockDomRect, mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
-import { RechartsHTMLContainer, setContainer, setOffset } from '../../../src/state/layoutSlice';
-import {
-  selectContainerScale,
-  selectMargin,
-  selectRootContainerDomRect,
-} from '../../../src/state/selectors/containerSelectors';
+import { setScale } from '../../../src/state/layoutSlice';
+import { selectContainerScale, selectMargin } from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import { BarChart, ComposedChart, Customized } from '../../../src';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { mockHTMLElementProperty } from '../../helper/mockHTMLElementProperty';
 
-describe('selectRootContainerDomRect', () => {
-  shouldReturnUndefinedOutOfContext(selectRootContainerDomRect);
-  shouldReturnFromInitialState(selectRootContainerDomRect, undefined);
-
-  it('should return DOM rect of root container if set', () => {
-    const store = createRechartsStore();
-    const mockRect: DOMRect = getMockDomRect({
-      x: 1,
-      y: 2,
-      width: 3,
-      height: 4,
-    });
-    const mockElement: RechartsHTMLContainer = {
-      getBoundingClientRect: () => mockRect,
-    };
-    store.dispatch(setContainer(mockElement));
-    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRect);
-  });
-
-  it('should return updated DOM rect after browser window resize', () => {
-    const store = createRechartsStore();
-    const spy = vi.fn();
-    const mockRect: DOMRect = getMockDomRect({
-      x: 1,
-      y: 2,
-      width: 3,
-      height: 4,
-    });
-    const mockRectUpdated: DOMRect = getMockDomRect({
-      x: 5,
-      y: 6,
-      width: 7,
-      height: 8,
-    });
-    const mockElement: RechartsHTMLContainer = {
-      getBoundingClientRect: spy,
-    };
-    spy.mockReturnValue(mockRect);
-    store.dispatch(setContainer(mockElement));
-    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRect);
-    spy.mockReturnValue(mockRectUpdated);
-    expect(selectRootContainerDomRect(store.getState())).toEqual(mockRectUpdated);
-  });
-});
-
 describe('selectContainerScale', () => {
   shouldReturnUndefinedOutOfContext(selectContainerScale);
   shouldReturnFromInitialState(selectContainerScale, 1);
 
-  it('should return 1 when container is set and has width and DOMRect with matching widths', () => {
+  it('should return 1 in an initial state', () => {
     const store = createRechartsStore();
-    const mockRect: DOMRect = getMockDomRect({
-      x: 1,
-      y: 2,
-      width: 3,
-      height: 4,
-    });
-    const mockElement: RechartsHTMLContainer = {
-      getBoundingClientRect: () => mockRect,
-    };
-    store.dispatch(setContainer(mockElement));
-    store.dispatch(setOffset({ top: 10, left: 20, width: 3, height: 30 }));
     expect(selectContainerScale(store.getState())).toBe(1);
+  });
+
+  it('should return scale after it was set using an action', () => {
+    const store = createRechartsStore();
+    store.dispatch(setScale(1.25));
+    expect(selectContainerScale(store.getState())).toBe(1.25);
   });
 
   it('should return scale as the ratio of DOMRect / offsetWidth', () => {
@@ -126,15 +72,13 @@ describe('selectContainerScale', () => {
      * on the container, in all tests,
      * but for now this workaround is easier and doesn't hurt anyone.
      */
-    const store = createRechartsStore();
-    const mockRect: DOMRect = getMockDomRect({
-      width: 0,
-    });
-    const mockElement: RechartsHTMLContainer = {
-      getBoundingClientRect: () => mockRect,
-    };
-    store.dispatch(setContainer(mockElement));
-    expect(selectContainerScale(store.getState())).toBe(1);
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <ComposedChart width={5} height={6}>
+        {children}
+      </ComposedChart>
+    ));
+    const { spy } = renderTestCase(selectContainerScale);
+    expect(spy).toHaveBeenLastCalledWith(1);
   });
 });
 

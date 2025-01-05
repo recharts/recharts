@@ -1,7 +1,7 @@
 import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref, useEffect } from 'react';
 import clsx from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
-import { setContainer, setOffset } from '../state/layoutSlice';
+import { setOffset } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
@@ -39,7 +39,6 @@ export const RechartsWrapper = forwardRef(
     const setScaleRef = useReportScale();
 
     const innerRef = (node: HTMLDivElement | null) => {
-      dispatch(setContainer(node));
       setLastOffset(node);
       setScaleRef(node);
       if (typeof ref === 'function') {
