@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import get from 'lodash/get';
 import { selectLegendState } from './legendSelectors';
 import { CartesianViewBox, ChartOffset, Margin } from '../../util/types';

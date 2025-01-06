@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { Series } from 'victory-vendor/d3-shape';
 import { computeRadialBarDataItems, RadialBarDataItem } from '../../polar/RadialBar';

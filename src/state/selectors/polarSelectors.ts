@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { AppliedChartData, ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { AxisId, BaseCartesianAxis } from '../cartesianAxisSlice';

@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { computeScatterPoints, ScatterPointItem } from '../../cartesian/Scatter';
 import { RechartsRootState } from '../store';
@@ -121,7 +121,6 @@ export const selectScatterPoints: (
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);
     }
-
     if (
       displayedData == null ||
       xAxis == null ||

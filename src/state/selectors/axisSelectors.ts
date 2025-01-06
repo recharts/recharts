@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
 import * as d3Scales from 'victory-vendor/d3-scale';
