@@ -160,7 +160,7 @@ export const calculateStep = (
 };
 
 /**
- * Calculate the ticks of an interval, the count of ticks will be guraranteed
+ * Calculate the ticks of an interval, the count of ticks will be guaranteed
  *
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
  * @param  {Integer} tickCount     The count of ticks
