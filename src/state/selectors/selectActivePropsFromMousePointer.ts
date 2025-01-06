@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { MousePointer } from '../../chart/generateCategoricalChart';
 import { ActiveTooltipProps } from '../tooltipSlice';

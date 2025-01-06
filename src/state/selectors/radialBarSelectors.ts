@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { Series } from 'victory-vendor/d3-shape';
 import { computeRadialBarDataItems, RadialBarDataItem } from '../../polar/RadialBar';
@@ -84,7 +84,7 @@ const selectAngleAxisForRadialBar = (
   angleAxisId: AxisId,
 ): AngleAxisSettings => selectAngleAxis(state, angleAxisId);
 
-const selectAngleAxisScaleForRadar = (
+const selectAngleAxisScaleForRadialBar = (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
@@ -95,7 +95,7 @@ export const selectAngleAxisWithScale: (
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
 ) => BaseAxisWithScale = createSelector(
-  [selectAngleAxisForRadialBar, selectAngleAxisScaleForRadar],
+  [selectAngleAxisForRadialBar, selectAngleAxisScaleForRadialBar],
   (axis: AngleAxisSettings, scale: RechartsScale | undefined) => {
     if (axis == null || scale == null) {
       return undefined;

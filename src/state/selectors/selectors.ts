@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import sortBy from 'lodash/sortBy';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';

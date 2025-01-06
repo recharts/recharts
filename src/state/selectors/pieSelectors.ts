@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { CellProps, LegendType } from '../..';
 import { computePieSectors, PieCoordinate, PieSectorDataItem } from '../../polar/Pie';

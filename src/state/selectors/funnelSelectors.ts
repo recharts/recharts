@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { computeFunnelTrapezoids, FunnelTrapezoidItem } from '../../cartesian/Funnel';
 import { ChartData } from '../chartDataSlice';

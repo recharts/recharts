@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { Series } from 'victory-vendor/d3-shape';
 import { Coordinate, DataKey } from '../../util/types';
 import { BaseValue, computeArea } from '../../cartesian/Area';

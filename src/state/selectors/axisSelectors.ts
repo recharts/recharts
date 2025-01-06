@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import range from 'lodash/range';
 import { Series } from 'victory-vendor/d3-shape';
 import * as d3Scales from 'victory-vendor/d3-scale';
@@ -15,6 +15,7 @@ import {
 import {
   AxisDomain,
   AxisTick,
+  AxisType,
   CartesianTickItem,
   CategoricalDomain,
   ChartOffset,
@@ -1423,7 +1424,7 @@ export const selectAllXAxesOffsetSteps: (
   selectAllXAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
-  (chartHeight, offset, allAxesWithSameOffsetType, orientation, mirror) => {
+  (chartHeight, offset, allAxesWithSameOffsetType, orientation: XAxisOrientation, mirror) => {
     const steps: AxisOffsetSteps = {};
     let position: number;
     allAxesWithSameOffsetType.forEach(axis => {
@@ -1601,7 +1602,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
     categoricalDomain,
     axisRange,
     niceTicks,
-    axisType,
+    axisType: AxisType,
   ): AxisPropsForCartesianGridTicksGeneration => {
     if (axis == null) {
       return null;

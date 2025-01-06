@@ -1,4 +1,4 @@
-import { createSelector } from '@reduxjs/toolkit';
+import { createSelector } from 'reselect';
 import { computeLinePoints, LinePointItem } from '../../cartesian/Line';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';

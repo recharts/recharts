@@ -25,7 +25,7 @@ export const brushSlice = createSlice({
   name: 'brush',
   initialState,
   reducers: {
-    setBrushSettings(_state, action: PayloadAction<BrushSettings | null>) {
+    setBrushSettings(_state: BrushSettings, action: PayloadAction<BrushSettings | null>) {
       if (action.payload == null) {
         return initialState;
       }

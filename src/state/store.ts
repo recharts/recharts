@@ -1,4 +1,4 @@
-import { Action, combineReducers, configureStore, Dispatch } from '@reduxjs/toolkit';
+import { Action, combineReducers, configureStore, Dispatch, Store } from '@reduxjs/toolkit';
 import { optionsReducer } from './optionsSlice';
 import { tooltipReducer } from './tooltipSlice';
 import { chartDataReducer } from './chartDataSlice';
@@ -16,24 +16,29 @@ import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 
 const rootReducer = combineReducers({
-  cartesianAxis: cartesianAxisReducer,
-  polarAxis: polarAxisReducer,
   brush: brushReducer,
+  cartesianAxis: cartesianAxisReducer,
   chartData: chartDataReducer,
   graphicalItems: graphicalItemsReducer,
   layout: chartLayoutReducer,
   legend: legendReducer,
   options: optionsReducer,
+  polarAxis: polarAxisReducer,
   polarOptions: polarOptionsReducer,
   referenceElements: referenceElementsReducer,
-  tooltip: tooltipReducer,
   rootProps: rootPropsReducer,
+  tooltip: tooltipReducer,
 });
 
-export const createRechartsStore = (preloadedState?: Partial<RechartsRootState>, chartName: string = 'Chart') => {
-  return configureStore({
+export const createRechartsStore = (
+  preloadedState?: Partial<RechartsRootState>,
+  chartName: string = 'Chart',
+): Store<RechartsRootState> => {
+  return configureStore<RechartsRootState>({
     reducer: rootReducer,
-    preloadedState,
+    // redux-toolkit v1 types are unhappy with the preloadedState type. Remove the `as any` when bumping to v2
+    preloadedState: preloadedState as any,
+    // @ts-expect-error redux-toolkit v1 types are unhappy with the middleware array. Remove this comment when bumping to v2
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
