@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../src/state/hooks';
 import { createRechartsStore } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { setChartData } from '../../src/state/chartDataSlice';
+import { RechartsReduxContext } from '../../src/state/RechartsReduxContext';
 
 describe('useAppSelector', () => {
   it('should return undefined when used outside of Redux context', () => {
@@ -82,7 +83,7 @@ describe('useAppDispatch', () => {
     const spy = vi.fn();
     store.subscribe(spy);
     render(
-      <Provider store={store}>
+      <Provider context={RechartsReduxContext} store={store}>
         <Dispatcher />
       </Provider>,
     );

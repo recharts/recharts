@@ -86,6 +86,7 @@
   "types/shape/Symbols.d.ts",
   "types/shape/Trapezoid.d.ts",
   "types/state",
+  "types/state/RechartsReduxContext.d.ts",
   "types/state/RechartsStoreProvider.d.ts",
   "types/state/ReportBar.d.ts",
   "types/state/ReportChartProps.d.ts",

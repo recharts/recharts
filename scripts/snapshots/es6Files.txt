@@ -86,6 +86,7 @@
   "es6/shape/Symbols.js",
   "es6/shape/Trapezoid.js",
   "es6/state",
+  "es6/state/RechartsReduxContext.js",
   "es6/state/RechartsStoreProvider.js",
   "es6/state/ReportBar.js",
   "es6/state/ReportChartProps.js",
