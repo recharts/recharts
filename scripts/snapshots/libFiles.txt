@@ -86,6 +86,7 @@
   "lib/shape/Symbols.js",
   "lib/shape/Trapezoid.js",
   "lib/state",
+  "lib/state/RechartsReduxContext.js",
   "lib/state/RechartsStoreProvider.js",
   "lib/state/ReportBar.js",
   "lib/state/ReportChartProps.js",

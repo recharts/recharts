@@ -1,12 +1,13 @@
-import { ReactReduxContext } from 'react-redux';
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
 import { useContext } from 'react';
 import { type AppDispatch, type RechartsRootState } from './store';
 
+import { RechartsReduxContext } from './RechartsReduxContext';
+
 const noopDispatch: AppDispatch = (): undefined => {};
 
 export const useAppDispatch = (): AppDispatch => {
-  const context = useContext(ReactReduxContext);
+  const context = useContext(RechartsReduxContext);
   if (context) {
     return context.store.dispatch;
   }
@@ -37,7 +38,7 @@ const refEquality: EqualityFn<unknown> = (a, b) => a === b;
  * @return whatever the selector returned; or undefined when outside of Redux store
  */
 export function useAppSelector<T>(selector: (state: RechartsRootState) => T): T | undefined {
-  const context = useContext(ReactReduxContext);
+  const context = useContext(RechartsReduxContext);
 
   return useSyncExternalStoreWithSelector<RechartsRootState | undefined, T | undefined>(
     context ? context.subscription.addNestedSub : addNestedSubNoop,

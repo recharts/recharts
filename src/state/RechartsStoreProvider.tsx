@@ -2,6 +2,7 @@ import React, { ReactNode, useRef } from 'react';
 import { Provider } from 'react-redux';
 import { createRechartsStore, RechartsRootState } from './store';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { RechartsReduxContext } from './RechartsReduxContext';
 
 type RechartsStoreProviderProps = {
   children: ReactNode;
@@ -38,5 +39,9 @@ export function RechartsStoreProvider({ preloadedState, children, reduxStoreName
   if (storeRef.current == null) {
     storeRef.current = createRechartsStore(preloadedState, reduxStoreName);
   }
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return (
+    <Provider context={RechartsReduxContext} store={storeRef.current}>
+      {children}
+    </Provider>
+  );
 }
