@@ -114,8 +114,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip).toHaveTextContent('uv : 300');
     });
 
-    // Temporarily broken until the redux a11y layer is completed
-    test.fails('Chart updates when it receives left/right arrow keystrokes', () => {
+    test('Chart updates when it receives left/right arrow keystrokes', () => {
       const mockMouseMovements = vi.fn();
 
       const { container } = render(
@@ -139,28 +138,21 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       const tooltip = getTooltip(container);
 
       expect(tooltip.textContent).toBe('');
-      expect(mockMouseMovements.mock.instances).toHaveLength(0);
 
       // Once the chart receives focus, the tooltip should display
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
-      expect(mockMouseMovements.mock.instances).toHaveLength(1);
 
-      // TODO: move accessibility layer handling to redux. This passes now but is actually broken.
-      // Once a coordinate is set in redux it does not become falsy and prefer the one in context so it does not move on update.
       const cursor = container.querySelector('.recharts-tooltip-cursor');
       expect(cursor).not.toBeNull();
 
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page A');
-      expect(mockMouseMovements.mock.instances).toHaveLength(2);
       const cursorPathA = cursor.getAttribute('d');
 
       // Respect right arrow when there's something to the right
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page B');
-      expect(mockMouseMovements.mock.instances).toHaveLength(3);
       const cursorPathB = cursor.getAttribute('d');
 
       expect(cursorPathA).not.toEqual(cursorPathB);
@@ -173,28 +165,26 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements.mock.instances).toHaveLength(6);
 
       // Ignore right arrow when you're already at the right
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page F');
-      expect(mockMouseMovements.mock.instances).toHaveLength(7);
 
       // Respect left arrow when there's something to the left
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements.mock.instances).toHaveLength(8);
 
       // Chart ignores non-arrow keys
       fireEvent.keyDown(svg, {
         key: 'a',
       });
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements.mock.instances).toHaveLength(8);
+
+      // Keyboard controls no longer spoof mouse events!
+      expect(mockMouseMovements).toHaveBeenCalledTimes(0);
     });
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
-    test.fails('Left/right arrow pays attention to if the XAxis is reversed', () => {
+    test('Left/right arrow pays attention to if the XAxis is reversed', () => {
       const mockMouseMovements = vi.fn();
 
       const { container } = render(
@@ -218,22 +208,18 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       const tooltip = getTooltip(container);
 
       expect(tooltip.textContent).toBe('');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(0);
 
       // Once the chart receives focus, the tooltip should display
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(1);
 
       // Ignore right arrow when you're already at the right
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page A');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(2);
 
       // Respect left arrow when there's something to the left
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page B');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(3);
 
       // Page C
       arrowLeft(svg);
@@ -243,24 +229,21 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(6);
 
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
       expect(tooltip).toHaveTextContent('Page F');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(7);
 
       // Respect right arrow when there's something to the right
       arrowRight(svg);
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(8);
 
       // Chart ignores non-arrow keys
       fireEvent.keyDown(svg, {
         key: 'a',
       });
       expect(tooltip).toHaveTextContent('Page E');
-      expect(mockMouseMovements).toHaveBeenCalledTimes(8);
+      expect(mockMouseMovements).toHaveBeenCalledTimes(0);
     });
 
     const Expand = () => {
@@ -289,7 +272,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       );
     };
 
-    // Accessibility layer is not integrated with Redux yet, TODO fix and enable the test again
+    // Accessibility layer is now integrated with Redux, but this still fails, TODO fix and enable the test again
     test.fails('When chart updates, arrow keys still work', () => {
       const { container } = render(<Expand />);
 

@@ -594,12 +594,12 @@ describe('selectAxisDomain', () => {
     });
 
     // this test fails because the generateCategoricalChart code path throws
-    it.fails('should not throw an error when the data includes a Symbol', () => {
+    it('should not throw an error when the data includes a Symbol', () => {
       const data = [{ x: Symbol.for('unit test') }];
       const spy = vi.fn();
       const Comp = (): null => {
         const isPanorama = useIsPanorama();
-        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', '0', isPanorama));
+        const result = useAppSelectorWithStableTest(state => selectAxisDomain(state, 'xAxis', 0, isPanorama));
         spy(result);
         return null;
       };
@@ -609,7 +609,8 @@ describe('selectAxisDomain', () => {
           <Comp />
         </BarChart>,
       );
-      expect(spy).toHaveBeenLastCalledWith([100, 9999]);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should parse strings, and ignore values that are not numbers', () => {
