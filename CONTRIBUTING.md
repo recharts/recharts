@@ -1,16 +1,16 @@
 # Contributing to Recharts
 
-We'd love for you to contribute to our source code and to make Recharts even better than it is today! Here are the guidelines we'd like you to follow:
+We'd love for you to contribute to our source code and to make Recharts even better than it is today!
 
-- [Issues and Bugs](#issues)
-- [Testing](#testing)
-- [Pull Requests](#pr)
-- [Code Guide](#code)
-- [License](#license)
+If you want to know how to develop then check out the [Development Guide](/DEVELOPING.md).
+
+Here are the guidelines we'd like you to follow:
 
 ## Ongoing Initiatives
 
 We use Github Discussion to organize our discussion along new initiatives and organize ourselves. Please do check the [announcements](https://github.com/recharts/recharts/discussions/categories/announcements) section for an overview of recent initiatives.
+
+Also feel free to join us on Slack: https://recharts.slack.com/archives/C042Q5K5UDC
 
 ## <a name="issues"></a>Issues and Bugs
 
@@ -39,19 +39,6 @@ Some behaviour must be tested upon rendering, such as interactions between compo
 ### Storybook Test Runner
 
 Storybook also has a great interface for adding tests. By default every story in storybook is a smoke test (rendering without error logs means the test passed). Additionally, it is possible to add actual tests as play functions with an assert to a story. This will often be easier than using React Testing Library, because the natural test debugging tool is Storybook itself. See for example `storybook/stories/Examples/cartesian/ReferenceLine/ReferenceLineIfOverflow.stories.tsx`
-
-### Performance tests
-
-Recharts uses (https://callstack.github.io/reassure/)[Reassure] to run performance tests. Here is how to use:
-
-1. Before making code changes, run `npm run test:perf:baseline`. This will generate baseline data. You only do this once for each change.
-2. Make your code changes now
-3. Run `npm test:perf`. Reassure will run tests again, compare with the baseline from step 1. and print results to the console. If you wish you can also review the results in a markdown file in path `./reassure/output.md`.
-4. If you are satisfied with the performance impact then go ahead and commit! If you wish to make more changes go back to step 2.
-
-Reassure will look for `*.perf-test.tsx` files by default.
-
-Also be aware that the performance tests might take a long time to run; up to several minutes.
 
 ### Mutation tests
 
