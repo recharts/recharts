@@ -2175,6 +2175,7 @@ describe('<Legend />', () => {
       expect.soft(queryByText('bad but invisible')).not.toBeInTheDocument();
     });
 
+    // this throws an error - we should probably fix that so that it does nothing instead of throwing?
     it.fails('should not render legend of unsupported graphical element', () => {
       // ComposedChart now renders Pie Legend - we should probably fix that?
       const { container } = render(
