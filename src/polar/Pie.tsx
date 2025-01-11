@@ -43,7 +43,7 @@ import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSli
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
-import { SetLegendPayload } from '../state/SetLegendPayload';
+import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -245,7 +245,7 @@ function SetPiePayloadLegend(props: Props) {
   );
 
   const legendPayload = useAppSelector(state => selectPieLegend(state, pieSettings, cells));
-  return <SetLegendPayload legendPayload={legendPayload} />;
+  return <SetPolarLegendPayload legendPayload={legendPayload} />;
 }
 
 type PieSectorsProps = {

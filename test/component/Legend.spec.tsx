@@ -2175,20 +2175,16 @@ describe('<Legend />', () => {
       expect.soft(queryByText('bad but invisible')).not.toBeInTheDocument();
     });
 
-    // this throws an error - we should probably fix that so that it does nothing instead of throwing?
-    it.fails('should not render legend of unsupported graphical element', () => {
-      // ComposedChart now renders Pie Legend - we should probably fix that?
+    it('should not render legend of unsupported graphical element', () => {
       const { container } = render(
         <ComposedChart width={500} height={500} data={categoricalData}>
           <Legend />
           <Pie dataKey="pie datakey" />
           <Radar dataKey="radar datakey" />
           <RadialBar dataKey="radialbar datakey" />
-          {/* Scatter is not supported according to the website, but it still renders its Legend payload, interesting */}
-          {/* <Scatter dataKey="scatter datakey" /> */}
         </ComposedChart>,
       );
-      expectLegendLabels(container, []);
+      expectLegendLabels(container, null);
     });
 
     it('should render legend of Scatter even though it is not a supported graphical element inside ComposedChart', () => {

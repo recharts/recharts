@@ -50,7 +50,7 @@ import {
 } from '../state/selectors/radialBarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
-import { SetLegendPayload } from '../state/SetLegendPayload';
+import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -160,7 +160,7 @@ interface State {
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
-  return <SetLegendPayload legendPayload={legendPayload} />;
+  return <SetPolarLegendPayload legendPayload={legendPayload} />;
 }
 
 function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {

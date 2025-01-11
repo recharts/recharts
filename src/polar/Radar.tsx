@@ -24,7 +24,7 @@ import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext'
 import { selectRadarPoints } from '../state/selectors/radarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { SetLegendPayload } from '../state/SetLegendPayload';
+import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 
 interface RadarPoint {
   x: number;
@@ -460,7 +460,7 @@ export class Radar extends PureComponent<Props> {
           barSize={undefined}
           type="radar"
         />
-        <SetLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
+        <SetPolarLegendPayload legendPayload={computeLegendPayloadFromRadarSectors(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <RadarImpl {...this.props} />
       </>
