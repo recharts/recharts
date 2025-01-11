@@ -23,8 +23,11 @@ import { generateMockData } from '../helper/generateMockData';
 import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
 import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../src/state/selectors/axisSelectors';
-import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
+import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
+import { TickItem } from '../../src/util/types';
+import { CustomSyncMethodDataParam } from '../../src/synchronisation/types';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
@@ -818,6 +821,92 @@ describe('<LineChart />', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
+
+  test('Render a line with clipDot option on the dot and expect attributes not to be NaN', () => {
+    const { container } = render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line type="monotone" dataKey="uv" stroke="#ff7300" dot={{ clipDot: false }} />
+        <Tooltip />
+        <XAxis dataKey="name" allowDataOverflow />
+      </LineChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    const clipPaths = container.getElementsByTagName('clipPath');
+    for (let i = 0; i < clipPaths.length; i++) {
+      const clipPath = clipPaths.item(i);
+      const rects = clipPath && clipPath.getElementsByTagName('rect');
+      for (let j = 0; j < clipPaths.length; j++) {
+        const rect = rects?.item(j);
+        if (rect) {
+          expect(Number(rect.getAttribute('height'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('width'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('x'))).not.toBeNaN();
+          expect(Number(rect.getAttribute('y'))).not.toBeNaN();
+        }
+      }
+    }
+  });
+
+  describe('LineChart - test ref access', () => {
+    test('should allow access to the CategoricalChartWrapper through the ref prop forwarded from CategoricalChart', () => {
+      let refNode: { clipPathId: string };
+
+      const MyComponent = () => {
+        return (
+          <LineChart
+            width={100}
+            height={100}
+            data={PageData}
+            ref={node => {
+              refNode = node;
+            }}
+          >
+            <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+            <Tooltip />
+            <XAxis dataKey="name" />
+          </LineChart>
+        );
+      };
+
+      render(<MyComponent />);
+
+      expect(refNode).toBeDefined();
+      expect(refNode.clipPathId).toMatch(/recharts\d+-clip/);
+    });
+  });
+
+  describe('LineChart layout context', () => {
+    it(
+      'should provide viewBox and clipPathId',
+      testChartLayoutContext(
+        props => (
+          <LineChart width={100} height={50} barSize={20}>
+            {props.children}
+          </LineChart>
+        ),
+        ({ clipPathId, viewBox }) => {
+          expect(clipPathId).toMatch(/recharts\d+-clip/);
+          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
+        },
+      ),
+    );
+
+    it(
+      'should set width and height in context',
+      testChartLayoutContext(
+        props => (
+          <LineChart width={100} height={50} barSize={20}>
+            {props.children}
+          </LineChart>
+        ),
+        ({ width: w, height: h }) => {
+          expect(w).toBe(100);
+          expect(h).toBe(50);
+        },
+      ),
+    );
+  });
 });
 
 describe('<LineChart /> and various data sources', () => {
@@ -1363,133 +1452,131 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     vi.useRealTimers();
   });
 
-  test('should show tooltips for both charts synced by index on MouseEnter and hide on MouseLeave/Escape', async () => {
-    const { container, getByText } = render(
-      <div>
-        <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test">
-          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-          <Tooltip />
-          <XAxis dataKey="name" />
-        </LineChart>
-        <LineChart width={width} height={height} data={data2} margin={margin} syncId="test">
-          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
-          <Tooltip />
-          <XAxis dataKey="name" />
-        </LineChart>
-      </div>,
-    );
-
+  function hoverOverFirstLineItem(container: Element) {
     const chartWidth = width - margin.left - margin.right;
     const dotSpacing = chartWidth / (PageData.length - 1);
 
-    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
-
-    const firstChart = container.querySelector('.recharts-wrapper');
-
-    assertNotNull(firstChart);
-
-    // simulate entering just past Page A of Chart1 to test snapping of the cursor line
-    fireEvent.mouseOver(firstChart, {
+    fireEvent.mouseOver(container, {
       bubbles: true,
       cancelable: true,
       clientX: margin.left + 0.1 * dotSpacing,
       clientY: height / 2,
     });
     vi.advanceTimersByTime(100);
+  }
 
-    // There are two tooltips - one for each LineChart as they have the same syncId
-    const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
-    expect(tooltipCursors).toHaveLength(2);
+  describe.each(['index', undefined] as const)('when syncMethod=%s', syncMethod => {
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test" syncMethod={syncMethod}>
+          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          {children}
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart width={width} height={height} data={data2} margin={margin} syncId="test" syncMethod={syncMethod}>
+          <Line isAnimationActive={false} type="monotone" dataKey="uv" stroke="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          {children}
+        </LineChart>
+      ),
+    );
+    test('should show tooltips for both charts MouseEnter and hide on MouseLeave/Escape', async () => {
+      const { container, wrapperA, wrapperB } = renderTestCase();
 
-    // make sure tooltips display the correct values, i.e. the value of the first item in the data
-    expect(getByText('400')).toBeInTheDocument();
-    expect(getByText('500')).toBeInTheDocument();
+      expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    // Check the activeDots are highlighted
-    const activeDotNodes = container.querySelectorAll('.recharts-active-dot');
-    expect(activeDotNodes).toHaveLength(2);
+      const firstChart = wrapperA.querySelector('.recharts-wrapper');
 
-    // simulate leaving the area
-    fireEvent.mouseLeave(firstChart);
-    vi.advanceTimersByTime(100);
-    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
+      assertNotNull(firstChart);
 
-    fireEvent.mouseOver(firstChart, {
-      bubbles: true,
-      cancelable: true,
-      clientX: margin.left + 0.1 * dotSpacing,
-      clientY: height / 2,
+      // simulate entering just past Page A of Chart1 to test snapping of the cursor line
+      hoverOverFirstLineItem(firstChart);
+
+      // There are two tooltips - one for each LineChart as they have the same syncId
+      const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
+      expect(tooltipCursors).toHaveLength(2);
+
+      // make sure tooltips display the correct values, i.e. the value of the first item in the data
+      expectTooltipPayload(wrapperA, 'Page A', ['uv : 400']);
+      expectTooltipPayload(wrapperB, 'Page F', ['uv : 500']);
+
+      // Check the activeDots are highlighted
+      const activeDotNodes = container.querySelectorAll('.recharts-active-dot');
+      expect(activeDotNodes).toHaveLength(2);
+
+      // simulate leaving the area
+      fireEvent.mouseLeave(firstChart);
+      vi.advanceTimersByTime(100);
+      expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
+
+      // hover on the same spot again
+      hoverOverFirstLineItem(firstChart);
+      expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
     });
-    vi.advanceTimersByTime(100);
-    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
   });
 
-  test("should show tooltips using syncMethod: 'value' for both charts on MouseEnter and hide on MouseLeave", async () => {
-    const chart1 = (
-      <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test" syncMethod="value">
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <Tooltip />
-        <XAxis dataKey="name" />
-      </LineChart>
-    );
-    const chart2 = (
-      <LineChart width={width} height={height} data={data2} margin={margin} syncId="test" syncMethod="value">
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <Tooltip />
-        <XAxis dataKey="name" />
-      </LineChart>
-    );
-    const { container, getByText } = render(
-      <div>
-        {chart1}
-        {chart2}
-      </div>,
+  describe('when syncMethod=value', () => {
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart width={width} height={height} data={PageData} margin={margin} syncId="test" syncMethod="value">
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          {children}
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart width={width} height={height} data={data2} margin={margin} syncId="test" syncMethod="value">
+          <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+          <Tooltip />
+          <XAxis dataKey="name" />
+          {children}
+        </LineChart>
+      ),
     );
 
-    const chartWidth = width - margin.left - margin.right;
-    const dotSpacing = chartWidth / (PageData.length - 1);
+    test('should show tooltips for both charts on MouseEnter and hide on MouseLeave', async () => {
+      const { container, wrapperA, wrapperB } = renderTestCase();
 
-    // simulate entering just past Page A of Chart1 to test snapping of the cursor line
-    expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
+      // simulate entering just past Page A of Chart1 to test snapping of the cursor line
+      expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-    const firstChart = container.querySelector('.recharts-wrapper');
+      const firstChart = wrapperA.querySelector('.recharts-wrapper');
 
-    assertNotNull(firstChart);
+      assertNotNull(firstChart);
 
-    fireEvent.mouseOver(firstChart, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
-    vi.advanceTimersByTime(100);
+      hoverOverFirstLineItem(firstChart);
 
-    // There are two tooltips - one for each LineChart as they have the same syncId
-    const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
-    expect(tooltipCursors).toHaveLength(2);
+      // There are two tooltips - one for each LineChart as they have the same syncId
+      const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
+      expect(tooltipCursors).toHaveLength(2);
 
-    // make sure tooltips display the correct values, synced by data value
-    expect(getByText('400')).toBeInTheDocument();
-    expect(getByText('230')).toBeInTheDocument();
+      // make sure tooltips display the correct values, synced by XAxis label
+      expectTooltipPayload(wrapperA, 'Page A', ['uv : 400']);
+      expectTooltipPayload(wrapperB, 'Page A', ['uv : 230']);
 
-    // Check the activeDots are highlighted
-    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+      // Check the activeDots are highlighted
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
 
-    // simulate leaving the area
-    fireEvent.mouseLeave(firstChart);
-    vi.advanceTimersByTime(100);
+      // simulate leaving the area
+      fireEvent.mouseLeave(firstChart);
+      vi.advanceTimersByTime(100);
 
-    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+    });
   });
 
-  /**
-   * Tooltip sync is in redux but this example doesn't synchronise the cursors for some reason
-   * TODO fix and re-enable
-   * https://github.com/recharts/recharts/issues/4548
-   */
-  test.fails(
-    'should show tooltips using syncMethod: [function] for both charts on MouseEnter and hide on MouseLeave',
-    async () => {
-      const syncMethodFunction = () => {
-        return 1;
-      };
+  describe('when syncMethod=<function>', () => {
+    const syncMethodFunction = (tooltipTicks: ReadonlyArray<TickItem>, data: CustomSyncMethodDataParam) => {
+      return (data.activeTooltipIndex + 1) % tooltipTicks.length;
+    };
 
-      const chart1 = (
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
         <LineChart
           width={width}
           height={height}
@@ -1501,9 +1588,10 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
+          {children}
         </LineChart>
-      );
-      const chart2 = (
+      ),
+      ({ children }) => (
         <LineChart
           width={width}
           height={height}
@@ -1515,33 +1603,29 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
           <Line type="monotone" dataKey="uv" stroke="#ff7300" />
           <Tooltip />
           <XAxis dataKey="name" />
+          {children}
         </LineChart>
-      );
-      const { container } = render(
-        <div>
-          {chart1}
-          {chart2}
-        </div>,
-      );
+      ),
+    );
 
-      const chartWidth = width - margin.left - margin.right;
-      const dotSpacing = chartWidth / (PageData.length - 1);
+    test('should show tooltips for both charts on MouseEnter and hide on MouseLeave', async () => {
+      const { container, wrapperA, wrapperB } = renderTestCase();
 
       // simulate entering just past Page A of Chart1 to test snapping of the cursor line
       expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
 
-      const firstChart = container.querySelector('.recharts-wrapper');
+      const firstChart = wrapperA.querySelector('.recharts-wrapper');
       assertNotNull(firstChart);
 
-      fireEvent.mouseOver(firstChart, { bubbles: true, clientX: margin.left + 0.1 * dotSpacing, clientY: height / 2 });
-      vi.advanceTimersByTime(100);
+      hoverOverFirstLineItem(firstChart);
 
       // There are two tooltips - one for each LineChart as they have the same syncId
       expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(2);
 
-      // make sure tooltips display the correct values, synced by data value
-      expect(screen.queryByText('300')).toBeTruthy();
-      expect(screen.queryByText('550')).toBeTruthy();
+      // mouse hovered over first item which is page A in the original PageData
+      expectTooltipPayload(wrapperA, 'Page A', ['uv : 400']);
+      // the function always returns 1 which means the second element in the data2 array
+      expectTooltipPayload(wrapperB, 'Page E', ['uv : 550']);
 
       // Check the activeDots are highlighted
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
@@ -1550,92 +1634,6 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       fireEvent.mouseLeave(firstChart);
       vi.advanceTimersByTime(100);
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
-    },
-  );
-
-  test('Render a line with clipDot option on the dot and expect attributes not to be NaN', () => {
-    const { container } = render(
-      <LineChart width={width} height={height} data={data2}>
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" dot={{ clipDot: false }} />
-        <Tooltip />
-        <XAxis dataKey="name" allowDataOverflow />
-      </LineChart>,
-    );
-
-    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
-    const clipPaths = container.getElementsByTagName('clipPath');
-    for (let i = 0; i < clipPaths.length; i++) {
-      const clipPath = clipPaths.item(i);
-      const rects = clipPath && clipPath.getElementsByTagName('rect');
-      for (let j = 0; j < clipPaths.length; j++) {
-        const rect = rects?.item(j);
-        if (rect) {
-          expect(Number(rect.getAttribute('height'))).not.toBeNaN();
-          expect(Number(rect.getAttribute('width'))).not.toBeNaN();
-          expect(Number(rect.getAttribute('x'))).not.toBeNaN();
-          expect(Number(rect.getAttribute('y'))).not.toBeNaN();
-        }
-      }
-    }
-  });
-
-  describe('LineChart - test ref access', () => {
-    test('should allow access to the CategoricalChartWrapper through the ref prop forwarded from CategoricalChart', () => {
-      let refNode: { clipPathId: string };
-
-      const MyComponent = () => {
-        return (
-          <LineChart
-            width={width}
-            height={height}
-            data={data2}
-            ref={node => {
-              refNode = node;
-            }}
-          >
-            <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-            <Tooltip />
-            <XAxis dataKey="name" />
-          </LineChart>
-        );
-      };
-
-      render(<MyComponent />);
-
-      expect(refNode).toBeDefined();
-      expect(refNode.clipPathId).toMatch(/recharts\d+-clip/);
     });
-  });
-
-  describe('LineChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <LineChart width={100} height={50} barSize={20}>
-            {props.children}
-          </LineChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
-
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <LineChart width={100} height={50} barSize={20}>
-            {props.children}
-          </LineChart>
-        ),
-        ({ width: w, height: h }) => {
-          expect(w).toBe(100);
-          expect(h).toBe(50);
-        },
-      ),
-    );
   });
 });

@@ -6,15 +6,15 @@ import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Event
 import { createEventEmitter } from '../state/optionsSlice';
 import { setSyncInteraction, TooltipSyncState } from '../state/tooltipSlice';
 import { selectTooltipDataKey } from '../state/selectors/selectors';
-import { ChartCoordinate, Coordinate, TooltipEventType } from '../util/types';
+import { ChartCoordinate, Coordinate, TickItem, TooltipEventType } from '../util/types';
 import { TooltipTrigger } from '../chart/types';
 import { selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
 import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
+import { CustomSyncMethodDataParam } from './types';
 
-const originCoordinate: Coordinate = { x: 0, y: 0 };
 const noop = () => {};
 
 function useTooltipSyncEventsListener() {
@@ -38,46 +38,70 @@ function useTooltipSyncEventsListener() {
         // We don't want to dispatch actions that we sent ourselves.
         return;
       }
-      if (mySyncId === incomingSyncId) {
-        if (syncMethod === 'index') {
-          dispatch(action);
-        } else if (syncMethod === 'value') {
-          if (tooltipTicks == null) {
-            return;
-          }
-          const tickByValue = tooltipTicks.find(tick => tick.value === action.payload.label);
-          if (tickByValue == null) {
-            dispatch(
-              setSyncInteraction({
-                active: false,
-                coordinate: undefined,
-                dataKey: undefined,
-                index: null,
-                label: undefined,
-              }),
-            );
-            return;
-          }
-          const { x, y } = action.payload.coordinate;
-          const validateChartX = Math.min(x, viewBox.x + viewBox.width);
-          const validateChartY = Math.min(y, viewBox.y + viewBox.height);
-          const activeCoordinate = tickByValue
-            ? {
-                x: layout === 'horizontal' ? tickByValue.coordinate : validateChartX,
-                y: layout === 'horizontal' ? validateChartY : tickByValue.coordinate,
-              }
-            : originCoordinate;
-
-          const syncAction = setSyncInteraction({
-            active: action.payload.active,
-            coordinate: activeCoordinate,
-            dataKey: action.payload.dataKey,
-            index: String(tickByValue.index),
-            label: action.payload.label,
-          });
-          dispatch(syncAction);
-        }
+      if (mySyncId !== incomingSyncId) {
+        // This event is not for this chart
+        return;
       }
+      if (syncMethod === 'index') {
+        dispatch(action);
+        // This is the default behaviour, we don't need to do anything else.
+        return;
+      }
+
+      if (tooltipTicks == null) {
+        // for the other two sync methods, we need the ticks to be available
+        return;
+      }
+
+      let activeTick: TickItem | undefined;
+      if (typeof syncMethod === 'function') {
+        /*
+         * This is what the data shape in 2.x CategoricalChartState used to look like.
+         * In 3.x we store things differently but let's try to keep the old shape for compatibility.
+         */
+        const syncMethodParam: CustomSyncMethodDataParam = {
+          activeTooltipIndex: action.payload.index == null ? undefined : Number(action.payload.index),
+          isTooltipActive: action.payload.active,
+          activeIndex: action.payload.index == null ? undefined : Number(action.payload.index),
+          activeLabel: action.payload.label,
+          activeDataKey: action.payload.dataKey,
+          activeCoordinate: action.payload.coordinate,
+        };
+        // Call a callback function. If there is an application specific algorithm
+        const activeTooltipIndex = syncMethod(tooltipTicks, syncMethodParam);
+        activeTick = tooltipTicks[activeTooltipIndex];
+      } else if (syncMethod === 'value') {
+        activeTick = tooltipTicks.find(tick => tick.value === action.payload.label);
+      }
+
+      if (activeTick == null || action.payload.active === false) {
+        dispatch(
+          setSyncInteraction({
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+            label: undefined,
+          }),
+        );
+        return;
+      }
+      const { x, y } = action.payload.coordinate;
+      const validateChartX = Math.min(x, viewBox.x + viewBox.width);
+      const validateChartY = Math.min(y, viewBox.y + viewBox.height);
+      const activeCoordinate: Coordinate = {
+        x: layout === 'horizontal' ? activeTick.coordinate : validateChartX,
+        y: layout === 'horizontal' ? validateChartY : activeTick.coordinate,
+      };
+
+      const syncAction = setSyncInteraction({
+        active: action.payload.active,
+        coordinate: activeCoordinate,
+        dataKey: action.payload.dataKey,
+        index: String(activeTick.index),
+        label: action.payload.label,
+      });
+      dispatch(syncAction);
     };
     eventCenter.on(TOOLTIP_SYNC_EVENT, listener);
 
