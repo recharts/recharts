@@ -15,7 +15,6 @@ import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { CustomSyncMethodDataParam } from './types';
 
-const originCoordinate: Coordinate = { x: 0, y: 0 };
 const noop = () => {};
 
 function useTooltipSyncEventsListener() {
@@ -90,12 +89,10 @@ function useTooltipSyncEventsListener() {
       const { x, y } = action.payload.coordinate;
       const validateChartX = Math.min(x, viewBox.x + viewBox.width);
       const validateChartY = Math.min(y, viewBox.y + viewBox.height);
-      const activeCoordinate = activeTick
-        ? {
-            x: layout === 'horizontal' ? activeTick.coordinate : validateChartX,
-            y: layout === 'horizontal' ? validateChartY : activeTick.coordinate,
-          }
-        : originCoordinate;
+      const activeCoordinate: Coordinate = {
+        x: layout === 'horizontal' ? activeTick.coordinate : validateChartX,
+        y: layout === 'horizontal' ? validateChartY : activeTick.coordinate,
+      };
 
       const syncAction = setSyncInteraction({
         active: action.payload.active,
