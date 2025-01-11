@@ -68,6 +68,7 @@ import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { selectTooltipSettings } from './selectTooltipSettings';
 
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
+import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -349,9 +350,9 @@ const selectTooltipInteractionState: (state: RechartsRootState) => TooltipIntera
   combineTooltipInteractionState,
 );
 
-export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | undefined = createSelector(
-  [selectTooltipInteractionState],
-  (tooltipInteraction: TooltipInteractionState): TooltipIndex | undefined => tooltipInteraction?.index,
+export const selectActiveTooltipIndex: (state: RechartsRootState) => TooltipIndex | null = createSelector(
+  [selectTooltipInteractionState, selectTooltipDisplayedData],
+  combineActiveTooltipIndex,
 );
 
 export const selectActiveLabel: (state: RechartsRootState) => string | undefined = createSelector(

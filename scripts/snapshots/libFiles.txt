@@ -116,6 +116,7 @@
   "lib/state/selectors/brushSelectors.js",
   "lib/state/selectors/combiners",
   "lib/state/selectors/combiners/combineActiveLabel.js",
+  "lib/state/selectors/combiners/combineActiveTooltipIndex.js",
   "lib/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "lib/state/selectors/combiners/combineTooltipInteractionState.js",
   "lib/state/selectors/containerSelectors.js",

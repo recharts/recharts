@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import {
@@ -18,6 +18,7 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { expectTooltipNotVisible, expectTooltipPayload, getTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { clickOn } from '../helper/clickOn';
 
 function assertChartA11yAttributes(svg: Element) {
   expect(svg).not.toBeNull();
@@ -246,91 +247,105 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(mockMouseMovements).toHaveBeenCalledTimes(0);
     });
 
-    const Expand = () => {
-      const [width, setWidth] = useState(6);
-      const myData = PageData.slice(0, width);
+    describe('changing data prop in the middle of keyboard interaction', () => {
+      const Expand = ({ children }: { children: ReactNode }) => {
+        const [width, setWidth] = useState(6);
+        const myData = PageData.slice(0, width);
 
-      return (
-        <div>
-          <pre>{myData.length}</pre>
+        return (
+          <div>
+            <pre>{myData.length}</pre>
 
-          <button id="my3" type="button" onClick={() => setWidth(3)}>
-            Show 3
-          </button>
-          <button id="my5" type="button" onClick={() => setWidth(5)}>
-            Show 5
-          </button>
+            <button id="my3" type="button" onClick={() => setWidth(3)}>
+              Show 3
+            </button>
+            <button id="my5" type="button" onClick={() => setWidth(5)}>
+              Show 5
+            </button>
 
-          <AreaChart width={100} height={50} data={myData} accessibilityLayer={accessibilityLayer}>
-            <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
-            <Tooltip />
-            <Legend />
-            <XAxis dataKey="name" />
-            <YAxis />
-          </AreaChart>
-        </div>
-      );
-    };
+            <AreaChart width={100} height={50} data={myData} accessibilityLayer={accessibilityLayer}>
+              <Area type="monotone" dataKey="uv" stroke="#ff7300" fill="#ff7300" />
+              <Tooltip />
+              <Legend />
+              <XAxis dataKey="name" />
+              <YAxis />
+              {children}
+            </AreaChart>
+          </div>
+        );
+      };
 
-    // Accessibility layer is now integrated with Redux, but this still fails, TODO fix and enable the test again
-    test.fails('When chart updates, arrow keys still work', () => {
-      const { container } = render(<Expand />);
+      const clickOn3 = clickOn('#my3');
+      const clickOn5 = clickOn('#my5');
 
-      const pre = container.querySelector('pre');
-      assertNotNull(pre);
-      const svg = container.querySelector('svg');
-      assertNotNull(svg);
-      const tooltip = getTooltip(container);
+      const renderTestCase = createSelectorTestCase(Expand);
 
-      expect(tooltip.textContent).toBe('');
-      expect(pre.textContent).toBe('6');
+      it('should start with tooltip not visible', () => {
+        const { container } = renderTestCase();
+        expectTooltipNotVisible(container);
+      });
 
-      // Once the chart receives focus, the tooltip should display
-      act(() => svg.focus());
-      expect(tooltip).toHaveTextContent('Page A');
+      it('should select smaller data array when the button is clicked', () => {});
 
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page B');
+      test('When chart updates and some data get removed, keyboard interaction state should update too', () => {
+        const { container } = renderTestCase();
 
-      // Page C
-      arrowRight(svg);
+        const pre = container.querySelector('pre');
+        assertNotNull(pre);
+        const svg = container.querySelector('svg');
+        assertNotNull(svg);
 
-      // Page D
-      arrowRight(svg);
+        expect(pre.textContent).toBe('6');
 
-      // Page E
-      arrowRight(svg);
+        // Once the chart receives focus, the tooltip should display
+        act(() => svg.focus());
+        expectTooltipPayload(container, 'Page A', ['uv : 400']);
 
-      // Page F
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page F');
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page B', ['uv : 300']);
 
-      fireEvent.click(container.querySelector('#my3') as HTMLButtonElement);
-      expect(pre.textContent).toBe('3');
+        // Page C
+        arrowRight(svg);
 
-      // The chart only goes from A - C now, so the AccessibilityManager should think "C" is active.
+        // Page D
+        arrowRight(svg);
 
-      arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page B');
+        // Page E
+        arrowRight(svg);
 
-      fireEvent.click(container.querySelector('#my5') as HTMLButtonElement);
-      expect(pre.textContent).toBe('5');
+        // Page F
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page F', ['uv : 189']);
 
-      // The chart now goes from A - E. Since the focus was already on B, B can remain active.
-      expect(tooltip).toHaveTextContent('Page B');
+        clickOn3(container);
+        expect(pre.textContent).toBe('3');
 
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page C');
+        // The chart only goes from A - C now, so the AccessibilityManager should think "C" is active.
+        expectTooltipPayload(container, 'Page C', ['uv : 300']);
 
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page D');
+        arrowLeft(svg);
+        // after next arrow, it should follow the new data length, and not iterate through all the previous items that are now gone
+        expectTooltipPayload(container, 'Page B', ['uv : 300']);
 
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+        clickOn5(container);
+        expect(pre.textContent).toBe('5');
 
-      // The chart only goes from A - E, so we shouldn't be able to go right any further.
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+        // The chart now goes from A - E. Since the focus was already on B, B can remain active.
+        expectTooltipPayload(container, 'Page B', ['uv : 300']);
+
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page C', ['uv : 300']);
+
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page D', ['uv : 200']);
+
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page E', ['uv : 278']);
+
+        // The chart only goes from A - E, so we shouldn't be able to go right any further.
+        arrowRight(svg);
+        expectTooltipPayload(container, 'Page E', ['uv : 278']);
+      });
     });
 
     const Counter = () => {
