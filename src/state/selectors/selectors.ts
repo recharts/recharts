@@ -38,7 +38,7 @@ import { findEntryInArray } from '../../util/DataUtils';
 import { TooltipTrigger } from '../../chart/types';
 import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
-import { selectTooltipAxis, selectTooltipAxisTicks } from './tooltipSelectors';
+import { selectTooltipAxis, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
 import { AxisRange } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -46,6 +46,7 @@ import { selectChartOffset } from './selectChartOffset';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
+import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -102,9 +103,9 @@ export const selectActiveIndex: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => TooltipIndex | undefined = createSelector(
-  [selectTooltipInteractionState],
-  (tooltipInteraction: TooltipInteractionState | undefined) => tooltipInteraction?.index,
+) => TooltipIndex | null = createSelector(
+  [selectTooltipInteractionState, selectTooltipDisplayedData],
+  combineActiveTooltipIndex,
 );
 
 export const selectTooltipDataKey = (

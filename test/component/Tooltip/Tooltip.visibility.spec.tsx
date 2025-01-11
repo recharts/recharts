@@ -643,14 +643,10 @@ describe('Tooltip visibility', () => {
         expect(tooltip).not.toBeVisible();
       });
 
-      it('should ignore invalid defaultIndex value', context => {
-        if (name === 'FunnelChart') {
-          // FunnelChart throws an error when called with defaultIndex
-          context.skip();
-        }
+      it('should ignore invalid defaultIndex value', () => {
         const { container } = render(
           <Wrapper>
-            <Tooltip defaultIndex={20} />
+            <Tooltip defaultIndex={NaN} />
           </Wrapper>,
         );
 
@@ -659,9 +655,27 @@ describe('Tooltip visibility', () => {
         expect(tooltip).not.toBeVisible();
       });
 
-      it('should not fail when defaultIndex is data.length', context => {
+      it('should show the last item when defaultIndex is same or larger than the data.length', context => {
         if (name === 'FunnelChart') {
           // FunnelChart throws an error when called with defaultIndex
+          context.skip();
+        }
+        if (name === 'Sankey') {
+          /*
+           * Sankey chart does not support numeric tooltip indexes
+           */
+          context.skip();
+        }
+        if (name === 'Treemap') {
+          /*
+           * Treemap chart does not support numeric tooltip indexes
+           */
+          context.skip();
+        }
+        if (name === 'SunburstChart') {
+          /*
+           * SunburstChart does not support numeric tooltip indexes
+           */
           context.skip();
         }
         const { container } = render(
@@ -672,7 +686,7 @@ describe('Tooltip visibility', () => {
 
         const tooltip = getTooltip(container);
         expect(tooltip).toBeInTheDocument();
-        expect(tooltip).not.toBeVisible();
+        expect(tooltip).toBeVisible();
       });
     });
   });

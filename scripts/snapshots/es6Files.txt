@@ -116,6 +116,7 @@
   "es6/state/selectors/brushSelectors.js",
   "es6/state/selectors/combiners",
   "es6/state/selectors/combiners/combineActiveLabel.js",
+  "es6/state/selectors/combiners/combineActiveTooltipIndex.js",
   "es6/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "es6/state/selectors/combiners/combineTooltipInteractionState.js",
   "es6/state/selectors/containerSelectors.js",
