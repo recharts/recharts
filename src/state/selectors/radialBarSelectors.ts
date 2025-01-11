@@ -372,14 +372,22 @@ export const selectRadialBarSectors: (
     bandSize: number | undefined,
     layout: LayoutType,
     baseValue: number | unknown,
-    { cx, cy, startAngle, endAngle }: PolarViewBox,
+    polarViewBox: PolarViewBox,
     cells: ReadonlyArray<ReactElement> | undefined,
     pos: BarPositionPosition | undefined,
     stackedData: Series<Record<number, number>, DataKey<any>> | undefined,
   ) => {
-    if (radiusAxis == null || angleAxis == null || chartData == null || bandSize == null || pos == null) {
+    if (
+      radiusAxis == null ||
+      angleAxis == null ||
+      chartData == null ||
+      bandSize == null ||
+      pos == null ||
+      (layout !== 'centric' && layout !== 'radial')
+    ) {
       return undefined;
     }
+    const { cx, cy, startAngle, endAngle } = polarViewBox;
     const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
     const numericAxis = layout === 'centric' ? radiusAxis : angleAxis;
     const stackedDomain: ReadonlyArray<unknown> | null = stackedData ? numericAxis.scale.domain() : null;
