@@ -65,7 +65,7 @@ interface BrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onChange'> & BrushProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd'> & BrushProps;
 
 type PropertiesFromContext = {
   x: number;
