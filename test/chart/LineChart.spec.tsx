@@ -27,7 +27,7 @@ import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../h
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { TickItem } from '../../src/util/types';
-import { CustomSyncMethodDataParam } from '../../src/synchronisation/types';
+import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 
 describe('<LineChart />', () => {
   test('Render 1 line in simple LineChart', () => {
@@ -1571,7 +1571,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
   });
 
   describe('when syncMethod=<function>', () => {
-    const syncMethodFunction = (tooltipTicks: ReadonlyArray<TickItem>, data: CustomSyncMethodDataParam) => {
+    const syncMethodFunction = (tooltipTicks: ReadonlyArray<TickItem>, data: MouseHandlerDataParam) => {
       return (data.activeTooltipIndex + 1) % tooltipTicks.length;
     };
 
