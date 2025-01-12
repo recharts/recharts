@@ -13,9 +13,8 @@ import {
   XAxis,
   XAxisProps,
   YAxis,
+  useActiveTooltipLabel,
 } from '../../../src';
-import { useAppSelector } from '../../../src/state/hooks';
-import { selectActiveLabel } from '../../../src/state/selectors/tooltipSelectors';
 
 export default {
   component: LineChart,
@@ -141,7 +140,7 @@ const findNearestDatum = (
 };
 
 function JointActiveDot({ dataKey, fill }: { dataKey: 'y1' | 'y2'; fill: string }) {
-  const activeTimestamp = useAppSelector(selectActiveLabel);
+  const activeTimestamp = useActiveTooltipLabel();
   const activeDatum =
     activeTimestamp !== null ? findNearestDatum(mergedGraphData, Number(activeTimestamp), dataKey) : null;
 
