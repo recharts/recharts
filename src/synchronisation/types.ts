@@ -1,6 +1,6 @@
 import { Coordinate, DataKey, TickItem } from '../util/types';
 
-export type CustomSyncMethodDataParam = {
+export type MouseHandlerDataParam = {
   activeTooltipIndex: number | undefined;
   isTooltipActive: boolean;
   activeIndex: number | undefined;
@@ -19,7 +19,4 @@ export type CustomSyncMethodDataParam = {
  * argument 1: ticks from the current chart
  * argument 2: active tooltip state from the other chart
  */
-export type SyncMethod =
-  | 'index'
-  | 'value'
-  | ((ticks: ReadonlyArray<TickItem>, data: CustomSyncMethodDataParam) => number);
+export type SyncMethod = 'index' | 'value' | ((ticks: ReadonlyArray<TickItem>, data: MouseHandlerDataParam) => number);

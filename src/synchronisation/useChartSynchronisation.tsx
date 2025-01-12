@@ -13,7 +13,7 @@ import { selectSynchronisedTooltipState } from './syncSelectors';
 import { useChartLayout, useViewBox } from '../context/chartLayoutContext';
 import { BrushStartEndIndex } from '../context/brushUpdateContext';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
-import { CustomSyncMethodDataParam } from './types';
+import { MouseHandlerDataParam } from './types';
 
 const noop = () => {};
 
@@ -59,7 +59,7 @@ function useTooltipSyncEventsListener() {
          * This is what the data shape in 2.x CategoricalChartState used to look like.
          * In 3.x we store things differently but let's try to keep the old shape for compatibility.
          */
-        const syncMethodParam: CustomSyncMethodDataParam = {
+        const syncMethodParam: MouseHandlerDataParam = {
           activeTooltipIndex: action.payload.index == null ? undefined : Number(action.payload.index),
           isTooltipActive: action.payload.active,
           activeIndex: action.payload.index == null ? undefined : Number(action.payload.index),
