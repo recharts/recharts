@@ -1,4 +1,4 @@
-import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 import { useContext } from 'react';
 import { type AppDispatch, type RechartsRootState } from './store';
 
