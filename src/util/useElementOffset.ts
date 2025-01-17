@@ -41,7 +41,7 @@ export type SetElementOffset = (node: HTMLElement | null) => void;
 /**
  * Use this to listen to element layout changes.
  *
- * Very useful for reading actual sizes of DOM elements.
+ * Very useful for reading actual sizes of DOM elements relative to the viewport.
  *
  * @param extraDependencies use this to trigger new DOM dimensions read when any of these change. Good for things like payload and label, that will re-render something down in the children array, but you want to read the layout box of a parent.
  * @returns [lastElementOffset, updateElementOffset] most recent value, and setter. Pass the setter to a DOM element ref like this: `<div ref={updateElementOffset}>`
@@ -51,11 +51,12 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
   const updateBoundingBox = useCallback(
     (node: HTMLDivElement | null) => {
       if (node != null) {
+        const rect = node.getBoundingClientRect();
         const box: ElementOffset = {
-          height: node.offsetHeight,
-          left: node.offsetLeft,
-          top: node.offsetTop,
-          width: node.offsetWidth,
+          height: rect.height,
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
         };
         if (
           Math.abs(box.height - lastBoundingBox.height) > EPS ||

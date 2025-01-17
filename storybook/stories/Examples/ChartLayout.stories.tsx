@@ -172,7 +172,7 @@ function CrosshairWrapper() {
   return (
     <svg width="100%" height="100%" onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
       {/* transparent rect is here so that there is something for the mouse events to react to. empty SVG does not fire any mouse events */}
-      <rect x={0} y={0} width={500} height={500} fill="transparent" />
+      <rect x={0} y={0} width="100%" height="100%" fill="transparent" />
       {mousePosition != null && (
         <Crosshair x={Math.round(mousePosition.pageX - offset.left)} y={Math.round(mousePosition.pageY - offset.top)} />
       )}
@@ -237,6 +237,51 @@ export const WithStaticDimensions = {
         <CrosshairWrapper />
         <ShowScale />
       </ComposedChart>
+    );
+  },
+  args: {
+    width: 500,
+    height: 500,
+  },
+};
+
+/**
+ * https://github.com/recharts/recharts/issues/5477
+ */
+export const WithAbsolutePositionAndFlexboxParents = {
+  render: (args: Record<string, any>) => {
+    return (
+      <div style={{ display: 'flex', height: '100vh' }}>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#003459',
+            position: 'relative',
+          }}
+          className="spacer-top"
+        >
+          <div
+            style={{
+              position: 'absolute',
+              height: '100%',
+              width: '100%',
+              top: '100px',
+              background: '#00A7E1',
+            }}
+            className="spacer-left"
+          >
+            <ComposedChart {...args}>
+              {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
+              <ChartSizeDimensions />
+              <CrosshairWrapper />
+              <ShowScale />
+            </ComposedChart>
+          </div>
+        </div>
+      </div>
     );
   },
   args: {
