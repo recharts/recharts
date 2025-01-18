@@ -14,6 +14,7 @@ import { rootPropsReducer } from './rootPropsSlice';
 import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
+import { externalEventsMiddleware } from './externalEventsMiddleware';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
@@ -42,7 +43,12 @@ export const createRechartsStore = (
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-      }).concat([mouseClickMiddleware.middleware, mouseMoveMiddleware.middleware, keyboardEventsMiddleware.middleware]),
+      }).concat([
+        mouseClickMiddleware.middleware,
+        mouseMoveMiddleware.middleware,
+        keyboardEventsMiddleware.middleware,
+        externalEventsMiddleware.middleware,
+      ]),
     devTools: {
       serialize: {
         replacer: reduxDevtoolsJsonStringifyReplacer,

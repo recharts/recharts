@@ -50,12 +50,12 @@ import {
   selectActiveCoordinate,
   selectActiveIndex,
   selectIsTooltipActive,
-  selectTooltipPayloadSearcher,
 } from '../../../src/state/selectors/selectors';
 import { setMouseOverAxisIndex, setSyncInteraction } from '../../../src/state/tooltipSlice';
 import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { selectSynchronisedTooltipState } from '../../../src/synchronisation/syncSelectors';
+import { selectTooltipPayloadSearcher } from '../../../src/state/selectors/selectTooltipPayloadSearcher';
 
 type TooltipSyncTestCase = {
   // For identifying which test is running

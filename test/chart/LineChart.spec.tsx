@@ -1572,7 +1572,7 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
 
   describe('when syncMethod=<function>', () => {
     const syncMethodFunction = (tooltipTicks: ReadonlyArray<TickItem>, data: MouseHandlerDataParam) => {
-      return (data.activeTooltipIndex + 1) % tooltipTicks.length;
+      return (Number(data.activeTooltipIndex) + 1) % tooltipTicks.length;
     };
 
     const renderTestCase = createSynchronisedSelectorTestCase(

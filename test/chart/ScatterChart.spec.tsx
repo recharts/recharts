@@ -34,7 +34,6 @@ import {
   selectActiveCoordinate,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
-  selectTooltipState,
 } from '../../src/state/selectors/selectors';
 import {
   expectTooltipCoordinate,
@@ -46,6 +45,7 @@ import { scatterChartMouseHoverTooltipSelector } from '../component/Tooltip/tool
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [

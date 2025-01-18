@@ -52,7 +52,8 @@ export const PieWithTooltip = {
       <PieChart
         width={400}
         height={400}
-        onMouseMove={(_: any, event: MouseEvent) => {
+        // @ts-expect-error recharts needs more specific type for the event
+        onMouseMove={(_: unknown, event: MouseEvent) => {
           // follow the mouse and adjust for some offset
           setTtPos({ x: event.clientX - 185, y: event.clientY - 50 });
         }}

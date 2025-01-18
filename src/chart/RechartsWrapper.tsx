@@ -1,4 +1,4 @@
-import React, { CSSProperties, DOMAttributes, forwardRef, ReactNode, Ref, useEffect } from 'react';
+import React, { CSSProperties, forwardRef, ReactNode, Ref, useEffect } from 'react';
 import clsx from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { setOffset } from '../state/layoutSlice';
@@ -8,15 +8,20 @@ import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChar
 import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
 import { useElementOffset } from '../util/useElementOffset';
 import { useReportScale } from '../util/useReportScale';
+import { ExternalMouseEvents } from './types';
+import { externalEventAction } from '../state/externalEventsMiddleware';
 
-export type RechartsWrapperProps = {
+type Nullable<T> = {
+  [P in keyof T]: T[P] | undefined;
+};
+
+export type RechartsWrapperProps = Nullable<ExternalMouseEvents> & {
   children: ReactNode;
   width: number;
   height: number;
   className?: string;
   style?: CSSProperties;
   ref?: Ref<HTMLDivElement>;
-  wrapperEvents?: DOMAttributes<HTMLDivElement>;
 };
 
 const useReportChartOffset = () => {
@@ -29,7 +34,27 @@ const useReportChartOffset = () => {
 };
 
 export const RechartsWrapper = forwardRef(
-  ({ children, width, height, className, style, wrapperEvents }: RechartsWrapperProps, ref: Ref<HTMLDivElement>) => {
+  (
+    {
+      children,
+      className,
+      height,
+      onClick,
+      onContextMenu,
+      onDoubleClick,
+      onMouseDown,
+      onMouseEnter,
+      onMouseLeave,
+      onMouseMove,
+      onMouseUp,
+      onTouchEnd,
+      onTouchMove,
+      onTouchStart,
+      style,
+      width,
+    }: RechartsWrapperProps,
+    ref: Ref<HTMLDivElement>,
+  ) => {
     const dispatch = useAppDispatch();
 
     useSynchronisedEventsFromOtherCharts();
@@ -47,20 +72,20 @@ export const RechartsWrapper = forwardRef(
     };
     const myOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseClickAction(e));
-      wrapperEvents?.onClick?.(e);
+      dispatch(externalEventAction({ handler: onClick, reactEvent: e }));
     };
     const myOnMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseMoveAction(e));
-      wrapperEvents?.onMouseEnter?.(e);
+      dispatch(externalEventAction({ handler: onMouseEnter, reactEvent: e }));
     };
     const myOnMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
       // clear tooltip state if things happen to still be visible onMouseLeave of the wrapper
       dispatch(mouseLeaveChart());
-      wrapperEvents?.onMouseLeave?.(e);
+      dispatch(externalEventAction({ handler: onMouseLeave, reactEvent: e }));
     };
     const myOnMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       dispatch(mouseMoveAction(e));
-      wrapperEvents?.onMouseMove?.(e);
+      dispatch(externalEventAction({ handler: onMouseMove, reactEvent: e }));
     };
     const onFocus = () => {
       dispatch(focusAction());
@@ -69,6 +94,27 @@ export const RechartsWrapper = forwardRef(
       // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
       dispatch(keyDownAction(e.key));
     };
+    const myOnContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onContextMenu, reactEvent: e }));
+    };
+    const myOnDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onDoubleClick, reactEvent: e }));
+    };
+    const myOnMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onMouseDown, reactEvent: e }));
+    };
+    const myOnMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onMouseUp, reactEvent: e }));
+    };
+    const myOnTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onTouchStart, reactEvent: e }));
+    };
+    const myOnTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));
+    };
+    const myOnTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+      dispatch(externalEventAction({ handler: onTouchEnd, reactEvent: e }));
+    };
     return (
       // TODO fix these two a11y violations - we should probably add AccessibilityManager in here ?
       // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
@@ -76,13 +122,19 @@ export const RechartsWrapper = forwardRef(
         className={clsx('recharts-wrapper', className)}
         style={{ position: 'relative', cursor: 'default', width, height, ...style }}
         role="application"
-        {...wrapperEvents}
         onClick={myOnClick}
-        onMouseMove={myOnMouseMove}
-        onMouseEnter={myOnMouseEnter}
-        onMouseLeave={myOnMouseLeave}
+        onContextMenu={myOnContextMenu}
+        onDoubleClick={myOnDoubleClick}
         onFocus={onFocus}
         onKeyDown={onKeyDown}
+        onMouseDown={myOnMouseDown}
+        onMouseEnter={myOnMouseEnter}
+        onMouseLeave={myOnMouseLeave}
+        onMouseMove={myOnMouseMove}
+        onMouseUp={myOnMouseUp}
+        onTouchEnd={myOnTouchEnd}
+        onTouchMove={myOnTouchMove}
+        onTouchStart={myOnTouchStart}
         ref={innerRef}
       >
         {children}

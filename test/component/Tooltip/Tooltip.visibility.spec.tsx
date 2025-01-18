@@ -74,11 +74,11 @@ import {
   selectActiveCoordinate,
   selectActiveLabel,
   selectIsTooltipActive,
-  selectTooltipState,
 } from '../../../src/state/selectors/selectors';
 import { expectScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 import { TooltipState } from '../../../src/state/tooltipSlice';
+import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
