@@ -90,6 +90,7 @@
   "lib/state/RechartsStoreProvider.js",
   "lib/state/ReportBar.js",
   "lib/state/ReportChartProps.js",
+  "lib/state/ReportMainChartProps.js",
   "lib/state/ReportPolarOptions.js",
   "lib/state/SetGraphicalItem.js",
   "lib/state/SetLegendPayload.js",

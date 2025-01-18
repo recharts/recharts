@@ -18,6 +18,7 @@ import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { SyncMethod } from '../synchronisation/types';
+import { ReportMainChartProps } from '../state/ReportMainChartProps';
 
 export interface MousePointer {
   pageX: number;
@@ -65,6 +66,10 @@ export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
   tabIndex?: number;
 }
 
+const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
+
+const defaultLayout: LayoutType = 'horizontal';
+
 export const generateCategoricalChart = ({
   chartName,
   defaultTooltipEventType = 'axis',
@@ -80,11 +85,11 @@ export const generateCategoricalChart = ({
     // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       accessibilityLayer: true,
-      layout: 'horizontal',
+      layout: defaultLayout,
       stackOffset: 'none',
       barCategoryGap: '10%',
       barGap: 4,
-      margin: { top: 5, right: 5, bottom: 5, left: 5 },
+      margin: defaultMargin,
       reverseStackOrder: false,
       syncMethod: 'index',
       ...defaultProps,
@@ -181,14 +186,7 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <ChartLayoutContextProvider
-            state={this.state}
-            width={this.props.width}
-            height={this.props.height}
-            clipPathId={this.clipPathId}
-            margin={this.props.margin}
-            layout={this.props.layout}
-          >
+          <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
               <ClipPath clipPathId={this.clipPathId} />
               {children}
@@ -210,14 +208,7 @@ export const generateCategoricalChart = ({
           <CursorPortalContext.Provider value={this.state.cursorPortal}>
             <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
               <LegendPortalContext.Provider value={this.state.legendPortal}>
-                <ChartLayoutContextProvider
-                  state={this.state}
-                  width={this.props.width}
-                  height={this.props.height}
-                  clipPathId={this.clipPathId}
-                  margin={this.props.margin}
-                  layout={this.props.layout}
-                >
+                <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
                   <RechartsWrapper
                     className={className}
                     style={style}
@@ -298,6 +289,12 @@ export const generateCategoricalChart = ({
     }
     return (
       <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
+        <ReportMainChartProps
+          width={props.width}
+          height={props.height}
+          layout={props.layout ?? defaultProps.layout ?? defaultLayout}
+          margin={props.margin ?? defaultMargin}
+        />
         <ReportChartProps
           accessibilityLayer={props.accessibilityLayer}
           barCategoryGap={props.barCategoryGap ?? '10%'}

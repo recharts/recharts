@@ -1,9 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
 import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size } from '../util/types';
-import type { CategoricalChartState } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
-import { setChartSize, setLayout, setMargin } from '../state/layoutSlice';
+import { setChartSize, setMargin } from '../state/layoutSlice';
 import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { useIsPanorama } from './PanoramaContext';
@@ -14,13 +13,9 @@ export const ClipPathIdContext = createContext<string | undefined>(undefined);
 const UpdateIdContext = createContext<number>(0);
 
 export type ChartLayoutContextProviderProps = {
-  state: CategoricalChartState;
+  updateId: number;
   children: ReactNode;
   clipPathId: string;
-  width: number;
-  height: number;
-  margin: Margin;
-  layout: LayoutType;
 };
 
 /**
@@ -32,30 +27,7 @@ export type ChartLayoutContextProviderProps = {
  * @returns React Context Provider
  */
 export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
-  const {
-    state: { updateId },
-    clipPathId,
-    children,
-    width,
-    height,
-    margin,
-    layout,
-  } = props;
-
-  const dispatch = useAppDispatch();
-
-  /*
-   * Skip dispatching properties in panorama chart for two reasons:
-   * 1. The root chart should be deciding on these properties, and
-   * 2. Brush reads these properties from redux store, and so they must remain stable
-   *      to avoid circular dependency and infinite re-rendering.
-   */
-  const isPanorama = useIsPanorama();
-  if (!isPanorama) {
-    dispatch(setLayout(layout));
-    dispatch(setChartSize({ width, height }));
-    dispatch(setMargin(margin));
-  }
+  const { updateId, clipPathId, children } = props;
 
   /*
    * This pretends to be a single context but actually is split into multiple smaller ones.
