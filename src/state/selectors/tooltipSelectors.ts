@@ -42,6 +42,7 @@ import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils
 import {
   AxisDomain,
   CategoricalDomain,
+  Coordinate,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -69,6 +70,12 @@ import { selectTooltipSettings } from './selectTooltipSettings';
 
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
+import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
+import { selectChartHeight, selectChartWidth } from './containerSelectors';
+import { selectChartOffset } from './selectChartOffset';
+import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
+import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
+import { selectTooltipState } from './selectTooltipState';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -269,7 +276,7 @@ export const selectTooltipCategoricalDomain: (state: RechartsRootState) => Reado
     combineCategoricalDomain,
   );
 
-export const combineTicksOfTooltipAxis = (
+const combineTicksOfTooltipAxis = (
   layout: LayoutType,
   axis: AxisWithTicksSettings,
   realScaleType: string,
@@ -340,13 +347,13 @@ const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | u
     combineTooltipEventType(settings.shared, defaultTooltipEventType, validateTooltipEventType),
 );
 
+const selectTooltipTrigger = (state: RechartsRootState) => state.tooltip.settings.trigger;
+
+const selectDefaultIndex: (state: RechartsRootState) => TooltipIndex | undefined = state =>
+  state.tooltip.settings.defaultIndex;
+
 const selectTooltipInteractionState: (state: RechartsRootState) => TooltipInteractionState | undefined = createSelector(
-  [
-    (state: RechartsRootState) => state.tooltip,
-    selectTooltipEventType,
-    (state: RechartsRootState) => state.tooltip.settings.trigger,
-    (state: RechartsRootState) => state.tooltip.settings.defaultIndex,
-  ],
+  [selectTooltipState, selectTooltipEventType, selectTooltipTrigger, selectDefaultIndex],
   combineTooltipInteractionState,
 );
 
@@ -369,4 +376,39 @@ export const selectActiveTooltipDataKey: (state: RechartsRootState) => DataKey<a
 
     return tooltipInteraction.dataKey;
   },
+);
+
+const selectTooltipPayloadConfigurations = createSelector(
+  [selectTooltipState, selectTooltipEventType, selectTooltipTrigger, selectDefaultIndex],
+  combineTooltipPayloadConfigurations,
+);
+
+const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coordinate | undefined = createSelector(
+  [
+    selectChartWidth,
+    selectChartHeight,
+    selectChartLayout,
+    selectChartOffset,
+    selectTooltipAxisTicks,
+    selectDefaultIndex,
+    selectTooltipPayloadConfigurations,
+    selectTooltipPayloadSearcher,
+  ],
+  combineCoordinateForDefaultIndex,
+);
+
+export const selectActiveTooltipCoordinate: (state: RechartsRootState) => Coordinate | undefined = createSelector(
+  [selectTooltipInteractionState, selectTooltipCoordinateForDefaultIndex],
+  (tooltipInteractionState: TooltipInteractionState, defaultIndexCoordinate: Coordinate) => {
+    if (tooltipInteractionState?.coordinate) {
+      return tooltipInteractionState.coordinate;
+    }
+
+    return defaultIndexCoordinate;
+  },
+);
+
+export const selectIsTooltipActive: (state: RechartsRootState) => boolean = createSelector(
+  [selectTooltipInteractionState],
+  (tooltipInteractionState: TooltipInteractionState) => tooltipInteractionState.active,
 );

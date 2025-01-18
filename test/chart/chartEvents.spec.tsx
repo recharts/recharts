@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, Mock } from 'vitest';
 import {
   SankeyChartCase,
   SunburstChartCase,
@@ -9,6 +9,10 @@ import {
   allCharts,
   onlyCompact,
 } from '../helper/parameterizedTestCases';
+import { MouseHandlerDataParam } from '../../src/synchronisation/types';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+import { Bar, BarChart, Tooltip, XAxis } from '../../src';
+import { PageData } from '../_data';
 
 /**
  * These three charts accept the same named events - but they only trigger them when user interacts with the graphics.
@@ -20,16 +24,32 @@ const chartsThatSupportWrapperEvents = allCategoricalsChartsExcept([
   SunburstChartCase,
 ]);
 
+function expectLastCalledWithData(spy: Mock, expectedNextState: MouseHandlerDataParam) {
+  const lastCall = spy.mock.calls[spy.mock.calls.length - 1];
+  // first argument is the nextState object, second argument is the React event
+  expect(lastCall).toHaveLength(2);
+  expect(lastCall[0]).toEqual(expectedNextState);
+  /*
+   * vitest gets stuck in a loop when trying to parse the SyntheticEvent object, not sure what's going on there.
+   * For now let's just see that it's there.
+   */
+  expect(lastCall[1]).toBeInstanceOf(Object);
+}
+
+const spies = {
+  onClick: vi.fn(),
+  onMouseEnter: vi.fn(),
+  onMouseMove: vi.fn(),
+  onMouseLeave: vi.fn(),
+  onTouchStart: vi.fn(),
+  onTouchMove: vi.fn(),
+  onTouchEnd: vi.fn(),
+};
+
 describe('chart wrapper events', () => {
-  const spies = {
-    onClick: vi.fn(),
-    onMouseEnter: vi.fn(),
-    onMouseMove: vi.fn(),
-    onMouseLeave: vi.fn(),
-    onTouchStart: vi.fn(),
-    onTouchMove: vi.fn(),
-    onTouchEnd: vi.fn(),
-  };
+  beforeEach(() => {
+    Object.values(spies).forEach(spy => spy.mockClear());
+  });
 
   describe.each(chartsThatSupportWrapperEvents)('in $testName', ({ ChartElement }) => {
     it('should not call any chart events without user interaction', () => {
@@ -54,7 +74,7 @@ describe('chart wrapper events', () => {
         />,
       );
       fireEvent.mouseOver(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
-      expect(spies.onMouseEnter).toHaveBeenCalled();
+      expect(spies.onMouseEnter).toHaveBeenCalledTimes(1);
       expect(spies.onMouseMove).not.toHaveBeenCalled();
       expect(spies.onMouseLeave).not.toHaveBeenCalled();
       fireEvent.mouseMove(container.querySelector('.recharts-wrapper'), { clientX: 20, clientY: 20 });
@@ -127,6 +147,78 @@ describe('chart wrapper events', () => {
       expect(spies.onTouchStart).not.toHaveBeenCalled();
       expect(spies.onTouchMove).not.toHaveBeenCalled();
       expect(spies.onTouchEnd).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('chart wrapper event data', () => {
+  beforeEach(() => {
+    Object.values(spies).forEach(spy => spy.mockClear());
+  });
+
+  describe('when Tooltip has trigger=click', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={400} height={400} data={PageData} {...spies}>
+        <Bar dataKey="uv" />
+        <Tooltip trigger="click" />
+        <XAxis dataKey="name" />
+        {children}
+      </BarChart>
+    ));
+
+    it('should pass tooltip state to onClick when user clicks on the chart', () => {
+      const { container } = renderTestCase();
+      fireEvent.click(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      expectLastCalledWithData(spies.onClick, {
+        activeCoordinate: { x: 37.5, y: 10 },
+        activeDataKey: undefined,
+        activeIndex: '0',
+        activeLabel: 'Page A',
+        activeTooltipIndex: '0',
+        isTooltipActive: true,
+      });
+    });
+  });
+
+  describe.each(['hover', undefined] as const)('when Tooltip has trigger=%s', trigger => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <BarChart width={400} height={400} data={PageData} {...spies}>
+        <Bar dataKey="uv" />
+        <Tooltip trigger={trigger} />
+        <XAxis dataKey="name" />
+        {children}
+      </BarChart>
+    ));
+
+    it('should pass tooltip state to onMouseEnter, onMouseMove, and onMouseLeave when user hovers over the chart', () => {
+      const { container } = renderTestCase();
+      fireEvent.mouseOver(container.querySelector('.recharts-wrapper'), { clientX: 10, clientY: 10 });
+      expectLastCalledWithData(spies.onMouseEnter, {
+        activeCoordinate: { x: 37.5, y: 10 },
+        activeDataKey: undefined,
+        activeIndex: '0',
+        activeLabel: 'Page A',
+        activeTooltipIndex: '0',
+        isTooltipActive: true,
+      });
+      fireEvent.mouseMove(container.querySelector('.recharts-wrapper'), { clientX: 20, clientY: 20 });
+      expectLastCalledWithData(spies.onMouseMove, {
+        activeCoordinate: { x: 37.5, y: 20 },
+        activeDataKey: undefined,
+        activeIndex: '0',
+        activeLabel: 'Page A',
+        activeTooltipIndex: '0',
+        isTooltipActive: true,
+      });
+      fireEvent.mouseLeave(container.querySelector('.recharts-wrapper'));
+      expectLastCalledWithData(spies.onMouseLeave, {
+        activeCoordinate: undefined,
+        activeDataKey: undefined,
+        activeIndex: null,
+        activeLabel: undefined,
+        activeTooltipIndex: null,
+        isTooltipActive: false,
+      });
     });
   });
 });

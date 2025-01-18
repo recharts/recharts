@@ -989,6 +989,17 @@ export class Sankey extends PureComponent<Props, State> {
                   this.setState({ tooltipPortal: node });
                 }
               }}
+              onMouseEnter={undefined}
+              onMouseLeave={undefined}
+              onClick={undefined}
+              onMouseMove={undefined}
+              onMouseDown={undefined}
+              onMouseUp={undefined}
+              onContextMenu={undefined}
+              onDoubleClick={undefined}
+              onTouchStart={undefined}
+              onTouchMove={undefined}
+              onTouchEnd={undefined}
             >
               <Surface {...attrs} width={width} height={height}>
                 <g

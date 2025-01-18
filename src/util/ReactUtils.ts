@@ -7,23 +7,6 @@ import { isNullish, isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
-const REACT_BROWSER_EVENT_MAP: Record<string, string> = {
-  click: 'onClick',
-  mousedown: 'onMouseDown',
-  mouseup: 'onMouseUp',
-  mouseover: 'onMouseOver',
-  mousemove: 'onMouseMove',
-  mouseout: 'onMouseOut',
-  mouseenter: 'onMouseEnter',
-  mouseleave: 'onMouseLeave',
-  touchcancel: 'onTouchCancel',
-  touchend: 'onTouchEnd',
-  touchmove: 'onTouchMove',
-  touchstart: 'onTouchStart',
-  contextmenu: 'onContextMenu',
-  dblclick: 'onDoubleClick',
-};
-
 export const SCALE_TYPES = [
   'auto',
   'linear',
@@ -290,14 +273,4 @@ const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.Reac
   }
 
   return false;
-};
-
-export const getReactEventByType = (e: { type?: string }): string => {
-  const type = e && e.type;
-
-  if (type && REACT_BROWSER_EVENT_MAP[type]) {
-    return REACT_BROWSER_EVENT_MAP[type];
-  }
-
-  return null;
 };

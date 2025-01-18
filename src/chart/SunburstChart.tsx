@@ -315,6 +315,17 @@ const SunburstChartImpl = ({
               setTooltipPortal(node);
             }
           }}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onClick={undefined}
+          onMouseMove={undefined}
+          onMouseDown={undefined}
+          onMouseUp={undefined}
+          onContextMenu={undefined}
+          onDoubleClick={undefined}
+          onTouchStart={undefined}
+          onTouchMove={undefined}
+          onTouchEnd={undefined}
         >
           <Surface width={width} height={height}>
             <g

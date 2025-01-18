@@ -11,7 +11,6 @@ import {
   TooltipPayloadConfiguration,
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
-  TooltipState,
 } from '../tooltipSlice';
 import {
   calculateActiveTickIndex,
@@ -25,7 +24,6 @@ import { ChartDataState } from '../chartDataSlice';
 import {
   AxisType,
   BaseAxisProps,
-  ChartCoordinate,
   ChartOffset,
   Coordinate,
   DataKey,
@@ -47,6 +45,10 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
+import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
+import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
+import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
+import { selectTooltipState } from './selectTooltipState';
 
 export const useChartName = (): string => {
   return useAppSelector(selectChartName);
@@ -81,8 +83,6 @@ function getSliced<T>(
   }
   return arr;
 }
-
-export const selectTooltipState = (state: RechartsRootState): TooltipState => state.tooltip;
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
   sortBy(ticks, o => o.coordinate),
@@ -133,51 +133,15 @@ export const selectTooltipPayloadConfigurations: (
   defaultIndex: TooltipIndex | undefined,
 ) => ReadonlyArray<TooltipPayloadConfiguration> = createSelector(
   [selectTooltipState, pickTooltipEventType, pickTrigger, pickDefaultIndex],
-  (
-    tooltipState: TooltipState,
-    tooltipEventType: TooltipEventType,
-    trigger: TooltipTrigger,
-    defaultIndex: TooltipIndex | undefined,
-  ): ReadonlyArray<TooltipPayloadConfiguration> => {
-    // if tooltip reacts to axis interaction, then we display all items at the same time.
-    if (tooltipEventType === 'axis') {
-      return tooltipState.tooltipItemPayloads;
-    }
-    /*
-     * By now we already know that tooltipEventType is 'item', so we can only search in itemInteractions.
-     * item means that only the hovered or clicked item will be present in the tooltip.
-     */
-    if (tooltipState.tooltipItemPayloads.length === 0) {
-      // No point filtering if the payload is empty
-      return [];
-    }
-    let filterByDataKey: DataKey<any> | undefined;
-    if (trigger === 'hover') {
-      filterByDataKey = tooltipState.itemInteraction.hover.dataKey;
-    } else {
-      filterByDataKey = tooltipState.itemInteraction.click.dataKey;
-    }
-    if (filterByDataKey == null && defaultIndex != null) {
-      /*
-       * So when we use `defaultIndex` - we don't have a dataKey to filter by because user did not hover over anything yet.
-       * In that case let's display the first item in the tooltip; after all, this is `item` interaction case,
-       * so we should display only one item at a time instead of all.
-       */
-      return [tooltipState.tooltipItemPayloads[0]];
-    }
-    return tooltipState.tooltipItemPayloads.filter(tpc => tpc.settings?.dataKey === filterByDataKey);
-  },
+  combineTooltipPayloadConfigurations,
 );
-
-export const selectTooltipPayloadSearcher = (state: RechartsRootState): TooltipPayloadSearcher | undefined =>
-  state.options.tooltipPayloadSearcher;
 
 export const selectCoordinateForDefaultIndex: (
   state: RechartsRootState,
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => ChartCoordinate | undefined = createSelector(
+) => Coordinate | undefined = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -188,47 +152,7 @@ export const selectCoordinateForDefaultIndex: (
     selectTooltipPayloadConfigurations,
     selectTooltipPayloadSearcher,
   ],
-  (
-    width: number,
-    height: number,
-    layout: LayoutType,
-    offset: ChartOffset | undefined,
-    tooltipTicks: ReadonlyArray<TickItem>,
-    defaultIndex: TooltipIndex | undefined,
-    tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
-    tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
-  ): ChartCoordinate | undefined => {
-    if (defaultIndex == null || offset == null) {
-      return undefined;
-    }
-    // With defaultIndex alone, we don't have enough information to decide _which_ of the multiple tooltips to display. So we choose the first one.
-    const firstConfiguration = tooltipConfigurations[0];
-    // @ts-expect-error we need to rethink the tooltipPayloadSearcher type
-    const maybePosition: Coordinate | undefined =
-      firstConfiguration == null ? undefined : tooltipPayloadSearcher(firstConfiguration.positions, defaultIndex);
-    if (maybePosition != null) {
-      return maybePosition;
-    }
-    const tick = tooltipTicks?.[Number(defaultIndex)];
-    if (!tick) {
-      return undefined;
-    }
-    switch (layout) {
-      case 'horizontal': {
-        return {
-          x: tick.coordinate,
-          y: (offset.top + height) / 2,
-        };
-      }
-      default: {
-        // This logic is not super sound - it conflates vertical, radial, centric layouts into just one. TODO improve!
-        return {
-          x: (offset.left + width) / 2,
-          y: tick.coordinate,
-        };
-      }
-    }
-  },
+  combineCoordinateForDefaultIndex,
 );
 
 export const selectActiveCoordinate: (
@@ -236,12 +160,9 @@ export const selectActiveCoordinate: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => ChartCoordinate | undefined = createSelector(
+) => Coordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
-  (
-    tooltipInteractionState: TooltipInteractionState,
-    defaultIndexCoordinate: ChartCoordinate,
-  ): ChartCoordinate | undefined => {
+  (tooltipInteractionState: TooltipInteractionState, defaultIndexCoordinate: Coordinate): Coordinate | undefined => {
     return tooltipInteractionState.coordinate ?? defaultIndexCoordinate;
   },
 );

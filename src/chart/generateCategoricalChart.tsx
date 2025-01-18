@@ -1,21 +1,13 @@
 import React, { Component, forwardRef } from 'react';
-import get from 'lodash/get';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 
-import { filterProps, getReactEventByType, isChildrenEqual, validateWidthHeight } from '../util/ReactUtils';
+import { filterProps, isChildrenEqual, validateWidthHeight } from '../util/ReactUtils';
 import { isNullish, uniqueId } from '../util/DataUtils';
 import { shallowEqual } from '../util/ShallowEqual';
-import {
-  adaptEventHandlers,
-  CategoricalChartOptions,
-  DataKey,
-  LayoutType,
-  Margin,
-  StackOffsetType,
-} from '../util/types';
+import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { CategoricalChartState } from './types';
+import { CategoricalChartState, ExternalMouseEvents } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
@@ -39,9 +31,7 @@ export interface ChartPointer {
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
-export type CategoricalChartFunc = (nextState: CategoricalChartState, event: any) => void;
-
-export interface CategoricalChartProps {
+export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
   syncId?: number | string;
   syncMethod?: SyncMethod;
   compact?: boolean;
@@ -60,17 +50,8 @@ export interface CategoricalChartProps {
   style?: any;
   className?: string;
   children?: any;
-  onClick?: CategoricalChartFunc;
-  onMouseLeave?: CategoricalChartFunc;
-  onMouseEnter?: CategoricalChartFunc;
-  onMouseMove?: CategoricalChartFunc;
-  onMouseDown?: CategoricalChartFunc;
-  onMouseUp?: CategoricalChartFunc;
-  onContextMenu?: CategoricalChartFunc;
-  onDoubleClick?: CategoricalChartFunc;
   reverseStackOrder?: boolean;
   id?: string;
-
   startAngle?: number;
   endAngle?: number;
   cx?: number | string;
@@ -189,31 +170,6 @@ export const generateCategoricalChart = ({
       return null;
     }
 
-    parseEventsOfWrapper() {
-      // @ts-expect-error adaptEventHandlers expects DOM Event but generateCategoricalChart works with React UIEvents
-      const outerEvents = adaptEventHandlers(this.props, this.handleOuterEvent);
-
-      return {
-        ...outerEvents,
-      };
-    }
-
-    handleOuterEvent = (e: React.MouseEvent | React.TouchEvent) => {
-      const eventName = getReactEventByType(e);
-
-      const event = get(this.props, `${eventName}`);
-      if (eventName && typeof event === 'function') {
-        let mouse;
-        if (/.*touch.*/i.test(eventName)) {
-          mouse = null;
-        } else {
-          mouse = null;
-        }
-
-        event(mouse ?? {}, e);
-      }
-    };
-
     render() {
       if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
         return null;
@@ -248,7 +204,6 @@ export const generateCategoricalChart = ({
         attrs.role = this.props.role ?? 'application';
       }
 
-      const wrapperEvents = this.parseEventsOfWrapper();
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
@@ -266,7 +221,6 @@ export const generateCategoricalChart = ({
                   <RechartsWrapper
                     className={className}
                     style={style}
-                    wrapperEvents={wrapperEvents}
                     width={width}
                     height={height}
                     ref={(node: HTMLDivElement) => {
@@ -278,6 +232,17 @@ export const generateCategoricalChart = ({
                         this.setState({ legendPortal: node });
                       }
                     }}
+                    onClick={this.props.onClick}
+                    onMouseLeave={this.props.onMouseLeave}
+                    onMouseEnter={this.props.onMouseEnter}
+                    onMouseMove={this.props.onMouseMove}
+                    onMouseDown={this.props.onMouseDown}
+                    onMouseUp={this.props.onMouseUp}
+                    onContextMenu={this.props.onContextMenu}
+                    onDoubleClick={this.props.onDoubleClick}
+                    onTouchStart={this.props.onTouchStart}
+                    onTouchMove={this.props.onTouchMove}
+                    onTouchEnd={this.props.onTouchEnd}
                   >
                     <Surface
                       {...attrs}

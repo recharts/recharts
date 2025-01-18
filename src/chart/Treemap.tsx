@@ -37,6 +37,7 @@ const NODE_VALUE_KEY = 'value';
  */
 export interface TreemapDataType {
   children?: ReadonlyArray<TreemapDataType>;
+
   [key: string]: unknown;
 }
 
@@ -55,6 +56,7 @@ export interface TreemapNode {
   height: number;
   name: string;
   tooltipIndex: TooltipIndex;
+
   [k: string]: any;
 }
 
@@ -887,6 +889,17 @@ export class Treemap extends PureComponent<Props, State> {
                   this.setState({ tooltipPortal: node });
                 }
               }}
+              onMouseEnter={undefined}
+              onMouseLeave={undefined}
+              onClick={undefined}
+              onMouseMove={undefined}
+              onMouseDown={undefined}
+              onMouseUp={undefined}
+              onContextMenu={undefined}
+              onDoubleClick={undefined}
+              onTouchStart={undefined}
+              onTouchMove={undefined}
+              onTouchEnd={undefined}
             >
               <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
                 <g
