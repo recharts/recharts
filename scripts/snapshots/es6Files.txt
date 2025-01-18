@@ -90,6 +90,7 @@
   "es6/state/RechartsStoreProvider.js",
   "es6/state/ReportBar.js",
   "es6/state/ReportChartProps.js",
+  "es6/state/ReportMainChartProps.js",
   "es6/state/ReportPolarOptions.js",
   "es6/state/SetGraphicalItem.js",
   "es6/state/SetLegendPayload.js",

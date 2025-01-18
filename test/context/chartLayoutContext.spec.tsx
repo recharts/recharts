@@ -7,21 +7,14 @@ import {
   useClipPathId,
   useOffset,
 } from '../../src/context/chartLayoutContext';
-import { CategoricalChartState } from '../../src/chart/types';
-import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('ChartLayoutContextProvider', () => {
-  const minimalState: CategoricalChartState = {};
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
-    margin: { top: 0, right: 0, bottom: 0, left: 0 },
-    state: minimalState,
+    updateId: 0,
     clipPathId: 'my mock ID',
-    width: 100,
-    height: 100,
     children: <div />,
-    layout: 'horizontal',
   };
 
   describe('ClipPathIdContext', () => {
@@ -168,217 +161,17 @@ describe('ChartLayoutContextProvider', () => {
           renderCount++;
           return null;
         });
-        const mockState1: CategoricalChartState = { ...minimalState };
-        const mockState2: CategoricalChartState = { ...minimalState };
         expect(renderCount).toBe(0);
         const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
+          <ChartLayoutContextProvider {...mockContextProviderProps} updateId={0}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(1);
         rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState2}>
+          <ChartLayoutContextProvider {...mockContextProviderProps} updateId={1}>
             <MockConsumer />
           </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-    });
-  });
-
-  describe('XAxis state', () => {
-    const mockState1: CategoricalChartState = {
-      ...minimalState,
-    };
-
-    const mockState2: CategoricalChartState = {
-      ...minimalState,
-    };
-
-    describe('vanilla children', () => {
-      it('should re-render children every time even when nothing changes', () => {
-        let renderCount = 0;
-        const MockConsumer: ComponentType = () => {
-          renderCount++;
-          return null;
-        };
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(2);
-      });
-    });
-
-    describe('children using React.memo()', () => {
-      it('should render memo children only once if the xAxisMap does not change', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider
-              {...mockContextProviderProps}
-              clipPathId="my mock ID is different now"
-              state={mockState1}
-            >
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-
-      it('should render memo children only once even if the xAxisMap changes!', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider
-              {...mockContextProviderProps}
-              clipPathId="my mock ID but this time different"
-              state={mockState2}
-            >
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-    });
-  });
-
-  describe('YAxis state', () => {
-    const mockState1: CategoricalChartState = {
-      ...minimalState,
-    };
-
-    const mockState2: CategoricalChartState = {
-      ...minimalState,
-    };
-
-    describe('vanilla children', () => {
-      it('should re-render children every time even when nothing changes', () => {
-        let renderCount = 0;
-        const MockConsumer: ComponentType = () => {
-          renderCount++;
-          return null;
-        };
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(2);
-      });
-    });
-
-    describe('children using React.memo()', () => {
-      it('should render memo children only once if the yAxisMap does not change', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider
-              {...mockContextProviderProps}
-              clipPathId="my mock ID is different now"
-              state={mockState1}
-            >
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-
-      it('should render memo children only once even if the yAxisMap changes!', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider {...mockContextProviderProps} state={mockState1}>
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <RechartsStoreProvider>
-            <ChartLayoutContextProvider
-              {...mockContextProviderProps}
-              clipPathId="my mock ID but this time different"
-              state={mockState2}
-            >
-              <MockConsumer />
-            </ChartLayoutContextProvider>
-          </RechartsStoreProvider>,
         );
         expect(renderCount).toBe(1);
       });
