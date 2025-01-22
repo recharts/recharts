@@ -785,7 +785,7 @@ describe('Tooltip visibility', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltipOnCoordinate(
         container,
@@ -797,7 +797,7 @@ describe('Tooltip visibility', () => {
         activeIndex: '3',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -1322,7 +1322,7 @@ describe('Tooltip visibility', () => {
           activeIndex: null,
           isActive: false,
         });
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(3);
 
         showTooltip(container, composedChartMouseHoverTooltipSelector);
 
@@ -1330,7 +1330,7 @@ describe('Tooltip visibility', () => {
           activeIndex: '0',
           isActive: true,
         });
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(4);
       });
 
       it('should render tooltip payload for hidden items', () => {

@@ -212,7 +212,10 @@ describe('chart wrapper event data', () => {
       });
       fireEvent.mouseLeave(container.querySelector('.recharts-wrapper'));
       expectLastCalledWithData(spies.onMouseLeave, {
-        activeCoordinate: undefined,
+        activeCoordinate: {
+          x: 37.5,
+          y: 20,
+        },
         activeDataKey: undefined,
         activeIndex: null,
         activeLabel: undefined,

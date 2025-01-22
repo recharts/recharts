@@ -583,7 +583,7 @@ describe('selectActiveCoordinate', () => {
 
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toBe(undefined);
+    expect(selectActiveCoordinate(store.getState(), 'axis', 'hover', undefined)).toEqual({ x: 100, y: 150 });
     // the selector stops returning the coordinates but they should still be present in store for the next animation
     expect(store.getState().tooltip.axisInteraction.hover.coordinate).toEqual(expected);
   });
@@ -627,11 +627,14 @@ describe('selectActiveCoordinate', () => {
 
     expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(expected);
 
-    // neither of these reset the coordinates but the selector stops returning them
+    // neither of these reset the coordinates and the selector does NOT stop returning them
     store.dispatch(mouseLeaveItem());
     store.dispatch(mouseLeaveChart());
 
-    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toBe(undefined);
+    expect(selectActiveCoordinate(store.getState(), 'item', 'hover', undefined)).toEqual({
+      x: 100,
+      y: 150,
+    });
     // the selector stops returning the coordinates but they should still be present in store for the next animation
     expect(store.getState().tooltip.itemInteraction.hover.coordinate).toBe(expected);
   });
