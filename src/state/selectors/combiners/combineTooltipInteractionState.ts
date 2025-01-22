@@ -61,5 +61,8 @@ export const combineTooltipInteractionState = (
     };
   }
 
-  return noInteraction;
+  return {
+    ...noInteraction,
+    coordinate: appropriateMouseInteraction.coordinate,
+  };
 };

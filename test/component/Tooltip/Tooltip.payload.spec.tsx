@@ -1490,7 +1490,7 @@ describe('Tooltip payload', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltipOnCoordinate(
         container,
@@ -1618,7 +1618,7 @@ describe('Tooltip payload', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
 
       showTooltipOnCoordinate(
         container,
@@ -1630,7 +1630,7 @@ describe('Tooltip payload', () => {
         activeIndex: '3',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 
