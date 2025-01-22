@@ -1502,7 +1502,7 @@ describe('Tooltip payload', () => {
         activeIndex: '1',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
     });
 
     it('should select active coordinate', () => {

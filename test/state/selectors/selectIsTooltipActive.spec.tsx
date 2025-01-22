@@ -118,21 +118,21 @@ describe('selectIsTooltipActive', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
       expect(spy).toHaveBeenLastCalledWith({
         activeIndex: '0',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
 
       hideTooltip(container, scatterChartMouseHoverTooltipSelector);
       expect(spy).toHaveBeenLastCalledWith({
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledTimes(5);
     });
   });
 
