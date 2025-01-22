@@ -68,7 +68,7 @@ export function useElementOffset(extraDependencies: ReadonlyArray<unknown> = [])
         }
       }
     },
-    [lastBoundingBox.width, lastBoundingBox.height, ...extraDependencies],
+    [lastBoundingBox.width, lastBoundingBox.height, lastBoundingBox.top, lastBoundingBox.left, ...extraDependencies],
   );
   return [lastBoundingBox, updateBoundingBox];
 }
