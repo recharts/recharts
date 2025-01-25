@@ -101,6 +101,19 @@ export interface BarProps {
   label?: ImplicitLabelType;
 }
 
+type BarMouseEvent = (
+  data: BarRectangleItem,
+  index: number,
+  event: React.MouseEvent<SVGPathElement, MouseEvent>,
+) => void;
+
+interface BarEvents {
+  onClick: BarMouseEvent;
+  onMouseEnter: BarMouseEvent;
+  onMouseLeave: BarMouseEvent;
+  onMouseMove: BarMouseEvent;
+}
+
 type InternalBarProps = {
   /*
    * Injected from Redux store
@@ -149,7 +162,7 @@ type InternalBarProps = {
 
 type BarSvgProps = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'>;
 
-export type Props = BarSvgProps & BarProps;
+export type Props = Partial<BarEvents> & BarProps & Omit<BarSvgProps, keyof BarEvents>;
 
 type InternalProps = BarSvgProps & InternalBarProps;
 
