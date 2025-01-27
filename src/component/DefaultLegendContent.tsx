@@ -33,6 +33,7 @@ export type Formatter = (
       strokeDasharray: string | number;
       value?: any;
     };
+    dataKey?: DataKey<any>;
   },
   index: number,
 ) => ReactNode;
