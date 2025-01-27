@@ -22,7 +22,7 @@ export const PieWithCells = {
         <PieChart width={400} height={400}>
           <Pie dataKey="percent" {...args}>
             {data.map(d => (
-              <Cell key={`d-${d.value}`} fill={d.color} stroke="black" />
+              <Cell key={`d-${d.value}`} fill={d.color} stroke="none" />
             ))}
           </Pie>
           <Legend />
