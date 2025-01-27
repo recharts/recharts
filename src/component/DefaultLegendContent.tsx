@@ -24,7 +24,6 @@ export type Formatter = (value: any, entry: LegendPayload, index: number) => Rea
 
 export interface LegendPayload {
   value: any;
-  id?: string;
   type?: LegendType;
   color?: string;
   payload?: {
@@ -44,15 +43,16 @@ interface InternalProps {
   layout?: LayoutType;
   align?: HorizontalAlignmentType;
   verticalAlign?: VerticalAlignmentType;
-  /**
-   * @deprecated Legend.payload prop is not doing anything. Legend is set from data on other graphical elements like Bar, Line, and Area.
-   */
-  payload?: ReadonlyArray<LegendPayload>;
   inactiveColor?: string;
   formatter?: Formatter;
   onMouseEnter?: (data: LegendPayload, index: number, event: MouseEvent) => void;
   onMouseLeave?: (data: LegendPayload, index: number, event: MouseEvent) => void;
   onClick?: (data: LegendPayload, index: number, event: MouseEvent) => void;
+  /**
+   * DefaultLegendContent.payload is omitted from Legend props.
+   * A custom payload can be passed here if desired or it can be passed from the Legend "content" callback.
+   */
+  payload?: ReadonlyArray<LegendPayload>;
 }
 
 export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;

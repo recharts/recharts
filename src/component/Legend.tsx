@@ -86,7 +86,7 @@ function getDefaultPosition(
   return { ...hPos, ...vPos };
 }
 
-export type Props = DefaultProps & {
+export type Props = Omit<DefaultProps, 'payload'> & {
   wrapperStyle?: CSSProperties;
   width?: number;
   height?: number;
