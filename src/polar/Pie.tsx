@@ -102,8 +102,6 @@ interface InternalPieProps extends PieDef {
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
-  /** Match each sector's stroke color to it's fill color */
-  blendStroke?: boolean;
   /** The minimum angle for no-zero element */
   minAngle?: number;
   legendType?: LegendType;
@@ -136,8 +134,6 @@ interface PieProps extends PieDef {
   className?: string;
   dataKey: DataKey<any>;
   nameKey?: DataKey<any>;
-  /** Match each sector's stroke color to it's fill color */
-  blendStroke?: boolean;
   /** The minimum angle for no-zero element */
   minAngle?: number;
   legendType?: LegendType;
@@ -251,7 +247,6 @@ function SetPiePayloadLegend(props: Props) {
 type PieSectorsProps = {
   sectors: Readonly<PieSectorDataItem[]>;
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
-  blendStroke: boolean;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: Props;
   sectorRefs: SVGGElement[];
@@ -278,7 +273,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, sectorRefs, activeShape, blendStroke, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
+  const { sectors, sectorRefs, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -299,7 +294,7 @@ function PieSectors(props: PieSectorsProps) {
     const sectorOptions = isSectorActive ? activeShape : inactiveShape;
     const sectorProps = {
       ...entry,
-      stroke: blendStroke ? entry.fill : entry.stroke,
+      stroke: entry.stroke,
       tabIndex: -1,
     };
 
@@ -629,12 +624,11 @@ export class PieWithState extends PureComponent<InternalProps, State> {
   }
 
   renderSectorsStatically(sectors: Readonly<PieSectorDataItem[]>) {
-    const { activeShape, blendStroke, inactiveShape: inactiveShapeProp } = this.props;
+    const { activeShape, inactiveShape: inactiveShapeProp } = this.props;
     return (
       <PieSectors
         sectors={sectors}
         activeShape={activeShape}
-        blendStroke={blendStroke}
         inactiveShape={inactiveShapeProp}
         allOtherPieProps={this.props}
         sectorRefs={this.sectorRefs}
@@ -793,7 +787,6 @@ const defaultPieProps: Partial<Props> = {
   animationDuration: 1500,
   animationEasing: 'ease',
   nameKey: 'name',
-  blendStroke: false,
   rootTabIndex: 0,
 };
 
