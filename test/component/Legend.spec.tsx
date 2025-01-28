@@ -361,6 +361,7 @@ describe('<Legend />', () => {
 
   describe('outside of chart context', () => {
     it('should ignore payload prop', () => {
+      // @ts-expect-error payload is now omitted from Legend types
       const { container } = render(<Legend width={500} height={30} payload={categoricalData} />);
 
       expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
@@ -378,6 +379,7 @@ describe('<Legend />', () => {
         return (
           <>
             <LegendPortalContext.Provider value={portalRef}>
+              {/* @ts-expect-error payload is now omitted from Legend types */}
               <Legend width={500} height={30} payload={categoricalData} content={<CustomizedLegend />} />,
             </LegendPortalContext.Provider>
             <div
