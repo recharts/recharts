@@ -313,4 +313,24 @@ describe('<CartesianAxis />', () => {
 
     expect(container.querySelectorAll('.recharts-cartesian-axis-tick')).toHaveLength(0);
   });
+
+  it('Renders additional classname when passed via tick options', () => {
+    const { container } = render(
+      <Surface width={500} height={500}>
+        <CartesianAxis
+          orientation="bottom"
+          y={100}
+          width={400}
+          height={50}
+          viewBox={{ x: 0, y: 0, width: 500, height: 500 }}
+          ticks={ticks}
+          tick={{ className: 'custom' }}
+          label="test"
+          scale={exampleScale}
+        />
+      </Surface>,
+    );
+
+    expect(container.querySelectorAll('.recharts-cartesian-axis-tick-value.custom')).toHaveLength(ticks.length);
+  });
 });
