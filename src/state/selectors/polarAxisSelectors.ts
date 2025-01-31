@@ -7,11 +7,12 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
-import { PolarViewBox } from '../../util/types';
+import { LayoutType, PolarViewBox } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
 import { AxisRange } from './axisSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { selectChartLayout } from '../../context/chartLayoutContext';
 
 export const implicitAngleAxis: AngleAxisSettings = {
   allowDataOverflow: false,
@@ -162,9 +163,16 @@ export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiu
   createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
 export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox = createSelector(
-  [selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
-  (polarOptions: PolarChartOptions | undefined, innerRadius, outerRadius, width, height): PolarViewBox | undefined => {
-    if (polarOptions == null) {
+  [selectChartLayout, selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
+  (
+    layout: LayoutType,
+    polarOptions: PolarChartOptions | undefined,
+    innerRadius,
+    outerRadius,
+    width,
+    height,
+  ): PolarViewBox | undefined => {
+    if ((layout !== 'centric' && layout !== 'radial') || polarOptions == null) {
       return undefined;
     }
     const { cx, cy, startAngle, endAngle } = polarOptions;

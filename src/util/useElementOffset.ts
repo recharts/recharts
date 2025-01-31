@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 const EPS = 1;
 
 /**
+ * TODO this documentation does not reflect what this hook is doing, update it.
  * Stores the `offsetHeight`, `offsetLeft`, `offsetTop`, and `offsetWidth` of a DOM element.
  */
 export type ElementOffset = {
