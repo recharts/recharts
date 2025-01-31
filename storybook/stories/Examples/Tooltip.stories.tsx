@@ -404,3 +404,60 @@ export const TooltipWithPortal = {
     active: true,
   },
 };
+
+const d1 = [
+  {
+    Triggers: 0,
+    date: 'Jan 1, 2025',
+  },
+  {
+    Triggers: 0,
+    date: 'Feb 28, 2025',
+  },
+];
+
+const d2 = [
+  {
+    Triggers: 0,
+    date: 'Jan 1, 2025',
+  },
+  {
+    Triggers: 3,
+    date: 'Jan 2, 2025',
+  },
+  {
+    Triggers: 0,
+    date: 'Jan 3, 2025',
+  },
+];
+
+export const RechartsAlphaTooltipBug5516Repro = {
+  render: () => {
+    const [isDataSet1, setIsDataSet1] = useState(true);
+
+    const categories = ['Triggers'];
+
+    const data = isDataSet1 ? d1 : d2;
+
+    return (
+      <div>
+        <div style={{ height: 2000, width: 300 }}>
+          <p>There is a chart here; scroll down</p>
+        </div>
+        <div style={{ height: 250, width: 300 }}>
+          <button type="button" onClick={() => setIsDataSet1(v => !v)}>
+            toggle dataset
+          </button>
+          <ResponsiveContainer>
+            <LineChart data={data}>
+              {categories.map(c => {
+                return <Line key={c} dataKey={c} isAnimationActive={false} />;
+              })}
+              <Tooltip />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  },
+};
