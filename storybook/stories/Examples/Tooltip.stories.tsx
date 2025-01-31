@@ -409,11 +409,11 @@ export const TooltipWithPortal = {
 
 const d1 = [
   {
-    Triggers: 0,
+    Triggers: 10,
     date: 'Jan 1, 2025',
   },
   {
-    Triggers: 0,
+    Triggers: 10,
     date: 'Feb 28, 2025',
   },
 ];
@@ -437,6 +437,32 @@ export const RechartsAlphaTooltipBug5516Repro = {
               <Tooltip />
               <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  },
+};
+
+export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
+  render: (_args: Record<string, any>, context: StoryContext) => {
+    const [, setRandomUnusedState] = useState(true);
+
+    return (
+      <div>
+        <div style={{ height: 2000, width: 300 }}>
+          <p>There is a chart here; scroll down</p>
+        </div>
+        <div style={{ height: 250, width: 300 }}>
+          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+            set random unused state
+          </button>
+          <ResponsiveContainer>
+            <BarChart data={d1} style={{ border: '1px solid black' }}>
+              <Bar dataKey="Triggers" />
+              <Tooltip shared={false} />
+              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
