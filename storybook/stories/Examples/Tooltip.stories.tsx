@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { StoryContext } from '@storybook/react';
 import { pageData } from '../data';
 import {
   Area,
@@ -17,6 +18,7 @@ import {
 } from '../../../src';
 import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
 import { generateMockData } from '../../../test/helper/generateMockData';
+import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 
 export default {
   component: Tooltip,
@@ -416,28 +418,9 @@ const d1 = [
   },
 ];
 
-const d2 = [
-  {
-    Triggers: 0,
-    date: 'Jan 1, 2025',
-  },
-  {
-    Triggers: 3,
-    date: 'Jan 2, 2025',
-  },
-  {
-    Triggers: 0,
-    date: 'Jan 3, 2025',
-  },
-];
-
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: () => {
-    const [isDataSet1, setIsDataSet1] = useState(true);
-
-    const categories = ['Triggers'];
-
-    const data = isDataSet1 ? d1 : d2;
+  render: (_args: Record<string, any>, context: StoryContext) => {
+    const [, setRandomUnusedState] = useState(true);
 
     return (
       <div>
@@ -445,15 +428,14 @@ export const RechartsAlphaTooltipBug5516Repro = {
           <p>There is a chart here; scroll down</p>
         </div>
         <div style={{ height: 250, width: 300 }}>
-          <button type="button" onClick={() => setIsDataSet1(v => !v)}>
-            toggle dataset
+          <button type="button" onClick={() => setRandomUnusedState(v => !v)}>
+            set random unused state
           </button>
           <ResponsiveContainer>
-            <LineChart data={data}>
-              {categories.map(c => {
-                return <Line key={c} dataKey={c} isAnimationActive={false} />;
-              })}
+            <LineChart data={d1} style={{ border: '1px solid black' }}>
+              <Line dataKey="Triggers" />
               <Tooltip />
+              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </LineChart>
           </ResponsiveContainer>
         </div>

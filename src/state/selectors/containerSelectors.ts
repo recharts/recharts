@@ -14,15 +14,11 @@ export const selectChartHeight = (state: RechartsRootState): number => state.lay
 
 export const selectChartCoordinates: (state: RechartsRootState, event: MousePointer) => ChartPointer | undefined =
   createSelector(
-    selectContainerOffset,
     (_state: RechartsRootState, event: MousePointer): MousePointer => event,
-    (containerOffset: ElementOffset | undefined, event: MousePointer): ChartPointer | undefined => {
-      if (!containerOffset) {
-        return undefined;
-      }
+    (event: MousePointer): ChartPointer | undefined => {
       return {
-        chartX: Math.round(event.pageX - containerOffset.left),
-        chartY: Math.round(event.pageY - containerOffset.top),
+        chartX: Math.round(event.pageX - event.currentTarget.offsetLeft),
+        chartY: Math.round(event.pageY - event.currentTarget.offsetTop),
       };
     },
   );

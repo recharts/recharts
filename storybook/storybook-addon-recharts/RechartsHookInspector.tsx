@@ -2,10 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { useChartLayout } from '../../src/context/chartLayoutContext';
 import { PolarChartInspector } from './PolarChartInspector';
-
-function UnknownLayoutComponent() {
-  return <p>TODO create inspector for this layout</p>;
-}
+import { CartesianChartInspector } from './CartesianChartInspector';
 
 export function RechartsHookInspector({ rechartsInspectorEnabled }: { rechartsInspectorEnabled: boolean }) {
   const layout = useChartLayout();
@@ -32,7 +29,7 @@ export function RechartsHookInspector({ rechartsInspectorEnabled }: { rechartsIn
       Component = PolarChartInspector;
       break;
     default:
-      Component = UnknownLayoutComponent;
+      Component = CartesianChartInspector;
   }
 
   return createPortal(<Component />, document.querySelector('#storybook-root'));

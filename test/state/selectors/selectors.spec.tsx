@@ -972,6 +972,10 @@ describe('selectActiveIndexFromMousePointer', () => {
   const exampleMousePointer: MousePointer = {
     pageX: 10,
     pageY: 10,
+    currentTarget: {
+      offsetTop: 1,
+      offsetLeft: 3,
+    },
   };
 
   const selector = (state: RechartsRootState) => selectActivePropsFromMousePointer(state, exampleMousePointer);
@@ -989,21 +993,21 @@ describe('selectActiveIndexFromMousePointer', () => {
     render(
       <LineChart data={pageData} width={100} height={100}>
         <Line dataKey="pv" />
-        <Customized component={<Comp />} />
+        <Comp />
       </LineChart>,
     );
 
     expect(tooltipActiveSpy).toHaveBeenLastCalledWith({
       activeCoordinate: {
         x: 5,
-        y: 10,
+        y: 9,
       },
       activeIndex: '0',
     });
   });
 
   it('should be stable', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     mockGetBoundingClientRect({ width: 100, height: 100 });
     const Comp = (): null => {
       const result1 = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));

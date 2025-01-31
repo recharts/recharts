@@ -23,6 +23,7 @@ import { ReportMainChartProps } from '../state/ReportMainChartProps';
 export interface MousePointer {
   pageX: number;
   pageY: number;
+  currentTarget: Pick<HTMLElement, 'offsetTop' | 'offsetLeft'>;
 }
 
 export interface ChartPointer {
