@@ -259,8 +259,9 @@ export class CartesianAxis extends Component<Props, IState> {
     } else if (typeof option === 'function') {
       tickItem = option(props);
     } else {
+      const { className, ...restOfProps } = props;
       tickItem = (
-        <Text {...props} className="recharts-cartesian-axis-tick-value">
+        <Text {...restOfProps} className={`recharts-cartesian-axis-tick-value ${className}`}>
           {value}
         </Text>
       );
