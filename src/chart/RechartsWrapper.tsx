@@ -1,12 +1,10 @@
-import React, { CSSProperties, forwardRef, ReactNode, Ref, useEffect } from 'react';
+import React, { CSSProperties, forwardRef, ReactNode, Ref } from 'react';
 import clsx from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
-import { setOffset } from '../state/layoutSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
-import { useElementOffset } from '../util/useElementOffset';
 import { useReportScale } from '../util/useReportScale';
 import { ExternalMouseEvents } from './types';
 import { externalEventAction } from '../state/externalEventsMiddleware';
@@ -22,15 +20,6 @@ export type RechartsWrapperProps = Nullable<ExternalMouseEvents> & {
   className?: string;
   style?: CSSProperties;
   ref?: Ref<HTMLDivElement>;
-};
-
-const useReportChartOffset = () => {
-  const dispatch = useAppDispatch();
-  const [lastOffset, setLastOffset] = useElementOffset();
-  useEffect(() => {
-    dispatch(setOffset(lastOffset));
-  }, [dispatch, lastOffset]);
-  return setLastOffset;
 };
 
 export const RechartsWrapper = forwardRef(
@@ -59,12 +48,9 @@ export const RechartsWrapper = forwardRef(
 
     useSynchronisedEventsFromOtherCharts();
 
-    const setLastOffset = useReportChartOffset();
-
     const setScaleRef = useReportScale();
 
     const innerRef = (node: HTMLDivElement | null) => {
-      setLastOffset(node);
       setScaleRef(node);
       if (typeof ref === 'function') {
         ref(node);

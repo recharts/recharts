@@ -2,11 +2,6 @@ import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { ChartPointer, MousePointer } from '../../chart/generateCategoricalChart';
 import { Margin } from '../../util/types';
-import { ElementOffset } from '../../util/useElementOffset';
-
-export const selectContainerOffset: (state: RechartsRootState) => ElementOffset | undefined = (
-  state: RechartsRootState,
-): ElementOffset => state.layout.offset;
 
 export const selectChartWidth = (state: RechartsRootState): number => state.layout.width;
 
