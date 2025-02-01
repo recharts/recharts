@@ -404,6 +404,40 @@ describe('<LineChart />', () => {
     expect(container.querySelectorAll('.customized-active-dot')).toHaveLength(1);
   });
 
+  test('Renders active dot when activeDot=true', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={PageData}>
+        <Line activeDot type="monotone" dataKey="uv" />
+        <Tooltip />
+      </LineChart>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+
+    fireEvent.mouseOver(chart, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
+
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+  });
+
+  test('Renders no active dot when activeDot=false', () => {
+    const { container } = render(
+      <LineChart width={400} height={400} data={PageData}>
+        <Line activeDot={false} type="monotone" dataKey="uv" />
+        <Tooltip />
+      </LineChart>,
+    );
+
+    const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+
+    fireEvent.mouseOver(chart, { bubbles: true, cancelable: true, clientX: 200, clientY: 200 });
+
+    expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+  });
+
   test('Renders 1 dot no line when the length of data is 1', () => {
     const { container } = render(
       <LineChart

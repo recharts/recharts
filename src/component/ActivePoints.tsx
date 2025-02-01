@@ -32,6 +32,9 @@ const renderActivePoint = ({
    */
   mainColor: string;
 }) => {
+  if (activeDot === false) {
+    return null;
+  }
   const dotProps: DotProps = {
     // @ts-expect-error Dot does not expect the 'index' prop
     index: childIndex,
