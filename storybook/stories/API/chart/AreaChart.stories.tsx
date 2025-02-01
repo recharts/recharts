@@ -13,9 +13,19 @@ export default {
 
 export const Simple = {
   render: (args: Record<string, any>) => {
+    const [myState, setMyState] = React.useState(0);
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart {...args}>
+        <AreaChart
+          {...args}
+          onMouseDown={() => setMyState(myState + 1)}
+          margin={{
+            top: 0,
+            bottom: 0,
+            left: 50,
+            right: 50,
+          }}
+        >
           <Area dataKey="pv" strokeWidth={3} stroke="#2451B7" fill="#5376C4" />
           <CartesianGrid opacity={0.1} vertical={false} />
           <Tooltip />

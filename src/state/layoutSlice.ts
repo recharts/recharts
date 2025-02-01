@@ -33,7 +33,10 @@ const chartLayoutSlice = createSlice({
       state.height = action.payload.height;
     },
     setMargin(state, action: PayloadAction<Margin>) {
-      state.margin = action.payload;
+      state.margin.top = action.payload.top;
+      state.margin.right = action.payload.right;
+      state.margin.bottom = action.payload.bottom;
+      state.margin.left = action.payload.left;
     },
     setScale(state, action: PayloadAction<number>) {
       state.scale = action.payload;
