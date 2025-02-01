@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
+import React from 'react';
+import { StoryContext } from '@storybook/react';
 import { ComposedChart, ResponsiveContainer } from '../../../src';
 import { useChartHeight, useChartWidth } from '../../../src/context/chartLayoutContext';
-import { selectContainerOffset, selectContainerScale } from '../../../src/state/selectors/containerSelectors';
+import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
-import { ElementOffset } from '../../../src/util/useElementOffset';
+import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 
 /**
  * Renders a line with arrows on left and right.
@@ -121,65 +121,6 @@ const ChartSizeDimensions = () => {
   return <SvgDimensionShower width={width} height={height} />;
 };
 
-const OffsetDimensions = () => {
-  // offset has properties top; left
-  // they show distance from the top and left of the container to the top and left of the browser viewport
-  const offset = useAppSelector(selectContainerOffset);
-  if (offset == null) {
-    return null;
-  }
-  return (
-    // make the SVG bigger than the actual offset because we want to show the arrows, and labels outside that region
-    <svg
-      width={offset.left + 100}
-      height={offset.top + 50}
-      style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
-    >
-      <Background width={offset.left} height={offset.top} label="Offset" />
-      <HorizontalLineWithArrows x1={0} y={offset.top} x2={offset.left} stroke="red" label={`${offset.left}px`} />
-      <VerticalLineWithArrows x={offset.left} y1={0} y2={offset.top} stroke="blue" label={`${offset.top}px`} />
-    </svg>
-  );
-};
-
-function Crosshair({ x, y }: { x: number; y: number }) {
-  return (
-    <>
-      <line x1={0} y1={y} x2="100%" y2={y} stroke="black" strokeWidth={1} />
-      <line x1={x} y1={0} x2={x} y2="100%" stroke="black" strokeWidth={1} />;
-      {/* shows x, y in a text below and to the right of the center */}
-      <text x={x + 10} y={y + 10} textAnchor="start" dominantBaseline="hanging" stroke="black">
-        {`(x: ${x}, y: ${y})`}
-      </text>
-    </>
-  );
-}
-
-function CrosshairWrapper() {
-  const [mousePosition, setMousePosition] = useState<null | { pageX: number; pageY: number }>(null);
-  const offset: ElementOffset | undefined = useAppSelector(selectContainerOffset);
-  const scale: number = useAppSelector(selectContainerScale);
-  if (offset == null) {
-    return null;
-  }
-
-  const onMouseMove = (event: React.MouseEvent) => {
-    setMousePosition({ pageX: event.pageX / scale, pageY: event.pageY / scale });
-  };
-  const onMouseLeave = () => {
-    setMousePosition(null);
-  };
-  return (
-    <svg width="100%" height="100%" onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
-      {/* transparent rect is here so that there is something for the mouse events to react to. empty SVG does not fire any mouse events */}
-      <rect x={0} y={0} width="100%" height="100%" fill="transparent" />
-      {mousePosition != null && (
-        <Crosshair x={Math.round(mousePosition.pageX - offset.left)} y={Math.round(mousePosition.pageY - offset.top)} />
-      )}
-    </svg>
-  );
-}
-
 function ShowScale() {
   const width = useChartWidth();
   const height = useChartHeight();
@@ -210,14 +151,13 @@ export default {
 };
 
 export const WithResponsiveContainer = {
-  render: (args: Record<string, any>) => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer {...args}>
         <ComposedChart>
-          {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
           <ChartSizeDimensions />
-          <CrosshairWrapper />
           <ShowScale />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -229,13 +169,12 @@ export const WithResponsiveContainer = {
 };
 
 export const WithStaticDimensions = {
-  render: (args: Record<string, any>) => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ComposedChart {...args}>
-        {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
         <ChartSizeDimensions />
-        <CrosshairWrapper />
         <ShowScale />
+        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
       </ComposedChart>
     );
   },
@@ -249,7 +188,7 @@ export const WithStaticDimensions = {
  * https://github.com/recharts/recharts/issues/5477
  */
 export const WithAbsolutePositionAndFlexboxParents = {
-  render: (args: Record<string, any>) => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <div style={{ display: 'flex', height: '100vh' }}>
         <div
@@ -274,10 +213,9 @@ export const WithAbsolutePositionAndFlexboxParents = {
             className="spacer-left"
           >
             <ComposedChart {...args}>
-              {createPortal(<OffsetDimensions />, document.getElementById('storybook-root'))}
               <ChartSizeDimensions />
-              <CrosshairWrapper />
               <ShowScale />
+              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </ComposedChart>
           </div>
         </div>
