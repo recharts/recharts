@@ -38,7 +38,7 @@ interface XAxisProps extends BaseAxisProps {
   tickMargin?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & XAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
 
 function SetXAxisSettings(settings: XAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -65,7 +65,7 @@ const XAxisImpl = (props: Props) => {
     return null;
   }
 
-  const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+  const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
 
   return (
     <CartesianAxis

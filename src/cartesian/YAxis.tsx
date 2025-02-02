@@ -35,7 +35,7 @@ interface YAxisProps extends BaseAxisProps {
   angle?: number;
 }
 
-export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale'> & YAxisProps;
+export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & YAxisProps;
 
 function SetYAxisSettings(settings: YAxisSettings): null {
   const dispatch = useAppDispatch();
@@ -62,7 +62,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     return null;
   }
 
-  const { ref, dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
+  const { dangerouslySetInnerHTML, ticks, ...allOtherProps } = props;
 
   return (
     <CartesianAxis

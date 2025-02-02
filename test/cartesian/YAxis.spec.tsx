@@ -16,6 +16,7 @@ import {
   ReferenceLine,
   XAxis,
   ComposedChart,
+  YAxisProps,
 } from '../../src';
 import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
 import { pageData, rangeData } from '../../storybook/stories/data';
@@ -2112,5 +2113,22 @@ describe('<YAxis />', () => {
         expect(domainSpy).toHaveBeenLastCalledWith([0, 1200]);
       });
     });
+  });
+
+  it('should render the axis when wrapped in a custom component', () => {
+    /*
+     * https://github.com/recharts/recharts/issues/5445#issuecomment-2628711736
+     */
+    const YAxisWrapper = (props: YAxisProps) => {
+      return <YAxis {...props} />;
+    };
+
+    const { container } = render(
+      <BarChart width={100} height={100}>
+        <YAxisWrapper />
+      </BarChart>,
+    );
+
+    expect(container.querySelector('.yAxis')).toBeVisible();
   });
 });
