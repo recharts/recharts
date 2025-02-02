@@ -162,7 +162,6 @@ export const DualLineChart = {
           margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="2 5" />
-          {/* @ts-expect-error invalid ref type? */}
           <XAxis
             axisLine={false}
             stroke="#333"

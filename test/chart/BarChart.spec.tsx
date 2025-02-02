@@ -22,6 +22,7 @@ import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { BarRectangleItem } from '../../src/cartesian/Bar';
+import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 
 type DataType = {
   name: string;
@@ -2812,6 +2813,55 @@ describe('<BarChart />', () => {
     expect(clipPath.children[0]).toHaveAttribute('height', '0');
 
     expectBars(container, []);
+  });
+
+  test('renders chart when wrapped in a custom component', () => {
+    const MyBarChart = (props: CategoricalChartProps) => {
+      return <BarChart {...props} />;
+    };
+
+    const { container } = render(
+      <MyBarChart width={500} height={300} data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Bar dataKey="uv" fill="#8884d8" isAnimationActive={false} />
+      </MyBarChart>,
+    );
+
+    expectBars(container, [
+      {
+        d: 'M 75.75,5 h 86 v 260 h -86 Z',
+        height: '260',
+        radius: '0',
+        width: '86',
+        x: '75.75',
+        y: '5',
+      },
+      {
+        d: 'M 183.25,70 h 86 v 195 h -86 Z',
+        height: '195',
+        radius: '0',
+        width: '86',
+        x: '183.25',
+        y: '70',
+      },
+      {
+        d: 'M 290.75,70 h 86 v 195 h -86 Z',
+        height: '195',
+        radius: '0',
+        width: '86',
+        x: '290.75',
+        y: '70',
+      },
+      {
+        d: 'M 398.25,135 h 86 v 130 h -86 Z',
+        height: '130',
+        radius: '0',
+        width: '86',
+        x: '398.25',
+        y: '135',
+      },
+    ]);
   });
 
   describe('bar width', () => {

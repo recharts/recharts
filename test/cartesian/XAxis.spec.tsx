@@ -437,7 +437,6 @@ describe('<XAxis />', () => {
 
       const { container } = render(
         <LineChart width={600} height={300} data={timeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          {/* @ts-expect-error error in ref type */}
           <XAxis dataKey="x" {...xAxisArgs} />
           <YAxis />
           <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
