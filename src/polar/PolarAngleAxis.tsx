@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';
-import { Text } from '../component/Text';
+import { Text, Props as TextProps, TextAnchor } from '../component/Text';
 import {
   adaptEventsOfChild,
   AxisDomain,
@@ -49,9 +49,13 @@ export interface PolarAngleAxisProps extends PropsInjectedFromRedux {
   tickFormatter?: (value: any, index: number) => string;
   reversed: boolean;
   dataKey?: DataKey<any>;
-  tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean;
+  tick?:
+    | SVGProps<SVGTextElement>
+    | ReactElement<SVGElement>
+    | ((props: TickItemTextProps) => ReactElement<SVGElement>)
+    | boolean;
   scale: ScaleType | RechartsScale;
-  type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number but it actually never behaves as a number
+  type?: 'category' | 'number'; // so there is code that checks if angleAxis.type is number, but it actually never behaves as a number
 }
 
 type AxisSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGTextElement>, 'scale' | 'type'>;
@@ -101,7 +105,7 @@ const getTickLineCoord = (
  * @param orientation of the axis ticks
  * @return text-anchor
  */
-const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): string => {
+const getTickTextAnchor = (data: TickItem, orientation: Props['orientation']): TextAnchor => {
   const cos = Math.cos(-data.coordinate * RADIAN);
 
   if (cos > eps) {
@@ -136,20 +140,25 @@ const AxisLine = (props: PropsWithTicks): ReactElement => {
 
 type TickItemProps = {
   tick: PolarAngleAxisProps['tick'];
-  tickProps: any;
+  tickProps: TickItemTextProps;
   value: string | number;
-  allAxisProps: Props;
 };
 
-const TickItemText = ({ tick, allAxisProps, tickProps, value }: TickItemProps): ReactElement => {
+export type TickItemTextProps = TextProps & {
+  index: number;
+  payload: any;
+};
+
+const TickItemText = ({ tick, tickProps, value }: TickItemProps): ReactElement => {
   if (!tick) {
     return null;
   }
   if (React.isValidElement(tick)) {
+    // @ts-expect-error element cloning makes typescript unhappy and me too
     return React.cloneElement(tick, tickProps);
   }
   if (typeof tick === 'function') {
-    return tick(allAxisProps);
+    return tick(tickProps);
   }
   return (
     <Text {...tickProps} className="recharts-polar-angle-axis-tick-value">
@@ -171,7 +180,7 @@ const Ticks = (props: PropsWithTicks) => {
   const items = ticks.map((entry, i) => {
     const lineCoord = getTickLineCoord(entry, props);
     const textAnchor = getTickTextAnchor(entry, props.orientation);
-    const tickProps = {
+    const tickProps: TickItemTextProps = {
       textAnchor,
       ...axisProps,
       stroke: 'none',
@@ -194,7 +203,6 @@ const Ticks = (props: PropsWithTicks) => {
           tick={tick}
           tickProps={tickProps}
           value={tickFormatter ? tickFormatter(entry.value, i) : entry.value}
-          allAxisProps={props}
         />
       </Layer>
     );

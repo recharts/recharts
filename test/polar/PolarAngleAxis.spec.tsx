@@ -24,6 +24,7 @@ import { expectScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { TickItemTextProps } from '../../src/polar/PolarAngleAxis';
 
 type ExpectedAngleAxisTick = {
   x1: string;
@@ -1054,7 +1055,7 @@ describe('<PolarAngleAxis />', () => {
     });
 
     test('Renders ticks when tick is set to be a function', () => {
-      const Tick = (props: any) => {
+      const Tick = (props: TickItemTextProps) => {
         const { x, y } = props;
         return (
           <text x={x} y={y} className="customized-tick">
@@ -1069,6 +1070,162 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(container.querySelectorAll('.customized-tick')).toHaveLength(exampleRadarData.length);
+    });
+
+    test('passes custom data to the tick function', () => {
+      const tick = vi.fn().mockImplementation(() => null);
+
+      render(
+        <RadarChart width={500} height={500} data={exampleRadarData}>
+          <PolarAngleAxis tick={tick} />
+        </RadarChart>,
+      );
+
+      expect(tick).toHaveBeenCalledTimes(exampleRadarData.length);
+      expect(tick).toHaveBeenNthCalledWith(1, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 0,
+        orientation: 'outer',
+        payload: {
+          coordinate: 90,
+          index: 0,
+          offset: 45,
+          value: 0,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'middle',
+        x: 250,
+        y: 46,
+      });
+      expect(tick).toHaveBeenNthCalledWith(2, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 1,
+        orientation: 'outer',
+        payload: {
+          coordinate: 45,
+          index: 1,
+          offset: 45,
+          value: 1,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'start',
+        x: 394.2497833620557,
+        y: 105.7502166379443,
+      });
+      expect(tick).toHaveBeenNthCalledWith(3, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 2,
+        orientation: 'outer',
+        payload: {
+          coordinate: 0,
+          index: 2,
+          offset: 45,
+          value: 2,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'start',
+        x: 454,
+        y: 250,
+      });
+      expect(tick).toHaveBeenNthCalledWith(4, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 3,
+        orientation: 'outer',
+        payload: {
+          coordinate: -45,
+          index: 3,
+          offset: 45,
+          value: 3,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'start',
+        x: 394.2497833620557,
+        y: 394.2497833620557,
+      });
+      expect(tick).toHaveBeenNthCalledWith(5, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 4,
+        orientation: 'outer',
+        payload: {
+          coordinate: -90,
+          index: 4,
+          offset: 45,
+          value: 4,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'middle',
+        x: 250,
+        y: 454,
+      });
+      expect(tick).toHaveBeenNthCalledWith(6, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 5,
+        orientation: 'outer',
+        payload: {
+          coordinate: -135,
+          index: 5,
+          offset: 45,
+          value: 5,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'end',
+        x: 105.7502166379443,
+        y: 394.2497833620557,
+      });
+      expect(tick).toHaveBeenNthCalledWith(7, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 6,
+        orientation: 'outer',
+        payload: {
+          coordinate: -180,
+          index: 6,
+          offset: 45,
+          value: 6,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'end',
+        x: 46,
+        y: 250.00000000000003,
+      });
+      expect(tick).toHaveBeenNthCalledWith(8, {
+        cx: 250,
+        cy: 250,
+        fill: undefined,
+        index: 7,
+        orientation: 'outer',
+        payload: {
+          coordinate: -225,
+          index: 7,
+          offset: 45,
+          value: 7,
+        },
+        radius: 196,
+        stroke: 'none',
+        textAnchor: 'end',
+        x: 105.75021663794428,
+        y: 105.7502166379443,
+      });
     });
 
     test('renders labels and ticks on the inside with orientation=inner', () => {
