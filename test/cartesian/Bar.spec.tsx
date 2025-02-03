@@ -2,7 +2,7 @@ import React, { ComponentType, ReactNode } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import uniqueId from 'lodash/uniqueId';
-import { Bar, BarChart, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
+import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,
   AreaChartCase,
@@ -59,6 +59,58 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     const { container } = render(
       <ChartElement layout="horizontal" data={data}>
         <Bar isAnimationActive={false} dataKey="value" />
+      </ChartElement>,
+    );
+
+    expectBars(container, [
+      {
+        d: 'M 14.8,413.3333333333333 h 78 v 81.66666666666669 h -78 Z',
+        height: '81.66666666666669',
+        radius: '0',
+        width: '78',
+        x: '14.8',
+        y: '413.3333333333333',
+      },
+      {
+        d: 'M 112.8,331.66666666666674 h 78 v 163.33333333333326 h -78 Z',
+        height: '163.33333333333326',
+        radius: '0',
+        width: '78',
+        x: '112.8',
+        y: '331.66666666666674',
+      },
+      {
+        d: 'M 210.8,250 h 78 v 245 h -78 Z',
+        height: '245',
+        radius: '0',
+        width: '78',
+        x: '210.8',
+        y: '250',
+      },
+      {
+        d: 'M 308.8,168.33333333333337 h 78 v 326.66666666666663 h -78 Z',
+        height: '326.66666666666663',
+        radius: '0',
+        width: '78',
+        x: '308.8',
+        y: '168.33333333333337',
+      },
+      {
+        d: 'M 406.8,86.66666666666666 h 78 v 408.33333333333337 h -78 Z',
+        height: '408.33333333333337',
+        radius: '0',
+        width: '78',
+        x: '406.8',
+        y: '86.66666666666666',
+      },
+    ]);
+  });
+
+  it(`should render rectangles when wrapped in custom Component`, () => {
+    const MyBar = (props: BarProps) => <Bar {...props} />;
+    const { container } = render(
+      <ChartElement layout="horizontal" data={data}>
+        <MyBar isAnimationActive={false} dataKey="value" />
       </ChartElement>,
     );
 

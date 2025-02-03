@@ -160,7 +160,10 @@ type InternalBarProps = {
   label?: ImplicitLabelType;
 };
 
-type BarSvgProps = Omit<PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>, 'radius' | 'name'>;
+type BarSvgProps = Omit<
+  PresentationAttributesAdaptChildEvent<BarRectangleItem, SVGPathElement>,
+  'radius' | 'name' | 'ref'
+>;
 
 export type Props = Partial<BarEvents> & BarProps & Omit<BarSvgProps, keyof BarEvents>;
 
@@ -590,7 +593,6 @@ function BarImpl(props: Props) {
     isAnimationActive = defaultBarProps.isAnimationActive,
   } = props;
 
-  const { ref, ...everythingElse } = props;
   return (
     <SetErrorBarContext
       xAxisId={xAxisId}
@@ -600,7 +602,7 @@ function BarImpl(props: Props) {
       errorBarOffset={errorBarOffset}
     >
       <BarWithState
-        {...everythingElse}
+        {...props}
         layout={layout}
         needClip={needClip}
         data={rects}
