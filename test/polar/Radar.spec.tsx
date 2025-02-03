@@ -3,7 +3,7 @@ import uniqueId from 'lodash/uniqueId';
 import { render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';
-import { Radar, Customized, RadarChart } from '../../src';
+import { Radar, Customized, RadarChart, RadarProps } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
@@ -37,6 +37,26 @@ describe('<Radar />', () => {
     const { container } = render(
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" isAnimationActive={false} />
+      </RadarChart>,
+    );
+
+    expectRadarPolygons(container, [
+      {
+        d: 'M250,167.68L313.75274739177917,186.2472526082209L445.804,250L319.29646455628165,319.29646455628165L250,419.344L159.91459607683385,340.08540392316615L100.06,250.00000000000003L199.41358087391438,199.41358087391438L250,167.68Z',
+        fill: null,
+        fillOpacity: null,
+      },
+    ]);
+  });
+
+  it('should render Radar in a custom component', () => {
+    const CustomRadar = (props: RadarProps) => {
+      return <Radar {...props} />;
+    };
+
+    const { container } = render(
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <CustomRadar dataKey="value" isAnimationActive={false} />
       </RadarChart>,
     );
 

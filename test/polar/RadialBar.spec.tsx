@@ -2,7 +2,15 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, test, expect, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { Customized, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from '../../src';
+import {
+  Customized,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+  RadialBarProps,
+} from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectPolarItemsSettings } from '../../src/state/selectors/polarSelectors';
 import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
@@ -1012,6 +1020,20 @@ describe('<RadialBar />', () => {
     const { container } = render(
       <RadialBarChart width={500} height={500} data={[]}>
         <RadialBar dataKey="uv" />
+      </RadialBarChart>,
+    );
+
+    expectRadialBars(container, []);
+  });
+
+  test('Should render RadialBar in a custom component', () => {
+    const CustomRadialBar = (props: RadialBarProps) => {
+      return <RadialBar {...props} />;
+    };
+
+    const { container } = render(
+      <RadialBarChart width={500} height={500} data={[]}>
+        <CustomRadialBar dataKey="uv" />
       </RadialBarChart>,
     );
 
