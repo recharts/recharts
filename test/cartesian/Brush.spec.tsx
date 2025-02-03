@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine, Customized } from '../../src';
+import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine, Customized, BrushProps } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectDisplayedData } from '../../src/state/selectors/axisSelectors';
@@ -234,6 +234,20 @@ describe('<Brush />', () => {
     const { container } = render(
       <BarChart width={400} height={100} data={[]}>
         <Brush x={100} y={50} width={400} height={40} />
+      </BarChart>,
+    );
+    expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-brush-slide')).toHaveLength(0);
+  });
+
+  test('Renders Brush in a custom component', () => {
+    const CustomBrush = (props: BrushProps) => {
+      return <Brush {...props} />;
+    };
+
+    const { container } = render(
+      <BarChart width={400} height={100} data={[]}>
+        <CustomBrush x={100} y={50} width={400} height={40} />
       </BarChart>,
     );
     expect(container.querySelectorAll('.recharts-brush-traveller')).toHaveLength(0);

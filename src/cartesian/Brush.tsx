@@ -65,7 +65,7 @@ interface BrushProps {
   alwaysShowText?: boolean;
 }
 
-export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd'> & BrushProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
 
 type PropertiesFromContext = {
   x: number;
@@ -929,10 +929,9 @@ function BrushInternal(props: Props) {
     updateId,
     onChange,
   };
-  const { ref, ...allOtherProps } = props;
   return (
     <BrushWithState
-      {...allOtherProps}
+      {...props}
       {...contextProperties}
       startIndexControlledFromProps={startIndexFromProps ?? undefined}
       endIndexControlledFromProps={endIndexFromProps ?? undefined}
