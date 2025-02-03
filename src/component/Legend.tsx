@@ -38,9 +38,7 @@ function LegendContent(props: ContentProps) {
     return React.createElement(props.content as any, contentProps);
   }
 
-  const { ref, ...propsWithoutRef } = contentProps;
-
-  return <DefaultLegendContent {...propsWithoutRef} />;
+  return <DefaultLegendContent {...contentProps} />;
 }
 
 type PositionInput = {
@@ -86,7 +84,7 @@ function getDefaultPosition(
   return { ...hPos, ...vPos };
 }
 
-export type Props = Omit<DefaultProps, 'payload'> & {
+export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
   wrapperStyle?: CSSProperties;
   width?: number;
   height?: number;

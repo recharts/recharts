@@ -33,6 +33,20 @@ describe('<Funnel />', () => {
     expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
   });
 
+  it('Can render in a custom component', () => {
+    const CustomFunnel = (props: FunnelProps) => {
+      return <Funnel {...props} />;
+    };
+
+    const { container } = render(
+      <FunnelChart width={500} height={500}>
+        <CustomFunnel dataKey="value" data={data} isAnimationActive />
+      </FunnelChart>,
+    );
+
+    expect(container.getElementsByClassName('recharts-funnel-trapezoid')).toHaveLength(data.length);
+  });
+
   it("Don't render any Trapezoid when data is empty", () => {
     const { container } = render(
       <FunnelChart width={500} height={500}>

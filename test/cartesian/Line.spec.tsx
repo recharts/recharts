@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Line, ErrorBar, LineChart, Customized, XAxis } from '../../src';
+import { Line, ErrorBar, LineChart, Customized, XAxis, LineProps } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -37,6 +37,21 @@ describe('<Line />', () => {
     expect(line).toHaveLength(1);
 
     expect(line[0].getAttribute('stroke-dasharray')).toEqual('0px 0px');
+  });
+
+  it('Can be rendered in custom component', () => {
+    const CustomLine = (props: LineProps) => {
+      return <Line {...props} />;
+    };
+
+    const { container } = render(
+      <LineChart width={500} height={500}>
+        <CustomLine isAnimationActive={false} data={data} dataKey="value" />
+      </LineChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-line-dot')).toHaveLength(5);
   });
 
   it('Does not throw when dot is null', () => {

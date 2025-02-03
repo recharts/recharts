@@ -133,7 +133,7 @@ interface ScatterProps {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type BaseScatterSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'points'>;
+type BaseScatterSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'points' | 'ref'>;
 
 type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 
@@ -573,7 +573,6 @@ function ScatterImpl(props: Props) {
     legendType = defaultScatterProps.legendType,
     lineJointType = defaultScatterProps.lineJointType,
     lineType = defaultScatterProps.lineType,
-    ref,
     shape = defaultScatterProps.shape,
     xAxisId = defaultScatterProps.xAxisId,
     yAxisId = defaultScatterProps.yAxisId,

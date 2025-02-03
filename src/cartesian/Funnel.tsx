@@ -95,7 +95,7 @@ interface FunnelProps {
   id?: string;
 }
 
-type FunnelSvgProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps;
+type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps, 'ref'>;
 
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
@@ -367,7 +367,6 @@ function FunnelImpl(props: Props) {
   const updateId = useUpdateId();
 
   const {
-    ref,
     stroke = defaultFunnelProps.stroke,
     fill = defaultFunnelProps.fill,
     legendType = defaultFunnelProps.legendType,

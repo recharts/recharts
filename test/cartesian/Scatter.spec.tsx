@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Scatter, Customized, ScatterChart, XAxis, YAxis } from '../../src';
+import { Scatter, Customized, ScatterChart, XAxis, YAxis, ScatterProps } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSelectors';
@@ -69,6 +69,20 @@ describe('<Scatter />', () => {
         width: '9.0270333367641',
       },
     ]);
+  });
+
+  test('Can render in custom component', () => {
+    const CustomScatter = (props: ScatterProps) => {
+      return <Scatter {...props} />;
+    };
+
+    const { container } = render(
+      <ScatterChart width={500} height={500}>
+        <CustomScatter data={[]} />
+      </ScatterChart>,
+    );
+
+    expectScatterPoints(container, []);
   });
 
   test("Don't render any symbols when data is empty", () => {
