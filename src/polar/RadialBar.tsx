@@ -149,7 +149,8 @@ interface InternalRadialBarProps {
   animationEasing?: AnimationTiming;
 }
 
-export type RadialBarProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & InternalRadialBarProps;
+export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
+  InternalRadialBarProps;
 
 interface State {
   readonly isAnimationFinished?: boolean;
@@ -333,7 +334,6 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
 }
 
 function RadialBarImpl(props: RadialBarProps) {
-  const { ref, ...rest } = props;
   const cells = findAllByType(props.children, Cell);
   const radialBarSettings: RadialBarSettings = {
     dataKey: props.dataKey,
@@ -348,7 +348,7 @@ function RadialBarImpl(props: RadialBarProps) {
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
-      <RadialBarWithState {...rest} data={data} />
+      <RadialBarWithState {...props} data={data} />
     </>
   );
 }

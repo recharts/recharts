@@ -2,7 +2,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LabelProps, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
+import { LabelProps, Pie, PieChart, PieProps, Sector, SectorProps, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
@@ -47,6 +47,28 @@ describe('<Pie />', () => {
     const { container } = render(
       <PieChart width={500} height={500}>
         <Pie
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          data={PageData}
+          dataKey="uv"
+        />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+  });
+
+  test('Render Pie in a custom component', () => {
+    const CustomPie = (props: PieProps): React.ReactElement => {
+      return <Pie {...props} />;
+    };
+
+    const { container } = render(
+      <PieChart width={500} height={500}>
+        <CustomPie
           isAnimationActive={false}
           cx={250}
           cy={250}

@@ -181,9 +181,11 @@ interface State {
   sectorToFocus?: number;
 }
 
-type InternalProps = PresentationAttributesAdaptChildEvent<any, SVGElement> & InternalPieProps;
+type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
 
-export type Props = PresentationAttributesAdaptChildEvent<any, SVGElement> & PieProps;
+type InternalProps = PieSvgAttributes & InternalPieProps;
+
+export type Props = PieSvgAttributes & PieProps;
 
 type RealPieData = any;
 
@@ -845,7 +847,6 @@ function PieImpl(props: Props) {
     hide = defaultPieProps.hide,
     isAnimationActive = defaultPieProps.isAnimationActive,
     legendType = defaultPieProps.legendType,
-    ref,
     ...everythingElse
   } = props;
 

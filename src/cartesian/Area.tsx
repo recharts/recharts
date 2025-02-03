@@ -124,7 +124,7 @@ interface AreaProps {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type AreaSvgProps = Omit<CurveProps, 'type' | 'points'>;
+type AreaSvgProps = Omit<CurveProps, 'type' | 'points' | 'ref'>;
 
 type InternalProps = AreaSvgProps & InternalAreaProps;
 
@@ -348,7 +348,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     needClip: boolean,
     clipPathId: string,
   ) {
-    const { layout, type, stroke, connectNulls, isRange, ref, ...others } = this.props;
+    const { layout, type, stroke, connectNulls, isRange, ...others } = this.props;
 
     return (
       <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
@@ -583,7 +583,6 @@ function AreaImpl(props: Props) {
     hide = defaultAreaProps.hide,
     isAnimationActive = defaultAreaProps.isAnimationActive,
     legendType = defaultAreaProps.legendType,
-    ref,
     stroke = defaultAreaProps.stroke,
     xAxisId = defaultAreaProps.xAxisId,
     yAxisId = defaultAreaProps.yAxisId,

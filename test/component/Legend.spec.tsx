@@ -400,6 +400,19 @@ describe('<Legend />', () => {
       expect(container.querySelectorAll('.customized-legend')).toHaveLength(1);
     });
 
+    it('should render a custom component wrapped legend', () => {
+      const CustomLegend = (props: LegendProps) => <Legend {...props} />;
+      const { container } = render(
+        <LineChart width={600} height={300} data={categoricalData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <CustomLegend />
+          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} strokeDasharray="5 5" />
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        </LineChart>,
+      );
+
+      expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
+    });
+
     it('should inject extra sneaky props - but none of them are actual HTML props so they get ignored by React', () => {
       const CustomizedLegend = () => <div className="customized-legend">customized legend item</div>;
       const { container } = render(

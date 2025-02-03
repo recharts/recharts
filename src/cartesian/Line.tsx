@@ -118,7 +118,7 @@ interface LineProps {
 /**
  * Because of naming conflict, we are forced to ignore certain (valid) SVG attributes.
  */
-type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef'>;
+type LineSvgProps = Omit<CurveProps, 'points' | 'pathRef' | 'ref'>;
 
 type InternalProps = LineSvgProps & InternalLineProps;
 
@@ -353,7 +353,7 @@ class LineWithState extends Component<InternalProps, State> {
     clipPathId: string,
     props?: { strokeDasharray: string },
   ) {
-    const { type, layout, connectNulls, ref, ...others } = this.props;
+    const { type, layout, connectNulls, ...others } = this.props;
     const curveProps = {
       ...filterProps(others, true),
       fill: 'none',
@@ -562,7 +562,6 @@ function LineImpl(props: Props) {
   }
 
   const {
-    ref,
     activeDot = defaultLineProps.activeDot,
     animateNewValues = defaultLineProps.animateNewValues,
     animationBegin = defaultLineProps.animationBegin,

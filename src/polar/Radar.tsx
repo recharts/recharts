@@ -78,7 +78,7 @@ export type AngleAxisForRadar = {
   cy: number;
 };
 
-export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points'> & RadarProps;
+export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'> & RadarProps;
 
 interface State {
   isAnimationFinished?: boolean;
@@ -426,7 +426,6 @@ class RadarWithState extends PureComponent<Props, State> {
 }
 
 function RadarImpl(props: Props) {
-  const { ref, ...everythingElse } = props;
   const isPanorama = useIsPanorama();
   const radarPoints = useAppSelector(state =>
     selectRadarPoints(state, props.radiusAxisId, props.angleAxisId, isPanorama, props.dataKey),
@@ -434,7 +433,7 @@ function RadarImpl(props: Props) {
 
   return (
     <RadarWithState
-      {...everythingElse}
+      {...props}
       points={radarPoints?.points}
       baseLinePoints={radarPoints?.baseLinePoints}
       isRange={radarPoints?.isRange}
