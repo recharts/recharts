@@ -5,9 +5,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../.
 import { CategoricalChartProps } from '../props/ChartProps';
 
 export default {
-  argTypes: {
-    ...CategoricalChartProps,
-  },
+  argTypes: CategoricalChartProps,
   component: LineChart,
 };
 
