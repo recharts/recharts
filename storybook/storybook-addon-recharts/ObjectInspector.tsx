@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 
-function ValueInspector({ value }: { value: unknown }) {
-  const [expand, setExpand] = useState(false);
+/*
+ * Values that are expanded by default:
+ * - primitives
+ * - objects with 0 or 1 or 2 keys
+ * - arrays with 0 or 1 elements
+ */
+function shouldExpandByDefault(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.length <= 1;
+  }
+  if (value != null && typeof value === 'object') {
+    return Object.keys(value).length <= 2;
+  }
+  return true;
+}
+
+export function ValueInspector({ value }: { value: unknown }) {
+  const [expand, setExpand] = useState(shouldExpandByDefault(value));
   function copyToClipboard() {
     navigator.clipboard.writeText(JSON.stringify(value, null, 2));
   }
@@ -31,7 +47,10 @@ function ValueInspector({ value }: { value: unknown }) {
   );
 }
 
-export function ObjectInspector({ obj }: { obj: Record<string, any> }) {
+export function ObjectInspector({ obj }: { obj: Record<string, any> | undefined }) {
+  if (obj == null) {
+    return <code>{JSON.stringify(obj)}</code>;
+  }
   const keys = Object.keys(obj);
 
   return (

@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { expect, userEvent, within } from '@storybook/test';
-import { StoryObj } from '@storybook/react';
+import { StoryContext, StoryObj } from '@storybook/react';
 import React, { PureComponent, useState } from 'react';
 import { Impressions, impressionsData, pageData } from '../data';
 import {
@@ -17,29 +17,22 @@ import {
   ReferenceArea,
 } from '../../../src';
 import { DataKey } from '../../../src/util/types';
+import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { CategoricalChartProps } from '../API/props/ChartProps';
 
 export default {
   component: LineChart,
+  argTypes: CategoricalChartProps,
   docs: {
     autodocs: false,
   },
 };
 
 export const Simple = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -47,26 +40,44 @@ export const Simple = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
 
 export const Tiny = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart width={300} height={100} data={pageData}>
+        <LineChart {...args}>
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 300,
+    height: 100,
+    data: pageData,
+  },
 };
 
 export const Dashed = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
@@ -87,28 +98,28 @@ export const Dashed = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
           <Tooltip defaultIndex={3} active />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 
 export const Vertical = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          layout="vertical"
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
@@ -116,27 +127,30 @@ export const Vertical = {
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip defaultIndex={4} active />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    layout: 'vertical',
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 
 export const BiAxial = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid yAxisId="left" strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis yAxisId="left" />
@@ -145,27 +159,28 @@ export const BiAxial = {
           <Line yAxisId="left" type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line yAxisId="right" type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 export const VerticalWithSpecifiedDomain = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          layout="vertical"
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" domain={[0, 'dataMax + 1000']} />
           <YAxis dataKey="name" type="category" />
@@ -173,14 +188,62 @@ export const VerticalWithSpecifiedDomain = {
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    layout: 'vertical',
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 export const ConnectNulls = {
-  render: () => {
-    const data = [
+  render: (args: Record<string, any>, context: StoryContext) => {
+    return (
+      <>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart {...args}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          </LineChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart {...args}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          </LineChart>
+        </ResponsiveContainer>
+      </>
+    );
+  },
+  args: {
+    width: 500,
+    height: 200,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+    data: [
       { name: 'Page A', uv: 4000 },
       { name: 'Page B', uv: 3000 },
       { name: 'Page C', uv: 2000 },
@@ -188,58 +251,14 @@ export const ConnectNulls = {
       { name: 'Page E', uv: 1890 },
       { name: 'Page F', uv: 2390 },
       { name: 'Page G', uv: 3490 },
-    ];
-
-    return (
-      <>
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-            <Tooltip />
-          </LineChart>
-        </ResponsiveContainer>
-
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-            <Tooltip />
-          </LineChart>
-        </ResponsiveContainer>
-      </>
-    );
+    ],
   },
 };
 export const WithXAxisPadding = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart width={500} height={300} data={pageData}>
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
           <YAxis />
@@ -247,26 +266,22 @@ export const WithXAxisPadding = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+  },
 };
 export const WithReferenceLines = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 20,
-            right: 50,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -276,13 +291,25 @@ export const WithReferenceLines = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 20,
+      right: 50,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 export const WithCustomizedDot = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const CustomizedDot = (props: any) => {
       const { cx, cy, value } = props;
 
@@ -330,17 +357,7 @@ export const WithCustomizedDot = {
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -348,14 +365,26 @@ export const WithCustomizedDot = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" dot={<CustomizedDot />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
 };
 
 export const ClipDot: StoryObj = {
-  render: (args: Record<string, any>) => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
@@ -377,6 +406,7 @@ export const ClipDot: StoryObj = {
           <XAxis dataKey="name" allowDataOverflow />
           <YAxis allowDataOverflow />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -396,7 +426,7 @@ export const ClipDot: StoryObj = {
 };
 
 export const WithCustomizedLabel = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     class CustomizedLabel extends PureComponent {
       render() {
         const { x, y, stroke, value } = this.props as any;
@@ -425,17 +455,7 @@ export const WithCustomizedLabel = {
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 10,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" height={60} tick={<CustomizedAxisTick />} />
           <YAxis />
@@ -443,14 +463,26 @@ export const WithCustomizedLabel = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" label={<CustomizedLabel />} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 10,
+    },
+  },
 };
 
 export const HighlightAndZoom = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const initialState = {
       data: impressionsData,
       left: 'dataMin',
@@ -547,8 +579,7 @@ export const HighlightAndZoom = {
 
         <ResponsiveContainer minHeight={500}>
           <LineChart
-            width={800}
-            height={400}
+            {...args}
             data={data}
             onMouseDown={e => setZoomGraph(prev => ({ ...prev, refAreaLeft: e.activeLabel }))}
             onMouseMove={e => zoomGraph.refAreaLeft && setZoomGraph(prev => ({ ...prev, refAreaRight: e.activeLabel }))}
@@ -565,18 +596,23 @@ export const HighlightAndZoom = {
               <ReferenceArea yAxisId="1" x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
             ) : null}
             <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           </LineChart>
         </ResponsiveContainer>
       </div>
     );
   },
+  args: {
+    width: 800,
+    height: 400,
+  },
 };
 
 export const LineChartHasMultiSeries = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart width={500} height={300} data={pageData}>
+        <LineChart {...args}>
           <CartesianGrid />
           <XAxis dataKey="name" />
           <YAxis />
@@ -585,9 +621,15 @@ export const LineChartHasMultiSeries = {
           <Line dataKey="pv" />
           <Line dataKey="amt" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
   },
 };
 
@@ -636,7 +678,7 @@ export const LineChartAxisInterval = {
 };
 
 export const NegativeValuesWithReferenceLines = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const data = [
       {
         x: -50,
@@ -689,16 +731,7 @@ export const NegativeValuesWithReferenceLines = {
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
 
           <YAxis
@@ -735,9 +768,20 @@ export const NegativeValuesWithReferenceLines = {
           {minX < 0 && <ReferenceLine x={0} stroke="gray" strokeWidth={1.5} strokeOpacity={0.65} />}
 
           <Line strokeWidth={2} data={data} dot={false} type="monotone" dataKey="y" stroke="black" tooltipType="none" />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
 
@@ -749,7 +793,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     await userEvent.click(canvas.getByTestId('toggle'));
     expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
   },
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const data = [
       {
         name: 'Page A',
@@ -823,7 +867,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
         <button data-testid="toggle" type="button" onClick={() => setBtnClicked(clicked => !clicked)}>
           Click Me to Simulate Legend
         </button>
-        <LineChart width={1300} height={400} margin={{ right: 30, bottom: 40 }} data={data} layout="horizontal">
+        <LineChart {...args} data={data}>
           <CartesianGrid data-testid="cartesian" strokeDasharray="3 3" />
           {isBtnClicked ? null : (
             <>
@@ -855,6 +899,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
                 dot={false}
               />
               <Tooltip />
+              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </>
           )}
         </LineChart>
@@ -862,13 +907,20 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
       </div>
     );
   },
+  args: {
+    data: pageData,
+    width: 1300,
+    height: 400,
+    margin: { right: 30, bottom: 40 },
+    layout: 'horizontal',
+  },
 };
 
 export const WithBrush: StoryObj = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer>
-        <LineChart width={0} height={0} data={pageData}>
+        <LineChart {...args}>
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
@@ -877,14 +929,18 @@ export const WithBrush: StoryObj = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    data: pageData,
+  },
 };
 
 export const HideOnLegendClick: StoryObj = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
 
     const handleLegendClick = (dataKey?: DataKey<any>) => {
@@ -900,7 +956,7 @@ export const HideOnLegendClick: StoryObj = {
 
     return (
       <ResponsiveContainer height={400}>
-        <LineChart data={pageData}>
+        <LineChart {...args}>
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
@@ -909,14 +965,18 @@ export const HideOnLegendClick: StoryObj = {
           <Line hide={activeSeries.includes('uv')} type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Line hide={activeSeries.includes('pv')} type="monotone" dataKey="pv" stroke="#987" fill="#8884d8" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    data: pageData,
+  },
 };
 
 export const LineTrailingIcon: StoryObj = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const lastDotKey = 'lastDot';
     const data = pageData.map((entry, index) => ({
       ...entry,
@@ -939,6 +999,7 @@ export const LineTrailingIcon: StoryObj = {
             dot={{ stroke: 'red', strokeWidth: 1, r: 4 }}
           />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -946,20 +1007,10 @@ export const LineTrailingIcon: StoryObj = {
 };
 
 export const ReversedXAxis = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={pageData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+        <LineChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" reversed />
           <YAxis />
@@ -967,8 +1018,20 @@ export const ReversedXAxis = {
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
