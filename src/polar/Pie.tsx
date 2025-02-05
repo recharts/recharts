@@ -250,7 +250,6 @@ type PieSectorsProps = {
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: Props;
-  sectorRefs: SVGGElement[];
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
@@ -274,7 +273,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, sectorRefs, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -301,11 +300,6 @@ function PieSectors(props: PieSectorsProps) {
 
     return (
       <Layer
-        ref={(ref: SVGGElement) => {
-          if (ref && !sectorRefs.includes(ref)) {
-            sectorRefs.push(ref);
-          }
-        }}
         tabIndex={-1}
         className="recharts-pie-sector"
         {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
@@ -527,8 +521,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
 
   state: State;
 
-  sectorRefs: SVGGElement[] = [];
-
   static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (prevState.prevIsAnimationActive !== nextProps.isAnimationActive) {
       return {
@@ -631,7 +623,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
         activeShape={activeShape}
         inactiveShape={inactiveShapeProp}
         allOtherPieProps={this.props}
-        sectorRefs={this.sectorRefs}
       />
     );
   }
