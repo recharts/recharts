@@ -147,39 +147,39 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       const cursor = container.querySelector('.recharts-tooltip-cursor');
       expect(cursor).not.toBeNull();
 
-      // Ignore left arrow when you're already at the left
+      // Wrap around when already at the left
       arrowLeft(svg);
       const cursorPathA = cursor.getAttribute('d');
 
-      // Respect right arrow when there's something to the right
+      // Wrap back around tot he start when just wrapped to the end
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page B');
+      expect(tooltip).toHaveTextContent('Page A');
       const cursorPathB = cursor.getAttribute('d');
 
-      expect(cursorPathA).not.toEqual(cursorPathB);
+      expect(cursorPathA).toEqual(cursorPathB);
+
+      // Page B
+      arrowRight(svg);
 
       // Page C
       arrowRight(svg);
 
-      // Page D
       arrowRight(svg);
-
-      arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
 
       // Ignore right arrow when you're already at the right
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page F');
+      expect(tooltip).toHaveTextContent('Page E');
 
       // Respect left arrow when there's something to the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
 
       // Chart ignores non-arrow keys
       fireEvent.keyDown(svg, {
         key: 'a',
       });
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
 
       // Keyboard controls no longer spoof mouse events!
       expect(mockMouseMovements).toHaveBeenCalledTimes(0);
@@ -214,36 +214,36 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
 
-      // Ignore right arrow when you're already at the right
+      // Wrap around when at the right
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page A');
+      expect(tooltip).toHaveTextContent('Page F');
 
       // Respect left arrow when there's something to the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page B');
+      expect(tooltip).toHaveTextContent('Page A');
+
+      // Page B
+      arrowLeft(svg);
 
       // Page C
       arrowLeft(svg);
 
-      // Page D
       arrowLeft(svg);
-
-      arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
 
       // Ignore left arrow when you're already at the left
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page F');
+      expect(tooltip).toHaveTextContent('Page E');
 
       // Respect right arrow when there's something to the right
       arrowRight(svg);
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
 
       // Chart ignores non-arrow keys
       fireEvent.keyDown(svg, {
         key: 'a',
       });
-      expect(tooltip).toHaveTextContent('Page E');
+      expect(tooltip).toHaveTextContent('Page D');
       expect(mockMouseMovements).toHaveBeenCalledTimes(0);
     });
 
@@ -342,9 +342,9 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         arrowRight(svg);
         expectTooltipPayload(container, 'Page E', ['uv : 278']);
 
-        // The chart only goes from A - E, so we shouldn't be able to go right any further.
+        // The chart only goes from A - E, but we will wrap around to the start
         arrowRight(svg);
-        expectTooltipPayload(container, 'Page E', ['uv : 278']);
+        expectTooltipPayload(container, 'Page A', ['uv : 400']);
       });
     });
 
@@ -395,9 +395,9 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       act(() => svg.focus());
       expect(tooltip).toHaveTextContent('Page A');
 
-      // Ignore left arrow when you're already at the left
+      // Wrap around when you're already at the left most point
       arrowLeft(svg);
-      expect(tooltip).toHaveTextContent('Page A');
+      expect(tooltip).toHaveTextContent('Page F');
     });
 
     const BugExample = () => {
@@ -749,7 +749,7 @@ describe('AreaChart horizontal', () => {
     expectTooltipPayload(container, 'Page B', ['uv : 300']);
   });
 
-  test('should stay on the first index after pressing left', () => {
+  test('should wrap around to the end after pressing left', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
@@ -760,10 +760,10 @@ describe('AreaChart horizontal', () => {
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
 
     arrowLeft(svg);
-    expectTooltipPayload(container, 'Page A', ['uv : 400']);
+    expectTooltipPayload(container, 'Page F', ['uv : 189']);
   });
 
-  test('after it arrives at the end of the available data and then press arrow right again, it will continue showing the last item', () => {
+  test('after it arrives at the end of the available data and then press arrow right again, it will wrap around to show the first item again', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
@@ -789,7 +789,7 @@ describe('AreaChart horizontal', () => {
     expectTooltipPayload(container, 'Page F', ['uv : 189']);
 
     arrowRight(svg);
-    expectTooltipPayload(container, 'Page F', ['uv : 189']);
+    expectTooltipPayload(container, 'Page A', ['uv : 400']);
   });
 });
 

@@ -49,9 +49,11 @@ keyboardEventsMiddleware.startListening({
     const direction = selectChartDirection(state);
     const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
     const movement = key === 'ArrowRight' ? 1 : -1;
-    const nextIndex = currentIndex + movement * directionMultiplier;
-    if (nextIndex >= tooltipTicks.length || nextIndex < 0) {
-      return;
+    let nextIndex = currentIndex + movement * directionMultiplier;
+    if (nextIndex >= tooltipTicks.length) {
+      nextIndex = 0;
+    } else if (nextIndex < 0) {
+      nextIndex = tooltipTicks.length;
     }
     const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(nextIndex));
 
