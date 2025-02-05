@@ -178,7 +178,6 @@ interface State {
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
   prevAnimationId?: UpdateId;
-  sectorToFocus?: number;
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -523,7 +522,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       isAnimationFinished: !props.isAnimationActive,
       prevIsAnimationActive: props.isAnimationActive,
       prevAnimationId: props.animationId,
-      sectorToFocus: 0,
     };
   }
 
@@ -694,39 +692,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     );
   }
 
-  attachKeyboardHandlers(pieRef: SVGGElement) {
-    // eslint-disable-next-line no-param-reassign
-    pieRef.onkeydown = (e: KeyboardEvent) => {
-      if (!e.altKey) {
-        switch (e.key) {
-          case 'ArrowLeft': {
-            const next = ++this.state.sectorToFocus % this.sectorRefs.length;
-            this.sectorRefs[next].focus();
-            this.setState({ sectorToFocus: next });
-            break;
-          }
-          case 'ArrowRight': {
-            const next =
-              --this.state.sectorToFocus < 0
-                ? this.sectorRefs.length - 1
-                : this.state.sectorToFocus % this.sectorRefs.length;
-            this.sectorRefs[next].focus();
-            this.setState({ sectorToFocus: next });
-            break;
-          }
-          case 'Escape': {
-            this.sectorRefs[this.state.sectorToFocus].blur();
-            this.setState({ sectorToFocus: 0 });
-            break;
-          }
-          default: {
-            // There is nothing to do here
-          }
-        }
-      }
-    };
-  }
-
   renderSectors() {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
@@ -737,11 +702,11 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     return this.renderSectorsStatically(sectors);
   }
 
-  componentDidMount(): void {
-    if (this.pieRef) {
-      this.attachKeyboardHandlers(this.pieRef);
-    }
-  }
+  // componentDidMount(): void {
+  //   if (this.pieRef) {
+  //     this.attachKeyboardHandlers(this.pieRef);
+  //   }
+  // }
 
   render() {
     const { hide, className, label, isAnimationActive, sectors } = this.props;
