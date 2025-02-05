@@ -693,12 +693,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     return this.renderSectorsStatically(sectors);
   }
 
-  // componentDidMount(): void {
-  //   if (this.pieRef) {
-  //     this.attachKeyboardHandlers(this.pieRef);
-  //   }
-  // }
-
   render() {
     const { hide, className, label, isAnimationActive, sectors } = this.props;
     const { isAnimationFinished } = this.state;
