@@ -431,6 +431,7 @@ describe('selectTooltipPayload', () => {
       tooltipAxis,
       activeLabel,
       arrayTooltipSearcher,
+      'item',
     );
     const expectedEntry1: TooltipPayloadEntry = {
       name: 'stature',
@@ -482,6 +483,7 @@ describe('selectTooltipPayload', () => {
       tooltipAxis,
       activeLabel,
       arrayTooltipSearcher,
+      'axis',
     );
     const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: null, value: undefined };
     expect(actual).toEqual([expected]);

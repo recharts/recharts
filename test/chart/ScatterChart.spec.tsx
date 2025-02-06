@@ -32,6 +32,7 @@ import { boxPlotData, PageData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import {
   selectActiveCoordinate,
+  selectIsTooltipActive,
   selectTooltipPayload,
   selectTooltipPayloadConfigurations,
 } from '../../src/state/selectors/selectors';
@@ -46,6 +47,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/tooltipSlice';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
+import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -2305,5 +2307,250 @@ describe('Tooltip integration', () => {
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
     });
+  });
+});
+
+/*
+ * https://github.com/recharts/recharts/discussions/5545
+ * https://github.com/recharts/recharts/issues/5546
+ */
+describe('ScatterChart with allowDuplicateCategory=false', () => {
+  const data = [
+    { x: 100, y: 100, z: 200 },
+    { x: 100, y: 200, z: 200 },
+    { x: 100, y: 300, z: 200 },
+  ];
+
+  const renderTestCase = createSelectorTestCase(({ children }) => (
+    <ScatterChart width={500} height={500}>
+      <CartesianGrid />
+      <XAxis type="category" allowDuplicatedCategory={false} dataKey="x" name="stature" unit="cm" />
+      <YAxis type="category" allowDuplicatedCategory={false} dataKey="y" name="weight" unit="kg" />
+      <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} isAnimationActive={false} />
+      <Tooltip shared={false} cursor={{ strokeDasharray: '3 3' }} />
+      <Legend />
+      {children}
+    </ScatterChart>
+  ));
+
+  it('should render three scatter points', () => {
+    const { container } = renderTestCase();
+    expectScatterPoints(container, [
+      {
+        cx: '280',
+        cy: '388.33333333333337',
+        d: 'M4.514,0A4.514,4.514,0,1,1,-4.514,0A4.514,4.514,0,1,1,4.514,0',
+        height: '9.0270333367641',
+        transform: 'translate(280, 388.33333333333337)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '280',
+        cy: '235',
+        d: 'M4.514,0A4.514,4.514,0,1,1,-4.514,0A4.514,4.514,0,1,1,4.514,0',
+        height: '9.0270333367641',
+        transform: 'translate(280, 235)',
+        width: '9.0270333367641',
+      },
+      {
+        cx: '280',
+        cy: '81.66666666666667',
+        d: 'M4.514,0A4.514,4.514,0,1,1,-4.514,0A4.514,4.514,0,1,1,4.514,0',
+        height: '9.0270333367641',
+        transform: 'translate(280, 81.66666666666667)',
+        width: '9.0270333367641',
+      },
+    ]);
+  });
+
+  it('should select tooltip active', () => {
+    const { container, spy } = renderTestCase(state => selectIsTooltipActive(state, 'item', 'hover', undefined));
+    expect(spy).toHaveBeenLastCalledWith({ activeIndex: null, isActive: false });
+
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    expect(spy).toHaveBeenLastCalledWith({ activeIndex: '0', isActive: true });
+  });
+
+  it('should select tooltipPayloadConfigurations', () => {
+    const { spy } = renderTestCase(state => selectTooltipPayloadConfigurations(state, 'axis', 'hover', undefined));
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        dataDefinedOnItem: [
+          [
+            {
+              dataKey: 'x',
+              name: 'stature',
+              payload: {
+                x: 100,
+                y: 100,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'cm',
+              value: 100,
+            },
+            {
+              dataKey: 'y',
+              name: 'weight',
+              payload: {
+                x: 100,
+                y: 100,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'kg',
+              value: 100,
+            },
+          ],
+          [
+            {
+              dataKey: 'x',
+              name: 'stature',
+              payload: {
+                x: 100,
+                y: 200,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'cm',
+              value: 100,
+            },
+            {
+              dataKey: 'y',
+              name: 'weight',
+              payload: {
+                x: 100,
+                y: 200,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'kg',
+              value: 200,
+            },
+          ],
+          [
+            {
+              dataKey: 'x',
+              name: 'stature',
+              payload: {
+                x: 100,
+                y: 300,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'cm',
+              value: 100,
+            },
+            {
+              dataKey: 'y',
+              name: 'weight',
+              payload: {
+                x: 100,
+                y: 300,
+                z: 200,
+              },
+              type: undefined,
+              unit: 'kg',
+              value: 300,
+            },
+          ],
+        ],
+        positions: [
+          {
+            x: 280,
+            y: 388.33333333333337,
+          },
+          {
+            x: 280,
+            y: 235,
+          },
+          {
+            x: 280,
+            y: 81.66666666666667,
+          },
+        ],
+        settings: {
+          color: undefined,
+          dataKey: undefined,
+          fill: undefined,
+          hide: false,
+          name: 'A school',
+          nameKey: undefined,
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+        },
+      },
+    ]);
+  });
+
+  it('should select chartDataWithIndexes', () => {
+    const { spy } = renderTestCase(selectChartDataWithIndexes);
+    expect(spy).toHaveBeenLastCalledWith({
+      chartData: undefined,
+      computedData: undefined,
+      dataEndIndex: 0,
+      dataStartIndex: 0,
+    });
+  });
+
+  it('should select tooltip payload', () => {
+    const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', undefined));
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(undefined);
+
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenLastCalledWith([
+      {
+        color: undefined,
+        dataKey: 'x',
+        fill: undefined,
+        hide: false,
+        name: 'stature',
+        nameKey: undefined,
+        payload: {
+          x: 100,
+          y: 100,
+          z: 200,
+        },
+        stroke: undefined,
+        strokeWidth: undefined,
+        type: undefined,
+        unit: 'cm',
+        value: 100,
+      },
+      {
+        color: undefined,
+        dataKey: 'y',
+        fill: undefined,
+        hide: false,
+        name: 'weight',
+        nameKey: undefined,
+        payload: {
+          x: 100,
+          y: 100,
+          z: 200,
+        },
+        stroke: undefined,
+        strokeWidth: undefined,
+        type: undefined,
+        unit: 'kg',
+        value: 100,
+      },
+    ]);
+  });
+
+  it('should show tooltip when hovering over a point', () => {
+    const { container } = renderTestCase();
+    showTooltip(container, scatterChartMouseHoverTooltipSelector);
+    expectTooltipPayload(container, '', ['stature : 100cm', 'weight : 100kg']);
+  });
+
+  it('should show different tooltip when hovering over the second point', () => {
+    const { container } = renderTestCase();
+    showTooltip(container, `${scatterChartMouseHoverTooltipSelector}:nth-child(2)`);
+    expectTooltipPayload(container, '', ['stature : 100cm', 'weight : 200kg']);
   });
 });

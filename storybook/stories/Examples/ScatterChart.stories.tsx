@@ -575,3 +575,41 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
     data: babiesAndVideosCorrelation,
   },
 };
+
+export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
+  render: (args: StorybookArgs) => {
+    const data = [
+      { x: 100, y: 100, z: 200 },
+      { x: 100, y: 200, z: 200 },
+      { x: 100, y: 300, z: 200 },
+    ];
+
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ScatterChart>
+          <CartesianGrid />
+          <XAxis
+            type="category"
+            allowDuplicatedCategory={Boolean(args.allowDuplicatedCategory)}
+            dataKey="x"
+            name="stature"
+            unit="cm"
+          />
+          <YAxis
+            type="category"
+            allowDuplicatedCategory={Boolean(args.allowDuplicatedCategory)}
+            dataKey="y"
+            name="weight"
+            unit="kg"
+          />
+          <Scatter activeShape={{ fill: 'red' }} name="A school" data={data} />
+          <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+          <Legend />
+        </ScatterChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    allowDuplicatedCategory: false,
+  },
+};

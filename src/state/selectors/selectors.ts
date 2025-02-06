@@ -186,12 +186,13 @@ function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: Readonl
 }
 
 export const combineTooltipPayload = (
-  tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
+  tooltipPayloadConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
   activeIndex: TooltipIndex,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
+  tooltipEventType: TooltipEventType,
 ): TooltipPayload | undefined => {
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
@@ -200,7 +201,7 @@ export const combineTooltipPayload = (
 
   const init: Array<TooltipPayloadEntry> = [];
 
-  return tooltipItemPayloads.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
+  return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
@@ -209,7 +210,12 @@ export const combineTooltipPayload = (
     // BaseAxisProps does not support nameKey but it could!
     const finalNameKey: DataKey<any> | undefined = settings?.nameKey; // ?? tooltipAxis?.nameKey;
     let tooltipPayload: unknown;
-    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
+    if (
+      tooltipAxis?.dataKey &&
+      !tooltipAxis?.allowDuplicatedCategory &&
+      Array.isArray(sliced) &&
+      tooltipEventType === 'axis'
+    ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
       tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
@@ -268,6 +274,7 @@ export const selectTooltipPayload: (
     selectTooltipAxis,
     selectActiveLabel,
     selectTooltipPayloadSearcher,
+    pickTooltipEventType,
   ],
   combineTooltipPayload,
 );
