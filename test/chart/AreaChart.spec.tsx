@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-import { describe, test, it, expect, vi, MockInstance } from 'vitest';
+import { describe, test, it, expect, vi, MockInstance, beforeEach } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
@@ -8,6 +8,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { pageData } from '../../storybook/stories/data';
 import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
 import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 type ExpectedArea = {
   d: string;
@@ -22,6 +23,10 @@ function expectAreaCurve(container: Element, expectedAreas: ReadonlyArray<Expect
 }
 
 describe('AreaChart', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   const data = [
     { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
     { name: 'Page B', uv: 300, pv: 4567, amt: 2400 },

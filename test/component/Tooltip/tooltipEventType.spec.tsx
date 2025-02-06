@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PageData } from '../../_data';
@@ -26,6 +26,7 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { TooltipTrigger } from '../../../src/chart/types';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 type TooltipEventTypeTestCase = {
   testName: string;
@@ -147,6 +148,10 @@ describe('tooltipEventType', () => {
   });
 
   describe.each(axisTestCases)('axis in $testName', ({ Component }) => {
+    beforeEach(() => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
+    });
+
     describe.each(['hover', undefined] as const)('trigger=%s', tooltipTrigger => {
       it('should display tooltip when hovering over chart area, and hide it on mouse out', async () => {
         const { container } = render(<Component tooltipTrigger={tooltipTrigger} />);

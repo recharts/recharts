@@ -36,7 +36,7 @@ import {
 import { TooltipTrigger } from '../../../src/chart/types';
 import { produceState } from '../../helper/produceState';
 import { arrayTooltipSearcher } from '../../../src/state/optionsSlice';
-import { MousePointer } from '../../../src/chart/generateCategoricalChart';
+import { ChartPointer } from '../../../src/chart/generateCategoricalChart';
 import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
 import { PageData } from '../../_data';
 import { pageData } from '../../../storybook/stories/data';
@@ -46,7 +46,7 @@ import {
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
-import { selectActivePropsFromMousePointer } from '../../../src/state/selectors/selectActivePropsFromMousePointer';
+import { selectActivePropsFromChartPointer } from '../../../src/state/selectors/selectActivePropsFromChartPointer';
 import { useTooltipEventType } from '../../../src/state/selectors/selectTooltipEventType';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 
@@ -968,17 +968,13 @@ describe('selectIsTooltipActive', () => {
   });
 });
 
-describe('selectActiveIndexFromMousePointer', () => {
-  const exampleMousePointer: MousePointer = {
-    pageX: 10,
-    pageY: 10,
-    currentTarget: {
-      offsetTop: 1,
-      offsetLeft: 3,
-    },
+describe('selectActiveIndexFromChartPointer', () => {
+  const exampleChartPointer: ChartPointer = {
+    chartX: 10,
+    chartY: 10,
   };
 
-  const selector = (state: RechartsRootState) => selectActivePropsFromMousePointer(state, exampleMousePointer);
+  const selector = (state: RechartsRootState) => selectActivePropsFromChartPointer(state, exampleChartPointer);
 
   shouldReturnUndefinedOutOfContext(selector);
   shouldReturnFromInitialState(selector, undefined);
@@ -987,7 +983,7 @@ describe('selectActiveIndexFromMousePointer', () => {
     const tooltipActiveSpy = vi.fn();
     mockGetBoundingClientRect({ width: 100, height: 100 });
     const Comp = (): null => {
-      tooltipActiveSpy(useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer)));
+      tooltipActiveSpy(useAppSelector(state => selectActivePropsFromChartPointer(state, exampleChartPointer)));
       return null;
     };
     render(
@@ -1000,7 +996,7 @@ describe('selectActiveIndexFromMousePointer', () => {
     expect(tooltipActiveSpy).toHaveBeenLastCalledWith({
       activeCoordinate: {
         x: 5,
-        y: 9,
+        y: 10,
       },
       activeIndex: '0',
     });
@@ -1010,8 +1006,8 @@ describe('selectActiveIndexFromMousePointer', () => {
     expect.assertions(2);
     mockGetBoundingClientRect({ width: 100, height: 100 });
     const Comp = (): null => {
-      const result1 = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
-      const result2 = useAppSelector(state => selectActivePropsFromMousePointer(state, exampleMousePointer));
+      const result1 = useAppSelector(state => selectActivePropsFromChartPointer(state, exampleChartPointer));
+      const result2 = useAppSelector(state => selectActivePropsFromChartPointer(state, exampleChartPointer));
       expect(result1).toBe(result2);
       return null;
     };

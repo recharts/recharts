@@ -6,6 +6,7 @@ import { PageData } from '../../_data';
 import { selectActiveIndex, selectActiveLabel, selectTooltipPayload } from '../../../src/state/selectors/selectors';
 import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
 import { barChartMouseHoverTooltipSelector, pieChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 describe('defaultIndex', () => {
   describe('in BarChart', () => {
@@ -45,6 +46,7 @@ describe('defaultIndex', () => {
     });
 
     it('should update the payload after mouse hover', () => {
+      mockGetBoundingClientRect({ width: 100, height: 100 });
       const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', undefined));
       showTooltip(container, barChartMouseHoverTooltipSelector);
       expect(spy).toHaveBeenLastCalledWith([

@@ -1,11 +1,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, test, it, expect, vi } from 'vitest';
+import { describe, test, it, expect, vi, beforeEach } from 'vitest';
 import { Cell, Customized, Legend, RadialBar, RadialBarChart, Sector, SectorProps, Tooltip } from '../../src';
 import { testChartLayoutContext } from '../util/context';
 import { expectRadialBarLabels, expectRadialBars } from '../helper/expectRadialBars';
 import { selectRootBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { useAppSelector } from '../../src/state/hooks';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 function assertActiveShapeInteractions(container: HTMLElement) {
   const sectorNodes = container.querySelectorAll('.recharts-sector');
@@ -23,6 +24,10 @@ function assertActiveShapeInteractions(container: HTMLElement) {
 }
 
 describe('<RadialBarChart />', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   const data = [
     { name: '18-24', uv: 31.47, pv: 2400, fill: '#8884d8' },
     { name: '25-29', uv: 26.69, pv: 4567, fill: '#83a6ed' },

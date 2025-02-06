@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { describe, expect, it, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
@@ -23,6 +23,7 @@ import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { BarRectangleItem } from '../../src/cartesian/Bar';
 import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 type DataType = {
   name: string;
@@ -50,6 +51,10 @@ describe('<BarChart />', () => {
   ];
 
   type CustomLabelProps = Partial<{ x: number; y: number; index: number }>;
+
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
 
   beforeAll(() => {
     vi.useFakeTimers();

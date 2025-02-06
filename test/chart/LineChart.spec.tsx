@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, MockInstance, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, MockInstance, test, vi } from 'vitest';
 import {
   Brush,
   CartesianAxis,
@@ -28,8 +28,13 @@ import { selectTooltipPayload } from '../../src/state/selectors/selectors';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { TickItem } from '../../src/util/types';
 import { MouseHandlerDataParam } from '../../src/synchronisation/types';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('<LineChart />', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   test('Render 1 line in simple LineChart', () => {
     const { container } = render(
       <LineChart width={400} height={400} data={PageData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -195,10 +200,10 @@ describe('<LineChart />', () => {
     expect(line1).toHaveAttribute('stroke-width', '1');
     expect(line1).toHaveAttribute('fill', 'none');
     expect(line1).toHaveAttribute('width', '330');
-    expect(line1).toHaveAttribute('height', '260');
+    expect(line1).toHaveAttribute('height', '160');
     expect(line1).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line1).toHaveAttribute('stroke-dasharray', '0px 0px');
-    expect(line1).toHaveAttribute('d', 'M80,91.667L135,91.667L190,55.483L245,27.1L300,5L355,24.933L410,117.667');
+    expect(line1).toHaveAttribute('d', 'M80,58.333L135,58.333L190,36.067L245,18.6L300,5L355,17.267L410,74.333');
 
     const line2 = allLines[1];
     assertNotNull(line2);
@@ -216,10 +221,10 @@ describe('<LineChart />', () => {
     expect(line2).toHaveAttribute('stroke-width', '1');
     expect(line2).toHaveAttribute('fill', 'none');
     expect(line2).toHaveAttribute('width', '330');
-    expect(line2).toHaveAttribute('height', '260');
+    expect(line2).toHaveAttribute('height', '160');
     expect(line2).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line2).toHaveAttribute('stroke-dasharray', '0px 0px');
-    expect(line2).toHaveAttribute('d', 'M80,169.125L135,169.125L190,123.95L245,37.987L300,24.5L355,18L410,37.5');
+    expect(line2).toHaveAttribute('d', 'M80,106L135,106L190,78.2L245,25.3L300,17L355,13L410,25');
   });
 
   test('Sets title and description correctly', () => {
@@ -1477,6 +1482,10 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
     { name: 'Page B', uv: 678, pv: 4567, amt: 2400 },
     { name: 'Page A', uv: 230, pv: 2400, amt: 2400 },
   ];
+
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
 
   beforeAll(() => {
     vi.useFakeTimers();

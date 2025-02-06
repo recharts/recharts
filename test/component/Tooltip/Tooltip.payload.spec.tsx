@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 import {
   Area,
@@ -78,6 +78,7 @@ import {
 } from '../../../src/state/selectors/tooltipSelectors';
 import { expectScale } from '../../helper/expectScale';
 import { selectAxisDomain } from '../../../src/state/selectors/axisSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running
@@ -191,8 +192,8 @@ const LineChartVerticalTestCase: TooltipPayloadTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
-  expectedTooltipTitle: 'Page D',
-  expectedTooltipContent: ['uv : 200kg', 'My custom name : 9800$$$', 'amt : 2400'],
+  expectedTooltipTitle: 'Page E',
+  expectedTooltipContent: ['uv : 278kg', 'My custom name : 3908$$$', 'amt : 2400'],
 };
 
 const ComposedChartTestCase: TooltipPayloadTestCase = {
@@ -438,6 +439,10 @@ const testCases: ReadonlyArray<TooltipPayloadTestCase> = [
 ];
 
 describe('Tooltip payload', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe.each(testCases)(
     'as a child of $name',
     ({ Wrapper, mouseHoverSelector, expectedTooltipTitle, expectedTooltipContent, mouseCoordinate }) => {
@@ -1607,7 +1612,7 @@ describe('Tooltip payload', () => {
 
       expect(spy).toHaveBeenLastCalledWith({
         x: 200,
-        y: 221,
+        y: 213,
       });
       expect(spy).toHaveBeenCalledTimes(2);
     });
@@ -1627,7 +1632,7 @@ describe('Tooltip payload', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({
-        activeIndex: '3',
+        activeIndex: '4',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);

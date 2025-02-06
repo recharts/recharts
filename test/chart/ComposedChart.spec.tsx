@@ -3,6 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { testChartLayoutContext } from '../util/context';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -48,6 +49,8 @@ describe('<ComposedChart />', () => {
   });
 
   test('MouseEnter ComposedChart should show tooltip, active dot, and cursor', () => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+
     const { container } = render(
       <ComposedChart width={800} height={400} data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
         <XAxis dataKey="name" />
