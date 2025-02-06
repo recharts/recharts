@@ -214,6 +214,16 @@ export const combineTooltipPayload = (
       tooltipAxis?.dataKey &&
       !tooltipAxis?.allowDuplicatedCategory &&
       Array.isArray(sliced) &&
+      /*
+       * If the tooltipEventType is 'axis', we should search for the dataKey in the sliced data
+       * because thanks to allowDuplicatedCategory=false, the order of elements in the array
+       * no longer matches the order of elements in the original data
+       * and so we need to search by the active dataKey + label rather than by index.
+       *
+       * On the other hand the tooltipEventType 'item' should always search by index
+       * because we get the index from interacting over the individual elements
+       * which is always accurate, irrespective of the allowDuplicatedCategory setting.
+       */
       tooltipEventType === 'axis'
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
