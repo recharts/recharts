@@ -186,12 +186,13 @@ function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: Readonl
 }
 
 export const combineTooltipPayload = (
-  tooltipItemPayloads: ReadonlyArray<TooltipPayloadConfiguration>,
+  tooltipPayloadConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
   activeIndex: TooltipIndex,
   chartDataState: ChartDataState,
   tooltipAxis: BaseAxisProps | undefined,
   activeLabel: string | undefined,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
+  tooltipEventType: TooltipEventType,
 ): TooltipPayload | undefined => {
   if (activeIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
@@ -200,7 +201,7 @@ export const combineTooltipPayload = (
 
   const init: Array<TooltipPayloadEntry> = [];
 
-  return tooltipItemPayloads.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
+  return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
     const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
@@ -209,7 +210,22 @@ export const combineTooltipPayload = (
     // BaseAxisProps does not support nameKey but it could!
     const finalNameKey: DataKey<any> | undefined = settings?.nameKey; // ?? tooltipAxis?.nameKey;
     let tooltipPayload: unknown;
-    if (tooltipAxis?.dataKey && !tooltipAxis?.allowDuplicatedCategory && Array.isArray(sliced)) {
+    if (
+      tooltipAxis?.dataKey &&
+      !tooltipAxis?.allowDuplicatedCategory &&
+      Array.isArray(sliced) &&
+      /*
+       * If the tooltipEventType is 'axis', we should search for the dataKey in the sliced data
+       * because thanks to allowDuplicatedCategory=false, the order of elements in the array
+       * no longer matches the order of elements in the original data
+       * and so we need to search by the active dataKey + label rather than by index.
+       *
+       * On the other hand the tooltipEventType 'item' should always search by index
+       * because we get the index from interacting over the individual elements
+       * which is always accurate, irrespective of the allowDuplicatedCategory setting.
+       */
+      tooltipEventType === 'axis'
+    ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
       tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
@@ -268,6 +284,7 @@ export const selectTooltipPayload: (
     selectTooltipAxis,
     selectActiveLabel,
     selectTooltipPayloadSearcher,
+    pickTooltipEventType,
   ],
   combineTooltipPayload,
 );
