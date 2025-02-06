@@ -33,6 +33,6 @@ export function SetPolarLegendPayload({ legendPayload }: { legendPayload: Readon
     return () => {
       dispatch(removeLegendPayload(legendPayload));
     };
-  }, [dispatch, legendPayload]);
+  }, [dispatch, layout, legendPayload]);
   return null;
 }
