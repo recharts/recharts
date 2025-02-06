@@ -178,7 +178,6 @@ interface State {
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
   prevAnimationId?: UpdateId;
-  sectorToFocus?: number;
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -251,7 +250,6 @@ type PieSectorsProps = {
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: Props;
-  sectorRefs: SVGGElement[];
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
@@ -275,7 +273,7 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
 }
 
 function PieSectors(props: PieSectorsProps) {
-  const { sectors, sectorRefs, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -302,11 +300,6 @@ function PieSectors(props: PieSectorsProps) {
 
     return (
       <Layer
-        ref={(ref: SVGGElement) => {
-          if (ref && !sectorRefs.includes(ref)) {
-            sectorRefs.push(ref);
-          }
-        }}
         tabIndex={-1}
         className="recharts-pie-sector"
         {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
@@ -523,13 +516,10 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       isAnimationFinished: !props.isAnimationActive,
       prevIsAnimationActive: props.isAnimationActive,
       prevAnimationId: props.animationId,
-      sectorToFocus: 0,
     };
   }
 
   state: State;
-
-  sectorRefs: SVGGElement[] = [];
 
   static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
     if (prevState.prevIsAnimationActive !== nextProps.isAnimationActive) {
@@ -633,7 +623,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
         activeShape={activeShape}
         inactiveShape={inactiveShapeProp}
         allOtherPieProps={this.props}
-        sectorRefs={this.sectorRefs}
       />
     );
   }
@@ -694,39 +683,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     );
   }
 
-  attachKeyboardHandlers(pieRef: SVGGElement) {
-    // eslint-disable-next-line no-param-reassign
-    pieRef.onkeydown = (e: KeyboardEvent) => {
-      if (!e.altKey) {
-        switch (e.key) {
-          case 'ArrowLeft': {
-            const next = ++this.state.sectorToFocus % this.sectorRefs.length;
-            this.sectorRefs[next].focus();
-            this.setState({ sectorToFocus: next });
-            break;
-          }
-          case 'ArrowRight': {
-            const next =
-              --this.state.sectorToFocus < 0
-                ? this.sectorRefs.length - 1
-                : this.state.sectorToFocus % this.sectorRefs.length;
-            this.sectorRefs[next].focus();
-            this.setState({ sectorToFocus: next });
-            break;
-          }
-          case 'Escape': {
-            this.sectorRefs[this.state.sectorToFocus].blur();
-            this.setState({ sectorToFocus: 0 });
-            break;
-          }
-          default: {
-            // There is nothing to do here
-          }
-        }
-      }
-    };
-  }
-
   renderSectors() {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
@@ -735,12 +691,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);
-  }
-
-  componentDidMount(): void {
-    if (this.pieRef) {
-      this.attachKeyboardHandlers(this.pieRef);
-    }
   }
 
   render() {

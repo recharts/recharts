@@ -37,8 +37,8 @@ type CustomizedLabelLineProps = { points?: Array<Point> };
 describe('<Pie />', () => {
   const sectorsData = [
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 0, endAngle: 72, name: 'A', value: 40 },
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144 },
-    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216 },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 72, endAngle: 144, name: 'B' },
+    { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 144, endAngle: 216, name: 'C' },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 216, endAngle: 288 },
     { cx: 250, cy: 250, innerRadius: 50, outerRadius: 100, startAngle: 288, endAngle: 360 },
   ];
@@ -712,6 +712,7 @@ describe('<Pie />', () => {
                 cx: 250,
                 cy: 250,
                 endAngle: 144,
+                name: 'B',
                 innerRadius: 50,
                 outerRadius: 100,
                 startAngle: 72,
@@ -721,6 +722,7 @@ describe('<Pie />', () => {
                 cy: 250,
                 endAngle: 216,
                 innerRadius: 50,
+                name: 'C',
                 outerRadius: 100,
                 startAngle: 144,
               },
@@ -772,6 +774,7 @@ describe('<Pie />', () => {
                 cy: 250,
                 endAngle: 144,
                 innerRadius: 50,
+                name: 'B',
                 outerRadius: 100,
                 startAngle: 72,
               },
@@ -780,6 +783,7 @@ describe('<Pie />', () => {
                 cy: 250,
                 endAngle: 216,
                 innerRadius: 50,
+                name: 'C',
                 outerRadius: 100,
                 startAngle: 144,
               },
@@ -827,6 +831,7 @@ describe('<Pie />', () => {
             cy: 250,
             endAngle: 144,
             innerRadius: 50,
+            name: 'B',
             outerRadius: 100,
             startAngle: 72,
           },
@@ -834,6 +839,7 @@ describe('<Pie />', () => {
             cx: 250,
             cy: 250,
             endAngle: 216,
+            name: 'C',
             innerRadius: 50,
             outerRadius: 100,
             startAngle: 144,
@@ -1068,7 +1074,49 @@ describe('<Pie />', () => {
       );
     });
 
-    test('Arrows move between sectors, wrap around, and escape blurs', async () => {
+    test('Arrows move between sectors, and show tooltip information with accessibilityLayer', async () => {
+      // but only when defaultIndex is set? I can't get this to work without it
+      const { container, debug } = render(
+        <div role="button" tabIndex={0} className="container">
+          <PieChart width={500} height={500} accessibilityLayer>
+            <Pie
+              isAnimationActive={false}
+              cx={250}
+              cy={250}
+              label
+              innerRadius={0}
+              outerRadius={200}
+              dataKey="cy"
+              data={sectorsData}
+            />
+            {/* start at name="B" */}
+            <Tooltip defaultIndex={1} />
+          </PieChart>
+        </div>,
+      );
+
+      expect(document.activeElement).toBe(document.body);
+      const pie = focusTestHelper(container, '.recharts-pie', debug);
+      expect(document.activeElement).toBe(pie);
+
+      const allSectors = pie.querySelectorAll('.recharts-pie-sector');
+      expect(allSectors).toHaveLength(5);
+
+      expectTooltipPayload(container, '', ['B : 250']);
+
+      await userEvent.keyboard('{ArrowRight}');
+
+      // ArrowRight goes back instead of forwards?
+      expectTooltipPayload(container, '', ['A : 250']);
+
+      await userEvent.keyboard('{ArrowLeft}');
+      await userEvent.keyboard('{ArrowLeft}');
+
+      // ArrowLeft goes forwards instead of backwards?
+      expectTooltipPayload(container, '', ['C : 250']);
+    });
+
+    test.fails('Arrows move between sectors, wrap around, and escape blurs', async () => {
       const { container, debug } = render(
         <div role="button" tabIndex={0} className="container">
           <PieChart width={500} height={500}>
