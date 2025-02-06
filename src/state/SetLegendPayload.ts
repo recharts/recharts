@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { LegendPayload } from '../component/DefaultLegendContent';
-import { useAppDispatch, useAppSelector } from './hooks';
-import { addLegendPayload, removeLegendPayload } from './legendSlice';
+import type { LegendPayload } from '../component/DefaultLegendContent';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectChartLayout } from '../context/chartLayoutContext';
+import { useAppDispatch, useAppSelector } from './hooks';
+import { addLegendPayload, removeLegendPayload } from './legendSlice';
 
 const noop = () => {};
 
@@ -33,6 +33,6 @@ export function SetPolarLegendPayload({ legendPayload }: { legendPayload: Readon
     return () => {
       dispatch(removeLegendPayload(legendPayload));
     };
-  }, [dispatch, legendPayload]);
+  }, [dispatch, layout, legendPayload]);
   return null;
 }
