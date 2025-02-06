@@ -2,13 +2,13 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import {
   Series,
+  type SeriesPoint,
   stack as shapeStack,
   stackOffsetExpand,
   stackOffsetNone,
   stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
-  type SeriesPoint,
 } from 'victory-vendor/d3-shape';
 
 import { ReactElement } from 'react';
@@ -734,25 +734,19 @@ export function getTooltipNameProp(
 export function inRange(
   x: number,
   y: number,
-  scale: number,
   layout: LayoutType,
   polarViewBox: PolarViewBox | undefined,
   offset: ChartOffset,
 ): RangeObj {
-  const [scaledX, scaledY] = [x / scale, y / scale];
-
   if (layout === 'horizontal' || layout === 'vertical') {
     const isInRange =
-      scaledX >= offset.left &&
-      scaledX <= offset.left + offset.width &&
-      scaledY >= offset.top &&
-      scaledY <= offset.top + offset.height;
+      x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;
 
-    return isInRange ? { x: scaledX, y: scaledY } : null;
+    return isInRange ? { x, y } : null;
   }
 
   if (polarViewBox) {
-    return inRangeOfSector({ x: scaledX, y: scaledY }, polarViewBox);
+    return inRangeOfSector({ x, y }, polarViewBox);
   }
 
   return null;

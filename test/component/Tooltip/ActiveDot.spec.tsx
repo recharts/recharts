@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Area, AreaChart, ComposedChart, Line, LineChart, Radar, RadarChart, Tooltip } from '../../../src';
 import { PageData } from '../../_data';
@@ -10,6 +10,7 @@ import {
   lineChartMouseHoverTooltipSelector,
   radarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 const commonChartProps = {
   width: 400,
@@ -18,6 +19,10 @@ const commonChartProps = {
 };
 
 describe('ActiveDot', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe('as a child of AreaChart', () => {
     it('should render default activeDot and give it props', () => {
       const { container, debug } = render(

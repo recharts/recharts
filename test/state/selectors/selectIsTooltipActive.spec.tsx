@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { Bar, BarChart, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from '../../../src';
@@ -9,8 +9,13 @@ import {
   scatterChartMouseHoverTooltipSelector,
 } from '../../component/Tooltip/tooltipMouseHoverSelectors';
 import { hideTooltip, showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 describe('selectIsTooltipActive', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe('default Tooltip props', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
       <BarChart width={800} height={400} data={PageData}>

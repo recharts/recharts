@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
-import { describe, expect, it, test } from 'vitest';
+import { beforeEach, describe, expect, it, test } from 'vitest';
 import { fireEvent, getByText, render } from '@testing-library/react';
 
 import {
@@ -79,6 +79,8 @@ import { expectScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 import { TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
+import { selectChartOffset } from '../../../src/state/selectors/selectChartOffset';
+import { selectLegendState } from '../../../src/state/selectors/legendSelectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -330,6 +332,10 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
 ];
 
 describe('Tooltip visibility', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector, expectedTransform }) => {
     test('Without an event, the tooltip wrapper is rendered but not visible', () => {
       const { container } = render(
@@ -699,6 +705,69 @@ describe('Tooltip visibility', () => {
       </LineChartVerticalTestCase.Wrapper>
     ));
 
+    it('should select chart layout', () => {
+      const { spy } = renderTestCase(selectChartLayout);
+      expect(spy).toHaveBeenLastCalledWith('vertical');
+    });
+
+    it('should select chart offset', () => {
+      const { spy } = renderTestCase(selectChartOffset);
+      expect(spy).toHaveBeenLastCalledWith({
+        bottom: 135,
+        brushBottom: 35,
+        height: 245,
+        left: 80,
+        right: 30,
+        top: 20,
+        width: 290,
+      });
+    });
+
+    it('should select legend state and dimensions', () => {
+      const { spy } = renderTestCase(selectLegendState);
+      expect(spy).toHaveBeenLastCalledWith({
+        payload: [
+          [
+            {
+              color: '#82ca9d',
+              dataKey: 'uv',
+              inactive: false,
+              payload: {
+                activeDot: true,
+                animateNewValues: true,
+                animationBegin: 0,
+                animationDuration: 1500,
+                animationEasing: 'ease',
+                connectNulls: false,
+                dataKey: 'uv',
+                dot: true,
+                fill: '#fff',
+                hide: false,
+                isAnimationActive: true,
+                label: false,
+                legendType: 'line',
+                stroke: '#82ca9d',
+                strokeWidth: 1,
+                xAxisId: 0,
+                yAxisId: 0,
+              },
+              type: 'line',
+              value: 'uv',
+            },
+          ],
+        ],
+        settings: {
+          align: 'center',
+          layout: 'horizontal',
+          verticalAlign: 'bottom',
+        },
+        size: {
+          height: 100,
+          width: 100,
+        },
+      });
+    });
+
     it('should select tooltip axis type', () => {
       const { spy } = renderTestCase(selectTooltipAxisType);
       expect(spy).toHaveBeenLastCalledWith('yAxis');
@@ -774,9 +843,70 @@ describe('Tooltip visibility', () => {
 
       expect(spy).toHaveBeenLastCalledWith({
         x: 200,
-        y: 227,
+        y: 216,
       });
       expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should select tooltip axis range', () => {
+      const { spy } = renderTestCase(selectTooltipAxisRangeWithReverse);
+      expect(spy).toHaveBeenLastCalledWith([20, 265]);
+    });
+
+    it('should select tooltip axis scale', () => {
+      const { spy } = renderTestCase(selectTooltipAxisScale);
+      expectScale(spy, {
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        range: [20, 265],
+      });
+    });
+
+    it('should select categorical domain', () => {
+      const { spy } = renderTestCase(selectTooltipCategoricalDomain);
+      expect(spy).toHaveBeenLastCalledWith(undefined);
+    });
+
+    it('should select tooltip axis ticks', () => {
+      const { spy } = renderTestCase(selectTooltipAxisTicks);
+
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          coordinate: 20,
+          index: 0,
+          offset: 0,
+          value: 'Page A',
+        },
+        {
+          coordinate: 69,
+          index: 1,
+          offset: 0,
+          value: 'Page B',
+        },
+        {
+          coordinate: 118,
+          index: 2,
+          offset: 0,
+          value: 'Page C',
+        },
+        {
+          coordinate: 167,
+          index: 3,
+          offset: 0,
+          value: 'Page D',
+        },
+        {
+          coordinate: 216,
+          index: 4,
+          offset: 0,
+          value: 'Page E',
+        },
+        {
+          coordinate: 265,
+          index: 5,
+          offset: 0,
+          value: 'Page F',
+        },
+      ]);
     });
 
     it('should select isActive and activeIndex, and update it after mouse hover', () => {
@@ -794,7 +924,7 @@ describe('Tooltip visibility', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({
-        activeIndex: '3',
+        activeIndex: '4',
         isActive: true,
       });
       expect(spy).toHaveBeenCalledTimes(3);
@@ -1446,6 +1576,10 @@ describe('Tooltip visibility', () => {
 });
 
 describe('Active element visibility', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe.each([
     AreaChartTestCase,
     LineChartHorizontalTestCase,
@@ -1494,6 +1628,10 @@ describe('Active element visibility', () => {
 });
 
 describe('Cursor visibility', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe.each([
     AreaChartTestCase,
     BarChartTestCase,

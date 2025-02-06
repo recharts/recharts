@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { describe, expect, it, test, vi } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import uniqueId from 'lodash/uniqueId';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
@@ -1368,6 +1368,10 @@ describe.each(chartsThatDoNotSupportBar)('<Bar /> as a child of $testName', ({ C
 });
 
 describe('mouse interactions in stacked bar: https://github.com/recharts/recharts/issues/5124', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   const stackedData = [{ x: 1, y: 2 }];
 
   describe('with Tooltip shared=true', () => {

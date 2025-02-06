@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { describe, expect, it, test } from 'vitest';
+import { beforeEach, describe, expect, it, test } from 'vitest';
 import { fireEvent, queryByText, render } from '@testing-library/react';
 
 import {
@@ -134,7 +134,7 @@ const LineChartVerticalTestCase: TooltipSyncTestCase = {
     </LineChart>
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
-  tooltipContent: { chartOne: { name: 'uv', value: '200' }, chartTwo: { name: 'pv', value: '9800' } },
+  tooltipContent: { chartOne: { name: 'uv', value: '278' }, chartTwo: { name: 'pv', value: '3908' } },
 };
 
 const ComposedChartWithAreaTestCase: TooltipSyncTestCase = {
@@ -313,6 +313,10 @@ const radialTestCases: ReadonlyArray<TooltipSyncTestCase> = [
 
 // Tooltip sync does not work for PieChart, ScatterChart, FunnelChart, SunburstChart, SankeyChart, Treemap
 describe('Tooltip synchronization', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe.each([...cartesianTestCases, ...radialTestCases])(
     'as a child of $name',
     ({ name, Wrapper, mouseHoverSelector, tooltipContent }) => {
@@ -903,6 +907,10 @@ describe('brush synchronization', () => {
 });
 
 describe('Cursor synchronization', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   // Cursor sync does not work for RadialBarChart, PieChart, ScatterChart?
   describe.each([
     AreaChartTestCase,

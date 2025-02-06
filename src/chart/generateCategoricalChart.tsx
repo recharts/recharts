@@ -20,12 +20,22 @@ import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { SyncMethod } from '../synchronisation/types';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 
+/**
+ * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
+ *
+ * This is meant to represent the React.MouseEvent
+ * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+ */
 export interface MousePointer {
-  pageX: number;
-  pageY: number;
-  currentTarget: Pick<HTMLElement, 'offsetTop' | 'offsetLeft'>;
+  clientX: number;
+  clientY: number;
+  currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
 }
 
+/**
+ * Coordinates relative to the top-left corner of the chart.
+ * Also include scale which means that a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ */
 export interface ChartPointer {
   chartX: number;
   chartY: number;

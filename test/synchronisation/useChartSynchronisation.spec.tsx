@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, Mock } from 'vitest';
+import { describe, it, expect, vi, Mock, beforeEach } from 'vitest';
 import React from 'react';
 import { eventCenter, TOOLTIP_SYNC_EVENT } from '../../src/util/Events';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -8,6 +8,7 @@ import { setSyncInteraction } from '../../src/state/tooltipSlice';
 import { selectSyncId } from '../../src/state/selectors/rootPropsSelectors';
 import { hideTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('useTooltipChartSynchronisation', () => {
   let eventSpy: Mock<(...args: any[]) => any>;
@@ -15,6 +16,7 @@ describe('useTooltipChartSynchronisation', () => {
   beforeEach(() => {
     eventSpy = vi.fn();
     eventCenter.on(TOOLTIP_SYNC_EVENT, eventSpy);
+    mockGetBoundingClientRect({ width: 100, height: 100 });
   });
 
   describe('when syncId is set and Tooltip is present', () => {

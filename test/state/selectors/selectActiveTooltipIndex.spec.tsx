@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
@@ -8,8 +8,13 @@ import { selectActiveTooltipIndex } from '../../../src/state/selectors/tooltipSe
 import { showTooltip } from '../../component/Tooltip/tooltipTestHelpers';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { radialBarChartMouseHoverTooltipSelector } from '../../component/Tooltip/tooltipMouseHoverSelectors';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 describe('selectActiveTooltipIndex', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   describe('in RadialChart', () => {
     describe('with default Tooltip', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (

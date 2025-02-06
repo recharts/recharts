@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
-import { describe, it, expect, vi, Mock } from 'vitest';
+import { describe, it, expect, vi, Mock, beforeEach } from 'vitest';
 import {
   SankeyChartCase,
   SunburstChartCase,
@@ -13,6 +13,7 @@ import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Bar, BarChart, Tooltip, XAxis } from '../../src';
 import { PageData } from '../_data';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 /**
  * These three charts accept the same named events - but they only trigger them when user interacts with the graphics.
@@ -154,6 +155,7 @@ describe('chart wrapper events', () => {
 describe('chart wrapper event data', () => {
   beforeEach(() => {
     Object.values(spies).forEach(spy => spy.mockClear());
+    mockGetBoundingClientRect({ width: 100, height: 100 });
   });
 
   describe('when Tooltip has trigger=click', () => {

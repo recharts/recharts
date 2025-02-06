@@ -286,7 +286,6 @@ export const selectIsTooltipActive: (
 
 export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
-  scale: number | undefined,
   layout: LayoutType | undefined,
   polarViewBox: PolarViewBox | undefined,
   tooltipAxisType: AxisType | undefined,
@@ -295,10 +294,10 @@ export const combineActiveProps = (
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
   offset: ChartOffset,
 ): ActiveTooltipProps => {
-  if (!chartEvent || !scale || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
+  if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }
-  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, scale, layout, polarViewBox, offset);
+  const rangeObj = inRange(chartEvent.chartX, chartEvent.chartY, layout, polarViewBox, offset);
   if (!rangeObj) {
     return undefined;
   }
