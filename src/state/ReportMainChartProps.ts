@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { LayoutType, Margin } from '../util/types';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { setChartSize, setLayout, setMargin } from './layoutSlice';
@@ -24,10 +25,18 @@ export function ReportMainChartProps({ layout, width, height, margin }: MainChar
    *      to avoid circular dependency and infinite re-rendering.
    */
   const isPanorama = useIsPanorama();
-  if (!isPanorama) {
-    dispatch(setLayout(layout));
-    dispatch(setChartSize({ width, height }));
-    dispatch(setMargin(margin));
-  }
+  /*
+   * useEffect here is required to avoid the "Cannot update a component while rendering a different component" error.
+   * https://github.com/facebook/react/issues/18178
+   *
+   * Reported in https://github.com/recharts/recharts/issues/5514
+   */
+  useEffect(() => {
+    if (!isPanorama) {
+      dispatch(setLayout(layout));
+      dispatch(setChartSize({ width, height }));
+      dispatch(setMargin(margin));
+    }
+  }, [dispatch, isPanorama, layout, width, height, margin]);
   return null;
 }

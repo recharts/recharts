@@ -1,9 +1,9 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { Funnel, FunnelChart } from '../../src';
-import { testChartLayoutContext } from '../util/context';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 const data = [
   { value: 100, name: '展现' },
@@ -102,34 +102,68 @@ describe('<FunnelChart />', () => {
   });
 
   describe('FunnelChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <FunnelChart width={100} height={50} barSize={20}>
-            {props.children}
-          </FunnelChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
+      render(
+        <FunnelChart width={100} height={50} barSize={20}>
+          <Comp />
+        </FunnelChart>,
+      );
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <FunnelChart width={100} height={50} barSize={20}>
-            {props.children}
-          </FunnelChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+      render(
+        <FunnelChart width={100} height={50} barSize={20}>
+          <Comp />
+        </FunnelChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+      render(
+        <FunnelChart width={100} height={50} barSize={20}>
+          <Comp />
+        </FunnelChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+      render(
+        <FunnelChart width={100} height={50} barSize={20}>
+          <Comp />
+        </FunnelChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(50);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 });

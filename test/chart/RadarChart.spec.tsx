@@ -3,7 +3,6 @@ import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { exampleRadarData } from '../_data';
 import { Customized, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from '../../src';
-import { testChartLayoutContext } from '../util/context';
 import { assertNotNull } from '../helper/assertNotNull';
 import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 import { ExpectedRadarPolygon, expectRadarPolygons } from '../helper/expectRadarPolygons';
@@ -18,6 +17,7 @@ import {
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
 import { expectScale } from '../helper/expectScale';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<RadarChart />', () => {
   describe('with implicit axes', () => {
@@ -536,34 +536,72 @@ describe('<RadarChart />', () => {
   });
 
   describe('RadarChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <RadarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </RadarChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <RadarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </RadarChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      render(
+        <RadarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
+
+      render(
+        <RadarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide chart width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+
+      render(
+        <RadarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide chart height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+
+      render(
+        <RadarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith(50);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 });

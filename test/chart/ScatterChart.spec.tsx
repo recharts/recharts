@@ -16,7 +16,6 @@ import {
   YAxis,
   ZAxis,
 } from '../../src';
-import { testChartLayoutContext } from '../util/context';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 import {
@@ -48,6 +47,7 @@ import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/toolt
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -1275,35 +1275,69 @@ describe('ScatterChart of two dimension data', () => {
   });
 
   describe('ScatterChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <ScatterChart width={100} height={50} barSize={20}>
-            {props.children}
-          </ScatterChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
+      render(
+        <ScatterChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ScatterChart>,
+      );
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <ScatterChart width={100} height={50} barSize={20}>
-            {props.children}
-          </ScatterChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+      render(
+        <ScatterChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ScatterChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+      render(
+        <ScatterChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ScatterChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith(100);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+      render(
+        <ScatterChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ScatterChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith(50);
+    });
   });
 });
 

@@ -162,7 +162,7 @@ describe('selectRadarPoints', () => {
         },
       ],
     });
-    expect(radarPointsSpy).toHaveBeenCalledTimes(2);
+    expect(radarPointsSpy).toHaveBeenCalledTimes(3);
   });
 });
 

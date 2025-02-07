@@ -1,9 +1,9 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Mock, vi } from 'vitest';
+import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
-import { testChartLayoutContext } from '../util/context';
+import { useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
   const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
@@ -321,35 +321,73 @@ describe('<PieChart />', () => {
   });
 
   describe('PieChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <PieChart width={100} height={50} barSize={20}>
-            {props.children}
-          </PieChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <PieChart width={100} height={50} barSize={20}>
-            {props.children}
-          </PieChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      render(
+        <PieChart width={100} height={50} barSize={20}>
+          <Comp />
+        </PieChart>,
+      );
+
+      expect(spy).toBeCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+
+      render(
+        <PieChart width={100} height={50} barSize={20}>
+          <Comp />
+        </PieChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+    });
+
+    it('should provide chart width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+
+      render(
+        <PieChart width={100} height={50} barSize={20}>
+          <Comp />
+        </PieChart>,
+      );
+
+      expect(spy).toBeCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide chart height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+
+      render(
+        <PieChart width={100} height={50} barSize={20}>
+          <Comp />
+        </PieChart>,
+      );
+
+      expect(spy).toBeCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 
   test('classNames can be given to label and labelLine.', () => {

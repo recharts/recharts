@@ -3,8 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import { useAppSelector } from '../../../src/state/hooks';
-import { setScale } from '../../../src/state/layoutSlice';
-import { selectContainerScale, selectMargin } from '../../../src/state/selectors/containerSelectors';
+import { setChartSize, setScale } from '../../../src/state/layoutSlice';
+import {
+  selectChartHeight,
+  selectChartWidth,
+  selectContainerScale,
+  selectMargin,
+} from '../../../src/state/selectors/containerSelectors';
 import { createRechartsStore } from '../../../src/state/store';
 import { BarChart, ComposedChart, Customized } from '../../../src';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
@@ -108,7 +113,7 @@ describe('selectMargin', () => {
       bottom: 10,
       left: 10,
     });
-    expect(marginSpy).toHaveBeenCalledTimes(1);
+    expect(marginSpy).toHaveBeenCalledTimes(2);
 
     rerender(
       <BarChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }} width={500} height={300}>
@@ -121,6 +126,74 @@ describe('selectMargin', () => {
       bottom: 20,
       left: 20,
     });
-    expect(marginSpy).toHaveBeenCalledTimes(3);
+    expect(marginSpy).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('selectChartWidth', () => {
+  shouldReturnUndefinedOutOfContext(selectChartWidth);
+  shouldReturnFromInitialState(selectChartWidth, 0);
+
+  it('should return width when set from action', () => {
+    const store = createRechartsStore();
+    store.dispatch(setChartSize({ width: 500, height: 300 }));
+    expect(selectChartWidth(store.getState())).toBe(500);
+  });
+
+  it('should return width from root chart props, and update it when props change', () => {
+    const widthSpy = vi.fn();
+    const Comp = (): null => {
+      widthSpy(useAppSelector(selectChartWidth));
+      return null;
+    };
+    const { rerender } = render(
+      <BarChart width={500} height={300}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(widthSpy).toHaveBeenLastCalledWith(500);
+    expect(widthSpy).toHaveBeenCalledTimes(2);
+
+    rerender(
+      <BarChart width={600} height={400}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(widthSpy).toHaveBeenLastCalledWith(600);
+    expect(widthSpy).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('selectChartHeight', () => {
+  shouldReturnUndefinedOutOfContext(selectChartHeight);
+  shouldReturnFromInitialState(selectChartHeight, 0);
+
+  it('should return height when set from action', () => {
+    const store = createRechartsStore();
+    store.dispatch(setChartSize({ width: 500, height: 300 }));
+    expect(selectChartHeight(store.getState())).toBe(300);
+  });
+
+  it('should return height from root chart props, and update it when props change', () => {
+    const heightSpy = vi.fn();
+    const Comp = (): null => {
+      heightSpy(useAppSelector(selectChartHeight));
+      return null;
+    };
+    const { rerender } = render(
+      <BarChart width={500} height={300}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(heightSpy).toHaveBeenLastCalledWith(300);
+    expect(heightSpy).toHaveBeenCalledTimes(2);
+
+    rerender(
+      <BarChart width={600} height={400}>
+        <Customized component={<Comp />} />
+      </BarChart>,
+    );
+    expect(heightSpy).toHaveBeenLastCalledWith(400);
+    expect(heightSpy).toHaveBeenCalledTimes(4);
   });
 });

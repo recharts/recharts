@@ -1,9 +1,10 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { it, vi } from 'vitest';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { testChartLayoutContext } from '../util/context';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -73,34 +74,68 @@ describe('<ComposedChart />', () => {
   });
 
   describe('ComposedChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <ComposedChart width={100} height={50} barSize={20}>
-            {props.children}
-          </ComposedChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
+      render(
+        <ComposedChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ComposedChart>,
+      );
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <ComposedChart width={100} height={50} barSize={20}>
-            {props.children}
-          </ComposedChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+      render(
+        <ComposedChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ComposedChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+      render(
+        <ComposedChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ComposedChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+      render(
+        <ComposedChart width={100} height={50} barSize={20}>
+          <Comp />
+        </ComposedChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(50);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 });
