@@ -14,7 +14,6 @@ import {
   YAxis,
 } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { testChartLayoutContext } from '../util/context';
 import { CurveType } from '../../src/shape/Curve';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
@@ -29,6 +28,7 @@ import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 import { TickItem } from '../../src/util/types';
 import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<LineChart />', () => {
   beforeEach(() => {
@@ -916,35 +916,73 @@ describe('<LineChart />', () => {
   });
 
   describe('LineChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <LineChart width={100} height={50} barSize={20}>
-            {props.children}
-          </LineChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <LineChart width={100} height={50} barSize={20}>
-            {props.children}
-          </LineChart>
-        ),
-        ({ width: w, height: h }) => {
-          expect(w).toBe(100);
-          expect(h).toBe(50);
-        },
-      ),
-    );
+      render(
+        <LineChart width={100} height={50} barSize={20}>
+          <Comp />
+        </LineChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+
+      render(
+        <LineChart width={100} height={50} barSize={20}>
+          <Comp />
+        </LineChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+
+      render(
+        <LineChart width={100} height={50} barSize={20}>
+          <Comp />
+        </LineChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+
+      render(
+        <LineChart width={100} height={50} barSize={20}>
+          <Comp />
+        </LineChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(50);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
   });
 });
 

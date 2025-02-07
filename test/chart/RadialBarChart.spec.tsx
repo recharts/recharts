@@ -2,11 +2,11 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, test, it, expect, vi, beforeEach } from 'vitest';
 import { Cell, Customized, Legend, RadialBar, RadialBarChart, Sector, SectorProps, Tooltip } from '../../src';
-import { testChartLayoutContext } from '../util/context';
 import { expectRadialBarLabels, expectRadialBars } from '../helper/expectRadialBars';
 import { selectRootBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 
 function assertActiveShapeInteractions(container: HTMLElement) {
   const sectorNodes = container.querySelectorAll('.recharts-sector');
@@ -596,35 +596,73 @@ describe('<RadialBarChart />', () => {
   });
 
   describe('RadialBarChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <RadialBarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </RadialBarChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <RadialBarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </RadialBarChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      render(
+        <RadialBarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadialBarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadialBarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadialBarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith(100);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+
+      render(
+        <RadialBarChart width={100} height={50} barSize={20}>
+          <Comp />
+        </RadialBarChart>,
+      );
+
+      expect(spy).toHaveBeenLastCalledWith(50);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
 
     test('renders background in the exact same position as foreground', () => {
       const preparedData = [{ value: 42, fill: '#241084' }];

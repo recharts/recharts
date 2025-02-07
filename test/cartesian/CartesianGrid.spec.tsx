@@ -734,7 +734,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
           const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
           expect(allLines).toHaveLength(2);
@@ -782,7 +782,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
           const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
             angle: 0,
             interval: 'preserveEnd',
@@ -828,7 +828,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
           const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
             angle: 0,
             interval: 'preserveEnd',
@@ -875,7 +875,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
             const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
               angle: 0,
               interval: 'preserveEnd',
@@ -922,7 +922,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
             const expectedYAxis: AxisPropsForCartesianGridTicksGeneration = {
               angle: 0,
               interval: 'preserveEnd',
@@ -968,7 +968,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
             const allLines = container.querySelectorAll('.recharts-cartesian-grid-horizontal line');
             expect(allLines).toHaveLength(0);
@@ -1011,7 +1011,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
           const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
           expect(allLines).toHaveLength(2);
@@ -1059,7 +1059,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
           const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
             angle: 0,
             axisType: 'xAxis',
@@ -1105,7 +1105,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
           const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
             angle: 0,
             axisType: 'xAxis',
@@ -1152,7 +1152,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
             const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
               angle: 0,
               axisType: 'xAxis',
@@ -1199,7 +1199,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
             const expectedXAxis: AxisPropsForCartesianGridTicksGeneration = {
               angle: 0,
               axisType: 'xAxis',
@@ -1245,7 +1245,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               </ChartElement>,
             );
 
-            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+            expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
             const allLines = container.querySelectorAll('.recharts-cartesian-grid-vertical line');
             expect(allLines).toHaveLength(0);
@@ -1289,7 +1289,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               />
             </ChartElement>,
           );
-          expect(horizontal).toHaveBeenCalledTimes(horizontalPoints.length);
+          expect(horizontal).toHaveBeenCalledTimes(horizontalPoints.length * 2);
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
@@ -1383,7 +1383,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               />
             </ChartElement>,
           );
-          expect(spy).toHaveBeenCalledTimes(horizontalPoints.length);
+          expect(spy).toHaveBeenCalledTimes(horizontalPoints.length * 2);
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
@@ -1473,7 +1473,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               />
             </ChartElement>,
           );
-          expect(vertical).toHaveBeenCalledTimes(verticalPoints.length);
+          expect(vertical).toHaveBeenCalledTimes(verticalPoints.length * 2);
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
@@ -1567,7 +1567,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
               />
             </ChartElement>,
           );
-          expect(spy).toHaveBeenCalledTimes(verticalPoints.length);
+          expect(spy).toHaveBeenCalledTimes(verticalPoints.length * 2);
 
           const expectedProps: GridLineTypeFunctionProps = {
             stroke: '#ccc',
@@ -1713,7 +1713,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(horizontalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
           const allLines = container.querySelectorAll('.recharts-cartesian-gridstripes-horizontal rect');
           expect(allLines).toHaveLength(3);
@@ -1930,7 +1930,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
             </ChartElement>,
           );
 
-          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(1);
+          expect(verticalCoordinatesGenerator).toHaveBeenCalledTimes(2);
 
           const allLines = container.querySelectorAll('.recharts-cartesian-gridstripes-vertical rect');
           expect(allLines).toHaveLength(3);

@@ -176,11 +176,17 @@ const renderTicks = (props: Props, ticks: ReadonlyArray<TickItem>): ReactElement
   return <Layer className="recharts-polar-radius-axis-ticks">{items}</Layer>;
 };
 
-export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInputs => {
+export const PolarRadiusAxisWrapper: FunctionComponent<Props> = (defaultsAndInputs: Props) => {
   const { radiusAxisId } = defaultsAndInputs;
 
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'radiusAxis', radiusAxisId));
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, false));
+
+  if (viewBox == null || !ticks || !ticks.length) {
+    return null;
+  }
+
   const props: Props = {
     ...defaultsAndInputs,
     scale,
@@ -189,12 +195,6 @@ export const PolarRadiusAxisWrapper: FunctionComponent<Props> = defaultsAndInput
   };
 
   const { tick, axisLine } = props;
-
-  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'radiusAxis', radiusAxisId, false));
-
-  if (!ticks || !ticks.length) {
-    return null;
-  }
 
   return (
     <Layer className={clsx('recharts-polar-radius-axis', AXIS_TYPE, props.className)}>

@@ -191,10 +191,10 @@ describe('useOffset', () => {
   });
 
   it('should return default offset in an empty chart', () => {
-    expect.assertions(1);
+    const offsetSpy = vi.fn();
     const Comp = (): null => {
       const offset = useOffset();
-      expect(offset).toEqual({ top: 5, right: 5, bottom: 5, left: 5, brushBottom: 5, height: 190, width: 90 });
+      offsetSpy(offset);
       return null;
     };
     render(
@@ -202,20 +202,42 @@ describe('useOffset', () => {
         <Customized component={Comp} />
       </ComposedChart>,
     );
+
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenLastCalledWith({
+      top: 5,
+      right: 5,
+      bottom: 5,
+      left: 5,
+      brushBottom: 5,
+      height: 190,
+      width: 90,
+    });
   });
 
   it('should add chart margin', () => {
-    expect.assertions(1);
+    const offsetSpy = vi.fn();
     const Comp = (): null => {
       const offset = useOffset();
-      expect(offset).toEqual({ top: 10, right: 20, bottom: 30, left: 40, brushBottom: 30, height: 160, width: 40 });
+      offsetSpy(offset);
       return null;
     };
     render(
       <ComposedChart width={100} height={200} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
-        <Customized component={Comp} />
+        <Comp />
       </ComposedChart>,
     );
+
+    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenLastCalledWith({
+      top: 10,
+      right: 20,
+      bottom: 30,
+      left: 40,
+      brushBottom: 30,
+      height: 160,
+      width: 40,
+    });
   });
 
   it('should include default Brush height (40) in bottom property', () => {

@@ -162,7 +162,7 @@ export const selectRadiusAxisRange: (state: RechartsRootState, radiusAxisId: Axi
 export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange =
   createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
-export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox = createSelector(
+export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox | undefined = createSelector(
   [selectChartLayout, selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
   (
     layout: LayoutType,

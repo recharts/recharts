@@ -164,7 +164,7 @@ describe('<Radar />', () => {
         radiusAxisId: 0,
       };
       expect(polarItemsSpy).toHaveBeenLastCalledWith([expectedPolarItemsSettings]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(2);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(3);
 
       rerender(
         <RadarChart width={100} height={100} data={exampleRadarData}>
@@ -173,7 +173,7 @@ describe('<Radar />', () => {
       );
 
       expect(polarItemsSpy).toHaveBeenLastCalledWith([]);
-      expect(polarItemsSpy).toHaveBeenCalledTimes(4);
+      expect(polarItemsSpy).toHaveBeenCalledTimes(5);
     });
   });
 });

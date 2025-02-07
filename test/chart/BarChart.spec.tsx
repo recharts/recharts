@@ -4,9 +4,14 @@ import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
-import { testChartLayoutContext } from '../util/context';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
-import { useMargin } from '../../src/context/chartLayoutContext';
+import {
+  useChartHeight,
+  useChartWidth,
+  useClipPathId,
+  useMargin,
+  useViewBox,
+} from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
 import {
@@ -2968,35 +2973,69 @@ describe('<BarChart />', () => {
   });
 
   describe('BarChart layout context', () => {
-    it(
-      'should provide viewBox and clipPathId',
-      testChartLayoutContext(
-        props => (
-          <BarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </BarChart>
-        ),
-        ({ clipPathId, viewBox }) => {
-          expect(clipPathId).toMatch(/recharts\d+-clip/);
-          expect(viewBox).toEqual({ height: 40, width: 90, x: 5, y: 5 });
-        },
-      ),
-    );
+    it('should provide viewBox', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useViewBox());
+        return null;
+      };
+      render(
+        <BarChart width={100} height={50}>
+          <Comp />
+        </BarChart>,
+      );
 
-    it(
-      'should set width and height in context',
-      testChartLayoutContext(
-        props => (
-          <BarChart width={100} height={50} barSize={20}>
-            {props.children}
-          </BarChart>
-        ),
-        ({ width, height }) => {
-          expect(width).toBe(100);
-          expect(height).toBe(50);
-        },
-      ),
-    );
+      expect(spy).toHaveBeenCalledWith({ x: 5, y: 5, width: 90, height: 40 });
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should provide clipPathId', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useClipPathId());
+        return null;
+      };
+      render(
+        <BarChart width={100} height={50}>
+          <Comp />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should provide width', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartWidth());
+        return null;
+      };
+      render(
+        <BarChart width={100} height={50}>
+          <Comp />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith(100);
+    });
+
+    it('should provide height', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        spy(useChartHeight());
+        return null;
+      };
+      render(
+        <BarChart width={100} height={50}>
+          <Comp />
+        </BarChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith(50);
+    });
   });
 
   describe('chart synchronization', () => {
@@ -3111,7 +3150,7 @@ describe('<BarChart />', () => {
         right: 2,
         top: 1,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(1);
+      expect(marginSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <BarChart width={100} height={100} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
@@ -3124,7 +3163,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(3);
+      expect(marginSpy).toHaveBeenCalledTimes(4);
     });
   });
 });

@@ -216,18 +216,19 @@ export const PolarAngleAxisWrapper: FunctionComponent<Props> = defaultsAndInputs
 
   const viewBox = useAppSelector(selectPolarViewBox);
   const scale = useAppSelector(state => selectPolarAxisScale(state, 'angleAxis', angleAxisId));
+  const isPanorama = useIsPanorama();
+  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
+
+  if (viewBox == null || !ticks || !ticks.length) {
+    return null;
+  }
+
   const props: Props = {
     ...defaultsAndInputs,
     scale,
     ...viewBox,
     radius: viewBox.outerRadius,
   };
-  const isPanorama = useIsPanorama();
-  const ticks = useAppSelector(state => selectPolarAxisTicks(state, 'angleAxis', angleAxisId, isPanorama));
-
-  if (!ticks || !ticks.length) {
-    return null;
-  }
 
   return (
     <Layer className={clsx('recharts-polar-angle-axis', AXIS_TYPE, props.className)}>
