@@ -1,6 +1,7 @@
 import React from 'react';
 import { Args } from '@storybook/react';
-import { CartesianGrid, ResponsiveContainer, ComposedChart } from '../../../../src';
+import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
+import { pageData } from '../../data';
 
 const GeneralProps: Args = {
   x: {
@@ -124,5 +125,24 @@ export const API = {
     verticalFill: ['red', '#eee'],
     horizontalFill: ['#eee', 'yellow'],
     strokeDasharray: '10 10',
+  },
+};
+
+export const MultipleGrids = {
+  render: (args: Record<string, any>) => {
+    return (
+      <ResponsiveContainer width="100%" height={500}>
+        <ComposedChart width={500} height={500} data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis dataKey="pv" />
+          {args.displayGridA && <CartesianGrid verticalFill={['#aaeeee', '#eeeeaa']} stroke="trasparent" />}
+          {args.displayGridB && <CartesianGrid stroke="silver" strokeDasharray="3 3" strokeWidth={3} />}
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    displayGridA: true,
+    displayGridB: true,
   },
 };
