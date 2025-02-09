@@ -22,6 +22,11 @@ const defaultCoordinates: MouseCoordinate = { clientX: 200, clientY: 200 };
 /**
  * Test helper that will simulate a mouse over event on a given element which should trigger the tooltip to show.
  *
+ * Whenever you're trying to use this function, remember to mock the bounding rect call too, otherwise the jsdom environment
+ * will never recognize the mouse event as a chart event. Example:
+ *
+ * mockGetBoundingClientRect({ width: 100, height: 100 });
+ *
  * @param container Element rendered in the test
  * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element. If undefined then uses the container element itself.
  * @param coordinates X, Y coordinate of the mouse event
@@ -48,6 +53,11 @@ export function showTooltipOnCoordinate(
 /**
  * Test helper that will simulate a mouse over event on a given element which should trigger the tooltip to show.
  * This function will use default coordinates of 200, 200.
+ *
+ * Whenever you're trying to use this function, remember to mock the bounding rect call too, otherwise the jsdom environment
+ * will never recognize the mouse event as a chart event. Example:
+ *
+ * mockGetBoundingClientRect({ width: 100, height: 100 });
  *
  * @param container Element rendered in the test
  * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element. If undefined then uses the container element itself.
