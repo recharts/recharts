@@ -53,7 +53,7 @@ export interface Props<TValue extends ValueType, TName extends NameType> {
   labelFormatter?: (label: any, payload: ReadonlyArray<Payload<TValue, TName>>) => ReactNode;
   label?: any;
   payload?: ReadonlyArray<Payload<TValue, TName>>;
-  itemSorter?: 'dataKey' | 'value' | ((item: Payload<TValue, TName>) => number | string);
+  itemSorter?: 'dataKey' | 'value' | 'name' | ((item: Payload<TValue, TName>) => number | string);
   accessibilityLayer: boolean;
 }
 
