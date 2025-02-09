@@ -1,12 +1,32 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { Selector } from '@reduxjs/toolkit';
-import { Area, Bar, ComposedChart, Line, Scatter, Tooltip, TooltipProps, XAxis, YAxis } from '../../../src';
+import {
+  Area,
+  Bar,
+  ComposedChart,
+  Line,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  Scatter,
+  Tooltip,
+  TooltipProps,
+  XAxis,
+  YAxis,
+} from '../../../src';
 import { PageData } from '../../_data';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { RechartsRootState } from '../../../src/state/store';
 import { expectTooltipPayload, showTooltip } from './tooltipTestHelpers';
-import { composedChartMouseHoverTooltipSelector } from './tooltipMouseHoverSelectors';
+import {
+  composedChartMouseHoverTooltipSelector,
+  pieChartMouseHoverTooltipSelector,
+  radarChartMouseHoverTooltipSelector,
+} from './tooltipMouseHoverSelectors';
 import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
@@ -601,6 +621,365 @@ describe('itemSorter in ComposedChart', () => {
           unit: '',
           value: 9800,
         });
+      });
+    });
+  });
+});
+
+describe('itemSorter in PieChart', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  function renderTestCase<T>(
+    itemSorter: TooltipProps<number, string>['itemSorter'],
+    selector?: Selector<RechartsRootState, T, never>,
+  ) {
+    return createSelectorTestCase(({ children }) => (
+      <PieChart width={300} height={300}>
+        <Pie data={PageData} dataKey="uv" isAnimationActive={false} />
+        <Tooltip itemSorter={itemSorter} />
+        {children}
+      </PieChart>
+    ))(selector);
+  }
+
+  describe('when itemSorter is undefined', () => {
+    it('should render only one item in the Tooltip so there is nothing to sort', () => {
+      const { container } = renderTestCase(undefined);
+      showTooltip(container, pieChartMouseHoverTooltipSelector);
+      expectTooltipPayload(container, '', ['Page A : 400']);
+    });
+
+    it('should select payload with only one item so there is nothing to sort', () => {
+      const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'item', 'hover', '0'));
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'Page A',
+          nameKey: 'name',
+          payload: {
+            amt: 2400,
+            name: 'Page A',
+            pv: 2400,
+            uv: 400,
+          },
+          stroke: '#fff',
+          strokeWidth: undefined,
+          type: undefined,
+          unit: undefined,
+          value: 400,
+        },
+      ]);
+    });
+  });
+});
+
+describe('itemSorter in RadarChart', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  describe('without name prop', () => {
+    function renderTestCase<T>(
+      itemSorter: TooltipProps<number, string>['itemSorter'],
+      selector?: Selector<RechartsRootState, T, never>,
+    ) {
+      return createSelectorTestCase(({ children }) => (
+        <RadarChart width={600} height={600} data={PageData}>
+          <Radar dataKey="uv" isAnimationActive={false} />
+          <Radar dataKey="pv" isAnimationActive={false} />
+          <Radar dataKey="amt" isAnimationActive={false} />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis dataKey="uv" />
+          <Tooltip itemSorter={itemSorter} />
+          {children}
+        </RadarChart>
+      ))(selector);
+    }
+
+    describe('when itemSorter is undefined', () => {
+      it('should render payload in arbitrary order', () => {
+        const { container } = renderTestCase(undefined);
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['uv : 189', 'pv : 4800', 'amt : 2400']);
+      });
+
+      it('should select payload in arbitrary order', () => {
+        const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            color: undefined,
+            dataKey: 'uv',
+            fill: undefined,
+            hide: false,
+            name: 'uv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 400,
+          },
+          {
+            color: undefined,
+            dataKey: 'pv',
+            fill: undefined,
+            hide: false,
+            name: 'pv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+          {
+            color: undefined,
+            dataKey: 'amt',
+            fill: undefined,
+            hide: false,
+            name: 'amt',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+        ]);
+      });
+    });
+
+    describe('when itemSorter=`dataKey`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('dataKey');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['amt : 2400', 'pv : 4800', 'uv : 189']);
+      });
+    });
+
+    describe('when itemSorter=`value`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('value');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['uv : 189', 'amt : 2400', 'pv : 4800']);
+      });
+    });
+
+    describe('when itemSorter=`name`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('name');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['amt : 2400', 'pv : 4800', 'uv : 189']);
+      });
+    });
+
+    describe('when itemSorter is a function', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase(item => item.value);
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['uv : 189', 'amt : 2400', 'pv : 4800']);
+      });
+
+      it('should call the function once for every payload item, and pass the item as an argument', () => {
+        const spy = vi.fn();
+        const { container } = renderTestCase(spy);
+        expect(spy).toHaveBeenCalledTimes(0);
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenNthCalledWith(1, {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 189,
+        });
+        expect(spy).toHaveBeenNthCalledWith(2, {
+          color: undefined,
+          dataKey: 'pv',
+          fill: undefined,
+          hide: false,
+          name: 'pv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 4800,
+        });
+        expect(spy).toHaveBeenNthCalledWith(3, {
+          color: undefined,
+          dataKey: 'amt',
+          fill: undefined,
+          hide: false,
+          name: 'amt',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            name: 'Page F',
+            pv: 4800,
+            uv: 189,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        });
+      });
+    });
+  });
+
+  describe('with name prop', () => {
+    function renderTestCase<T>(
+      itemSorter: TooltipProps<number, string>['itemSorter'],
+      selector?: Selector<RechartsRootState, T, never>,
+    ) {
+      return createSelectorTestCase(({ children }) => (
+        <RadarChart width={600} height={600} data={PageData}>
+          <Radar dataKey="uv" isAnimationActive={false} name="Radar-uv" />
+          <Radar dataKey="pv" isAnimationActive={false} name="Radar-pv" />
+          <Radar dataKey="amt" isAnimationActive={false} name="Radar-amt" />
+          <PolarAngleAxis dataKey="name" name="PolarAngleAxis" />
+          <PolarRadiusAxis dataKey="uv" name="PolarRadiusAxis" />
+          <Tooltip itemSorter={itemSorter} />
+          {children}
+        </RadarChart>
+      ))(selector);
+    }
+
+    describe('when itemSorter is undefined', () => {
+      it('should render payload in arbitrary order', () => {
+        const { container } = renderTestCase(undefined);
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['Radar-uv : 189', 'Radar-pv : 4800', 'Radar-amt : 2400']);
+      });
+
+      it('should select payload in arbitrary order', () => {
+        const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            color: undefined,
+            dataKey: 'uv',
+            fill: undefined,
+            hide: false,
+            name: 'Radar-uv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 400,
+          },
+          {
+            color: undefined,
+            dataKey: 'pv',
+            fill: undefined,
+            hide: false,
+            name: 'Radar-pv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+          {
+            color: undefined,
+            dataKey: 'amt',
+            fill: undefined,
+            hide: false,
+            name: 'Radar-amt',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+        ]);
+      });
+    });
+
+    describe('when itemSorter=`dataKey`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('dataKey');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['Radar-amt : 2400', 'Radar-pv : 4800', 'Radar-uv : 189']);
+      });
+    });
+
+    describe('when itemSorter=`value`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('value');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['Radar-uv : 189', 'Radar-amt : 2400', 'Radar-pv : 4800']);
+      });
+    });
+
+    describe('when itemSorter=`name`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('name');
+        showTooltip(container, radarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, 'Page F', ['Radar-amt : 2400', 'Radar-pv : 4800', 'Radar-uv : 189']);
       });
     });
   });
