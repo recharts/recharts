@@ -308,7 +308,9 @@ export class Bar extends PureComponent<Props, State> {
           <Layer
             className="recharts-bar-rectangle"
             {...adaptEventsOfChild(this.props, entry, i)}
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
+            // https://github.com/recharts/recharts/issues/5415
+            // eslint-disable-next-line react/no-array-index-key
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
           >
             <BarRectangle {...props} />
           </Layer>
