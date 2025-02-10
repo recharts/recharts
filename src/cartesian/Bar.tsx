@@ -345,7 +345,9 @@ function BarRectangles(props: BarRectanglesProps) {
             onMouseLeave={onMouseLeaveFromContext(entry, i)}
             // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
             onClick={onClickFromContext(entry, i)}
-            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}`}
+            // https://github.com/recharts/recharts/issues/5415
+            // eslint-disable-next-line react/no-array-index-key
+            key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}
           >
             <BarRectangle {...barRectangleProps} />
           </Layer>
