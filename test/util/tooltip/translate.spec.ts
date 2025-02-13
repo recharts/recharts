@@ -57,6 +57,21 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
       expect(result).toBe(132);
     });
 
+    it('should return number outside of viewBox even when offsetTopLeft is negative', () => {
+      const result = getTooltipTranslateXY({
+        allowEscapeViewBox: { [dimension]: true },
+        coordinate: { [dimension]: 900 },
+        key: dimension,
+        offsetTopLeft: -35,
+        position: {},
+        reverseDirection: { [dimension]: false },
+        tooltipDimension: 70,
+        viewBox: { [dimension]: 65 },
+        viewBoxDimension: 800,
+      });
+      expect(result).toBe(865);
+    });
+
     it('should return Y even outside of viewBox when reversed', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { y: true },
@@ -143,7 +158,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should try to fit translate inside the viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 150 },
+        coordinate: { [dimension]: 900 },
         key: dimension,
         offsetTopLeft: -35,
         position: {},
@@ -152,7 +167,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
         viewBox: { [dimension]: 65 },
         viewBoxDimension: 800,
       });
-      expect(result).toBe(115);
+      expect(result).toBe(830);
     });
   });
 });
