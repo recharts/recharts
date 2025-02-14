@@ -13,6 +13,7 @@ import {
 } from '../../src/state/selectors/axisSelectors';
 import { ZAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
 
 describe('<ZAxis />', () => {
   const data = [
@@ -76,15 +77,22 @@ describe('<ZAxis />', () => {
     expect(tooltip).not.toBeVisible();
 
     await userEvent.hover(firstShape);
-    expect(tooltip).toBeVisible();
-    expect(tooltip).toHaveTextContent(`xAxis : ${data[0].xAxis}yAxis : ${data[0].yAxis}test name : ${data[0].zAxis}km`);
+
+    expectTooltipPayload(container, '', [
+      `test name : ${data[0].zAxis}km`,
+      `xAxis : ${data[0].xAxis}`,
+      `yAxis : ${data[0].yAxis}`,
+    ]);
 
     await userEvent.unhover(firstShape);
     expect(tooltip).not.toBeVisible();
 
     await userEvent.hover(secondShape);
-    expect(tooltip).toBeVisible();
-    expect(tooltip).toHaveTextContent(`xAxis : ${data[1].xAxis}yAxis : ${data[1].yAxis}test name : ${data[1].zAxis}km`);
+    expectTooltipPayload(container, '', [
+      `test name : ${data[1].zAxis}km`,
+      `xAxis : ${data[1].xAxis}`,
+      `yAxis : ${data[1].yAxis}`,
+    ]);
   });
 
   describe('state integration', () => {

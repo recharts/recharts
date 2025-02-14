@@ -267,15 +267,16 @@ export class Tooltip<TValue extends ValueType, TName extends NameType> extends P
   static displayName = 'Tooltip';
 
   static defaultProps = {
-    axisId: 0,
     allowEscapeViewBox: { x: false, y: false },
     animationDuration: 400,
     animationEasing: 'ease',
+    axisId: 0,
     contentStyle: {},
     coordinate: { x: 0, y: 0 },
     cursor: true,
     filterNull: true,
     isAnimationActive: !Global.isSsr,
+    itemSorter: 'name',
     itemStyle: {},
     labelStyle: {},
     offset: 10,

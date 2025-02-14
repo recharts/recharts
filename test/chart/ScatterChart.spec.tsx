@@ -1605,7 +1605,7 @@ describe('Tooltip integration', () => {
       const { container } = renderTestCase();
       showTooltip(container, scatterChartMouseHoverTooltipSelector);
 
-      expectTooltipPayload(container, '', ['uv : 400', 'pv : 2400']);
+      expectTooltipPayload(container, '', ['pv : 2400', 'uv : 400']);
       expectTooltipCoordinate(container, { x: 77.5, y: 30.6 });
     });
   });
@@ -1627,7 +1627,7 @@ describe('Tooltip integration', () => {
         height: 10,
       });
       const { container } = renderTestCase();
-      expectTooltipPayload(container, '', ['uv : 300', 'pv : 4567']);
+      expectTooltipPayload(container, '', ['pv : 4567', 'uv : 300']);
       expectTooltipCoordinate(container, {
         x: 82.5,
         y: 47.598,

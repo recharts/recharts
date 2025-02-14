@@ -111,7 +111,7 @@ const AreaChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: areaChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const AreaChartWithXAxisTestCase: TooltipPayloadTestCase = {
@@ -128,7 +128,7 @@ const AreaChartWithXAxisTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: areaChartMouseHoverTooltipSelector,
   expectedTooltipTitle: 'Page C',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const BarChartTestCase: TooltipPayloadTestCase = {
@@ -143,7 +143,7 @@ const BarChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: barChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const LineChartTestCase: TooltipPayloadTestCase = {
@@ -158,7 +158,7 @@ const LineChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
@@ -174,7 +174,7 @@ const LineChartDataOnGraphicalItemTestCase: TooltipPayloadTestCase = {
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   mouseCoordinate: { clientX: 20, clientY: 20 },
   expectedTooltipTitle: '1',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 4567$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 4567$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const LineChartVerticalTestCase: TooltipPayloadTestCase = {
@@ -193,7 +193,7 @@ const LineChartVerticalTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTooltipTitle: 'Page E',
-  expectedTooltipContent: ['uv : 278kg', 'My custom name : 3908$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 3908$$$', 'amt : 2400', 'uv : 278kg'],
 };
 
 const ComposedChartTestCase: TooltipPayloadTestCase = {
@@ -208,7 +208,7 @@ const ComposedChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '2',
-  expectedTooltipContent: ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'],
 };
 
 const PieChartTestCase: TooltipPayloadTestCase = {
@@ -309,7 +309,7 @@ const RadarChartTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
   expectedTooltipTitle: '5',
-  expectedTooltipContent: ['uv : 189', 'My custom name : 4800', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 4800', 'amt : 2400', 'uv : 189'],
 };
 
 const RadarChartWithAxisTestCase: TooltipPayloadTestCase = {
@@ -325,7 +325,7 @@ const RadarChartWithAxisTestCase: TooltipPayloadTestCase = {
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
   expectedTooltipTitle: 'Page F',
-  expectedTooltipContent: ['uv : 189', 'My custom name : 4800', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 4800', 'amt : 2400', 'uv : 189'],
 };
 
 const RadialBarChartTestCase: TooltipPayloadTestCase = {
@@ -341,7 +341,7 @@ const RadialBarChartTestCase: TooltipPayloadTestCase = {
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
   // I cannot figure out how to make RadialBar display anything else other than the index
   expectedTooltipTitle: '3',
-  expectedTooltipContent: ['uv : 200', 'My custom name : 9800', 'amt : 2400'],
+  expectedTooltipContent: ['My custom name : 9800', 'amt : 2400', 'uv : 200'],
 };
 
 const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
@@ -1734,7 +1734,7 @@ describe('Tooltip payload', () => {
         showTooltip(container, barChartMouseHoverTooltipSelector, debug);
 
         const expectedTooltipTitle = '2';
-        const expectedTooltipContent = ['uv : 300kg', 'My custom name : 1398$$$', 'amt : 2400'];
+        const expectedTooltipContent = ['My custom name : 1398$$$', 'amt : 2400', 'uv : 300kg'];
         expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
       });
 
@@ -1852,7 +1852,7 @@ describe('Tooltip payload', () => {
           showTooltip(container, radialBarChartMouseHoverTooltipSelector, debug);
 
           const expectedTooltipTitle = '3';
-          const expectedTooltipContent = ['uv : 200', 'My custom name : 9800', 'amt : 2400'];
+          const expectedTooltipContent = ['My custom name : 9800', 'amt : 2400', 'uv : 200'];
           expectTooltipPayload(container, expectedTooltipTitle, expectedTooltipContent);
         });
       });
