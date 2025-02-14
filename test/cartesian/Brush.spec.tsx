@@ -226,8 +226,22 @@ describe('<Brush />', () => {
     expect(customTraveller).toBeInTheDocument();
     expect(customTraveller).toBeVisible();
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenNthCalledWith(1, { x: 100, y: 50, width: 5, height: 40, fill: '#abc', stroke: '#def' });
-    expect(spy).toHaveBeenNthCalledWith(2, { x: 495, y: 50, width: 5, height: 40, fill: '#abc', stroke: '#def' });
+    expect(spy).toHaveBeenNthCalledWith(1, {
+      x: 100,
+      y: 50,
+      width: 5,
+      height: 40,
+      fill: '#abc',
+      stroke: '#def',
+    });
+    expect(spy).toHaveBeenNthCalledWith(2, {
+      x: 495,
+      y: 50,
+      width: 5,
+      height: 40,
+      fill: '#abc',
+      stroke: '#def',
+    });
   });
 
   test("Don't render any travellers or slide when data is empty in simple Brush", () => {
@@ -587,6 +601,38 @@ describe('<Brush />', () => {
 
       expect(rootYAxisRangeSpy).toHaveBeenLastCalledWith([216, 11]);
       expect(panoramaYAxisRangeSpy).toHaveBeenLastCalledWith([39, 1]);
+    });
+  });
+
+  describe('dy props', () => {
+    it('should added its given y value', () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data}>
+          <Brush dataKey="value" x={100} y={50} dy={30} width={400} height={40} />
+        </BarChart>,
+      );
+
+      expectBrush(container, {
+        height: '40',
+        width: '400',
+        x: '100',
+        y: '80',
+      });
+    });
+
+    it('should added its automatically calculated y value', () => {
+      const { container } = render(
+        <BarChart width={400} height={100} data={data} margin={{ top: 0, bottom: 0 }}>
+          <Brush dataKey="value" x={100} dy={30} width={400} height={40} />
+        </BarChart>,
+      );
+
+      expectBrush(container, {
+        height: '40',
+        width: '400',
+        x: '100',
+        y: '90',
+      });
     });
   });
 });
