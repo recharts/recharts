@@ -12,6 +12,8 @@ import {
   PolarRadiusAxis,
   Radar,
   RadarChart,
+  RadialBar,
+  RadialBarChart,
   Scatter,
   Tooltip,
   TooltipProps,
@@ -26,6 +28,7 @@ import {
   composedChartMouseHoverTooltipSelector,
   pieChartMouseHoverTooltipSelector,
   radarChartMouseHoverTooltipSelector,
+  radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
 import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
@@ -980,6 +983,638 @@ describe('itemSorter in RadarChart', () => {
         const { container } = renderTestCase('name');
         showTooltip(container, radarChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page F', ['Radar-amt : 2400', 'Radar-pv : 4800', 'Radar-uv : 189']);
+      });
+    });
+  });
+});
+
+describe('itemSorter in RadialBarChart', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
+  describe('without name prop', () => {
+    function renderTestCase<T>(
+      itemSorter: TooltipProps<number, string>['itemSorter'],
+      selector?: Selector<RechartsRootState, T, never>,
+    ) {
+      return createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={600} height={600} data={PageData}>
+          <RadialBar dataKey="uv" isAnimationActive={false} />
+          <RadialBar dataKey="pv" isAnimationActive={false} />
+          <RadialBar dataKey="amt" isAnimationActive={false} />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis dataKey="uv" />
+          <Tooltip itemSorter={itemSorter} />
+          {children}
+        </RadialBarChart>
+      ))(selector);
+    }
+
+    describe('when itemSorter is undefined', () => {
+      it('should render payload in arbitrary order', () => {
+        const { container } = renderTestCase(undefined);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['uv : 400', 'pv : 2400', 'amt : 2400']);
+      });
+
+      it('should select payload in arbitrary order', () => {
+        const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            color: undefined,
+            dataKey: 'uv',
+            fill: undefined,
+            hide: false,
+            name: 'uv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 70.8,
+                outerRadius: 98.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 70.8,
+              name: 'Page A',
+              outerRadius: 98.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 400,
+          },
+          {
+            color: undefined,
+            dataKey: 'pv',
+            fill: undefined,
+            hide: false,
+            name: 'pv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 102.8,
+                outerRadius: 130.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 102.8,
+              name: 'Page A',
+              outerRadius: 130.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 2400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+          {
+            color: undefined,
+            dataKey: 'amt',
+            fill: undefined,
+            hide: false,
+            name: 'amt',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 134.8,
+                outerRadius: 162.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 134.8,
+              name: 'Page A',
+              outerRadius: 162.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 2400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+        ]);
+      });
+    });
+
+    describe('when itemSorter=`dataKey`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('dataKey');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['amt : 2400', 'pv : 2400', 'uv : 400']);
+      });
+    });
+
+    describe('when itemSorter=`value`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('value');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['uv : 400', 'pv : 2400', 'amt : 2400']);
+      });
+    });
+
+    describe('when itemSorter=`name`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('name');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['amt : 2400', 'pv : 2400', 'uv : 400']);
+      });
+    });
+
+    describe('when itemSorter is a function', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase(item => item.value);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['uv : 400', 'pv : 2400', 'amt : 2400']);
+      });
+
+      it('should call the function once for every payload item, and pass the item as an argument', () => {
+        const spy = vi.fn();
+        const { container } = renderTestCase(spy);
+        expect(spy).toHaveBeenCalledTimes(0);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenNthCalledWith(1, {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 70.8,
+              outerRadius: 98.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 70.8,
+            name: 'Page A',
+            outerRadius: 98.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 400,
+        });
+        expect(spy).toHaveBeenNthCalledWith(2, {
+          color: undefined,
+          dataKey: 'pv',
+          fill: undefined,
+          hide: false,
+          name: 'pv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 102.8,
+              outerRadius: 130.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 102.8,
+            name: 'Page A',
+            outerRadius: 130.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 2400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        });
+        expect(spy).toHaveBeenNthCalledWith(3, {
+          color: undefined,
+          dataKey: 'amt',
+          fill: undefined,
+          hide: false,
+          name: 'amt',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 134.8,
+              outerRadius: 162.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 134.8,
+            name: 'Page A',
+            outerRadius: 162.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 2400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        });
+      });
+    });
+  });
+
+  describe('with name prop', () => {
+    function renderTestCase<T>(
+      itemSorter: TooltipProps<number, string>['itemSorter'],
+      selector?: Selector<RechartsRootState, T, never>,
+    ) {
+      return createSelectorTestCase(({ children }) => (
+        <RadialBarChart width={600} height={600} data={PageData}>
+          <RadialBar dataKey="uv" isAnimationActive={false} name="RadialBar-uv" />
+          <RadialBar dataKey="pv" isAnimationActive={false} name="RadialBar-pv" />
+          <RadialBar dataKey="amt" isAnimationActive={false} name="RadialBar-amt" />
+          <PolarAngleAxis dataKey="name" name="PolarAngleAxis" />
+          <PolarRadiusAxis dataKey="uv" name="PolarRadiusAxis" />
+          <Tooltip itemSorter={itemSorter} />
+          {children}
+        </RadialBarChart>
+      ))(selector);
+    }
+
+    describe('when itemSorter is undefined', () => {
+      it('should render payload in arbitrary order', () => {
+        const { container } = renderTestCase(undefined);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['RadialBar-uv : 400', 'RadialBar-pv : 2400', 'RadialBar-amt : 2400']);
+      });
+
+      it('should select payload in arbitrary order', () => {
+        const { spy } = renderTestCase(undefined, state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            color: undefined,
+            dataKey: 'uv',
+            fill: undefined,
+            hide: false,
+            name: 'RadialBar-uv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 70.8,
+                outerRadius: 98.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 70.8,
+              name: 'Page A',
+              outerRadius: 98.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 400,
+          },
+          {
+            color: undefined,
+            dataKey: 'pv',
+            fill: undefined,
+            hide: false,
+            name: 'RadialBar-pv',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 102.8,
+                outerRadius: 130.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 102.8,
+              name: 'Page A',
+              outerRadius: 130.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 2400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+          {
+            color: undefined,
+            dataKey: 'amt',
+            fill: undefined,
+            hide: false,
+            name: 'RadialBar-amt',
+            nameKey: undefined,
+            payload: {
+              amt: 2400,
+              background: {
+                cx: 300,
+                cy: 300,
+                endAngle: 360,
+                innerRadius: 134.8,
+                outerRadius: 162.8,
+                startAngle: 0,
+              },
+              cx: 300,
+              cy: 300,
+              endAngle: NaN,
+              innerRadius: 134.8,
+              name: 'Page A',
+              outerRadius: 162.8,
+              payload: {
+                amt: 2400,
+                name: 'Page A',
+                pv: 2400,
+                uv: 400,
+              },
+              pv: 2400,
+              startAngle: undefined,
+              uv: 400,
+              value: 2400,
+            },
+            stroke: undefined,
+            strokeWidth: undefined,
+            type: undefined,
+            unit: '',
+            value: 2400,
+          },
+        ]);
+      });
+    });
+
+    describe('when itemSorter=`dataKey`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('dataKey');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['RadialBar-amt : 2400', 'RadialBar-pv : 2400', 'RadialBar-uv : 400']);
+      });
+    });
+
+    describe('when itemSorter=`value`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('value');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['RadialBar-uv : 400', 'RadialBar-pv : 2400', 'RadialBar-amt : 2400']);
+      });
+    });
+
+    describe('when itemSorter=`name`', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase('name');
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['RadialBar-amt : 2400', 'RadialBar-pv : 2400', 'RadialBar-uv : 400']);
+      });
+    });
+
+    describe('when itemSorter is a function', () => {
+      it('should render sorted payload', () => {
+        const { container } = renderTestCase(item => item.value);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expectTooltipPayload(container, '400', ['RadialBar-uv : 400', 'RadialBar-pv : 2400', 'RadialBar-amt : 2400']);
+      });
+
+      it('should call the function once for every payload item, and pass the item as an argument', () => {
+        const spy = vi.fn();
+        const { container } = renderTestCase(spy);
+        expect(spy).toHaveBeenCalledTimes(0);
+        showTooltip(container, radialBarChartMouseHoverTooltipSelector);
+        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenNthCalledWith(1, {
+          color: undefined,
+          dataKey: 'uv',
+          fill: undefined,
+          hide: false,
+          name: 'RadialBar-uv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 70.8,
+              outerRadius: 98.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 70.8,
+            name: 'Page A',
+            outerRadius: 98.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 400,
+        });
+        expect(spy).toHaveBeenNthCalledWith(2, {
+          color: undefined,
+          dataKey: 'pv',
+          fill: undefined,
+          hide: false,
+          name: 'RadialBar-pv',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 102.8,
+              outerRadius: 130.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 102.8,
+            name: 'Page A',
+            outerRadius: 130.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 2400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        });
+        expect(spy).toHaveBeenNthCalledWith(3, {
+          color: undefined,
+          dataKey: 'amt',
+          fill: undefined,
+          hide: false,
+          name: 'RadialBar-amt',
+          nameKey: undefined,
+          payload: {
+            amt: 2400,
+            background: {
+              cx: 300,
+              cy: 300,
+              endAngle: 360,
+              innerRadius: 134.8,
+              outerRadius: 162.8,
+              startAngle: 0,
+            },
+            cx: 300,
+            cy: 300,
+            endAngle: NaN,
+            innerRadius: 134.8,
+            name: 'Page A',
+            outerRadius: 162.8,
+            payload: {
+              amt: 2400,
+              name: 'Page A',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            startAngle: undefined,
+            uv: 400,
+            value: 2400,
+          },
+          stroke: undefined,
+          strokeWidth: undefined,
+          type: undefined,
+          unit: '',
+          value: 2400,
+        });
       });
     });
   });
