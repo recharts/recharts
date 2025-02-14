@@ -55,8 +55,9 @@ export function getTooltipTranslateXY({
     return position[key];
   }
 
-  const negative = coordinate[key] - tooltipDimension - offsetTopLeft;
+  const negative = coordinate[key] - tooltipDimension - (offsetTopLeft > 0 ? offsetTopLeft : 0);
   const positive = coordinate[key] + offsetTopLeft;
+
   if (allowEscapeViewBox[key]) {
     return reverseDirection[key] ? negative : positive;
   }

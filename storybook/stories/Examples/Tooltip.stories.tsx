@@ -512,3 +512,23 @@ export const RechartsTooltipBug5542Repro = {
     data: pageData,
   },
 };
+
+export const TooltipWithNegativeOffset = {
+  render: () => {
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart data={pageData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Line dataKey="uv" />
+          <Tooltip
+            offset={-50}
+            wrapperStyle={{
+              width: 100,
+            }}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+};
