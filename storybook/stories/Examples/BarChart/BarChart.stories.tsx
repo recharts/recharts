@@ -14,6 +14,7 @@ import {
   Brush,
   ErrorBar,
   Rectangle,
+  LegendPayload,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
@@ -72,18 +73,59 @@ export const Simple = {
   },
 };
 
-export const Stacked = {
+export const StackedAndDynamic = {
   render: (args: Record<string, any>) => {
+    const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
+    const [locked, setLocked] = useState<boolean>(false);
+
+    const onLegendMouseEnter = (payload: LegendPayload) => {
+      if (!locked) {
+        setFocusedDataKey(String(payload.dataKey));
+      }
+    };
+
+    const onLegendMouseOut = () => {
+      if (!locked) {
+        setFocusedDataKey(null);
+      }
+    };
+
+    const onLegendClick = (payload: LegendPayload) => {
+      if (focusedDataKey === String(payload.dataKey)) {
+        if (locked) {
+          setFocusedDataKey(null);
+          setLocked(false);
+        } else {
+          setLocked(true);
+        }
+      } else {
+        setFocusedDataKey(String(payload.dataKey));
+        setLocked(true);
+      }
+    };
+
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Legend />
-          <Bar dataKey="pv" stackId="a" fill="#8884d8" activeBar={{ fill: 'gold' }} />
-          <Bar dataKey="uv" stackId="a" fill="#82ca9d" activeBar={{ fill: 'silver' }} />
-          <Tooltip shared={false} />
+          <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
+          <Bar
+            hide={focusedDataKey != null && focusedDataKey !== 'pv'}
+            dataKey="pv"
+            stackId="a"
+            fill="#8884d8"
+            activeBar={{ fill: 'gold' }}
+          />
+          <Bar
+            hide={focusedDataKey != null && focusedDataKey !== 'uv'}
+            dataKey="uv"
+            stackId="a"
+            fill="#82ca9d"
+            activeBar={{ fill: 'silver' }}
+          />
+          <Tooltip shared={false} defaultIndex={1} />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -139,16 +181,49 @@ export const StackedWithErrorBar = {
 
 export const Mix = {
   render: (args: Record<string, any>) => {
+    const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
+    const [locked, setLocked] = useState<boolean>(false);
+
+    const onLegendMouseEnter = (payload: LegendPayload) => {
+      if (!locked) {
+        setFocusedDataKey(String(payload.dataKey));
+      }
+    };
+
+    const onLegendMouseOut = () => {
+      if (!locked) {
+        setFocusedDataKey(null);
+      }
+    };
+
+    const onLegendClick = (payload: LegendPayload) => {
+      if (focusedDataKey === String(payload.dataKey)) {
+        if (locked) {
+          setFocusedDataKey(null);
+          setLocked(false);
+        } else {
+          setLocked(true);
+        }
+      } else {
+        setFocusedDataKey(String(payload.dataKey));
+        setLocked(true);
+      }
+    };
+
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Legend />
-          <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-          <Bar dataKey="amt" stackId="a" fill="#82ca9d" />
-          <Bar dataKey="uv" fill="#ffc658" />
+          <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
+          <Bar dataKey="pv" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'pv' ? '#8884d8' : '#eee'} />
+          <Bar
+            dataKey="amt"
+            stackId="a"
+            fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'}
+          />
+          <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
           <Tooltip />
         </BarChart>
       </ResponsiveContainer>

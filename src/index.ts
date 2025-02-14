@@ -11,7 +11,7 @@ export type { Props as LayerProps } from './container/Layer';
 export { Legend } from './component/Legend';
 export type { Props as LegendProps } from './component/Legend';
 export { DefaultLegendContent } from './component/DefaultLegendContent';
-export type { Props as DefaultLegendContentProps } from './component/DefaultLegendContent';
+export type { Props as DefaultLegendContentProps, LegendPayload } from './component/DefaultLegendContent';
 export { Tooltip } from './component/Tooltip';
 export type { TooltipProps, TooltipContentProps } from './component/Tooltip';
 export { DefaultTooltipContent } from './component/DefaultTooltipContent';
