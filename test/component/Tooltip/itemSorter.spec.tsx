@@ -1619,3 +1619,5 @@ describe('itemSorter in RadialBarChart', () => {
     });
   });
 });
+
+// Funnel, Treemap, Sankey - always only render one payload item so there is nothing to sort either
