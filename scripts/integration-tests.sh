@@ -22,6 +22,8 @@ set -x
 # examples: `./integration-tests.sh`, `scripts/integration-tests.sh`
 pushd "$(dirname "$0")/.." > /dev/null
 
+#remove the old tarball if it exists
+rm -f recharts-SNAPSHOT.tgz
 # pack the root package and rename the output to 'recharts-SNAPSHOT.tgz'
 tarball=$(npm pack --silent)
 mv "$tarball" recharts-SNAPSHOT.tgz
@@ -32,11 +34,6 @@ function verify_single_dependency {
   local package_name=$1
   local ls_output
   pwd
-  ls -la ../../recharts-SNAPSHOT.tgz
-  tar -tvf ../../recharts-SNAPSHOT.tgz
-  rm -rf node_modules
-  npm cache clean --force
-  npm ls recharts
   ls_output=$(npm ls "$package_name" --long --parseable)
   local unique_versions
   unique_versions=$(echo "$ls_output" | awk -F: '{print $2}' | sort -u)
@@ -55,6 +52,7 @@ function test {
   pushd "$integration"
   echo "Running integration test $integration"
   npm install --package-lock=false
+  cat ./node_modules/recharts/package.json
   echo "Running build"
   npm run build
   echo "Verifying unique dependencies"
