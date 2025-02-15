@@ -16,12 +16,15 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  DefaultTooltipContent,
 } from '../../../src';
-import { DefaultTooltipContent } from '../../../src/component/DefaultTooltipContent';
 import { generateMockData } from '../../../test/helper/generateMockData';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { TooltipProps } from '../API/props/TooltipProps';
+import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 
 export default {
+  argTypes: TooltipProps,
   component: Tooltip,
 };
 
@@ -44,12 +47,13 @@ const SimpleTooltipStory = {
 export const ActiveTooltip = {
   ...SimpleTooltipStory,
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     active: true,
   },
 };
 
 export const SettingTooltipIndex = {
-  render: () => (
+  render: (tooltipArgs: Record<string, any>) => (
     <LineChart
       width={500}
       height={300}
@@ -67,13 +71,17 @@ export const SettingTooltipIndex = {
       <YAxis />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-      <Tooltip defaultIndex={2} />
+      <Tooltip {...tooltipArgs} />
     </LineChart>
   ),
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    defaultIndex: 2,
+  },
 };
 
 export const LockedByClick = {
-  render: (_args: Record<string, any>) => {
+  render: (tooltipArgs: Record<string, any>) => {
     const [isLocked, setIsLocked] = React.useState(false);
     // The TooltipData contains the payload, the label and the x position of the tooltip.
     // Their update is interrupted by the click event, so we need to store them in a state.
@@ -108,6 +116,7 @@ export const LockedByClick = {
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
           <Tooltip
+            {...tooltipArgs}
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
           />
@@ -117,10 +126,13 @@ export const LockedByClick = {
   },
   description:
     'This example shows how to lock the tooltip to a specific position. Click on the chart to show fix the Tooltip.',
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+  },
 };
 
 export const CssScaledParent = {
-  render: () => {
+  render: (tooltipArgs: Record<string, any>) => {
     const [scale, setScale] = useState(1.2);
     const handleZoomIn = useCallback(() => setScale(s => s + 0.1), []);
     const handleZoomOut = useCallback(() => setScale(s => s - 0.1), []);
@@ -154,7 +166,7 @@ export const CssScaledParent = {
               <Line dataKey="uv" />
               <Bar dataKey="pv" />
               <XAxis dataKey="name" />
-              <Tooltip />
+              <Tooltip {...tooltipArgs} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -162,6 +174,9 @@ export const CssScaledParent = {
     );
   },
   description: 'This example shows if Tooltip is shown correctly when parent component use transform:scale styling',
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+  },
 };
 
 const areaData = [
@@ -183,7 +198,7 @@ const lineData = [
 ];
 
 export const SeparateDataSetsForChart = {
-  render: () => {
+  render: (tooltipProps: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart data={areaData}>
@@ -192,16 +207,20 @@ export const SeparateDataSetsForChart = {
 
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
-          <Tooltip />
+          <Tooltip {...tooltipProps} />
         </ComposedChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
   },
 };
 
 export const TriggerTooltipByClick = {
   ...SimpleTooltipStory,
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     trigger: 'click',
   },
 };
@@ -251,6 +270,7 @@ const CustomContent = ({ active, payload }: CustomTooltipProps) => {
 export const CustomContentExample = {
   ...SimpleTooltipStory,
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     content: <CustomContent />,
     trigger: 'hover',
   },
@@ -281,7 +301,9 @@ export const LargeDataArray = {
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+  },
 };
 
 export const IncludeHidden = {
@@ -303,12 +325,15 @@ export const IncludeHidden = {
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
           {/* The target component */}
-          <Tooltip includeHidden {...args} />
+          <Tooltip {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
-  args: {},
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    includeHidden: true,
+  },
 };
 
 export const SharedTooltipInBarChart = {
@@ -324,6 +349,7 @@ export const SharedTooltipInBarChart = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     shared: false,
     defaultIndex: 2,
     active: true,
@@ -343,6 +369,7 @@ export const SharedTooltipInRadialBarChart = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     shared: false,
     defaultIndex: 2,
     active: true,
@@ -369,13 +396,14 @@ export const TallTooltipInNarrowChart = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
     defaultIndex: 2,
     active: true,
   },
 };
 
 export const TooltipWithPortal = {
-  render: (args: Record<string, any>) => {
+  render: (tooltipProps: Record<string, any>) => {
     const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
 
     return (
@@ -384,7 +412,7 @@ export const TooltipWithPortal = {
           <LineChart data={pageData}>
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
-            {portalRef && <Tooltip {...args} portal={portalRef} wrapperStyle={{ width: '25%', marginLeft: 10 }} />}
+            {portalRef && <Tooltip {...tooltipProps} portal={portalRef} />}
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -405,6 +433,11 @@ export const TooltipWithPortal = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    wrapperStyle: {
+      width: '25%',
+      marginLeft: 10,
+    },
     defaultIndex: 3,
     active: true,
   },
@@ -422,7 +455,7 @@ const d1 = [
 ];
 
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: (_args: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -437,7 +470,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
           <ResponsiveContainer>
             <LineChart data={d1} style={{ border: '1px solid black' }}>
               <Line dataKey="Triggers" />
-              <Tooltip />
+              <Tooltip {...tooltipProps} />
               <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </LineChart>
           </ResponsiveContainer>
@@ -445,10 +478,13 @@ export const RechartsAlphaTooltipBug5516Repro = {
       </div>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+  },
 };
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
-  render: (_args: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -463,7 +499,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
           <ResponsiveContainer>
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
-              <Tooltip shared={false} />
+              <Tooltip {...tooltipProps} />
               <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </BarChart>
           </ResponsiveContainer>
@@ -471,10 +507,14 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
       </div>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    shared: false,
+  },
 };
 
 export const RechartsTooltipBug5542Repro = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
     return (
       <div
         style={{
@@ -492,11 +532,11 @@ export const RechartsTooltipBug5542Repro = {
             position: 'relative',
           }}
         >
-          <BarChart {...args}>
+          <BarChart width={730} height={250} data={pageData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip cursor={false} />
+            <Tooltip {...tooltipProps} />
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
@@ -507,28 +547,29 @@ export const RechartsTooltipBug5542Repro = {
     );
   },
   args: {
-    width: 730,
-    height: 250,
-    data: pageData,
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    cursor: false,
   },
 };
 
 export const TooltipWithNegativeOffset = {
-  render: () => {
+  render: (tooltipProps: Record<string, any>) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" />
-          <Tooltip
-            offset={-50}
-            wrapperStyle={{
-              width: 100,
-            }}
-          />
+          <Tooltip {...tooltipProps} />
         </ComposedChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(TooltipProps),
+    offset: -50,
+    wrapperStyle: {
+      width: 100,
+    },
   },
 };
