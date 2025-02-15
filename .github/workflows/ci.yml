@@ -35,8 +35,8 @@ jobs:
       - name: Storybook tests
         run: npm run test-storybook:ci
       - name: TS+React 19 test
-        run: ./scripts/integration-test.sh ts-react19
+        run: ./scripts/integration-tests.sh ts-react19
       - name: TS+React 18 test
-        run: ./scripts/integration-test.sh ts-react18
+        run: ./scripts/integration-tests.sh ts-react18
       - name: TS+React 16 test
-        run: ./scripts/integration-test.sh ts-react16
+        run: ./scripts/integration-tests.sh ts-react16
