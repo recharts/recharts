@@ -52,6 +52,7 @@ function test {
   pushd "$integration"
   echo "Running integration test $integration"
   npm install --package-lock=false
+  npm ls
   cat ./node_modules/recharts/package.json
   echo "Running build"
   npm run build
