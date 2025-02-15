@@ -10,6 +10,7 @@
 set -o pipefail
 set -o errexit
 set -o nounset
+set -x
 
 # one folder in the subfolder 'integrations' is one integration test
 # each folder is an npm package that depends on the root package
