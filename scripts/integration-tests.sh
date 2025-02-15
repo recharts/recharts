@@ -48,7 +48,7 @@ function test {
   local integration=$1
   pushd "$integration"
   echo "Running integration test $integration"
-  npm install --silent
+  npm install
   echo "Running build"
   npm run build
   echo "Verifying unique dependencies"
