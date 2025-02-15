@@ -31,7 +31,11 @@ mv "$tarball" recharts-SNAPSHOT.tgz
 function verify_single_dependency {
   local package_name=$1
   local ls_output
+  pwd
   ls -la ../../recharts-SNAPSHOT.tgz
+  tar -tvf ../../recharts-SNAPSHOT.tgz
+  rm -rf node_modules
+  npm cache clean --force
   npm ls recharts
   ls_output=$(npm ls "$package_name" --long --parseable)
   local unique_versions
