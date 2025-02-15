@@ -31,8 +31,8 @@ mv "$tarball" recharts-SNAPSHOT.tgz
 function verify_single_dependency {
   local package_name=$1
   local ls_output
-  npm ls recharts
   ls -la ../../recharts-SNAPSHOT.tgz
+  npm ls recharts
   ls_output=$(npm ls "$package_name" --long --parseable)
   local unique_versions
   unique_versions=$(echo "$ls_output" | awk -F: '{print $2}' | sort -u)
