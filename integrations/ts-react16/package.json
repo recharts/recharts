@@ -12,7 +12,7 @@
   "dependencies": {
     "react": "^16.8.x",
     "react-dom": "^16.8.x",
-    "recharts": "file:/../../recharts-SNAPSHOT.tgz"
+    "recharts": "file:../../recharts-SNAPSHOT.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
