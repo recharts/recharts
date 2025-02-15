@@ -34,7 +34,7 @@ function verify_single_dependency {
   local package_name=$1
   local ls_output
   pwd
-  ls_output=$(npm ls "$package_name" --long --parseable)
+  ls_output=$(npm ls "$package_name" --parseable)
   local unique_versions
   unique_versions=$(echo "$ls_output" | awk -F: '{print $2}' | sort -u)
   echo "Found unique versions of $package_name: $unique_versions"
