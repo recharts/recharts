@@ -28,8 +28,8 @@ export const API = {
         >
           {/* The target component */}
           <Legend {...args} />
-          <Line dataKey="uv" stroke="#8884d8" />
-          <Line dataKey="pv" stroke="#82ca9d" />
+          <Line dataKey="uv" stroke="#8884d8" name="Series 1 (UV)" />
+          <Line dataKey="pv" stroke="#82ca9d" name="Series 2 (PV)" />
         </LineChart>
       </ResponsiveContainer>
     );

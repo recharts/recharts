@@ -94,6 +94,22 @@ The exact behavior changes depending on \`align\` prop.`,
       category: 'General',
     },
   },
+  itemSorter: {
+    description: `How should Legend items be sorted.
+      Can be either a string (the name of the key to sort by) or a function.
+      The function should return one value to be compared. This sorts always in ascending order.`,
+    defaultValue: 'value',
+    options: ['value', 'dataKey'],
+    control: {
+      type: 'inline-radio',
+    },
+    table: {
+      category: 'Content',
+      type: {
+        summary: 'value | dataKey | Function',
+      },
+    },
+  },
   content: {
     description: `If set to a React element, the option will be used to render the legend.
     If set to a function, the function will be called to render the legend's content.`,
