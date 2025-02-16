@@ -176,7 +176,7 @@ interface State {
   readonly prevAnimationId?: number;
 }
 
-const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => {
+const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
   return [
     {
@@ -184,7 +184,7 @@ const computeLegendPayloadFromBarData = (props: Props): Array<LegendPayload> => 
       dataKey,
       type: legendType,
       color: fill,
-      value: name || dataKey,
+      value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
   ];

@@ -67,8 +67,8 @@ export const Stacked = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
-          <Bar dataKey="uv" stackId="a" fill="green" barSize={50} />
-          <Bar dataKey="pv" stackId="a" fill="red" barSize={30} />
+          <Bar dataKey="uv" stackId="a" fill="green" barSize={50} name="UV Bar" />
+          <Bar dataKey="pv" stackId="a" fill="red" barSize={30} name="PV Bar" />
           <Tooltip />
         </BarChart>
       </ResponsiveContainer>

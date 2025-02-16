@@ -9,7 +9,7 @@ import { ChartOffset, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
 import { selectChartOffset } from './selectChartOffset';
 import type { LegendPayload } from '../../component/DefaultLegendContent';
-import { getValueByDataKey } from '../../util/ChartUtils';
+import { getTooltipNameProp, getValueByDataKey } from '../../util/ChartUtils';
 
 export type ResolvedPieSettings = {
   name: string | number | undefined;
@@ -74,10 +74,14 @@ export const selectPieLegend: (
   state: RechartsRootState,
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => Array<LegendPayload> | undefined = createSelector(
+) => ReadonlyArray<LegendPayload> | undefined = createSelector(
   [selectDisplayedData, pickPieSettings, pickCells],
-  (displayedData, pieSettings: ResolvedPieSettings, cells: ReadonlyArray<ReactElement>) => {
-    return displayedData.map((entry, i) => {
+  (
+    displayedData,
+    pieSettings: ResolvedPieSettings,
+    cells: ReadonlyArray<ReactElement>,
+  ): ReadonlyArray<LegendPayload> => {
+    return displayedData.map((entry, i): LegendPayload => {
       const name = getValueByDataKey(entry, pieSettings.nameKey, pieSettings.name);
       let color;
       if (cells?.[i]?.props?.fill) {
@@ -87,7 +91,12 @@ export const selectPieLegend: (
       } else {
         color = pieSettings.fill;
       }
-      return { value: name, color, payload: entry, type: pieSettings.legendType };
+      return {
+        value: getTooltipNameProp(name, pieSettings.dataKey),
+        color,
+        payload: entry,
+        type: pieSettings.legendType,
+      };
     });
   },
 );
