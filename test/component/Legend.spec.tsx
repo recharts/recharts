@@ -605,6 +605,36 @@ describe('<Legend />', () => {
       ]);
     });
 
+    test('sorts legend items by name by default', () => {
+      const { container } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend />
+          <Line dataKey="percent" name="B" />
+          <Line dataKey="value" name="A" />
+        </LineChart>,
+      );
+
+      expectLegendLabels(container, [
+        { textContent: 'A', fill: 'none' },
+        { textContent: 'B', fill: 'none' },
+      ]);
+    });
+
+    test('sorts legend items when itemSorter=dataKey', () => {
+      const { container } = render(
+        <LineChart width={500} height={500} data={numericalData}>
+          <Legend itemSorter="dataKey" />
+          <Line dataKey="percent" name="B" />
+          <Line dataKey="value" name="A" />
+        </LineChart>,
+      );
+
+      expectLegendLabels(container, [
+        { textContent: 'B', fill: 'none' },
+        { textContent: 'A', fill: 'none' },
+      ]);
+    });
+
     test('Legend defaults are read correctly', () => {
       const { container } = render(
         <LineChart width={500} height={500} data={categoricalData}>
@@ -2279,23 +2309,57 @@ describe('<Legend />', () => {
       );
 
       expectLegendLabels(container, [
-        {
-          fill: 'fill1',
-          textContent: 'name1',
-        },
-        {
-          fill: 'fill2',
-          textContent: 'name2',
-        },
-        {
-          fill: 'fill3',
-          textContent: 'name3',
-        },
-        {
-          fill: 'fill4',
-          textContent: 'name4',
-        },
+        { fill: 'fill1', textContent: 'name1' },
+        { fill: 'fill2', textContent: 'name2' },
+        { fill: 'fill3', textContent: 'name3' },
+        { fill: 'fill4', textContent: 'name4' },
       ]);
+    });
+
+    describe('itemSorter', () => {
+      it('should sort items by the special name property by default', () => {
+        const dataWithSpecialNameAndFillPropertiesInDifferentOrder = [
+          { name: 'name2', fill: 'fill2', value: 34 },
+          { name: 'name1', fill: 'fill1', value: 12 },
+          { name: 'name4', fill: 'fill4', value: 78 },
+          { name: 'name3', fill: 'fill3', value: 56 },
+        ];
+
+        const { container } = render(
+          <PieChart width={500} height={500}>
+            <Legend />
+            <Pie data={dataWithSpecialNameAndFillPropertiesInDifferentOrder} dataKey="value" />
+          </PieChart>,
+        );
+
+        expectLegendLabels(container, [
+          { fill: 'fill1', textContent: 'name1' },
+          { fill: 'fill2', textContent: 'name2' },
+          { fill: 'fill3', textContent: 'name3' },
+          { fill: 'fill4', textContent: 'name4' },
+        ]);
+      });
+
+      it.each(['dataKey', null] as const)(
+        'should leave items in the original data order when itemSorter=%s',
+        itemSorter => {
+          const { container } = render(
+            <PieChart width={500} height={500}>
+              <Legend itemSorter={itemSorter} />
+              <Pie data={numericalData} dataKey="percent" nameKey="value" />
+            </PieChart>,
+          );
+
+          expectLegendLabels(container, [
+            { fill: '#808080', textContent: 'Luck' },
+            { fill: '#808080', textContent: 'Skill' },
+            { fill: '#808080', textContent: 'Concentrated power of will' },
+            { fill: '#808080', textContent: 'Pleasure' },
+            { fill: '#808080', textContent: 'Pain' },
+            { fill: '#808080', textContent: 'Reason to remember the name' },
+          ]);
+        },
+      );
     });
 
     it('should disappear after Pie data is removed', () => {

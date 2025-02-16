@@ -4,6 +4,7 @@
 import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import clsx from 'clsx';
+import sortBy from 'lodash/sortBy';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -55,6 +56,7 @@ interface InternalProps {
    * A custom payload can be passed here if desired or it can be passed from the Legend "content" callback.
    */
   payload?: ReadonlyArray<LegendPayload>;
+  itemSorter?: 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
 }
 
 export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<any, ReactElement>, keyof InternalProps>;
@@ -62,12 +64,13 @@ export type Props = InternalProps & Omit<PresentationAttributesAdaptChildEvent<a
 export class DefaultLegendContent extends PureComponent<Props> {
   static displayName = 'Legend';
 
-  static defaultProps = {
-    iconSize: 14,
-    layout: 'horizontal',
+  static defaultProps: Partial<Props> = {
     align: 'center',
-    verticalAlign: 'middle',
+    iconSize: 14,
     inactiveColor: '#ccc',
+    itemSorter: 'value',
+    layout: 'horizontal',
+    verticalAlign: 'middle',
   };
 
   /**
@@ -140,7 +143,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
    * @return Items
    */
   renderItems() {
-    const { payload, iconSize, layout, formatter, inactiveColor, iconType } = this.props;
+    const { payload, iconSize, layout, formatter, inactiveColor, iconType, itemSorter } = this.props;
     const viewBox = { x: 0, y: 0, width: SIZE, height: SIZE };
     const itemStyle = {
       display: layout === 'horizontal' ? 'inline-block' : 'block',
@@ -148,7 +151,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return payload.map((entry, i) => {
+    return (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry, i) => {
       const finalFormatter = entry.formatter || formatter;
       const className = clsx({
         'recharts-legend-item': true,
