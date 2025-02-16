@@ -12,7 +12,7 @@ import { validateWidthHeight, findChildByType, filterProps } from '../util/React
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
-import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
@@ -497,7 +497,6 @@ interface State {
   prevNodePadding?: number;
   prevSort?: boolean;
 
-  cursorPortal?: SVGElement | null;
   tooltipPortal?: HTMLElement | null;
 }
 
@@ -977,61 +976,51 @@ export class Sankey extends PureComponent<Props, State> {
         <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
         <ReportChartSize width={width} height={height} />
         <ReportChartMargin margin={defaultSankeyMargin} />
-        <CursorPortalContext.Provider value={this.state.cursorPortal}>
-          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <RechartsWrapper
-              className={className}
-              style={style}
-              width={width}
-              height={height}
-              ref={(node: HTMLDivElement) => {
-                if (this.state.tooltipPortal == null) {
-                  this.setState({ tooltipPortal: node });
-                }
-              }}
-              onMouseEnter={undefined}
-              onMouseLeave={undefined}
-              onClick={undefined}
-              onMouseMove={undefined}
-              onMouseDown={undefined}
-              onMouseUp={undefined}
-              onContextMenu={undefined}
-              onDoubleClick={undefined}
-              onTouchStart={undefined}
-              onTouchMove={undefined}
-              onTouchEnd={undefined}
-            >
-              <Surface {...attrs} width={width} height={height}>
-                <g
-                  className="recharts-cursor-portal"
-                  ref={(node: SVGElement) => {
-                    if (this.state.cursorPortal == null) {
-                      this.setState({ cursorPortal: node });
-                    }
-                  }}
-                />
-                {children}
-                <AllSankeyLinkElements
-                  links={links}
-                  modifiedLinks={modifiedLinks}
-                  linkContent={this.props.link}
-                  dataKey={this.props.dataKey}
-                  onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
-                  onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
-                  onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
-                />
-                <AllNodeElements
-                  modifiedNodes={modifiedNodes}
-                  nodeContent={this.props.node}
-                  dataKey={this.props.dataKey}
-                  onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
-                  onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
-                  onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
-                />
-              </Surface>
-            </RechartsWrapper>
-          </TooltipPortalContext.Provider>
-        </CursorPortalContext.Provider>
+        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+          <RechartsWrapper
+            className={className}
+            style={style}
+            width={width}
+            height={height}
+            ref={(node: HTMLDivElement) => {
+              if (this.state.tooltipPortal == null) {
+                this.setState({ tooltipPortal: node });
+              }
+            }}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onClick={undefined}
+            onMouseMove={undefined}
+            onMouseDown={undefined}
+            onMouseUp={undefined}
+            onContextMenu={undefined}
+            onDoubleClick={undefined}
+            onTouchStart={undefined}
+            onTouchMove={undefined}
+            onTouchEnd={undefined}
+          >
+            <Surface {...attrs} width={width} height={height}>
+              {children}
+              <AllSankeyLinkElements
+                links={links}
+                modifiedLinks={modifiedLinks}
+                linkContent={this.props.link}
+                dataKey={this.props.dataKey}
+                onMouseEnter={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseEnter(linkProps, 'link', e)}
+                onMouseLeave={(linkProps: LinkProps, e: MouseEvent) => this.handleMouseLeave(linkProps, 'link', e)}
+                onClick={(linkProps: LinkProps, e: MouseEvent) => this.handleClick(linkProps, 'link', e)}
+              />
+              <AllNodeElements
+                modifiedNodes={modifiedNodes}
+                nodeContent={this.props.node}
+                dataKey={this.props.dataKey}
+                onMouseEnter={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseEnter(nodeProps, 'node', e)}
+                onMouseLeave={(nodeProps: NodeProps, e: MouseEvent) => this.handleMouseLeave(nodeProps, 'node', e)}
+                onClick={(nodeProps: NodeProps, e: MouseEvent) => this.handleClick(nodeProps, 'node', e)}
+              />
+            </Surface>
+          </RechartsWrapper>
+        </TooltipPortalContext.Provider>
       </RechartsStoreProvider>
     );
   }

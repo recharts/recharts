@@ -37,9 +37,9 @@ export const Simple = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip cursor={{ stroke: 'gold', strokeWidth: 2 }} defaultIndex={3} />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-          <Tooltip />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>

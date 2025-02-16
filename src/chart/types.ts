@@ -15,7 +15,6 @@ export interface CategoricalChartState {
   prevChildren?: any;
 
   tooltipPortal?: HTMLElement | null;
-  cursorPortal?: SVGElement | null;
   legendPortal?: HTMLElement | null;
 }
 

@@ -22,7 +22,7 @@ import {
   selectIsTooltipActive,
   selectTooltipPayload,
 } from '../state/selectors/selectors';
-import { useCursorPortal, useTooltipPortal } from '../context/tooltipPortalContext';
+import { useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
@@ -191,8 +191,7 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
   useTooltipChartSynchronisation(tooltipEventType, trigger, coordinate, finalLabel, activeIndex, finalIsActive);
 
   const tooltipPortal = portalFromProps ?? tooltipPortalFromContext;
-  const cursorPortal = useCursorPortal();
-  if (tooltipPortal == null || cursorPortal == null) {
+  if (tooltipPortal == null) {
     return null;
   }
 
@@ -245,18 +244,15 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
     <>
       {/* Tooltip the HTML element renders through a React portal so that it escapes clipping, and it renders on top of everything else */}
       {createPortal(tooltipElement, tooltipPortal)}
-      {/* Cursor is an SVG element and renders in another portal, so that it renders _below_ the graphical elements */}
-      {finalIsActive &&
-        createPortal(
-          <Cursor
-            cursor={cursor}
-            tooltipEventType={tooltipEventType}
-            coordinate={coordinate}
-            payload={payload}
-            index={activeIndex}
-          />,
-          cursorPortal,
-        )}
+      {finalIsActive && (
+        <Cursor
+          cursor={cursor}
+          tooltipEventType={tooltipEventType}
+          coordinate={coordinate}
+          payload={payload}
+          index={activeIndex}
+        />
+      )}
     </>
   );
 }
