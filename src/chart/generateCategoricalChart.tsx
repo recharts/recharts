@@ -12,7 +12,7 @@ import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
@@ -216,60 +216,50 @@ export const generateCategoricalChart = ({
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
-          <CursorPortalContext.Provider value={this.state.cursorPortal}>
-            <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-              <LegendPortalContext.Provider value={this.state.legendPortal}>
-                <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
-                  <RechartsWrapper
-                    className={className}
-                    style={style}
+          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+            <LegendPortalContext.Provider value={this.state.legendPortal}>
+              <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
+                <RechartsWrapper
+                  className={className}
+                  style={style}
+                  width={width}
+                  height={height}
+                  ref={(node: HTMLDivElement) => {
+                    this.container = node;
+                    if (this.state.tooltipPortal == null) {
+                      this.setState({ tooltipPortal: node });
+                    }
+                    if (this.state.legendPortal == null) {
+                      this.setState({ legendPortal: node });
+                    }
+                  }}
+                  onClick={this.props.onClick}
+                  onMouseLeave={this.props.onMouseLeave}
+                  onMouseEnter={this.props.onMouseEnter}
+                  onMouseMove={this.props.onMouseMove}
+                  onMouseDown={this.props.onMouseDown}
+                  onMouseUp={this.props.onMouseUp}
+                  onContextMenu={this.props.onContextMenu}
+                  onDoubleClick={this.props.onDoubleClick}
+                  onTouchStart={this.props.onTouchStart}
+                  onTouchMove={this.props.onTouchMove}
+                  onTouchEnd={this.props.onTouchEnd}
+                >
+                  <Surface
+                    {...attrs}
                     width={width}
                     height={height}
-                    ref={(node: HTMLDivElement) => {
-                      this.container = node;
-                      if (this.state.tooltipPortal == null) {
-                        this.setState({ tooltipPortal: node });
-                      }
-                      if (this.state.legendPortal == null) {
-                        this.setState({ legendPortal: node });
-                      }
-                    }}
-                    onClick={this.props.onClick}
-                    onMouseLeave={this.props.onMouseLeave}
-                    onMouseEnter={this.props.onMouseEnter}
-                    onMouseMove={this.props.onMouseMove}
-                    onMouseDown={this.props.onMouseDown}
-                    onMouseUp={this.props.onMouseUp}
-                    onContextMenu={this.props.onContextMenu}
-                    onDoubleClick={this.props.onDoubleClick}
-                    onTouchStart={this.props.onTouchStart}
-                    onTouchMove={this.props.onTouchMove}
-                    onTouchEnd={this.props.onTouchEnd}
+                    title={title}
+                    desc={desc}
+                    style={FULL_WIDTH_AND_HEIGHT}
                   >
-                    <Surface
-                      {...attrs}
-                      width={width}
-                      height={height}
-                      title={title}
-                      desc={desc}
-                      style={FULL_WIDTH_AND_HEIGHT}
-                    >
-                      <ClipPath clipPathId={this.clipPathId} />
-                      <g
-                        className="recharts-cursor-portal"
-                        ref={(node: SVGElement) => {
-                          if (this.state.cursorPortal == null) {
-                            this.setState({ cursorPortal: node });
-                          }
-                        }}
-                      />
-                      {children}
-                    </Surface>
-                  </RechartsWrapper>
-                </ChartLayoutContextProvider>
-              </LegendPortalContext.Provider>
-            </TooltipPortalContext.Provider>
-          </CursorPortalContext.Provider>
+                    <ClipPath clipPathId={this.clipPathId} />
+                    {children}
+                  </Surface>
+                </RechartsWrapper>
+              </ChartLayoutContextProvider>
+            </LegendPortalContext.Provider>
+          </TooltipPortalContext.Provider>
         </>
       );
     }

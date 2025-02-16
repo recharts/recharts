@@ -16,7 +16,7 @@ import { Global } from '../util/Global';
 import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
-import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
   TooltipIndex,
@@ -362,7 +362,6 @@ interface State {
 
   prevAspectRatio?: number;
 
-  cursorPortal?: SVGElement | null;
   tooltipPortal?: HTMLElement | null;
 }
 
@@ -873,50 +872,40 @@ export class Treemap extends PureComponent<Props, State> {
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
         <ReportChartSize width={this.props.width} height={this.props.height} />
         <ReportChartMargin margin={defaultTreemapMargin} />
-        <CursorPortalContext.Provider value={this.state.cursorPortal}>
-          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <SetTooltipEntrySettings
-              fn={getTooltipEntrySettings}
-              args={{ props: this.props, currentRoot: this.state.currentRoot }}
-            />
-            <RechartsWrapper
-              className={className}
-              style={style}
-              width={width}
-              height={height}
-              ref={(node: HTMLDivElement) => {
-                if (this.state.tooltipPortal == null) {
-                  this.setState({ tooltipPortal: node });
-                }
-              }}
-              onMouseEnter={undefined}
-              onMouseLeave={undefined}
-              onClick={undefined}
-              onMouseMove={undefined}
-              onMouseDown={undefined}
-              onMouseUp={undefined}
-              onContextMenu={undefined}
-              onDoubleClick={undefined}
-              onTouchStart={undefined}
-              onTouchMove={undefined}
-              onTouchEnd={undefined}
-            >
-              <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-                <g
-                  className="recharts-cursor-portal"
-                  ref={(node: SVGElement) => {
-                    if (this.state.cursorPortal == null) {
-                      this.setState({ cursorPortal: node });
-                    }
-                  }}
-                />
-                {this.renderAllNodes()}
-                {children}
-              </Surface>
-              {type === 'nest' && this.renderNestIndex()}
-            </RechartsWrapper>
-          </TooltipPortalContext.Provider>
-        </CursorPortalContext.Provider>
+        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+          <SetTooltipEntrySettings
+            fn={getTooltipEntrySettings}
+            args={{ props: this.props, currentRoot: this.state.currentRoot }}
+          />
+          <RechartsWrapper
+            className={className}
+            style={style}
+            width={width}
+            height={height}
+            ref={(node: HTMLDivElement) => {
+              if (this.state.tooltipPortal == null) {
+                this.setState({ tooltipPortal: node });
+              }
+            }}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onClick={undefined}
+            onMouseMove={undefined}
+            onMouseDown={undefined}
+            onMouseUp={undefined}
+            onContextMenu={undefined}
+            onDoubleClick={undefined}
+            onTouchStart={undefined}
+            onTouchMove={undefined}
+            onTouchEnd={undefined}
+          >
+            <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+              {this.renderAllNodes()}
+              {children}
+            </Surface>
+            {type === 'nest' && this.renderNestIndex()}
+          </RechartsWrapper>
+        </TooltipPortalContext.Provider>
       </RechartsStoreProvider>
     );
   }

@@ -8,7 +8,7 @@ import { Sector } from '../shape/Sector';
 import { Text } from '../component/Text';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
-import { CursorPortalContext, TooltipPortalContext } from '../context/tooltipPortalContext';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import {
   mouseLeaveItem,
@@ -209,7 +209,6 @@ const SunburstChartImpl = ({
   const positions: SunburstPositionMap = new Map<string, ChartCoordinate>([]);
 
   const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
-  const [cursorPortal, setCursorPortal] = useState<SVGElement | null>(null);
   // event handlers
   function handleMouseEnter(node: SunburstData, e: React.MouseEvent) {
     if (onMouseEnter) onMouseEnter(node, e);
@@ -303,49 +302,39 @@ const SunburstChartImpl = ({
 
   const layerClass = clsx('recharts-sunburst', className);
   return (
-    <CursorPortalContext.Provider value={cursorPortal}>
-      <TooltipPortalContext.Provider value={tooltipPortal}>
-        <RechartsWrapper
-          className={className}
-          width={width}
-          // Sunburst doesn't support `style` property, why?
-          height={height}
-          ref={(node: HTMLDivElement) => {
-            if (tooltipPortal == null && node != null) {
-              setTooltipPortal(node);
-            }
-          }}
-          onMouseEnter={undefined}
-          onMouseLeave={undefined}
-          onClick={undefined}
-          onMouseMove={undefined}
-          onMouseDown={undefined}
-          onMouseUp={undefined}
-          onContextMenu={undefined}
-          onDoubleClick={undefined}
-          onTouchStart={undefined}
-          onTouchMove={undefined}
-          onTouchEnd={undefined}
-        >
-          <Surface width={width} height={height}>
-            <g
-              className="recharts-cursor-portal"
-              ref={(node: SVGElement) => {
-                if (cursorPortal == null && node != null) {
-                  setCursorPortal(node);
-                }
-              }}
-            />
-            <Layer className={layerClass}>{sectors}</Layer>
-            <SetTooltipEntrySettings
-              fn={getTooltipEntrySettings}
-              args={{ dataKey, data, stroke, fill, nameKey, positions }}
-            />
-            {children}
-          </Surface>
-        </RechartsWrapper>
-      </TooltipPortalContext.Provider>
-    </CursorPortalContext.Provider>
+    <TooltipPortalContext.Provider value={tooltipPortal}>
+      <RechartsWrapper
+        className={className}
+        width={width}
+        // Sunburst doesn't support `style` property, why?
+        height={height}
+        ref={(node: HTMLDivElement) => {
+          if (tooltipPortal == null && node != null) {
+            setTooltipPortal(node);
+          }
+        }}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        onClick={undefined}
+        onMouseMove={undefined}
+        onMouseDown={undefined}
+        onMouseUp={undefined}
+        onContextMenu={undefined}
+        onDoubleClick={undefined}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
+      >
+        <Surface width={width} height={height}>
+          <Layer className={layerClass}>{sectors}</Layer>
+          <SetTooltipEntrySettings
+            fn={getTooltipEntrySettings}
+            args={{ dataKey, data, stroke, fill, nameKey, positions }}
+          />
+          {children}
+        </Surface>
+      </RechartsWrapper>
+    </TooltipPortalContext.Provider>
   );
 };
 
