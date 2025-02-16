@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import sortBy from 'lodash/sortBy';
 import { RechartsRootState } from '../store';
 import { LegendState } from '../legendSlice';
 import { LegendPayload } from '../../component/DefaultLegendContent';
@@ -11,5 +10,5 @@ const selectAllLegendPayload2DArray = (state: RechartsRootState): ReadonlyArray<
 
 export const selectLegendPayload: (state: RechartsRootState) => ReadonlyArray<LegendPayload> = createSelector(
   [selectAllLegendPayload2DArray],
-  payloads => sortBy(payloads.flat(1), 'value'),
+  payloads => payloads.flat(1),
 );

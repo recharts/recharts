@@ -175,9 +175,9 @@ export class Legend extends PureComponent<Props, State> {
   static displayName = 'Legend';
 
   static defaultProps = {
+    align: 'center',
     iconSize: 14,
     layout: 'horizontal',
-    align: 'center',
     verticalAlign: 'bottom',
   };
 
