@@ -132,7 +132,7 @@ interface State {
   prevAnimationId?: UpdateId;
 }
 
-const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> => {
+const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   return [
     {
@@ -140,7 +140,7 @@ const computeLegendPayloadFromAreaData = (props: Props): Array<LegendPayload> =>
       dataKey,
       type: legendType,
       color: stroke,
-      value: name || dataKey,
+      value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
   ];

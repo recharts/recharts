@@ -719,7 +719,7 @@ export function getTooltipEntry({
 }
 
 export function getTooltipNameProp(
-  nameFromItem: string | number | undefined,
+  nameFromItem: string | number | undefined | unknown,
   dataKey: DataKey<any>,
 ): string | undefined {
   if (nameFromItem) {

@@ -4,7 +4,6 @@
 import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import clsx from 'clsx';
-import { warn } from '../util/LogUtils';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -23,7 +22,10 @@ export type VerticalAlignmentType = 'top' | 'bottom' | 'middle';
 export type Formatter = (value: any, entry: LegendPayload, index: number) => ReactNode;
 
 export interface LegendPayload {
-  value: any;
+  /**
+   * This is the text that will be displayed in the legend in the DOM.
+   */
+  value: string;
   type?: LegendType;
   color?: string;
   payload?: {
@@ -158,15 +160,8 @@ export class DefaultLegendContent extends PureComponent<Props> {
         return null;
       }
 
-      // Do not render entry.value as functions. Always require static string properties.
-      const entryValue = typeof entry.value !== 'function' ? entry.value : null;
-      warn(
-        typeof entry.value !== 'function',
-        `The name property is also required when using a function for the dataKey of a chart's cartesian components. Ex: <Bar name="Name of my Data"/>`, // eslint-disable-line max-len
-      );
-
       const color = entry.inactive ? inactiveColor : entry.color;
-      const finalValue = finalFormatter ? finalFormatter(entryValue, entry, i) : entryValue;
+      const finalValue = finalFormatter ? finalFormatter(entry.value, entry, i) : entry.value;
 
       return (
         <li

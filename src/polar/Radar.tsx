@@ -97,7 +97,7 @@ function getLegendItemColor(stroke: string | undefined, fill: string): string {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
-const computeLegendPayloadFromRadarSectors = (props: Props): Array<LegendPayload> => {
+const computeLegendPayloadFromRadarSectors = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, fill, legendType, hide } = props;
   return [
     {
@@ -105,7 +105,7 @@ const computeLegendPayloadFromRadarSectors = (props: Props): Array<LegendPayload
       dataKey,
       type: legendType,
       color: getLegendItemColor(stroke, fill),
-      value: name || dataKey,
+      value: getTooltipNameProp(name, dataKey),
       payload: props,
     },
   ];
