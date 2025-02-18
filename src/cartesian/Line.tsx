@@ -1,9 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
 import React, { Component, PureComponent } from 'react';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
+import { dequal } from 'dequal';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -446,7 +446,7 @@ class LineWithState extends Component<InternalProps, State> {
       isAnimationActive &&
       points &&
       points.length &&
-      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points))
+      ((!prevPoints && totalLength > 0) || !dequal(prevPoints, points))
     ) {
       return this.renderCurveWithAnimation(needClip, clipPathId);
     }

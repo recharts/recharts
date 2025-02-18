@@ -2,9 +2,9 @@
 import React, { PureComponent, ReactElement, ReactNode, SVGProps, useMemo } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
+import { dequal } from 'dequal';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
@@ -687,7 +687,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     const { sectors, isAnimationActive } = this.props;
     const { prevSectors } = this.state;
 
-    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
+    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !dequal(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
     return this.renderSectorsStatically(sectors);

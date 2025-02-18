@@ -3,9 +3,9 @@ import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react'
 import Animate from 'react-smooth';
 import last from 'lodash/last';
 import first from 'lodash/first';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
+import { dequal } from 'dequal';
 import { interpolateNumber, isNullish } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';
@@ -391,7 +391,7 @@ class RadarWithState extends PureComponent<Props, State> {
     const { points, isAnimationActive, isRange } = this.props;
     const { prevPoints } = this.state;
 
-    if (isAnimationActive && points && points.length && !isRange && (!prevPoints || !isEqual(prevPoints, points))) {
+    if (isAnimationActive && points && points.length && !isRange && (!prevPoints || !dequal(prevPoints, points))) {
       return this.renderPolygonWithAnimation();
     }
 

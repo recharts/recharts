@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import max from 'lodash/max';
-import isEqual from 'lodash/isEqual';
+import { dequal } from 'dequal';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -471,7 +471,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
       isAnimationActive &&
       points &&
       points.length &&
-      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points) || !isEqual(prevBaseLine, baseLine))
+      ((!prevPoints && totalLength > 0) || !dequal(prevPoints, points) || !dequal(prevBaseLine, baseLine))
     ) {
       return this.renderAreaWithAnimation(needClip, clipPathId);
     }

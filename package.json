@@ -70,6 +70,7 @@
     "@reduxjs/toolkit": "1.x.x || 2.x.x",
     "clsx": "^2.1.1",
     "decimal.js-light": "^2.5.1",
+    "dequal": "^2.0.3",
     "eventemitter3": "^5.0.1",
     "immer": "^10.1.1",
     "lodash": "^4.17.21",

@@ -2,8 +2,8 @@
 import React, { Component, PureComponent, ReactElement, useMemo } from 'react';
 import Animate from 'react-smooth';
 
-import isEqual from 'lodash/isEqual';
 import clsx from 'clsx';
+import { dequal } from 'dequal';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { filterProps, findAllByType } from '../util/ReactUtils';
@@ -490,7 +490,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
     const { points, isAnimationActive } = this.props;
     const { prevPoints } = this.state;
 
-    if (isAnimationActive && points && points.length && (!prevPoints || !isEqual(prevPoints, points))) {
+    if (isAnimationActive && points && points.length && (!prevPoints || !dequal(prevPoints, points))) {
       return this.renderSymbolsWithAnimation();
     }
 
