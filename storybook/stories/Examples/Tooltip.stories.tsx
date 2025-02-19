@@ -36,8 +36,8 @@ const SimpleTooltipStory = {
         <ComposedChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Line dataKey="uv" />
           <Tooltip {...tooltipArgs} />
+          <Line dataKey="uv" />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -69,9 +69,9 @@ export const SettingTooltipIndex = {
       <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
       <XAxis dataKey="name" />
       <YAxis />
+      <Tooltip {...tooltipArgs} />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
-      <Tooltip {...tooltipArgs} />
     </LineChart>
   ),
   args: {
@@ -113,13 +113,13 @@ export const LockedByClick = {
             setIsLocked(!isLocked);
           }}
         >
-          <Line dataKey="uv" />
-          <Bar dataKey="pv" />
           <Tooltip
             {...tooltipArgs}
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
           />
+          <Line dataKey="uv" />
+          <Bar dataKey="pv" />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -142,10 +142,10 @@ export const CssScaledParent = {
         <div style={{ display: 'flex' }}>
           <ResponsiveContainer width="100%" height={200}>
             <ComposedChart data={pageData}>
-              <Line dataKey="uv" />
-              <Bar dataKey="pv" />
               <XAxis dataKey="name" />
               <Tooltip />
+              <Line dataKey="uv" />
+              <Bar dataKey="pv" />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -163,9 +163,9 @@ export const CssScaledParent = {
         <div style={{ transform: `scale(${scale})`, transformOrigin: '50% 0' }}>
           <ResponsiveContainer width="100%" height={200}>
             <ComposedChart data={pageData}>
+              <XAxis dataKey="name" />
               <Line dataKey="uv" />
               <Bar dataKey="pv" />
-              <XAxis dataKey="name" />
               <Tooltip {...tooltipArgs} />
             </ComposedChart>
           </ResponsiveContainer>
@@ -204,10 +204,9 @@ export const SeparateDataSetsForChart = {
         <ComposedChart data={areaData}>
           <XAxis dataKey="category" type="category" />
           <YAxis dataKey="value" />
-
+          <Tooltip {...tooltipProps} />
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
-          <Tooltip {...tooltipProps} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -292,11 +291,10 @@ export const LargeDataArray = {
           }}
           data={generateMockData(1000, 334058656)}
         >
+          <Tooltip {...args} />
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
-          {/* The target component */}
-          <Tooltip {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -322,10 +320,9 @@ export const IncludeHidden = {
           }}
           data={pageData}
         >
+          <Tooltip {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
-          {/* The target component */}
-          <Tooltip {...args} />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -387,10 +384,10 @@ export const TallTooltipInNarrowChart = {
     return (
       <ResponsiveContainer width="100%" height={50}>
         <LineChart data={pageData}>
+          <Tooltip {...args} />
           <Line dataKey="uv" fill="green" />
           <Line dataKey="pv" fill="red" />
           <Line dataKey="amt" fill="amt" />
-          <Tooltip {...args} />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -410,9 +407,9 @@ export const TooltipWithPortal = {
       <>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={pageData}>
+            {portalRef && <Tooltip {...tooltipProps} portal={portalRef} />}
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
-            {portalRef && <Tooltip {...tooltipProps} portal={portalRef} />}
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -469,8 +466,8 @@ export const RechartsAlphaTooltipBug5516Repro = {
           </button>
           <ResponsiveContainer>
             <LineChart data={d1} style={{ border: '1px solid black' }}>
-              <Line dataKey="Triggers" />
               <Tooltip {...tooltipProps} />
+              <Line dataKey="Triggers" />
               <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
             </LineChart>
           </ResponsiveContainer>

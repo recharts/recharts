@@ -17,11 +17,11 @@ export const XAxisWithMultipleAxes = {
         <XAxis {...args} mirror dataKey="uv" xAxisId="b" height={50} />
         <XAxis {...args} dataKey="pv" type="number" xAxisId="c" height={60} />
         <XAxis {...args} mirror dataKey="amt" type="number" orientation="top" xAxisId="d" height={20} />
+        <Tooltip defaultIndex={2} axisId="a" />
         <Line dataKey="name" xAxisId="a" />
         <Line dataKey="uv" xAxisId="b" />
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
-        <Tooltip defaultIndex={2} axisId="a" />
       </LineChart>
       <p>
         {`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a

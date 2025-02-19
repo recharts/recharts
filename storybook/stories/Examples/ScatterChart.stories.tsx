@@ -53,8 +53,8 @@ export const Simple: Meta<ScatterProps> = {
           <CartesianGrid />
           <XAxis type="number" dataKey="x" name="stature" unit="cm" />
           <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-          <Scatter activeShape={args.activeShape} name="A school" data={data} fill="#8884d8" />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} defaultIndex={1} />
+          <Scatter activeShape={args.activeShape} name="A school" data={data} fill="#8884d8" />
           <Legend />
         </ScatterChart>
       </ResponsiveContainer>

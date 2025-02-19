@@ -95,9 +95,9 @@ export const Dashed = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip defaultIndex={3} active />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeDasharray="5 5" />
           <Line type="monotone" dataKey="uv" stroke="#82ca9d" strokeDasharray="3 4 5 2" />
-          <Tooltip defaultIndex={3} active />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
@@ -124,9 +124,9 @@ export const Vertical = {
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
           <Legend />
+          <Tooltip defaultIndex={4} active />
           <Line dataKey="pv" stroke="#8884d8" />
           <Line dataKey="uv" stroke="#82ca9d" />
-          <Tooltip defaultIndex={4} active />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
       </ResponsiveContainer>
