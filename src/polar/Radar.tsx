@@ -14,7 +14,7 @@ import { Polygon } from '../shape/Polygon';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
-import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration } from '../util/types';
+import { LegendType, TooltipType, AnimationTiming, DataKey, AnimationDuration, ActiveDotType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
@@ -49,7 +49,7 @@ interface RadarProps {
   baseLinePoints?: RadarPoint[];
   isRange?: boolean;
   shape?: ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>);
-  activeDot?: RadarDot;
+  activeDot?: ActiveDotType;
   dot?: RadarDot;
   legendType?: LegendType;
   tooltipType?: TooltipType;

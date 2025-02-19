@@ -21,7 +21,7 @@ import {
   TickItem,
   TooltipType,
 } from '../util/types';
-import { filterProps, hasClipDot } from '../util/ReactUtils';
+import { filterProps, isClipDot } from '../util/ReactUtils';
 import type { LegendPayload } from '../component/DefaultLegendContent';
 import { ActivePoints } from '../component/ActivePoints';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
@@ -506,7 +506,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
     const layerClass = clsx('recharts-area', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = hasClipDot(dot) ? dot : {};
+    const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
 
     return (
