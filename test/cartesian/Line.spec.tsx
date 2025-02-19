@@ -1,13 +1,22 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { Line, ErrorBar, LineChart, Customized, XAxis, LineProps } from '../../src';
+import { describe, it, expect, vi, test, beforeEach } from 'vitest';
+import { Line, ErrorBar, LineChart, Customized, XAxis, LineProps, Tooltip } from '../../src';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
+import { PageData } from '../_data';
+import { ActiveDotProps, ActiveDotType } from '../../src/util/types';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('<Line />', () => {
+  beforeEach(() => {
+    mockGetBoundingClientRect({ width: 100, height: 100 });
+  });
+
   const data = [
     { x: 10, y: 50, value: 100 },
     { x: 50, y: 50, value: 100 },
@@ -161,6 +170,67 @@ describe('<Line />', () => {
       },
     ]);
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  describe('activeDot', () => {
+    test('Renders active dot when activeDot=true', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line activeDot type="monotone" dataKey="uv" />
+          <Tooltip />
+        </LineChart>,
+      );
+
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(1);
+    });
+
+    test('Renders no active dot when activeDot=false', () => {
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line activeDot={false} type="monotone" dataKey="uv" />
+          <Tooltip />
+        </LineChart>,
+      );
+
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+    });
+
+    test('passes props to activeDot function', () => {
+      const spy: ActiveDotType = vi.fn();
+      const { container } = render(
+        <LineChart width={400} height={400} data={PageData}>
+          <Line activeDot={spy} type="monotone" dataKey="uv" />
+          <Tooltip />
+        </LineChart>,
+      );
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+
+      const expectedProps: ActiveDotProps = {
+        cx: 161,
+        cy: 102.5,
+        fill: '#3182bd',
+        dataKey: 'uv',
+        index: 2,
+        payload: {
+          amt: 2400,
+          name: 'Page C',
+          pv: 1398,
+          uv: 300,
+        },
+        r: 4,
+        stroke: '#fff',
+        strokeWidth: 2,
+        value: 300,
+      };
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(expectedProps);
+    });
   });
 
   describe('Tooltip integration', () => {

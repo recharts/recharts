@@ -2,7 +2,6 @@ import get from 'lodash/get';
 
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
-import { DotProps } from '..';
 import { isNullish, isNumber } from './DataUtils';
 import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
@@ -136,7 +135,12 @@ export const validateWidthHeight = ({ width, height }: { width: number; height: 
   return true;
 };
 
-export const hasClipDot = (dot: ActiveDotType): dot is DotProps => dot && typeof dot === 'object' && 'clipDot' in dot;
+export const isClipDot = (dot: ActiveDotType): boolean => {
+  if (dot && typeof dot === 'object' && 'clipDot' in dot) {
+    return Boolean(dot.clipDot);
+  }
+  return true;
+};
 
 /**
  * Checks if the property is valid to spread onto an SVG element or onto a specific component

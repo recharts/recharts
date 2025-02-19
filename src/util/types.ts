@@ -606,7 +606,7 @@ export const SVGElementPropKeys = [
   'style',
   /*
    * removed 'type' SVGElementPropKey because we do not currently use any SVG elements
-   * that can use it and it conflicts with the recharts prop 'type'
+   * that can use it, and it conflicts with the recharts prop 'type'
    * https://github.com/recharts/recharts/pull/3327
    * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/type
    */
@@ -1169,7 +1169,7 @@ export interface BaseAxisProps {
 /** Defines how ticks are placed and whether / how tick collisions are handled.
  * 'preserveStart' keeps the left tick on collision and ensures that the first tick is always shown.
  * 'preserveEnd' keeps the right tick on collision and ensures that the last tick is always shown.
- * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks are always shown.
+ * 'preserveStartEnd' keeps the left tick on collision and ensures that the first and last ticks always show.
  * 'equidistantPreserveStart' selects a number N such that every nTh tick will be shown without collision.
  */
 export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveStartEnd' | 'equidistantPreserveStart';
@@ -1336,6 +1336,22 @@ export interface SankeyLink {
 export type Size = { width: number; height: number };
 
 /**
+ * These are the props we are going to pass to an `activeDot` if it is a function or a custom Component
+ */
+export type ActiveDotProps = DotProps & {
+  payload: any;
+  index: number;
+  dataKey: DataKey<any>;
+  cx: number;
+  cy: number;
+  r: number;
+  fill: string;
+  strokeWidth: number;
+  stroke: string;
+  value: any;
+};
+
+/**
  * This is the type of `activeDot` prop on:
  * - Area
  * - Line
@@ -1349,11 +1365,11 @@ export type ActiveDotType =
   /**
    * activeDot can be a custom React Component
    */
-  | ((props: DotProps) => ReactElement<SVGElement>)
+  | ((props: ActiveDotProps) => ReactElement<SVGElement>)
   /**
    * activeDot can be an object; props from here will be appended to the default active dot
    */
-  | DotProps
+  | Partial<ActiveDotProps>
   /**
    * activeDot can be an element; it will get cloned and will receive new extra props.
    */

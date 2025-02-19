@@ -11,7 +11,7 @@ import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { interpolateNumber, isNullish, uniqueId } from '../util/DataUtils';
-import { filterProps, hasClipDot } from '../util/ReactUtils';
+import { filterProps, isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
@@ -481,7 +481,7 @@ class LineWithState extends Component<InternalProps, State> {
     const layerClass = clsx('recharts-line', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
-    const { clipDot = true } = hasClipDot(dot) ? dot : {};
+    const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
 
     return (

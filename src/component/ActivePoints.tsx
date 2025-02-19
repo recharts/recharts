@@ -1,7 +1,7 @@
 import React, { cloneElement, isValidElement } from 'react';
-import { ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
+import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { Dot, Props as DotProps } from '../shape/Dot';
+import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { useTooltipAxis } from '../context/useTooltipAxis';
 import { findEntryInArray, isNullish } from '../util/DataUtils';
@@ -35,8 +35,7 @@ const renderActivePoint = ({
   if (activeDot === false) {
     return null;
   }
-  const dotProps: DotProps = {
-    // @ts-expect-error Dot does not expect the 'index' prop
+  const dotProps: ActiveDotProps = {
     index: childIndex,
     dataKey,
     cx: point.x,
