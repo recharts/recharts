@@ -5,10 +5,9 @@ import get from 'lodash/get';
 import sumBy from 'lodash/sumBy';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
-import { Tooltip } from '../component/Tooltip';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { validateWidthHeight, findChildByType, filterProps } from '../util/ReactUtils';
+import { validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
@@ -479,9 +478,6 @@ type Props = SVGProps<SVGElement> & SankeyProps;
 type SankeyElementType = 'node' | 'link';
 
 interface State {
-  activeElement?: NodeProps | LinkProps;
-  activeElementType?: SankeyElementType;
-  isTooltipActive: boolean;
   nodes: SankeyNode[];
   links: SankeyLink[];
   modifiedNodes: NodeProps[];
@@ -816,9 +812,6 @@ export class Sankey extends PureComponent<Props, State> {
   };
 
   state: State = {
-    activeElement: null,
-    activeElementType: null,
-    isTooltipActive: false,
     nodes: [],
     links: [],
     modifiedLinks: [],
@@ -887,76 +880,22 @@ export class Sankey extends PureComponent<Props, State> {
   }
 
   handleMouseEnter(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType([children], Tooltip);
-
-    if (tooltipItem) {
-      this.setState(
-        prev => {
-          if (tooltipItem.props.trigger === 'hover') {
-            return { ...prev, activeElement: item, activeElementType: type, isTooltipActive: true };
-          }
-          return prev;
-        },
-        () => {
-          if (onMouseEnter) {
-            onMouseEnter(item, type, e);
-          }
-        },
-      );
-    } else if (onMouseEnter) {
+    const { onMouseEnter } = this.props;
+    if (onMouseEnter) {
       onMouseEnter(item, type, e);
     }
   }
 
   handleMouseLeave(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const { onMouseLeave } = this.props;
 
-    if (tooltipItem) {
-      this.setState(
-        prev => {
-          if (tooltipItem.props.trigger === 'hover') {
-            return { ...prev, activeElement: undefined, activeElementType: undefined, isTooltipActive: false };
-          }
-          return prev;
-        },
-        () => {
-          if (onMouseLeave) {
-            onMouseLeave(item, type, e);
-          }
-        },
-      );
-    } else if (onMouseLeave) {
+    if (onMouseLeave) {
       onMouseLeave(item, type, e);
     }
   }
 
   handleClick(item: NodeProps | LinkProps, type: SankeyElementType, e: MouseEvent) {
-    const { onClick, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
-
-    if (tooltipItem && tooltipItem.props.trigger === 'click') {
-      if (this.state.isTooltipActive) {
-        this.setState(prev => {
-          return {
-            ...prev,
-            activeElement: undefined as NodeProps | LinkProps | undefined,
-            activeElementType: undefined as SankeyElementType | undefined,
-            isTooltipActive: false,
-          };
-        });
-      } else {
-        this.setState(prev => {
-          return {
-            ...prev,
-            activeElement: item,
-            activeElementType: type,
-            isTooltipActive: true,
-          };
-        });
-      }
-    }
+    const { onClick } = this.props;
 
     if (onClick) onClick(item, type, e);
   }
