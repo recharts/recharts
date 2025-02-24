@@ -41,6 +41,7 @@ type BrushTickFormatter = (value: any, index: number) => number | string;
 interface BrushProps {
   x?: number;
   y?: number;
+  dy?: number;
   width?: number;
   className?: string;
 
@@ -784,6 +785,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       children,
       x,
       y,
+      dy,
       width,
       height,
       alwaysShowText,
@@ -813,6 +815,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
     const layerClass = clsx('recharts-brush', className);
     const style = generatePrefixStyle('userSelect', 'none');
+    const calculatedY = y + (dy ?? 0);
 
     return (
       <Layer
@@ -821,14 +824,14 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         onTouchMove={this.handleTouchMove}
         style={style}
       >
-        <Background x={x} y={y} width={width} height={height} fill={fill} stroke={stroke} />
+        <Background x={x} y={calculatedY} width={width} height={height} fill={fill} stroke={stroke} />
         <PanoramaContextProvider>
-          <Panorama x={x} y={y} width={width} height={height} data={data} padding={padding}>
+          <Panorama x={x} y={calculatedY} width={width} height={height} data={data} padding={padding}>
             {children}
           </Panorama>
         </PanoramaContextProvider>
         <Slide
-          y={y}
+          y={calculatedY}
           height={height}
           stroke={stroke}
           travellerWidth={travellerWidth}
@@ -842,7 +845,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         <TravellerLayer
           travellerX={startX}
           id="startX"
-          otherProps={this.props}
+          otherProps={{ ...this.props, y: calculatedY }}
           onMouseEnter={this.handleEnterSlideOrTraveller}
           onMouseLeave={this.handleLeaveSlideOrTraveller}
           onMouseDown={this.travellerDragStartHandlers.startX}
@@ -858,7 +861,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         <TravellerLayer
           travellerX={endX}
           id="endX"
-          otherProps={this.props}
+          otherProps={{ ...this.props, y: calculatedY }}
           onMouseEnter={this.handleEnterSlideOrTraveller}
           onMouseLeave={this.handleLeaveSlideOrTraveller}
           onMouseDown={this.travellerDragStartHandlers.endX}
@@ -875,7 +878,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
           <BrushText
             startIndex={startIndex}
             endIndex={endIndex}
-            y={y}
+            y={calculatedY}
             height={height}
             travellerWidth={travellerWidth}
             stroke={stroke}

@@ -32,6 +32,10 @@ const GeneralProps: Args = {
     description: 'The y-coordinate of brush.',
     table: { type: { summary: 'number' }, category: 'General' },
   },
+  dy: {
+    description: 'Indicates a shift along the y-axis on the position of the Brush and its content.',
+    table: { type: { summary: 'number' }, category: 'General' },
+  },
   width: {
     description: 'The width of brush.',
     table: { type: { summary: 'number' }, category: 'General' },
