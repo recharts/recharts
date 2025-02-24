@@ -39,11 +39,11 @@ export const radialBarChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSe
  * instead it only reacts to hovering over individual RadialBars.
  */
 export const radialBarMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-radial-bar-sector';
-export const sankeyNodeChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
+export const sankeyNodeMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
   '.recharts-sankey-nodes .recharts-rectangle';
-export const scatterChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-scatter-symbol';
-export const sankeyChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
+export const sankeyLinkMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
   '.recharts-sankey-links .recharts-sankey-link';
+export const scatterChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-scatter-symbol';
 export const sunburstChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector = '.recharts-sector';
 export const treemapNodeChartMouseHoverTooltipSelector: MouseHoverTooltipTriggerSelector =
   '.recharts-treemap-depth-2 .recharts-rectangle';

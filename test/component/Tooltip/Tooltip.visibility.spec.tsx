@@ -53,7 +53,7 @@ import {
   pieChartMouseHoverTooltipSelector,
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
-  sankeyNodeChartMouseHoverTooltipSelector,
+  sankeyNodeMouseHoverTooltipSelector,
   scatterChartMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
   treemapNodeChartMouseHoverTooltipSelector,
@@ -265,7 +265,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: sankeyNodeChartMouseHoverTooltipSelector,
+  mouseHoverSelector: sankeyNodeMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(35px, 114.89236115144739px);',
 };
 

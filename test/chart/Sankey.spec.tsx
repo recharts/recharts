@@ -1,15 +1,16 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
-import { Customized, Sankey, XAxis, YAxis } from '../../src';
+import { Customized, Sankey, Tooltip, XAxis, YAxis } from '../../src';
 import { exampleSankeyData } from '../_data';
 import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { assertNotNull } from '../helper/assertNotNull';
 import {
-  sankeyChartMouseHoverTooltipSelector,
-  sankeyNodeChartMouseHoverTooltipSelector,
+  sankeyLinkMouseHoverTooltipSelector,
+  sankeyNodeMouseHoverTooltipSelector,
 } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {
@@ -91,6 +92,147 @@ describe('<Sankey />', () => {
     });
   });
 
+  describe('with Tooltip trigger=hover', () => {
+    it('should display Tooltip on mouse enter on Link and hide it on mouse leave', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="hover" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = showTooltip(container, sankeyLinkMouseHoverTooltipSelector);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should display Tooltip on mouse enter on a Node and hide it on mouse leave', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="hover" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = showTooltip(container, sankeyNodeMouseHoverTooltipSelector);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not display Tooltip when clicking on a Link', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="hover" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      const tooltipTriggerElement = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not display Tooltip when clicking on a Node', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="hover" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      const tooltipTriggerElement = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+  });
+
+  describe('with Tooltip trigger=click', () => {
+    it('should display Tooltip on mouse click on Link and keep it on second click', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="click" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+    });
+
+    it('should display Tooltip on mouse enter on a Node and keep it on mouse leave', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="click" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+    });
+
+    it('should do nothing on hover over Link or Node', () => {
+      const { container } = render(
+        <Sankey width={1000} height={500} data={exampleSankeyData}>
+          <XAxis dataKey="number" type="number" />
+          <YAxis type="category" dataKey="name" />
+          <Tooltip trigger="click" />
+        </Sankey>,
+      );
+
+      const tooltip = getTooltip(container);
+      showTooltip(container, sankeyLinkMouseHoverTooltipSelector);
+      showTooltip(container, sankeyNodeMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+    });
+  });
+
   describe('tooltip state', () => {
     it('should start with tooltip inactive, and activate it on hover and click on a link', () => {
       const tooltipStateSpy = vi.fn();
@@ -121,7 +263,7 @@ describe('<Sankey />', () => {
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
 
-      const tooltipTriggerElement = container.querySelector(sankeyChartMouseHoverTooltipSelector);
+      const tooltipTriggerElement = container.querySelector(sankeyLinkMouseHoverTooltipSelector);
       assertNotNull(tooltipTriggerElement);
 
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });
@@ -223,7 +365,7 @@ describe('<Sankey />', () => {
       });
       expect(tooltipStateSpy).toHaveBeenCalledTimes(1);
 
-      const tooltipTriggerElement = container.querySelector(sankeyNodeChartMouseHoverTooltipSelector);
+      const tooltipTriggerElement = container.querySelector(sankeyNodeMouseHoverTooltipSelector);
       assertNotNull(tooltipTriggerElement);
 
       fireEvent.mouseOver(tooltipTriggerElement, { clientX: 200, clientY: 200 });

@@ -49,8 +49,8 @@ import {
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
   radialBarMouseHoverTooltipSelector,
-  sankeyChartMouseHoverTooltipSelector,
-  sankeyNodeChartMouseHoverTooltipSelector,
+  sankeyLinkMouseHoverTooltipSelector,
+  sankeyNodeMouseHoverTooltipSelector,
   sunburstChartMouseHoverTooltipSelector,
   treemapNodeChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
@@ -351,7 +351,7 @@ const SankeyNodeHoverTestCase: TooltipPayloadTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: sankeyNodeChartMouseHoverTooltipSelector,
+  mouseHoverSelector: sankeyNodeMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Agricultural waste : 124.729'],
 };
@@ -363,7 +363,7 @@ const SankeyLinkHoverTestCase: TooltipPayloadTestCase = {
       {children}
     </Sankey>
   ),
-  mouseHoverSelector: sankeyChartMouseHoverTooltipSelector,
+  mouseHoverSelector: sankeyLinkMouseHoverTooltipSelector,
   expectedTooltipTitle: '',
   expectedTooltipContent: ['Agricultural waste - Bio-conversion : 124.729'],
 };
