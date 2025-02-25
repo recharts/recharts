@@ -8,6 +8,7 @@ import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
 import { useReportScale } from '../util/useReportScale';
 import { ExternalMouseEvents } from './types';
 import { externalEventAction } from '../state/externalEventsMiddleware';
+import { touchEventAction } from '../state/touchEventsMiddleware';
 
 type Nullable<T> = {
   [P in keyof T]: T[P] | undefined;
@@ -96,6 +97,7 @@ export const RechartsWrapper = forwardRef(
       dispatch(externalEventAction({ handler: onTouchStart, reactEvent: e }));
     };
     const myOnTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+      dispatch(touchEventAction(e));
       dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));
     };
     const myOnTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {

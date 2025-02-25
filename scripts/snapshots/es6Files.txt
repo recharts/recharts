@@ -150,6 +150,7 @@
   "es6/state/selectors/tooltipSelectors.js",
   "es6/state/store.js",
   "es6/state/tooltipSlice.js",
+  "es6/state/touchEventsMiddleware.js",
   "es6/synchronisation",
   "es6/synchronisation/syncSelectors.js",
   "es6/synchronisation/types.js",

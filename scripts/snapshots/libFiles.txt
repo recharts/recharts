@@ -150,6 +150,7 @@
   "lib/state/selectors/tooltipSelectors.js",
   "lib/state/store.js",
   "lib/state/tooltipSlice.js",
+  "lib/state/touchEventsMiddleware.js",
   "lib/synchronisation",
   "lib/synchronisation/syncSelectors.js",
   "lib/synchronisation/types.js",

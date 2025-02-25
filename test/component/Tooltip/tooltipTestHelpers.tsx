@@ -51,6 +51,33 @@ export function showTooltipOnCoordinate(
 }
 
 /**
+ * Whenever you're trying to use this function, remember to mock the bounding rect call too, otherwise the jsdom environment
+ * will never recognize the touch event as a chart event.
+ *
+ * @param container Element rendered in the test
+ * @param selector Tooltip reacts to different triggers based on props, this is the selector that will be used to find the trigger element. If undefined then uses the container element itself.
+ * @param coordinates X, Y coordinate of the touch event
+ * @param debug Optional function that will be called if the tooltip trigger element is not found
+ * @returns Tooltip trigger element
+ */
+export function showTooltipOnCoordinateTouch(
+  container: Element,
+  selector: string | undefined,
+  coordinates: MouseCoordinate | undefined,
+  debug?: () => void,
+): Element {
+  const tooltipTriggerElement = selector != null ? container.querySelector(selector) : container;
+  if (tooltipTriggerElement == null && debug != null) {
+    debug();
+  }
+  assertNotNull(tooltipTriggerElement);
+  expect(tooltipTriggerElement).toBeInTheDocument();
+  expect(tooltipTriggerElement).toBeVisible();
+  fireEvent.touchMove(tooltipTriggerElement, { touches: [coordinates] });
+  return tooltipTriggerElement;
+}
+
+/**
  * Test helper that will simulate a mouse over event on a given element which should trigger the tooltip to show.
  * This function will use default coordinates of 200, 200.
  *

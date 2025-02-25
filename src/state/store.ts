@@ -15,6 +15,7 @@ import { polarAxisReducer } from './polarAxisSlice';
 import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 import { externalEventsMiddleware } from './externalEventsMiddleware';
+import { touchEventMiddleware } from './touchEventsMiddleware';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
@@ -48,6 +49,7 @@ export const createRechartsStore = (
         mouseMoveMiddleware.middleware,
         keyboardEventsMiddleware.middleware,
         externalEventsMiddleware.middleware,
+        touchEventMiddleware.middleware,
       ]),
     devTools: {
       serialize: {
