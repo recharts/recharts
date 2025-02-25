@@ -1,7 +1,6 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, test } from 'vitest';
 import { fireEvent, getByText, render } from '@testing-library/react';
-
 import {
   Area,
   AreaChart,
@@ -42,6 +41,7 @@ import {
   MouseCoordinate,
   showTooltip,
   showTooltipOnCoordinate,
+  showTooltipOnCoordinateTouch,
 } from './tooltipTestHelpers';
 import {
   areaChartMouseHoverTooltipSelector,
@@ -403,6 +403,50 @@ describe('Tooltip visibility', () => {
       expect(tooltip1.getAttribute('style')).toContain('left: 0px');
 
       fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
+
+      const tooltip2 = getTooltip(container);
+
+      expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
+    });
+
+    it('should move onTouchMove', async context => {
+      // TODO: these charts currently do not work onTouchMove. Did they before?
+      // This is because these are set via item rather than axis. The middleware currently only sets axis coordinates.
+      if (
+        name === 'SunburstChart' ||
+        name === 'Treemap' ||
+        name === 'FunnelChart' ||
+        name === 'Sankey' ||
+        name === 'PieChart' ||
+        name === 'ScatterChart'
+      ) {
+        context.skip();
+      }
+
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = render(
+        <Wrapper>
+          <Tooltip />
+        </Wrapper>,
+      );
+
+      showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
+        clientX: 200,
+        clientY: 200,
+      });
+
+      const tooltip1 = getTooltip(container);
+      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
+
+      showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
+        clientX: 201,
+        clientY: 201,
+      });
 
       const tooltip2 = getTooltip(container);
 
@@ -1336,6 +1380,33 @@ describe('Tooltip visibility', () => {
       expect(tooltip1.getAttribute('style')).toContain('left: 0px');
 
       showTooltipOnCoordinate(container, RadialBarChartTestCase.mouseHoverSelector, { clientX: 201, clientY: 201 });
+
+      const tooltip2 = getTooltip(container);
+
+      expect(tooltip2.getAttribute('style')).toContain(RadialBarChartTestCase.expectedTransform);
+    });
+
+    it('should move onTouchMove', async () => {
+      mockGetBoundingClientRect({
+        width: 10,
+        height: 10,
+      });
+      const { container } = renderTestCase();
+
+      showTooltipOnCoordinateTouch(container, RadialBarChartTestCase.mouseHoverSelector, {
+        clientX: 200,
+        clientY: 200,
+      });
+
+      const tooltip1 = getTooltip(container);
+      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
+
+      showTooltipOnCoordinateTouch(container, RadialBarChartTestCase.mouseHoverSelector, {
+        clientX: 201,
+        clientY: 201,
+      });
 
       const tooltip2 = getTooltip(container);
 
