@@ -326,7 +326,6 @@ const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
   RadialBarChartTestCase,
   SankeyTestCase,
   ScatterChartTestCase,
-  // Sunburst is excluded because it renders tooltip multiple times and all tests fail :( TODO fix and re-enable
   SunburstChartTestCase,
   TreemapTestCase,
 ];
@@ -507,25 +506,7 @@ describe('Tooltip visibility', () => {
     });
 
     describe('active prop', () => {
-      test('with active=true it should render tooltip even after moving the mouse out of the chart.', context => {
-        if (name === 'Sankey') {
-          /*
-           * Sankey chart for some reason ignores active property on Tooltip
-           */
-          context.skip();
-        }
-        if (name === 'Treemap') {
-          /*
-           * Treemap chart for some reason ignores active property on Tooltip
-           */
-          context.skip();
-        }
-        if (name === 'SunburstChart') {
-          /*
-           * SunburstChart for some reason ignores active property on Tooltip
-           */
-          context.skip();
-        }
+      test('with active=true it should render tooltip even after moving the mouse out of the chart.', () => {
         const { container } = render(
           <Wrapper>
             <Tooltip active />
@@ -545,19 +526,7 @@ describe('Tooltip visibility', () => {
         expect(tooltip).toBeVisible();
       });
 
-      test('with active=false it should never render tooltip', context => {
-        if (name === 'Sankey') {
-          /*
-           * Sankey chart for some reason ignores active property on Tooltip
-           */
-          context.skip();
-        }
-        if (name === 'Treemap') {
-          /*
-           * Treemap chart for some reason ignores active property on Tooltip
-           */
-          context.skip();
-        }
+      test('with active=false it should never render tooltip', () => {
         const { container } = render(
           <Wrapper>
             <Tooltip active={false} />
@@ -598,26 +567,15 @@ describe('Tooltip visibility', () => {
 
     describe('defaultIndex prop', () => {
       it('should show tooltip from the beginning if defaultIndex is set to a valid value', context => {
-        if (name === 'FunnelChart') {
-          // IntelliJ (incorrectly) reports the context.skip() as test failure - but CLI says it's skipped. Since CLI is the source of truth I leave this here.
-          // FunnelChart throws an error when called with defaultIndex
-          context.skip();
-        }
         if (name === 'Sankey') {
           /*
-           * Sankey chart for some reason ignores defaultIndex property on Tooltip
+           * Sankey chart won't work with numerical indexes and it will need a different format
            */
           context.skip();
         }
         if (name === 'Treemap') {
           /*
-           * Treemap chart for some reason ignores defaultIndex property on Tooltip
-           */
-          context.skip();
-        }
-        if (name === 'SunburstChart') {
-          /*
-           * SunburstChart for some reason ignores active property on Tooltip
+           * Treemap chart won't work with numerical indexes and it will need a different format
            */
           context.skip();
         }
