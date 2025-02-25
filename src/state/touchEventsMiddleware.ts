@@ -1,7 +1,7 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { AppDispatch, RechartsRootState } from './store';
-import { setActiveMouseOverItemIndex, setMouseOverAxisIndex } from './tooltipSlice';
+import { setMouseOverAxisIndex } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 
 import { getChartPointer } from '../util/getChartPointer';
@@ -28,13 +28,6 @@ touchEventMiddleware.startListening({
     if (activeProps?.activeIndex != null) {
       listenerApi.dispatch(
         setMouseOverAxisIndex({
-          activeIndex: activeProps.activeIndex,
-          activeDataKey: undefined,
-          activeCoordinate: activeProps.activeCoordinate,
-        }),
-      );
-      listenerApi.dispatch(
-        setActiveMouseOverItemIndex({
           activeIndex: activeProps.activeIndex,
           activeDataKey: undefined,
           activeCoordinate: activeProps.activeCoordinate,
