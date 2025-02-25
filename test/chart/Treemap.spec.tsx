@@ -1,10 +1,12 @@
 import React from 'react';
 import { describe, test, expect, it, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
-import { Customized, Treemap, XAxis, YAxis } from '../../src';
+import { Customized, Tooltip, Treemap, XAxis, YAxis } from '../../src';
 import { exampleTreemapData } from '../_data';
 import { TreemapNode, addToTreemapNodeIndex, computeNode, treemapPayloadSearcher } from '../../src/chart/Treemap';
 import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
+import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('<Treemap />', () => {
   test('renders 20 rectangles in simple TreemapChart', () => {
@@ -60,6 +62,77 @@ describe('<Treemap />', () => {
     expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(4);
     expect(container.querySelectorAll('.recharts-treemap-depth-1')).toHaveLength(3);
     expect(container.querySelectorAll('.recharts-treemap-depth-1')[0]).toHaveTextContent('U');
+  });
+
+  describe('with Tooltip trigger=hover', () => {
+    it('should display Tooltip on mouse enter on a Node and hide it on mouse leave', () => {
+      const { container } = render(
+        <Treemap width={1000} height={500} data={exampleTreemapData}>
+          <Tooltip trigger="hover" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = showTooltip(container, treemapNodeChartMouseHoverTooltipSelector);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should not display Tooltip when clicking on a Node', () => {
+      const { container } = render(
+        <Treemap width={1000} height={500} data={exampleTreemapData}>
+          <Tooltip trigger="hover" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      const tooltipTriggerElement = container.querySelector(treemapNodeChartMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+  });
+
+  describe('with Tooltip trigger=click', () => {
+    it('should display Tooltip on mouse enter on a Node and keep it on mouse leave', () => {
+      const { container } = render(
+        <Treemap width={1000} height={500} data={exampleTreemapData}>
+          <Tooltip trigger="click" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = container.querySelector(treemapNodeChartMouseHoverTooltipSelector);
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.click(tooltipTriggerElement);
+
+      expect(tooltip).toBeVisible();
+    });
+
+    it('should do nothing on hover over Node', () => {
+      const { container } = render(
+        <Treemap width={1000} height={500} data={exampleTreemapData}>
+          <Tooltip trigger="click" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      showTooltip(container, treemapNodeChartMouseHoverTooltipSelector);
+      expect(tooltip).not.toBeVisible();
+    });
   });
 
   describe('Treemap layout context', () => {
