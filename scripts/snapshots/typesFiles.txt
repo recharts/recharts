@@ -150,6 +150,7 @@
   "types/state/selectors/tooltipSelectors.d.ts",
   "types/state/store.d.ts",
   "types/state/tooltipSlice.d.ts",
+  "types/state/touchEventsMiddleware.d.ts",
   "types/synchronisation",
   "types/synchronisation/syncSelectors.d.ts",
   "types/synchronisation/types.d.ts",
