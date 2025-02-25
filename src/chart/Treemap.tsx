@@ -3,7 +3,6 @@ import omit from 'lodash/omit';
 import get from 'lodash/get';
 import Smooth from 'react-smooth';
 
-import { Tooltip } from '../component/Tooltip';
 import { Layer } from '../container/Layer';
 import { Surface } from '../container/Surface';
 import { Polygon } from '../shape/Polygon';
@@ -13,7 +12,7 @@ import { COLOR_PANEL } from '../util/Constants';
 import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { findChildByType, validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { validateWidthHeight, filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -338,11 +337,7 @@ export interface Props {
 }
 
 interface State {
-  isTooltipActive: boolean;
-
   isAnimationFinished: boolean;
-
-  activeNode?: TreemapNode;
 
   formatRoot?: TreemapNode;
 
@@ -366,11 +361,7 @@ interface State {
 }
 
 const defaultState: State = {
-  isTooltipActive: false,
-
   isAnimationFinished: false,
-
-  activeNode: null as TreemapNode,
 
   formatRoot: null as TreemapNode,
 
@@ -572,44 +563,18 @@ export class Treemap extends PureComponent<Props, State> {
 
   handleMouseEnter(node: TreemapNode, e: any) {
     e.persist();
-    const { onMouseEnter, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const { onMouseEnter } = this.props;
 
-    if (tooltipItem) {
-      this.setState(
-        {
-          isTooltipActive: true,
-          activeNode: node,
-        },
-        () => {
-          if (onMouseEnter) {
-            onMouseEnter(node, e);
-          }
-        },
-      );
-    } else if (onMouseEnter) {
+    if (onMouseEnter) {
       onMouseEnter(node, e);
     }
   }
 
   handleMouseLeave(node: TreemapNode, e: any) {
     e.persist();
-    const { onMouseLeave, children } = this.props;
-    const tooltipItem = findChildByType(children, Tooltip);
+    const { onMouseLeave } = this.props;
 
-    if (tooltipItem) {
-      this.setState(
-        {
-          isTooltipActive: false,
-          activeNode: null,
-        },
-        () => {
-          if (onMouseLeave) {
-            onMouseLeave(node, e);
-          }
-        },
-      );
-    } else if (onMouseLeave) {
+    if (onMouseLeave) {
       onMouseLeave(node, e);
     }
   }

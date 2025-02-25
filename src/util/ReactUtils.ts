@@ -104,25 +104,6 @@ export function findAllByType<
 }
 
 /**
- * @deprecated instead find another approach that does not require reading React Elements from DOM.
- *
- * Return the first matched child by type, return null otherwise.
- * `type` must be a React.ComponentType
- *
- * @param children do not use
- * @param type do not use
- * @return deprecated do not use
- */
-export function findChildByType<ComponentType extends React.ComponentType>(
-  children: ReactNode[],
-  type: ComponentType | ComponentType[],
-) {
-  const result = findAllByType(children, type);
-
-  return result && result[0];
-}
-
-/**
  * validate the width and height props of a chart element
  * @param  {Object} el A chart element
  * @return {Boolean}   true If the props width and height are number, and greater than 0
