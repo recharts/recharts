@@ -1,4 +1,4 @@
-import React, { CSSProperties, PureComponent, ReactElement, ReactNode, useEffect } from 'react';
+import React, { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,
@@ -119,7 +119,38 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
 
 const emptyPayload: TooltipPayload = [];
 
-function TooltipInternal<TValue extends ValueType, TName extends NameType>(props: TooltipProps<TValue, TName>) {
+const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
+  allowEscapeViewBox: { x: false, y: false },
+  animationDuration: 400,
+  animationEasing: 'ease',
+  axisId: 0,
+  contentStyle: {},
+  cursor: true,
+  filterNull: true,
+  isAnimationActive: !Global.isSsr,
+  itemSorter: 'name',
+  itemStyle: {},
+  labelStyle: {},
+  offset: 10,
+  reverseDirection: { x: false, y: false },
+  separator: ' : ',
+  trigger: 'hover',
+  useTranslate3d: false,
+  wrapperStyle: {},
+};
+
+function resolveDefaultProps<T extends Record<string, any>>(realProps: T, defaultProps: Partial<T>): T {
+  const resolvedProps: T = { ...realProps };
+  return (Object.keys(defaultProps) as (keyof T)[]).reduce((acc: T, key: keyof T): T => {
+    if (acc[key] === undefined) {
+      acc[key] = defaultProps[key];
+    }
+    return acc;
+  }, resolvedProps);
+}
+
+export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
+  const props = resolveDefaultProps(outsideProps, defaultTooltipProps);
   const {
     active: activeFromProps,
     allowEscapeViewBox,
@@ -255,35 +286,4 @@ function TooltipInternal<TValue extends ValueType, TName extends NameType>(props
       )}
     </>
   );
-}
-
-export class Tooltip<TValue extends ValueType, TName extends NameType> extends PureComponent<
-  TooltipProps<TValue, TName>
-> {
-  static displayName = 'Tooltip';
-
-  static defaultProps = {
-    allowEscapeViewBox: { x: false, y: false },
-    animationDuration: 400,
-    animationEasing: 'ease',
-    axisId: 0,
-    contentStyle: {},
-    coordinate: { x: 0, y: 0 },
-    cursor: true,
-    filterNull: true,
-    isAnimationActive: !Global.isSsr,
-    itemSorter: 'name',
-    itemStyle: {},
-    labelStyle: {},
-    offset: 10,
-    reverseDirection: { x: false, y: false },
-    separator: ' : ',
-    trigger: 'hover',
-    useTranslate3d: false,
-    wrapperStyle: {},
-  };
-
-  render() {
-    return <TooltipInternal {...this.props} />;
-  }
 }
