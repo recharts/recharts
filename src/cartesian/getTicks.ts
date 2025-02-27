@@ -162,8 +162,15 @@ export function getTicks(
   const sign = ticks.length >= 2 ? mathSign(ticks[1].coordinate - ticks[0].coordinate) : 1;
   const boundaries = getTickBoundaries(viewBox, sign, sizeKey);
 
-  if (interval === 'equidistantPreserveStart') {
-    return getEquidistantTicks(sign, boundaries, getTickSize, ticks, minTickGap);
+  if (interval === 'equidistantPreserveStart' || interval === 'equidistantPreserveZeroStart') {
+    return getEquidistantTicks(
+      sign,
+      boundaries,
+      getTickSize,
+      ticks,
+      minTickGap,
+      interval === 'equidistantPreserveZeroStart',
+    );
   }
 
   if (interval === 'preserveStart' || interval === 'preserveStartEnd') {
