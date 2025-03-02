@@ -388,7 +388,7 @@ describe('ScatterChart with joint line', () => {
       name: undefined,
       range: [100, 200],
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({ domain: [0, 190], range: [100, 200] }),
       type: 'number',
       unit: undefined,
     });

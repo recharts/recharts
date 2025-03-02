@@ -30,7 +30,7 @@ import {
   selectTooltipAxisType,
   selectTooltipDisplayedData,
 } from '../../src/state/selectors/tooltipSelectors';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -875,7 +875,7 @@ describe('<Pie />', () => {
 
       it('should select tooltip axis scale', () => {
         const { spy } = renderTestCase(selectTooltipAxisScale);
-        expectScale(spy, { domain: [0, 1, 2, 3, 4], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4], range: [0, 360] });
       });
 
       it('should select tooltip ticks', () => {

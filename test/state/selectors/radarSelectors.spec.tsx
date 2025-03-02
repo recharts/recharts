@@ -196,7 +196,10 @@ describe('selectRadiusAxisForBandSize', () => {
       includeHidden: false,
       name: undefined,
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({
+        domain: [0, 100],
+        range: [0, 196],
+      }),
       tick: true,
       tickCount: 5,
       ticks: undefined,
@@ -236,7 +239,7 @@ describe('selectAngleAxisForBandSize', () => {
       includeHidden: false,
       name: undefined,
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] }),
       tick: true,
       tickCount: undefined,
       ticks: undefined,
@@ -246,7 +249,7 @@ describe('selectAngleAxisForBandSize', () => {
   });
 });
 
-describe('selectAngleAxisForRadar', () => {
+describe('selectAngleAxisWithScaleAndViewport', () => {
   const selector = (state: RechartsRootState) => selectAngleAxisWithScaleAndViewport(state, 0, 0);
 
   shouldReturnUndefinedOutOfContext(selector);
@@ -270,7 +273,7 @@ describe('selectAngleAxisForRadar', () => {
       cx: 250,
       cy: 250,
       dataKey: 'value',
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 0, 864, 650, 765, 365], range: [90, -270] }),
       type: 'category',
     });
   });

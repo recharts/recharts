@@ -19,7 +19,7 @@ import {
 } from '../../src/state/selectors/polarSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 type ExpectedRadiusAxisTick = {
@@ -128,7 +128,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1000],
           range: [0, 196],
         });
@@ -378,7 +378,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1000],
           range: [0, 196],
         });
@@ -469,7 +469,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1000],
           range: [0, 196],
         });
@@ -759,7 +759,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1, 2, 3, 4, 5],
           range: [0, 196],
         });
@@ -836,7 +836,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1, 2, 3, 4, 5],
           range: [0, 196],
         });
@@ -950,7 +950,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 400],
           range: [0, 196],
         });
@@ -1037,7 +1037,7 @@ describe('<PolarRadiusAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 400],
           range: [0, 196],
         });

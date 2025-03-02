@@ -16,7 +16,7 @@ import {
 } from '../../src/state/selectors/polarAxisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectPolarAxisScale } from '../../src/state/selectors/polarScaleSelectors';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 describe('<RadarChart />', () => {
@@ -51,7 +51,7 @@ describe('<RadarChart />', () => {
 
     it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+      expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
     });
 
     it('should select angle axis scale type', () => {
@@ -109,7 +109,7 @@ describe('<RadarChart />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectScale(spy, { domain: [0, 1000], range: [0, 150] }); // TODO this returns 0, 196, why?
+      expectLastCalledWithScale(spy, { domain: [0, 1000], range: [0, 150] }); // TODO this returns 0, 196, why?
     });
 
     it('should select radius axis scale type', () => {

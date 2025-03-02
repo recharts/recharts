@@ -20,7 +20,7 @@ import {
   selectPolarCategoricalDomain,
 } from '../../src/state/selectors/polarScaleSelectors';
 import { selectPolarGridAngles, selectPolarGridRadii } from '../../src/state/selectors/polarGridSelectors';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 import { selectAllPolarAppliedNumericalValues, selectPolarNiceTicks } from '../../src/state/selectors/polarSelectors';
 
 type ExpectedLine = {
@@ -542,7 +542,7 @@ describe('<PolarGrid />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 1, 2, 3],
         range: [0, 116],
         bandwidth: 29,
@@ -635,7 +635,7 @@ describe('<PolarGrid />', () => {
 
     it('should select scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 9],
         range: [0, 360],
       });
@@ -888,7 +888,7 @@ describe('<PolarGrid />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 'axis-uv'));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 1520],
           range: [0, 360],
         });
@@ -1123,7 +1123,7 @@ describe('<PolarGrid />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 'axis-name'));
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F', 'Page G'],
           range: [0, 116],
         });
