@@ -13,6 +13,6 @@
   "include": [
     "./**/*",
     "../types.d.ts",
-    "./helper/toBeScaleFunction.ts"
+    "./helper/toBeRechartsScale.ts"
   ]
 }
