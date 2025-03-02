@@ -10,5 +10,9 @@
     "target": "es6",
     "types": ["vitest/globals"]
   },
-  "include": ["./**/*", "../types.d.ts"]
+  "include": [
+    "./**/*",
+    "../types.d.ts",
+    "./helper/toBeRechartsScale.ts"
+  ]
 }

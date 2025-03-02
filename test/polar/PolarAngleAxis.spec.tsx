@@ -20,7 +20,7 @@ import {
   selectPolarNiceTicks,
 } from '../../src/state/selectors/polarSelectors';
 import { useAppSelectorWithStableTest } from '../helper/selectorTestHelpers';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { RadialBarSettings } from '../../src/state/selectors/radialBarSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
@@ -175,7 +175,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -423,7 +423,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -623,7 +623,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -713,7 +713,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 360], range: [90, -270] });
+        expectLastCalledWithScale(spy, { domain: [0, 360], range: [90, -270] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -1754,7 +1754,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [400, 189], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [400, 189], range: [0, 360] });
       });
 
       it('should select real scale type', () => {
@@ -1864,7 +1864,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 400], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [0, 400], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -1952,7 +1952,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [400, 189], range: [360, 0] });
+        expectLastCalledWithScale(spy, { domain: [400, 189], range: [360, 0] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -2147,7 +2147,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 9], range: [20, 220] });
+        expectLastCalledWithScale(spy, { domain: [0, 9], range: [20, 220] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
@@ -2388,7 +2388,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         // why is scale.domain() different from domain?
-        expectScale(spy, { domain: [31.47, 6.67], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [31.47, 6.67], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -2427,7 +2427,7 @@ describe('<PolarAngleAxis />', () => {
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-        expectScale(spy, { domain: [0, 9800], range: [0, 360] });
+        expectLastCalledWithScale(spy, { domain: [0, 9800], range: [0, 360] });
         expect(spy).toHaveBeenCalledTimes(3);
       });
     });
@@ -2572,10 +2572,9 @@ describe('<PolarAngleAxis />', () => {
       expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
       expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
 
-      expect(angleAxisScaleSpy).toHaveBeenLastCalledWith(expect.any(Function));
       expect(angleAxisScaleSpy).toHaveBeenCalledTimes(3);
 
-      expectScale(angleAxisScaleSpy, { domain: [420, 365], range: [-270, 90] });
+      expectLastCalledWithScale(angleAxisScaleSpy, { domain: [420, 365], range: [-270, 90] });
 
       expect(angleAxisTicksSpy).toHaveBeenLastCalledWith([
         {

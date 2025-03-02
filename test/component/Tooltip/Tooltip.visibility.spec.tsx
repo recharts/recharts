@@ -75,7 +75,7 @@ import {
   selectActiveLabel,
   selectIsTooltipActive,
 } from '../../../src/state/selectors/selectors';
-import { expectScale } from '../../helper/expectScale';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 import { TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
@@ -857,7 +857,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
         range: [20, 265],
       });
@@ -979,7 +979,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
         range: [90, -270],
       });
@@ -1267,7 +1267,7 @@ describe('Tooltip visibility', () => {
 
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 1, 2, 3, 4, 5],
         range: [0, 236],
       });
@@ -1419,7 +1419,7 @@ describe('Tooltip visibility', () => {
 
       it('should select tooltip axis scale', () => {
         const { spy } = renderTestCase(selectTooltipAxisScale);
-        expectScale(spy, {
+        expectLastCalledWithScale(spy, {
           domain: [0, 2400],
           range: [65, 395],
         });

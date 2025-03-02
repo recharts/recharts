@@ -67,6 +67,7 @@ import {
 } from '../../helper/selectorTestHelpers';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
 import { assertNotNull } from '../../helper/assertNotNull';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
 
 const defaultAxisId: AxisId = 0;
 
@@ -95,7 +96,7 @@ describe('selectAxisScale', () => {
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenCalledWith(expect.any(Function));
+    expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5], range: [5, 95] });
   });
 
   it('should return scale if there is an Axis in the chart', () => {
@@ -114,7 +115,10 @@ describe('selectAxisScale', () => {
     );
     expect(container.querySelector('.xAxis')).toBeVisible();
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenLastCalledWith(expect.any(Function));
+    expectLastCalledWithScale(spy, {
+      domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+      range: [5, 95],
+    });
   });
 
   it('should be stable', () => {

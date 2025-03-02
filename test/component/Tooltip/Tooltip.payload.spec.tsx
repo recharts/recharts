@@ -76,7 +76,7 @@ import {
   selectTooltipDisplayedData,
   selectTooltipGraphicalItemsData,
 } from '../../../src/state/selectors/tooltipSelectors';
-import { expectScale } from '../../helper/expectScale';
+import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectAxisDomain } from '../../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
@@ -1038,7 +1038,7 @@ describe('Tooltip payload', () => {
 
     it('should select tooltip axis scale', () => {
       const { spy } = renderTestCase(selectTooltipAxisScale);
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
         range: [5, 395],
       });

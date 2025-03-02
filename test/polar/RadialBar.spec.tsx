@@ -17,7 +17,7 @@ import { PolarGraphicalItemSettings } from '../../src/state/graphicalItemsSlice'
 import { PageData, ringsData } from '../_data';
 import { expectRadialBars } from '../helper/expectRadialBars';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { expectScale } from '../helper/expectScale';
+import { expectLastCalledWithScale } from '../helper/expectScale';
 import {
   selectPolarAxisScale,
   selectPolarAxisTicks,
@@ -97,7 +97,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 9800],
         range: [0, 360],
       });
@@ -126,7 +126,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 1, 2, 3, 4, 5],
         range: [0, 196],
       });
@@ -471,7 +471,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 9800],
         range: [0, 360],
       });
@@ -505,7 +505,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
         range: [0, 196],
         bandwidth: 32.666666666666664,
@@ -846,7 +846,7 @@ describe('<RadialBar />', () => {
 
     it('should select angle axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 9],
         range: [0, 360],
       });
@@ -880,7 +880,7 @@ describe('<RadialBar />', () => {
 
     it('should select radius axis scale', () => {
       const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'radiusAxis', 0));
-      expectScale(spy, {
+      expectLastCalledWithScale(spy, {
         domain: [0, 1, 2, 3],
         range: [0, 196],
         bandwidth: 49,
