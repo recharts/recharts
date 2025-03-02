@@ -1,9 +1,10 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Selector } from '@reduxjs/toolkit';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
+  BaseAxisWithScale,
   combineXAxisRange,
   implicitXAxis,
   implicitYAxis,
@@ -15,6 +16,7 @@ import {
   selectAxisRangeWithReverse,
   selectAxisScale,
   selectAxisSettings,
+  selectAxisWithScale,
   selectBaseAxis,
   selectCalculatedXAxisPadding,
   selectCartesianGraphicalItemsData,
@@ -52,8 +54,7 @@ import { misbehavedData, PageData } from '../../_data';
 import { ExpectAxisDomain, expectXAxisTicks } from '../../helper/expectAxisTicks';
 import { addCartesianGraphicalItem, CartesianGraphicalItemSettings } from '../../../src/state/graphicalItemsSlice';
 import { generateMockData } from '../../helper/generateMockData';
-import { AxisId } from '../../../src/state/cartesianAxisSlice';
-import { pageData } from '../../../storybook/stories/data';
+import { AxisId, XAxisSettings } from '../../../src/state/cartesianAxisSlice';
 import { AxisDomain } from '../../../src/util/types';
 import { ChartData } from '../../../src/state/chartDataSlice';
 import { setLegendSize } from '../../../src/state/legendSlice';
@@ -65,6 +66,7 @@ import {
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
 import { useIsPanorama } from '../../../src/context/PanoramaContext';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 const defaultAxisId: AxisId = 0;
 
@@ -367,7 +369,7 @@ describe('selectAxisDomain', () => {
       <LineChart
         width={500}
         height={300}
-        data={pageData}
+        data={PageData}
         margin={{
           top: 5,
           right: 30,
@@ -386,12 +388,12 @@ describe('selectAxisDomain', () => {
         <Comp />
       </LineChart>,
     );
-    expect(domainLeftSpy).toHaveBeenLastCalledWith([0, 1200]);
-    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1200]);
-    expect(scaleLeftSpy).toHaveBeenLastCalledWith([0, 1200]);
-    expect(domainRightSpy).toHaveBeenLastCalledWith([0, 1520]);
-    expect(domainRightIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 1600]);
-    expect(scaleRightSpy).toHaveBeenLastCalledWith([0, 1600]);
+    expect(domainLeftSpy).toHaveBeenLastCalledWith([0, 9800]);
+    expect(domainLeftIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 10000]);
+    expect(scaleLeftSpy).toHaveBeenLastCalledWith([0, 10000]);
+    expect(domainRightSpy).toHaveBeenLastCalledWith([0, 400]);
+    expect(domainRightIncludingNiceTicksSpy).toHaveBeenLastCalledWith([0, 400]);
+    expect(scaleRightSpy).toHaveBeenLastCalledWith([0, 400]);
     expect(domainLeftSpy).toHaveBeenCalledTimes(3);
     expect(domainLeftIncludingNiceTicksSpy).toHaveBeenCalledTimes(3);
     expect(scaleLeftSpy).toHaveBeenCalledTimes(3);
@@ -2467,7 +2469,7 @@ describe('selectErrorBarsSettings', () => {
       return null;
     };
     render(
-      <LineChart width={100} height={100} data={pageData}>
+      <LineChart width={100} height={100} data={PageData}>
         <Line isAnimationActive={false}>
           <ErrorBar dataKey="data-x" direction="x" />
           <ErrorBar dataKey="data-y" direction="y" />
@@ -2779,7 +2781,7 @@ describe('selectNiceTicks', () => {
       return null;
     };
     render(
-      <LineChart width={100} height={100} data={pageData}>
+      <LineChart width={100} height={100} data={PageData}>
         <Line isAnimationActive={false} />
         <XAxis type="number" />
         <Comp />
@@ -2793,9 +2795,9 @@ describe('selectNiceTicks', () => {
   });
 
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
-    { domain: undefined, expectedTicks: [0, 400, 800, 1200, 1600] },
-    { domain: ['auto', 'auto'], expectedTicks: [350, 700, 1050, 1400, 1750] },
-    { domain: [-500, 'auto'], expectedTicks: [-550, 0, 550, 1100, 1650] },
+    { domain: undefined, expectedTicks: [0, 100, 200, 300, 400] },
+    { domain: ['auto', 'auto'], expectedTicks: [180, 240, 300, 360, 420] },
+    { domain: [-500, 'auto'], expectedTicks: [-500, -250, 0, 250, 500] },
     { domain: ['auto', 3000], expectedTicks: [0, 750, 1500, 2250, 3000] },
   ];
 
@@ -2808,7 +2810,7 @@ describe('selectNiceTicks', () => {
       return null;
     };
     render(
-      <LineChart width={100} height={100} data={pageData}>
+      <LineChart width={100} height={100} data={PageData}>
         <Line dataKey="pv" isAnimationActive={false} />
         <XAxis type="number" dataKey="uv" domain={domain} />
         <Comp />
@@ -2871,7 +2873,7 @@ describe('selectStackGroups', () => {
       return null;
     };
     render(
-      <BarChart width={100} height={100} data={pageData}>
+      <BarChart width={100} height={100} data={PageData}>
         <Bar dataKey="uv" stackId="a" />
         <Bar dataKey="pv" stackId="a" />
         <Bar dataKey="uv" stackId="b" />
@@ -2985,7 +2987,7 @@ describe('selectStackGroups', () => {
       return null;
     };
     render(
-      <BarChart width={100} height={100} data={pageData}>
+      <BarChart width={100} height={100} data={PageData}>
         <Bar dataKey="uv" />
         <Bar dataKey="pv" />
         <Bar dataKey="amt" />
@@ -2995,4 +2997,305 @@ describe('selectStackGroups', () => {
     expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
     expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
   });
+});
+
+describe('selectAxisWithScale', () => {
+  const selector = (state: RechartsRootState) => selectAxisWithScale(state, 'xAxis', defaultAxisId, false);
+
+  shouldReturnUndefinedOutOfContext(selector);
+  shouldReturnFromInitialState(selector, undefined);
+
+  it('should return undefined in a chart with no data', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
+      return null;
+    };
+    render(
+      <BarChart width={100} height={100}>
+        <Bar isAnimationActive={false} />
+        <Comp />
+      </BarChart>,
+    );
+    expect(xAxisSpy).toHaveBeenLastCalledWith(undefined);
+    expect(xAxisSpy).toHaveBeenCalledTimes(1);
+    expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
+    expect(yAxisSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return implicit XAxis if there is no axis with matching ID, but undefined YAxis', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', 'foo', isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', 'bar', isPanorama)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line isAnimationActive={false} />
+        <XAxis type="number" />
+        <Comp />
+      </LineChart>,
+    );
+    // There is an XAxis but it has a different ID
+    expect(xAxisSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: undefined,
+      domain: undefined,
+      height: 30,
+      hide: true,
+      id: undefined,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'bottom',
+      padding: {
+        left: 0,
+        right: 0,
+      },
+      reversed: false,
+      scale: expect.any(Function),
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'category',
+      unit: undefined,
+    });
+    expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return axis object in a chart with explicit axes', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line isAnimationActive={false} dataKey="pv" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Comp />
+      </LineChart>,
+    );
+    expect(xAxisSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: 'name',
+      domain: undefined,
+      height: 30,
+      hide: false,
+      id: defaultAxisId,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'bottom',
+      padding: {
+        left: 0,
+        right: 0,
+      },
+      reversed: false,
+      scale: expect.any(Function),
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'category',
+      unit: undefined,
+    });
+    expect(yAxisSpy).toHaveBeenLastCalledWith({
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: undefined,
+      domain: undefined,
+      hide: false,
+      id: 0,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'left',
+      padding: {
+        bottom: 0,
+        top: 0,
+      },
+      reversed: false,
+      scale: expect.any(Function),
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'number',
+      unit: undefined,
+      width: 60,
+    });
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should be stable between different calls', () => {
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      const x1 = useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama));
+      const y1 = useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama));
+      const x2 = useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama));
+      const y2 = useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama));
+
+      expect(x1).toBe(x2);
+      expect(y1).toBe(y2);
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={PageData}>
+        <Line isAnimationActive={false} dataKey="pv" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Comp />
+      </LineChart>,
+    );
+  });
+
+  // https://github.com/recharts/recharts/issues/5625
+  it.fails(
+    'may call the selector again when unrelated props change but it should keep passing the same instance',
+    () => {
+      const xAxisSpy = vi.fn();
+      const yAxisSpy = vi.fn();
+      const Comp = (): null => {
+        const isPanorama = useIsPanorama();
+        xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
+        yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama)));
+        return null;
+      };
+      const TestCase = () => {
+        const [dataKey, setDataKey] = React.useState('uv');
+        return (
+          <>
+            {dataKey === 'uv' ? (
+              <button type="button" onClick={() => setDataKey('pv')}>
+                Change DataKey to pv
+              </button>
+            ) : (
+              <button type="button" onClick={() => setDataKey('uv')}>
+                Change DataKey to uv
+              </button>
+            )}
+            <LineChart width={100} height={100} data={PageData}>
+              <Line isAnimationActive={false} dataKey="pv" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area dataKey={dataKey} />
+              <Comp />
+            </LineChart>
+          </>
+        );
+      };
+
+      const { container } = render(<TestCase />);
+
+      expect(xAxisSpy).toHaveBeenCalledTimes(2);
+      // first call is with undefined, the chart is still parsing, fine
+      expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
+      const expectedXAxis: XAxisSettings & BaseAxisWithScale = {
+        allowDataOverflow: false,
+        allowDecimals: true,
+        allowDuplicatedCategory: true,
+        angle: 0,
+        dataKey: 'name',
+        domain: undefined,
+        height: 30,
+        hide: false,
+        id: defaultAxisId,
+        includeHidden: false,
+        interval: 'preserveEnd',
+        minTickGap: 5,
+        mirror: false,
+        name: undefined,
+        orientation: 'bottom',
+        padding: {
+          left: 0,
+          right: 0,
+        },
+        reversed: false,
+        scale: expect.any(Function),
+        tick: true,
+        tickCount: 5,
+        tickFormatter: undefined,
+        ticks: undefined,
+        type: 'category',
+        unit: undefined,
+      };
+      expect(xAxisSpy).toHaveBeenNthCalledWith(2, expectedXAxis);
+
+      expect(yAxisSpy).toHaveBeenCalledTimes(2);
+      expect(yAxisSpy).toHaveBeenNthCalledWith(1, undefined);
+      expect(yAxisSpy).toHaveBeenNthCalledWith(2, {
+        allowDataOverflow: false,
+        allowDecimals: true,
+        allowDuplicatedCategory: true,
+        angle: 0,
+        dataKey: undefined,
+        domain: undefined,
+        hide: false,
+        id: 0,
+        includeHidden: false,
+        interval: 'preserveEnd',
+        minTickGap: 5,
+        mirror: false,
+        name: undefined,
+        orientation: 'left',
+        padding: {
+          bottom: 0,
+          top: 0,
+        },
+        reversed: false,
+        scale: expect.any(Function),
+        tick: true,
+        tickCount: 5,
+        tickFormatter: undefined,
+        ticks: undefined,
+        type: 'number',
+        unit: undefined,
+        width: 60,
+      });
+
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      expect(xAxisSpy).toHaveBeenCalledTimes(4);
+      // these are indeed equal objects which is good - but they also need to be the same instances for animations to work
+      expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
+      expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
+      expect(xAxisSpy.mock.calls[0][0]).toBe(undefined);
+      expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);
+      expect(xAxisSpy.mock.calls[2][0]).toBe(xAxisSpy.mock.calls[3][0]);
+      expect(xAxisSpy.mock.calls[3][0]).toBe(xAxisSpy.mock.calls[4][0]);
+    },
+  );
 });
