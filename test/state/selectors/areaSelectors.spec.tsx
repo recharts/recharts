@@ -126,19 +126,19 @@ describe('useArea', () => {
   // https://github.com/recharts/recharts/issues/5625
   it.fails('should call one more time after re-render with different dataKey', () => {
     const spy = vi.fn();
+    const Comp = ({ dataKey }: { dataKey: string }): null => {
+      const myAreaSettings = useMemo(
+        () => ({
+          ...areaSettings,
+          dataKey,
+        }),
+        [],
+      );
+      spy(useAppSelectorWithStableTest(state => selectArea(state, 0, 0, false, myAreaSettings)));
+      return null;
+    };
     const TestCase = () => {
       const [dataKey, setDataKey] = React.useState('uv');
-      const Comp = (): null => {
-        const myAreaSettings = useMemo(
-          () => ({
-            ...areaSettings,
-            dataKey,
-          }),
-          [],
-        );
-        spy(useAppSelectorWithStableTest(state => selectArea(state, 0, 0, false, myAreaSettings)));
-        return null;
-      };
       return (
         <>
           {dataKey === 'uv' ? (
@@ -153,7 +153,7 @@ describe('useArea', () => {
           <AreaChart width={400} height={400} data={PageData}>
             <XAxis dataKey="name" />
             <Area dataKey={dataKey} />
-            <Comp />
+            <Comp dataKey={dataKey} />
           </AreaChart>
         </>
       );
