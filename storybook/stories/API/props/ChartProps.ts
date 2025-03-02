@@ -176,6 +176,9 @@ toggling between multiple dataKey.`,
   syncId: {
     description: `If any two categorical charts(LineChart, AreaChart, BarChart, ComposedChart) have the same syncId,
       these two charts can sync the position tooltip, and the startIndex, endIndex of Brush.`,
+    control: {
+      type: 'text',
+    },
     table: {
       type: {
         summary: 'String',
@@ -189,6 +192,11 @@ toggling between multiple dataKey.`,
     In cases where data does not have the same length, this might yield unexpected results. In that case use 'value'
     which will try to match other charts values, or a fully custom function which will receive tick, data as argument
     and should return an index.`,
+    control: {
+      type: 'radio',
+    },
+    options: ['index', 'value'],
+    defaultValue: 'index',
     table: {
       type: {
         summary: "'index' | 'value' | function",
@@ -209,6 +217,9 @@ toggling between multiple dataKey.`,
   },
   title: {
     description: 'The title of chart.',
+    control: {
+      type: 'text',
+    },
     table: {
       type: {
         summary: 'String',

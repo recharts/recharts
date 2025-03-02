@@ -1,57 +1,65 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
+import { StoryContext } from '@storybook/react';
 import { pageData, rangeData } from '../data';
-import { AreaChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Area, Legend } from '../../../src';
+import {
+  AreaChart,
+  ResponsiveContainer,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Area,
+  Legend,
+  ComposedChart,
+} from '../../../src';
+import { CategoricalChartProps } from '../API/props/ChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 
 export default {
   component: AreaChart,
   docs: {
     autodocs: false,
   },
+  argTypes: CategoricalChartProps,
 };
 
 export const Simple = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={pageData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
+        <AreaChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
 };
 
 export const StackedAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={pageData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
+        <AreaChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
@@ -59,37 +67,53 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip active defaultIndex={2} />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           <Legend />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
 };
 
 export const TinyAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={200}
-          height={60}
-          data={pageData}
-          margin={{
-            top: 5,
-            right: 0,
-            left: 0,
-            bottom: 5,
-          }}
-        >
+        <AreaChart {...args}>
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 200,
+    height: 60,
+    data: pageData,
+    margin: {
+      top: 5,
+      right: 0,
+      left: 0,
+      bottom: 5,
+    },
+  },
 };
 
 export const PercentAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
 
     const getPercent = (value: number, total: number = 0) => {
@@ -118,18 +142,7 @@ export const PercentAreaChart = {
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={pageData}
-          stackOffset="expand"
-          margin={{
-            top: 10,
-            right: 30,
-            left: 20,
-            bottom: 20,
-          }}
-        >
+        <AreaChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis tickFormatter={toPercent} />
@@ -137,44 +150,89 @@ export const PercentAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip content={renderTooltipContent} defaultIndex={3} active />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    stackOffset: 'expand',
+    margin: {
+      top: 10,
+      right: 30,
+      left: 20,
+      bottom: 20,
+    },
+  },
 };
 
 export const CardinalAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     const cardinal = curveCardinal.tension(0.2);
 
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={pageData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
+        <AreaChart {...args}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
           <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
 };
 
 export const AreaChartConnectNulls = {
-  render: () => {
-    const data = [
+  render: (args: Record<string, any>, context: StoryContext) => {
+    return (
+      <div style={{ width: '100%' }}>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart {...args}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
+          </AreaChart>
+        </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart {...args}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 200,
+    data: [
       {
         name: 'Page A',
         uv: 4000,
@@ -216,56 +274,51 @@ export const AreaChartConnectNulls = {
         pv: 4300,
         amt: 2100,
       },
-    ];
+    ],
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
+};
 
+export const StackedAreaChartConnectNulls = {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
+          <AreaChart {...args}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
+            <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+            <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           </AreaChart>
         </ResponsiveContainer>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
+          <AreaChart {...args}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
+            <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
+            <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+            <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     );
   },
-};
-
-export const StackedAreaChartConnectNulls = {
-  render: () => {
-    const data = [
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 200,
+    data: [
       {
         name: 'Page A',
         uv: 4000,
@@ -281,6 +334,8 @@ export const StackedAreaChartConnectNulls = {
       {
         name: 'Page C',
         uv: 2000,
+        pv: 9800,
+        amt: 2290,
       },
       {
         name: 'Page D',
@@ -301,113 +356,107 @@ export const StackedAreaChartConnectNulls = {
       },
       {
         name: 'Page G',
+        uv: 3490,
+        pv: 4300,
+        amt: 2100,
       },
-    ];
-
-    return (
-      <div style={{ width: '100%' }}>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-            <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-            <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-          </AreaChart>
-        </ResponsiveContainer>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
-            <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-            <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    );
+    ],
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
   },
 };
 
 export const SynchronisedAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <h4>A demo of synchronized AreaCharts</h4>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={pageData}
-            syncId="anyId"
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
+          <AreaChart {...args}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           </AreaChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
 
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart
-            width={500}
-            height={200}
-            data={pageData}
-            syncId="anyId"
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
+          <AreaChart {...args}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 200,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+    syncId: 'anyId',
+  },
 };
 
 export const AreaChartFillByValue = {
-  render: () => {
-    const data = [
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const gradientOffset = () => {
+      const dataMax = Math.max(...args.data.map((i: any) => i.uv));
+      const dataMin = Math.min(...args.data.map((i: any) => i.uv));
+
+      if (dataMax <= 0) {
+        return 0;
+      }
+      if (dataMin >= 0) {
+        return 1;
+      }
+
+      return dataMax / (dataMax - dataMin);
+    };
+
+    const off = gradientOffset();
+
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <defs>
+            <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+              <stop offset={off} stopColor="green" stopOpacity={1} />
+              <stop offset={off} stopColor="red" stopOpacity={1} />
+            </linearGradient>
+          </defs>
+          <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
+          <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: [
       {
         name: 'Page A',
         uv: 4000,
@@ -450,76 +499,41 @@ export const AreaChartFillByValue = {
         pv: 4300,
         amt: 2100,
       },
-    ];
-
-    const gradientOffset = () => {
-      const dataMax = Math.max(...data.map(i => i.uv));
-      const dataMin = Math.min(...data.map(i => i.uv));
-
-      if (dataMax <= 0) {
-        return 0;
-      }
-      if (dataMin >= 0) {
-        return 1;
-      }
-
-      return dataMax / (dataMax - dataMin);
-    };
-
-    const off = gradientOffset();
-
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <defs>
-            <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-              <stop offset={off} stopColor="green" stopOpacity={1} />
-              <stop offset={off} stopColor="red" stopOpacity={1} />
-            </linearGradient>
-          </defs>
-          <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
-          <Tooltip />
-        </AreaChart>
-      </ResponsiveContainer>
-    );
+    ],
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
   },
 };
 
 export const RangedAreaChart = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={rangeData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
+        <AreaChart {...args}>
           <XAxis dataKey="day" />
           <YAxis />
           <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
           <Tooltip defaultIndex={4} active />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: rangeData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
   },
 };
 
@@ -532,7 +546,7 @@ const rangeData2 = [
 ];
 
 export const RangedAreaChartWithGradient = {
-  render: () => {
+  render: (args: Record<string, any>, context: StoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={rangeData2} width={1000} height={600} margin={{ top: 20, right: 200, bottom: 20, left: 20 }}>
@@ -555,8 +569,61 @@ export const RangedAreaChartWithGradient = {
           />
           <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
           <Tooltip />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </AreaChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+  },
+};
+
+export const WithChangingDataKeyAndAnimations = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const [dataKey, setDataKey] = React.useState('uv');
+    return (
+      <>
+        <form
+          style={{ display: 'flex', flexDirection: 'column' }}
+          onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
+        >
+          <label htmlFor="dataKey-uv" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-uv" name="dataKey" value="uv" checked={dataKey === 'uv'} />
+            dataKey=uv
+          </label>
+          <label htmlFor="dataKey-pv" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-pv" name="dataKey" value="pv" checked={dataKey === 'pv'} />
+            dataKey=pv
+          </label>
+          <label htmlFor="dataKey-empty" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-empty" name="dataKey" value="hidden" checked={dataKey === 'hidden'} />
+            Hidden
+          </label>
+        </form>
+        <ResponsiveContainer width="100%">
+          <ComposedChart {...args}>
+            <Legend />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Area dataKey={dataKey} />
+            <Tooltip />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
   },
 };
