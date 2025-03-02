@@ -197,7 +197,7 @@ describe('selectRadiusAxisForBandSize', () => {
       name: undefined,
       reversed: false,
       scale: expect.toBeRechartsScale({
-        domain: [0, 100],
+        domain: [0, 1000],
         range: [0, 196],
       }),
       tick: true,
@@ -273,7 +273,7 @@ describe('selectAngleAxisWithScaleAndViewport', () => {
       cx: 250,
       cy: 250,
       dataKey: 'value',
-      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 0, 864, 650, 765, 365], range: [90, -270] }),
+      scale: expect.toBeRechartsScale({ domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] }),
       type: 'category',
     });
   });
