@@ -75,6 +75,10 @@ environment.
 
 Thanks to [Chromatic](https://www.chromatic.com/) for providing the visual testing platform that helps us review UI changes and catch visual regressions.
 
+[![JetBrains logo.](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg)](https://jb.gg/OpenSourceSupport)
+
+Thanks to JetBrains for providing OSS development license for their IDEs.
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
