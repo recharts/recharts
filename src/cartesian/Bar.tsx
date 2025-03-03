@@ -5,8 +5,8 @@
 import React, { Key, PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 import { Series } from 'victory-vendor/d3-shape';
+import { dequal } from 'dequal';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
@@ -491,7 +491,7 @@ class BarWithState extends PureComponent<InternalProps, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !dequal(prevData, data))) {
       return this.renderRectanglesWithAnimation();
     }
 

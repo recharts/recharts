@@ -2,9 +2,9 @@
 import React, { PureComponent, ReactElement } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 
 import { Series } from 'victory-vendor/d3-shape';
+import { dequal } from 'dequal';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
@@ -275,7 +275,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
     const { data, isAnimationActive } = this.props;
     const { prevData } = this.state;
 
-    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
+    if (isAnimationActive && data && data.length && (!prevData || !dequal(prevData, data))) {
       return this.renderSectorsWithAnimation();
     }
 

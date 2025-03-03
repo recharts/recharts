@@ -2,9 +2,9 @@
 import React, { PureComponent, useMemo } from 'react';
 import Animate from 'react-smooth';
 import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
+import { dequal } from 'dequal';
 import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
@@ -326,7 +326,7 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
       isAnimationActive &&
       trapezoids &&
       trapezoids.length &&
-      (!prevTrapezoids || !isEqual(prevTrapezoids, trapezoids))
+      (!prevTrapezoids || !dequal(prevTrapezoids, trapezoids))
     ) {
       return this.renderTrapezoidsWithAnimation();
     }
