@@ -120,11 +120,9 @@ describe('selectArea', () => {
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
-});
 
-describe('useArea', () => {
   // https://github.com/recharts/recharts/issues/5625
-  it.fails('should call one more time after re-render with different dataKey', () => {
+  it('should call one more time after re-render with different dataKey', () => {
     const spy = vi.fn();
     const Comp = ({ dataKey }: { dataKey: string }): null => {
       const myAreaSettings = useMemo(
@@ -132,7 +130,7 @@ describe('useArea', () => {
           ...areaSettings,
           dataKey,
         }),
-        [],
+        [dataKey],
       );
       spy(useAppSelectorWithStableTest(state => selectArea(state, 0, 0, false, myAreaSettings)));
       return null;
@@ -160,7 +158,6 @@ describe('useArea', () => {
     };
 
     const { container } = render(<TestCase />);
-    expect(spy).toHaveBeenCalledTimes(2);
     const expectedResultBefore: ComputedArea = {
       baseLine: 365,
       isRange: false,
@@ -233,12 +230,10 @@ describe('useArea', () => {
         },
       ],
     };
+
+    expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
-    expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore);
-    // this again calls with undefined because the dispatch had removed XAxis from state.
-    // There is another dispatch already in the queue adding it back, but there is an in-between render with inconsistent data,
-    // which is not correct and will break the animation.
-    expect(spy).toHaveBeenNthCalledWith(3, expectedResultBefore);
+    expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right points
 
     const button = container.querySelector('button');
     assertNotNull(button);
@@ -257,9 +252,9 @@ describe('useArea', () => {
             pv: 2400,
             uv: 400,
           },
-          value: [0, 400],
+          value: [0, 2400],
           x: 5,
-          y: 5,
+          y: 278.59999999999997,
         },
         {
           payload: {
@@ -268,9 +263,9 @@ describe('useArea', () => {
             pv: 4567,
             uv: 300,
           },
-          value: [0, 300],
+          value: [0, 4567],
           x: 83,
-          y: 95,
+          y: 200.588,
         },
         {
           payload: {
@@ -279,9 +274,9 @@ describe('useArea', () => {
             pv: 1398,
             uv: 300,
           },
-          value: [0, 300],
+          value: [0, 1398],
           x: 161,
-          y: 95,
+          y: 314.672,
         },
         {
           payload: {
@@ -290,9 +285,9 @@ describe('useArea', () => {
             pv: 9800,
             uv: 200,
           },
-          value: [0, 200],
+          value: [0, 9800],
           x: 239,
-          y: 185,
+          y: 12.200000000000006,
         },
         {
           payload: {
@@ -301,9 +296,9 @@ describe('useArea', () => {
             pv: 3908,
             uv: 278,
           },
-          value: [0, 278],
+          value: [0, 3908],
           x: 317,
-          y: 114.80000000000001,
+          y: 224.31199999999998,
         },
         {
           payload: {
@@ -312,20 +307,30 @@ describe('useArea', () => {
             pv: 4800,
             uv: 189,
           },
-          value: [0, 189],
+          value: [0, 4800],
           x: 395,
-          y: 194.90000000000003,
+          y: 192.20000000000002,
         },
       ],
     };
 
-    expect(spy).toHaveBeenCalledTimes(6);
-    // this now fails because it renders previous range (because cartesian items still have reference to the previous dataKey)
-    // with new dataKey coming from props.
-    // A new dispatch is already in progress and will correct it in the next render
-    // but this in-between state is not correct and will break the animation.
+    expect(spy).toHaveBeenCalledTimes(4);
+    /*
+     * This now returns undefined because we're in an inconsistent state:
+     * Props have been updated and are already passing in the new dataKey, but the state has not yet been updated.
+     * A new dispatch is already in progress and will correct it in the next render
+     * but this in-between state is not correct and would render non-sensical data.
+     *
+     * The selector detects this and returns undefined to prevent rendering non-sensical data.
+     *
+     * Area later uses this undefined to interrupt the animation.
+     */
+    expect(spy).toHaveBeenNthCalledWith(3, undefined);
+    /*
+     * Fourth render has the new updated data with consistent dataKey.
+     * Area will resume the animation from the most recent previous data
+     * to the new points.
+     */
     expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfterRerender);
-    expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfterRerender);
-    expect(spy).toHaveBeenNthCalledWith(6, expectedResultAfterRerender);
   });
 });

@@ -606,7 +606,7 @@ export const WithChangingDataKeyAndAnimations = {
             <Legend />
             <XAxis dataKey="name" />
             <YAxis />
-            <Area dataKey={dataKey} />
+            <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
             <Tooltip />
             <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           </ComposedChart>
