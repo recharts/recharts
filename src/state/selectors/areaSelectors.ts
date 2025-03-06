@@ -2,7 +2,13 @@ import { createSelector } from 'reselect';
 import { Series } from 'victory-vendor/d3-shape';
 import { Coordinate, DataKey } from '../../util/types';
 import { BaseValue, computeArea } from '../../cartesian/Area';
-import { selectAxisWithScale, selectStackGroups, selectTicksOfGraphicalItem, StackGroup } from './axisSelectors';
+import {
+  selectAxisWithScale,
+  selectStackGroups,
+  selectTicksOfGraphicalItem,
+  selectUnfilteredCartesianItems,
+  StackGroup,
+} from './axisSelectors';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -82,6 +88,47 @@ const pickAreaSettings = (
   areaSettings: AreaSettings,
 ) => areaSettings;
 
+/*
+ * There is a race condition problem because we read some data from props and some from the state.
+ * The state is updated through a dispatch and is one render behind,
+ * and so we have this weird one tick render where the displayedData in one selector have the old dataKey
+ * but the new dataKey in another selector.
+ *
+ * A proper fix is to either move everything into the state, or read the dataKey always from props
+ * - but this is a smaller change.
+ */
+const selectSynchronisedAreaSettings: (
+  state: RechartsRootState,
+  xAxisId: AxisId,
+  yAxisId: AxisId,
+  isPanorama: boolean,
+  areaSettings: AreaSettings,
+) => AreaSettings | undefined = createSelector(
+  [selectUnfilteredCartesianItems, pickAreaSettings],
+  (areaSettingsState, areaSettingsFromProps) => {
+    if (
+      areaSettingsState.some(
+        cgis =>
+          cgis.type === 'area' &&
+          areaSettingsFromProps.dataKey === cgis.dataKey &&
+          areaSettingsFromProps.stackId === cgis.stackId &&
+          areaSettingsFromProps.data === cgis.data,
+      )
+    ) {
+      /*
+       * now, at least one of the areas has the same dataKey as the one in props.
+       * Is this a perfect match? Maybe not because we could theoretically have two different Areas with the same dataKey
+       * and the same stackId and the same data but still different areas, yes,
+       * but the chances of that happening are ... lowish.
+       *
+       * A proper fix would be to store the areaSettings in a state too, and compare references directly instead of enumerating the properties.
+       */
+      return areaSettingsFromProps;
+    }
+    return undefined;
+  },
+);
+
 export const selectArea: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -98,7 +145,7 @@ export const selectArea: (
     selectGraphicalItemStackedData,
     selectChartDataWithIndexesIfNotInPanorama,
     selectBandSize,
-    pickAreaSettings,
+    selectSynchronisedAreaSettings,
   ],
   (
     layout,
@@ -112,6 +159,7 @@ export const selectArea: (
     areaSettings,
   ) => {
     if (
+      areaSettings == null ||
       (layout !== 'horizontal' && layout !== 'vertical') ||
       xAxis == null ||
       yAxis == null ||

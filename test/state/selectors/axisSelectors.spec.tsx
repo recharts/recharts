@@ -26,6 +26,7 @@ import {
   selectNiceTicks,
   selectSmallestDistanceBetweenValues,
   selectStackGroups,
+  selectXAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import {
@@ -135,6 +136,19 @@ describe('selectAxisScale', () => {
         <Comp />
       </BarChart>,
     );
+  });
+
+  it('should be stable even when there are calls in-between to another axis', () => {
+    const state = createRechartsStore().getState();
+    const result1 = selectAxisScale(state, 'xAxis', defaultAxisId, false);
+    const result2 = selectAxisScale(state, 'xAxis', defaultAxisId, false);
+    expect(result1).toBe(result2);
+
+    selectAxisScale(state, 'xAxis', 'foo', false);
+    selectAxisScale(state, 'yAxis', defaultAxisId, false);
+    selectAxisScale(state, 'yAxis', 'foo', false);
+    const result4 = selectAxisScale(state, 'xAxis', defaultAxisId, false);
+    expect(result1).toBe(result4);
   });
 
   it('should not recompute when an irrelevant property in the state changes', () => {
@@ -3068,7 +3082,7 @@ describe('selectAxisWithScale', () => {
         right: 0,
       },
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({ domain: [0, 1, 2, 3, 4, 5], range: [5, 95] }),
       tick: true,
       tickCount: 5,
       tickFormatter: undefined,
@@ -3119,7 +3133,10 @@ describe('selectAxisWithScale', () => {
         right: 0,
       },
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        range: [65, 95],
+      }),
       tick: true,
       tickCount: 5,
       tickFormatter: undefined,
@@ -3147,7 +3164,7 @@ describe('selectAxisWithScale', () => {
         top: 0,
       },
       reversed: false,
-      scale: expect.any(Function),
+      scale: expect.toBeRechartsScale({ domain: [0, 10000], range: [65, 5] }),
       tick: true,
       tickCount: 5,
       tickFormatter: undefined,
@@ -3183,123 +3200,151 @@ describe('selectAxisWithScale', () => {
   });
 
   // https://github.com/recharts/recharts/issues/5625
-  it.fails(
-    'may call the selector again when unrelated props change but it should keep passing the same instance',
-    () => {
-      const xAxisSpy = vi.fn();
-      const yAxisSpy = vi.fn();
-      const Comp = (): null => {
-        const isPanorama = useIsPanorama();
-        xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
-        yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama)));
-        return null;
-      };
-      const TestCase = () => {
-        const [dataKey, setDataKey] = React.useState('uv');
-        return (
-          <>
-            {dataKey === 'uv' ? (
-              <button type="button" onClick={() => setDataKey('pv')}>
-                Change DataKey to pv
-              </button>
-            ) : (
-              <button type="button" onClick={() => setDataKey('uv')}>
-                Change DataKey to uv
-              </button>
-            )}
-            <LineChart width={100} height={100} data={PageData}>
-              <Line isAnimationActive={false} dataKey="pv" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Area dataKey={dataKey} />
-              <Comp />
-            </LineChart>
-          </>
-        );
-      };
+  it('may call the selector again when unrelated props change but it should keep passing the same instance', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
 
-      const { container } = render(<TestCase />);
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'xAxis', defaultAxisId, isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectAxisWithScale(state, 'yAxis', defaultAxisId, isPanorama)));
+      return null;
+    };
+    const TestCase = () => {
+      const [dataKey, setDataKey] = React.useState('uv');
+      return (
+        <>
+          {dataKey === 'uv' ? (
+            <button type="button" onClick={() => setDataKey('pv')}>
+              Change DataKey to pv
+            </button>
+          ) : (
+            <button type="button" onClick={() => setDataKey('uv')}>
+              Change DataKey to uv
+            </button>
+          )}
+          <LineChart width={100} height={100} data={PageData}>
+            <Line isAnimationActive={false} dataKey={dataKey} />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Comp />
+          </LineChart>
+        </>
+      );
+    };
 
-      expect(xAxisSpy).toHaveBeenCalledTimes(2);
-      // first call is with undefined, the chart is still parsing, fine
-      expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
-      const expectedXAxis: XAxisSettings & BaseAxisWithScale = {
-        allowDataOverflow: false,
-        allowDecimals: true,
-        allowDuplicatedCategory: true,
-        angle: 0,
-        dataKey: 'name',
-        domain: undefined,
-        height: 30,
-        hide: false,
-        id: defaultAxisId,
-        includeHidden: false,
-        interval: 'preserveEnd',
-        minTickGap: 5,
-        mirror: false,
-        name: undefined,
-        orientation: 'bottom',
-        padding: {
-          left: 0,
-          right: 0,
-        },
-        reversed: false,
-        scale: expect.any(Function),
-        tick: true,
-        tickCount: 5,
-        tickFormatter: undefined,
-        ticks: undefined,
-        type: 'category',
-        unit: undefined,
-      };
-      expect(xAxisSpy).toHaveBeenNthCalledWith(2, expectedXAxis);
+    const { container } = render(<TestCase />);
 
-      expect(yAxisSpy).toHaveBeenCalledTimes(2);
-      expect(yAxisSpy).toHaveBeenNthCalledWith(1, undefined);
-      expect(yAxisSpy).toHaveBeenNthCalledWith(2, {
-        allowDataOverflow: false,
-        allowDecimals: true,
-        allowDuplicatedCategory: true,
-        angle: 0,
-        dataKey: undefined,
-        domain: undefined,
-        hide: false,
-        id: 0,
-        includeHidden: false,
-        interval: 'preserveEnd',
-        minTickGap: 5,
-        mirror: false,
-        name: undefined,
-        orientation: 'left',
-        padding: {
-          bottom: 0,
-          top: 0,
-        },
-        reversed: false,
-        scale: expect.any(Function),
-        tick: true,
-        tickCount: 5,
-        tickFormatter: undefined,
-        ticks: undefined,
-        type: 'number',
-        unit: undefined,
-        width: 60,
-      });
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    // first call is with undefined, the chart is still parsing, fine
+    expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
+    const expectedXAxis: XAxisSettings & BaseAxisWithScale = {
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: 'name',
+      domain: undefined,
+      height: 30,
+      hide: false,
+      id: defaultAxisId,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'bottom',
+      padding: {
+        left: 0,
+        right: 0,
+      },
+      reversed: false,
+      scale: expect.toBeRechartsScale({
+        domain: ['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F'],
+        range: [65, 95],
+      }),
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'category',
+      unit: undefined,
+    };
+    // Second call is when the chart is populated
+    expect(xAxisSpy).toHaveBeenNthCalledWith(2, expectedXAxis);
 
-      const button = container.querySelector('button');
-      assertNotNull(button);
-      act(() => {
-        button.click();
-      });
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenNthCalledWith(1, undefined);
+    expect(yAxisSpy).toHaveBeenNthCalledWith(2, {
+      allowDataOverflow: false,
+      allowDecimals: true,
+      allowDuplicatedCategory: true,
+      angle: 0,
+      dataKey: undefined,
+      domain: undefined,
+      hide: false,
+      id: 0,
+      includeHidden: false,
+      interval: 'preserveEnd',
+      minTickGap: 5,
+      mirror: false,
+      name: undefined,
+      orientation: 'left',
+      padding: {
+        bottom: 0,
+        top: 0,
+      },
+      reversed: false,
+      scale: expect.toBeRechartsScale({ domain: [0, 400], range: [65, 5] }),
+      tick: true,
+      tickCount: 5,
+      tickFormatter: undefined,
+      ticks: undefined,
+      type: 'number',
+      unit: undefined,
+      width: 60,
+    });
 
-      expect(xAxisSpy).toHaveBeenCalledTimes(4);
-      // these are indeed equal objects which is good - but they also need to be the same instances for animations to work
-      expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
-      expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
-      expect(xAxisSpy.mock.calls[0][0]).toBe(undefined);
-      expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);
-      expect(xAxisSpy.mock.calls[2][0]).toBe(xAxisSpy.mock.calls[3][0]);
-      expect(xAxisSpy.mock.calls[3][0]).toBe(xAxisSpy.mock.calls[4][0]);
-    },
-  );
+    const button = container.querySelector('button');
+    assertNotNull(button);
+    act(() => {
+      button.click();
+    });
+
+    expect(xAxisSpy).toHaveBeenCalledTimes(4);
+    expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
+    expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
+    expect(xAxisSpy.mock.calls[0][0]).toBe(undefined);
+    expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);
+
+    /*
+     * This is not very intuitive but correct. The scale is different instance
+     * because at this point, the chart is re-rendering which means the Line gets removed and then added back with new props.
+     *
+     * Call with index 2 is the render after Line has been removed.
+     * That means the selectors run again because the chart might have changed.
+     *
+     * Call with index 3 is the render from when the Line is present in the store again.
+     * It doesn't have data prop - but it could! - so the selectors do one extra run to verify that.
+     *
+     * The end result is that the scale is different instance but the same values.
+     * The `expect.toBeRechartsScale` verifies that domain equals and range equals - which they do - but instances don't.
+     *
+     */
+    expect(xAxisSpy.mock.calls[2][0]).not.toEqual(xAxisSpy.mock.calls[3][0]);
+    expect(xAxisSpy.mock.calls[2][0].scale).not.toEqual(xAxisSpy.mock.calls[3][0].scale);
+  });
+});
+
+describe('selectXAxisSettings', () => {
+  it('should be stable', () => {
+    const state = createRechartsStore().getState();
+    const result1 = selectXAxisSettings(state, defaultAxisId);
+    const result2 = selectXAxisSettings(state, defaultAxisId);
+    expect(result1).toBe(result2);
+
+    selectXAxisSettings(state, 'foo');
+    const result4 = selectXAxisSettings(state, defaultAxisId);
+    expect(result1).toBe(result4);
+  });
 });

@@ -396,7 +396,10 @@ describe('AreaChart', () => {
         <Area type="monotone" dot label dataKey="uv" stroke="#ff7300" fill="#ff7300" />
       </AreaChart>,
     );
-    expect(container.querySelectorAll('.recharts-area')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-area-area')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-area-curve')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-area-dots')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-label-list')).toHaveLength(0);
   });
 
   describe('<AreaChart /> - Pure Rendering', () => {

@@ -1,5 +1,6 @@
 import { expect } from 'vitest';
 import { ExpectedScale, expectScale } from './expectScale';
+import { RechartsScale } from '../../src/util/ChartUtils';
 
 function rechartsScaleMatcher(received: unknown, expected: ExpectedScale) {
   try {
@@ -22,8 +23,11 @@ expect.extend({
   toBeRechartsScale: rechartsScaleMatcher,
 });
 
-interface CustomMatchers<R = unknown> {
+interface CustomMatchers {
   /**
+   * This matcher will check that the received object is a Recharts scale object
+   * with the expected domain and range.
+   *
    * If you arrived here because you see a cryptic error failure message, you are in the right place.
    *
    * The test failure will usually say something entirely unhelpful like:
@@ -46,7 +50,7 @@ interface CustomMatchers<R = unknown> {
    *
    * @param expectedScale expected domain and range
    */
-  toBeRechartsScale: (expectedScale: ExpectedScale) => R;
+  toBeRechartsScale: (expectedScale: ExpectedScale) => RechartsScale;
 }
 
 declare module 'vitest' {

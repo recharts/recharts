@@ -1,9 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent } from 'react';
+import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
 import max from 'lodash/max';
-import isEqual from 'lodash/isEqual';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -32,12 +31,16 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { useAppSelector } from '../state/hooks';
-import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { UpdateId, useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
+import { useAppSelector } from '../state/hooks';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
+
+function isEqual(a: unknown, b: unknown): boolean {
+  return a === b;
+}
 
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
@@ -47,7 +50,6 @@ interface InternalAreaProps {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
-  animationId: UpdateId;
   baseLine?: number | Coordinate[];
 
   baseValue?: BaseValue;
@@ -92,7 +94,6 @@ interface AreaProps {
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
-  animationId?: number;
   baseValue?: BaseValue;
   className?: string;
 
@@ -137,7 +138,6 @@ interface State {
   curPoints?: ReadonlyArray<AreaPointItem>;
   curBaseLine?: number | Coordinate[];
   isAnimationFinished?: boolean;
-  totalLength?: number;
 }
 
 function getLegendItemColor(stroke: string | undefined, fill: string): string {
@@ -193,227 +193,310 @@ const renderDotItem = (option: ActiveDotType, props: any) => {
   return dotItem;
 };
 
-class AreaWithState extends PureComponent<InternalProps, State> {
-  state: State = {
-    isAnimationFinished: true,
-  };
+function shouldRenderDots(points: ReadonlyArray<AreaPointItem>, dot: InternalProps['dot']): boolean {
+  if (points == null) {
+    return false;
+  }
+  if (dot) {
+    return true;
+  }
+  return points.length === 1;
+}
 
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curPoints: nextProps.points,
-        curBaseLine: nextProps.baseLine,
-        prevPoints: prevState.curPoints,
-        prevBaseLine: prevState.curBaseLine,
-      };
-    }
-    if (nextProps.points !== prevState.curPoints || nextProps.baseLine !== prevState.curBaseLine) {
-      return {
-        curPoints: nextProps.points,
-        curBaseLine: nextProps.baseLine,
-      };
-    }
+function Dots({
+  points,
+  clipPathId,
+  props,
+}: {
+  clipPathId: string;
+  points: ReadonlyArray<AreaPointItem>;
+  props: InternalProps;
+}) {
+  const { needClip, dot, dataKey } = props;
 
+  if (!shouldRenderDots(points, dot)) {
     return null;
   }
 
-  id = uniqueId('recharts-area-');
+  const clipDot = isClipDot(dot);
+  const areaProps = filterProps(props, false);
+  const customDotProps = filterProps(dot, true);
 
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
+  const dots = points.map((entry: AreaPointItem, i: number) => {
+    const dotProps = {
+      key: `dot-${i}`,
+      r: 3,
+      ...areaProps,
+      ...customDotProps,
+      index: i,
+      cx: entry.x,
+      cy: entry.y,
+      dataKey,
+      value: entry.value,
+      payload: entry.payload,
+      points,
+    };
 
-    this.setState({ isAnimationFinished: true });
+    return renderDotItem(dot, dotProps);
+  });
+  const dotsProps = {
+    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
+  };
+  return (
+    <Layer className="recharts-area-dots" {...dotsProps}>
+      {dots}
+    </Layer>
+  );
+}
 
+function StaticArea({
+  points,
+  baseLine,
+  needClip,
+  clipPathId,
+  props,
+  showLabels,
+}: {
+  points: ReadonlyArray<AreaPointItem> | undefined;
+  baseLine: Props['baseLine'];
+  needClip: boolean;
+  clipPathId: string;
+  props: InternalProps;
+  showLabels: boolean;
+}) {
+  const { layout, type, stroke, connectNulls, isRange, ...others } = props;
+
+  return (
+    <>
+      {points?.length > 1 && (
+        <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+          <Curve
+            {...filterProps(others, true)}
+            points={points}
+            connectNulls={connectNulls}
+            type={type}
+            baseLine={baseLine}
+            layout={layout}
+            stroke="none"
+            className="recharts-area-area"
+          />
+          {stroke !== 'none' && (
+            <Curve
+              {...filterProps(props, false)}
+              className="recharts-area-curve"
+              layout={layout}
+              type={type}
+              connectNulls={connectNulls}
+              fill="none"
+              points={points}
+            />
+          )}
+          {stroke !== 'none' && isRange && (
+            <Curve
+              {...filterProps(props, false)}
+              className="recharts-area-curve"
+              layout={layout}
+              type={type}
+              connectNulls={connectNulls}
+              fill="none"
+              points={baseLine as CurvePoint[]}
+            />
+          )}
+        </Layer>
+      )}
+      <Dots points={points} props={props} clipPathId={clipPathId} />
+      {showLabels && LabelList.renderCallByParent(props, points)}
+    </>
+  );
+}
+
+function VerticalRect({
+  alpha,
+  baseLine,
+  points,
+  strokeWidth,
+}: {
+  alpha: number;
+  points: ReadonlyArray<AreaPointItem>;
+  baseLine: Props['baseLine'];
+  strokeWidth: Props['strokeWidth'];
+}) {
+  const startY = points[0].y;
+  const endY = points[points.length - 1].y;
+  const height = alpha * Math.abs(startY - endY);
+  let maxX = max(points.map(entry => entry.x || 0));
+
+  if (isNumber(baseLine)) {
+    maxX = Math.max(baseLine, maxX);
+  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
+    maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
+  }
+
+  if (isNumber(maxX)) {
+    return (
+      <rect
+        x={0}
+        y={startY < endY ? startY : startY - height}
+        width={maxX + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1)}
+        height={Math.floor(height)}
+      />
+    );
+  }
+
+  return null;
+}
+
+function HorizontalRect({
+  alpha,
+  baseLine,
+  points,
+  strokeWidth,
+}: {
+  alpha: number;
+  points: ReadonlyArray<AreaPointItem>;
+  baseLine: Props['baseLine'];
+  strokeWidth: Props['strokeWidth'];
+}) {
+  const startX = points[0].x;
+  const endX = points[points.length - 1].x;
+  const width = alpha * Math.abs(startX - endX);
+  let maxY = max(points.map(entry => entry.y || 0));
+
+  if (isNumber(baseLine)) {
+    maxY = Math.max(baseLine, maxY);
+  } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
+    maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
+  }
+
+  if (isNumber(maxY)) {
+    return (
+      <rect
+        x={startX < endX ? startX : startX - width}
+        y={0}
+        width={width}
+        height={Math.floor(maxY + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1))}
+      />
+    );
+  }
+
+  return null;
+}
+
+function ClipRect({
+  alpha,
+  layout,
+  points,
+  baseLine,
+  strokeWidth,
+}: {
+  alpha: number;
+  layout: 'horizontal' | 'vertical';
+  points: ReadonlyArray<AreaPointItem>;
+  baseLine: Props['baseLine'];
+  strokeWidth: Props['strokeWidth'];
+}) {
+  if (layout === 'vertical') {
+    return <VerticalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
+  }
+
+  return <HorizontalRect alpha={alpha} points={points} baseLine={baseLine} strokeWidth={strokeWidth} />;
+}
+
+function AreaWithAnimation({
+  needClip,
+  clipPathId,
+  props,
+  previousPointsRef,
+  previousBaselineRef,
+}: {
+  needClip: boolean;
+  clipPathId: string;
+  props: InternalProps;
+  previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem>>;
+  previousBaselineRef: MutableRefObject<InternalProps['baseLine']>;
+}) {
+  const {
+    points,
+    baseLine,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    onAnimationStart,
+    onAnimationEnd,
+  } = props;
+
+  const [isAnimating, setIsAnimating] = useState(true);
+  const currentPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
+  const currentBaselineRef = useRef<InternalProps['baseLine'] | null>(null);
+  currentPointsRef.current = points;
+  currentBaselineRef.current = baseLine;
+
+  const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
-  };
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
 
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
+  const handleAnimationStart = useCallback(() => {
     if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
-  };
+    setIsAnimating(true);
+  }, [onAnimationStart]);
 
-  renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
-    const { isAnimationActive } = this.props;
-    const { isAnimationFinished } = this.state;
+  const prevPoints = previousPointsRef.current;
+  const prevBaseLine = previousBaselineRef.current;
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        if (prevPoints) {
+          const prevPointsDiffFactor = prevPoints.length / points.length;
+          const stepPoints =
+            /*
+             * Here it is important that at the very end of the animation, on the last frame,
+             * we render the original points without any interpolation.
+             * This is needed because the code above is checking for reference equality to decide if the animation should run
+             * and if we create a new array instance (even if the numbers were the same)
+             * then we would break animations.
+             */
+            t === 1
+              ? points
+              : points.map((entry, index) => {
+                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                  if (prevPoints[prevPointIndex]) {
+                    const prev = prevPoints[prevPointIndex];
+                    const interpolatorX = interpolateNumber(prev.x, entry.x);
+                    const interpolatorY = interpolateNumber(prev.y, entry.y);
 
-    if (isAnimationActive && !isAnimationFinished) {
-      return null;
-    }
+                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                  }
 
-    const { dot, points, dataKey } = this.props;
-    const areaProps = filterProps(this.props, false);
-    const customDotProps = filterProps(dot, true);
+                  return entry;
+                });
+          let stepBaseLine;
 
-    const dots = points.map((entry: AreaPointItem, i: number) => {
-      const dotProps = {
-        key: `dot-${i}`,
-        r: 3,
-        ...areaProps,
-        ...customDotProps,
-        index: i,
-        cx: entry.x,
-        cy: entry.y,
-        dataKey,
-        value: entry.value,
-        payload: entry.payload,
-        points,
-      };
-
-      return renderDotItem(dot, dotProps);
-    });
-    const dotsProps = {
-      clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
-    };
-    return (
-      <Layer className="recharts-area-dots" {...dotsProps}>
-        {dots}
-      </Layer>
-    );
-  }
-
-  renderHorizontalRect(alpha: number) {
-    const { baseLine, points, strokeWidth } = this.props;
-    const startX = points[0].x;
-    const endX = points[points.length - 1].x;
-    const width = alpha * Math.abs(startX - endX);
-    let maxY = max(points.map(entry => entry.y || 0));
-
-    if (isNumber(baseLine)) {
-      maxY = Math.max(baseLine, maxY);
-    } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-      maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
-    }
-
-    if (isNumber(maxY)) {
-      return (
-        <rect
-          x={startX < endX ? startX : startX - width}
-          y={0}
-          width={width}
-          height={Math.floor(maxY + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1))}
-        />
-      );
-    }
-
-    return null;
-  }
-
-  renderVerticalRect(alpha: number) {
-    const { baseLine, points, strokeWidth } = this.props;
-    const startY = points[0].y;
-    const endY = points[points.length - 1].y;
-    const height = alpha * Math.abs(startY - endY);
-    let maxX = max(points.map(entry => entry.x || 0));
-
-    if (isNumber(baseLine)) {
-      maxX = Math.max(baseLine, maxX);
-    } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-      maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
-    }
-
-    if (isNumber(maxX)) {
-      return (
-        <rect
-          x={0}
-          y={startY < endY ? startY : startY - height}
-          width={maxX + (strokeWidth ? parseInt(`${strokeWidth}`, 10) : 1)}
-          height={Math.floor(height)}
-        />
-      );
-    }
-
-    return null;
-  }
-
-  renderClipRect(alpha: number) {
-    const { layout } = this.props;
-
-    if (layout === 'vertical') {
-      return this.renderVerticalRect(alpha);
-    }
-
-    return this.renderHorizontalRect(alpha);
-  }
-
-  renderAreaStatically(
-    points: ReadonlyArray<AreaPointItem>,
-    baseLine: Props['baseLine'],
-    needClip: boolean,
-    clipPathId: string,
-  ) {
-    const { layout, type, stroke, connectNulls, isRange, ...others } = this.props;
-
-    return (
-      <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-        <Curve
-          {...filterProps(others, true)}
-          points={points}
-          connectNulls={connectNulls}
-          type={type}
-          baseLine={baseLine}
-          layout={layout}
-          stroke="none"
-          className="recharts-area-area"
-        />
-        {stroke !== 'none' && (
-          <Curve
-            {...filterProps(this.props, false)}
-            className="recharts-area-curve"
-            layout={layout}
-            type={type}
-            connectNulls={connectNulls}
-            fill="none"
-            points={points}
-          />
-        )}
-        {stroke !== 'none' && isRange && (
-          <Curve
-            {...filterProps(this.props, false)}
-            className="recharts-area-curve"
-            layout={layout}
-            type={type}
-            connectNulls={connectNulls}
-            fill="none"
-            points={baseLine as CurvePoint[]}
-          />
-        )}
-      </Layer>
-    );
-  }
-
-  renderAreaWithAnimation(needClip: boolean, clipPathId: string) {
-    const { points, baseLine, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
-      this.props;
-    const { prevPoints, prevBaseLine } = this.state;
-    // const clipPathId = isNullish(id) ? this.id : id;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`area-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            // update animation
-            const stepPoints = points.map((entry, index) => {
+          if (isNumber(baseLine)) {
+            const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
+            stepBaseLine = interpolator(t);
+          } else if (isNullish(baseLine) || isNan(baseLine)) {
+            const interpolator = interpolateNumber(prevBaseLine as number, 0);
+            stepBaseLine = interpolator(t);
+          } else {
+            stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
               const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-              if (prevPoints[prevPointIndex]) {
-                const prev = prevPoints[prevPointIndex];
+              if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
+                const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
                 const interpolatorX = interpolateNumber(prev.x, entry.x);
                 const interpolatorY = interpolateNumber(prev.y, entry.y);
 
@@ -422,87 +505,131 @@ class AreaWithState extends PureComponent<InternalProps, State> {
 
               return entry;
             });
-            let stepBaseLine;
-
-            if (isNumber(baseLine)) {
-              const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
-              stepBaseLine = interpolator(t);
-            } else if (isNullish(baseLine) || isNan(baseLine)) {
-              const interpolator = interpolateNumber(prevBaseLine as number, 0);
-              stepBaseLine = interpolator(t);
-            } else {
-              stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
-                const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-                if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
-                  const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
-                  const interpolatorX = interpolateNumber(prev.x, entry.x);
-                  const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                  return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-                }
-
-                return entry;
-              });
-            }
-
-            return this.renderAreaStatically(stepPoints, stepBaseLine, needClip, clipPathId);
           }
 
+          /*
+           * We need to keep the refs in the parent component because we need to remember the last shape of the animation
+           * even if AreaWithAnimation is unmounted as that happens when changing props.
+           *
+           * And we need to update the refs here because here is where the interpolation is computed.
+           * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
+           */
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = stepPoints;
+          // eslint-disable-next-line no-param-reassign
+          previousBaselineRef.current = stepBaseLine;
           return (
-            <Layer>
-              <defs>
-                <clipPath id={`animationClipPath-${clipPathId}`}>{this.renderClipRect(t)}</clipPath>
-              </defs>
-              <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
-                {this.renderAreaStatically(points, baseLine, needClip, clipPathId)}
-              </Layer>
-            </Layer>
+            <StaticArea
+              points={stepPoints}
+              baseLine={stepBaseLine}
+              needClip={needClip}
+              clipPathId={clipPathId}
+              props={props}
+              showLabels={!isAnimating}
+            />
           );
-        }}
-      </Animate>
+        }
+
+        // eslint-disable-next-line no-param-reassign
+        previousPointsRef.current = points;
+        // eslint-disable-next-line no-param-reassign
+        previousBaselineRef.current = baseLine;
+        return (
+          <Layer>
+            <defs>
+              <clipPath id={`animationClipPath-${clipPathId}`}>
+                <ClipRect
+                  alpha={t}
+                  points={points}
+                  baseLine={baseLine}
+                  layout={props.layout}
+                  strokeWidth={props.strokeWidth}
+                />
+              </clipPath>
+            </defs>
+            <Layer clipPath={`url(#animationClipPath-${clipPathId})`}>
+              <StaticArea
+                points={points}
+                baseLine={baseLine}
+                needClip={needClip}
+                clipPathId={clipPathId}
+                props={props}
+                showLabels
+              />
+            </Layer>
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+/*
+ * This components decides if the area should be animated or not.
+ * It also holds the state of the animation.
+ */
+function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPathId: string; props: InternalProps }) {
+  const { points, baseLine, isAnimationActive } = props;
+
+  /*
+   * These two must be refs, not state!
+   * Because we want to store the most recent shape of the animation in case we have to interrupt the animation;
+   * that happens when user initiates another animation before the current one finishes.
+   *
+   * If this was a useState, then every step in the animation would trigger a re-render.
+   * So, useRef it is.
+   */
+  const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>();
+  const previousBaselineRef = useRef<InternalProps['baseLine'] | null>();
+
+  const prevPoints = previousPointsRef.current;
+  const prevBaseLine = previousBaselineRef.current;
+
+  if (
+    isAnimationActive &&
+    /*
+     * Here it's important that we unmount of AreaWithAnimation in case points are undefined
+     * - this will make sure to interrupt the animation if it's running.
+     * We still get to keep the last shape of the animation in the refs above.
+     */
+    points &&
+    points.length &&
+    (!isEqual(prevPoints, points) || !isEqual(prevBaseLine, baseLine))
+  ) {
+    return (
+      <AreaWithAnimation
+        needClip={needClip}
+        clipPathId={clipPathId}
+        props={props}
+        previousPointsRef={previousPointsRef}
+        previousBaselineRef={previousBaselineRef}
+      />
     );
   }
 
-  renderArea(needClip: boolean, clipPathId: string) {
-    const { points, baseLine, isAnimationActive } = this.props;
-    const { prevPoints, prevBaseLine, totalLength } = this.state;
+  return (
+    <StaticArea
+      points={points}
+      baseLine={baseLine}
+      needClip={needClip}
+      clipPathId={clipPathId}
+      props={props}
+      showLabels
+    />
+  );
+}
 
-    if (
-      isAnimationActive &&
-      points &&
-      points.length &&
-      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points) || !isEqual(prevBaseLine, baseLine))
-    ) {
-      return this.renderAreaWithAnimation(needClip, clipPathId);
-    }
-
-    return this.renderAreaStatically(points, baseLine, needClip, clipPathId);
-  }
+class AreaWithState extends PureComponent<InternalProps> {
+  id = uniqueId('recharts-area-');
 
   render() {
-    const {
-      hide,
-      dot,
-      points,
-      className,
-      top,
-      left,
-      needClip,
-      xAxisId,
-      yAxisId,
-      width,
-      height,
-      isAnimationActive,
-      id,
-      baseLine,
-    } = this.props;
+    const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine } =
+      this.props;
 
-    if (hide || !points || !points.length) {
+    if (hide) {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
-    const hasSinglePoint = points.length === 1;
     const layerClass = clsx('recharts-area', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
@@ -527,9 +654,7 @@ class AreaWithState extends PureComponent<InternalProps, State> {
               )}
             </defs>
           )}
-          {!hasSinglePoint ? this.renderArea(needClip, clipPathId) : null}
-          {(dot || hasSinglePoint) && this.renderDots(needClip, clipDot, clipPathId)}
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+          <RenderArea needClip={needClip} clipPathId={clipPathId} props={this.props} />
         </Layer>
         <ActivePoints
           points={points}
@@ -589,18 +714,20 @@ function AreaImpl(props: Props) {
     ...everythingElse
   } = props;
   const isPanorama = useIsPanorama();
+
+  const areaSettings = useMemo(
+    () => ({
+      baseValue: props.baseValue,
+      stackId: props.stackId,
+      connectNulls: props.connectNulls,
+      data: props.data,
+      dataKey: props.dataKey,
+    }),
+    [props.baseValue, props.stackId, props.connectNulls, props.data, props.dataKey],
+  );
   const { points, isRange, baseLine } =
-    useAppSelector(state =>
-      selectArea(state, props.xAxisId, props.yAxisId, isPanorama, {
-        baseValue: props.baseValue,
-        stackId: props.stackId,
-        connectNulls: props.connectNulls,
-        data: props.data,
-        dataKey: props.dataKey,
-      }),
-    ) ?? {};
+    useAppSelector(state => selectArea(state, props.xAxisId, props.yAxisId, isPanorama, areaSettings)) ?? {};
   const { height, width, left, top } = useOffset();
-  const updateId = useUpdateId();
 
   if (layout !== 'horizontal' && layout !== 'vertical') {
     // Can't render Area in an unsupported layout
@@ -619,7 +746,6 @@ function AreaImpl(props: Props) {
       animationBegin={animationBegin}
       animationDuration={animationDuration}
       animationEasing={animationEasing}
-      animationId={updateId}
       baseLine={baseLine}
       connectNulls={connectNulls}
       dot={dot}
