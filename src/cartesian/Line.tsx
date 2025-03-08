@@ -302,7 +302,7 @@ function StaticCurve({
     type,
     layout,
     connectNulls,
-    strokeDasharray,
+    strokeDasharray: strokeDasharray ?? props.strokeDasharray,
   };
 
   return (
