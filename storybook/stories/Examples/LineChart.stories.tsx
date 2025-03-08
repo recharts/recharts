@@ -1050,17 +1050,9 @@ export const ReproducingBug4935 = {
     ];
 
     const dataKey1 = (d: any) => {
-      // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
-      if (d.x == null) {
-        return 0;
-      }
       return d.x.value;
     };
     const dataKey2 = (d: any) => {
-      // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
-      if (d.y == null) {
-        return 0;
-      }
       return d.y.value;
     };
 
