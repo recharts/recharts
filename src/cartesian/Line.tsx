@@ -277,12 +277,14 @@ function StaticCurve({
   points,
   strokeDasharray,
   props,
+  showLabels,
 }: {
   clipPathId: string;
   pathRef: Ref<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
   strokeDasharray?: string;
+  showLabels: boolean;
 }) {
   const { type, layout, connectNulls, needClip, ...others } = props;
   const curveProps = {
@@ -301,6 +303,7 @@ function StaticCurve({
     <>
       <Curve {...curveProps} pathRef={pathRef} />
       <Dots points={points} clipPathId={clipPathId} props={props} />
+      {showLabels && LabelList.renderCallByParent(props, points)}
     </>
   );
 }
@@ -398,7 +401,15 @@ function CurveWithAnimation({
                 });
           // eslint-disable-next-line no-param-reassign
           previousPointsRef.current = stepData;
-          return <StaticCurve props={props} points={stepData} clipPathId={clipPathId} pathRef={pathRef} />;
+          return (
+            <StaticCurve
+              props={props}
+              points={stepData}
+              clipPathId={clipPathId}
+              pathRef={pathRef}
+              showLabels={!isAnimating}
+            />
+          );
         }
         const interpolator = interpolateNumber(0, totalLength);
         const curLength = interpolator(t);
@@ -422,6 +433,7 @@ function CurveWithAnimation({
             clipPathId={clipPathId}
             pathRef={pathRef}
             strokeDasharray={currentStrokeDasharray}
+            showLabels={!isAnimating}
           />
         );
       }}
@@ -447,7 +459,7 @@ function RenderCurve({ clipPathId, props }: { clipPathId: string; props: Interna
     );
   }
 
-  return <StaticCurve props={props} points={points} clipPathId={clipPathId} pathRef={pathRef} />;
+  return <StaticCurve props={props} points={points} clipPathId={clipPathId} pathRef={pathRef} showLabels />;
 }
 
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
@@ -467,28 +479,13 @@ class LineWithState extends Component<InternalProps> {
   id = uniqueId('recharts-line-');
 
   render() {
-    const {
-      hide,
-      dot,
-      points,
-      className,
-      xAxisId,
-      yAxisId,
-      top,
-      left,
-      width,
-      height,
-      isAnimationActive,
-      id,
-      needClip,
-      layout,
-    } = this.props;
+    const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, layout } =
+      this.props;
 
     if (hide) {
       return null;
     }
 
-    const isAnimationFinished = true;
     const layerClass = clsx('recharts-line', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
@@ -525,7 +522,6 @@ class LineWithState extends Component<InternalProps> {
               {this.props.children}
             </SetErrorBarContext>
           </SetErrorBarPreferredDirection>
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
           activeDot={this.props.activeDot}

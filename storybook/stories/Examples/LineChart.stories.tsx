@@ -1014,9 +1014,9 @@ export const ReversedXAxis = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" reversed />
           <YAxis />
-          {/*<Legend />*/}
+          {/* <Legend /> */}
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-          {/*<Line type="monotone" dataKey="uv" stroke="#82ca9d" />*/}
+          {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
           <Tooltip />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
@@ -1108,6 +1108,7 @@ export const ReproducingBug4935 = {
             stroke="#8884d8"
             strokeDasharray="5 5"
             activeDot={{ r: 8 }}
+            label={{ fill: 'red', dy: -25 }}
           />
         </LineChart>
       </>
