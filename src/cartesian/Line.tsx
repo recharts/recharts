@@ -305,7 +305,12 @@ function StaticCurve({
     strokeDasharray,
   };
 
-  return <Curve {...curveProps} pathRef={pathRef} />;
+  return (
+    <>
+      <Curve {...curveProps} pathRef={pathRef} />
+      <Dots points={points} clipPathId={clipPathId} props={props} />
+    </>
+  );
 }
 
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
@@ -549,7 +554,6 @@ class LineWithState extends Component<InternalProps, State> {
               {this.props.children}
             </SetErrorBarContext>
           </SetErrorBarPreferredDirection>
-          <Dots points={points} clipPathId={clipPathId} props={this.props} />
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
