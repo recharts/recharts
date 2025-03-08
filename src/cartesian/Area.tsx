@@ -204,8 +204,8 @@ function shouldRenderDots(points: ReadonlyArray<AreaPointItem>, dot: InternalPro
 }
 
 function Dots({
-  points,
   clipPathId,
+  points,
   props,
 }: {
   clipPathId: string;

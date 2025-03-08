@@ -613,7 +613,7 @@ describe('<LineChart />', () => {
         onClick,
         onMouseDown,
         onMouseUp,
-        pathRef: expect.any(Function),
+        pathRef: expect.any(Object),
         points: expect.any(Array),
         stroke: '#ff7300',
         strokeDasharray: '0px 0px',
@@ -639,7 +639,7 @@ describe('<LineChart />', () => {
         onClick,
         onMouseDown,
         onMouseUp,
-        pathRef: expect.any(Function),
+        pathRef: expect.any(Object),
         points: expect.any(Array),
         stroke: '#ff7300',
         strokeDasharray: '0px 0px',
@@ -664,7 +664,7 @@ describe('<LineChart />', () => {
         onClick,
         onMouseDown,
         onMouseUp,
-        pathRef: expect.any(Function),
+        pathRef: expect.any(Object),
         points: expect.any(Array),
         stroke: '#ff7300',
         strokeDasharray: '0px 0px',
@@ -1693,18 +1693,14 @@ describe('<LineChart /> with dataKey as a function', () => {
     { x: { value: 3 }, name: 'x3' },
   ];
   const data2 = [
-    { y: { value: 1 }, name: 'y1' },
+    { y: { value: 3 }, name: 'y1' },
     { y: { value: 2 }, name: 'y2' },
-    { y: { value: 3 }, name: 'y3' },
+    { y: { value: 1 }, name: 'y3' },
   ];
   const dataKey1 = (d: any) => {
     return d.x.value;
   };
   const dataKey2 = (d: any) => {
-    // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
-    if (d?.y == null) {
-      return 0;
-    }
     return d.y.value;
   };
 
@@ -1722,7 +1718,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
+    expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
   });
 
   it('should call the function and give it the latest data', () => {
@@ -1752,7 +1748,7 @@ describe('<LineChart /> with dataKey as a function', () => {
     expect(spy).toHaveBeenNthCalledWith(3, data2[2]);
   });
 
-  test.fails('reproducing https://github.com/recharts/recharts/issues/4935', () => {
+  test('reproducing https://github.com/recharts/recharts/issues/4935', () => {
     const dataKey1Spy = vi.fn(dataKey1);
     const dataKey2Spy = vi.fn(dataKey2);
     const Reproduction = () => {
@@ -1772,17 +1768,17 @@ describe('<LineChart /> with dataKey as a function', () => {
 
     const { container } = render(<Reproduction />);
     expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 9);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 7);
     expect(dataKey1Spy).toHaveBeenNthCalledWith(1, data1[0]);
     expect(dataKey1Spy).toHaveBeenLastCalledWith(data1[2]);
     expect(dataKey2Spy).toHaveBeenCalledTimes(0);
 
     fireEvent.click(screen.getByText('Use data2'));
 
-    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 10);
+    expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 7);
 
-    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 9);
+    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
   });

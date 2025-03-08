@@ -1014,9 +1014,9 @@ export const ReversedXAxis = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" reversed />
           <YAxis />
-          <Legend />
+          {/* <Legend /> */}
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
           <Tooltip />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
@@ -1050,37 +1050,61 @@ export const ReproducingBug4935 = {
     ];
 
     const dataKey1 = (d: any) => {
-      // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
-      if (d.x == null) {
-        return 0;
-      }
       return d.x.value;
     };
     const dataKey2 = (d: any) => {
-      // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
-      if (d.y == null) {
-        return 0;
-      }
       return d.y.value;
     };
 
     const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
 
     return (
       <>
-        <button type="button" onClick={() => setUseData2(false)}>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
           Use data1
         </button>
-        <button type="button" onClick={() => setUseData2(true)}>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
           Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
         </button>
         <LineChart {...args} data={useData2 ? data2 : data1}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-          <YAxis />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
+          <Legend />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
-          <Line type="monotone" dataKey={useData2 ? dataKey2 : dataKey1} stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line
+            name="Animated line"
+            hide={!visible}
+            type="monotone"
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            strokeDasharray="5 5"
+            activeDot={{ r: 8 }}
+            label={{ fill: 'red', dy: -25 }}
+            animationDuration={3000}
+          />
         </LineChart>
       </>
     );
@@ -1089,7 +1113,7 @@ export const ReproducingBug4935 = {
     width: 500,
     height: 300,
     margin: {
-      top: 5,
+      top: 30,
       right: 30,
       left: 20,
       bottom: 5,
