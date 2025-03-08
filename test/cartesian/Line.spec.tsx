@@ -6,6 +6,7 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectErrorBarsSettings } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
+import { expectLines } from '../helper/expectLine';
 import { PageData } from '../_data';
 import { ActiveDotProps, ActiveDotType } from '../../src/util/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -32,7 +33,7 @@ describe('<Line />', () => {
       </LineChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(1);
+    expectLines(container, [{ d: 'M5,86.667L127.5,86.667L250,86.667L372.5,86.667L495,86.667' }]);
   });
 
   it('Does not fall into infinite loop if strokeDasharray is 0', () => {
