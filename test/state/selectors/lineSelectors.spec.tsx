@@ -7,7 +7,7 @@ import {
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
 import { ResolvedLineSettings, selectLinePoints } from '../../../src/state/selectors/lineSelectors';
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from '../../../src';
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from '../../../src';
 import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { LinePointItem } from '../../../src/cartesian/Line';
