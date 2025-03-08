@@ -1098,10 +1098,12 @@ export const ReproducingBug4935 = {
         <LineChart {...args} data={useData2 ? data2 : data1}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-          <YAxis />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
+          <Legend />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           <Line
+            name="Animated line"
             hide={!visible}
             type="monotone"
             dataKey={useData2 ? dataKey2 : dataKey1}
@@ -1109,6 +1111,7 @@ export const ReproducingBug4935 = {
             strokeDasharray="5 5"
             activeDot={{ r: 8 }}
             label={{ fill: 'red', dy: -25 }}
+            animationDuration={3000}
           />
         </LineChart>
       </>
@@ -1118,7 +1121,7 @@ export const ReproducingBug4935 = {
     width: 500,
     height: 300,
     margin: {
-      top: 5,
+      top: 30,
       right: 30,
       left: 20,
       bottom: 5,

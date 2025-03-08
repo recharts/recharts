@@ -301,7 +301,7 @@ function StaticCurve({
 
   return (
     <>
-      <Curve {...curveProps} pathRef={pathRef} />
+      {points?.length > 1 && <Curve {...curveProps} pathRef={pathRef} />}
       <Dots points={points} clipPathId={clipPathId} props={props} />
       {showLabels && LabelList.renderCallByParent(props, points)}
     </>
@@ -321,10 +321,12 @@ function CurveWithAnimation({
   props,
   pathRef,
   previousPointsRef,
+  longestAnimatedLengthRef,
 }: {
   clipPathId: string;
   props: InternalProps;
   pathRef: MutableRefObject<SVGPathElement>;
+  longestAnimatedLengthRef: MutableRefObject<number>;
   previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem>>;
 }) {
   const {
@@ -362,6 +364,24 @@ function CurveWithAnimation({
     setIsAnimating(true);
   }, [onAnimationStart]);
   const totalLength = getTotalLength(pathRef.current);
+  /*
+   * Here we want to detect if the length animation has been interrupted.
+   * For that we keep a reference to the furthest length that has been animated.
+   *
+   * And then, to keep things smooth, we add to it the current length that is being animated right now.
+   *
+   * If we did Math.max then it makes the length animation "pause" but we want to keep it smooth
+   * so in case we have some "leftover" length from the previous animation we add it to the current length.
+   *
+   * This is not perfect because the animation changes speed due to easing. The default easing is 'ease' which is not linear
+   * and makes it stand out. But it's good enough I suppose.
+   * If we want to fix it then we need to keep track of multiple animations and their easing and timings.
+   *
+   * If you want to see this in action, try to change the dataKey of the line chart while the initial animation is running.
+   * The Line begins with zero length and slowly grows to the full length. While this growth is in progress,
+   * change the dataKey and the Line will continue growing from where it has grown so far.
+   */
+  const startingPoint = longestAnimatedLengthRef.current;
 
   return (
     <Animate
@@ -376,6 +396,34 @@ function CurveWithAnimation({
       onAnimationStart={handleAnimationStart}
     >
       {({ t }: { t: number }) => {
+        const interpolator = interpolateNumber(startingPoint, totalLength + startingPoint);
+        const curLength = Math.min(interpolator(t), totalLength);
+        if (totalLength > 0) {
+          /*
+           * totalLength is set from a ref and is not updated in the first tick of the animation.
+           * It defaults to zero which is exactly what we want here because we want to grow from zero,
+           * however the same happens when the data change.
+           *
+           * In that case we want to remember the previous length and continue from there, and only animate the shape.
+           *
+           * Therefore the totalLength > 0 check.
+           *
+           * The Animate is about to fire handleAnimationStart which will update the state
+           * and cause a re-render and read a new proper totalLength which will be used in the next tick
+           * and update the longestAnimatedLengthRef.
+           */
+          // eslint-disable-next-line no-param-reassign
+          longestAnimatedLengthRef.current = curLength;
+        }
+        let currentStrokeDasharray;
+
+        if (strokeDasharray) {
+          const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+          currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+        } else {
+          currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+        }
+
         if (prevPoints) {
           const prevPointsDiffFactor = prevPoints.length / points.length;
           const stepData =
@@ -408,20 +456,10 @@ function CurveWithAnimation({
               clipPathId={clipPathId}
               pathRef={pathRef}
               showLabels={!isAnimating}
+              strokeDasharray={currentStrokeDasharray}
             />
           );
         }
-        const interpolator = interpolateNumber(0, totalLength);
-        const curLength = interpolator(t);
-        let currentStrokeDasharray;
-
-        if (strokeDasharray) {
-          const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-          currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
-        } else {
-          currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
-        }
-
         if (totalLength > 0) {
           // eslint-disable-next-line no-param-reassign
           previousPointsRef.current = points;
@@ -432,8 +470,8 @@ function CurveWithAnimation({
             points={points}
             clipPathId={clipPathId}
             pathRef={pathRef}
-            strokeDasharray={currentStrokeDasharray}
             showLabels={!isAnimating}
+            strokeDasharray={currentStrokeDasharray}
           />
         );
       }}
@@ -444,6 +482,7 @@ function CurveWithAnimation({
 function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
   const { points, isAnimationActive } = props;
   const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
+  const longestAnimatedLengthRef = useRef<number>(0);
   const pathRef = useRef<SVGPathElement | null>(null);
 
   const prevPoints = previousPointsRef.current;
@@ -454,6 +493,7 @@ function RenderCurve({ clipPathId, props }: { clipPathId: string; props: Interna
         props={props}
         clipPathId={clipPathId}
         previousPointsRef={previousPointsRef}
+        longestAnimatedLengthRef={longestAnimatedLengthRef}
         pathRef={pathRef}
       />
     );
