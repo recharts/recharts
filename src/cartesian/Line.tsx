@@ -36,6 +36,7 @@ import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
+import { AreaPointItem } from '../state/selectors/areaSelectors';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -221,6 +222,63 @@ function renderDotItem(option: ActiveDotType, props: any) {
   return dotItem;
 }
 
+function shouldRenderDots(points: ReadonlyArray<AreaPointItem>, dot: InternalProps['dot']): boolean {
+  if (points == null) {
+    return false;
+  }
+  if (dot) {
+    return true;
+  }
+  return points.length === 1;
+}
+
+function Dots({
+  clipPathId,
+  points,
+  props,
+}: {
+  points: ReadonlyArray<LinePointItem>;
+  clipPathId: string;
+  props: InternalProps;
+}) {
+  const { dot, dataKey, needClip } = props;
+
+  if (!shouldRenderDots(points, dot)) {
+    return null;
+  }
+
+  const clipDot = isClipDot(dot);
+  const lineProps = filterProps(props, false);
+  const customDotProps = filterProps(dot, true);
+
+  const dots = points.map((entry, i) => {
+    const dotProps = {
+      key: `dot-${i}`,
+      r: 3,
+      ...lineProps,
+      ...customDotProps,
+      index: i,
+      cx: entry.x,
+      cy: entry.y,
+      dataKey,
+      value: entry.value,
+      payload: entry.payload,
+      points,
+    };
+
+    return renderDotItem(dot, dotProps);
+  });
+  const dotsProps = {
+    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
+  };
+
+  return (
+    <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
+      {dots}
+    </Layer>
+  );
+}
+
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataPoint: LinePointItem,
   dataKey,
@@ -310,42 +368,6 @@ class LineWithState extends Component<InternalProps, State> {
       this.props.onAnimationStart();
     }
   };
-
-  renderDots(needClip: boolean, clipDot: boolean, clipPathId: string) {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-    const { dot, points, dataKey } = this.props;
-    const lineProps = filterProps(this.props, false);
-    const customDotProps = filterProps(dot, true);
-    const dots = points.map((entry, i) => {
-      const dotProps = {
-        key: `dot-${i}`,
-        r: 3,
-        ...lineProps,
-        ...customDotProps,
-        value: entry.value,
-        dataKey,
-        cx: entry.x,
-        cy: entry.y,
-        index: i,
-        payload: entry.payload,
-      };
-
-      return renderDotItem(dot, dotProps);
-    });
-    const dotsProps = {
-      clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
-    };
-
-    return (
-      <Layer className="recharts-line-dots" key="dots" {...dotsProps}>
-        {dots}
-      </Layer>
-    );
-  }
 
   renderCurveStatically(
     points: ReadonlyArray<LinePointItem>,
@@ -514,7 +536,7 @@ class LineWithState extends Component<InternalProps, State> {
               {this.props.children}
             </SetErrorBarContext>
           </SetErrorBarPreferredDirection>
-          {(hasSinglePoint || dot) && this.renderDots(needClip, clipDot, clipPathId)}
+          <Dots points={points} clipPathId={clipPathId} props={this.props} />
           {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
         </Layer>
         <ActivePoints
