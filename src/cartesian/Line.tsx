@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { Component, PureComponent } from 'react';
+import React, { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 import isEqual from 'lodash/isEqual';
 
@@ -32,7 +32,7 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { selectLinePoints } from '../state/selectors/lineSelectors';
+import { ResolvedLineSettings, selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
@@ -287,11 +287,16 @@ function StaticCurve({
   props,
 }: {
   clipPathId: string;
-  pathRef: (ref: SVGPathElement) => void;
+  pathRef: Ref<SVGPathElement>;
   points: ReadonlyArray<LinePointItem>;
   props: InternalProps;
   strokeDasharray?: string;
 }) {
+  console.log('StaticCurve renders', {
+    strokeDasharray: strokeDasharray ?? props.strokeDasharray,
+    pathRef,
+    points,
+  });
   const { type, layout, connectNulls, needClip, ...others } = props;
   const curveProps = {
     ...filterProps(others, true),
@@ -311,6 +316,151 @@ function StaticCurve({
       <Dots points={points} clipPathId={clipPathId} props={props} />
     </>
   );
+}
+
+function getTotalLength(mainCurve: SVGPathElement | null): number {
+  try {
+    return (mainCurve && mainCurve.getTotalLength && mainCurve.getTotalLength()) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function CurveWithAnimation({
+  clipPathId,
+  props,
+  pathRef,
+  previousPointsRef,
+}: {
+  clipPathId: string;
+  props: InternalProps;
+  pathRef: MutableRefObject<SVGPathElement>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<LinePointItem>>;
+}) {
+  const {
+    points,
+    strokeDasharray,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    animationId,
+    animateNewValues,
+    width,
+    height,
+    onAnimationEnd,
+    onAnimationStart,
+  } = props;
+
+  const currentPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
+  currentPointsRef.current = points;
+  const prevPoints = previousPointsRef.current;
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+  const totalLength = getTotalLength(pathRef.current);
+
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      key={`line-${animationId}`}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        if (prevPoints) {
+          const prevPointsDiffFactor = prevPoints.length / points.length;
+          const stepData =
+            t === 1
+              ? points
+              : points.map((entry, index) => {
+                  const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
+                  if (prevPoints[prevPointIndex]) {
+                    const prev = prevPoints[prevPointIndex];
+                    const interpolatorX = interpolateNumber(prev.x, entry.x);
+                    const interpolatorY = interpolateNumber(prev.y, entry.y);
+
+                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                  }
+
+                  // magic number of faking previous x and y location
+                  if (animateNewValues) {
+                    const interpolatorX = interpolateNumber(width * 2, entry.x);
+                    const interpolatorY = interpolateNumber(height / 2, entry.y);
+                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                  }
+                  return { ...entry, x: entry.x, y: entry.y };
+                });
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = stepData;
+          return <StaticCurve props={props} points={stepData} clipPathId={clipPathId} pathRef={pathRef} />;
+        }
+        const interpolator = interpolateNumber(0, totalLength);
+        const curLength = interpolator(t);
+        let currentStrokeDasharray;
+
+        if (strokeDasharray) {
+          const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
+          currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
+        } else {
+          currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
+        }
+
+        if (totalLength > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = points;
+        }
+        return (
+          <StaticCurve
+            props={props}
+            points={points}
+            clipPathId={clipPathId}
+            pathRef={pathRef}
+            strokeDasharray={currentStrokeDasharray}
+          />
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderCurve({ clipPathId, props }: { clipPathId: string; props: InternalProps }) {
+  const { points, isAnimationActive } = props;
+  const previousPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
+  const pathRef = useRef<SVGPathElement | null>(null);
+
+  const prevPoints = previousPointsRef.current;
+
+  if (isAnimationActive && points && points.length && !isEqual(prevPoints, points)) {
+    return (
+      <CurveWithAnimation
+        props={props}
+        clipPathId={clipPathId}
+        previousPointsRef={previousPointsRef}
+        pathRef={pathRef}
+      />
+    );
+  }
+
+  return <StaticCurve props={props} points={points} clipPathId={clipPathId} pathRef={pathRef} />;
 }
 
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
@@ -512,12 +662,12 @@ class LineWithState extends Component<InternalProps, State> {
       layout,
     } = this.props;
 
-    if (hide || !points || !points.length) {
+    if (hide) {
       return null;
     }
 
     const { isAnimationFinished } = this.state;
-    const hasSinglePoint = points.length === 1;
+    const hasSinglePoint = points?.length === 1;
     const layerClass = clsx('recharts-line', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
@@ -542,7 +692,8 @@ class LineWithState extends Component<InternalProps, State> {
               )}
             </defs>
           )}
-          {!hasSinglePoint && this.renderCurve(needClip, clipPathId)}
+          {/*{!hasSinglePoint && this.renderCurve(needClip, clipPathId)}*/}
+          <RenderCurve props={this.props} clipPathId={clipPathId} />
           <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
             <SetErrorBarContext
               xAxisId={xAxisId}
@@ -591,8 +742,9 @@ function LineImpl(props: Props) {
   const { height, width, left, top } = useOffset();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
+  const lineSettings = useMemo(() => ({ dataKey: props.dataKey, data: props.data }), [props.dataKey, props.data]);
   const points: ReadonlyArray<LinePointItem> = useAppSelector(state =>
-    selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, { dataKey: props.dataKey, data: props.data }),
+    selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, lineSettings),
   );
   const updateId = useUpdateId();
   if (layout !== 'horizontal' && layout !== 'vertical') {
