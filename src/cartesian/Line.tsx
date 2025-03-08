@@ -279,6 +279,35 @@ function Dots({
   );
 }
 
+function StaticCurve({
+  clipPathId,
+  pathRef,
+  points,
+  strokeDasharray,
+  props,
+}: {
+  clipPathId: string;
+  pathRef: (ref: SVGPathElement) => void;
+  points: ReadonlyArray<LinePointItem>;
+  props: InternalProps;
+  strokeDasharray?: string;
+}) {
+  const { type, layout, connectNulls, needClip, ...others } = props;
+  const curveProps = {
+    ...filterProps(others, true),
+    fill: 'none',
+    className: 'recharts-line-curve',
+    clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
+    points,
+    type,
+    layout,
+    connectNulls,
+    strokeDasharray,
+  };
+
+  return <Curve {...curveProps} pathRef={pathRef} />;
+}
+
 const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   dataPoint: LinePointItem,
   dataKey,
@@ -341,7 +370,7 @@ class LineWithState extends Component<InternalProps, State> {
     const curveDom = this.mainCurve;
 
     try {
-      return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
+      return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 10;
     } catch {
       return 0;
     }
@@ -368,28 +397,6 @@ class LineWithState extends Component<InternalProps, State> {
       this.props.onAnimationStart();
     }
   };
-
-  renderCurveStatically(
-    points: ReadonlyArray<LinePointItem>,
-    needClip: boolean,
-    clipPathId: string,
-    props?: { strokeDasharray: string },
-  ) {
-    const { type, layout, connectNulls, ...others } = this.props;
-    const curveProps = {
-      ...filterProps(others, true),
-      fill: 'none',
-      className: 'recharts-line-curve',
-      clipPath: needClip ? `url(#clipPath-${clipPathId})` : null,
-      points,
-      ...props,
-      type,
-      layout,
-      connectNulls,
-    };
-
-    return <Curve {...curveProps} pathRef={this.pathRef} />;
-  }
 
   renderCurveWithAnimation(needClip: boolean, clipPathId: string) {
     const {
@@ -439,7 +446,7 @@ class LineWithState extends Component<InternalProps, State> {
               }
               return { ...entry, x: entry.x, y: entry.y };
             });
-            return this.renderCurveStatically(stepData, needClip, clipPathId);
+            return <StaticCurve props={this.props} points={stepData} clipPathId={clipPathId} pathRef={this.pathRef} />;
           }
           const interpolator = interpolateNumber(0, totalLength);
           const curLength = interpolator(t);
@@ -452,9 +459,15 @@ class LineWithState extends Component<InternalProps, State> {
             currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
           }
 
-          return this.renderCurveStatically(points, needClip, clipPathId, {
-            strokeDasharray: currentStrokeDasharray,
-          });
+          return (
+            <StaticCurve
+              props={this.props}
+              points={points}
+              clipPathId={clipPathId}
+              pathRef={this.pathRef}
+              strokeDasharray={currentStrokeDasharray}
+            />
+          );
         }}
       </Animate>
     );
@@ -473,7 +486,7 @@ class LineWithState extends Component<InternalProps, State> {
       return this.renderCurveWithAnimation(needClip, clipPathId);
     }
 
-    return this.renderCurveStatically(points, needClip, clipPathId);
+    return <StaticCurve props={this.props} points={points} clipPathId={clipPathId} pathRef={this.pathRef} />;
   }
 
   render() {
