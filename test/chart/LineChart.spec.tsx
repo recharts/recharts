@@ -29,6 +29,7 @@ import { TickItem } from '../../src/util/types';
 import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { expectLines } from '../helper/expectLine';
 
 describe('<LineChart />', () => {
   beforeEach(() => {
@@ -1682,5 +1683,107 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       vi.advanceTimersByTime(100);
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
     });
+  });
+});
+
+describe('<LineChart /> with dataKey as a function', () => {
+  const data1 = [
+    { x: { value: 1 }, name: 'x1' },
+    { x: { value: 2 }, name: 'x2' },
+    { x: { value: 3 }, name: 'x3' },
+  ];
+  const data2 = [
+    { y: { value: 1 }, name: 'y1' },
+    { y: { value: 2 }, name: 'y2' },
+    { y: { value: 3 }, name: 'y3' },
+  ];
+  const dataKey1 = (d: any) => {
+    return d.x.value;
+  };
+  const dataKey2 = (d: any) => {
+    // Need a type guard until https://github.com/recharts/recharts/issues/4935 is fixed
+    if (d?.y == null) {
+      return 0;
+    }
+    return d.y.value;
+  };
+
+  it('should use the return value as data points', () => {
+    const { container, rerender } = render(
+      <LineChart width={300} height={300} data={data1}>
+        <Line dataKey={dataKey1} isAnimationActive={false} />
+      </LineChart>,
+    );
+    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
+
+    rerender(
+      <LineChart width={300} height={300} data={data2}>
+        <Line dataKey={dataKey2} isAnimationActive={false} />
+      </LineChart>,
+    );
+
+    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
+  });
+
+  it('should call the function and give it the latest data', () => {
+    const spy = vi.fn();
+    const { rerender } = render(
+      <LineChart width={300} height={300} data={data1}>
+        <Line dataKey={spy} />
+      </LineChart>,
+    );
+
+    expect(spy).toHaveBeenCalledTimes(data1.length * 6);
+    expect(spy).toHaveBeenNthCalledWith(1, data1[0]);
+    expect(spy).toHaveBeenNthCalledWith(2, data1[1]);
+    expect(spy).toHaveBeenNthCalledWith(3, data1[2]);
+
+    spy.mockReset();
+
+    rerender(
+      <LineChart width={300} height={300} data={data2}>
+        <Line dataKey={spy} />
+      </LineChart>,
+    );
+
+    expect(spy).toHaveBeenCalledTimes(data2.length * 6);
+    expect(spy).toHaveBeenNthCalledWith(1, data2[0]);
+    expect(spy).toHaveBeenNthCalledWith(2, data2[1]);
+    expect(spy).toHaveBeenNthCalledWith(3, data2[2]);
+  });
+
+  test.fails('reproducing https://github.com/recharts/recharts/issues/4935', () => {
+    const dataKey1Spy = vi.fn(dataKey1);
+    const dataKey2Spy = vi.fn(dataKey2);
+    const Reproduction = () => {
+      const [useData2, setUseData2] = useState(false);
+
+      return (
+        <>
+          <button type="button" onClick={() => setUseData2(true)}>
+            Use data2
+          </button>
+          <LineChart width={300} height={300} data={useData2 ? data2 : data1}>
+            <Line dataKey={useData2 ? dataKey2Spy : dataKey1Spy} isAnimationActive={false} />
+          </LineChart>
+        </>
+      );
+    };
+
+    const { container } = render(<Reproduction />);
+    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 9);
+    expect(dataKey1Spy).toHaveBeenNthCalledWith(1, data1[0]);
+    expect(dataKey1Spy).toHaveBeenLastCalledWith(data1[2]);
+    expect(dataKey2Spy).toHaveBeenCalledTimes(0);
+
+    fireEvent.click(screen.getByText('Use data2'));
+
+    expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 10);
+
+    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 9);
+    expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
+    expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
   });
 });
