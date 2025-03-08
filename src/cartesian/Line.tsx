@@ -125,14 +125,6 @@ type InternalProps = LineSvgProps & InternalLineProps;
 
 export type Props = LineSvgProps & LineProps;
 
-interface State {
-  isAnimationFinished?: boolean;
-  totalLength?: number;
-  prevPoints?: ReadonlyArray<LinePointItem>;
-  curPoints?: ReadonlyArray<LinePointItem>;
-  prevAnimationId?: UpdateId;
-}
-
 const computeLegendPayloadFromAreaData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, stroke, legendType, hide } = props;
   return [
@@ -292,11 +284,6 @@ function StaticCurve({
   props: InternalProps;
   strokeDasharray?: string;
 }) {
-  console.log('StaticCurve renders', {
-    strokeDasharray: strokeDasharray ?? props.strokeDasharray,
-    pathRef,
-    points,
-  });
   const { type, layout, connectNulls, needClip, ...others } = props;
   const curveProps = {
     ...filterProps(others, true),
@@ -476,173 +463,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class LineWithState extends Component<InternalProps, State> {
-  mainCurve?: SVGPathElement;
-
-  state: State = {
-    isAnimationFinished: true,
-    totalLength: 0,
-  };
-
-  componentDidMount() {
-    if (!this.props.isAnimationActive) {
-      return;
-    }
-
-    const totalLength = this.getTotalLength();
-    this.setState({ totalLength });
-  }
-
-  componentDidUpdate(): void {
-    if (!this.props.isAnimationActive) {
-      return;
-    }
-
-    const totalLength = this.getTotalLength();
-    if (totalLength !== this.state.totalLength) {
-      this.setState({ totalLength });
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curPoints: nextProps.points,
-        prevPoints: prevState.curPoints,
-      };
-    }
-    if (nextProps.points !== prevState.curPoints) {
-      return {
-        curPoints: nextProps.points,
-      };
-    }
-
-    return null;
-  }
-
-  getTotalLength() {
-    const curveDom = this.mainCurve;
-
-    try {
-      return (curveDom && curveDom.getTotalLength && curveDom.getTotalLength()) || 0;
-    } catch {
-      return 0;
-    }
-  }
-
+class LineWithState extends Component<InternalProps> {
   id = uniqueId('recharts-line-');
-
-  pathRef = (node: SVGPathElement): void => {
-    this.mainCurve = node;
-  };
-
-  handleAnimationEnd = () => {
-    this.setState({ isAnimationFinished: true });
-
-    if (this.props.onAnimationEnd) {
-      this.props.onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    this.setState({ isAnimationFinished: false });
-
-    if (this.props.onAnimationStart) {
-      this.props.onAnimationStart();
-    }
-  };
-
-  renderCurveWithAnimation(needClip: boolean, clipPathId: string) {
-    const {
-      points,
-      strokeDasharray,
-      isAnimationActive,
-      animationBegin,
-      animationDuration,
-      animationEasing,
-      animationId,
-      animateNewValues,
-      width,
-      height,
-    } = this.props;
-    const { prevPoints, totalLength } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`line-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          if (prevPoints) {
-            const prevPointsDiffFactor = prevPoints.length / points.length;
-            const stepData = points.map((entry, index) => {
-              const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-              if (prevPoints[prevPointIndex]) {
-                const prev = prevPoints[prevPointIndex];
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-              }
-
-              // magic number of faking previous x and y location
-              if (animateNewValues) {
-                const interpolatorX = interpolateNumber(width * 2, entry.x);
-                const interpolatorY = interpolateNumber(height / 2, entry.y);
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
-              }
-              return { ...entry, x: entry.x, y: entry.y };
-            });
-            return <StaticCurve props={this.props} points={stepData} clipPathId={clipPathId} pathRef={this.pathRef} />;
-          }
-          const interpolator = interpolateNumber(0, totalLength);
-          const curLength = interpolator(t);
-          let currentStrokeDasharray;
-
-          if (strokeDasharray) {
-            const lines = `${strokeDasharray}`.split(/[,\s]+/gim).map(num => parseFloat(num));
-            currentStrokeDasharray = getStrokeDasharray(curLength, totalLength, lines);
-          } else {
-            currentStrokeDasharray = generateSimpleStrokeDasharray(totalLength, curLength);
-          }
-
-          return (
-            <StaticCurve
-              props={this.props}
-              points={points}
-              clipPathId={clipPathId}
-              pathRef={this.pathRef}
-              strokeDasharray={currentStrokeDasharray}
-            />
-          );
-        }}
-      </Animate>
-    );
-  }
-
-  renderCurve(needClip: boolean, clipPathId: string) {
-    const { points, isAnimationActive } = this.props;
-    const { prevPoints, totalLength } = this.state;
-
-    if (
-      isAnimationActive &&
-      points &&
-      points.length &&
-      ((!prevPoints && totalLength > 0) || !isEqual(prevPoints, points))
-    ) {
-      return this.renderCurveWithAnimation(needClip, clipPathId);
-    }
-
-    return <StaticCurve props={this.props} points={points} clipPathId={clipPathId} pathRef={this.pathRef} />;
-  }
 
   render() {
     const {
@@ -666,8 +488,7 @@ class LineWithState extends Component<InternalProps, State> {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
-    const hasSinglePoint = points?.length === 1;
+    const isAnimationFinished = true;
     const layerClass = clsx('recharts-line', className);
     const clipPathId = isNullish(id) ? this.id : id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
@@ -692,7 +513,6 @@ class LineWithState extends Component<InternalProps, State> {
               )}
             </defs>
           )}
-          {/*{!hasSinglePoint && this.renderCurve(needClip, clipPathId)}*/}
           <RenderCurve props={this.props} clipPathId={clipPathId} />
           <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
             <SetErrorBarContext
@@ -742,7 +562,10 @@ function LineImpl(props: Props) {
   const { height, width, left, top } = useOffset();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
-  const lineSettings = useMemo(() => ({ dataKey: props.dataKey, data: props.data }), [props.dataKey, props.data]);
+  const lineSettings: ResolvedLineSettings = useMemo(
+    () => ({ dataKey: props.dataKey, data: props.data }),
+    [props.dataKey, props.data],
+  );
   const points: ReadonlyArray<LinePointItem> = useAppSelector(state =>
     selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, lineSettings),
   );
