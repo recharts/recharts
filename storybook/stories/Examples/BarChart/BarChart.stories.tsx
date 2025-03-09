@@ -52,9 +52,9 @@ export const Simple = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip defaultIndex={3} />
           <Bar dataKey="pv" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
           <Bar dataKey="uv" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
-          <Tooltip defaultIndex={3} />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -155,11 +155,11 @@ export const StackedWithErrorBar = {
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d">
             <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
           </Bar>
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -217,6 +217,7 @@ export const Mix = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
+          <Tooltip />
           <Bar dataKey="pv" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'pv' ? '#8884d8' : '#eee'} />
           <Bar
             dataKey="amt"
@@ -224,7 +225,6 @@ export const Mix = {
             fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'}
           />
           <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -265,11 +265,11 @@ export const CustomShape = {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
+        <Tooltip />
         <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} label={{ position: 'top' }}>
           {pageData.map(({ name }, index) => (
             <Cell key={`cell-${name}`} fill={colors[index % 20]} />
           ))}
-          <Tooltip />
         </Bar>
       </BarChart>
     );
@@ -342,9 +342,9 @@ export const PositiveAndNegative = {
           <YAxis />
           <Legend />
           <ReferenceLine y={0} stroke="#000" />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -413,11 +413,11 @@ export const WithBrush = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Brush dataKey="name" height={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -445,11 +445,11 @@ export const XAxisTickMarginWithBrushDy = {
           <XAxis dataKey="name" tickMargin={30} />
           <YAxis />
           <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Brush dataKey="name" height={30} dy={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -507,10 +507,10 @@ export const StackedBySign = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
           <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -540,9 +540,9 @@ export const Biaxial = {
           <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
           <Legend />
+          <Tooltip />
           <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
           <Bar yAxisId="right" dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -570,9 +570,9 @@ export const HasBackground = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -606,9 +606,9 @@ export const HasLabelBasedOnSeparateDataKey = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" label={{ dataKey: 'label', position: 'top', fill: '#111' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -746,9 +746,9 @@ export const WithMultiXAxis = {
           />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -828,10 +828,10 @@ export const WithMinPointSize = {
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
           <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -888,8 +888,8 @@ export const RangedBarChart = {
           <XAxis dataKey="day" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Bar dataKey="temperature" fill="violet" stroke="indigo" />
           <Tooltip />
+          <Bar dataKey="temperature" fill="violet" stroke="indigo" />
         </BarChart>
       </ResponsiveContainer>
     );
