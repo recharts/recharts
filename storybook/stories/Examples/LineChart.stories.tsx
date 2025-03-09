@@ -1036,7 +1036,7 @@ export const ReversedXAxis = {
   },
 };
 
-export const ReproducingBug4935 = {
+export const ChangingDataKey = {
   render: (args: Record<string, any>, context: StoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },

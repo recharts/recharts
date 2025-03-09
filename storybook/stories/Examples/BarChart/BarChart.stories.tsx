@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StoryContext } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -18,6 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
 
 export default {
   argTypes: BarChartProps,
@@ -942,5 +944,89 @@ export const CustomCursorBarChart = {
     },
     /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
     barSize: '30%',
+  },
+};
+
+export const ChangingDataKey = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const data1 = [
+      { x: { value: 1 }, name: 'x1' },
+      { x: { value: 2 }, name: 'x2' },
+      { x: { value: 3 }, name: 'x3' },
+    ];
+    const data2 = [
+      { y: { value: 3 }, name: 'y1' },
+      { y: { value: 2 }, name: 'y2' },
+      { y: { value: 1 }, name: 'y3' },
+    ];
+
+    const dataKey1 = (d: any) => {
+      return d.x.value;
+    };
+    const dataKey2 = (d: any) => {
+      return d.y.value;
+    };
+
+    const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
+          Use data1
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
+          Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
+        </button>
+        <BarChart {...args} data={useData2 ? data2 : data1}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Bar
+            name="Animated line"
+            hide={!visible}
+            type="monotone"
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+        </BarChart>
+      </>
+    );
+  },
+  args: {
+    width: 500,
+    height: 300,
+    margin: {
+      top: 30,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
