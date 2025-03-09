@@ -14,7 +14,6 @@ import React, {
 } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
@@ -458,7 +457,12 @@ function RenderRectangles(props: InternalProps) {
   const { data, isAnimationActive } = props;
   const previousRectanglesRef = useRef<ReadonlyArray<BarRectangleItem> | null>(null);
 
-  if (isAnimationActive && data && data.length && (!previousRectanglesRef || !isEqual(previousRectanglesRef, data))) {
+  if (
+    isAnimationActive &&
+    data &&
+    data.length &&
+    (previousRectanglesRef.current == null || previousRectanglesRef.current !== data)
+  ) {
     return <RectanglesWithAnimation previousRectanglesRef={previousRectanglesRef} props={props} />;
   }
 
