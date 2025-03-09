@@ -105,7 +105,6 @@ export interface BarProps {
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
-  animationId?: number;
   id?: string;
   label?: ImplicitLabelType;
 }
@@ -164,7 +163,6 @@ type InternalBarProps = {
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
 
-  animationId?: number;
   id?: string;
   label?: ImplicitLabelType;
 };
@@ -177,13 +175,6 @@ type BarSvgProps = Omit<
 export type Props = Partial<BarEvents> & BarProps & Omit<BarSvgProps, keyof BarEvents>;
 
 type InternalProps = BarSvgProps & InternalBarProps;
-
-interface State {
-  readonly isAnimationFinished?: boolean;
-  readonly prevData?: ReadonlyArray<BarRectangleItem>;
-  readonly curData?: ReadonlyArray<BarRectangleItem>;
-  readonly prevAnimationId?: number;
-}
 
 const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -380,7 +371,6 @@ function RectanglesWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    animationId,
     onAnimationEnd,
     onAnimationStart,
   } = props;
@@ -410,7 +400,6 @@ function RectanglesWithAnimation({
       easing={animationEasing}
       from={{ t: 0 }}
       to={{ t: 1 }}
-      key={`bar-${animationId}`}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
     >
@@ -496,119 +485,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class BarWithState extends PureComponent<InternalProps, State> {
-  state: State = { isAnimationFinished: false };
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curData: nextProps.data,
-        prevData: prevState.curData,
-      };
-    }
-    if (nextProps.data !== prevState.curData) {
-      return {
-        curData: nextProps.data,
-      };
-    }
-
-    return null;
-  }
-
+class BarWithState extends PureComponent<InternalProps> {
   id = uniqueId('recharts-bar-');
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (onAnimationEnd) {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
-    if (onAnimationStart) {
-      onAnimationStart();
-    }
-  };
-
-  renderRectanglesWithAnimation() {
-    const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
-      this.props;
-    const { prevData } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`bar-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          const stepData = data.map((entry, index) => {
-            const prev = prevData && prevData[index];
-
-            if (prev) {
-              const interpolatorX = interpolateNumber(prev.x, entry.x);
-              const interpolatorY = interpolateNumber(prev.y, entry.y);
-              const interpolatorWidth = interpolateNumber(prev.width, entry.width);
-              const interpolatorHeight = interpolateNumber(prev.height, entry.height);
-
-              return {
-                ...entry,
-                x: interpolatorX(t),
-                y: interpolatorY(t),
-                width: interpolatorWidth(t),
-                height: interpolatorHeight(t),
-              };
-            }
-
-            if (layout === 'horizontal') {
-              const interpolatorHeight = interpolateNumber(0, entry.height);
-              const h = interpolatorHeight(t);
-
-              return {
-                ...entry,
-                y: entry.y + entry.height - h,
-                height: h,
-              };
-            }
-
-            const interpolator = interpolateNumber(0, entry.width);
-            const w = interpolator(t);
-
-            return { ...entry, width: w };
-          });
-
-          return (
-            <Layer>
-              <BarRectangles props={this.props} data={stepData} showLabels={this.state.isAnimationFinished} />
-            </Layer>
-          );
-        }}
-      </Animate>
-    );
-  }
-
-  renderRectangles() {
-    const { data, isAnimationActive } = this.props;
-    const { prevData } = this.state;
-
-    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
-      return this.renderRectanglesWithAnimation();
-    }
-
-    return <BarRectangles props={this.props} data={data} showLabels />;
-  }
 
   render() {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, layout } = this.props;
@@ -628,7 +506,6 @@ class BarWithState extends PureComponent<InternalProps, State> {
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
           <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
-          {/*{this.renderRectangles()}*/}
           <RenderRectangles {...this.props} />
         </Layer>
         <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
