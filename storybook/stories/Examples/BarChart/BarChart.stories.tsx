@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StoryContext } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -18,6 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
 
 export default {
   argTypes: BarChartProps,
@@ -52,9 +54,9 @@ export const Simple = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip defaultIndex={3} />
           <Bar dataKey="pv" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
           <Bar dataKey="uv" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
-          <Tooltip defaultIndex={3} />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -155,11 +157,11 @@ export const StackedWithErrorBar = {
           <XAxis type="number" />
           <YAxis dataKey="name" type="category" />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" stackId="a" fill="#8884d8" />
           <Bar dataKey="uv" stackId="a" fill="#82ca9d">
             <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
           </Bar>
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -217,6 +219,7 @@ export const Mix = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend onMouseEnter={onLegendMouseEnter} onMouseOut={onLegendMouseOut} onClick={onLegendClick} />
+          <Tooltip />
           <Bar dataKey="pv" stackId="a" fill={focusedDataKey == null || focusedDataKey === 'pv' ? '#8884d8' : '#eee'} />
           <Bar
             dataKey="amt"
@@ -224,7 +227,6 @@ export const Mix = {
             fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'}
           />
           <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -265,11 +267,11 @@ export const CustomShape = {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
+        <Tooltip />
         <Bar dataKey="uv" fill="#8884d8" shape={<TriangleBar />} label={{ position: 'top' }}>
           {pageData.map(({ name }, index) => (
             <Cell key={`cell-${name}`} fill={colors[index % 20]} />
           ))}
-          <Tooltip />
         </Bar>
       </BarChart>
     );
@@ -342,9 +344,9 @@ export const PositiveAndNegative = {
           <YAxis />
           <Legend />
           <ReferenceLine y={0} stroke="#000" />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -413,11 +415,11 @@ export const WithBrush = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Brush dataKey="name" height={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -445,11 +447,11 @@ export const XAxisTickMarginWithBrushDy = {
           <XAxis dataKey="name" tickMargin={30} />
           <YAxis />
           <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '40px' }} />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Brush dataKey="name" height={30} dy={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -507,10 +509,10 @@ export const StackedBySign = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <ReferenceLine y={0} stroke="#000" />
           <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
           <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -540,9 +542,9 @@ export const Biaxial = {
           <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
           <Legend />
+          <Tooltip />
           <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
           <Bar yAxisId="right" dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -570,9 +572,9 @@ export const HasBackground = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -606,9 +608,9 @@ export const HasLabelBasedOnSeparateDataKey = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" label={{ dataKey: 'label', position: 'top', fill: '#111' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -746,9 +748,9 @@ export const WithMultiXAxis = {
           />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -828,10 +830,10 @@ export const WithMinPointSize = {
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
           <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
-          <Tooltip />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -888,8 +890,8 @@ export const RangedBarChart = {
           <XAxis dataKey="day" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
-          <Bar dataKey="temperature" fill="violet" stroke="indigo" />
           <Tooltip />
+          <Bar dataKey="temperature" fill="violet" stroke="indigo" />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -942,5 +944,167 @@ export const CustomCursorBarChart = {
     },
     /* When there's only one data point on a numerical domain, we cannot automatically calculate the bar size */
     barSize: '30%',
+  },
+};
+
+export const ChangingDataKey = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const data1 = [
+      { x: { value: 1 }, name: 'x1' },
+      { x: { value: 2 }, name: 'x2' },
+      { x: { value: 3 }, name: 'x3' },
+    ];
+    const data2 = [
+      { y: { value: 3 }, name: 'y1' },
+      { y: { value: 2 }, name: 'y2' },
+      { y: { value: 1 }, name: 'y3' },
+    ];
+
+    const dataKey1 = (d: any) => {
+      return d.x.value;
+    };
+    const dataKey2 = (d: any) => {
+      return d.y.value;
+    };
+
+    const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
+          Use data1
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
+          Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
+        </button>
+        <BarChart {...args} data={useData2 ? data2 : data1}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Bar
+            name="Animated Bar"
+            hide={!visible}
+            type="monotone"
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+        </BarChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    margin: {
+      top: 30,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
+};
+
+export const ChangingDataKeyAndStacked = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
+          Use data1
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
+          Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
+        </button>
+        <BarChart {...args} data={pageData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey="uv" />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Bar
+            name="Animated Bar 1"
+            hide={!visible}
+            dataKey={useData2 ? 'uv' : 'pv'}
+            stackId={1}
+            stroke="green"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+          <Bar
+            name="Animated Bar 2"
+            hide={!visible}
+            dataKey={useData2 ? 'pv' : 'amt'}
+            stackId={1}
+            stroke="yellow"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+        </BarChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    margin: {
+      top: 30,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
