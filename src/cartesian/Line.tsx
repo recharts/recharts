@@ -343,8 +343,6 @@ function CurveWithAnimation({
     onAnimationStart,
   } = props;
 
-  const currentPointsRef = useRef<ReadonlyArray<LinePointItem> | null>(null);
-  currentPointsRef.current = points;
   const prevPoints = previousPointsRef.current;
 
   const [isAnimating, setIsAnimating] = useState(false);
