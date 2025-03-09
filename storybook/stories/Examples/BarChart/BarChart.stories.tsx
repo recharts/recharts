@@ -1006,11 +1006,88 @@ export const ChangingDataKey = {
           <Legend />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           <Bar
-            name="Animated line"
+            name="Animated Bar"
             hide={!visible}
             type="monotone"
             dataKey={useData2 ? dataKey2 : dataKey1}
             stroke="#8884d8"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+        </BarChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 500,
+    height: 300,
+    margin: {
+      top: 30,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
+  },
+};
+
+export const ChangingDataKeyAndStacked = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
+          Use data1
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
+          Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
+        </button>
+        <BarChart {...args} data={pageData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+          <YAxis dataKey="uv" />
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Bar
+            name="Animated Bar 1"
+            hide={!visible}
+            dataKey={useData2 ? 'uv' : 'pv'}
+            stackId={1}
+            stroke="green"
+            strokeDasharray="5 5"
+            label={{ fill: 'red' }}
+            animationDuration={3000}
+          />
+          <Bar
+            name="Animated Bar 2"
+            hide={!visible}
+            dataKey={useData2 ? 'pv' : 'amt'}
+            stackId={1}
+            stroke="yellow"
             strokeDasharray="5 5"
             label={{ fill: 'red' }}
             animationDuration={3000}
