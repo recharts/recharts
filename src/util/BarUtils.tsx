@@ -43,7 +43,7 @@ export type BarRectangleProps = {
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   width?: number;
   height?: number;
-} & BarProps;
+} & Omit<BarProps, 'onAnimationStart' | 'onAnimationEnd'>;
 
 export function BarRectangle(props: BarRectangleProps) {
   return (
@@ -59,7 +59,7 @@ export function BarRectangle(props: BarRectangleProps) {
 export type MinPointSize = number | ((value: number, index: number) => number);
 
 /**
- * Safely gets minPointSize from from the minPointSize prop if it is a function
+ * Safely gets minPointSize from the minPointSize prop if it is a function
  * @param minPointSize minPointSize as passed to the Bar component
  * @param defaultValue default minPointSize
  * @returns minPointSize

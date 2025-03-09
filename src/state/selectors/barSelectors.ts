@@ -15,7 +15,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
 import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
-import { DataKey, LayoutType, TickItem } from '../../util/types';
+import { ChartOffset, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
@@ -438,6 +438,31 @@ export const combineStackedData = (
   return stack;
 };
 
+const selectSynchronisedBarSettings: (
+  state: RechartsRootState,
+  xAxisId: AxisId,
+  yAxisId: AxisId,
+  isPanorama: boolean,
+  barSettings: BarSettings,
+) => BarSettings | undefined = createSelector(
+  [selectUnfilteredCartesianItems, pickBarSettings],
+  (graphicalItems, barSettingsFromProps) => {
+    if (
+      graphicalItems.some(
+        cgis =>
+          cgis.type === 'bar' &&
+          barSettingsFromProps.dataKey === cgis.dataKey &&
+          barSettingsFromProps.stackId === cgis.stackId &&
+          // barSettingsFromProps.data === cgis.data && // bar doesn't support data and one is undefined and another is null and this condition breaks
+          barSettingsFromProps.stackId === cgis.stackId,
+      )
+    ) {
+      return barSettingsFromProps;
+    }
+    return undefined;
+  },
+);
+
 const selectStackedDataOfItem: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -468,11 +493,11 @@ export const selectBarRectangles: (
     selectChartDataWithIndexesIfNotInPanorama,
     selectAxisBandSize,
     selectStackedDataOfItem,
-    pickBarSettings,
+    selectSynchronisedBarSettings,
     pickCells,
   ],
   (
-    offset,
+    offset: ChartOffset,
     xAxis: BaseAxisWithScale,
     yAxis: BaseAxisWithScale,
     xAxisTicks,
@@ -486,6 +511,7 @@ export const selectBarRectangles: (
     cells,
   ): ReadonlyArray<BarRectangleItem> | undefined => {
     if (
+      barSettings == null ||
       pos == null ||
       (layout !== 'horizontal' && layout !== 'vertical') ||
       xAxis == null ||
