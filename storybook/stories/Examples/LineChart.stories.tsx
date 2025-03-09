@@ -19,6 +19,7 @@ import {
 import { DataKey } from '../../../src/util/types';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { CategoricalChartProps } from '../API/props/ChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 
 export default {
   component: LineChart,
@@ -412,6 +413,7 @@ export const ClipDot: StoryObj = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     clipDot: false,
   },
   parameters: {
@@ -469,6 +471,7 @@ export const WithCustomizedLabel = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 300,
     data: pageData,
@@ -603,6 +606,7 @@ export const HighlightAndZoom = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 800,
     height: 400,
   },
@@ -627,6 +631,7 @@ export const LineChartHasMultiSeries = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 300,
     data: pageData,
@@ -774,6 +779,7 @@ export const NegativeValuesWithReferenceLines = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 300,
     margin: {
@@ -908,6 +914,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
     width: 1300,
     height: 400,
@@ -935,6 +942,7 @@ export const WithBrush: StoryObj = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
   },
 };
@@ -971,6 +979,7 @@ export const HideOnLegendClick: StoryObj = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
   },
 };
@@ -978,14 +987,10 @@ export const HideOnLegendClick: StoryObj = {
 export const LineTrailingIcon: StoryObj = {
   render: (args: Record<string, any>, context: StoryContext) => {
     const lastDotKey = 'lastDot';
-    const data = pageData.map((entry, index) => ({
-      ...entry,
-      [lastDotKey]: index === pageData.length - 1 ? entry.pv : undefined,
-    }));
 
     return (
       <ResponsiveContainer>
-        <LineChart data={data}>
+        <LineChart {...args}>
           <XAxis dataKey="name" />
           <YAxis />
           <CartesianGrid strokeDasharray="3 3" />
@@ -1004,6 +1009,13 @@ export const LineTrailingIcon: StoryObj = {
       </ResponsiveContainer>
     );
   },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    data: pageData.map((entry, index) => ({
+      ...entry,
+      lastDot: index === pageData.length - 1 ? entry.pv : undefined,
+    })),
+  },
 };
 
 export const ReversedXAxis = {
@@ -1014,9 +1026,9 @@ export const ReversedXAxis = {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" reversed />
           <YAxis />
-          {/* <Legend /> */}
+          <Legend />
           <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-          {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
+          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
           <Tooltip />
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </LineChart>
@@ -1024,6 +1036,7 @@ export const ReversedXAxis = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 300,
     data: pageData,
@@ -1110,6 +1123,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     width: 500,
     height: 300,
     margin: {

@@ -1020,6 +1020,7 @@ export const ChangingDataKey = {
     );
   },
   args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
     width: 500,
     height: 300,
     margin: {
