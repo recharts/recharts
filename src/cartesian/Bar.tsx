@@ -417,17 +417,6 @@ class BarWithState extends PureComponent<InternalProps, State> {
     }
   };
 
-  renderRectanglesStatically(data: ReadonlyArray<BarRectangleItem>) {
-    return (
-      <BarRectangles
-        {...this.props}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-        data={data}
-      />
-    );
-  }
-
   renderRectanglesWithAnimation() {
     const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
@@ -481,7 +470,16 @@ class BarWithState extends PureComponent<InternalProps, State> {
             return { ...entry, width: w };
           });
 
-          return <Layer>{this.renderRectanglesStatically(stepData)}</Layer>;
+          return (
+            <Layer>
+              <BarRectangles
+                {...this.props}
+                onAnimationStart={this.handleAnimationStart}
+                onAnimationEnd={this.handleAnimationEnd}
+                data={stepData}
+              />
+            </Layer>
+          );
         }}
       </Animate>
     );
@@ -495,7 +493,14 @@ class BarWithState extends PureComponent<InternalProps, State> {
       return this.renderRectanglesWithAnimation();
     }
 
-    return this.renderRectanglesStatically(data);
+    return (
+      <BarRectangles
+        {...this.props}
+        onAnimationStart={this.handleAnimationStart}
+        onAnimationEnd={this.handleAnimationEnd}
+        data={data}
+      />
+    );
   }
 
   render() {
