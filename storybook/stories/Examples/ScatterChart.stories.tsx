@@ -675,10 +675,12 @@ export const ChangingDataKey = {
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
           <Scatter
             name="Animated Scatter"
+            lineType="joint"
+            line
             hide={!visible}
-            type="monotone"
             dataKey={useData2 ? dataKey2 : dataKey1}
             stroke="#8884d8"
+            fill="#8884d8"
             strokeWidth={3}
             strokeDasharray="2 2"
             label={{ fill: 'red' }}
