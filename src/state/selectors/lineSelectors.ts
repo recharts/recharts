@@ -58,27 +58,27 @@ const selectSynchronisedLineSettings: (
   xAxisId: AxisId,
   yAxisId: AxisId,
   isPanorama: boolean,
-  areaSettings: ResolvedLineSettings,
+  lineSettings: ResolvedLineSettings,
 ) => ResolvedLineSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickLineSettings],
-  (areaSettingsState, areaSettingsFromProps) => {
+  (graphicalItems, lineSettingsFromProps) => {
     if (
-      areaSettingsState.some(
+      graphicalItems.some(
         cgis =>
           cgis.type === 'line' &&
-          areaSettingsFromProps.dataKey === cgis.dataKey &&
-          areaSettingsFromProps.data === cgis.data,
+          lineSettingsFromProps.dataKey === cgis.dataKey &&
+          lineSettingsFromProps.data === cgis.data,
       )
     ) {
       /*
-       * now, at least one of the areas has the same dataKey as the one in props.
-       * Is this a perfect match? Maybe not because we could theoretically have two different Areas with the same dataKey
-       * and the same stackId and the same data but still different areas, yes,
+       * now, at least one of the lines has the same dataKey as the one in props.
+       * Is this a perfect match? Maybe not because we could theoretically have two different Lines with the same dataKey
+       * and the same stackId and the same data but still different lines, yes,
        * but the chances of that happening are ... lowish.
        *
        * A proper fix would be to store the lineSettings in a state too, and compare references directly instead of enumerating the properties.
        */
-      return areaSettingsFromProps;
+      return lineSettingsFromProps;
     }
     return undefined;
   },
