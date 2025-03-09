@@ -438,10 +438,6 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 
   id = uniqueId('recharts-scatter-');
 
-  renderSymbolsStatically(points: ReadonlyArray<ScatterPointItem>) {
-    return <ScatterSymbols points={points} allOtherScatterProps={this.props} />;
-  }
-
   renderSymbolsWithAnimation() {
     const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevPoints } = this.state;
@@ -480,7 +476,11 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
             return { ...entry, size: interpolator(t) };
           });
 
-          return <Layer>{this.renderSymbolsStatically(stepData)}</Layer>;
+          return (
+            <Layer>
+              <ScatterSymbols points={stepData} allOtherScatterProps={this.props} />
+            </Layer>
+          );
         }}
       </Animate>
     );
@@ -494,7 +494,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
       return this.renderSymbolsWithAnimation();
     }
 
-    return this.renderSymbolsStatically(points);
+    return <ScatterSymbols points={points} allOtherScatterProps={this.props} />;
   }
 
   render() {
