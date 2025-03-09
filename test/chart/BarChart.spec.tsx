@@ -647,8 +647,12 @@ describe('<BarChart />', () => {
             [],
           ),
         );
-        [seriesOneBarOneEntry] = seriesOneResult;
-        [seriesTwoBarOneEntry] = seriesTwoResult;
+        if (seriesOneResult != null) {
+          [seriesOneBarOneEntry] = seriesOneResult;
+        }
+        if (seriesTwoResult != null) {
+          [seriesTwoBarOneEntry] = seriesTwoResult;
+        }
         return <></>;
       };
 

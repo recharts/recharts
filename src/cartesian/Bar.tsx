@@ -232,7 +232,7 @@ function BarBackground(props: BarBackgroundProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
-  if (!backgroundFromProps) {
+  if (!backgroundFromProps || data == null) {
     return null;
   }
 

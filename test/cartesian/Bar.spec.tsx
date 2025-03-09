@@ -811,8 +811,6 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         height: 490,
         index: expect.any(Number),
         label: 'test',
-        onAnimationEnd: expect.any(Function),
-        onAnimationStart: expect.any(Function),
         onMouseEnter: expect.any(Function),
         onMouseLeave: expect.any(Function),
         onClick: expect.any(Function),
