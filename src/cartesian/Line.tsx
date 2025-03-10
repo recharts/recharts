@@ -356,13 +356,13 @@ export class Line extends PureComponent<Props, State> {
         r: 3,
         ...lineProps,
         ...customDotProps,
-        value: entry.value,
-        dataKey,
+        index: i,
         cx: entry.x,
         cy: entry.y,
-        index: i,
+        value: entry.value,
+        dataKey,
         payload: entry.payload,
-        points
+        points,
       };
 
       return Line.renderDotItem(dot, dotProps);

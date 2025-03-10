@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { expect } from 'vitest';
 import { Surface, Line } from '../../src';
 
@@ -84,5 +84,24 @@ describe('<Line />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(0);
+  });
+
+  it('Render customized dot when dot is set to be a function', () => {
+    let areaDotProps;
+    const renderDot = (props: { cx: number; cy: number }) => {
+      const { cx, cy } = props;
+      areaDotProps = props;
+
+      return <circle role="cell" key={cx} x={cx} y={cy} r={5} className="customized-dot" />;
+    };
+
+    render(
+      <Surface width={500} height={500}>
+        <Line isAnimationActive={false} points={data} dot={renderDot} />
+      </Surface>,
+    );
+
+    expect(screen.getAllByRole('cell')).toHaveLength(data.length);
+    expect(areaDotProps).toHaveProperty('points');
   });
 });
