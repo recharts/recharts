@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Bar, BarChart, LabelList, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from '../../src';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
+import { expectLabels } from '../helper/expectLabel';
 
 describe('<LabelList />', () => {
   it('Render labels in ScatterChart', () => {
@@ -25,8 +26,6 @@ describe('<LabelList />', () => {
         </Scatter>
       </ScatterChart>,
     );
-
-    const label = container.querySelectorAll('.recharts-label');
 
     expectScatterPoints(container, [
       {
@@ -78,7 +77,57 @@ describe('<LabelList />', () => {
         width: '3.638913473173784',
       },
     ]);
-    expect(label?.length).toEqual(data.length);
+
+    expectLabels(container, [
+      {
+        height: '3.638913473173784',
+        offset: '5',
+        textContent: '100',
+        width: '3.638913473173784',
+        x: '86.66666666666667',
+        y: '185',
+      },
+      {
+        height: '3.960594802695323',
+        offset: '5',
+        textContent: '120',
+        width: '3.960594802695323',
+        x: '140',
+        y: '267.5',
+      },
+      {
+        height: '4.624978308224887',
+        offset: '5',
+        textContent: '170',
+        width: '4.624978308224887',
+        x: '193.33333333333334',
+        y: '102.5',
+      },
+      {
+        height: '4.062165001543845',
+        offset: '5',
+        textContent: '140',
+        width: '4.062165001543845',
+        x: '246.66666666666666',
+        y: '143.75',
+      },
+      {
+        height: '5.046265044040321',
+        offset: '5',
+        textContent: '150',
+        width: '5.046265044040321',
+        x: '300.00000000000006',
+        y: '20',
+      },
+      {
+        height: '3.638913473173784',
+        offset: '5',
+        textContent: '110',
+        width: '3.638913473173784',
+        x: '353.33333333333337',
+        y: '119.00000000000001',
+      },
+    ]);
   });
 
   it('Render labels in BarChart with an offset', () => {
