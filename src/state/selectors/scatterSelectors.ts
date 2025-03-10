@@ -5,7 +5,13 @@ import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
-import { selectAxisWithScale, selectZAxisWithScale, selectTicksOfGraphicalItem, ZAxisWithScale } from './axisSelectors';
+import {
+  selectAxisWithScale,
+  selectZAxisWithScale,
+  selectTicksOfGraphicalItem,
+  ZAxisWithScale,
+  selectUnfilteredCartesianItems,
+} from './axisSelectors';
 import { DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
 
@@ -86,6 +92,29 @@ const scatterChartDataSelector = (
   isPanorama: boolean,
 ): ChartDataState => selectChartDataWithIndexesIfNotInPanorama(state, xAxisId, yAxisId, isPanorama);
 
+const selectSynchronisedScatterSettings: (
+  state: RechartsRootState,
+  xAxisId: AxisId,
+  yAxisId: AxisId,
+  _zAxisId: AxisId,
+  scatterSettings: ResolvedScatterSettings,
+) => ResolvedScatterSettings | undefined = createSelector(
+  [selectUnfilteredCartesianItems, pickScatterSettings],
+  (graphicalItems, scatterSettingsFromProps) => {
+    if (
+      graphicalItems.some(
+        cgis =>
+          cgis.type === 'scatter' &&
+          scatterSettingsFromProps.dataKey === cgis.dataKey &&
+          scatterSettingsFromProps.data === cgis.data,
+      )
+    ) {
+      return scatterSettingsFromProps;
+    }
+    return undefined;
+  },
+);
+
 export const selectScatterPoints: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -102,7 +131,7 @@ export const selectScatterPoints: (
     selectYAxisWithScale,
     selectYAxisTicks,
     selectZAxis,
-    pickScatterSettings,
+    selectSynchronisedScatterSettings,
     pickCells,
   ],
   (
@@ -115,6 +144,9 @@ export const selectScatterPoints: (
     scatterSettings: ResolvedScatterSettings,
     cells,
   ): ReadonlyArray<ScatterPointItem> | undefined => {
+    if (scatterSettings == null) {
+      return undefined;
+    }
     let displayedData: ChartData | undefined;
     if (scatterSettings?.data?.length > 0) {
       displayedData = scatterSettings.data;

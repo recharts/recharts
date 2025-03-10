@@ -683,7 +683,7 @@ export const ChangingDataKey = {
             fill="#8884d8"
             strokeWidth={3}
             strokeDasharray="2 2"
-            label={{ fill: 'red' }}
+            label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
             animationDuration={3000}
           />
         </ScatterChart>

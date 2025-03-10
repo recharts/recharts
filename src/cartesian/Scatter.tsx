@@ -1,5 +1,14 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { Component, PureComponent, ReactElement, useMemo } from 'react';
+import React, {
+  Component,
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Animate from 'react-smooth';
 
 import isEqual from 'lodash/isEqual';
@@ -162,11 +171,56 @@ const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<Legen
 
 type ScatterSymbolsProps = {
   points: ReadonlyArray<ScatterPointItem>;
+  showLabels: boolean;
   allOtherScatterProps: InternalProps;
 };
 
+function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem>; props: InternalProps }) {
+  const { line, lineType, lineJointType } = props;
+
+  if (!line) {
+    return null;
+  }
+
+  const scatterProps = filterProps(props, false);
+  const customLineProps = filterProps(line, false);
+  let linePoints, lineItem;
+
+  if (lineType === 'joint') {
+    linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
+  } else if (lineType === 'fitting') {
+    const { xmin, xmax, a, b } = getLinearRegression(points);
+    const linearExp = (x: number) => a * x + b;
+    linePoints = [
+      { x: xmin, y: linearExp(xmin) },
+      { x: xmax, y: linearExp(xmax) },
+    ];
+  }
+  const lineProps = {
+    ...scatterProps,
+    fill: 'none',
+    stroke: scatterProps && scatterProps.fill,
+    ...customLineProps,
+    points: linePoints,
+  };
+
+  if (React.isValidElement(line)) {
+    lineItem = React.cloneElement(line as any, lineProps);
+  } else if (typeof line === 'function') {
+    lineItem = line(lineProps);
+  } else {
+    lineItem = <Curve {...lineProps} type={lineJointType} />;
+  }
+
+  return (
+    <Layer className="recharts-scatter-line" key="recharts-scatter-line">
+      {lineItem}
+    </Layer>
+  );
+}
+
 function ScatterSymbols(props: ScatterSymbolsProps) {
-  const { points, allOtherScatterProps } = props;
+  const { points, showLabels, allOtherScatterProps } = props;
   const { shape, activeShape } = allOtherScatterProps;
   const baseProps = filterProps(allOtherScatterProps, false);
 
@@ -181,9 +235,12 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
-
+  if (points == null) {
+    return null;
+  }
   return (
     <>
+      <ScatterLine points={points} props={allOtherScatterProps} />
       {points.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
         const option = isActive ? activeShape : shape;
@@ -204,11 +261,101 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             role="img"
           >
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+            {showLabels && LabelList.renderCallByParent(allOtherScatterProps, points)}
           </Layer>
         );
       })}
     </>
   );
+}
+
+function SymbolsWithAnimation({
+  previousPointsRef,
+  props,
+}: {
+  previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem>>;
+  props: InternalProps;
+}) {
+  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = props;
+  const prevPoints = previousPointsRef.current;
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleAnimationEnd = useCallback(() => {
+    // Scatter doesn't have onAnimationEnd prop, and if we want to add it we do it here
+    // if (typeof onAnimationEnd === 'function') {
+    //   onAnimationEnd();
+    // }
+    setIsAnimating(false);
+  }, []);
+
+  const handleAnimationStart = useCallback(() => {
+    // Scatter doesn't have onAnimationStart prop, and if we want to add it we do it here
+    // if (typeof onAnimationStart === 'function') {
+    //   onAnimationStart();
+    // }
+    setIsAnimating(true);
+  }, []);
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      key={`pie-${animationId}`}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        const stepData =
+          t === 1
+            ? points
+            : points.map((entry, index) => {
+                const prev = prevPoints && prevPoints[index];
+
+                if (prev) {
+                  const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
+                  const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
+                  const interpolatorSize = interpolateNumber(prev.size, entry.size);
+
+                  return {
+                    ...entry,
+                    cx: interpolatorCx(t),
+                    cy: interpolatorCy(t),
+                    size: interpolatorSize(t),
+                  };
+                }
+
+                const interpolator = interpolateNumber(0, entry.size);
+
+                return { ...entry, size: interpolator(t) };
+              });
+
+        // eslint-disable-next-line no-param-reassign
+        previousPointsRef.current = stepData;
+        return (
+          <Layer>
+            <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={!isAnimating} />
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderSymbols(props: InternalProps) {
+  const { points, isAnimationActive } = props;
+  const previousPointsRef = useRef<ReadonlyArray<ScatterPointItem> | null>(null);
+
+  const prevPoints = previousPointsRef.current;
+
+  if (isAnimationActive && points && points.length && (!prevPoints || !isEqual(prevPoints, points))) {
+    return <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />;
+  }
+
+  return <ScatterSymbols points={points} allOtherScatterProps={props} showLabels />;
 }
 
 type InputRequiredToComputeTooltipEntrySettings = {
@@ -350,50 +497,6 @@ export function computeScatterPoints({
   });
 }
 
-function ScatterLine(props: InternalProps) {
-  const { points, line, lineType, lineJointType } = props;
-
-  if (!line) {
-    return null;
-  }
-
-  const scatterProps = filterProps(props, false);
-  const customLineProps = filterProps(line, false);
-  let linePoints, lineItem;
-
-  if (lineType === 'joint') {
-    linePoints = points.map(entry => ({ x: entry.cx, y: entry.cy }));
-  } else if (lineType === 'fitting') {
-    const { xmin, xmax, a, b } = getLinearRegression(points);
-    const linearExp = (x: number) => a * x + b;
-    linePoints = [
-      { x: xmin, y: linearExp(xmin) },
-      { x: xmax, y: linearExp(xmax) },
-    ];
-  }
-  const lineProps = {
-    ...scatterProps,
-    fill: 'none',
-    stroke: scatterProps && scatterProps.fill,
-    ...customLineProps,
-    points: linePoints,
-  };
-
-  if (React.isValidElement(line)) {
-    lineItem = React.cloneElement(line as any, lineProps);
-  } else if (typeof line === 'function') {
-    lineItem = line(lineProps);
-  } else {
-    lineItem = <Curve {...lineProps} type={lineJointType} />;
-  }
-
-  return (
-    <Layer className="recharts-scatter-line" key="recharts-scatter-line">
-      {lineItem}
-    </Layer>
-  );
-}
-
 const errorBarDataPointFormatter = (
   dataPoint: ScatterPointItem,
   dataKey: Props['dataKey'],
@@ -478,7 +581,7 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 
           return (
             <Layer>
-              <ScatterSymbols points={stepData} allOtherScatterProps={this.props} />
+              <ScatterSymbols points={stepData} allOtherScatterProps={this.props} showLabels />
             </Layer>
           );
         }}
@@ -499,7 +602,8 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
 
   render() {
     const { hide, points, className, needClip, xAxisId, yAxisId, id, isAnimationActive } = this.props;
-    if (hide || !points || !points.length) {
+    // if (hide || !points || !points.length) {
+    if (hide) {
       return null;
     }
     const { isAnimationFinished } = this.state;
@@ -512,7 +616,6 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
             <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
           </defs>
         )}
-        <ScatterLine {...this.props} />
         <SetErrorBarContext
           xAxisId={xAxisId}
           yAxisId={yAxisId}
@@ -522,8 +625,11 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
         >
           {this.props.children}
         </SetErrorBarContext>
-        <Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+        {/*<Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>*/}
+        <Layer key="recharts-scatter-symbols">
+          <RenderSymbols {...this.props} />
+        </Layer>
+        {/*{(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}*/}
       </Layer>
     );
   }
