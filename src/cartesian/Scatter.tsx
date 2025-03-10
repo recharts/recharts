@@ -252,10 +252,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             role="img"
           >
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
-            {showLabels && LabelList.renderCallByParent(allOtherScatterProps, points)}
           </Layer>
         );
       })}
+      {showLabels && LabelList.renderCallByParent(allOtherScatterProps, points)}
     </>
   );
 }
