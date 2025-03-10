@@ -362,6 +362,7 @@ export class Line extends PureComponent<Props, State> {
         cy: entry.y,
         index: i,
         payload: entry.payload,
+        points
       };
 
       return Line.renderDotItem(dot, dotProps);
