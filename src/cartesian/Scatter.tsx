@@ -11,7 +11,6 @@ import React, {
 } from 'react';
 import Animate from 'react-smooth';
 
-import isEqual from 'lodash/isEqual';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
@@ -341,7 +340,7 @@ function RenderSymbols(props: InternalProps) {
 
   const prevPoints = previousPointsRef.current;
 
-  if (isAnimationActive && points && points.length && (!prevPoints || !isEqual(prevPoints, points))) {
+  if (isAnimationActive && points && points.length && (!prevPoints || prevPoints !== points)) {
     return <SymbolsWithAnimation props={props} previousPointsRef={previousPointsRef} />;
   }
 
