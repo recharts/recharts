@@ -105,9 +105,9 @@ const selectSynchronisedAreaSettings: (
   areaSettings: AreaSettings,
 ) => AreaSettings | undefined = createSelector(
   [selectUnfilteredCartesianItems, pickAreaSettings],
-  (areaSettingsState, areaSettingsFromProps) => {
+  (graphicalItems, areaSettingsFromProps) => {
     if (
-      areaSettingsState.some(
+      graphicalItems.some(
         cgis =>
           cgis.type === 'area' &&
           areaSettingsFromProps.dataKey === cgis.dataKey &&

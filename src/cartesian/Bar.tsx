@@ -2,10 +2,18 @@
  * @fileOverview Render a group of bar
  */
 // eslint-disable-next-line max-classes-per-file
-import React, { Key, PureComponent, ReactElement } from 'react';
+import React, {
+  Key,
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
@@ -96,7 +104,6 @@ export interface BarProps {
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
-  animationId?: number;
   id?: string;
   label?: ImplicitLabelType;
 }
@@ -155,7 +162,6 @@ type InternalBarProps = {
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
 
-  animationId?: number;
   id?: string;
   label?: ImplicitLabelType;
 };
@@ -168,13 +174,6 @@ type BarSvgProps = Omit<
 export type Props = Partial<BarEvents> & BarProps & Omit<BarSvgProps, keyof BarEvents>;
 
 type InternalProps = BarSvgProps & InternalBarProps;
-
-interface State {
-  readonly isAnimationFinished?: boolean;
-  readonly prevData?: ReadonlyArray<BarRectangleItem>;
-  readonly curData?: ReadonlyArray<BarRectangleItem>;
-  readonly prevAnimationId?: number;
-}
 
 const computeLegendPayloadFromBarData = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -214,15 +213,13 @@ type BarBackgroundProps = {
   background?: ActiveShape<BarProps, SVGPathElement>;
   data: ReadonlyArray<BarRectangleItem>;
   dataKey: DataKey<any>;
-  onAnimationStart: () => void;
-  onAnimationEnd: () => void;
   allOtherBarProps: Props;
 };
 
 function BarBackground(props: BarBackgroundProps) {
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
 
-  const { data, dataKey, background: backgroundFromProps, onAnimationStart, onAnimationEnd, allOtherBarProps } = props;
+  const { data, dataKey, background: backgroundFromProps, allOtherBarProps } = props;
 
   const {
     onMouseEnter: onMouseEnterFromProps,
@@ -234,7 +231,7 @@ function BarBackground(props: BarBackgroundProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, dataKey);
-  if (!backgroundFromProps) {
+  if (!backgroundFromProps || data == null) {
     return null;
   }
 
@@ -268,8 +265,6 @@ function BarBackground(props: BarBackgroundProps) {
           onMouseEnter,
           onMouseLeave,
           onClick,
-          onAnimationStart,
-          onAnimationEnd,
           dataKey,
           index: i,
           className: 'recharts-bar-background-rectangle',
@@ -283,14 +278,19 @@ function BarBackground(props: BarBackgroundProps) {
 
 type BarRectanglesProps = Props & {
   data: ReadonlyArray<BarRectangleItem>;
-  onAnimationStart: () => void;
-  onAnimationEnd: () => void;
 };
 
-function BarRectangles(props: BarRectanglesProps) {
-  const { onAnimationStart, onAnimationEnd, ...rest } = props;
-  const baseProps = filterProps(rest, false);
-  const { data, shape, dataKey, activeBar } = props;
+function BarRectangles({
+  data,
+  props,
+  showLabels,
+}: {
+  data: ReadonlyArray<BarRectangleItem>;
+  props: BarRectanglesProps;
+  showLabels: boolean;
+}) {
+  const baseProps = filterProps(props, false);
+  const { shape, dataKey, activeBar } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const activeDataKey = useAppSelector(selectActiveTooltipDataKey);
@@ -300,7 +300,7 @@ function BarRectangles(props: BarRectanglesProps) {
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     ...restOfAllOtherProps
-  } = rest;
+  } = props;
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -324,15 +324,13 @@ function BarRectangles(props: BarRectanglesProps) {
          */
         const isActive = activeBar && String(i) === activeIndex && (activeDataKey == null || dataKey === activeDataKey);
         const option = isActive ? activeBar : shape;
-        const barRectangleProps = {
+        const barRectangleProps: BarRectangleProps = {
           ...baseProps,
           ...entry,
           isActive,
           option,
           index: i,
           dataKey,
-          onAnimationStart,
-          onAnimationEnd,
         };
 
         return (
@@ -353,8 +351,122 @@ function BarRectangles(props: BarRectanglesProps) {
           </Layer>
         );
       })}
+      {showLabels && LabelList.renderCallByParent(props, data)}
     </>
   );
+}
+
+function RectanglesWithAnimation({
+  props,
+  previousRectanglesRef,
+}: {
+  props: InternalProps;
+  previousRectanglesRef: MutableRefObject<ReadonlyArray<BarRectangleItem>>;
+}) {
+  const {
+    data,
+    layout,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    onAnimationEnd,
+    onAnimationStart,
+  } = props;
+  const prevData = previousRectanglesRef.current;
+
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        const stepData =
+          t === 1
+            ? data
+            : data.map((entry, index) => {
+                const prev = prevData && prevData[index];
+
+                if (prev) {
+                  const interpolatorX = interpolateNumber(prev.x, entry.x);
+                  const interpolatorY = interpolateNumber(prev.y, entry.y);
+                  const interpolatorWidth = interpolateNumber(prev.width, entry.width);
+                  const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+
+                  return {
+                    ...entry,
+                    x: interpolatorX(t),
+                    y: interpolatorY(t),
+                    width: interpolatorWidth(t),
+                    height: interpolatorHeight(t),
+                  };
+                }
+
+                if (layout === 'horizontal') {
+                  const interpolatorHeight = interpolateNumber(0, entry.height);
+                  const h = interpolatorHeight(t);
+
+                  return {
+                    ...entry,
+                    y: entry.y + entry.height - h,
+                    height: h,
+                  };
+                }
+
+                const interpolator = interpolateNumber(0, entry.width);
+                const w = interpolator(t);
+
+                return { ...entry, width: w };
+              });
+
+        // eslint-disable-next-line no-param-reassign
+        previousRectanglesRef.current = stepData;
+        return (
+          <Layer>
+            <BarRectangles props={props} data={stepData} showLabels={!isAnimating} />
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderRectangles(props: InternalProps) {
+  const { data, isAnimationActive } = props;
+  const previousRectanglesRef = useRef<ReadonlyArray<BarRectangleItem> | null>(null);
+
+  if (
+    isAnimationActive &&
+    data &&
+    data.length &&
+    (previousRectanglesRef.current == null || previousRectanglesRef.current !== data)
+  ) {
+    return <RectanglesWithAnimation previousRectanglesRef={previousRectanglesRef} props={props} />;
+  }
+
+  return <BarRectangles props={props} data={data} showLabels />;
 }
 
 const defaultMinPointSize: number = 0;
@@ -377,135 +489,15 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
-class BarWithState extends PureComponent<InternalProps, State> {
-  state: State = { isAnimationFinished: false };
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curData: nextProps.data,
-        prevData: prevState.curData,
-      };
-    }
-    if (nextProps.data !== prevState.curData) {
-      return {
-        curData: nextProps.data,
-      };
-    }
-
-    return null;
-  }
-
+class BarWithState extends PureComponent<InternalProps> {
   id = uniqueId('recharts-bar-');
 
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (onAnimationEnd) {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
-    if (onAnimationStart) {
-      onAnimationStart();
-    }
-  };
-
-  renderRectanglesStatically(data: ReadonlyArray<BarRectangleItem>) {
-    return (
-      <BarRectangles
-        {...this.props}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-        data={data}
-      />
-    );
-  }
-
-  renderRectanglesWithAnimation() {
-    const { data, layout, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
-      this.props;
-    const { prevData } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`bar-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          const stepData = data.map((entry, index) => {
-            const prev = prevData && prevData[index];
-
-            if (prev) {
-              const interpolatorX = interpolateNumber(prev.x, entry.x);
-              const interpolatorY = interpolateNumber(prev.y, entry.y);
-              const interpolatorWidth = interpolateNumber(prev.width, entry.width);
-              const interpolatorHeight = interpolateNumber(prev.height, entry.height);
-
-              return {
-                ...entry,
-                x: interpolatorX(t),
-                y: interpolatorY(t),
-                width: interpolatorWidth(t),
-                height: interpolatorHeight(t),
-              };
-            }
-
-            if (layout === 'horizontal') {
-              const interpolatorHeight = interpolateNumber(0, entry.height);
-              const h = interpolatorHeight(t);
-
-              return {
-                ...entry,
-                y: entry.y + entry.height - h,
-                height: h,
-              };
-            }
-
-            const interpolator = interpolateNumber(0, entry.width);
-            const w = interpolator(t);
-
-            return { ...entry, width: w };
-          });
-
-          return <Layer>{this.renderRectanglesStatically(stepData)}</Layer>;
-        }}
-      </Animate>
-    );
-  }
-
-  renderRectangles() {
-    const { data, isAnimationActive } = this.props;
-    const { prevData } = this.state;
-
-    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
-      return this.renderRectanglesWithAnimation();
-    }
-
-    return this.renderRectanglesStatically(data);
-  }
-
   render() {
-    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, isAnimationActive, background, id, layout } =
-      this.props;
-    if (hide || !data || !data.length) {
+    const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, layout } = this.props;
+    if (hide) {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-bar', className);
     const clipPathId = isNullish(id) ? this.id : id;
 
@@ -517,20 +509,12 @@ class BarWithState extends PureComponent<InternalProps, State> {
           </defs>
         )}
         <Layer className="recharts-bar-rectangles" clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-          <BarBackground
-            data={data}
-            dataKey={dataKey}
-            background={background}
-            onAnimationStart={this.handleAnimationStart}
-            onAnimationEnd={this.handleAnimationEnd}
-            allOtherBarProps={this.props}
-          />
-          {this.renderRectangles()}
+          <BarBackground data={data} dataKey={dataKey} background={background} allOtherBarProps={this.props} />
+          <RenderRectangles {...this.props} />
         </Layer>
         <SetErrorBarPreferredDirection direction={layout === 'horizontal' ? 'y' : 'x'}>
           {this.props.children}
         </SetErrorBarPreferredDirection>
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, data)}
       </Layer>
     );
   }
@@ -555,14 +539,17 @@ function BarImpl(props: Props) {
 
   const isPanorama = useIsPanorama();
 
-  const barSettings: BarSettings = {
-    barSize: props.barSize,
-    data: undefined,
-    dataKey: props.dataKey,
-    maxBarSize: props.maxBarSize,
-    minPointSize: props.minPointSize,
-    stackId: props.stackId,
-  };
+  const barSettings: BarSettings = useMemo(
+    (): BarSettings => ({
+      barSize: props.barSize,
+      data: undefined,
+      dataKey: props.dataKey,
+      maxBarSize: props.maxBarSize,
+      minPointSize: props.minPointSize,
+      stackId: props.stackId,
+    }),
+    [props.barSize, props.dataKey, props.maxBarSize, props.minPointSize, props.stackId],
+  );
 
   const cells = findAllByType(props.children, Cell);
 
