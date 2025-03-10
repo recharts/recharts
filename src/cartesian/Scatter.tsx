@@ -52,7 +52,6 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { ResolvedScatterSettings, selectScatterPoints } from '../state/selectors/scatterSelectors';
 import { useAppSelector } from '../state/hooks';
 import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelectors';
-import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
@@ -101,7 +100,6 @@ interface ScatterInternalProps {
   label?: ImplicitLabelListType<any>;
 
   isAnimationActive: boolean;
-  animationId: UpdateId;
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
@@ -147,13 +145,6 @@ type BaseScatterSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGEl
 type InternalProps = BaseScatterSvgProps & ScatterInternalProps;
 
 export type Props = BaseScatterSvgProps & ScatterProps;
-
-interface State {
-  isAnimationFinished?: boolean;
-  prevPoints?: ReadonlyArray<ScatterPointItem>;
-  curPoints?: ReadonlyArray<ScatterPointItem>;
-  prevAnimationId?: string;
-}
 
 const computeLegendPayloadFromScatterProps = (props: Props): ReadonlyArray<LegendPayload> => {
   const { dataKey, name, fill, legendType, hide } = props;
@@ -276,7 +267,7 @@ function SymbolsWithAnimation({
   previousPointsRef: MutableRefObject<ReadonlyArray<ScatterPointItem>>;
   props: InternalProps;
 }) {
-  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = props;
+  const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
   const prevPoints = previousPointsRef.current;
 
   const [isAnimating, setIsAnimating] = useState(false);
@@ -304,7 +295,6 @@ function SymbolsWithAnimation({
       easing={animationEasing}
       from={{ t: 0 }}
       to={{ t: 1 }}
-      key={`pie-${animationId}`}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
     >
@@ -511,102 +501,14 @@ const errorBarDataPointFormatter = (
   };
 };
 
-class ScatterWithState extends PureComponent<InternalProps, State> {
-  state: State = { isAnimationFinished: false };
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curPoints: nextProps.points,
-        prevPoints: prevState.curPoints,
-      };
-    }
-    if (nextProps.points !== prevState.curPoints) {
-      return {
-        curPoints: nextProps.points,
-      };
-    }
-
-    return null;
-  }
-
-  handleAnimationEnd = () => {
-    this.setState({ isAnimationFinished: true });
-  };
-
-  handleAnimationStart = () => {
-    this.setState({ isAnimationFinished: false });
-  };
-
+class ScatterWithState extends PureComponent<InternalProps> {
   id = uniqueId('recharts-scatter-');
 
-  renderSymbolsWithAnimation() {
-    const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
-    const { prevPoints } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`pie-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          const stepData = points.map((entry, index) => {
-            const prev = prevPoints && prevPoints[index];
-
-            if (prev) {
-              const interpolatorCx = interpolateNumber(prev.cx, entry.cx);
-              const interpolatorCy = interpolateNumber(prev.cy, entry.cy);
-              const interpolatorSize = interpolateNumber(prev.size, entry.size);
-
-              return {
-                ...entry,
-                cx: interpolatorCx(t),
-                cy: interpolatorCy(t),
-                size: interpolatorSize(t),
-              };
-            }
-
-            const interpolator = interpolateNumber(0, entry.size);
-
-            return { ...entry, size: interpolator(t) };
-          });
-
-          return (
-            <Layer>
-              <ScatterSymbols points={stepData} allOtherScatterProps={this.props} showLabels />
-            </Layer>
-          );
-        }}
-      </Animate>
-    );
-  }
-
-  renderSymbols() {
-    const { points, isAnimationActive } = this.props;
-    const { prevPoints } = this.state;
-
-    if (isAnimationActive && points && points.length && (!prevPoints || !isEqual(prevPoints, points))) {
-      return this.renderSymbolsWithAnimation();
-    }
-
-    return <ScatterSymbols points={points} allOtherScatterProps={this.props} />;
-  }
-
   render() {
-    const { hide, points, className, needClip, xAxisId, yAxisId, id, isAnimationActive } = this.props;
-    // if (hide || !points || !points.length) {
+    const { hide, points, className, needClip, xAxisId, yAxisId, id } = this.props;
     if (hide) {
       return null;
     }
-    const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-scatter', className);
     const clipPathId = isNullish(id) ? this.id : id;
     return (
@@ -625,11 +527,9 @@ class ScatterWithState extends PureComponent<InternalProps, State> {
         >
           {this.props.children}
         </SetErrorBarContext>
-        {/*<Layer key="recharts-scatter-symbols">{this.renderSymbols()}</Layer>*/}
         <Layer key="recharts-scatter-symbols">
           <RenderSymbols {...this.props} />
         </Layer>
-        {/*{(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}*/}
       </Layer>
     );
   }
@@ -655,7 +555,6 @@ const defaultScatterProps: Partial<Props> = {
 function ScatterImpl(props: Props) {
   const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const updateId = useUpdateId();
   const scatterSettings: ResolvedScatterSettings = useMemo(
     () => ({
       name: props.name,
@@ -705,7 +604,6 @@ function ScatterImpl(props: Props) {
         animationEasing={animationEasing}
         points={points}
         needClip={needClip}
-        animationId={updateId}
       />
     </>
   );
