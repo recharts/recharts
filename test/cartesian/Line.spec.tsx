@@ -87,10 +87,10 @@ describe('<Line />', () => {
   });
 
   it('Render customized dot when dot is set to be a function', () => {
-    let areaDotProps;
+    let lineDotProps;
     const renderDot = (props: { cx: number; cy: number }) => {
       const { cx, cy } = props;
-      areaDotProps = props;
+      lineDotProps = props;
 
       return <circle role="cell" key={cx} x={cx} y={cy} r={5} className="customized-dot" />;
     };
@@ -102,6 +102,6 @@ describe('<Line />', () => {
     );
 
     expect(screen.getAllByRole('cell')).toHaveLength(data.length);
-    expect(areaDotProps).toHaveProperty('points');
+    expect(lineDotProps).toHaveProperty('points');
   });
 });
