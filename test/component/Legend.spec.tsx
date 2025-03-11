@@ -29,11 +29,11 @@ import { assertNotNull } from '../helper/assertNotNull';
 import { expectBars } from '../helper/expectBars';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
-import { selectLegendPayload, selectLegendState } from '../../src/state/selectors/legendSelectors';
+import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
 import { LegendPortalContext } from '../../src/context/legendPortalContext';
 import { dataWithSpecialNameAndFillProperties } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { LegendState } from '../../src/state/legendSlice';
+import { Size } from '../../src/util/types';
 
 function assertHasLegend(container: Element): ReadonlyArray<Element> {
   expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
@@ -3119,7 +3119,7 @@ describe('<Legend />', () => {
       mockGetBoundingClientRect({ width: 3, height: 11 });
       const legendSpy = vi.fn();
       const Comp = (): null => {
-        legendSpy(useAppSelector(selectLegendState));
+        legendSpy(useAppSelector(selectLegendSize));
         return null;
       };
 
@@ -3130,20 +3130,12 @@ describe('<Legend />', () => {
         </BarChart>,
       );
 
-      const expectedAfterFirstRender: LegendState = {
-        payload: [],
-        settings: {
-          align: 'center',
-          layout: 'horizontal',
-          verticalAlign: 'bottom',
-        },
-        size: {
-          height: 11,
-          width: 3,
-        },
+      const expectedAfterFirstRender: Size = {
+        height: 11,
+        width: 3,
       };
       expect(legendSpy).toHaveBeenLastCalledWith(expectedAfterFirstRender);
-      expect(legendSpy).toHaveBeenCalledTimes(3);
+      expect(legendSpy).toHaveBeenCalledTimes(2);
 
       rerender(
         <BarChart width={500} height={500} data={numericalData}>
@@ -3151,20 +3143,12 @@ describe('<Legend />', () => {
         </BarChart>,
       );
 
-      const expectedAfterSecondRender: LegendState = {
-        payload: [],
-        settings: {
-          align: 'center',
-          layout: 'horizontal',
-          verticalAlign: 'bottom',
-        },
-        size: {
-          height: 0,
-          width: 0,
-        },
+      const expectedAfterSecondRender: Size = {
+        height: 0,
+        width: 0,
       };
       expect(legendSpy).toHaveBeenLastCalledWith(expectedAfterSecondRender);
-      expect(legendSpy).toHaveBeenCalledTimes(5);
+      expect(legendSpy).toHaveBeenCalledTimes(4);
     });
   });
 });

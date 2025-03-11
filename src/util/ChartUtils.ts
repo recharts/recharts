@@ -26,12 +26,13 @@ import {
   NumberDomain,
   PolarViewBox,
   RangeObj,
+  Size,
   StackOffsetType,
   TickItem,
 } from './types';
 import { ValueType } from '../component/DefaultTooltipContent';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
-import { LegendState } from '../state/legendSlice';
+import { LegendSettings } from '../state/legendSlice';
 import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
@@ -153,12 +154,14 @@ export type BarPositionPosition = {
   size: number | undefined | typeof NaN;
 };
 
-export const appendOffsetOfLegend = (offset: ChartOffset, legendState: LegendState): ChartOffset => {
-  if (legendState) {
-    const {
-      size: { width: boxWidth, height: boxHeight },
-      settings: { align, verticalAlign, layout },
-    } = legendState;
+export const appendOffsetOfLegend = (
+  offset: ChartOffset,
+  legendSettings: LegendSettings,
+  legendSize: Size,
+): ChartOffset => {
+  if (legendSettings && legendSize) {
+    const { width: boxWidth, height: boxHeight } = legendSize;
+    const { align, verticalAlign, layout } = legendSettings;
 
     if (
       (layout === 'vertical' || (layout === 'horizontal' && verticalAlign === 'middle')) &&

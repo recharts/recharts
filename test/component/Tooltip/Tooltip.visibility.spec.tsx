@@ -80,7 +80,11 @@ import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 import { TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 import { selectChartOffset } from '../../../src/state/selectors/selectChartOffset';
-import { selectLegendState } from '../../../src/state/selectors/legendSelectors';
+import {
+  selectLegendPayload,
+  selectLegendSettings,
+  selectLegendSize,
+} from '../../../src/state/selectors/legendSelectors';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -725,49 +729,53 @@ describe('Tooltip visibility', () => {
       });
     });
 
-    it('should select legend state and dimensions', () => {
-      const { spy } = renderTestCase(selectLegendState);
+    it('should select legend settings', () => {
+      const { spy } = renderTestCase(selectLegendSettings);
       expect(spy).toHaveBeenLastCalledWith({
-        payload: [
-          [
-            {
-              color: '#82ca9d',
-              dataKey: 'uv',
-              inactive: false,
-              payload: {
-                activeDot: true,
-                animateNewValues: true,
-                animationBegin: 0,
-                animationDuration: 1500,
-                animationEasing: 'ease',
-                connectNulls: false,
-                dataKey: 'uv',
-                dot: true,
-                fill: '#fff',
-                hide: false,
-                isAnimationActive: true,
-                label: false,
-                legendType: 'line',
-                stroke: '#82ca9d',
-                strokeWidth: 1,
-                xAxisId: 0,
-                yAxisId: 0,
-              },
-              type: 'line',
-              value: 'uv',
-            },
-          ],
-        ],
-        settings: {
-          align: 'center',
-          layout: 'horizontal',
-          verticalAlign: 'bottom',
-        },
-        size: {
-          height: 100,
-          width: 100,
-        },
+        align: 'center',
+        layout: 'horizontal',
+        verticalAlign: 'bottom',
       });
+    });
+
+    it('should select legend size', () => {
+      const { spy } = renderTestCase(selectLegendSize);
+      expect(spy).toHaveBeenLastCalledWith({
+        height: 100,
+        width: 100,
+      });
+    });
+
+    it('should select legend payload', () => {
+      const { spy } = renderTestCase(selectLegendPayload);
+      expect(spy).toHaveBeenLastCalledWith([
+        {
+          color: '#82ca9d',
+          dataKey: 'uv',
+          inactive: false,
+          payload: {
+            activeDot: true,
+            animateNewValues: true,
+            animationBegin: 0,
+            animationDuration: 1500,
+            animationEasing: 'ease',
+            connectNulls: false,
+            dataKey: 'uv',
+            dot: true,
+            fill: '#fff',
+            hide: false,
+            isAnimationActive: true,
+            label: false,
+            legendType: 'line',
+            stroke: '#82ca9d',
+            strokeWidth: 1,
+            xAxisId: 0,
+            yAxisId: 0,
+          },
+          type: 'line',
+          value: 'uv',
+        },
+      ]);
     });
 
     it('should select tooltip axis type', () => {

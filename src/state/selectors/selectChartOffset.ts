@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
-import { selectLegendState } from './legendSelectors';
-import { CartesianViewBox, ChartOffset, Margin } from '../../util/types';
+import { selectLegendSettings, selectLegendSize } from './legendSelectors';
+import { CartesianViewBox, ChartOffset, Margin, Size } from '../../util/types';
 import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
-import { LegendState } from '../legendSlice';
+import { LegendSettings } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
@@ -12,13 +12,16 @@ import { RechartsRootState } from '../store';
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
 export const selectChartOffset: (state: RechartsRootState) => ChartOffset = createSelector(
-  selectChartWidth,
-  selectChartHeight,
-  selectMargin,
-  selectBrushHeight,
-  selectAllXAxes,
-  selectAllYAxes,
-  selectLegendState,
+  [
+    selectChartWidth,
+    selectChartHeight,
+    selectMargin,
+    selectBrushHeight,
+    selectAllXAxes,
+    selectAllYAxes,
+    selectLegendSettings,
+    selectLegendSize,
+  ],
   (
     chartWidth: number,
     chartHeight: number,
@@ -26,7 +29,8 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
     brushHeight: number,
     xAxes: XAxisSettings[],
     yAxes: YAxisSettings[],
-    legendState: LegendState,
+    legendSettings: LegendSettings,
+    legendSize: Size,
   ): ChartOffset => {
     const offsetH = yAxes.reduce(
       (result, entry) => {
@@ -60,7 +64,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
 
     offset.bottom += brushHeight;
 
-    offset = appendOffsetOfLegend(offset, legendState);
+    offset = appendOffsetOfLegend(offset, legendSettings, legendSize);
 
     const offsetWidth = chartWidth - offset.left - offset.right;
     const offsetHeight = chartHeight - offset.top - offset.bottom;
