@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { ReactElement } from 'react';
 import { CellProps, LegendType } from '../..';
-import { computePieSectors, PieCoordinate, PieSectorDataItem } from '../../polar/Pie';
+import { computePieSectors, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
@@ -10,6 +10,7 @@ import { TooltipType } from '../../component/DefaultTooltipContent';
 import { selectChartOffset } from './selectChartOffset';
 import type { LegendPayload } from '../../component/DefaultLegendContent';
 import { getTooltipNameProp, getValueByDataKey } from '../../util/ChartUtils';
+import { selectUnfilteredPolarItems } from './polarSelectors';
 
 export type ResolvedPieSettings = {
   name: string | number | undefined;
@@ -35,11 +36,18 @@ export type ResolvedPieSettings = {
 
 const pickPieSettings = (_state: RechartsRootState, pieSettings: ResolvedPieSettings) => pieSettings;
 
+// Keep stable reference to an empty array to prevent re-renders
+const emptyArray: ReadonlyArray<ReactElement> = [];
 const pickCells = (
   _state: RechartsRootState,
   _pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-): ReadonlyArray<ReactElement> | undefined => cells;
+): ReadonlyArray<ReactElement> | undefined => {
+  if (cells?.length === 0) {
+    return emptyArray;
+  }
+  return cells;
+};
 
 export const selectDisplayedData: (
   state: RechartsRootState,
@@ -101,18 +109,41 @@ export const selectPieLegend: (
   },
 );
 
+const selectSynchronisedPieSettings: (
+  state: RechartsRootState,
+  pieSettings: ResolvedPieSettings,
+) => ResolvedPieSettings | undefined = createSelector(
+  [selectUnfilteredPolarItems, pickPieSettings],
+  (graphicalItems, pieSettingsFromProps) => {
+    if (
+      graphicalItems.some(
+        pgis =>
+          pgis.type === 'pie' &&
+          pieSettingsFromProps.dataKey === pgis.dataKey &&
+          pieSettingsFromProps.data === pgis.data,
+      )
+    ) {
+      return pieSettingsFromProps;
+    }
+    return undefined;
+  },
+);
+
 export const selectPieSectors: (
   state: RechartsRootState,
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined = createSelector(
-  [selectDisplayedData, pickPieSettings, pickCells, selectChartOffset],
+) => Readonly<PieSectorDataItem[]> | undefined = createSelector(
+  [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffset],
   (
     displayedData: ChartData | undefined,
     pieSettings: ResolvedPieSettings,
     cells,
     offset: ChartOffset,
-  ): { sectors?: Readonly<PieSectorDataItem[]>; coordinate?: PieCoordinate } | undefined => {
+  ): Readonly<PieSectorDataItem[]> | undefined => {
+    if (pieSettings == null || displayedData == null) {
+      return undefined;
+    }
     return computePieSectors({
       offset,
       pieSettings,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StoryContext } from '@storybook/react';
 import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
@@ -82,6 +82,12 @@ export const ChangingDataKey = {
 
     const [useData2, setUseData2] = useState(false);
     const [visible, setVisible] = useState(true);
+    useEffect(() => {
+      console.log('ChangingDataKey mounted');
+      return () => {
+        console.log('ChangingDataKey unmounted');
+      };
+    }, []);
 
     return (
       <>
@@ -123,7 +129,7 @@ export const ChangingDataKey = {
             dataKey={useData2 ? dataKey2 : dataKey1}
             stroke="#8884d8"
             strokeDasharray="5 5"
-            label={{ fill: 'red', dy: -25 }}
+            label={{ fill: 'red' }}
             animationDuration={3000}
           />
         </PieChart>
