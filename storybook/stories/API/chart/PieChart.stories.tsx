@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StoryContext } from '@storybook/react';
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
@@ -57,5 +57,88 @@ export const Donut = {
   args: {
     ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
     data: pageData,
+  },
+};
+
+export const ChangingDataKey = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const data1 = [
+      { x: { value: 1 }, name: 'x1', fill: 'blue' },
+      { x: { value: 2 }, name: 'x2', fill: 'red' },
+      { x: { value: 3 }, name: 'x3', fill: 'green' },
+    ];
+    const data2 = [
+      { y: { value: 3 }, name: 'y1', fill: 'blue' },
+      { y: { value: 2 }, name: 'y2', fill: 'red' },
+      { y: { value: 1 }, name: 'y3', fill: 'green' },
+    ];
+
+    const dataKey1 = (d: any) => {
+      return d.x.value;
+    };
+    const dataKey2 = (d: any) => {
+      return d.y.value;
+    };
+
+    const [useData2, setUseData2] = useState(false);
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(false);
+            setVisible(true);
+          }}
+        >
+          Use data1
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setUseData2(true);
+            setVisible(true);
+          }}
+        >
+          Use data2
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setVisible(false);
+          }}
+        >
+          Hide
+        </button>
+        <PieChart {...args} data={useData2 ? data2 : data1}>
+          <Tooltip />
+          <Legend />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Pie
+            data={useData2 ? data2 : data1}
+            name="Animated line"
+            hide={!visible}
+            type="monotone"
+            dataKey={useData2 ? dataKey2 : dataKey1}
+            stroke="#8884d8"
+            strokeDasharray="5 5"
+            label={{ fill: 'red', dy: -25 }}
+            animationDuration={3000}
+          />
+        </PieChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 300,
+    margin: {
+      top: 30,
+      right: 30,
+      left: 20,
+      bottom: 5,
+    },
   },
 };
