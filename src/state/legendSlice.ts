@@ -9,7 +9,14 @@ export type LegendSettings = {
   verticalAlign: VerticalAlignmentType;
 };
 
-export type LegendState = {
+/**
+ * The properties inside this state update independently of each other and quite often.
+ * When selecting, never select the whole state because you are going to get
+ * unnecessary re-renders. Select only the properties you need.
+ *
+ * This is why this state type is not exported - don't use it directly.
+ */
+type LegendState = {
   settings: LegendSettings;
   size: Size;
   /**
