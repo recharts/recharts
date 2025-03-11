@@ -615,20 +615,16 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     return <Layer className="recharts-pie-labels">{labels}</Layer>;
   }
 
-  renderSectorsStatically(sectors: Readonly<PieSectorDataItem[]>) {
-    const { activeShape, inactiveShape: inactiveShapeProp } = this.props;
-    return (
-      <PieSectors
-        sectors={sectors}
-        activeShape={activeShape}
-        inactiveShape={inactiveShapeProp}
-        allOtherPieProps={this.props}
-      />
-    );
-  }
-
   renderSectorsWithAnimation() {
-    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
+    const {
+      sectors,
+      isAnimationActive,
+      animationBegin,
+      animationDuration,
+      animationEasing,
+      activeShape,
+      inactiveShape,
+    } = this.props;
 
     const { prevSectors } = this.state;
 
@@ -677,20 +673,36 @@ export class PieWithState extends PureComponent<InternalProps, State> {
             }
           });
 
-          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
+          return (
+            <Layer>
+              <PieSectors
+                sectors={stepData}
+                activeShape={activeShape}
+                inactiveShape={inactiveShape}
+                allOtherPieProps={this.props}
+              />
+            </Layer>
+          );
         }}
       </Animate>
     );
   }
 
   renderSectors() {
-    const { sectors, isAnimationActive } = this.props;
+    const { sectors, isAnimationActive, activeShape, inactiveShape } = this.props;
     const { prevSectors } = this.state;
 
     if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
       return this.renderSectorsWithAnimation();
     }
-    return this.renderSectorsStatically(sectors);
+    return (
+      <PieSectors
+        sectors={sectors}
+        activeShape={activeShape}
+        inactiveShape={inactiveShape}
+        allOtherPieProps={this.props}
+      />
+    );
   }
 
   render() {
