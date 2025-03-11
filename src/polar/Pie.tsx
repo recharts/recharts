@@ -560,8 +560,6 @@ function PieLabels({
 }
 
 export class PieWithState extends PureComponent<InternalProps, State> {
-  pieRef: SVGGElement = null;
-
   constructor(props: InternalProps) {
     super(props);
 
@@ -722,13 +720,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     const layerClass = clsx('recharts-pie', className);
 
     return (
-      <Layer
-        tabIndex={this.props.rootTabIndex}
-        className={layerClass}
-        ref={ref => {
-          this.pieRef = ref;
-        }}
-      >
+      <Layer tabIndex={this.props.rootTabIndex} className={layerClass}>
         {this.renderSectors()}
         <PieLabels sectors={sectors} props={this.props} showLabels />
         {Label.renderCallByParent(this.props, null, false)}
