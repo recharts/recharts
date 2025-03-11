@@ -12,8 +12,6 @@ import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
-import { Label } from '../component/Label';
-import { LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -173,7 +171,6 @@ export interface PieLabelRenderProps extends PieDef {
 }
 
 interface State {
-  isAnimationFinished?: boolean;
   prevIsAnimationActive?: boolean;
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
@@ -564,7 +561,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
     super(props);
 
     this.state = {
-      isAnimationFinished: !props.isAnimationActive,
       prevIsAnimationActive: props.isAnimationActive,
       prevAnimationId: props.animationId,
     };
@@ -578,18 +574,13 @@ export class PieWithState extends PureComponent<InternalProps, State> {
         prevIsAnimationActive: nextProps.isAnimationActive,
         prevAnimationId: nextProps.animationId,
         prevSectors: [],
-        isAnimationFinished: true,
       };
     }
     if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
       return {
         prevAnimationId: nextProps.animationId,
         prevSectors: prevState.curSectors,
-        isAnimationFinished: true,
       };
-    }
-    if (nextProps.sectors !== prevState.curSectors) {
-      return { isAnimationFinished: true };
     }
 
     return null;
@@ -598,10 +589,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
   handleAnimationEnd = () => {
     const { onAnimationEnd } = this.props;
 
-    this.setState({
-      isAnimationFinished: true,
-    });
-
     if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
@@ -609,10 +596,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
 
   handleAnimationStart = () => {
     const { onAnimationStart } = this.props;
-
-    this.setState({
-      isAnimationFinished: false,
-    });
 
     if (typeof onAnimationStart === 'function') {
       onAnimationStart();
@@ -710,8 +693,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
   }
 
   render() {
-    const { hide, className, isAnimationActive, sectors } = this.props;
-    const { isAnimationFinished } = this.state;
+    const { hide, className, sectors } = this.props;
 
     if (hide || !sectors || !sectors.length) {
       return null;
@@ -723,8 +705,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       <Layer tabIndex={this.props.rootTabIndex} className={layerClass}>
         {this.renderSectors()}
         <PieLabels sectors={sectors} props={this.props} showLabels />
-        {Label.renderCallByParent(this.props, null, false)}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
       </Layer>
     );
   }
