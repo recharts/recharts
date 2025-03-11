@@ -506,6 +506,59 @@ export function computePieSectors({
   return { sectors };
 }
 
+function PieLabels({
+  sectors,
+  props,
+  showLabels,
+}: {
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  props: InternalProps;
+  showLabels: boolean;
+}) {
+  const { label, labelLine, dataKey } = props;
+  if (!showLabels || !label) {
+    return null;
+  }
+  const pieProps = filterProps(props, false);
+  const customLabelProps = filterProps(label, false);
+  const customLabelLineProps = filterProps(labelLine, false);
+  const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
+
+  const labels = sectors.map((entry, i) => {
+    const midAngle = (entry.startAngle + entry.endAngle) / 2;
+    const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+    const labelProps = {
+      ...pieProps,
+      ...entry,
+      stroke: 'none',
+      ...customLabelProps,
+      index: i,
+      textAnchor: getTextAnchor(endPoint.x, entry.cx),
+      ...endPoint,
+    };
+    const lineProps = {
+      ...pieProps,
+      ...entry,
+      fill: 'none',
+      stroke: entry.fill,
+      ...customLabelLineProps,
+      index: i,
+      points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
+      key: 'line',
+    };
+
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
+        {labelLine && renderLabelLineItem(labelLine, lineProps)}
+        {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+      </Layer>
+    );
+  });
+
+  return <Layer className="recharts-pie-labels">{labels}</Layer>;
+}
+
 export class PieWithState extends PureComponent<InternalProps, State> {
   pieRef: SVGGElement = null;
 
@@ -567,53 +620,6 @@ export class PieWithState extends PureComponent<InternalProps, State> {
       onAnimationStart();
     }
   };
-
-  renderLabels(sectors: Readonly<PieSectorDataItem[]>) {
-    const { isAnimationActive } = this.props;
-
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-    const { label, labelLine, dataKey } = this.props;
-    const pieProps = filterProps(this.props, false);
-    const customLabelProps = filterProps(label, false);
-    const customLabelLineProps = filterProps(labelLine, false);
-    const offsetRadius = (label && (label as any).offsetRadius) || 20;
-
-    const labels = sectors.map((entry, i) => {
-      const midAngle = (entry.startAngle + entry.endAngle) / 2;
-      const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
-      const labelProps = {
-        ...pieProps,
-        ...entry,
-        stroke: 'none',
-        ...customLabelProps,
-        index: i,
-        textAnchor: getTextAnchor(endPoint.x, entry.cx),
-        ...endPoint,
-      };
-      const lineProps = {
-        ...pieProps,
-        ...entry,
-        fill: 'none',
-        stroke: entry.fill,
-        ...customLabelLineProps,
-        index: i,
-        points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-        key: 'line',
-      };
-
-      return (
-        // eslint-disable-next-line react/no-array-index-key
-        <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
-          {labelLine && renderLabelLineItem(labelLine, lineProps)}
-          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
-        </Layer>
-      );
-    });
-
-    return <Layer className="recharts-pie-labels">{labels}</Layer>;
-  }
 
   renderSectorsWithAnimation() {
     const {
@@ -706,7 +712,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
   }
 
   render() {
-    const { hide, className, label, isAnimationActive, sectors } = this.props;
+    const { hide, className, isAnimationActive, sectors } = this.props;
     const { isAnimationFinished } = this.state;
 
     if (hide || !sectors || !sectors.length) {
@@ -724,7 +730,7 @@ export class PieWithState extends PureComponent<InternalProps, State> {
         }}
       >
         {this.renderSectors()}
-        {label && this.renderLabels(sectors)}
+        <PieLabels sectors={sectors} props={this.props} showLabels />
         {Label.renderCallByParent(this.props, null, false)}
         {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
       </Layer>
