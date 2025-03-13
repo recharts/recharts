@@ -537,7 +537,8 @@ describe('<Pie />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie')).toHaveLength(0);
+    expect(container.querySelectorAll('.recharts-pie')).toHaveLength(1);
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
   });
 
   describe('Pie event handlers', () => {

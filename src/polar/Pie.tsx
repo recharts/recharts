@@ -1,8 +1,17 @@
 /* eslint-disable max-classes-per-file */
-import React, { PureComponent, ReactElement, ReactNode, SVGProps, useMemo } from 'react';
+import React, {
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  ReactNode,
+  SVGProps,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
@@ -12,8 +21,6 @@ import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
-import { Label } from '../component/Label';
-import { LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
@@ -173,7 +180,6 @@ export interface PieLabelRenderProps extends PieDef {
 }
 
 interface State {
-  isAnimationFinished?: boolean;
   prevIsAnimationActive?: boolean;
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
@@ -250,6 +256,7 @@ type PieSectorsProps = {
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
   allOtherPieProps: Props;
+  showLabels: boolean;
 };
 
 function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfiguration {
@@ -270,52 +277,6 @@ function getTooltipEntrySettings(props: InternalProps): TooltipPayloadConfigurat
       unit: '', // why doesn't Pie support unit?
     },
   };
-}
-
-function PieSectors(props: PieSectorsProps) {
-  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps } = props;
-
-  const activeIndex = useAppSelector(selectActiveTooltipIndex);
-  const {
-    onMouseEnter: onMouseEnterFromProps,
-    onClick: onItemClickFromProps,
-    onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
-  } = allOtherPieProps;
-
-  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
-  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
-  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
-
-  return sectors.map((entry, i) => {
-    if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-    const isSectorActive = activeShape && String(i) === activeIndex;
-    const inactiveShape = activeIndex ? inactiveShapeProp : null;
-    const sectorOptions = isSectorActive ? activeShape : inactiveShape;
-    const sectorProps = {
-      ...entry,
-      stroke: entry.stroke,
-      tabIndex: -1,
-    };
-
-    return (
-      <Layer
-        tabIndex={-1}
-        className="recharts-pie-sector"
-        {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseEnter={onMouseEnterFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseLeave={onMouseLeaveFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onClick={onClickFromContext(entry, i)}
-        // eslint-disable-next-line react/no-array-index-key
-        key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
-      >
-        <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
-      </Layer>
-    );
-  });
 }
 
 const getTextAnchor = (x: number, cx: number) => {
@@ -406,6 +367,114 @@ const renderLabelItem = (option: PieLabel, props: any, value: any) => {
   );
 };
 
+function PieLabels({
+  sectors,
+  props,
+  showLabels,
+}: {
+  sectors: ReadonlyArray<PieSectorDataItem>;
+  props: InternalProps;
+  showLabels: boolean;
+}) {
+  const { label, labelLine, dataKey } = props;
+  if (!showLabels || !label || !sectors) {
+    return null;
+  }
+  const pieProps = filterProps(props, false);
+  const customLabelProps = filterProps(label, false);
+  const customLabelLineProps = filterProps(labelLine, false);
+  const offsetRadius = (typeof label === 'object' && 'offsetRadius' in label && label.offsetRadius) || 20;
+
+  const labels = sectors.map((entry, i) => {
+    const midAngle = (entry.startAngle + entry.endAngle) / 2;
+    const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
+    const labelProps = {
+      ...pieProps,
+      ...entry,
+      stroke: 'none',
+      ...customLabelProps,
+      index: i,
+      textAnchor: getTextAnchor(endPoint.x, entry.cx),
+      ...endPoint,
+    };
+    const lineProps = {
+      ...pieProps,
+      ...entry,
+      fill: 'none',
+      stroke: entry.fill,
+      ...customLabelLineProps,
+      index: i,
+      points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
+      key: 'line',
+    };
+
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
+        {labelLine && renderLabelLineItem(labelLine, lineProps)}
+        {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
+      </Layer>
+    );
+  });
+
+  return <Layer className="recharts-pie-labels">{labels}</Layer>;
+}
+
+function PieSectors(props: PieSectorsProps) {
+  const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, showLabels } = props;
+
+  const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const {
+    onMouseEnter: onMouseEnterFromProps,
+    onClick: onItemClickFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+    ...restOfAllOtherProps
+  } = allOtherPieProps;
+
+  const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
+  const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
+  const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherPieProps.dataKey);
+
+  if (sectors == null) {
+    return null;
+  }
+
+  return (
+    <>
+      {sectors.map((entry, i) => {
+        if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
+        const isSectorActive = activeShape && String(i) === activeIndex;
+        const inactiveShape = activeIndex ? inactiveShapeProp : null;
+        const sectorOptions = isSectorActive ? activeShape : inactiveShape;
+        const sectorProps = {
+          ...entry,
+          stroke: entry.stroke,
+          tabIndex: -1,
+        };
+
+        return (
+          <Layer
+            tabIndex={-1}
+            className="recharts-pie-sector"
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseEnter={onMouseEnterFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseLeave={onMouseLeaveFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onClick={onClickFromContext(entry, i)}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
+          >
+            <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
+          </Layer>
+        );
+      })}
+      <PieLabels sectors={sectors} props={allOtherPieProps} showLabels={showLabels} />
+    </>
+  );
+}
+
 export function computePieSectors({
   pieSettings,
   displayedData,
@@ -431,7 +500,7 @@ export function computePieSectors({
     presentationProps?: Record<string, string>;
   };
   offset: ChartOffset;
-}): { sectors: ReadonlyArray<PieSectorDataItem> } {
+}): ReadonlyArray<PieSectorDataItem> {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
   const deltaAngle = parseDeltaAngle(startAngle, endAngle);
@@ -503,218 +572,142 @@ export function computePieSectors({
       return prev;
     });
   }
-  return { sectors };
+  return sectors;
 }
 
-export class PieWithState extends PureComponent<InternalProps, State> {
-  pieRef: SVGGElement = null;
+function SectorsWithAnimation({
+  props,
+  previousSectorsRef,
+}: {
+  props: InternalProps;
+  previousSectorsRef: MutableRefObject<ReadonlyArray<PieSectorDataItem> | null>;
+}) {
+  const {
+    sectors,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    activeShape,
+    inactiveShape,
+    onAnimationStart,
+    onAnimationEnd,
+  } = props;
 
-  constructor(props: InternalProps) {
-    super(props);
+  const prevSectors = previousSectorsRef.current;
 
-    this.state = {
-      isAnimationFinished: !props.isAnimationActive,
-      prevIsAnimationActive: props.isAnimationActive,
-      prevAnimationId: props.animationId,
-    };
-  }
+  const [isAnimating, setIsAnimating] = useState(true);
 
-  state: State;
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (prevState.prevIsAnimationActive !== nextProps.isAnimationActive) {
-      return {
-        prevIsAnimationActive: nextProps.isAnimationActive,
-        prevAnimationId: nextProps.animationId,
-        prevSectors: [],
-        isAnimationFinished: true,
-      };
-    }
-    if (nextProps.isAnimationActive && nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        prevSectors: prevState.curSectors,
-        isAnimationFinished: true,
-      };
-    }
-    if (nextProps.sectors !== prevState.curSectors) {
-      return { isAnimationFinished: true };
-    }
-
-    return null;
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-
-    this.setState({
-      isAnimationFinished: true,
-    });
-
+  const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
       onAnimationEnd();
     }
-  };
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
 
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-
-    this.setState({
-      isAnimationFinished: false,
-    });
-
+  const handleAnimationStart = useCallback(() => {
     if (typeof onAnimationStart === 'function') {
       onAnimationStart();
     }
-  };
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      onAnimationStart={handleAnimationStart}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      {({ t }: { t: number }) => {
+        const stepData: PieSectorDataItem[] = [];
+        const first = sectors && sectors[0];
+        let curAngle = first.startAngle;
 
-  renderLabels(sectors: Readonly<PieSectorDataItem[]>) {
-    const { isAnimationActive } = this.props;
+        sectors.forEach((entry, index) => {
+          const prev = prevSectors && prevSectors[index];
+          const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
 
-    if (isAnimationActive && !this.state.isAnimationFinished) {
-      return null;
-    }
-    const { label, labelLine, dataKey } = this.props;
-    const pieProps = filterProps(this.props, false);
-    const customLabelProps = filterProps(label, false);
-    const customLabelLineProps = filterProps(labelLine, false);
-    const offsetRadius = (label && (label as any).offsetRadius) || 20;
+          if (prev) {
+            const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
+            const latest = {
+              ...entry,
+              startAngle: curAngle + paddingAngle,
+              endAngle: curAngle + angleIp(t) + paddingAngle,
+            };
 
-    const labels = sectors.map((entry, i) => {
-      const midAngle = (entry.startAngle + entry.endAngle) / 2;
-      const endPoint = polarToCartesian(entry.cx, entry.cy, entry.outerRadius + offsetRadius, midAngle);
-      const labelProps = {
-        ...pieProps,
-        ...entry,
-        stroke: 'none',
-        ...customLabelProps,
-        index: i,
-        textAnchor: getTextAnchor(endPoint.x, entry.cx),
-        ...endPoint,
-      };
-      const lineProps = {
-        ...pieProps,
-        ...entry,
-        fill: 'none',
-        stroke: entry.fill,
-        ...customLabelLineProps,
-        index: i,
-        points: [polarToCartesian(entry.cx, entry.cy, entry.outerRadius, midAngle), endPoint],
-        key: 'line',
-      };
+            stepData.push(latest);
+            curAngle = latest.endAngle;
+          } else {
+            const { endAngle, startAngle } = entry;
+            const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
+            const deltaAngle = interpolatorAngle(t);
+            const latest = {
+              ...entry,
+              startAngle: curAngle + paddingAngle,
+              endAngle: curAngle + deltaAngle + paddingAngle,
+            };
 
-      return (
-        // eslint-disable-next-line react/no-array-index-key
-        <Layer key={`label-${entry.startAngle}-${entry.endAngle}-${entry.midAngle}-${i}`}>
-          {labelLine && renderLabelLineItem(labelLine, lineProps)}
-          {renderLabelItem(label, labelProps, getValueByDataKey(entry, dataKey))}
-        </Layer>
-      );
-    });
+            stepData.push(latest);
+            curAngle = latest.endAngle;
+          }
+        });
 
-    return <Layer className="recharts-pie-labels">{labels}</Layer>;
+        // eslint-disable-next-line no-param-reassign
+        previousSectorsRef.current = stepData;
+        return (
+          <Layer>
+            <PieSectors
+              sectors={stepData}
+              activeShape={activeShape}
+              inactiveShape={inactiveShape}
+              allOtherPieProps={props}
+              showLabels={!isAnimating}
+            />
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderSectors(props: InternalProps) {
+  const { sectors, isAnimationActive, activeShape, inactiveShape } = props;
+
+  const previousSectorsRef = useRef<ReadonlyArray<PieSectorDataItem> | null>(null);
+  const prevSectors = previousSectorsRef.current;
+
+  if (isAnimationActive && sectors && sectors.length && (!prevSectors || prevSectors !== sectors)) {
+    return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
   }
 
-  renderSectorsStatically(sectors: Readonly<PieSectorDataItem[]>) {
-    const { activeShape, inactiveShape: inactiveShapeProp } = this.props;
-    return (
-      <PieSectors
-        sectors={sectors}
-        activeShape={activeShape}
-        inactiveShape={inactiveShapeProp}
-        allOtherPieProps={this.props}
-      />
-    );
-  }
+  return (
+    <PieSectors
+      sectors={sectors}
+      activeShape={activeShape}
+      inactiveShape={inactiveShape}
+      allOtherPieProps={props}
+      showLabels
+    />
+  );
+}
 
-  renderSectorsWithAnimation() {
-    const { sectors, isAnimationActive, animationBegin, animationDuration, animationEasing } = this.props;
-
-    const { prevSectors } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-        {({ t }: { t: number }) => {
-          const stepData: PieSectorDataItem[] = [];
-          const first = sectors && sectors[0];
-          let curAngle = first.startAngle;
-
-          sectors.forEach((entry, index) => {
-            const prev = prevSectors && prevSectors[index];
-            const paddingAngle = index > 0 ? get(entry, 'paddingAngle', 0) : 0;
-
-            if (prev) {
-              const angleIp = interpolateNumber(prev.endAngle - prev.startAngle, entry.endAngle - entry.startAngle);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + angleIp(t) + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            } else {
-              const { endAngle, startAngle } = entry;
-              const interpolatorAngle = interpolateNumber(0, endAngle - startAngle);
-              const deltaAngle = interpolatorAngle(t);
-              const latest = {
-                ...entry,
-                startAngle: curAngle + paddingAngle,
-                endAngle: curAngle + deltaAngle + paddingAngle,
-              };
-
-              stepData.push(latest);
-              curAngle = latest.endAngle;
-            }
-          });
-
-          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
-        }}
-      </Animate>
-    );
-  }
-
-  renderSectors() {
-    const { sectors, isAnimationActive } = this.props;
-    const { prevSectors } = this.state;
-
-    if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
-      return this.renderSectorsWithAnimation();
-    }
-    return this.renderSectorsStatically(sectors);
-  }
-
+export class PieWithState extends PureComponent<InternalProps> {
   render() {
-    const { hide, className, label, isAnimationActive, sectors } = this.props;
-    const { isAnimationFinished } = this.state;
+    const { hide, className } = this.props;
 
-    if (hide || !sectors || !sectors.length) {
+    if (hide) {
       return null;
     }
 
     const layerClass = clsx('recharts-pie', className);
 
     return (
-      <Layer
-        tabIndex={this.props.rootTabIndex}
-        className={layerClass}
-        ref={ref => {
-          this.pieRef = ref;
-        }}
-      >
-        {this.renderSectors()}
-        {label && this.renderLabels(sectors)}
-        {Label.renderCallByParent(this.props, null, false)}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, sectors, false)}
+      <Layer tabIndex={this.props.rootTabIndex} className={layerClass}>
+        <RenderSectors {...this.props} />
       </Layer>
     );
   }
@@ -788,7 +781,7 @@ function PieImpl(props: Props) {
     ],
   );
 
-  const { sectors } = useAppSelector(state => selectPieSectors(state, pieSettings, cells));
+  const sectors = useAppSelector(state => selectPieSectors(state, pieSettings, cells));
 
   const {
     animationBegin = defaultPieProps.animationBegin,

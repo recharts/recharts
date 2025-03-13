@@ -38,10 +38,6 @@ import { useAppSelector } from '../state/hooks';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
-function isEqual(a: unknown, b: unknown): boolean {
-  return a === b;
-}
-
 /**
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
@@ -594,7 +590,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
      */
     points &&
     points.length &&
-    (!isEqual(prevPoints, points) || !isEqual(prevBaseLine, baseLine))
+    (prevPoints !== points || prevBaseLine !== baseLine)
   ) {
     return (
       <AreaWithAnimation
