@@ -12,7 +12,6 @@ import React, {
 } from 'react';
 import Animate from 'react-smooth';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
@@ -681,7 +680,7 @@ function RenderSectors(props: InternalProps) {
   const previousSectorsRef = useRef<ReadonlyArray<PieSectorDataItem> | null>(null);
   const prevSectors = previousSectorsRef.current;
 
-  if (isAnimationActive && sectors && sectors.length && (!prevSectors || !isEqual(prevSectors, sectors))) {
+  if (isAnimationActive && sectors && sectors.length && (!prevSectors || prevSectors !== sectors)) {
     return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
   }
 
