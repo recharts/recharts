@@ -295,6 +295,7 @@ export const isValidSpreadableProp = (
   const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
 
   return (
+    key.startsWith('data-') ||
     (!isFunction(property) &&
       ((svgElementType && matchingElementTypeKeys.includes(key)) || SVGElementPropKeys.includes(key))) ||
     (includeEvents && EventKeys.includes(key))

@@ -79,6 +79,12 @@ describe('ReactUtils untest tests', () => {
       expect(Object.keys(result ?? {})).toContain('fill');
       expect(Object.keys(result ?? {})).toContain('r');
     });
+
+    test('should maintain data-* attributes', () => {
+      expect(filterProps({ test: '1234', helloWorld: 1234, 'data-x': 'foo' }, false)).toEqual({
+        'data-x': 'foo',
+      });
+    });
   });
 
   describe('isValidSpreadableProp', () => {
