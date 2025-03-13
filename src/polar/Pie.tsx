@@ -440,36 +440,40 @@ function PieSectors(props: PieSectorsProps) {
     return null;
   }
 
-  return sectors.map((entry, i) => {
-    if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
-    const isSectorActive = activeShape && String(i) === activeIndex;
-    const inactiveShape = activeIndex ? inactiveShapeProp : null;
-    const sectorOptions = isSectorActive ? activeShape : inactiveShape;
-    const sectorProps = {
-      ...entry,
-      stroke: entry.stroke,
-      tabIndex: -1,
-    };
+  return (
+    <>
+      {sectors.map((entry, i) => {
+        if (entry?.startAngle === 0 && entry?.endAngle === 0 && sectors.length !== 1) return null;
+        const isSectorActive = activeShape && String(i) === activeIndex;
+        const inactiveShape = activeIndex ? inactiveShapeProp : null;
+        const sectorOptions = isSectorActive ? activeShape : inactiveShape;
+        const sectorProps = {
+          ...entry,
+          stroke: entry.stroke,
+          tabIndex: -1,
+        };
 
-    return (
-      <Layer
-        tabIndex={-1}
-        className="recharts-pie-sector"
-        {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseEnter={onMouseEnterFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseLeave={onMouseLeaveFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onClick={onClickFromContext(entry, i)}
-        // eslint-disable-next-line react/no-array-index-key
-        key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
-      >
-        <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
-        <PieLabels sectors={sectors} props={allOtherPieProps} showLabels={showLabels} />
-      </Layer>
-    );
-  });
+        return (
+          <Layer
+            tabIndex={-1}
+            className="recharts-pie-sector"
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseEnter={onMouseEnterFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseLeave={onMouseLeaveFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onClick={onClickFromContext(entry, i)}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
+          >
+            <Shape option={sectorOptions} isActive={isSectorActive} shapeType="sector" {...sectorProps} />
+          </Layer>
+        );
+      })}
+      <PieLabels sectors={sectors} props={allOtherPieProps} showLabels={showLabels} />
+    </>
+  );
 }
 
 export function computePieSectors({
