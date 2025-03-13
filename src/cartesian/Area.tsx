@@ -507,17 +507,19 @@ function AreaWithAnimation({
             });
           }
 
-          /*
-           * We need to keep the refs in the parent component because we need to remember the last shape of the animation
-           * even if AreaWithAnimation is unmounted as that happens when changing props.
-           *
-           * And we need to update the refs here because here is where the interpolation is computed.
-           * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
-           */
-          // eslint-disable-next-line no-param-reassign
-          previousPointsRef.current = stepPoints;
-          // eslint-disable-next-line no-param-reassign
-          previousBaselineRef.current = stepBaseLine;
+          if (t > 0) {
+            /*
+             * We need to keep the refs in the parent component because we need to remember the last shape of the animation
+             * even if AreaWithAnimation is unmounted as that happens when changing props.
+             *
+             * And we need to update the refs here because here is where the interpolation is computed.
+             * Eslint doesn't like changing function arguments, but we need it so here is an eslint-disable.
+             */
+            // eslint-disable-next-line no-param-reassign
+            previousPointsRef.current = stepPoints;
+            // eslint-disable-next-line no-param-reassign
+            previousBaselineRef.current = stepBaseLine;
+          }
           return (
             <StaticArea
               points={stepPoints}
@@ -530,10 +532,12 @@ function AreaWithAnimation({
           );
         }
 
-        // eslint-disable-next-line no-param-reassign
-        previousPointsRef.current = points;
-        // eslint-disable-next-line no-param-reassign
-        previousBaselineRef.current = baseLine;
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = points;
+          // eslint-disable-next-line no-param-reassign
+          previousBaselineRef.current = baseLine;
+        }
         return (
           <Layer>
             <defs>
