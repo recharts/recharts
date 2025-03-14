@@ -218,6 +218,33 @@ export function computeRadarPoints({
   return { points, isRange, baseLinePoints };
 }
 
+function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
+  const { dot, dataKey } = props;
+  if (!dot) {
+    return null;
+  }
+  const baseProps = filterProps(props, false);
+  const customDotProps = filterProps(dot, true);
+
+  const dots = points.map((entry, i) => {
+    const dotProps = {
+      key: `dot-${i}`,
+      r: 3,
+      ...baseProps,
+      ...customDotProps,
+      dataKey,
+      cx: entry.x,
+      cy: entry.y,
+      index: i,
+      payload: entry,
+    };
+
+    return renderDotItem(dot, dotProps);
+  });
+
+  return <Layer className="recharts-radar-dots">{dots}</Layer>;
+}
+
 const defaultRadarProps: Partial<Props> = {
   angleAxisId: 0,
   radiusAxisId: 0,
@@ -286,32 +313,8 @@ class RadarWithState extends PureComponent<Props, State> {
     }
   };
 
-  renderDots(points: RadarPoint[]) {
-    const { dot, dataKey } = this.props;
-    const baseProps = filterProps(this.props, false);
-    const customDotProps = filterProps(dot, true);
-
-    const dots = points.map((entry, i) => {
-      const dotProps = {
-        key: `dot-${i}`,
-        r: 3,
-        ...baseProps,
-        ...customDotProps,
-        dataKey,
-        cx: entry.x,
-        cy: entry.y,
-        index: i,
-        payload: entry,
-      };
-
-      return renderDotItem(dot, dotProps);
-    });
-
-    return <Layer className="recharts-radar-dots">{dots}</Layer>;
-  }
-
   renderPolygonStatically(points: RadarPoint[]) {
-    const { shape, dot, isRange, baseLinePoints, connectNulls } = this.props;
+    const { shape, isRange, baseLinePoints, connectNulls } = this.props;
 
     let radar;
     if (React.isValidElement(shape)) {
@@ -334,7 +337,7 @@ class RadarWithState extends PureComponent<Props, State> {
     return (
       <Layer className="recharts-radar-polygon">
         {radar}
-        {dot ? this.renderDots(points) : null}
+        <Dots props={this.props} points={points} />
       </Layer>
     );
   }
