@@ -589,15 +589,21 @@ export const WithChangingDataKeyAndAnimations = {
           onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
         >
           <label htmlFor="dataKey-uv" style={{ display: 'flex', flexDirection: 'row' }}>
-            <input type="radio" id="dataKey-uv" name="dataKey" value="uv" checked={dataKey === 'uv'} />
+            <input type="radio" id="dataKey-uv" name="dataKey" value="uv" defaultChecked={dataKey === 'uv'} />
             dataKey=uv
           </label>
           <label htmlFor="dataKey-pv" style={{ display: 'flex', flexDirection: 'row' }}>
-            <input type="radio" id="dataKey-pv" name="dataKey" value="pv" checked={dataKey === 'pv'} />
+            <input type="radio" id="dataKey-pv" name="dataKey" value="pv" defaultChecked={dataKey === 'pv'} />
             dataKey=pv
           </label>
           <label htmlFor="dataKey-empty" style={{ display: 'flex', flexDirection: 'row' }}>
-            <input type="radio" id="dataKey-empty" name="dataKey" value="hidden" checked={dataKey === 'hidden'} />
+            <input
+              type="radio"
+              id="dataKey-empty"
+              name="dataKey"
+              value="hidden"
+              defaultChecked={dataKey === 'hidden'}
+            />
             Hidden
           </label>
         </form>
