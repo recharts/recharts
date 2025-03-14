@@ -245,6 +245,51 @@ function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
   return <Layer className="recharts-radar-dots">{dots}</Layer>;
 }
 
+function StaticPolygon({ points, props }: { points: RadarPoint[]; props: Props }) {
+  const { shape, isRange, baseLinePoints, connectNulls } = props;
+
+  const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
+    const { onMouseEnter } = props;
+
+    if (onMouseEnter) {
+      onMouseEnter(props, e);
+    }
+  };
+
+  const handleMouseLeave = (e: MouseEvent<SVGPolygonElement>) => {
+    const { onMouseLeave } = props;
+
+    if (onMouseLeave) {
+      onMouseLeave(props, e);
+    }
+  };
+
+  let radar;
+  if (React.isValidElement(shape)) {
+    radar = React.cloneElement(shape, { ...props, points } as any);
+  } else if (typeof shape === 'function') {
+    radar = shape({ ...props, points });
+  } else {
+    radar = (
+      <Polygon
+        {...filterProps(props, true)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        points={points}
+        baseLinePoints={isRange ? baseLinePoints : null}
+        connectNulls={connectNulls}
+      />
+    );
+  }
+
+  return (
+    <Layer className="recharts-radar-polygon">
+      {radar}
+      <Dots props={props} points={points} />
+    </Layer>
+  );
+}
+
 const defaultRadarProps: Partial<Props> = {
   angleAxisId: 0,
   radiusAxisId: 0,
@@ -297,51 +342,6 @@ class RadarWithState extends PureComponent<Props, State> {
     }
   };
 
-  handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
-    const { onMouseEnter } = this.props;
-
-    if (onMouseEnter) {
-      onMouseEnter(this.props, e);
-    }
-  };
-
-  handleMouseLeave = (e: MouseEvent<SVGPolygonElement>) => {
-    const { onMouseLeave } = this.props;
-
-    if (onMouseLeave) {
-      onMouseLeave(this.props, e);
-    }
-  };
-
-  renderPolygonStatically(points: RadarPoint[]) {
-    const { shape, isRange, baseLinePoints, connectNulls } = this.props;
-
-    let radar;
-    if (React.isValidElement(shape)) {
-      radar = React.cloneElement(shape, { ...this.props, points } as any);
-    } else if (typeof shape === 'function') {
-      radar = shape({ ...this.props, points });
-    } else {
-      radar = (
-        <Polygon
-          {...filterProps(this.props, true)}
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          points={points}
-          baseLinePoints={isRange ? baseLinePoints : null}
-          connectNulls={connectNulls}
-        />
-      );
-    }
-
-    return (
-      <Layer className="recharts-radar-polygon">
-        {radar}
-        <Dots props={this.props} points={points} />
-      </Layer>
-    );
-  }
-
   renderPolygonWithAnimation() {
     const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevPoints } = this.state;
@@ -384,7 +384,7 @@ class RadarWithState extends PureComponent<Props, State> {
             };
           });
 
-          return this.renderPolygonStatically(stepData);
+          return <StaticPolygon points={stepData} props={this.props} />;
         }}
       </Animate>
     );
@@ -398,7 +398,7 @@ class RadarWithState extends PureComponent<Props, State> {
       return this.renderPolygonWithAnimation();
     }
 
-    return this.renderPolygonStatically(points);
+    return <StaticPolygon points={points} props={this.props} />;
   }
 
   render() {
