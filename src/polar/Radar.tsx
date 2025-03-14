@@ -1,9 +1,17 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent, ReactElement, MouseEvent, SVGProps } from 'react';
+import React, {
+  PureComponent,
+  ReactElement,
+  MouseEvent,
+  SVGProps,
+  useCallback,
+  useRef,
+  MutableRefObject,
+  useState,
+} from 'react';
 import Animate from 'react-smooth';
 import last from 'lodash/last';
 import first from 'lodash/first';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
 import { interpolateNumber, isNullish } from '../util/DataUtils';
@@ -79,13 +87,6 @@ export type AngleAxisForRadar = {
 };
 
 export type Props = Omit<SVGProps<SVGElement>, 'onMouseEnter' | 'onMouseLeave' | 'points' | 'ref'> & RadarProps;
-
-interface State {
-  isAnimationFinished?: boolean;
-  prevPoints?: RadarPoint[];
-  curPoints?: RadarPoint[];
-  prevAnimationId?: number;
-}
 
 export type RadarComposedData = {
   points: RadarPoint[];
@@ -245,7 +246,11 @@ function Dots({ points, props }: { points: RadarPoint[]; props: Props }) {
   return <Layer className="recharts-radar-dots">{dots}</Layer>;
 }
 
-function StaticPolygon({ points, props }: { points: RadarPoint[]; props: Props }) {
+function StaticPolygon({ points, props, showLabels }: { points: RadarPoint[]; props: Props; showLabels: boolean }) {
+  if (points == null) {
+    return null;
+  }
+
   const { shape, isRange, baseLinePoints, connectNulls } = props;
 
   const handleMouseEnter = (e: MouseEvent<SVGPolygonElement>) => {
@@ -286,8 +291,106 @@ function StaticPolygon({ points, props }: { points: RadarPoint[]; props: Props }
     <Layer className="recharts-radar-polygon">
       {radar}
       <Dots props={props} points={points} />
+      {showLabels && LabelList.renderCallByParent(props, points)}
     </Layer>
   );
+}
+
+function PolygonWithAnimation({
+  props,
+  previousPointsRef,
+}: {
+  props: Props;
+  previousPointsRef: MutableRefObject<ReadonlyArray<RadarPoint>>;
+}) {
+  const {
+    points,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    animationId,
+    onAnimationEnd,
+    onAnimationStart,
+  } = props;
+  const prevPoints = previousPointsRef.current;
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      key={`radar-${animationId}`}
+      onAnimationEnd={handleAnimationEnd}
+      onAnimationStart={handleAnimationStart}
+    >
+      {({ t }: { t: number }) => {
+        const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
+        const stepData =
+          t === 1
+            ? points
+            : points.map((entry, index) => {
+                const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
+
+                if (prev) {
+                  const interpolatorX = interpolateNumber(prev.x, entry.x);
+                  const interpolatorY = interpolateNumber(prev.y, entry.y);
+
+                  return {
+                    ...entry,
+                    x: interpolatorX(t),
+                    y: interpolatorY(t),
+                  };
+                }
+
+                const interpolatorX = interpolateNumber(entry.cx, entry.x);
+                const interpolatorY = interpolateNumber(entry.cy, entry.y);
+
+                return {
+                  ...entry,
+                  x: interpolatorX(t),
+                  y: interpolatorY(t),
+                };
+              });
+
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = stepData;
+        }
+        return <StaticPolygon points={stepData} props={props} showLabels={!isAnimating} />;
+      }}
+    </Animate>
+  );
+}
+
+function RenderPolygon(props: Props) {
+  const { points, isAnimationActive, isRange } = props;
+  const previousPointsRef = useRef<ReadonlyArray<RadarPoint> | undefined>(undefined);
+  const prevPoints = previousPointsRef.current;
+
+  if (isAnimationActive && points && points.length && !isRange && (!prevPoints || prevPoints !== points)) {
+    return <PolygonWithAnimation props={props} previousPointsRef={previousPointsRef} />;
+  }
+
+  return <StaticPolygon points={points} props={props} showLabels />;
 }
 
 const defaultRadarProps: Partial<Props> = {
@@ -303,119 +406,20 @@ const defaultRadarProps: Partial<Props> = {
   animationEasing: 'ease',
 };
 
-class RadarWithState extends PureComponent<Props, State> {
-  state: State = { isAnimationFinished: false };
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curPoints: nextProps.points,
-        prevPoints: prevState.curPoints,
-      };
-    }
-    if (nextProps.points !== prevState.curPoints) {
-      return {
-        curPoints: nextProps.points,
-      };
-    }
-
-    return null;
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-
-    this.setState({ isAnimationFinished: false });
-
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-  };
-
-  renderPolygonWithAnimation() {
-    const { points, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
-    const { prevPoints } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`radar-${animationId}`}
-        onAnimationEnd={this.handleAnimationEnd}
-        onAnimationStart={this.handleAnimationStart}
-      >
-        {({ t }: { t: number }) => {
-          const prevPointsDiffFactor = prevPoints && prevPoints.length / points.length;
-          const stepData = points.map((entry, index) => {
-            const prev = prevPoints && prevPoints[Math.floor(index * prevPointsDiffFactor)];
-
-            if (prev) {
-              const interpolatorX = interpolateNumber(prev.x, entry.x);
-              const interpolatorY = interpolateNumber(prev.y, entry.y);
-
-              return {
-                ...entry,
-                x: interpolatorX(t),
-                y: interpolatorY(t),
-              };
-            }
-
-            const interpolatorX = interpolateNumber(entry.cx, entry.x);
-            const interpolatorY = interpolateNumber(entry.cy, entry.y);
-
-            return {
-              ...entry,
-              x: interpolatorX(t),
-              y: interpolatorY(t),
-            };
-          });
-
-          return <StaticPolygon points={stepData} props={this.props} />;
-        }}
-      </Animate>
-    );
-  }
-
-  renderPolygon() {
-    const { points, isAnimationActive, isRange } = this.props;
-    const { prevPoints } = this.state;
-
-    if (isAnimationActive && points && points.length && !isRange && (!prevPoints || !isEqual(prevPoints, points))) {
-      return this.renderPolygonWithAnimation();
-    }
-
-    return <StaticPolygon points={points} props={this.props} />;
-  }
-
+class RadarWithState extends PureComponent<Props> {
   render() {
-    const { hide, className, points, isAnimationActive } = this.props;
+    const { hide, className, points } = this.props;
 
-    if (hide || !points || !points.length) {
+    if (hide) {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-radar', className);
 
     return (
       <>
         <Layer className={layerClass}>
-          {this.renderPolygon()}
-          {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, points)}
+          <RenderPolygon {...this.props} />
         </Layer>
         <ActivePoints
           points={points}

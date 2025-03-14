@@ -699,9 +699,9 @@ describe('selectPieSectors', () => {
 
     // fourth render is when the Pie has dispatched new information and chart is in the middle of synchronization
     expect(spy).toHaveBeenNthCalledWith(4, undefined);
-    // renders four and five are stabilized, the sectors are now updated
+    // renders five and six are stabilized, the sectors are now updated
     expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfter);
-    // render number five is because Pie has dispatched new information after the first sectors it had received.
+    // render number six is because Pie has dispatched new information after the first sectors it had received.
     expect(spy).toHaveBeenNthCalledWith(6, expectedResultAfter);
     // the sectors however did not change so they should be the same reference
     expect(spy.mock.calls[4][0]).toBe(spy.mock.calls[5][0]);

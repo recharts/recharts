@@ -156,11 +156,11 @@ export const RadarWithChangingDataKey: StoryObj = {
           style={{ display: 'flex', flexDirection: 'column' }}
           onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
         >
-          <label htmlFor="dataKey-uv" style={{ display: 'flex', flexDirection: 'row' }}>
+          <label htmlFor="dataKey-key1" style={{ display: 'flex', flexDirection: 'row' }}>
             <input type="radio" id="dataKey-key1" name="dataKey" value="key1" defaultChecked={dataKey === 'key1'} />
             dataKey 1
           </label>
-          <label htmlFor="dataKey-pv" style={{ display: 'flex', flexDirection: 'row' }}>
+          <label htmlFor="dataKey-key2" style={{ display: 'flex', flexDirection: 'row' }}>
             <input type="radio" id="dataKey-key2" name="dataKey" value="key2" defaultChecked={dataKey === 'key2'} />
             dataKey 2
           </label>
@@ -196,11 +196,11 @@ export const RadarWithChangingDataKey: StoryObj = {
   args: {
     ...getStoryArgsFromArgsTypesObject(RadarChartProps),
     data: [
-      { name: 'A', key1: [2, 15], key2: [3, 12] },
-      { name: 'B', key1: [3, 12], key2: [4, 12] },
-      { name: 'C', key1: [12, 16], key2: [5, 16] },
-      { name: 'D', key1: [5, 16], key2: [3, 12] },
-      { name: 'E', key1: [0, 8], key2: [-3, 5] },
+      { name: 'A', key1: 15, key2: 5 },
+      { name: 'B', key1: 12, key2: 2 },
+      { name: 'C', key1: 16, key2: 6 },
+      { name: 'D', key1: 6, key2: 12 },
+      { name: 'E', key1: 8, key2: 15 },
     ],
     width: 360,
     height: 360,

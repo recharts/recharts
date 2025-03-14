@@ -11,6 +11,7 @@ import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getBandSizeOfAxis, isCategoricalAxis, RechartsScale } from '../../util/ChartUtils';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
+import { selectUnfilteredPolarItems } from './polarSelectors';
 
 const selectRadiusAxisScale = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
   selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
@@ -144,6 +145,22 @@ const selectBandSizeOfAxis: (
   },
 );
 
+const selectSynchronisedRadarDataKey: (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  _angleAxisId: AxisId,
+  _isPanorama: boolean,
+  radarDataKey: DataKey<any> | undefined,
+) => DataKey<any> | undefined = createSelector(
+  [selectUnfilteredPolarItems, pickDataKey],
+  (graphicalItems, radarDataKey) => {
+    if (graphicalItems.some(pgis => pgis.type === 'radar' && radarDataKey === pgis.dataKey)) {
+      return radarDataKey;
+    }
+    return undefined;
+  },
+);
+
 export const selectRadarPoints: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
@@ -155,7 +172,7 @@ export const selectRadarPoints: (
     selectRadiusAxisForRadar,
     selectAngleAxisWithScaleAndViewport,
     selectChartDataAndAlwaysIgnoreIndexes,
-    pickDataKey,
+    selectSynchronisedRadarDataKey,
     selectBandSizeOfAxis,
   ],
   (
@@ -165,7 +182,7 @@ export const selectRadarPoints: (
     dataKey: DataKey<any> | undefined,
     bandSize: number | undefined,
   ) => {
-    if (radiusAxis == null || angleAxis == null || chartData == null || bandSize == null) {
+    if (radiusAxis == null || angleAxis == null || chartData == null || bandSize == null || dataKey == null) {
       return undefined;
     }
     const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);

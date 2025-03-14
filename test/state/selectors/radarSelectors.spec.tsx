@@ -1,6 +1,6 @@
-import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import React, { useState } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+import { act, render } from '@testing-library/react';
 import { RechartsRootState } from '../../../src/state/store';
 import {
   selectAngleAxisForBandSize,
@@ -15,6 +15,7 @@ import {
 } from '../../helper/selectorTestHelpers';
 import { Customized, PolarAngleAxis, Radar, RadarChart } from '../../../src';
 import { exampleRadarData } from '../../_data';
+import { assertNotNull } from '../../helper/assertNotNull';
 
 describe('selectRadarPoints', () => {
   const selector = (state: RechartsRootState) => selectRadarPoints(state, 0, 0, false, 'value');
@@ -32,7 +33,7 @@ describe('selectRadarPoints', () => {
       <RadarChart width={500} height={500} data={exampleRadarData}>
         <Radar dataKey="value" />
         <PolarAngleAxis dataKey="value" />
-        <Customized component={<Comp />} />
+        <Comp />
       </RadarChart>,
     );
 
@@ -163,6 +164,325 @@ describe('selectRadarPoints', () => {
       ],
     });
     expect(radarPointsSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it('should return new data after interaction', () => {
+    const spy = vi.fn();
+    const Comp = ({ dataKey }: { dataKey: string }): null => {
+      spy(useAppSelectorWithStableTest(state => selectRadarPoints(state, 0, 0, false, dataKey)));
+      return null;
+    };
+    const TestCase = () => {
+      const [dataKey, setDataKey] = useState('value');
+      return (
+        <>
+          {dataKey === 'value' ? (
+            <button type="button" onClick={() => setDataKey('half')}>
+              Change DataKey to half
+            </button>
+          ) : (
+            <button type="button" onClick={() => setDataKey('value')}>
+              Change DataKey to value
+            </button>
+          )}
+          <RadarChart data={exampleRadarData} width={400} height={400}>
+            <Radar dataKey={dataKey} />
+            <Comp dataKey={dataKey} />
+          </RadarChart>
+        </>
+      );
+    };
+    const { container } = render(<TestCase />);
+    const expectedResultBefore: ReturnType<typeof selectRadarPoints> = {
+      baseLinePoints: [],
+      isRange: false,
+      points: [
+        {
+          angle: 90,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 0,
+          payload: {
+            half: 210,
+            name: 'iPhone 3GS',
+            value: 420,
+          },
+          radius: 65.52,
+          value: 420,
+          x: 200,
+          y: 134.48000000000002,
+        },
+        {
+          angle: 45,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 1,
+          payload: {
+            half: 230,
+            name: 'iPhone 4',
+            value: 460,
+          },
+          radius: 71.76,
+          value: 460,
+          x: 250.74198261794666,
+          y: 149.25801738205337,
+        },
+        {
+          angle: 0,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 2,
+          payload: {
+            half: 500,
+            name: 'iPhone 4s',
+            value: 999,
+          },
+          radius: 155.844,
+          value: 999,
+          x: 355.844,
+          y: 200,
+        },
+        {
+          angle: -45,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 3,
+          payload: {
+            half: 250,
+            name: 'iPhone 5',
+            value: 500,
+          },
+          radius: 78,
+          value: 500,
+          x: 255.1543289325507,
+          y: 255.1543289325507,
+        },
+        {
+          angle: -90,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 4,
+          payload: {
+            half: 432,
+            name: 'iPhone 5s',
+            value: 864,
+          },
+          radius: 134.784,
+          value: 864,
+          x: 200,
+          y: 334.784,
+        },
+        {
+          angle: -135,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 5,
+          payload: {
+            half: 325,
+            name: 'iPhone 6',
+            value: 650,
+          },
+          radius: 101.4,
+          value: 650,
+          x: 128.2993723876841,
+          y: 271.70062761231594,
+        },
+        {
+          angle: -180,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 6,
+          payload: {
+            half: 383,
+            name: 'iPhone 6s',
+            value: 765,
+          },
+          radius: 119.34,
+          value: 765,
+          x: 80.66,
+          y: 200.00000000000003,
+        },
+        {
+          angle: -225,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 7,
+          payload: {
+            half: 183,
+            name: 'iPhone 5se',
+            value: 365,
+          },
+          radius: 56.94,
+          value: 365,
+          x: 159.737339879238,
+          y: 159.737339879238,
+        },
+      ],
+    };
+
+    expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
+    expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right sectors
+    // third render is because Radar has dispatched new information after the first sectors it had received.
+    expect(spy).toHaveBeenNthCalledWith(3, expectedResultBefore);
+    // the sectors however did not change so they should be the same reference
+    expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
+    expect(spy).toHaveBeenCalledTimes(3);
+
+    const button = container.querySelector('button');
+    assertNotNull(button);
+    act(() => {
+      button.click();
+    });
+
+    const expectedResultAfter: ReturnType<typeof selectRadarPoints> = {
+      baseLinePoints: [],
+      isRange: false,
+      points: [
+        {
+          angle: 90,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 0,
+          payload: {
+            half: 210,
+            name: 'iPhone 3GS',
+            value: 420,
+          },
+          radius: 54.599999999999994,
+          value: 210,
+          x: 200,
+          y: 145.4,
+        },
+        {
+          angle: 45,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 1,
+          payload: {
+            half: 230,
+            name: 'iPhone 4',
+            value: 460,
+          },
+          radius: 59.800000000000004,
+          value: 230,
+          x: 242.28498551495557,
+          y: 157.71501448504446,
+        },
+        {
+          angle: 0,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 2,
+          payload: {
+            half: 500,
+            name: 'iPhone 4s',
+            value: 999,
+          },
+          radius: 130,
+          value: 500,
+          x: 330,
+          y: 200,
+        },
+        {
+          angle: -45,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 3,
+          payload: {
+            half: 250,
+            name: 'iPhone 5',
+            value: 500,
+          },
+          radius: 65,
+          value: 250,
+          x: 245.9619407771256,
+          y: 245.9619407771256,
+        },
+        {
+          angle: -90,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 4,
+          payload: {
+            half: 432,
+            name: 'iPhone 5s',
+            value: 864,
+          },
+          radius: 112.32,
+          value: 432,
+          x: 200,
+          y: 312.32,
+        },
+        {
+          angle: -135,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 5,
+          payload: {
+            half: 325,
+            name: 'iPhone 6',
+            value: 650,
+          },
+          radius: 84.5,
+          value: 325,
+          x: 140.24947698973673,
+          y: 259.7505230102633,
+        },
+        {
+          angle: -180,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 6,
+          payload: {
+            half: 383,
+            name: 'iPhone 6s',
+            value: 765,
+          },
+          radius: 99.58,
+          value: 383,
+          x: 100.42,
+          y: 200,
+        },
+        {
+          angle: -225,
+          cx: 200,
+          cy: 200,
+          // @ts-expect-error expected string, got number
+          name: 7,
+          payload: {
+            half: 183,
+            name: 'iPhone 5se',
+            value: 365,
+          },
+          radius: 47.58,
+          value: 183,
+          x: 166.35585935114406,
+          y: 166.3558593511441,
+        },
+      ],
+    };
+
+    // fourth render is when the Radar has dispatched new information and chart is in the middle of synchronization
+    expect(spy).toHaveBeenNthCalledWith(4, undefined);
+    // render five is stabilized, the points are now updated
+    expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfter);
+
+    expect(spy).toHaveBeenCalledTimes(5);
   });
 });
 

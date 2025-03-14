@@ -423,10 +423,6 @@ function AreaWithAnimation({
   } = props;
 
   const [isAnimating, setIsAnimating] = useState(true);
-  const currentPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
-  const currentBaselineRef = useRef<InternalProps['baseLine'] | null>(null);
-  currentPointsRef.current = points;
-  currentBaselineRef.current = baseLine;
 
   const handleAnimationEnd = useCallback(() => {
     if (typeof onAnimationEnd === 'function') {
