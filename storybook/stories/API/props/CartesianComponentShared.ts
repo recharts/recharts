@@ -27,16 +27,6 @@ export const activeShape: StorybookArg = {
   },
 };
 
-export const trapezoids: StorybookArg = {
-  description: 'The coordinates of all trapezoids in the chart, usually calculated internally',
-  table: {
-    type: {
-      summary: 'Array',
-      detail: '[{x: 12, y: 12, upperWidth: 240, lowerWidth: 22, height: 80}]',
-    },
-  },
-};
-
 export const xAxisId: StorybookArg = {
   description: 'The id of x-axis which is corresponding to the data.',
   table: { type: { summary: 'string | number' }, category: 'General' },
