@@ -278,9 +278,11 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
 
 class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
+    if (sectors == null) {
+      return null;
+    }
     const { cornerRadius } = this.props;
     const backgroundProps = filterProps(this.props.background, false);
-
     return sectors.map((entry, i) => {
       const { value, background, ...rest } = entry;
 
