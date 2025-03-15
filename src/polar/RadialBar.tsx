@@ -225,10 +225,6 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
     }
   };
 
-  renderSectorsStatically(sectors: ReadonlyArray<SectorProps>) {
-    return <RadialBarSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
-  }
-
   renderSectorsWithAnimation() {
     const { data, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
     const { prevData } = this.state;
@@ -265,7 +261,11 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
             return { ...entry, endAngle: interpolator(t) };
           });
 
-          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
+          return (
+            <Layer>
+              <RadialBarSectors sectors={stepData} allOtherRadialBarProps={this.props} />
+            </Layer>
+          );
         }}
       </Animate>
     );
@@ -279,7 +279,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
       return this.renderSectorsWithAnimation();
     }
 
-    return this.renderSectorsStatically(data);
+    return <RadialBarSectors sectors={data} allOtherRadialBarProps={this.props} />;
   }
 
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
