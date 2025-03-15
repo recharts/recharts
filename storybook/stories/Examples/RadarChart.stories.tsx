@@ -146,3 +146,63 @@ export const RangedRadarChart: StoryObj = {
     height: 360,
   },
 };
+
+export const RadarWithChangingDataKey: StoryObj = {
+  render: (args: Record<string, any>) => {
+    const [dataKey, setDataKey] = React.useState('key1');
+    return (
+      <>
+        <form
+          style={{ display: 'flex', flexDirection: 'column' }}
+          onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
+        >
+          <label htmlFor="dataKey-key1" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-key1" name="dataKey" value="key1" defaultChecked={dataKey === 'key1'} />
+            dataKey 1
+          </label>
+          <label htmlFor="dataKey-key2" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-key2" name="dataKey" value="key2" defaultChecked={dataKey === 'key2'} />
+            dataKey 2
+          </label>
+          <label htmlFor="dataKey-empty" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input
+              type="radio"
+              id="dataKey-empty"
+              name="dataKey"
+              value="hidden"
+              defaultChecked={dataKey === 'hidden'}
+            />
+            Hidden
+          </label>
+        </form>
+        <RadarChart {...args}>
+          <Legend />
+          <PolarAngleAxis dataKey="name" />
+          <PolarRadiusAxis domain={[0, 20]} tick={false} axisLine={false} />
+          <Radar
+            dataKey={dataKey}
+            fill="orange"
+            fillOpacity={0.5}
+            stroke="blue"
+            strokeDasharray="3 3"
+            dot
+            label={{ fill: 'red' }}
+          />
+          <Tooltip defaultIndex={2} />
+        </RadarChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    data: [
+      { name: 'A', key1: 15, key2: 5 },
+      { name: 'B', key1: 12, key2: 2 },
+      { name: 'C', key1: 16, key2: 6 },
+      { name: 'D', key1: 6, key2: 12 },
+      { name: 'E', key1: 8, key2: 15 },
+    ],
+    width: 360,
+    height: 360,
+  },
+};
