@@ -1,8 +1,10 @@
 import React from 'react';
-import { Meta } from '@storybook/react';
-import { Tooltip, Funnel, FunnelChart, LabelList, ResponsiveContainer, FunnelProps } from '../../../../src';
+import { Meta, StoryObj } from '@storybook/react';
+import { Funnel, FunnelChart, FunnelProps, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
+import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { pageDataWithFillColor } from '../../data';
 
 export default {
   argTypes: {
@@ -74,5 +76,49 @@ export const Simple: Meta<FunnelProps> = {
         value: 580,
       },
     ],
+  },
+};
+
+export const WithChangingDataKey: StoryObj = {
+  render: (args: Record<string, any>) => {
+    const [dataKey, setDataKey] = React.useState('amt');
+    return (
+      <>
+        <form
+          style={{ display: 'flex', flexDirection: 'column' }}
+          onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
+        >
+          <label htmlFor="dataKey-amt" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-amt" name="dataKey" value="amt" defaultChecked={dataKey === 'amt'} />
+            dataKey 1
+          </label>
+          <label htmlFor="dataKey-pv" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-pv" name="dataKey" value="pv" defaultChecked={dataKey === 'pv'} />
+            dataKey 2
+          </label>
+          <label htmlFor="dataKey-empty" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input
+              type="radio"
+              id="dataKey-empty"
+              name="dataKey"
+              value="hidden"
+              defaultChecked={dataKey === 'hidden'}
+            />
+            Hidden
+          </label>
+        </form>
+        <FunnelChart {...args}>
+          <Legend />
+          <Funnel dataKey={dataKey} fill="orange" fillOpacity={0.5} stroke="blue" strokeDasharray="3 3" />
+          <Tooltip />
+        </FunnelChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    data: pageDataWithFillColor,
+    width: 360,
+    height: 360,
   },
 };
