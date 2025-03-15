@@ -109,7 +109,15 @@ export const WithChangingDataKey: StoryObj = {
         </form>
         <FunnelChart {...args}>
           <Legend />
-          <Funnel dataKey={dataKey} fill="orange" fillOpacity={0.5} stroke="blue" strokeDasharray="3 3" />
+          <Funnel
+            dataKey={dataKey}
+            fill="orange"
+            fillOpacity={0.5}
+            stroke="blue"
+            strokeDasharray="3 3"
+            lastShapeType="rectangle"
+            label={{ dataKey: 'name', stroke: 'none', fill: 'black', strokeDasharray: '0 0' }}
+          />
           <Tooltip />
         </FunnelChart>
       </>
