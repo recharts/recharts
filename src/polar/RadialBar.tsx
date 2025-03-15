@@ -1,8 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { PureComponent, ReactElement } from 'react';
+import React, { MutableRefObject, PureComponent, ReactElement, useCallback, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import isEqual from 'lodash/isEqual';
 
 import { Series } from 'victory-vendor/d3-shape';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
@@ -61,12 +60,12 @@ export type RadialBarDataItem = SectorProps & {
 type RadialBarBackground = ActiveShape<SectorProps>;
 
 type RadialBarSectorsProps = {
-  sectors: ReadonlyArray<SectorProps>;
+  sectors: ReadonlyArray<RadialBarDataItem>;
   allOtherRadialBarProps: RadialBarProps;
+  showLabels: boolean;
 };
 
-function RadialBarSectors(props: RadialBarSectorsProps) {
-  const { sectors, allOtherRadialBarProps } = props;
+function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: RadialBarSectorsProps) {
   const { shape, activeShape, cornerRadius, ...others } = allOtherRadialBarProps;
   const baseProps = filterProps(others, false);
 
@@ -81,6 +80,10 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherRadialBarProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherRadialBarProps.dataKey);
+
+  if (sectors == null) {
+    return null;
+  }
 
   return (
     <>
@@ -111,12 +114,108 @@ function RadialBarSectors(props: RadialBarSectorsProps) {
 
         return <RadialBarSector {...radialBarSectorProps} />;
       })}
+      {showLabels && LabelList.renderCallByParent(allOtherRadialBarProps, sectors)}
     </>
   );
 }
 
+function SectorsWithAnimation({
+  props,
+  previousSectorsRef,
+}: {
+  props: RadialBarProps;
+  previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem>>;
+}) {
+  const {
+    data,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    onAnimationEnd,
+    onAnimationStart,
+  } = props;
+
+  const prevData = previousSectorsRef.current;
+
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      onAnimationStart={handleAnimationStart}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      {({ t }: { t: number }) => {
+        const stepData =
+          t === 1
+            ? data
+            : data.map((entry, index) => {
+                const prev = prevData && prevData[index];
+
+                if (prev) {
+                  const interpolatorStartAngle = interpolateNumber(prev.startAngle, entry.startAngle);
+                  const interpolatorEndAngle = interpolateNumber(prev.endAngle, entry.endAngle);
+
+                  return {
+                    ...entry,
+                    startAngle: interpolatorStartAngle(t),
+                    endAngle: interpolatorEndAngle(t),
+                  };
+                }
+                const { endAngle, startAngle } = entry;
+                const interpolator = interpolateNumber(startAngle, endAngle);
+
+                return { ...entry, endAngle: interpolator(t) };
+              });
+
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousSectorsRef.current = stepData;
+        }
+
+        return (
+          <Layer>
+            <RadialBarSectors sectors={stepData} allOtherRadialBarProps={props} showLabels={!isAnimating} />
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderSectors(props: RadialBarProps) {
+  const { data, isAnimationActive } = props;
+
+  const previousSectorsRef = useRef<ReadonlyArray<RadialBarDataItem> | null>(null);
+  const prevData = previousSectorsRef.current;
+
+  if (isAnimationActive && data && data.length && (!prevData || prevData !== data)) {
+    return <SectorsWithAnimation props={props} previousSectorsRef={previousSectorsRef} />;
+  }
+
+  return <RadialBarSectors sectors={data} allOtherRadialBarProps={props} showLabels />;
+}
+
 interface InternalRadialBarProps {
-  animationId?: string | number;
   className?: string;
   angleAxisId?: string | number;
   radiusAxisId?: string | number;
@@ -152,13 +251,6 @@ interface InternalRadialBarProps {
 export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'> &
   InternalRadialBarProps;
 
-interface State {
-  readonly isAnimationFinished?: boolean;
-  readonly prevData?: ReadonlyArray<RadialBarDataItem>;
-  readonly curData?: ReadonlyArray<RadialBarDataItem>;
-  readonly prevAnimationId?: string | number;
-}
-
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
   return <SetPolarLegendPayload legendPayload={legendPayload} />;
@@ -184,108 +276,13 @@ function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfigura
   };
 }
 
-class RadialBarWithState extends PureComponent<RadialBarProps, State> {
-  state: State = {
-    isAnimationFinished: false,
-  };
-
-  static getDerivedStateFromProps(nextProps: RadialBarProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curData: nextProps.data,
-        prevData: prevState.curData,
-      };
-    }
-    if (nextProps.data !== prevState.curData) {
-      return {
-        curData: nextProps.data,
-      };
-    }
-
-    return null;
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-
-    this.setState({ isAnimationFinished: false });
-
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-  };
-
-  renderSectorsStatically(sectors: ReadonlyArray<SectorProps>) {
-    return <RadialBarSectors sectors={sectors} allOtherRadialBarProps={this.props} />;
-  }
-
-  renderSectorsWithAnimation() {
-    const { data, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } = this.props;
-    const { prevData } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`radialBar-${animationId}`}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-        {({ t }: { t: number }) => {
-          const stepData = data.map((entry, index) => {
-            const prev = prevData && prevData[index];
-
-            if (prev) {
-              const interpolatorStartAngle = interpolateNumber(prev.startAngle, entry.startAngle);
-              const interpolatorEndAngle = interpolateNumber(prev.endAngle, entry.endAngle);
-
-              return {
-                ...entry,
-                startAngle: interpolatorStartAngle(t),
-                endAngle: interpolatorEndAngle(t),
-              };
-            }
-            const { endAngle, startAngle } = entry;
-            const interpolator = interpolateNumber(startAngle, endAngle);
-
-            return { ...entry, endAngle: interpolator(t) };
-          });
-
-          return <Layer>{this.renderSectorsStatically(stepData)}</Layer>;
-        }}
-      </Animate>
-    );
-  }
-
-  renderSectors() {
-    const { data, isAnimationActive } = this.props;
-    const { prevData } = this.state;
-
-    if (isAnimationActive && data && data.length && (!prevData || !isEqual(prevData, data))) {
-      return this.renderSectorsWithAnimation();
-    }
-
-    return this.renderSectorsStatically(data);
-  }
-
+class RadialBarWithState extends PureComponent<RadialBarProps> {
   renderBackground(sectors?: ReadonlyArray<RadialBarDataItem>) {
+    if (sectors == null) {
+      return null;
+    }
     const { cornerRadius } = this.props;
     const backgroundProps = filterProps(this.props.background, false);
-
     return sectors.map((entry, i) => {
       const { value, background, ...rest } = entry;
 
@@ -312,22 +309,21 @@ class RadialBarWithState extends PureComponent<RadialBarProps, State> {
   }
 
   render() {
-    const { hide, data, className, background, isAnimationActive } = this.props;
+    const { hide, data, className, background } = this.props;
 
-    if (hide || !data || !data.length) {
+    if (hide) {
       return null;
     }
 
-    const { isAnimationFinished } = this.state;
     const layerClass = clsx('recharts-area', className);
 
     return (
       <Layer className={layerClass}>
         {background && <Layer className="recharts-radial-bar-background">{this.renderBackground(data)}</Layer>}
 
-        <Layer className="recharts-radial-bar-sectors">{this.renderSectors()}</Layer>
-
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent({ ...this.props }, data)}
+        <Layer className="recharts-radial-bar-sectors">
+          <RenderSectors {...this.props} />
+        </Layer>
       </Layer>
     );
   }
@@ -342,7 +338,7 @@ function RadialBarImpl(props: RadialBarProps) {
     maxBarSize: props.maxBarSize,
     barSize: props.barSize,
   };
-  const data = useAppSelector(state =>
+  const data: ReadonlyArray<RadialBarDataItem> = useAppSelector(state =>
     selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
   );
   return (

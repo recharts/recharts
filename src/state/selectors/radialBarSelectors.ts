@@ -120,6 +120,28 @@ const pickRadialBarSettings = (
   radialBarSettings: RadialBarSettings,
 ): RadialBarSettings => radialBarSettings;
 
+const selectSynchronisedRadialBarSettings: (
+  state: RechartsRootState,
+  _radiusAxisId: AxisId,
+  _angleAxisId: AxisId,
+  radialBarSettings: RadialBarSettings,
+) => RadialBarSettings | undefined = createSelector(
+  [selectUnfilteredPolarItems, pickRadialBarSettings],
+  (graphicalItems, radialBarSettingsFromProps) => {
+    if (
+      graphicalItems.some(
+        pgis =>
+          pgis.type === 'radialBar' &&
+          radialBarSettingsFromProps.dataKey === pgis.dataKey &&
+          radialBarSettingsFromProps.stackId === pgis.stackId,
+      )
+    ) {
+      return radialBarSettingsFromProps;
+    }
+    return undefined;
+  },
+);
+
 export const selectBandSizeOfPolarAxis: (
   state: RechartsRootState,
   radiusAxisId: AxisId,
@@ -291,9 +313,9 @@ export const selectPolarBarPosition: (
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => BarPositionPosition | undefined = createSelector(
-  [selectAllPolarBarPositions, pickRadialBarSettings],
+  [selectAllPolarBarPositions, selectSynchronisedRadialBarSettings],
   (allBarPositions: ReadonlyArray<BarWithPosition>, barSettings: RadialBarSettings) => {
-    if (allBarPositions == null) {
+    if (allBarPositions == null || barSettings == null) {
       return undefined;
     }
     const position = allBarPositions.find(
@@ -336,7 +358,7 @@ const selectPolarStackedData: (
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => Series<Record<number, number>, DataKey<any>> = createSelector(
-  [selectRadialBarStackGroups, pickRadialBarSettings],
+  [selectRadialBarStackGroups, selectSynchronisedRadialBarSettings],
   combineStackedData,
 );
 
@@ -353,7 +375,7 @@ export const selectRadialBarSectors: (
     selectRadiusAxisWithScale,
     selectRadiusAxisTicks,
     selectChartDataWithIndexes,
-    pickRadialBarSettings,
+    selectSynchronisedRadialBarSettings,
     selectBandSizeOfPolarAxis,
     selectChartLayout,
     selectBaseValue,
@@ -368,7 +390,7 @@ export const selectRadialBarSectors: (
     radiusAxis: BaseAxisWithScale,
     radiusAxisTicks: ReadonlyArray<TickItem> | undefined,
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
-    { dataKey, minPointSize }: RadialBarSettings,
+    radialBarSettings: RadialBarSettings,
     bandSize: number | undefined,
     layout: LayoutType,
     baseValue: number | unknown,
@@ -378,6 +400,7 @@ export const selectRadialBarSectors: (
     stackedData: Series<Record<number, number>, DataKey<any>> | undefined,
   ) => {
     if (
+      radialBarSettings == null ||
       radiusAxis == null ||
       angleAxis == null ||
       chartData == null ||
@@ -387,6 +410,7 @@ export const selectRadialBarSectors: (
     ) {
       return undefined;
     }
+    const { dataKey, minPointSize } = radialBarSettings;
     const { cx, cy, startAngle, endAngle } = polarViewBox;
     const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
     const numericAxis = layout === 'centric' ? radiusAxis : angleAxis;

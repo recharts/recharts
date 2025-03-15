@@ -15,6 +15,7 @@ import { RadialBarChartProps } from '../API/props/RadialBarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { StorybookArgs } from '../../StorybookArgs';
+import { RadarChartProps } from '../API/props/RadarChartProps';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -439,5 +440,51 @@ export const ChartReversedByBothAnglesAndReverseAxis = {
     data: ringsData,
     startAngle: 145,
     endAngle: 20,
+  },
+};
+
+export const RadialBarChartWithChangingDataKey: StoryObj = {
+  render: (args: Record<string, any>) => {
+    const [dataKey, setDataKey] = React.useState('amt');
+    return (
+      <>
+        <form
+          style={{ display: 'flex', flexDirection: 'column' }}
+          onChange={e => 'value' in e.target && typeof e.target.value === 'string' && setDataKey(e.target.value)}
+        >
+          <label htmlFor="dataKey-amt" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-amt" name="dataKey" value="amt" defaultChecked={dataKey === 'amt'} />
+            dataKey 1
+          </label>
+          <label htmlFor="dataKey-pv" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input type="radio" id="dataKey-pv" name="dataKey" value="pv" defaultChecked={dataKey === 'pv'} />
+            dataKey 2
+          </label>
+          <label htmlFor="dataKey-empty" style={{ display: 'flex', flexDirection: 'row' }}>
+            <input
+              type="radio"
+              id="dataKey-empty"
+              name="dataKey"
+              value="hidden"
+              defaultChecked={dataKey === 'hidden'}
+            />
+            Hidden
+          </label>
+        </form>
+        <RadialBarChart {...args}>
+          <Legend />
+          <PolarAngleAxis type="number" domain={[0, 10000]} />
+          <PolarRadiusAxis type="category" dataKey="name" />
+          <RadialBar dataKey={dataKey} fill="orange" fillOpacity={0.5} stroke="blue" strokeDasharray="3 3" label />
+          <Tooltip />
+        </RadialBarChart>
+      </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(RadarChartProps),
+    data: pageDataWithFillColor,
+    width: 360,
+    height: 360,
   },
 };
