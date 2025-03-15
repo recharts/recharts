@@ -117,8 +117,6 @@ type FunnelComposedData = {
 
 type FunnelTrapezoidsProps = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  shape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   allOtherFunnelProps: Props;
 };
 
@@ -145,7 +143,7 @@ function getTooltipEntrySettings(
 }
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
+  const { trapezoids, allOtherFunnelProps } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -153,6 +151,8 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
+    shape,
+    activeShape,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
 
@@ -246,19 +246,6 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
     }
   };
 
-  renderTrapezoidsStatically(trapezoids: ReadonlyArray<FunnelTrapezoidItem>) {
-    const { shape, activeShape } = this.props;
-
-    return (
-      <FunnelTrapezoids
-        trapezoids={trapezoids}
-        shape={shape}
-        activeShape={activeShape}
-        allOtherFunnelProps={this.props}
-      />
-    );
-  }
-
   renderTrapezoidsWithAnimation() {
     const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
       this.props;
@@ -312,7 +299,11 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
               height: interpolatorHeight(t),
             };
           });
-          return <Layer>{this.renderTrapezoidsStatically(stepData)}</Layer>;
+          return (
+            <Layer>
+              <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={this.props} />
+            </Layer>
+          );
         }}
       </Animate>
     );
@@ -330,7 +321,7 @@ export class FunnelWithState extends PureComponent<InternalProps, State> {
     ) {
       return this.renderTrapezoidsWithAnimation();
     }
-    return this.renderTrapezoidsStatically(trapezoids);
+    return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={this.props} />;
   }
 
   render() {
