@@ -52,7 +52,7 @@ export function LabelList<T extends Data>({ valueAccessor = defaultAccessor, ...
         const value = isNullish(dataKey)
           ? valueAccessor(entry, index)
           : (getValueByDataKey(entry && entry.payload, dataKey) as string | number);
-        console.log({ entry, value });
+
         const idProps = isNullish(id) ? {} : { id: `${id}-${index}` };
 
         return (
