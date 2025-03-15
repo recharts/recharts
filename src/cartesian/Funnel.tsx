@@ -1,15 +1,14 @@
 /* eslint-disable max-classes-per-file */
-import React, { PureComponent, useMemo } from 'react';
+import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
 
 import clsx from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
-import { LabelList } from '../component/LabelList';
+import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
@@ -33,7 +32,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { UpdateId, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { UpdateId, useOffset } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
@@ -75,24 +74,25 @@ interface InternalFunnelProps {
  * External props, intended for end users to fill in
  */
 interface FunnelProps {
-  className?: string;
-  dataKey: DataKey<any>;
-  nameKey?: DataKey<any>;
-  data?: any[];
-  hide?: boolean;
-  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   activeShape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  legendType?: LegendType;
-  tooltipType?: TooltipType;
-  lastShapeType?: 'triangle' | 'rectangle';
-  reversed?: boolean;
-  onAnimationStart?: () => void;
-  onAnimationEnd?: () => void;
-  isAnimationActive?: boolean;
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   animationEasing?: AnimationTiming;
+  className?: string;
+  data?: any[];
+  dataKey: DataKey<any>;
+  hide?: boolean;
   id?: string;
+  isAnimationActive?: boolean;
+  label?: ImplicitLabelListType<any>;
+  lastShapeType?: 'triangle' | 'rectangle';
+  legendType?: LegendType;
+  nameKey?: DataKey<any>;
+  onAnimationEnd?: () => void;
+  onAnimationStart?: () => void;
+  reversed?: boolean;
+  shape?: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
+  tooltipType?: TooltipType;
 }
 
 type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement> & TrapezoidProps, 'ref'>;
@@ -100,13 +100,6 @@ type FunnelSvgProps = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement
 type InternalProps = FunnelSvgProps & InternalFunnelProps;
 
 export type Props = FunnelSvgProps & FunnelProps;
-
-interface State {
-  readonly prevTrapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
-  readonly curTrapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
-  readonly prevAnimationId?: UpdateId;
-  readonly isAnimationFinished?: boolean;
-}
 
 type RealFunnelData = any;
 
@@ -117,9 +110,8 @@ type FunnelComposedData = {
 
 type FunnelTrapezoidsProps = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  shape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
-  activeShape: ActiveShape<FunnelTrapezoidItem, SVGPathElement>;
   allOtherFunnelProps: Props;
+  showLabels: boolean;
 };
 
 function getTooltipEntrySettings(
@@ -145,7 +137,7 @@ function getTooltipEntrySettings(
 }
 
 function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
-  const { trapezoids, shape, activeShape, allOtherFunnelProps } = props;
+  const { trapezoids, allOtherFunnelProps, showLabels } = props;
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
@@ -153,6 +145,8 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
+    shape,
+    activeShape,
     ...restOfAllOtherProps
   } = allOtherFunnelProps;
 
@@ -160,33 +154,173 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
 
-  return trapezoids.map((entry, i) => {
-    const isActiveIndex = activeShape && activeItemIndex === String(i);
-    const trapezoidOptions = isActiveIndex ? activeShape : shape;
-    const trapezoidProps: FunnelTrapezoidProps = {
-      ...entry,
-      option: trapezoidOptions,
-      isActive: isActiveIndex,
-      stroke: entry.stroke,
-    };
+  return (
+    <>
+      {trapezoids.map((entry, i) => {
+        const isActiveIndex = activeShape && activeItemIndex === String(i);
+        const trapezoidOptions = isActiveIndex ? activeShape : shape;
+        const trapezoidProps: FunnelTrapezoidProps = {
+          ...entry,
+          option: trapezoidOptions,
+          isActive: isActiveIndex,
+          stroke: entry.stroke,
+        };
 
-    return (
-      <Layer
-        className="recharts-funnel-trapezoid"
-        {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseEnter={onMouseEnterFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onMouseLeave={onMouseLeaveFromContext(entry, i)}
-        // @ts-expect-error the types need a bit of attention
-        onClick={onClickFromContext(entry, i)}
-        key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
-        role="img"
-      >
-        <FunnelTrapezoid {...trapezoidProps} />
-      </Layer>
-    );
-  });
+        return (
+          <Layer
+            className="recharts-funnel-trapezoid"
+            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseEnter={onMouseEnterFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onMouseLeave={onMouseLeaveFromContext(entry, i)}
+            // @ts-expect-error the types need a bit of attention
+            onClick={onClickFromContext(entry, i)}
+            key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
+            role="img"
+          >
+            <FunnelTrapezoid {...trapezoidProps} />
+          </Layer>
+        );
+      })}
+      {showLabels && LabelList.renderCallByParent(allOtherFunnelProps, trapezoids)}
+    </>
+  );
+}
+
+let latestId = 0;
+
+/**
+ * This hook will return a unique animation id for the given reference.
+ * The ID increments every time the reference changes.
+ * @param reference The reference to track
+ * @returns The unique animation ID
+ */
+function useAnimationId(reference: unknown) {
+  const idRef = useRef<number>(latestId);
+  const ref = useRef(reference);
+
+  if (ref.current !== reference) {
+    idRef.current += 1;
+    latestId = idRef.current;
+    ref.current = reference;
+  }
+
+  return idRef.current;
+}
+
+function TrapezoidsWithAnimation({
+  previousTrapezoidsRef,
+  props,
+}: {
+  props: InternalProps;
+  previousTrapezoidsRef: MutableRefObject<ReadonlyArray<FunnelTrapezoidItem>>;
+}) {
+  const {
+    trapezoids,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    onAnimationEnd,
+    onAnimationStart,
+  } = props;
+  const prevTrapezoids = previousTrapezoidsRef.current;
+
+  const [isAnimating, setIsAnimating] = useState(true);
+
+  const animationId = useAnimationId(trapezoids);
+
+  const handleAnimationEnd = useCallback(() => {
+    if (typeof onAnimationEnd === 'function') {
+      onAnimationEnd();
+    }
+    setIsAnimating(false);
+  }, [onAnimationEnd]);
+
+  const handleAnimationStart = useCallback(() => {
+    if (typeof onAnimationStart === 'function') {
+      onAnimationStart();
+    }
+    setIsAnimating(true);
+  }, [onAnimationStart]);
+
+  return (
+    <Animate
+      begin={animationBegin}
+      duration={animationDuration}
+      isActive={isAnimationActive}
+      easing={animationEasing}
+      from={{ t: 0 }}
+      to={{ t: 1 }}
+      key={animationId}
+      onAnimationStart={handleAnimationStart}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      {({ t }: { t: number }) => {
+        const stepData =
+          t === 1
+            ? trapezoids
+            : trapezoids.map((entry: FunnelTrapezoidItem, index: number) => {
+                const prev = prevTrapezoids && prevTrapezoids[index];
+
+                if (prev) {
+                  const interpolatorX = interpolateNumber(prev.x, entry.x);
+                  const interpolatorY = interpolateNumber(prev.y, entry.y);
+                  const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
+                  const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
+                  const interpolatorHeight = interpolateNumber(prev.height, entry.height);
+
+                  return {
+                    ...entry,
+                    x: interpolatorX(t),
+                    y: interpolatorY(t),
+                    upperWidth: interpolatorUpperWidth(t),
+                    lowerWidth: interpolatorLowerWidth(t),
+                    height: interpolatorHeight(t),
+                  };
+                }
+
+                const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
+                const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
+                const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
+                const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
+                const interpolatorHeight = interpolateNumber(0, entry.height);
+
+                return {
+                  ...entry,
+                  x: interpolatorX(t),
+                  y: interpolatorY(t),
+                  upperWidth: interpolatorUpperWidth(t),
+                  lowerWidth: interpolatorLowerWidth(t),
+                  height: interpolatorHeight(t),
+                };
+              });
+
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousTrapezoidsRef.current = stepData;
+        }
+        return (
+          <Layer>
+            <FunnelTrapezoids trapezoids={stepData} allOtherFunnelProps={props} showLabels={!isAnimating} />
+          </Layer>
+        );
+      }}
+    </Animate>
+  );
+}
+
+function RenderTrapezoids(props: InternalProps) {
+  const { trapezoids, isAnimationActive } = props;
+
+  const previousTrapezoidsRef = useRef<ReadonlyArray<FunnelTrapezoidItem> | null>(null);
+  const prevTrapezoids = previousTrapezoidsRef.current;
+
+  if (isAnimationActive && trapezoids && trapezoids.length && (!prevTrapezoids || prevTrapezoids !== trapezoids)) {
+    return <TrapezoidsWithAnimation props={props} previousTrapezoidsRef={previousTrapezoidsRef} />;
+  }
+  return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={props} showLabels />;
 }
 
 const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, offset: ChartOffset) => {
@@ -208,141 +342,15 @@ const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, o
   };
 };
 
-export class FunnelWithState extends PureComponent<InternalProps, State> {
-  state: State = { isAnimationFinished: false };
-
-  static getDerivedStateFromProps(nextProps: InternalProps, prevState: State): State {
-    if (nextProps.animationId !== prevState.prevAnimationId) {
-      return {
-        prevAnimationId: nextProps.animationId,
-        curTrapezoids: nextProps.trapezoids,
-        prevTrapezoids: prevState.curTrapezoids,
-      };
-    }
-    if (nextProps.trapezoids !== prevState.curTrapezoids) {
-      return {
-        curTrapezoids: nextProps.trapezoids,
-      };
-    }
-
-    return null;
-  }
-
-  handleAnimationEnd = () => {
-    const { onAnimationEnd } = this.props;
-    this.setState({ isAnimationFinished: true });
-
-    if (typeof onAnimationEnd === 'function') {
-      onAnimationEnd();
-    }
-  };
-
-  handleAnimationStart = () => {
-    const { onAnimationStart } = this.props;
-    this.setState({ isAnimationFinished: false });
-
-    if (typeof onAnimationStart === 'function') {
-      onAnimationStart();
-    }
-  };
-
-  renderTrapezoidsStatically(trapezoids: ReadonlyArray<FunnelTrapezoidItem>) {
-    const { shape, activeShape } = this.props;
-
-    return (
-      <FunnelTrapezoids
-        trapezoids={trapezoids}
-        shape={shape}
-        activeShape={activeShape}
-        allOtherFunnelProps={this.props}
-      />
-    );
-  }
-
-  renderTrapezoidsWithAnimation() {
-    const { trapezoids, isAnimationActive, animationBegin, animationDuration, animationEasing, animationId } =
-      this.props;
-    const { prevTrapezoids } = this.state;
-
-    return (
-      <Animate
-        begin={animationBegin}
-        duration={animationDuration}
-        isActive={isAnimationActive}
-        easing={animationEasing}
-        from={{ t: 0 }}
-        to={{ t: 1 }}
-        key={`funnel-${animationId}`}
-        onAnimationStart={this.handleAnimationStart}
-        onAnimationEnd={this.handleAnimationEnd}
-      >
-        {({ t }: { t: number }) => {
-          const stepData = trapezoids.map((entry: any, index: number) => {
-            const prev = prevTrapezoids && prevTrapezoids[index];
-
-            if (prev) {
-              const interpolatorX = interpolateNumber(prev.x, entry.x);
-              const interpolatorY = interpolateNumber(prev.y, entry.y);
-              const interpolatorUpperWidth = interpolateNumber(prev.upperWidth, entry.upperWidth);
-              const interpolatorLowerWidth = interpolateNumber(prev.lowerWidth, entry.lowerWidth);
-              const interpolatorHeight = interpolateNumber(prev.height, entry.height);
-
-              return {
-                ...entry,
-                x: interpolatorX(t),
-                y: interpolatorY(t),
-                upperWidth: interpolatorUpperWidth(t),
-                lowerWidth: interpolatorLowerWidth(t),
-                height: interpolatorHeight(t),
-              };
-            }
-
-            const interpolatorX = interpolateNumber(entry.x + entry.upperWidth / 2, entry.x);
-            const interpolatorY = interpolateNumber(entry.y + entry.height / 2, entry.y);
-            const interpolatorUpperWidth = interpolateNumber(0, entry.upperWidth);
-            const interpolatorLowerWidth = interpolateNumber(0, entry.lowerWidth);
-            const interpolatorHeight = interpolateNumber(0, entry.height);
-
-            return {
-              ...entry,
-              x: interpolatorX(t),
-              y: interpolatorY(t),
-              upperWidth: interpolatorUpperWidth(t),
-              lowerWidth: interpolatorLowerWidth(t),
-              height: interpolatorHeight(t),
-            };
-          });
-          return <Layer>{this.renderTrapezoidsStatically(stepData)}</Layer>;
-        }}
-      </Animate>
-    );
-  }
-
-  renderTrapezoids() {
-    const { trapezoids, isAnimationActive } = this.props;
-    const { prevTrapezoids } = this.state;
-
-    if (
-      isAnimationActive &&
-      trapezoids &&
-      trapezoids.length &&
-      (!prevTrapezoids || !isEqual(prevTrapezoids, trapezoids))
-    ) {
-      return this.renderTrapezoidsWithAnimation();
-    }
-    return this.renderTrapezoidsStatically(trapezoids);
-  }
-
+export class FunnelWithState extends PureComponent<InternalProps> {
   render() {
-    const { trapezoids, className, isAnimationActive } = this.props;
-    const { isAnimationFinished } = this.state;
+    const { className } = this.props;
 
     const layerClass = clsx('recharts-trapezoids', className);
 
     return (
       <Layer className={layerClass}>
-        {this.renderTrapezoids()}
-        {(!isAnimationActive || isAnimationFinished) && LabelList.renderCallByParent(this.props, trapezoids)}
+        <RenderTrapezoids {...this.props} />
       </Layer>
     );
   }
@@ -363,8 +371,6 @@ const defaultFunnelProps: Partial<Props> = {
 
 function FunnelImpl(props: Props) {
   const { height, width } = useOffset();
-
-  const updateId = useUpdateId();
 
   const {
     stroke = defaultFunnelProps.stroke,
@@ -420,7 +426,6 @@ function FunnelImpl(props: Props) {
           fill={fill}
           nameKey={nameKey}
           lastShapeType={lastShapeType}
-          animationId={updateId}
           animationBegin={animationBegin}
           animationDuration={animationDuration}
           animationEasing={animationEasing}

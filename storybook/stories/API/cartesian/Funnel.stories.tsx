@@ -1,5 +1,5 @@
 import React from 'react';
-import { nameKey, activeShape, trapezoids, General } from '../props/CartesianComponentShared';
+import { nameKey, activeShape, General } from '../props/CartesianComponentShared';
 import { legendType } from '../props/Legend';
 import { AnimationProps } from '../props/AnimationProps';
 import { Funnel, FunnelChart, LabelList, Legend, ResponsiveContainer } from '../../../../src';
@@ -27,7 +27,6 @@ export default {
     legendType,
     shape: activeShape,
     activeShape,
-    trapezoids,
     ...AnimationProps,
     ...General,
     ...GeneralStyle,
@@ -50,19 +49,10 @@ export default {
 
 export const API = {
   render: (args: Record<string, any>) => {
-    const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
-          <Funnel
-            width={400}
-            data={data}
-            dataKey="value"
-            stroke="#424242"
-            isAnimationActive
-            lastShapeType="rectangle"
-            orientation="horizontal"
-          >
+          <Funnel {...args}>
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
             <Legend />
           </Funnel>
@@ -75,6 +65,12 @@ export const API = {
     ...getStoryArgsFromArgsTypesObject(General),
     ...getStoryArgsFromArgsTypesObject(GeneralStyle),
     ...getStoryArgsFromArgsTypesObject(ChartSizeProps),
+    width: 400,
+    dataKey: 'value',
+    stroke: '#424242',
+    isAnimationActive: true,
+    lastShapeType: 'rectangle',
+    orientation: 'horizontal',
     data: [
       {
         fill: '#EEEEEE',
