@@ -30,16 +30,6 @@ $ npm run lint
 $ npm run check-types
 ```
 
-## Demo
-
-To examine the demos in your local build, execute:
-
-```sh
-$ npm run[-script] demo
-```
-
-and then browse to http://localhost:3000.
-
 ## Storybook
 
 We are in the process of unifying documentation and examples in storybook. To run it locally, execute
