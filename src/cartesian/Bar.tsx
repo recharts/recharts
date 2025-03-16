@@ -443,8 +443,10 @@ function RectanglesWithAnimation({
                 return { ...entry, width: w };
               });
 
-        // eslint-disable-next-line no-param-reassign
-        previousRectanglesRef.current = stepData;
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousRectanglesRef.current = stepData;
+        }
         return (
           <Layer>
             <BarRectangles props={props} data={stepData} showLabels={!isAnimating} />
