@@ -88,7 +88,7 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
         const { value, name } = entry;
         let finalValue: React.ReactNode = value;
         let finalName: React.ReactNode = name;
-        if (finalFormatter && finalValue != null && finalName != null) {
+        if (finalFormatter) {
           const formatted = finalFormatter(value, name, entry, i, payload);
           if (Array.isArray(formatted)) {
             [finalValue, finalName] = formatted;
