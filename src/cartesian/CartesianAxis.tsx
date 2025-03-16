@@ -103,8 +103,6 @@ export class CartesianAxis extends Component<Props, IState> {
     interval: 'preserveEnd',
   };
 
-  private layerReference: any;
-
   constructor(props: Props) {
     super(props);
     this.state = { fontSize: '', letterSpacing: '' };
@@ -121,22 +119,10 @@ export class CartesianAxis extends Component<Props, IState> {
     );
   }
 
-  componentDidMount() {
-    const htmlLayer: SVGElement = this.layerReference;
-    if (!htmlLayer) return;
-    const tick: Element = htmlLayer.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
-    if (tick) {
-      this.setState({
-        fontSize: window.getComputedStyle(tick).fontSize,
-        letterSpacing: window.getComputedStyle(tick).letterSpacing,
-      });
-    }
-  }
-
   /**
    * Calculate the coordinates of endpoints in ticks
-   * @param  {Object} data The data of a simple tick
-   * @return {Object} (x1, y1): The coordinate of endpoint close to tick text
+   * @param  data The data of a simple tick
+   * @return (x1, y1): The coordinate of endpoint close to tick text
    *  (x2, y2): The coordinate of endpoint close to axis
    */
   getTickLineCoord(data: CartesianTickItem) {
@@ -202,22 +188,16 @@ export class CartesianAxis extends Component<Props, IState> {
 
   getTickVerticalAnchor() {
     const { orientation, mirror } = this.props;
-    let verticalAnchor = 'end';
 
     switch (orientation) {
       case 'left':
       case 'right':
-        verticalAnchor = 'middle';
-        break;
+        return 'middle';
       case 'top':
-        verticalAnchor = mirror ? 'start' : 'end';
-        break;
+        return mirror ? 'start' : 'end';
       default:
-        verticalAnchor = mirror ? 'end' : 'start';
-        break;
+        return mirror ? 'end' : 'start';
     }
-
-    return verticalAnchor;
   }
 
   renderAxisLine() {
@@ -278,7 +258,7 @@ export class CartesianAxis extends Component<Props, IState> {
   /**
    * render the ticks
    * @param {string} fontSize Fontsize to consider for tick spacing
-   * @param {string} letterSpacing Letterspacing to consider for tick spacing
+   * @param {string} letterSpacing Letter spacing to consider for tick spacing
    * @param {Array} ticks The ticks to actually render (overrides what was passed in props)
    * @return {ReactElement | null} renderedTicks
    */
@@ -358,7 +338,19 @@ export class CartesianAxis extends Component<Props, IState> {
       <Layer
         className={clsx('recharts-cartesian-axis', className)}
         ref={ref => {
-          this.layerReference = ref;
+          if (ref) {
+            const tick: Element | undefined = ref.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
+            if (tick) {
+              const calculatedFontSize = window.getComputedStyle(tick).fontSize;
+              const calculatedLetterSpacing = window.getComputedStyle(tick).letterSpacing;
+              if (calculatedFontSize !== this.state.fontSize || calculatedLetterSpacing !== this.state.letterSpacing) {
+                this.setState({
+                  fontSize: window.getComputedStyle(tick).fontSize,
+                  letterSpacing: window.getComputedStyle(tick).letterSpacing,
+                });
+              }
+            }
+          }
         }}
       >
         {axisLine && this.renderAxisLine()}
