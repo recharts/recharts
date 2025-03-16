@@ -19,6 +19,7 @@ import {
   selectAllBarPositions,
   selectAllVisibleBars,
   selectBarCartesianAxisSize,
+  selectBarPosition,
   selectBarRectangles,
   selectBarSizeList,
 } from '../../src/state/selectors/barSelectors';
@@ -29,6 +30,7 @@ import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSl
 import { BarRectangleItem } from '../../src/cartesian/Bar';
 import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 type DataType = {
   name: string;
@@ -608,6 +610,258 @@ describe('<BarChart />', () => {
           y: '5',
         },
       ]);
+    });
+
+    describe('when stackId is a number', () => {
+      const barSettings: BarSettings = {
+        barSize: '',
+        data,
+        dataKey: 'pv',
+        maxBarSize: 0,
+        minPointSize: 0,
+        stackId: '8',
+      };
+      const cells: never[] = [];
+
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <BarChart width={100} height={50} data={data}>
+          <YAxis />
+          <Bar dataKey="uv" stackId={barSettings.stackId} fill="#ff7300" isAnimationActive={false} />
+          <Bar dataKey="pv" stackId={barSettings.stackId} fill="#387908" isAnimationActive={false} />
+          {children}
+        </BarChart>
+      ));
+
+      it('should select bars', () => {
+        const { spy } = renderTestCase(state => selectBarRectangles(state, 0, 0, false, barSettings, cells));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            background: {
+              height: 40,
+              width: 0,
+              x: 68.75,
+              y: 5,
+            },
+            height: 9.600000000000001,
+            name: 'food',
+            payload: {
+              name: 'food',
+              pv: 2400,
+              uv: 400,
+            },
+            pv: 2400,
+            tooltipPosition: {
+              x: 68.75,
+              y: 38.599999999999994,
+            },
+            uv: 400,
+            value: [400, 2800],
+            width: 0,
+            x: 68.75,
+            y: 33.8,
+          },
+          {
+            background: {
+              height: 40,
+              width: 0,
+              x: 76.25,
+              y: 5,
+            },
+            height: 18.268,
+            name: 'cosmetic',
+            payload: {
+              name: 'cosmetic',
+              pv: 4567,
+              uv: 300,
+            },
+            pv: 4567,
+            tooltipPosition: {
+              x: 76.25,
+              y: 34.666,
+            },
+            uv: 300,
+            value: [300, 4867],
+            width: 0,
+            x: 76.25,
+            y: 25.531999999999996,
+          },
+          {
+            background: {
+              height: 40,
+              width: 0,
+              x: 83.75,
+              y: 5,
+            },
+            height: 5.591999999999999,
+            name: 'storage',
+            payload: {
+              name: 'storage',
+              pv: 1398,
+              uv: 300,
+            },
+            pv: 1398,
+            tooltipPosition: {
+              x: 83.75,
+              y: 41.004,
+            },
+            uv: 300,
+            value: [300, 1698],
+            width: 0,
+            x: 83.75,
+            y: 38.208,
+          },
+          {
+            background: {
+              height: 40,
+              width: 0,
+              x: 91.25,
+              y: 5,
+            },
+            height: 39.2,
+            name: 'digital',
+            payload: {
+              name: 'digital',
+              pv: 9800,
+              uv: 200,
+            },
+            pv: 9800,
+            tooltipPosition: {
+              x: 91.25,
+              y: 24.6,
+            },
+            uv: 200,
+            value: [200, 10000],
+            width: 0,
+            x: 91.25,
+            y: 5,
+          },
+        ]);
+      });
+
+      it('should select bar size list', () => {
+        const { spy } = renderTestCase(state => selectBarSizeList(state, 0, 0, false, barSettings));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            barSize: undefined,
+            dataKeys: ['uv', 'pv'],
+            stackId: '8',
+          },
+        ]);
+      });
+
+      it('should select all bar positions', () => {
+        const { spy } = renderTestCase(state => selectAllBarPositions(state, 0, 0, false, barSettings));
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataKeys: ['uv', 'pv'],
+            position: {
+              offset: 3.75,
+              size: 0,
+            },
+            stackId: '8',
+          },
+        ]);
+      });
+
+      it('should select bar position', () => {
+        const { spy } = renderTestCase(state => selectBarPosition(state, 0, 0, false, barSettings));
+        expect(spy).toHaveBeenLastCalledWith({
+          offset: 3.75,
+          size: 0,
+        });
+      });
+
+      it('should render bars', () => {
+        const matchingStackConfig = [
+          { name: 'food', firstBarIndex: 0, secondBarIndex: 4 },
+          { name: 'cosmetic', firstBarIndex: 1, secondBarIndex: 5 },
+          { name: 'storage', firstBarIndex: 2, secondBarIndex: 6 },
+          { name: 'digital', firstBarIndex: 3, secondBarIndex: 7 },
+        ];
+
+        const { container } = renderTestCase();
+
+        const rects = container.querySelectorAll('.recharts-rectangle');
+        expect(rects).toHaveLength(8);
+
+        matchingStackConfig.forEach(({ name, firstBarIndex, secondBarIndex }) => {
+          // bar one and bar two should be the same category
+          const barOne = rects[firstBarIndex];
+          const barTwo = rects[secondBarIndex];
+          expect(barOne.getAttribute('name')).toEqual(name);
+          expect(barTwo.getAttribute('name')).toEqual(name);
+
+          // these bars should have the same x (cannot compare y accurately as Y does not start from 0)
+          expect(barOne.getAttribute('x')).toEqual(barTwo.getAttribute('x'));
+        });
+
+        expectBars(container, [
+          {
+            d: 'M 65.75,43.4 h 6 v 1.6000000000000014 h -6 Z',
+            height: '1.6000000000000014',
+            radius: '0',
+            width: '6',
+            x: '65.75',
+            y: '43.4',
+          },
+          {
+            d: 'M 73.25,43.8 h 6 v 1.2000000000000028 h -6 Z',
+            height: '1.2000000000000028',
+            radius: '0',
+            width: '6',
+            x: '73.25',
+            y: '43.8',
+          },
+          {
+            d: 'M 80.75,43.8 h 6 v 1.2000000000000028 h -6 Z',
+            height: '1.2000000000000028',
+            radius: '0',
+            width: '6',
+            x: '80.75',
+            y: '43.8',
+          },
+          {
+            d: 'M 88.25,44.2 h 6 v 0.7999999999999972 h -6 Z',
+            height: '0.7999999999999972',
+            radius: '0',
+            width: '6',
+            x: '88.25',
+            y: '44.2',
+          },
+          {
+            d: 'M 65.75,33.8 h 6 v 9.600000000000001 h -6 Z',
+            height: '9.600000000000001',
+            radius: '0',
+            width: '6',
+            x: '65.75',
+            y: '33.8',
+          },
+          {
+            d: 'M 73.25,25.531999999999996 h 6 v 18.268 h -6 Z',
+            height: '18.268',
+            radius: '0',
+            width: '6',
+            x: '73.25',
+            y: '25.531999999999996',
+          },
+          {
+            d: 'M 80.75,38.208 h 6 v 5.591999999999999 h -6 Z',
+            height: '5.591999999999999',
+            radius: '0',
+            width: '6',
+            x: '80.75',
+            y: '38.208',
+          },
+          {
+            d: 'M 88.25,5 h 6 v 39.2 h -6 Z',
+            height: '39.2',
+            radius: '0',
+            width: '6',
+            x: '88.25',
+            y: '5',
+          },
+        ]);
+      });
     });
 
     test('Stacked bars are actually stacked', () => {

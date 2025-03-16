@@ -4,7 +4,7 @@ import { ChartData } from './chartDataSlice';
 import { AxisId } from './cartesianAxisSlice';
 import { DataKey } from '../util/types';
 import { ErrorBarDirection } from '../cartesian/ErrorBar';
-import { StackId } from '../util/ChartUtils';
+import { NormalizedStackId } from '../util/ChartUtils';
 import { MaybeStackedGraphicalItem } from './selectors/barSelectors';
 
 /**
@@ -64,7 +64,7 @@ export type CartesianGraphicalItemSettings = GraphicalItemSettings & {
    * One graphical item can have multiple error bars. This probably only makes sense in Scatter.
    */
   errorBars: ReadonlyArray<ErrorBarsSettings> | undefined;
-  stackId: StackId | undefined;
+  stackId: NormalizedStackId | undefined;
   /**
    * This property is only used in Bar and RadialBar items
    */
