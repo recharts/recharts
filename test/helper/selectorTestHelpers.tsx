@@ -45,7 +45,7 @@ export function shouldReturnFromInitialState<T>(
  *
  * This is generally what we want from all selectors so it's a good idea to run this on all selector functions.
  *
- * Redux out of the box does something similar but it only prints warnings to console, this version throws.
+ * Redux out of the box does something similar, but it only prints warnings to console, this version throws.
  *
  * @param selector accepts RechartsRootState and returns T
  * @return T that the selector returned

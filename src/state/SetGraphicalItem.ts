@@ -8,13 +8,22 @@ import {
   removeCartesianGraphicalItem,
   removePolarGraphicalItem,
 } from './graphicalItemsSlice';
+import { getNormalizedStackId, StackId } from '../util/ChartUtils';
 
-export function SetCartesianGraphicalItem(props: CartesianGraphicalItemSettings): null {
+type SetCartesianGraphicalItemProps = Omit<CartesianGraphicalItemSettings, 'stackId'> & {
+  stackId: StackId | undefined;
+};
+
+export function SetCartesianGraphicalItem(props: SetCartesianGraphicalItemProps): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(addCartesianGraphicalItem(props));
+    const settings: CartesianGraphicalItemSettings = {
+      ...props,
+      stackId: getNormalizedStackId(props.stackId),
+    };
+    dispatch(addCartesianGraphicalItem(settings));
     return () => {
-      dispatch(removeCartesianGraphicalItem(props));
+      dispatch(removeCartesianGraphicalItem(settings));
     };
   }, [dispatch, props]);
   return null;

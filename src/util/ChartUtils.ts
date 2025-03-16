@@ -522,7 +522,17 @@ export const getStackedData = (
   return stack(data);
 };
 
-export type StackId = string | number | symbol;
+export type StackId = string | number;
+/**
+ * Stack IDs in the external props allow numbers; but internally we use it as an object key
+ * and object keys are always strings. Also it would be kinda confusing if stackId=8 and stackId='8' were different stacks
+ * so let's just force a string.
+ */
+export type NormalizedStackId = string;
+
+export function getNormalizedStackId(publicStackId: StackId | undefined): NormalizedStackId | undefined {
+  return publicStackId == null ? undefined : String(publicStackId);
+}
 
 /**
  * @deprecated do not use - depends on passing around DOM elements

@@ -27,8 +27,10 @@ import {
   BarPositionPosition,
   getBaseValueOfBar,
   getCateCoordinateOfBar,
+  getNormalizedStackId,
   getTooltipNameProp,
   getValueByDataKey,
+  StackId,
   truncateByDomain,
 } from '../util/ChartUtils';
 import {
@@ -82,7 +84,7 @@ export interface BarProps {
   index?: Key;
   xAxisId?: string | number;
   yAxisId?: string | number;
-  stackId?: string | number;
+  stackId?: StackId;
   barSize?: string | number;
   unit?: string | number;
   name?: string | number;
@@ -546,7 +548,7 @@ function BarImpl(props: Props) {
       dataKey: props.dataKey,
       maxBarSize: props.maxBarSize,
       minPointSize: props.minPointSize,
-      stackId: props.stackId,
+      stackId: getNormalizedStackId(props.stackId),
     }),
     [props.barSize, props.dataKey, props.maxBarSize, props.minPointSize, props.stackId],
   );

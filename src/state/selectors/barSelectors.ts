@@ -14,7 +14,7 @@ import {
 import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
-import { BarPositionPosition, getBandSizeOfAxis, StackId } from '../../util/ChartUtils';
+import { BarPositionPosition, getBandSizeOfAxis, NormalizedStackId, StackId } from '../../util/ChartUtils';
 import { ChartOffset, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -30,7 +30,7 @@ export type BarSettings = {
   dataKey: DataKey<any>;
   maxBarSize: number | undefined;
   minPointSize: MinPointSize;
-  stackId: StackId | undefined;
+  stackId: NormalizedStackId | undefined;
 };
 
 const pickXAxisId = (_state: RechartsRootState, xAxisId: AxisId): AxisId => xAxisId;
@@ -364,6 +364,7 @@ export const combineAllBarPositions = (
 
   return allBarPositions;
 };
+
 export const selectAllBarPositions: (
   state: RechartsRootState,
   xAxisId: AxisId,
@@ -395,7 +396,7 @@ const selectXAxisTicks = (state: RechartsRootState, xAxisId: AxisId, _yAxisId: A
 const selectYAxisTicks = (state: RechartsRootState, _xAxisId: AxisId, yAxisId: AxisId, isPanorama: boolean) =>
   selectTicksOfGraphicalItem(state, 'yAxis', yAxisId, isPanorama);
 
-const selectBarPosition: (
+export const selectBarPosition: (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
