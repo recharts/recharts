@@ -9,6 +9,7 @@ import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelector
 import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 type ExpectedArea = {
   d: string;
@@ -374,6 +375,36 @@ describe('AreaChart', () => {
       },
       {
         d: 'M80,10L145,10L210,10L275,10L340,10L405,10L470,10',
+      },
+    ]);
+  });
+
+  test('renders a stacked chart when stackId is a number', () => {
+    const areaSettings: AreaSettings = {
+      baseValue: undefined,
+      stackId: 1,
+      dataKey: 'uv',
+      connectNulls: false,
+      data: undefined,
+    };
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <AreaChart width={500} height={400} data={pageData}>
+        <Area dataKey="uv" stackId={areaSettings.stackId} />
+        <Area dataKey="pv" stackId={areaSettings.stackId} />
+        {children}
+      </AreaChart>
+    ));
+
+    const { container } = renderTestCase(state => selectArea(state, 0, 0, false, areaSettings));
+
+    // if number stackId breaks this will return an empty array
+    expectAreaCurve(container, [
+      {
+        d: 'M5,312.821L86.667,312.821L168.333,274.1L250,200.418L331.667,188.857L413.333,183.286L495,200',
+      },
+      {
+        d: 'M5,201.393L86.667,201.393L168.333,139.411L250,47.482L331.667,21.714L413.333,28.957L495,105.286',
       },
     ]);
   });

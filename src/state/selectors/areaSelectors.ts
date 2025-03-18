@@ -13,7 +13,7 @@ import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
-import { getBandSizeOfAxis, isCategoricalAxis, StackId } from '../../util/ChartUtils';
+import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
 import { Point as CurvePoint } from '../../shape/Curve';
 
@@ -111,7 +111,7 @@ const selectSynchronisedAreaSettings: (
         cgis =>
           cgis.type === 'area' &&
           areaSettingsFromProps.dataKey === cgis.dataKey &&
-          areaSettingsFromProps.stackId === cgis.stackId &&
+          getNormalizedStackId(areaSettingsFromProps.stackId) === cgis.stackId &&
           areaSettingsFromProps.data === cgis.data,
       )
     ) {
