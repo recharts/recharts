@@ -9,7 +9,7 @@ import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
 import { interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
-import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
+import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, StackId } from '../util/ChartUtils';
 import {
   ActiveDotType,
   AnimationDuration,
@@ -71,7 +71,7 @@ interface InternalAreaProps {
   onAnimationStart?: () => void;
 
   points?: ReadonlyArray<AreaPointItem>;
-  stackId?: string | number;
+  stackId?: StackId;
 
   tooltipType?: TooltipType;
   top: number;
