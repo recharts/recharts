@@ -492,6 +492,10 @@ export function CartesianGrid(props: Props) {
         height={propsIncludingDefaults.height}
         ry={propsIncludingDefaults.ry}
       />
+
+      <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
+      <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
+
       <HorizontalGridLines
         {...propsIncludingDefaults}
         offset={offset}
@@ -507,10 +511,6 @@ export function CartesianGrid(props: Props) {
         xAxis={xAxis}
         yAxis={yAxis}
       />
-
-      <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
-
-      <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
     </g>
   );
 }
