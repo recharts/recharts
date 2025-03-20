@@ -92,10 +92,11 @@ interface CartesianGridProps extends InternalCartesianGridProps {
    * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
    * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
    *
-   * In case there are more stripes than colors, the colors will start from beginning
+   * In case there are more stripes than colors, the colors will start from beginning.
    * So for example: verticalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
    *
    * If this is undefined, or an empty array, then there is no background fill.
+   * Note: Grid lines will be rendered above these background stripes.
    */
   verticalFill?: string[];
   /**
@@ -104,10 +105,11 @@ interface CartesianGridProps extends InternalCartesianGridProps {
    * The values from this array will be passed in as the `fill` property in a `rect` SVG element.
    * For possible values see: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/fill#rect
    *
-   * In case there are more stripes than colors, the colors will start from beginning
+   * In case there are more stripes than colors, the colors will start from beginning.
    * So for example: horizontalFill['yellow', 'black'] produces a pattern of yellow|black|yellow|black
    *
    * If this is undefined, or an empty array, then there is no background fill.
+   * Note: Grid lines will be rendered above these background stripes.
    */
   horizontalFill?: string[];
   /**
@@ -492,6 +494,10 @@ export function CartesianGrid(props: Props) {
         height={propsIncludingDefaults.height}
         ry={propsIncludingDefaults.ry}
       />
+
+      <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
+      <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
+
       <HorizontalGridLines
         {...propsIncludingDefaults}
         offset={offset}
@@ -507,10 +513,6 @@ export function CartesianGrid(props: Props) {
         xAxis={xAxis}
         yAxis={yAxis}
       />
-
-      <HorizontalStripes {...propsIncludingDefaults} horizontalPoints={horizontalPoints} />
-
-      <VerticalStripes {...propsIncludingDefaults} verticalPoints={verticalPoints} />
     </g>
   );
 }
