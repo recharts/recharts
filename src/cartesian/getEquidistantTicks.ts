@@ -1,6 +1,6 @@
 import { isVisible } from '../util/TickUtils';
 import { CartesianTickItem } from '../util/types';
-import { getEveryNthWithCondition } from '../util/getEveryNthWithCondition';
+import { getEveryNthWithCondition, getEveryNthWithShiftingFirst } from '../util/getEveryNthWithCondition';
 import { Sign } from './getTicks';
 
 export function getEquidistantTicks(
@@ -9,6 +9,7 @@ export function getEquidistantTicks(
   getTickSize: (tick: CartesianTickItem, index: number) => number,
   ticks: ReadonlyArray<CartesianTickItem>,
   minTickGap: number,
+  shiftFirstTick?: boolean,
 ): ReadonlyArray<CartesianTickItem> {
   // If the ticks are readonly, then the slice might not be necessary
   const result = (ticks || []).slice();
@@ -28,6 +29,7 @@ export function getEquidistantTicks(
 
     // Break condition - If we have evaluated all the ticks, then we are done.
     if (entry === undefined) {
+      if (shiftFirstTick) return getEveryNthWithShiftingFirst(ticks, stepsize, getTickSize);
       return getEveryNthWithCondition(ticks, stepsize);
     }
 
@@ -55,7 +57,11 @@ export function getEquidistantTicks(
 
     if (isShow) {
       // If it can be shown, update the start
-      start = tickCoord + sign * (getSize() / 2 + minTickGap);
+      if (index === 0 && shiftFirstTick) {
+        start = tickCoord + sign * (getSize() + minTickGap);
+      } else {
+        start = tickCoord + sign * (getSize() / 2 + minTickGap);
+      }
       index += stepsize;
     }
   }
