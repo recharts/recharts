@@ -7,6 +7,10 @@ import Decimal from 'decimal.js-light';
 import { compose, range, memoize, map, reverse } from './util/utils';
 import { getDigitCount, rangeStep } from './util/arithmetic';
 
+const MIN_SCALE_RATIO = 0.02;
+const SCALE_RATIO_DECREMENT = 0.01;
+const STEP_THRESHOLD_FACTOR = 0.7;
+
 /**
  * Calculate a interval of a minimum value and a maximum value
  *
@@ -45,12 +49,23 @@ export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correc
   const digitCountValue = new Decimal(10).pow(digitCount);
   const stepRatio = roughStep.div(digitCountValue);
   // When an integer and a float multiplied, the accuracy of result may be wrong
-  const stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
-  const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
-    .add(correctionFactor)
-    .mul(stepRatioScale);
+  let stepRatioScale = digitCount !== 1 ? 0.05 : 0.1;
 
-  const formatStep = amendStepRatio.mul(digitCountValue);
+  let formatStep: Decimal;
+
+  while (stepRatioScale > MIN_SCALE_RATIO) {
+    const amendStepRatio = new Decimal(Math.ceil(stepRatio.div(stepRatioScale).toNumber()))
+      .add(correctionFactor)
+      .mul(stepRatioScale);
+
+    formatStep = amendStepRatio.mul(digitCountValue);
+
+    if (formatStep.mul(STEP_THRESHOLD_FACTOR).lt(roughStep)) {
+      break;
+    }
+
+    stepRatioScale -= SCALE_RATIO_DECREMENT;
+  }
 
   return allowDecimals ? new Decimal(formatStep.toNumber()) : new Decimal(Math.ceil(formatStep.toNumber()));
 };
@@ -165,6 +180,7 @@ export const calculateStep = (
  * @param  {Number}  min, max      min: The minimum value, max: The maximum value
  * @param  {Integer} tickCount     The count of ticks
  * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
+ * @param  {StepRatioControl} stepRatioControl The value to control the step of y domain
  * @return {Array}   ticks
  */
 function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true): number[] {
