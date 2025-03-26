@@ -10,7 +10,7 @@ export const ChartDataContextProvider = (props: { chartData: ChartData }): null 
   useEffect(() => {
     dispatch(setChartData(chartData));
     return () => {
-      dispatch(setChartData([]));
+      dispatch(setChartData(undefined));
     };
   }, [chartData, dispatch]);
   return null;
@@ -22,7 +22,7 @@ export const SetComputedData = (props: { computedData: any }): null => {
   useEffect(() => {
     dispatch(setComputedData(computedData));
     return () => {
-      dispatch(setChartData([]));
+      dispatch(setChartData(undefined));
     };
   }, [computedData, dispatch]);
   return null;

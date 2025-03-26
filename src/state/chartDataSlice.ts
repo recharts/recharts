@@ -54,7 +54,12 @@ const chartDataSlice = createSlice({
   reducers: {
     setChartData(state, action: PayloadAction<ChartData | undefined>) {
       state.chartData = action.payload;
-      if (action.payload != null && state.dataEndIndex !== action.payload.length - 1) {
+      if (action.payload == null) {
+        state.dataStartIndex = 0;
+        state.dataEndIndex = 0;
+        return;
+      }
+      if (action.payload.length > 0 && state.dataEndIndex !== action.payload.length - 1) {
         state.dataEndIndex = action.payload.length - 1;
       }
     },
