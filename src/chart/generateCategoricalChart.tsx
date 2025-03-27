@@ -1421,6 +1421,7 @@ export const generateCategoricalChart = ({
 
       const { xAxisMap, yAxisMap } = this.state;
       const tooltipEventType = this.getTooltipEventType();
+      const toolTipData = getTooltipData(this.state, this.props.data, this.props.layout, rangeObj);
 
       if (tooltipEventType !== 'axis' && xAxisMap && yAxisMap) {
         const xScale = getAnyElementOfObject(xAxisMap).scale;
@@ -1428,10 +1429,8 @@ export const generateCategoricalChart = ({
         const xValue = xScale && xScale.invert ? xScale.invert(e.chartX) : null;
         const yValue = yScale && yScale.invert ? yScale.invert(e.chartY) : null;
 
-        return { ...e, xValue, yValue };
+        return { ...e, xValue, yValue, ...toolTipData };
       }
-
-      const toolTipData = getTooltipData(this.state, this.props.data, this.props.layout, rangeObj);
 
       if (toolTipData) {
         return {
