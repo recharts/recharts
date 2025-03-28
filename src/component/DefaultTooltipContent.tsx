@@ -2,7 +2,7 @@
  * @fileOverview Default Tooltip Content
  */
 
-import React, { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import React, { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
 import sortBy from 'lodash/sortBy';
 import clsx from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
@@ -23,7 +23,7 @@ export type Formatter<TValue extends ValueType, TName extends NameType> = (
   payload: ReadonlyArray<Payload<TValue, TName>>,
 ) => [React.ReactNode, TName] | React.ReactNode;
 
-export interface Payload<TValue extends ValueType, TName extends NameType> {
+export interface Payload<TValue extends ValueType, TName extends NameType> extends Omit<SVGProps<SVGElement>, 'name'> {
   type?: TooltipType;
   color?: string;
   formatter?: Formatter<TValue, TName>;
