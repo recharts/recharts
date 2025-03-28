@@ -720,7 +720,7 @@ function PieWithTouchMove(props: InternalProps) {
     if (!target || !target.getAttribute) {
       return;
     }
-    const itemIndex = Number(target.getAttribute('data-recharts-item-index'));
+    const itemIndex = Number.parseInt(target.getAttribute('data-recharts-item-index'), 10);
     const activeSector = sectors[itemIndex];
     if (!activeSector) {
       return;

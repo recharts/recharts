@@ -17,3 +17,13 @@ export function mockTouchingElement(touchItemIndex: TooltipIndex): void {
   fakeElement.setAttribute('data-recharts-item-index', touchItemIndex);
   document.elementFromPoint = () => fakeElement;
 }
+
+/**
+ * This method will mock that the user is touching some element
+ * that is not any of the chart elements.
+ * @return void
+ */
+export function mockTouchingUnrelatedElement(): void {
+  const fakeElement = document.createElement('g');
+  document.elementFromPoint = () => fakeElement;
+}
