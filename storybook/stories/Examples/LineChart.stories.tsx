@@ -1116,7 +1116,6 @@ export const ChangingDataKey = {
             strokeDasharray="5 5"
             activeDot={{ r: 8 }}
             label={{ fill: 'red', dy: -25 }}
-            animationDuration={3000}
           />
         </LineChart>
       </>
