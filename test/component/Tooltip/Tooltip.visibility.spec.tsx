@@ -85,6 +85,7 @@ import {
   selectLegendSettings,
   selectLegendSize,
 } from '../../../src/state/selectors/legendSelectors';
+import { mockTouchingElement } from '../../helper/mockTouchingElement';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -420,11 +421,12 @@ describe('Tooltip visibility', () => {
         name === 'Treemap' ||
         name === 'FunnelChart' ||
         name === 'Sankey' ||
-        name === 'PieChart' ||
         name === 'ScatterChart'
       ) {
         context.skip();
       }
+
+      mockTouchingElement('0');
 
       mockGetBoundingClientRect({
         width: 10,

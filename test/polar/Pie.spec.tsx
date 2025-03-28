@@ -241,6 +241,7 @@ describe('<Pie />', () => {
       'stroke',
       'name',
       'tabindex',
+      'data-recharts-item-index',
       'class',
       'd',
     ]);
@@ -304,6 +305,7 @@ describe('<Pie />', () => {
       cx: 255,
       cy: 255,
       endAngle: 77.15833835039133,
+      'data-recharts-item-index': 0,
       fill: '#808080',
       innerRadius: 0,
       label: 'Iter: 0',
