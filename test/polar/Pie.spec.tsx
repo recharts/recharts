@@ -1,5 +1,5 @@
 import React from 'react';
-import { vi } from 'vitest';
+import { it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LabelProps, Pie, PieChart, PieProps, Sector, SectorProps, Tooltip } from '../../src';
@@ -13,6 +13,7 @@ import {
   expectTooltipPayload,
   showTooltip,
   showTooltipOnCoordinate,
+  showTooltipOnCoordinateTouch,
 } from '../component/Tooltip/tooltipTestHelpers';
 import { pieChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { PageData } from '../_data';
@@ -31,6 +32,7 @@ import {
   selectTooltipDisplayedData,
 } from '../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
+import { mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -81,6 +83,25 @@ describe('<Pie />', () => {
     );
 
     expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+  });
+
+  test('Renders nothing if hide=true', () => {
+    const { container } = render(
+      <PieChart width={500} height={500}>
+        <Pie
+          hide
+          isAnimationActive={false}
+          cx={250}
+          cy={250}
+          innerRadius={0}
+          outerRadius={200}
+          data={PageData}
+          dataKey="uv"
+        />
+      </PieChart>,
+    );
+
+    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
   });
 
   test('Render customized active sector when activeShape is set to be an element', () => {
@@ -241,6 +262,7 @@ describe('<Pie />', () => {
       'stroke',
       'name',
       'tabindex',
+      'data-recharts-item-index',
       'class',
       'd',
     ]);
@@ -304,6 +326,7 @@ describe('<Pie />', () => {
       cx: 255,
       cy: 255,
       endAngle: 77.15833835039133,
+      'data-recharts-item-index': 0,
       fill: '#808080',
       innerRadius: 0,
       label: 'Iter: 0',
@@ -649,6 +672,19 @@ describe('<Pie />', () => {
 
         expectTooltipPayload(container, '', ['A : 250']);
         expectTooltipCoordinate(container, { x: 273.1033255612459, y: 164.15275032118709 });
+      });
+
+      it('should not display tooltip when touchMove is triggered without touching an element', () => {
+        mockTouchingUnrelatedElement();
+
+        const { container } = renderTestCase();
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 200,
+          clientY: 200,
+        });
+
+        expectTooltipNotVisible(container);
       });
     });
 

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import React, {
   MutableRefObject,
   PureComponent,
@@ -15,7 +14,7 @@ import get from 'lodash/get';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
-import { useAppSelector } from '../state/hooks';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
@@ -46,7 +45,7 @@ import {
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
 } from '../context/tooltipContext';
-import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { setActiveMouseOverItemIndex, TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
@@ -450,6 +449,7 @@ function PieSectors(props: PieSectorsProps) {
           ...entry,
           stroke: entry.stroke,
           tabIndex: -1,
+          'data-recharts-item-index': i,
         };
 
         return (
@@ -695,22 +695,52 @@ function RenderSectors(props: InternalProps) {
   );
 }
 
-export class PieWithState extends PureComponent<InternalProps> {
-  render() {
-    const { hide, className } = this.props;
+function PieWithTouchMove(props: InternalProps) {
+  const dispatch = useAppDispatch();
+  const { hide, className, onTouchMove, rootTabIndex, sectors } = props;
 
-    if (hide) {
-      return null;
+  const layerClass = clsx('recharts-pie', className);
+
+  if (hide) {
+    return null;
+  }
+
+  /*
+   * onTouchMove is special because it behaves different from mouse events.
+   * Mouse events have enter + leave combo that notify us when the mouse is over
+   * a certain element. Touch events don't have that; touch only gives us
+   * start (finger down), end (finger up) and move (finger moving).
+   * So we need to figure out which element the user is touching
+   * ourselves. Fortunately, there's a convenient method for that:
+   * https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
+   */
+  const myOnTouchMove = (e: React.TouchEvent<SVGElement>) => {
+    const touchEvent = e.touches[0];
+    const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
+    if (!target || !target.getAttribute) {
+      return;
+    }
+    const itemIndex = Number.parseInt(target.getAttribute('data-recharts-item-index'), 10);
+    const activeSector = sectors[itemIndex];
+    if (!activeSector) {
+      return;
     }
 
-    const layerClass = clsx('recharts-pie', className);
-
-    return (
-      <Layer tabIndex={this.props.rootTabIndex} className={layerClass}>
-        <RenderSectors {...this.props} />
-      </Layer>
+    onTouchMove?.(activeSector, itemIndex, e);
+    dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: String(itemIndex),
+        activeDataKey: props.dataKey,
+        activeCoordinate: activeSector.tooltipPosition,
+      }),
     );
-  }
+  };
+
+  return (
+    <Layer tabIndex={rootTabIndex} className={layerClass} onTouchMove={myOnTouchMove}>
+      <RenderSectors {...props} />
+    </Layer>
+  );
 }
 
 const defaultPieProps: Partial<Props> = {
@@ -796,7 +826,7 @@ function PieImpl(props: Props) {
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
-      <PieWithState
+      <PieWithTouchMove
         {...everythingElse}
         legendType={legendType}
         hide={hide}
