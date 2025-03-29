@@ -1,17 +1,7 @@
 import { SyntheticEvent } from 'react';
-import { DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { MouseHandlerDataParam } from '../synchronisation/types';
 
 export interface CategoricalChartState {
-  prevDataKey?: DataKey<any>;
-  prevData?: any[];
-  prevWidth?: number;
-  prevHeight?: number;
-  prevLayout?: LayoutType;
-  prevStackOffset?: StackOffsetType;
-  prevMargin?: Margin;
-  prevChildren?: any;
-
   tooltipPortal?: HTMLElement | null;
   legendPortal?: HTMLElement | null;
 }
