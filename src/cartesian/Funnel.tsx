@@ -32,7 +32,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { UpdateId, useOffset } from '../context/chartLayoutContext';
+import { useOffset } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
@@ -48,7 +48,6 @@ export interface FunnelTrapezoidItem extends TrapezoidProps {
  * Internal props, combination of external props + defaultProps + private Recharts state
  */
 interface InternalFunnelProps {
-  animationId?: UpdateId;
   trapezoids?: ReadonlyArray<FunnelTrapezoidItem>;
   className?: string;
   dataKey: DataKey<any>;

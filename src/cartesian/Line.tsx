@@ -28,7 +28,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import { UpdateId, useChartLayout, useOffset, useUpdateId } from '../context/chartLayoutContext';
+import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedLineSettings, selectLinePoints } from '../state/selectors/lineSelectors';
@@ -51,7 +51,6 @@ interface InternalLineProps {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
-  animationId: UpdateId;
 
   className?: string;
   connectNulls: boolean;
@@ -335,7 +334,6 @@ function CurveWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    animationId,
     animateNewValues,
     width,
     height,
@@ -388,7 +386,6 @@ function CurveWithAnimation({
       easing={animationEasing}
       from={{ t: 0 }}
       to={{ t: 1 }}
-      key={`line-${animationId}`}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
     >
@@ -602,7 +599,6 @@ function LineImpl(props: Props) {
   const points: ReadonlyArray<LinePointItem> = useAppSelector(state =>
     selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, lineSettings),
   );
-  const updateId = useUpdateId();
   if (layout !== 'horizontal' && layout !== 'vertical') {
     // Cannot render Line in an unsupported layout
     return null;
@@ -641,7 +637,6 @@ function LineImpl(props: Props) {
       legendType={legendType}
       xAxisId={xAxisId}
       yAxisId={yAxisId}
-      animationId={updateId}
       points={points}
       layout={layout}
       height={height}

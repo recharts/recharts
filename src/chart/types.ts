@@ -3,8 +3,6 @@ import { DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { MouseHandlerDataParam } from '../synchronisation/types';
 
 export interface CategoricalChartState {
-  updateId?: number;
-
   prevDataKey?: DataKey<any>;
   prevData?: any[];
   prevWidth?: number;

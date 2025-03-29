@@ -47,7 +47,6 @@ import {
 } from '../context/tooltipContext';
 import { setActiveMouseOverItemIndex, TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { UpdateId, useUpdateId } from '../context/chartLayoutContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 
@@ -122,7 +121,6 @@ interface InternalPieProps extends PieDef {
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
   label?: PieLabel;
-  animationId?: UpdateId;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -154,7 +152,6 @@ interface PieProps extends PieDef {
   inactiveShape?: ActiveShape<PieSectorDataItem>;
   labelLine?: PieLabelLine;
   label?: PieLabel;
-  animationId?: UpdateId;
   animationEasing?: AnimationTiming;
   isAnimationActive?: boolean;
   animationBegin?: number;
@@ -182,7 +179,6 @@ interface State {
   prevIsAnimationActive?: boolean;
   prevSectors?: PieSectorDataItem[];
   curSectors?: PieSectorDataItem[];
-  prevAnimationId?: UpdateId;
 }
 
 type PieSvgAttributes = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'ref'>;
@@ -767,7 +763,6 @@ const defaultPieProps: Partial<Props> = {
 
 function PieImpl(props: Props) {
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const updateId = useUpdateId();
   const presentationProps = filterProps(props, false);
 
   const pieSettings: ResolvedPieSettings = useMemo(
@@ -835,7 +830,6 @@ function PieImpl(props: Props) {
         animationDuration={animationDuration}
         animationEasing={animationEasing}
         sectors={sectors}
-        animationId={updateId}
       />
     </>
   );

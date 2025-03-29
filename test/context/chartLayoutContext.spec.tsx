@@ -12,7 +12,6 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 
 describe('ChartLayoutContextProvider', () => {
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
-    updateId: 0,
     clipPathId: 'my mock ID',
     children: <div />,
   };
@@ -152,28 +151,6 @@ describe('ChartLayoutContextProvider', () => {
           </ChartLayoutContextProvider>,
         );
         expect(renderCount).toBe(2);
-      });
-
-      it('should not re-render context-aware children if unrelated property changes', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          useClipPathId();
-          renderCount++;
-          return null;
-        });
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps} updateId={0}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} updateId={1}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
       });
     });
   });
