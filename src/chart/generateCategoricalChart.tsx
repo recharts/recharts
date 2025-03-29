@@ -3,7 +3,7 @@ import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 
 import { filterProps, isChildrenEqual, validateWidthHeight } from '../util/ReactUtils';
-import { isNullish, uniqueId } from '../util/DataUtils';
+import { uniqueId } from '../util/DataUtils';
 import { shallowEqual } from '../util/ShallowEqual';
 import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
@@ -122,23 +122,6 @@ export const generateCategoricalChart = ({
     ): CategoricalChartState {
       const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
 
-      if (prevState.updateId === undefined) {
-        const defaultState = {};
-        return {
-          ...defaultState,
-          updateId: 0,
-          ...{},
-
-          prevDataKey: dataKey,
-          prevData: data,
-          prevWidth: width,
-          prevHeight: height,
-          prevLayout: layout,
-          prevStackOffset: stackOffset,
-          prevMargin: margin,
-          prevChildren: children,
-        };
-      }
       if (
         dataKey !== prevState.prevDataKey ||
         data !== prevState.prevData ||
@@ -148,20 +131,7 @@ export const generateCategoricalChart = ({
         stackOffset !== prevState.prevStackOffset ||
         !shallowEqual(margin, prevState.prevMargin)
       ) {
-        const defaultState = {};
-
-        const updatesToState = {
-          // Update the current tooltip data (in case it changes without mouse interaction)
-          updateId: prevState.updateId + 1,
-        };
-
-        const newState = {
-          ...defaultState,
-          ...updatesToState,
-        };
-
         return {
-          ...newState,
           prevDataKey: dataKey,
           prevData: data,
           prevWidth: width,
@@ -174,11 +144,7 @@ export const generateCategoricalChart = ({
       }
       if (!isChildrenEqual(children, prevState.prevChildren)) {
         // update configuration in children
-        const hasGlobalData = !isNullish(data);
-        const newUpdateId = hasGlobalData ? prevState.updateId : prevState.updateId + 1;
-
         return {
-          updateId: newUpdateId,
           prevChildren: children,
         };
       }
@@ -197,7 +163,7 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
+          <ChartLayoutContextProvider clipPathId={this.clipPathId}>
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
               <ClipPath clipPathId={this.clipPathId} />
               {children}
@@ -218,7 +184,7 @@ export const generateCategoricalChart = ({
           <ChartDataContextProvider chartData={this.props.data} />
           <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
             <LegendPortalContext.Provider value={this.state.legendPortal}>
-              <ChartLayoutContextProvider updateId={this.state.updateId} clipPathId={this.clipPathId}>
+              <ChartLayoutContextProvider clipPathId={this.clipPathId}>
                 <RechartsWrapper
                   className={className}
                   style={style}
