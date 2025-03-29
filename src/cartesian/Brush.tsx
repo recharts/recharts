@@ -23,7 +23,6 @@ import { isNumber } from '../util/DataUtils';
 import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
-import { useUpdateId } from '../context/chartLayoutContext';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
@@ -75,7 +74,6 @@ type PropertiesFromContext = {
   data: any[];
   startIndex: number;
   endIndex: number;
-  updateId: string;
   onChange: OnBrushUpdate;
 };
 
@@ -399,7 +397,6 @@ interface State {
   prevWidth?: number;
   prevX?: number;
   prevTravellerWidth?: number;
-  prevUpdateId?: string | number;
 
   /**
    * Used to prevent re-setting of traveller position unless controlled via props.
@@ -485,18 +482,16 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       width,
       x,
       travellerWidth,
-      updateId,
       startIndex,
       endIndex,
       startIndexControlledFromProps,
       endIndexControlledFromProps,
     } = nextProps;
 
-    if (data !== prevState.prevData || updateId !== prevState.prevUpdateId) {
+    if (data !== prevState.prevData) {
       return {
         prevData: data,
         prevTravellerWidth: travellerWidth,
-        prevUpdateId: updateId,
         prevX: x,
         prevWidth: width,
         ...(data && data.length
@@ -515,7 +510,6 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       return {
         prevData: data,
         prevTravellerWidth: travellerWidth,
-        prevUpdateId: updateId,
         prevX: x,
         prevWidth: width,
         startX: prevState.scale(nextProps.startIndex),
@@ -898,7 +892,6 @@ function BrushInternal(props: Props) {
   const dispatch = useAppDispatch();
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
-  const updateId = useUpdateId();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
@@ -929,7 +922,6 @@ function BrushInternal(props: Props) {
     width,
     startIndex,
     endIndex,
-    updateId,
     onChange,
   };
   return (

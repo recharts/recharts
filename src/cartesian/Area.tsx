@@ -31,7 +31,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { UpdateId, useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
@@ -128,7 +128,6 @@ type InternalProps = AreaSvgProps & InternalAreaProps;
 export type Props = AreaSvgProps & AreaProps;
 
 interface State {
-  prevAnimationId?: UpdateId;
   prevPoints?: ReadonlyArray<AreaPointItem>;
   prevBaseLine?: number | Coordinate[];
   curPoints?: ReadonlyArray<AreaPointItem>;
