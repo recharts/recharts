@@ -7,7 +7,6 @@ import {
   filterProps,
   findAllByType,
   getDisplayName,
-  isChildrenEqual,
   isValidSpreadableProp,
   toArray,
   validateWidthHeight,
@@ -172,98 +171,6 @@ describe('ReactUtils untest tests', () => {
 
     test('validateWidthHeight returns true when height and width are positive numbers', () => {
       expect(validateWidthHeight({ width: 5, height: 10 })).toEqual(true);
-    });
-  });
-
-  describe('isChildrenEqual', () => {
-    test('isChildrenEqual when children has no null children', () => {
-      const children = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <rect x="0" y="0" width="20" height="20" />
-          <text x="0" y="0">
-            12
-          </text>
-        </>,
-      ];
-
-      expect(isChildrenEqual(children, children)).toEqual(true);
-    });
-
-    test('isChildrenEqual when children has null children', () => {
-      const children = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <rect x="0" y="0" width="20" height="20" />
-          <text x="0" y="0">
-            12
-          </text>
-          {null}
-        </>,
-      ];
-
-      expect(isChildrenEqual(children, children)).toEqual(true);
-    });
-
-    test('isChildrenEqual false when children are not equal', () => {
-      const childrenOne = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <rect x="0" y="0" width="20" height="20" />
-          <text x="0" y="0">
-            12
-          </text>
-        </>,
-      ];
-      const childrenTwo = [
-        <>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <rect x="0" y="0" width="20" height="20" />
-        </>,
-      ];
-
-      expect(isChildrenEqual(childrenOne, childrenTwo)).toEqual(false);
-    });
-
-    test('isChildrenEqual return false when single child are not equal', () => {
-      const childrenOne = [<Line dataKey="a" />];
-      const childrenTwo = [<Line dataKey="b" />];
-
-      expect(isChildrenEqual(childrenOne, childrenTwo)).toEqual(false);
-    });
-
-    test("isChildrenEqual return false when one has child and another don't has child", () => {
-      const childrenOne = [<>{null}</>];
-      const childrenTwo = [
-        <>
-          <Line dataKey="b" />
-        </>,
-      ];
-
-      expect(isChildrenEqual(childrenOne, childrenTwo)).toEqual(false);
-    });
-
-    test('isChildrenEqual return true when only has a child in an array', () => {
-      const childrenOne = [
-        <>
-          {['A'].map(value => {
-            return <Line key={value} dataKey={value} />;
-          })}
-        </>,
-      ];
-      const childrenTwo = [
-        <>
-          {['B'].map(value => {
-            return <Line key={value} dataKey={value} />;
-          })}
-        </>,
-      ];
-
-      expect(isChildrenEqual(childrenOne, childrenTwo)).toEqual(false);
     });
   });
 

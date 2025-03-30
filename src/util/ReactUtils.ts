@@ -3,7 +3,6 @@ import get from 'lodash/get';
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { isNullish, isNumber } from './DataUtils';
-import { shallowEqual } from './ShallowEqual';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 export const SCALE_TYPES = [
@@ -187,76 +186,4 @@ export const filterProps = (
   });
 
   return out;
-};
-
-/**
- * @deprecated instead find another approach that does not require comparing React Elements.
- * Wether props of children changed
- * @param  {Object} nextChildren The latest children
- * @param  {Object} prevChildren The prev children
- * @return {Boolean}             equal or not
- */
-export const isChildrenEqual = (nextChildren: React.ReactElement[], prevChildren: React.ReactElement[]): boolean => {
-  if (nextChildren === prevChildren) {
-    return true;
-  }
-
-  const count = Children.count(nextChildren);
-  if (count !== Children.count(prevChildren)) {
-    return false;
-  }
-
-  if (count === 0) {
-    return true;
-  }
-  if (count === 1) {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return isSingleChildEqual(
-      Array.isArray(nextChildren) ? nextChildren[0] : nextChildren,
-      Array.isArray(prevChildren) ? prevChildren[0] : prevChildren,
-    );
-  }
-
-  for (let i = 0; i < count; i++) {
-    const nextChild: any = nextChildren[i];
-    const prevChild: any = prevChildren[i];
-
-    if (Array.isArray(nextChild) || Array.isArray(prevChild)) {
-      if (!isChildrenEqual(nextChild, prevChild)) {
-        return false;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    } else if (!isSingleChildEqual(nextChild, prevChild)) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-/**
- * @deprecated instead find another approach that does not require comparing React Elements.
- * @param nextChild do not use
- * @param prevChild do not use
- * @return deprecated do not use
- */
-const isSingleChildEqual = (nextChild: React.ReactElement, prevChild: React.ReactElement): boolean => {
-  if (isNullish(nextChild) && isNullish(prevChild)) {
-    return true;
-  }
-  if (!isNullish(nextChild) && !isNullish(prevChild)) {
-    const { children: nextChildren, ...nextProps } = nextChild.props || {};
-    const { children: prevChildren, ...prevProps } = prevChild.props || {};
-
-    if (nextChildren && prevChildren) {
-      return shallowEqual(nextProps, prevProps) && isChildrenEqual(nextChildren, prevChildren);
-    }
-    if (!nextChildren && !prevChildren) {
-      return shallowEqual(nextProps, prevProps);
-    }
-
-    return false;
-  }
-
-  return false;
 };
