@@ -2,9 +2,8 @@ import React, { Component, forwardRef } from 'react';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 
-import { filterProps, isChildrenEqual, validateWidthHeight } from '../util/ReactUtils';
+import { filterProps, validateWidthHeight } from '../util/ReactUtils';
 import { uniqueId } from '../util/DataUtils';
-import { shallowEqual } from '../util/ShallowEqual';
 import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { CategoricalChartState, ExternalMouseEvents } from './types';
@@ -114,42 +113,6 @@ export const generateCategoricalChart = ({
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
 
       this.state = {};
-    }
-
-    static getDerivedStateFromProps(
-      nextProps: CategoricalChartProps,
-      prevState: CategoricalChartState,
-    ): CategoricalChartState {
-      const { dataKey, data, children, width, height, layout, stackOffset, margin } = nextProps;
-
-      if (
-        dataKey !== prevState.prevDataKey ||
-        data !== prevState.prevData ||
-        width !== prevState.prevWidth ||
-        height !== prevState.prevHeight ||
-        layout !== prevState.prevLayout ||
-        stackOffset !== prevState.prevStackOffset ||
-        !shallowEqual(margin, prevState.prevMargin)
-      ) {
-        return {
-          prevDataKey: dataKey,
-          prevData: data,
-          prevWidth: width,
-          prevHeight: height,
-          prevLayout: layout,
-          prevStackOffset: stackOffset,
-          prevMargin: margin,
-          prevChildren: children,
-        };
-      }
-      if (!isChildrenEqual(children, prevState.prevChildren)) {
-        // update configuration in children
-        return {
-          prevChildren: children,
-        };
-      }
-
-      return null;
     }
 
     render() {
