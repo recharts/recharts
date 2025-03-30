@@ -635,15 +635,9 @@ describe('Tooltip visibility', () => {
              */
             context.skip();
           }
-          if (name === 'Treemap') {
-            /*
-             * Treemap chart won't work with numerical indexes and it will need a different format
-             */
-            context.skip();
-          }
           const { container } = render(
             <Wrapper>
-              <Tooltip defaultIndex={2} />
+              <Tooltip defaultIndex={tooltipIndex} />
             </Wrapper>,
           );
 
