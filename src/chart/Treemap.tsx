@@ -28,6 +28,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
+import { AppDispatch } from '../state/store';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -431,6 +432,7 @@ function ContentItem({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
+        data-recharts-item-index={nodeProps.tooltipIndex}
       />
       {arrow}
       {text}
@@ -506,7 +508,11 @@ const defaultTreemapMargin: Margin = {
   left: 0,
 };
 
-export class Treemap extends PureComponent<Props, State> {
+type InternalTreemapProps = Props & {
+  dispatch: AppDispatch;
+};
+
+class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   static displayName = 'Treemap';
 
   static defaultProps = {
@@ -825,7 +831,7 @@ export class Treemap extends PureComponent<Props, State> {
     );
   }
 
-  handleTouchMove = (e: React.TouchEvent<SVGElement>) => {
+  handleTouchMove = (_state: never, e: React.TouchEvent<SVGElement>) => {
     const touchEvent = e.touches[0];
     const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
     if (!target || !target.getAttribute) {
@@ -837,14 +843,15 @@ export class Treemap extends PureComponent<Props, State> {
       return;
     }
 
-    const { onTouchMove, dataKey } = this.props;
+    const { dataKey, dispatch } = this.props;
 
     const activeCoordinate = {
       x: activeNode.x + activeNode.width / 2,
       y: activeNode.y + activeNode.height / 2,
     };
 
-    onTouchMove?.(activeNode, Number(itemIndex), e);
+    // Treemap does not support onTouchMove prop, but it could
+    // onTouchMove?.(activeNode, Number(itemIndex), e);
     dispatch(
       setActiveMouseOverItemIndex({
         activeIndex: itemIndex,
@@ -855,52 +862,63 @@ export class Treemap extends PureComponent<Props, State> {
   };
 
   render() {
-    if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
-      return null;
-    }
-
     const { width, height, className, style, children, type, ...others } = this.props;
     const attrs = filterProps(others, false);
 
     return (
-      <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={this.props.className ?? 'Treemap'}>
-        <ReportChartSize width={this.props.width} height={this.props.height} />
-        <ReportChartMargin margin={defaultTreemapMargin} />
-        <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-          <SetTooltipEntrySettings
-            fn={getTooltipEntrySettings}
-            args={{ props: this.props, currentRoot: this.state.currentRoot }}
-          />
-          <RechartsWrapper
-            className={className}
-            style={style}
-            width={width}
-            height={height}
-            ref={(node: HTMLDivElement) => {
-              if (this.state.tooltipPortal == null) {
-                this.setState({ tooltipPortal: node });
-              }
-            }}
-            onMouseEnter={undefined}
-            onMouseLeave={undefined}
-            onClick={undefined}
-            onMouseMove={undefined}
-            onMouseDown={undefined}
-            onMouseUp={undefined}
-            onContextMenu={undefined}
-            onDoubleClick={undefined}
-            onTouchStart={undefined}
-            onTouchMove={undefined}
-            onTouchEnd={undefined}
-          >
-            <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
-              {this.renderAllNodes()}
-              {children}
-            </Surface>
-            {type === 'nest' && this.renderNestIndex()}
-          </RechartsWrapper>
-        </TooltipPortalContext.Provider>
-      </RechartsStoreProvider>
+      <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
+        <SetTooltipEntrySettings
+          fn={getTooltipEntrySettings}
+          args={{ props: this.props, currentRoot: this.state.currentRoot }}
+        />
+        <RechartsWrapper
+          className={className}
+          style={style}
+          width={width}
+          height={height}
+          ref={(node: HTMLDivElement) => {
+            if (this.state.tooltipPortal == null) {
+              this.setState({ tooltipPortal: node });
+            }
+          }}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onClick={undefined}
+          onMouseMove={undefined}
+          onMouseDown={undefined}
+          onMouseUp={undefined}
+          onContextMenu={undefined}
+          onDoubleClick={undefined}
+          onTouchStart={undefined}
+          onTouchMove={this.handleTouchMove}
+          onTouchEnd={undefined}
+        >
+          <Surface {...attrs} width={width} height={type === 'nest' ? height - 30 : height}>
+            {this.renderAllNodes()}
+            {children}
+          </Surface>
+          {type === 'nest' && this.renderNestIndex()}
+        </RechartsWrapper>
+      </TooltipPortalContext.Provider>
     );
   }
+}
+
+function TreemapDispatchInject(props: Props) {
+  const dispatch = useAppDispatch();
+  return <TreemapWithState {...props} dispatch={dispatch} />;
+}
+
+export function Treemap(props: Props) {
+  if (!validateWidthHeight({ width: props.width, height: props.height })) {
+    return null;
+  }
+
+  return (
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
+      <ReportChartSize width={props.width} height={props.height} />
+      <ReportChartMargin margin={defaultTreemapMargin} />
+      <TreemapDispatchInject {...props} />
+    </RechartsStoreProvider>
+  );
 }
