@@ -825,6 +825,35 @@ export class Treemap extends PureComponent<Props, State> {
     );
   }
 
+  handleTouchMove = (e: React.TouchEvent<SVGElement>) => {
+    const touchEvent = e.touches[0];
+    const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
+    if (!target || !target.getAttribute) {
+      return;
+    }
+    const itemIndex = target.getAttribute('data-recharts-item-index');
+    const activeNode = treemapPayloadSearcher(this.state.formatRoot, itemIndex);
+    if (!activeNode) {
+      return;
+    }
+
+    const { onTouchMove, dataKey } = this.props;
+
+    const activeCoordinate = {
+      x: activeNode.x + activeNode.width / 2,
+      y: activeNode.y + activeNode.height / 2,
+    };
+
+    onTouchMove?.(activeNode, Number(itemIndex), e);
+    dispatch(
+      setActiveMouseOverItemIndex({
+        activeIndex: itemIndex,
+        activeDataKey: dataKey,
+        activeCoordinate,
+      }),
+    );
+  };
+
   render() {
     if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
       return null;

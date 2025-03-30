@@ -42,7 +42,7 @@ export type TooltipIndex = string | null;
  * the only requirement is that the chart also provides a searcher function
  * that accepts the data, and a key, and returns whatever the payload in Tooltip should be.
  */
-export type TooltipPayloadSearcher<T = unknown, R = unknown> = (
+export type TooltipPayloadSearcher<T = unknown, R = T> = (
   data: T,
   index: TooltipIndex,
   computedData?: unknown,

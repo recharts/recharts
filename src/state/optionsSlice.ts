@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TooltipEventType } from '../util/types';
-import { TooltipPayloadSearcher } from './tooltipSlice';
+import { TooltipIndex, TooltipPayloadSearcher } from './tooltipSlice';
 import { isNan } from '../util/DataUtils';
 
 /**
@@ -27,16 +27,13 @@ export type ChartOptions = {
   eventEmitter: symbol | undefined;
 };
 
-export const arrayTooltipSearcher: TooltipPayloadSearcher = (
-  data: unknown[],
-  strIndex: string | undefined,
-): unknown => {
+export function arrayTooltipSearcher<T>(data: ReadonlyArray<T>, strIndex: TooltipIndex): T | undefined {
   const numIndex = Number.parseInt(strIndex, 10);
   if (isNan(numIndex)) {
     return undefined;
   }
   return data?.[numIndex];
-};
+}
 
 const initialState: ChartOptions = {
   chartName: '',

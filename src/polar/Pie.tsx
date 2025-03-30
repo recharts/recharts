@@ -49,6 +49,7 @@ import { setActiveMouseOverItemIndex, TooltipPayload, TooltipPayloadConfiguratio
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
+import { arrayTooltipSearcher } from '../state/optionsSlice';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -716,13 +717,13 @@ function PieWithTouchMove(props: InternalProps) {
     if (!target || !target.getAttribute) {
       return;
     }
-    const itemIndex = Number.parseInt(target.getAttribute('data-recharts-item-index'), 10);
-    const activeSector = sectors[itemIndex];
+    const itemIndex = target.getAttribute('data-recharts-item-index');
+    const activeSector = arrayTooltipSearcher(sectors, itemIndex);
     if (!activeSector) {
       return;
     }
 
-    onTouchMove?.(activeSector, itemIndex, e);
+    onTouchMove?.(activeSector, Number(itemIndex), e);
     dispatch(
       setActiveMouseOverItemIndex({
         activeIndex: String(itemIndex),
