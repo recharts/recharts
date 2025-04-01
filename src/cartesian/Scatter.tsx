@@ -1,14 +1,4 @@
-// eslint-disable-next-line max-classes-per-file
-import React, {
-  Component,
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 
 import clsx from 'clsx';
@@ -500,38 +490,37 @@ const errorBarDataPointFormatter = (
   };
 };
 
-class ScatterWithState extends PureComponent<InternalProps> {
-  id = uniqueId('recharts-scatter-');
+function ScatterWithId(props: InternalProps) {
+  const idRef = useRef(uniqueId('recharts-scatter-'));
 
-  render() {
-    const { hide, points, className, needClip, xAxisId, yAxisId, id } = this.props;
-    if (hide) {
-      return null;
-    }
-    const layerClass = clsx('recharts-scatter', className);
-    const clipPathId = isNullish(id) ? this.id : id;
-    return (
-      <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
-        {needClip && (
-          <defs>
-            <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
-          </defs>
-        )}
-        <SetErrorBarContext
-          xAxisId={xAxisId}
-          yAxisId={yAxisId}
-          data={points}
-          dataPointFormatter={errorBarDataPointFormatter}
-          errorBarOffset={0}
-        >
-          {this.props.children}
-        </SetErrorBarContext>
-        <Layer key="recharts-scatter-symbols">
-          <RenderSymbols {...this.props} />
-        </Layer>
-      </Layer>
-    );
+  const { hide, points, className, needClip, xAxisId, yAxisId, id, children } = props;
+  if (hide) {
+    return null;
   }
+  const layerClass = clsx('recharts-scatter', className);
+  const clipPathId = isNullish(id) ? idRef.current : id;
+
+  return (
+    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+      {needClip && (
+        <defs>
+          <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />
+        </defs>
+      )}
+      <SetErrorBarContext
+        xAxisId={xAxisId}
+        yAxisId={yAxisId}
+        data={points}
+        dataPointFormatter={errorBarDataPointFormatter}
+        errorBarOffset={0}
+      >
+        {children}
+      </SetErrorBarContext>
+      <Layer key="recharts-scatter-symbols">
+        <RenderSymbols {...props} />
+      </Layer>
+    </Layer>
+  );
 }
 
 const defaultScatterProps: Partial<Props> = {
@@ -587,7 +576,7 @@ function ScatterImpl(props: Props) {
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />
-      <ScatterWithState
+      <ScatterWithId
         {...everythingElse}
         xAxisId={xAxisId}
         yAxisId={yAxisId}
