@@ -25,7 +25,7 @@ import {
 import { useTooltipPortal } from '../context/tooltipPortalContext';
 import { TooltipTrigger } from '../chart/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { setTooltipSettingsState, TooltipPayload } from '../state/tooltipSlice';
+import { setTooltipSettingsState, TooltipIndex, TooltipPayload } from '../state/tooltipSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
@@ -82,7 +82,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
   content?: ContentType<TValue, TName>;
   cursor?: CursorDefinition;
   filterNull?: boolean;
-  defaultIndex?: number;
+  defaultIndex?: number | TooltipIndex;
   isAnimationActive?: boolean;
   offset?: number;
   payloadUniqBy?: UniqueOption<Payload<TValue, TName>>;

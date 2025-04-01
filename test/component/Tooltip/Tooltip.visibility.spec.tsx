@@ -77,7 +77,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
-import { TooltipState } from '../../../src/state/tooltipSlice';
+import { TooltipIndex, TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
 import { selectChartOffset } from '../../../src/state/selectors/selectChartOffset';
 import {
@@ -94,6 +94,7 @@ type TooltipVisibilityTestCase = {
   mouseCoordinate?: MouseCoordinate;
   Wrapper: ComponentType<{ children: ReactNode }>;
   expectedTransform: string;
+  tooltipIndex: TooltipIndex;
 };
 
 const commonChartProps = {
@@ -112,6 +113,7 @@ const AreaChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: areaChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(249px, 211px);',
+  tooltipIndex: '0',
 };
 
 const BarChartTestCase: TooltipVisibilityTestCase = {
@@ -124,6 +126,7 @@ const BarChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: barChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(242.5px, 211px);',
+  tooltipIndex: '0',
 };
 
 const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
@@ -140,6 +143,7 @@ const LineChartHorizontalTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(207px, 211px);',
+  tooltipIndex: '0',
 };
 
 const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
@@ -165,6 +169,7 @@ const LineChartVerticalTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: lineChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(211px, 231px);',
+  tooltipIndex: '0',
 };
 
 const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
@@ -179,6 +184,7 @@ const ComposedChartWithAreaTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(207px, 211px);',
+  tooltipIndex: '0',
 };
 
 const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
@@ -193,6 +199,7 @@ const ComposedChartWithBarTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(212.5px, 211px);',
+  tooltipIndex: '0',
 };
 
 const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
@@ -207,6 +214,7 @@ const ComposedChartWithLineTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: composedChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(207px, 211px);',
+  tooltipIndex: '0',
 };
 
 const FunnelChartTestCase: TooltipVisibilityTestCase = {
@@ -219,6 +227,7 @@ const FunnelChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(355px, 55px);',
+  tooltipIndex: '0',
 };
 
 const PieChartTestCase: TooltipVisibilityTestCase = {
@@ -231,6 +240,7 @@ const PieChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: pieChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(271.8676024097812px, 161.6138988484545px);',
+  tooltipIndex: '0',
 };
 
 const RadarChartTestCase: TooltipVisibilityTestCase = {
@@ -246,6 +256,7 @@ const RadarChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: radarChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(188.75025773223268px, 239.9964286625318px);',
+  tooltipIndex: '0',
 };
 
 const RadialBarChartTestCase: TooltipVisibilityTestCase = {
@@ -261,6 +272,7 @@ const RadialBarChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: radialBarChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(198.74853309331652px, 198.7485330933165px);',
+  tooltipIndex: '0',
 };
 
 const SankeyTestCase: TooltipVisibilityTestCase = {
@@ -272,6 +284,7 @@ const SankeyTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: sankeyNodeMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(35px, 114.89236115144739px);',
+  tooltipIndex: '0',
 };
 
 const ScatterChartTestCase: TooltipVisibilityTestCase = {
@@ -286,6 +299,7 @@ const ScatterChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: scatterChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(115px, 280.8px);',
+  tooltipIndex: '0',
 };
 
 const SunburstChartTestCase: TooltipVisibilityTestCase = {
@@ -297,6 +311,7 @@ const SunburstChartTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: sunburstChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(285px, 210px);',
+  tooltipIndex: '0',
 };
 
 const TreemapTestCase: TooltipVisibilityTestCase = {
@@ -315,6 +330,7 @@ const TreemapTestCase: TooltipVisibilityTestCase = {
   ),
   mouseHoverSelector: treemapNodeChartMouseHoverTooltipSelector,
   expectedTransform: 'transform: translate(94.5px, 58.5px);',
+  tooltipIndex: 'children[0]children[0]',
 };
 
 const testCases: ReadonlyArray<TooltipVisibilityTestCase> = [
@@ -340,370 +356,361 @@ describe('Tooltip visibility', () => {
     mockGetBoundingClientRect({ width: 100, height: 100 });
   });
 
-  describe.each(testCases)('as a child of $name', ({ name, Wrapper, mouseHoverSelector, expectedTransform }) => {
-    test('Without an event, the tooltip wrapper is rendered but not visible', () => {
-      const { container } = render(
-        <Wrapper>
-          <Tooltip />
-        </Wrapper>,
-      );
-
-      const wrapper = getTooltip(container);
-      expect(wrapper).toBeInTheDocument();
-      expect(wrapper).not.toBeVisible();
-    });
-
-    test('No content is rendered without an explicit event', () => {
-      const { container } = render(
-        <Wrapper>
-          <Tooltip />
-        </Wrapper>,
-      );
-
-      const tooltipContentName = container.querySelector('.recharts-tooltip-item-name');
-      const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
-      expect(tooltipContentName).toBeNull();
-      expect(tooltipContentValue).toBeNull();
-    });
-
-    test(`Mouse over element ${mouseHoverSelector} renders content`, () => {
-      const { container, debug } = render(
-        <Wrapper>
-          <Tooltip />
-        </Wrapper>,
-      );
-
-      showTooltip(container, mouseHoverSelector, debug);
-
-      const tooltip = getTooltip(container);
-      expect(tooltip).toBeVisible();
-
-      // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
-      // but the content is already created based on the nearest data point.
-      const tooltipContentName = container.querySelector('.recharts-tooltip-item-name');
-      const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
-      expect(tooltipContentName).not.toBeNull();
-      expect(tooltipContentValue).not.toBeNull();
-      expect(tooltipContentName).toBeInTheDocument();
-      expect(tooltipContentValue).toBeInTheDocument();
-    });
-
-    test('Should move when the mouse moves', async () => {
-      mockGetBoundingClientRect({
-        width: 10,
-        height: 10,
-      });
-      const { container } = render(
-        <Wrapper>
-          <Tooltip />
-        </Wrapper>,
-      );
-
-      const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
-
-      const tooltip1 = getTooltip(container);
-      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
-      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
-      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
-
-      fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
-
-      const tooltip2 = getTooltip(container);
-
-      expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
-    });
-
-    it('should move onTouchMove', async context => {
-      // TODO: these charts currently do not work onTouchMove. Did they before?
-      // This is because these are set via item rather than axis. The middleware currently only sets axis coordinates.
-      if (
-        name === 'SunburstChart' ||
-        name === 'Treemap' ||
-        name === 'FunnelChart' ||
-        name === 'Sankey' ||
-        name === 'ScatterChart'
-      ) {
-        context.skip();
-      }
-
-      mockTouchingElement('0');
-
-      mockGetBoundingClientRect({
-        width: 10,
-        height: 10,
-      });
-      const { container } = render(
-        <Wrapper>
-          <Tooltip />
-        </Wrapper>,
-      );
-
-      showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
-        clientX: 200,
-        clientY: 200,
-      });
-
-      const tooltip1 = getTooltip(container);
-      expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
-      expect(tooltip1.getAttribute('style')).toContain('top: 0px');
-      expect(tooltip1.getAttribute('style')).toContain('left: 0px');
-
-      showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
-        clientX: 201,
-        clientY: 201,
-      });
-
-      const tooltip2 = getTooltip(container);
-
-      expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
-    });
-
-    it('should render customized tooltip when content is set to be a react element', () => {
-      const Customized = () => {
-        return <div className="customized" />;
-      };
-      const { container } = render(
-        <Wrapper>
-          <Tooltip content={<Customized />} />
-        </Wrapper>,
-      );
-
-      showTooltip(container, mouseHoverSelector);
-
-      const customizedContent = container.querySelector('.customized');
-      expect(customizedContent).toBeInTheDocument();
-    });
-
-    describe('portal prop', () => {
-      it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
-        const { container } = render(
-          <Wrapper>
-            <Tooltip />
-          </Wrapper>,
-        );
-        showTooltip(container, mouseHoverSelector);
-
-        expect(container.querySelectorAll('.recharts-wrapper svg .recharts-tooltip-wrapper')).toHaveLength(0);
-        expect(container.querySelector('.recharts-wrapper > .recharts-tooltip-wrapper')).toBeVisible();
-      });
-
-      it('should render in a custom portal if "portal" prop is set', () => {
-        function Example() {
-          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
-
-          return (
-            <>
-              <Wrapper>
-                <Tooltip portal={portalRef} />
-              </Wrapper>
-              <div
-                data-testid="my-custom-portal-target"
-                ref={node => {
-                  if (portalRef == null && node != null) {
-                    setPortalRef(node);
-                  }
-                }}
-              />
-            </>
-          );
-        }
-        const { container } = render(<Example />);
-        showTooltip(container, mouseHoverSelector);
-
-        expect(container.querySelector('.recharts-wrapper .recharts-tooltip-wrapper')).not.toBeInTheDocument();
-        expect(
-          container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
-        ).toBeVisible();
-      });
-
-      it('should keep custom portal visible when active is true after mouseOut, should no longer have absolute styles', () => {
-        function Example() {
-          const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
-
-          return (
-            <>
-              <Wrapper>
-                <Tooltip portal={portalRef} active />
-              </Wrapper>
-              <div
-                data-testid="my-custom-portal-target"
-                ref={node => {
-                  if (portalRef == null && node != null) {
-                    setPortalRef(node);
-                  }
-                }}
-              />
-            </>
-          );
-        }
-        const { container } = render(<Example />);
-        showTooltip(container, mouseHoverSelector);
-
-        const tooltipWrapper = container.querySelector('.recharts-tooltip-wrapper');
-
-        expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
-        expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
-
-        fireEvent.mouseLeave(container, mouseHoverSelector);
-
-        expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
-        expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
-
-        expect(
-          container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
-        ).toBeVisible();
-      });
-    });
-
-    describe('active prop', () => {
-      test('with active=true it should render tooltip even after moving the mouse out of the chart.', () => {
-        const { container } = render(
-          <Wrapper>
-            <Tooltip active />
-          </Wrapper>,
-        );
-
-        const tooltip = getTooltip(container);
-        expect(tooltip).not.toBeVisible();
-
-        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
-
-        expect(tooltip).toBeVisible();
-
-        fireEvent.mouseOut(tooltipTriggerElement);
-
-        // Still visible after moving out of the chart, because active is true.
-        expect(tooltip).toBeVisible();
-      });
-
-      test('with active=false it should never render tooltip', () => {
-        const { container } = render(
-          <Wrapper>
-            <Tooltip active={false} />
-          </Wrapper>,
-        );
-
-        const tooltip = getTooltip(container);
-        expect(tooltip).not.toBeVisible();
-
-        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
-
-        expect(tooltip).not.toBeVisible();
-
-        fireEvent.mouseOut(tooltipTriggerElement);
-
-        expect(tooltip).not.toBeVisible();
-      });
-
-      test('with active=undefined it should render the Tooltip only while in the chart', () => {
+  describe.each(testCases)(
+    'as a child of $name',
+    ({ name, Wrapper, mouseHoverSelector, expectedTransform, tooltipIndex }) => {
+      test('Without an event, the tooltip wrapper is rendered but not visible', () => {
         const { container } = render(
           <Wrapper>
             <Tooltip />
           </Wrapper>,
         );
 
+        const wrapper = getTooltip(container);
+        expect(wrapper).toBeInTheDocument();
+        expect(wrapper).not.toBeVisible();
+      });
+
+      test('No content is rendered without an explicit event', () => {
+        const { container } = render(
+          <Wrapper>
+            <Tooltip />
+          </Wrapper>,
+        );
+
+        const tooltipContentName = container.querySelector('.recharts-tooltip-item-name');
+        const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
+        expect(tooltipContentName).toBeNull();
+        expect(tooltipContentValue).toBeNull();
+      });
+
+      test(`Mouse over element ${mouseHoverSelector} renders content`, () => {
+        const { container, debug } = render(
+          <Wrapper>
+            <Tooltip />
+          </Wrapper>,
+        );
+
+        showTooltip(container, mouseHoverSelector, debug);
+
         const tooltip = getTooltip(container);
-        expect(tooltip).not.toBeVisible();
+        expect(tooltip).toBeVisible();
+
+        // After the mouse over event over the chart, the tooltip wrapper still is not set to visible,
+        // but the content is already created based on the nearest data point.
+        const tooltipContentName = container.querySelector('.recharts-tooltip-item-name');
+        const tooltipContentValue = container.querySelector('.recharts-tooltip-item-value');
+        expect(tooltipContentName).not.toBeNull();
+        expect(tooltipContentValue).not.toBeNull();
+        expect(tooltipContentName).toBeInTheDocument();
+        expect(tooltipContentValue).toBeInTheDocument();
+      });
+
+      test('Should move when the mouse moves', async () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        const { container } = render(
+          <Wrapper>
+            <Tooltip />
+          </Wrapper>,
+        );
 
         const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
 
-        expect(tooltip).toBeVisible();
+        const tooltip1 = getTooltip(container);
+        expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+        expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+        expect(tooltip1.getAttribute('style')).toContain('left: 0px');
 
-        fireEvent.mouseOut(tooltipTriggerElement);
+        fireEvent.mouseMove(tooltipTriggerElement, { clientX: 201, clientY: 201 });
 
-        expect(tooltip).not.toBeVisible();
+        const tooltip2 = getTooltip(container);
+
+        expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
       });
-    });
 
-    describe('defaultIndex prop', () => {
-      it('should show tooltip from the beginning if defaultIndex is set to a valid value', context => {
-        if (name === 'Sankey') {
-          /*
-           * Sankey chart won't work with numerical indexes and it will need a different format
-           */
+      it(`should move tooltip onTouchMove with active tooltip index ${tooltipIndex}`, async context => {
+        // TODO: these charts currently do not work onTouchMove. Did they before?
+        // This is because these are set via item rather than axis. The middleware currently only sets axis coordinates.
+        if (name === 'SunburstChart' || name === 'FunnelChart' || name === 'Sankey' || name === 'ScatterChart') {
           context.skip();
         }
-        if (name === 'Treemap') {
-          /*
-           * Treemap chart won't work with numerical indexes and it will need a different format
-           */
-          context.skip();
-        }
+
+        mockTouchingElement(tooltipIndex);
+
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
         const { container } = render(
           <Wrapper>
-            <Tooltip defaultIndex={2} />
+            <Tooltip />
           </Wrapper>,
         );
 
-        const tooltip = getTooltip(container);
-        expect(tooltip).toBeInTheDocument();
+        showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
+          clientX: 200,
+          clientY: 200,
+        });
 
-        // Tooltip should be visible, since defaultIndex was set
-        expect(tooltip).toBeVisible();
+        const tooltip1 = getTooltip(container);
+        expect(tooltip1.getAttribute('style')).toContain('position: absolute;');
+        expect(tooltip1.getAttribute('style')).toContain('top: 0px');
+        expect(tooltip1.getAttribute('style')).toContain('left: 0px');
 
-        const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+        showTooltipOnCoordinateTouch(container, mouseHoverSelector, {
+          clientX: 201,
+          clientY: 201,
+        });
 
-        // Tooltip should be able to move when the mouse moves over the chart
-        expect(tooltip).toBeVisible();
+        const tooltip2 = getTooltip(container);
 
-        fireEvent.mouseOver(tooltipTriggerElement, { clientX: 350, clientY: 200 });
-
-        // Tooltip should be able to move when the mouse moves over the chart
-        expect(tooltip).toBeVisible();
-
-        fireEvent.mouseOut(tooltipTriggerElement);
-
-        // Since active is false, the tooltip can be dismissed by mousing out
-        expect(tooltip).not.toBeVisible();
+        expect(tooltip2.getAttribute('style')).toContain(expectedTransform);
       });
 
-      it('should ignore invalid defaultIndex value', () => {
+      it('should render customized tooltip when content is set to be a react element', () => {
+        const Customized = () => {
+          return <div className="customized" />;
+        };
         const { container } = render(
           <Wrapper>
-            <Tooltip defaultIndex={NaN} />
+            <Tooltip content={<Customized />} />
           </Wrapper>,
         );
 
-        const tooltip = getTooltip(container);
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).not.toBeVisible();
+        showTooltip(container, mouseHoverSelector);
+
+        const customizedContent = container.querySelector('.customized');
+        expect(customizedContent).toBeInTheDocument();
       });
 
-      it('should show the last item when defaultIndex is same or larger than the data.length', context => {
-        if (name === 'FunnelChart') {
-          // FunnelChart throws an error when called with defaultIndex
-          context.skip();
-        }
-        if (name === 'Sankey') {
-          /*
-           * Sankey chart does not support numeric tooltip indexes
-           */
-          context.skip();
-        }
-        if (name === 'Treemap') {
-          /*
-           * Treemap chart does not support numeric tooltip indexes
-           */
-          context.skip();
-        }
-        if (name === 'SunburstChart') {
-          /*
-           * SunburstChart does not support numeric tooltip indexes
-           */
-          context.skip();
-        }
-        const { container } = render(
-          <Wrapper>
-            <Tooltip defaultIndex={commonChartProps.data.length} />
-          </Wrapper>,
-        );
+      describe('portal prop', () => {
+        it('should render outside of SVG, as a direct child of recharts-wrapper by default', () => {
+          const { container } = render(
+            <Wrapper>
+              <Tooltip />
+            </Wrapper>,
+          );
+          showTooltip(container, mouseHoverSelector);
 
-        const tooltip = getTooltip(container);
-        expect(tooltip).toBeInTheDocument();
-        expect(tooltip).toBeVisible();
+          expect(container.querySelectorAll('.recharts-wrapper svg .recharts-tooltip-wrapper')).toHaveLength(0);
+          expect(container.querySelector('.recharts-wrapper > .recharts-tooltip-wrapper')).toBeVisible();
+        });
+
+        it('should render in a custom portal if "portal" prop is set', () => {
+          function Example() {
+            const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+            return (
+              <>
+                <Wrapper>
+                  <Tooltip portal={portalRef} />
+                </Wrapper>
+                <div
+                  data-testid="my-custom-portal-target"
+                  ref={node => {
+                    if (portalRef == null && node != null) {
+                      setPortalRef(node);
+                    }
+                  }}
+                />
+              </>
+            );
+          }
+          const { container } = render(<Example />);
+          showTooltip(container, mouseHoverSelector);
+
+          expect(container.querySelector('.recharts-wrapper .recharts-tooltip-wrapper')).not.toBeInTheDocument();
+          expect(
+            container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
+          ).toBeVisible();
+        });
+
+        it('should keep custom portal visible when active is true after mouseOut, should no longer have absolute styles', () => {
+          function Example() {
+            const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
+
+            return (
+              <>
+                <Wrapper>
+                  <Tooltip portal={portalRef} active />
+                </Wrapper>
+                <div
+                  data-testid="my-custom-portal-target"
+                  ref={node => {
+                    if (portalRef == null && node != null) {
+                      setPortalRef(node);
+                    }
+                  }}
+                />
+              </>
+            );
+          }
+          const { container } = render(<Example />);
+          showTooltip(container, mouseHoverSelector);
+
+          const tooltipWrapper = container.querySelector('.recharts-tooltip-wrapper');
+
+          expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
+          expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+
+          fireEvent.mouseLeave(container, mouseHoverSelector);
+
+          expect(tooltipWrapper).toHaveStyle({ visibility: 'visible' });
+          expect(tooltipWrapper).not.toHaveStyle({ postition: 'absolute' });
+
+          expect(
+            container.querySelector('[data-testid="my-custom-portal-target"] > .recharts-tooltip-wrapper'),
+          ).toBeVisible();
+        });
       });
-    });
-  });
+
+      describe('active prop', () => {
+        test('with active=true it should render tooltip even after moving the mouse out of the chart.', () => {
+          const { container } = render(
+            <Wrapper>
+              <Tooltip active />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).not.toBeVisible();
+
+          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+
+          expect(tooltip).toBeVisible();
+
+          fireEvent.mouseOut(tooltipTriggerElement);
+
+          // Still visible after moving out of the chart, because active is true.
+          expect(tooltip).toBeVisible();
+        });
+
+        test('with active=false it should never render tooltip', () => {
+          const { container } = render(
+            <Wrapper>
+              <Tooltip active={false} />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).not.toBeVisible();
+
+          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+
+          expect(tooltip).not.toBeVisible();
+
+          fireEvent.mouseOut(tooltipTriggerElement);
+
+          expect(tooltip).not.toBeVisible();
+        });
+
+        test('with active=undefined it should render the Tooltip only while in the chart', () => {
+          const { container } = render(
+            <Wrapper>
+              <Tooltip />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).not.toBeVisible();
+
+          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+
+          expect(tooltip).toBeVisible();
+
+          fireEvent.mouseOut(tooltipTriggerElement);
+
+          expect(tooltip).not.toBeVisible();
+        });
+      });
+
+      describe('defaultIndex prop', () => {
+        it('should show tooltip from the beginning if defaultIndex is set to a valid value', context => {
+          if (name === 'Sankey') {
+            /*
+             * Sankey chart won't work with numerical indexes and it will need a different format
+             */
+            context.skip();
+          }
+          const { container } = render(
+            <Wrapper>
+              <Tooltip defaultIndex={tooltipIndex} />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).toBeInTheDocument();
+
+          // Tooltip should be visible, since defaultIndex was set
+          expect(tooltip).toBeVisible();
+
+          const tooltipTriggerElement = showTooltip(container, mouseHoverSelector);
+
+          // Tooltip should be able to move when the mouse moves over the chart
+          expect(tooltip).toBeVisible();
+
+          fireEvent.mouseOver(tooltipTriggerElement, { clientX: 350, clientY: 200 });
+
+          // Tooltip should be able to move when the mouse moves over the chart
+          expect(tooltip).toBeVisible();
+
+          fireEvent.mouseOut(tooltipTriggerElement);
+
+          // Since active is false, the tooltip can be dismissed by mousing out
+          expect(tooltip).not.toBeVisible();
+        });
+
+        it('should ignore invalid defaultIndex value', () => {
+          const { container } = render(
+            <Wrapper>
+              <Tooltip defaultIndex={NaN} />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).toBeInTheDocument();
+          expect(tooltip).not.toBeVisible();
+        });
+
+        it('should show the last item when defaultIndex is same or larger than the data.length', context => {
+          if (name === 'FunnelChart') {
+            // FunnelChart throws an error when called with defaultIndex
+            context.skip();
+          }
+          if (name === 'Sankey') {
+            /*
+             * Sankey chart does not support numeric tooltip indexes
+             */
+            context.skip();
+          }
+          if (name === 'Treemap') {
+            /*
+             * Treemap chart does not support numeric tooltip indexes
+             */
+            context.skip();
+          }
+          if (name === 'SunburstChart') {
+            /*
+             * SunburstChart does not support numeric tooltip indexes
+             */
+            context.skip();
+          }
+          const { container } = render(
+            <Wrapper>
+              <Tooltip defaultIndex={commonChartProps.data.length} />
+            </Wrapper>,
+          );
+
+          const tooltip = getTooltip(container);
+          expect(tooltip).toBeInTheDocument();
+          expect(tooltip).toBeVisible();
+        });
+      });
+    },
+  );
 
   describe(`as a child of vertical LineChart`, () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
