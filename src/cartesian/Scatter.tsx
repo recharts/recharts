@@ -201,7 +201,7 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
 
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, showLabels, allOtherScatterProps } = props;
-  const { shape, activeShape } = allOtherScatterProps;
+  const { shape, activeShape, dataKey } = allOtherScatterProps;
   const baseProps = filterProps(allOtherScatterProps, false);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -240,7 +240,13 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             role="img"
           >
-            <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
+            <ScatterSymbol
+              option={option}
+              isActive={isActive}
+              {...symbolProps}
+              data-recharts-item-index={i}
+              data-recharts-item-dataKey={dataKey}
+            />
           </Layer>
         );
       })}

@@ -1,7 +1,7 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import * as React from 'react';
 import { AppDispatch, RechartsRootState } from './store';
-import { setMouseOverAxisIndex } from './tooltipSlice';
+import { setActiveMouseOverItemIndex, setMouseOverAxisIndex } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 
 import { getChartPointer } from '../util/getChartPointer';
@@ -20,20 +20,37 @@ touchEventMiddleware.startListening({
     const touchEvent = action.payload;
     const state = listenerApi.getState();
     const tooltipEventType = selectTooltipEventType(state, state.tooltip.settings.shared);
-    const activeProps = selectActivePropsFromChartPointer(
-      state,
-      getChartPointer({
-        clientX: touchEvent.touches[0].clientX,
-        clientY: touchEvent.touches[0].clientY,
-        currentTarget: touchEvent.currentTarget,
-      }),
-    );
-    if (tooltipEventType === 'axis' && activeProps?.activeIndex != null) {
+    if (tooltipEventType === 'axis') {
+      const activeProps = selectActivePropsFromChartPointer(
+        state,
+        getChartPointer({
+          clientX: touchEvent.touches[0].clientX,
+          clientY: touchEvent.touches[0].clientY,
+          currentTarget: touchEvent.currentTarget,
+        }),
+      );
+      if (activeProps?.activeIndex != null) {
+        listenerApi.dispatch(
+          setMouseOverAxisIndex({
+            activeIndex: activeProps.activeIndex,
+            activeDataKey: undefined,
+            activeCoordinate: activeProps.activeCoordinate,
+          }),
+        );
+      }
+    } else if (tooltipEventType === 'item') {
+      const touch = touchEvent.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!target || !target.getAttribute) {
+        return;
+      }
+      const itemIndex = target.getAttribute('data-recharts-item-index');
+      const dataKey = target.getAttribute('data-recharts-item-dataKey');
+
       listenerApi.dispatch(
-        setMouseOverAxisIndex({
-          activeIndex: activeProps.activeIndex,
-          activeDataKey: undefined,
-          activeCoordinate: activeProps.activeCoordinate,
+        setActiveMouseOverItemIndex({
+          activeDataKey: dataKey,
+          activeIndex: itemIndex,
         }),
       );
     }
