@@ -1471,11 +1471,11 @@ export const generateCategoricalChart = ({
 
     parseEventsOfWrapper() {
       const { children } = this.props;
-      const tooltipEventType = this.getTooltipEventType();
+
       const tooltipItem = findChildByType(children, Tooltip);
       let tooltipEvents: any = {};
 
-      if (tooltipItem && tooltipEventType === 'axis') {
+      if (tooltipItem) {
         if (tooltipItem.props.trigger === 'click') {
           tooltipEvents = {
             onClick: this.handleClick,
