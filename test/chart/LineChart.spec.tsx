@@ -24,7 +24,7 @@ import { pageData } from '../../storybook/stories/data';
 import { selectAxisRangeWithReverse, selectTicksOfGraphicalItem } from '../../src/state/selectors/axisSelectors';
 import { createSelectorTestCase, createSynchronisedSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectTooltipPayload } from '../../src/state/selectors/selectors';
-import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
+import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { TickItem } from '../../src/util/types';
 import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
@@ -1606,6 +1606,86 @@ describe('<LineChart /> - Rendering two line charts with syncId', () => {
       // make sure tooltips display the correct values, synced by XAxis label
       expectTooltipPayload(wrapperA, 'Page A', ['uv : 400']);
       expectTooltipPayload(wrapperB, 'Page A', ['uv : 230']);
+
+      // Check the activeDots are highlighted
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);
+
+      // simulate leaving the area
+      fireEvent.mouseLeave(firstChart);
+      vi.advanceTimersByTime(100);
+
+      expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(0);
+    });
+  });
+
+  describe('when syncMethod=value but with the other example reported in https://github.com/recharts/recharts/issues/5740', () => {
+    const series = [
+      {
+        name: 'Series 1',
+        data: [
+          { x: 0, y: 0 },
+          { x: 1, y: 1 },
+          { x: 2, y: 2 },
+        ],
+      },
+    ];
+
+    const series2 = [
+      {
+        name: 'Series 2',
+        data: [
+          { x: 1, y: 0 },
+          { x: 2, y: 1 },
+          { x: 3, y: 2 },
+        ],
+      },
+    ];
+
+    const renderTestCase = createSynchronisedSelectorTestCase(
+      ({ children }) => (
+        <LineChart width={width} height={height} margin={margin} syncId="test" syncMethod="value">
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{ stroke: 'red' }} />
+          {series.map(s => (
+            <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
+          ))}
+          {children}
+        </LineChart>
+      ),
+      ({ children }) => (
+        <LineChart width={width} height={height} margin={margin} syncId="test" syncMethod="value">
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{ stroke: 'red', strokeWidth: '5px' }} />
+          {series2.map(s => (
+            <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
+          ))}
+          <Brush />
+          {children}
+        </LineChart>
+      ),
+    );
+
+    test('should show tooltips for both charts on MouseEnter and hide on MouseLeave', async () => {
+      const { container, wrapperA, wrapperB } = renderTestCase();
+
+      // simulate entering just past Page A of Chart1 to test snapping of the cursor line
+      expect(container.querySelectorAll('.recharts-tooltip-cursor')).toHaveLength(0);
+
+      const firstChart = wrapperA.querySelector('.recharts-wrapper');
+
+      assertNotNull(firstChart);
+
+      showTooltip(container, lineChartMouseHoverTooltipSelector);
+
+      // There are two tooltips - one for each LineChart as they have the same syncId
+      const tooltipCursors = container.querySelectorAll('.recharts-tooltip-cursor');
+      expect(tooltipCursors).toHaveLength(2);
+
+      // make sure tooltips display the correct values, synced by XAxis label
+      expectTooltipPayload(wrapperA, '1', ['Series 1 : 1']);
+      expectTooltipPayload(wrapperB, '1', ['Series 2 : 0']);
 
       // Check the activeDots are highlighted
       expect(container.querySelectorAll('.recharts-active-dot')).toHaveLength(2);

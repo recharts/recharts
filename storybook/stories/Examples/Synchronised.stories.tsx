@@ -211,3 +211,55 @@ export const Synchronised = {
     syncId: 'my-sync-id',
   },
 };
+
+export const SynchronisedWithDataOnItem = {
+  render: (args: StorybookArgs) => {
+    const series = [
+      {
+        name: 'Series 1',
+        data: [
+          { x: 0, y: 0 },
+          { x: 1, y: 1 },
+          { x: 2, y: 2 },
+        ],
+      },
+    ];
+
+    const series2 = [
+      {
+        name: 'Series 1',
+        data: [
+          { x: 1, y: 0 },
+          { x: 2, y: 1 },
+          { x: 3, y: 2 },
+        ],
+      },
+    ];
+
+    return (
+      <>
+        <LineChart {...args} width={500} height={300}>
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{ stroke: 'red' }} />
+          {series.map(s => (
+            <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
+          ))}
+        </LineChart>
+        <LineChart {...args} width={500} height={300}>
+          <XAxis dataKey="x" type="number" domain={[0, 3]} />
+          <YAxis dataKey="y" />
+          <Tooltip cursor={{ stroke: 'red', strokeWidth: '5px' }} />
+          {series2.map(s => (
+            <Line dataKey="y" data={s.data} name={s.name} key={s.name} />
+          ))}
+          <Brush />
+        </LineChart>
+      </>
+    );
+  },
+  args: {
+    syncMethod: 'index',
+    syncId: 'my-sync-id',
+  },
+};
