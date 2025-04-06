@@ -148,6 +148,7 @@
   "types/state/selectors/selectTooltipState.d.ts",
   "types/state/selectors/selectors.d.ts",
   "types/state/selectors/tooltipSelectors.d.ts",
+  "types/state/selectors/touchSelectors.d.ts",
   "types/state/store.d.ts",
   "types/state/tooltipSlice.d.ts",
   "types/state/touchEventsMiddleware.d.ts",

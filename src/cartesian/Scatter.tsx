@@ -44,6 +44,7 @@ import { BaseAxisWithScale, ZAxisWithScale } from '../state/selectors/axisSelect
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
+import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -224,7 +225,13 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
       {points.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
         const option = isActive ? activeShape : shape;
-        const symbolProps = { key: `symbol-${i}`, ...baseProps, ...entry };
+        const symbolProps = {
+          key: `symbol-${i}`,
+          ...baseProps,
+          ...entry,
+          [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
+          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: dataKey,
+        };
 
         return (
           <Layer
@@ -240,13 +247,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
             role="img"
           >
-            <ScatterSymbol
-              option={option}
-              isActive={isActive}
-              {...symbolProps}
-              data-recharts-item-index={i}
-              data-recharts-item-dataKey={dataKey}
-            />
+            <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
           </Layer>
         );
       })}

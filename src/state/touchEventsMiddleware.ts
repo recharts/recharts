@@ -6,6 +6,8 @@ import { selectActivePropsFromChartPointer } from './selectors/selectActiveProps
 
 import { getChartPointer } from '../util/getChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
+import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { selectTooltipCoordinate } from './selectors/touchSelectors';
 
 export const touchEventAction = createAction<React.TouchEvent<HTMLDivElement>>('touchMove');
 
@@ -44,13 +46,15 @@ touchEventMiddleware.startListening({
       if (!target || !target.getAttribute) {
         return;
       }
-      const itemIndex = target.getAttribute('data-recharts-item-index');
-      const dataKey = target.getAttribute('data-recharts-item-dataKey');
+      const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
+      const dataKey = target.getAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME);
+      const coordinate = selectTooltipCoordinate(listenerApi.getState(), itemIndex, dataKey);
 
       listenerApi.dispatch(
         setActiveMouseOverItemIndex({
           activeDataKey: dataKey,
           activeIndex: itemIndex,
+          activeCoordinate: coordinate,
         }),
       );
     }

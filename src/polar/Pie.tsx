@@ -14,7 +14,7 @@ import get from 'lodash/get';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
-import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
@@ -45,11 +45,11 @@ import {
   useMouseEnterItemDispatch,
   useMouseLeaveItemDispatch,
 } from '../context/tooltipContext';
-import { setActiveMouseOverItemIndex, TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
+import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
-import { arrayTooltipSearcher } from '../state/optionsSlice';
+import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -446,7 +446,8 @@ function PieSectors(props: PieSectorsProps) {
           ...entry,
           stroke: entry.stroke,
           tabIndex: -1,
-          'data-recharts-item-index': i,
+          [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
+          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
 
         return (
@@ -693,8 +694,7 @@ function RenderSectors(props: InternalProps) {
 }
 
 function PieWithTouchMove(props: InternalProps) {
-  const dispatch = useAppDispatch();
-  const { hide, className, onTouchMove, rootTabIndex, sectors } = props;
+  const { hide, className, rootTabIndex } = props;
 
   const layerClass = clsx('recharts-pie', className);
 
@@ -702,39 +702,8 @@ function PieWithTouchMove(props: InternalProps) {
     return null;
   }
 
-  /*
-   * onTouchMove is special because it behaves different from mouse events.
-   * Mouse events have enter + leave combo that notify us when the mouse is over
-   * a certain element. Touch events don't have that; touch only gives us
-   * start (finger down), end (finger up) and move (finger moving).
-   * So we need to figure out which element the user is touching
-   * ourselves. Fortunately, there's a convenient method for that:
-   * https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
-   */
-  const myOnTouchMove = (e: React.TouchEvent<SVGElement>) => {
-    const touchEvent = e.touches[0];
-    const target = document.elementFromPoint(touchEvent.clientX, touchEvent.clientY);
-    if (!target || !target.getAttribute) {
-      return;
-    }
-    const itemIndex = target.getAttribute('data-recharts-item-index');
-    const activeSector = arrayTooltipSearcher(sectors, itemIndex);
-    if (!activeSector) {
-      return;
-    }
-
-    onTouchMove?.(activeSector, Number(itemIndex), e);
-    dispatch(
-      setActiveMouseOverItemIndex({
-        activeIndex: String(itemIndex),
-        activeDataKey: props.dataKey,
-        activeCoordinate: activeSector.tooltipPosition,
-      }),
-    );
-  };
-
   return (
-    <Layer tabIndex={rootTabIndex} className={layerClass} onTouchMove={myOnTouchMove}>
+    <Layer tabIndex={rootTabIndex} className={layerClass}>
       <RenderSectors {...props} />
     </Layer>
   );
