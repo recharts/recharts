@@ -230,7 +230,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           ...baseProps,
           ...entry,
           [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: i,
-          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: dataKey,
+          [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
         };
 
         return (
