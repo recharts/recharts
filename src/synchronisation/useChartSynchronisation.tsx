@@ -71,7 +71,8 @@ function useTooltipSyncEventsListener() {
         const activeTooltipIndex = syncMethod(tooltipTicks, syncMethodParam);
         activeTick = tooltipTicks[activeTooltipIndex];
       } else if (syncMethod === 'value') {
-        activeTick = tooltipTicks.find(tick => tick.value === action.payload.label);
+        // labels are always strings, tick.value might be a string or a number, depending on axis type
+        activeTick = tooltipTicks.find(tick => String(tick.value) === action.payload.label);
       }
 
       if (activeTick == null || action.payload.active === false) {
