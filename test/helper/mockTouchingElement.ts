@@ -1,4 +1,6 @@
 import { TooltipIndex } from '../../src/state/tooltipSlice';
+import { DataKey } from '../../src/util/types';
+import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
 
 /**
  * This method will pretend that the user is touching an element at the given index.
@@ -10,11 +12,13 @@ import { TooltipIndex } from '../../src/state/tooltipSlice';
  * so we're left with mocking it out.
  * See https://github.com/jsdom/jsdom/issues/1435
  * @param touchItemIndex the index of the item that user is touching
+ * @param dataKey the dataKey of the item that user is touching
  * @returns void
  */
-export function mockTouchingElement(touchItemIndex: TooltipIndex): void {
+export function mockTouchingElement(touchItemIndex: TooltipIndex, dataKey: DataKey<any>): void {
   const fakeElement = document.createElement('g');
-  fakeElement.setAttribute('data-recharts-item-index', touchItemIndex);
+  fakeElement.setAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, touchItemIndex);
+  fakeElement.setAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, String(dataKey));
   document.elementFromPoint = () => fakeElement;
 }
 

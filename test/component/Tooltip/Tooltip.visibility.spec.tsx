@@ -438,7 +438,7 @@ describe('Tooltip visibility', () => {
           context.skip();
         }
 
-        mockTouchingElement(tooltipIndex);
+        mockTouchingElement(tooltipIndex, 'uv');
 
         mockGetBoundingClientRect({
           width: 10,

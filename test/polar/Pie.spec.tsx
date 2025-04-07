@@ -32,7 +32,14 @@ import {
   selectTooltipDisplayedData,
 } from '../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
-import { mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
+import { mockTouchingElement, mockTouchingUnrelatedElement } from '../helper/mockTouchingElement';
+import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../../src/util/Constants';
+import {
+  selectActiveCoordinate,
+  selectActiveIndex,
+  selectTooltipPayload,
+  selectTooltipPayloadConfigurations,
+} from '../../src/state/selectors/selectors';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 
@@ -262,7 +269,8 @@ describe('<Pie />', () => {
       'stroke',
       'name',
       'tabindex',
-      'data-recharts-item-index',
+      DATA_ITEM_INDEX_ATTRIBUTE_NAME,
+      DATA_ITEM_DATAKEY_ATTRIBUTE_NAME,
       'class',
       'd',
     ]);
@@ -326,7 +334,8 @@ describe('<Pie />', () => {
       cx: 255,
       cy: 255,
       endAngle: 77.15833835039133,
-      'data-recharts-item-index': 0,
+      [DATA_ITEM_INDEX_ATTRIBUTE_NAME]: 0,
+      [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: 'y',
       fill: '#808080',
       innerRadius: 0,
       label: 'Iter: 0',
@@ -685,6 +694,363 @@ describe('<Pie />', () => {
         });
 
         expectTooltipNotVisible(container);
+      });
+
+      it('should provide touch attributes on sectors', () => {
+        const { container } = renderTestCase();
+
+        const allSectors = container.querySelectorAll('.recharts-pie-sector .recharts-sector');
+        expect(allSectors).toHaveLength(sectorsData.length);
+        allSectors.forEach((sector, index) => {
+          expect(sector).toHaveAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME, `${index}`);
+          expect(sector).toHaveAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, 'cy');
+        });
+      });
+
+      it('should select tooltip payload configuration', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container, spy } = renderTestCase(state =>
+          selectTooltipPayloadConfigurations(state, 'item', 'hover', undefined),
+        );
+
+        expect(spy).toHaveBeenCalledTimes(4);
+        expect(spy).toHaveBeenLastCalledWith([]);
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 200,
+          clientY: 200,
+        });
+
+        expect(spy).toHaveBeenCalledTimes(5);
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataDefinedOnItem: [
+              [
+                {
+                  dataKey: 'cy',
+                  name: 'A',
+                  payload: {
+                    cx: 250,
+                    cy: 250,
+                    endAngle: 72,
+                    innerRadius: 50,
+                    name: 'A',
+                    outerRadius: 100,
+                    startAngle: 0,
+                    value: 40,
+                  },
+                  type: undefined,
+                  value: 250,
+                },
+              ],
+              [
+                {
+                  dataKey: 'cy',
+                  name: 'B',
+                  payload: {
+                    cx: 250,
+                    cy: 250,
+                    endAngle: 144,
+                    innerRadius: 50,
+                    name: 'B',
+                    outerRadius: 100,
+                    startAngle: 72,
+                  },
+                  type: undefined,
+                  value: 250,
+                },
+              ],
+              [
+                {
+                  dataKey: 'cy',
+                  name: 'C',
+                  payload: {
+                    cx: 250,
+                    cy: 250,
+                    endAngle: 216,
+                    innerRadius: 50,
+                    name: 'C',
+                    outerRadius: 100,
+                    startAngle: 144,
+                  },
+                  type: undefined,
+                  value: 250,
+                },
+              ],
+              [
+                {
+                  dataKey: 'cy',
+                  name: 3,
+                  payload: {
+                    cx: 250,
+                    cy: 250,
+                    endAngle: 288,
+                    innerRadius: 50,
+                    outerRadius: 100,
+                    startAngle: 216,
+                  },
+                  type: undefined,
+                  value: 250,
+                },
+              ],
+              [
+                {
+                  dataKey: 'cy',
+                  name: 4,
+                  payload: {
+                    cx: 250,
+                    cy: 250,
+                    endAngle: 360,
+                    innerRadius: 50,
+                    outerRadius: 100,
+                    startAngle: 288,
+                  },
+                  type: undefined,
+                  value: 250,
+                },
+              ],
+            ],
+            positions: [
+              {
+                x: 263.1033255612459,
+                y: 154.15275032118709,
+              },
+              {
+                x: 175.8966744387541,
+                y: 125.81759172897802,
+              },
+              {
+                x: 122,
+                y: 200,
+              },
+              {
+                x: 175.89667443875408,
+                y: 274.182408271022,
+              },
+              {
+                x: 263.1033255612459,
+                y: 245.84724967881291,
+              },
+            ],
+            settings: {
+              color: '#808080',
+              dataKey: 'cy',
+              fill: '#808080',
+              hide: false,
+              name: 'cy',
+              nameKey: 'name',
+              stroke: '#fff',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
+        ]);
+      });
+
+      it('should show tooltip after touchMove', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container } = renderTestCase();
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 10,
+          clientY: 10,
+        });
+
+        expectTooltipCoordinate(container, { x: 132, y: 210 });
+        expectTooltipPayload(container, '', ['C : 250']);
+      });
+
+      it('should set active index after touchMove', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container, spy } = renderTestCase(state => state.tooltip.itemInteraction);
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenLastCalledWith({
+          click: {
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+          },
+          hover: {
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+          },
+        });
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 10,
+          clientY: 10,
+        });
+
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({
+          click: {
+            active: false,
+            coordinate: undefined,
+            dataKey: undefined,
+            index: null,
+          },
+          hover: {
+            active: true,
+            coordinate: { x: 122, y: 200 },
+            dataKey: 'cy',
+            index: '2',
+          },
+        });
+      });
+
+      it('should select active index after touch', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container, spy } = renderTestCase(state => selectActiveIndex(state, 'item', 'hover', undefined));
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenLastCalledWith(null);
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 10,
+          clientY: 10,
+        });
+
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith('2');
+      });
+
+      it('should select coordinate after touch', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container, spy } = renderTestCase(state => selectActiveCoordinate(state, 'item', 'hover', undefined));
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveBeenLastCalledWith(undefined);
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 10,
+          clientY: 10,
+        });
+
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenLastCalledWith({ x: 122, y: 200 });
+      });
+
+      it('should select tooltip data', () => {
+        const { container, spy } = renderTestCase(selectTooltipDisplayedData);
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            cx: 250,
+            cy: 250,
+            endAngle: 72,
+            innerRadius: 50,
+            name: 'A',
+            outerRadius: 100,
+            startAngle: 0,
+            value: 40,
+          },
+          {
+            cx: 250,
+            cy: 250,
+            endAngle: 144,
+            innerRadius: 50,
+            name: 'B',
+            outerRadius: 100,
+            startAngle: 72,
+          },
+          {
+            cx: 250,
+            cy: 250,
+            endAngle: 216,
+            innerRadius: 50,
+            name: 'C',
+            outerRadius: 100,
+            startAngle: 144,
+          },
+          {
+            cx: 250,
+            cy: 250,
+            endAngle: 288,
+            innerRadius: 50,
+            outerRadius: 100,
+            startAngle: 216,
+          },
+          {
+            cx: 250,
+            cy: 250,
+            endAngle: 360,
+            innerRadius: 50,
+            outerRadius: 100,
+            startAngle: 288,
+          },
+        ]);
+        expectTooltipNotVisible(container);
+      });
+
+      it('should select payload after touching a sector', () => {
+        mockGetBoundingClientRect({
+          width: 10,
+          height: 10,
+        });
+        mockTouchingElement('2', 'cy');
+
+        const { container, spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', undefined));
+
+        showTooltipOnCoordinateTouch(container, pieChartMouseHoverTooltipSelector, {
+          clientX: 10,
+          clientY: 10,
+        });
+
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            color: undefined,
+            dataKey: 'cy',
+            fill: undefined,
+            hide: false,
+            name: 'C',
+            nameKey: 'name',
+            payload: {
+              cx: 250,
+              cy: 250,
+              endAngle: 216,
+              innerRadius: 50,
+              name: 'C',
+              outerRadius: 100,
+              startAngle: 144,
+            },
+            stroke: '#fff',
+            strokeWidth: undefined,
+            type: undefined,
+            unit: undefined,
+            value: 250,
+          },
+        ]);
+
+        expectTooltipPayload(container, '', ['C : 250']);
       });
     });
 

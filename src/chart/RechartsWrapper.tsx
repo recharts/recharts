@@ -96,6 +96,16 @@ export const RechartsWrapper = forwardRef(
     const myOnTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
       dispatch(externalEventAction({ handler: onTouchStart, reactEvent: e }));
     };
+
+    /*
+     * onTouchMove is special because it behaves different from mouse events.
+     * Mouse events have enter + leave combo that notify us when the mouse is over
+     * a certain element. Touch events don't have that; touch only gives us
+     * start (finger down), end (finger up) and move (finger moving).
+     * So we need to figure out which element the user is touching
+     * ourselves. Fortunately, there's a convenient method for that:
+     * https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
+     */
     const myOnTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
       dispatch(touchEventAction(e));
       dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));

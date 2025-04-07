@@ -148,6 +148,7 @@
   "lib/state/selectors/selectTooltipState.js",
   "lib/state/selectors/selectors.js",
   "lib/state/selectors/tooltipSelectors.js",
+  "lib/state/selectors/touchSelectors.js",
   "lib/state/store.js",
   "lib/state/tooltipSlice.js",
   "lib/state/touchEventsMiddleware.js",
