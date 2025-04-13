@@ -50,6 +50,7 @@ import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { useAnimationId } from '../util/useAnimationId';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -591,6 +592,7 @@ function SectorsWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
+  const animationId = useAnimationId(props, 'recharts-pie-');
 
   const prevSectors = previousSectorsRef.current;
 
@@ -619,6 +621,7 @@ function SectorsWithAnimation({
       to={{ t: 1 }}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         const stepData: PieSectorDataItem[] = [];

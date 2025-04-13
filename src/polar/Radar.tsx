@@ -33,6 +33,7 @@ import { selectRadarPoints } from '../state/selectors/radarSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
+import { useAnimationId } from '../util/useAnimationId';
 
 interface RadarPoint {
   x: number;
@@ -70,7 +71,6 @@ interface RadarProps {
   animationBegin?: number;
   animationDuration?: AnimationDuration;
   isAnimationActive?: boolean;
-  animationId?: number;
   animationEasing?: AnimationTiming;
 
   onMouseEnter?: (props: any, e: MouseEvent<SVGPolygonElement>) => void;
@@ -309,11 +309,11 @@ function PolygonWithAnimation({
     animationBegin,
     animationDuration,
     animationEasing,
-    animationId,
     onAnimationEnd,
     onAnimationStart,
   } = props;
   const prevPoints = previousPointsRef.current;
+  const animationId = useAnimationId(props, 'recharts-radar-');
   const [isAnimating, setIsAnimating] = useState(true);
 
   const handleAnimationEnd = useCallback(() => {

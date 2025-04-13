@@ -66,6 +66,7 @@ import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
+import { useAnimationId } from '../util/useAnimationId';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -376,6 +377,7 @@ function RectanglesWithAnimation({
     onAnimationStart,
   } = props;
   const prevData = previousRectanglesRef.current;
+  const animationId = useAnimationId(props, 'recharts-bar-');
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -392,7 +394,6 @@ function RectanglesWithAnimation({
     }
     setIsAnimating(true);
   }, [onAnimationStart]);
-
   return (
     <Animate
       begin={animationBegin}
@@ -403,6 +404,7 @@ function RectanglesWithAnimation({
       to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         const stepData =

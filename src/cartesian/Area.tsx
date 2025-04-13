@@ -35,6 +35,7 @@ import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
+import { useAnimationId } from '../util/useAnimationId';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -420,6 +421,7 @@ function AreaWithAnimation({
     onAnimationStart,
     onAnimationEnd,
   } = props;
+  const animationId = useAnimationId(props, 'recharts-area-');
 
   const [isAnimating, setIsAnimating] = useState(true);
 
@@ -449,6 +451,7 @@ function AreaWithAnimation({
       to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         if (prevPoints) {

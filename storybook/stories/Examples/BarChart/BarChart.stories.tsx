@@ -1108,3 +1108,54 @@ export const ChangingDataKeyAndStacked = {
     },
   },
 };
+
+export const ChangingData = {
+  render: (args: Record<string, any>, context: StoryContext) => {
+    type MyDataShape = Array<{ number: number }>;
+
+    const [data, setData] = useState<MyDataShape>([{ number: 10 }]);
+
+    const reset = () => {
+      setData([{ number: 10 }]);
+    };
+
+    const changeSynchronously = () => {
+      setData([{ number: 50 }]);
+    };
+
+    const changeAsynchronously = () => {
+      setData([{ number: 90 }]);
+
+      setTimeout(() => {
+        setData([{ number: 30 }]);
+      }, 150);
+    };
+
+    return (
+      <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
+        <BarChart {...args} data={data}>
+          <YAxis hide domain={[0, 100]} />
+          <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        </BarChart>
+
+        <button type="button" onClick={changeSynchronously}>
+          Change data synchronously
+        </button>
+
+        <button type="button" onClick={changeAsynchronously}>
+          Change data with setTimeout
+        </button>
+
+        <button type="button" onClick={reset}>
+          Reset
+        </button>
+      </div>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    width: 100,
+    height: 100,
+  },
+};
