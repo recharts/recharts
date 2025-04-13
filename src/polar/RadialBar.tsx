@@ -50,6 +50,7 @@ import {
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
+import { useAnimationId } from '../util/useAnimationId';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -135,6 +136,7 @@ function SectorsWithAnimation({
     onAnimationEnd,
     onAnimationStart,
   } = props;
+  const animationId = useAnimationId(props, 'recharts-radialbar-');
 
   const prevData = previousSectorsRef.current;
 
@@ -163,6 +165,7 @@ function SectorsWithAnimation({
       to={{ t: 1 }}
       onAnimationStart={handleAnimationStart}
       onAnimationEnd={handleAnimationEnd}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         const stepData =

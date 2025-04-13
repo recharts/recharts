@@ -196,6 +196,7 @@
   "types/util/tooltip",
   "types/util/tooltip/translate.d.ts",
   "types/util/types.d.ts",
+  "types/util/useAnimationId.d.ts",
   "types/util/useElementOffset.d.ts",
   "types/util/useReportScale.d.ts",
 ]

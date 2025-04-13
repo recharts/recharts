@@ -36,6 +36,7 @@ import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AreaPointItem } from '../state/selectors/areaSelectors';
+import { useAnimationId } from '../util/useAnimationId';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -342,6 +343,7 @@ function CurveWithAnimation({
   } = props;
 
   const prevPoints = previousPointsRef.current;
+  const animationId = useAnimationId(props, 'recharts-line-');
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -388,6 +390,7 @@ function CurveWithAnimation({
       to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         const interpolator = interpolateNumber(startingPoint, totalLength + startingPoint);

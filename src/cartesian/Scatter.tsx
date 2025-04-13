@@ -45,6 +45,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
+import { useAnimationId } from '../util/useAnimationId';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -265,6 +266,7 @@ function SymbolsWithAnimation({
 }) {
   const { points, isAnimationActive, animationBegin, animationDuration, animationEasing } = props;
   const prevPoints = previousPointsRef.current;
+  const animationId = useAnimationId(props, 'recharts-scatter-');
 
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -293,6 +295,7 @@ function SymbolsWithAnimation({
       to={{ t: 1 }}
       onAnimationEnd={handleAnimationEnd}
       onAnimationStart={handleAnimationStart}
+      key={animationId}
     >
       {({ t }: { t: number }) => {
         const stepData =

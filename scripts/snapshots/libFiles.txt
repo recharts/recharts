@@ -196,6 +196,7 @@
   "lib/util/tooltip",
   "lib/util/tooltip/translate.js",
   "lib/util/types.js",
+  "lib/util/useAnimationId.js",
   "lib/util/useElementOffset.js",
   "lib/util/useReportScale.js",
 ]
