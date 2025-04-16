@@ -674,15 +674,7 @@ function renderNodeItem(option: SankeyNodeOptions, props: NodeProps) {
     return option(props);
   }
 
-  return (
-    <Rectangle
-      className="recharts-sankey-node"
-      fill="#0088fe"
-      fillOpacity="0.8"
-      {...filterProps(props, false)}
-      role="img"
-    />
-  );
+  return <Rectangle className="recharts-sankey-node" fill="#0088fe" fillOpacity="0.8" {...filterProps(props, false)} />;
 }
 
 const buildNodeProps = ({

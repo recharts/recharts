@@ -176,7 +176,6 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
             // @ts-expect-error the types need a bit of attention
             onClick={onClickFromContext(entry, i)}
             key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
-            role="img"
           >
             <FunnelTrapezoid {...trapezoidProps} />
           </Layer>

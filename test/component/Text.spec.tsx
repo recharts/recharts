@@ -214,24 +214,6 @@ describe('<Text />', () => {
 
       expect(lastLetter).toEqual('…');
     });
-
-    // test('adds an ellipsis at the end of a very long word', () => {
-    //   Element.prototype.getBoundingClientRect = vi.fn(() => ({ ...mock, width: 1 }));
-    //   const testString =
-    //     'longwooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooord';
-    //   render(
-    //     <Text role="img" width={200} maxLines={1}>
-    //       {testString}
-    //     </Text>,
-    //   );
-
-    //   const text = screen.getByRole('img');
-    //   expect(text).toBeInTheDocument();
-    //   const lastChild = text?.children[text?.children?.length - 1];
-    //   const lastLetter = lastChild.textContent?.[lastChild?.textContent?.length - 1];
-
-    //   expect(lastLetter).toEqual('…');
-    // });
   });
 });
 

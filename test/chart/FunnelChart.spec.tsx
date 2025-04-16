@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { Funnel, FunnelChart } from '../../src';
@@ -37,7 +37,7 @@ describe('<FunnelChart />', () => {
       </FunnelChart>,
     );
     expect(container.querySelectorAll('.recharts-trapezoids')).toHaveLength(1);
-    expect(screen.getAllByRole('img')).toHaveLength(5);
+    expect(container.querySelectorAll('.recharts-funnel-trapezoid')).toHaveLength(5);
 
     data.forEach(({ name }) => {
       expect(container.querySelectorAll(`[name="${name}"]`)).toHaveLength(1);
