@@ -1096,7 +1096,7 @@ export const selectSmallestDistanceBetweenValues: (
       return undefined;
     }
     let smallestDistanceBetweenValues = Infinity;
-    const sortedValues = Array.from(onlyAllowNumbers(allDataSquished.map(d => d.value))).sort();
+    const sortedValues = Array.from(onlyAllowNumbers(allDataSquished.map(d => d.value))).sort((a, b) => a - b);
     if (sortedValues.length < 2) {
       return Infinity;
     }
@@ -1104,12 +1104,11 @@ export const selectSmallestDistanceBetweenValues: (
     if (diff === 0) {
       return Infinity;
     }
-    sortedValues.forEach((value: number, index: number) => {
-      smallestDistanceBetweenValues = Math.min(
-        (value || 0) - (sortedValues[index - 1] || 0),
-        smallestDistanceBetweenValues,
-      );
-    });
+    // Only do n - 1 distance calculations because there's only n - 1 distances between n values.
+    for (let i = 0; i < sortedValues.length - 1; i++) {
+      const distance = sortedValues[i + 1] - sortedValues[i];
+      smallestDistanceBetweenValues = Math.min(smallestDistanceBetweenValues, distance);
+    }
     return smallestDistanceBetweenValues / diff;
   },
 );

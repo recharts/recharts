@@ -526,7 +526,7 @@ describe('<XAxis />', () => {
       </BarChart>,
     );
 
-    expect(barBandSizeSpy).toHaveBeenLastCalledWith(201.25);
+    expect(barBandSizeSpy).toHaveBeenLastCalledWith(25.15625);
     expect(barBandSizeSpy).toHaveBeenCalledTimes(2);
 
     expect(offsetSpy).toHaveBeenLastCalledWith({
@@ -545,43 +545,43 @@ describe('<XAxis />', () => {
 
     expect(barTicksSpy).toHaveBeenLastCalledWith([
       {
-        coordinate: 985,
+        coordinate: 79.375,
         index: 0,
         offset: 0,
         value: 90,
       },
       {
-        coordinate: 783.75,
+        coordinate: 104.53125,
         index: 1,
         offset: 0,
         value: 100,
       },
       {
-        coordinate: 381.25,
+        coordinate: 154.84375,
         index: 2,
         offset: 0,
         value: 120,
       },
       {
-        coordinate: -625,
+        coordinate: 280.625,
         index: 3,
         offset: 0,
         value: 170,
       },
       {
-        coordinate: -21.25,
+        coordinate: 205.15625,
         index: 4,
         offset: 0,
         value: 140,
       },
       {
-        coordinate: -222.5,
+        coordinate: 230.3125,
         index: 5,
         offset: 0,
         value: 150,
       },
       {
-        coordinate: 582.5,
+        coordinate: 129.6875,
         index: 6,
         offset: 0,
         value: 110,
@@ -591,72 +591,87 @@ describe('<XAxis />', () => {
 
     expectBars(container, [
       {
-        d: 'M 904.5,206.5 h 161 v 58.5 h -161 Z',
+        d: 'M 69.3125,206.5 h 20 v 58.5 h -20 Z',
         height: '58.5',
         radius: '0',
-        width: '161',
-        x: '904.5',
+        width: '20',
+        x: '69.3125',
         y: '206.5',
       },
       {
-        d: 'M 703.25,135 h 161 v 130 h -161 Z',
+        d: 'M 94.46875,135 h 20 v 130 h -20 Z',
         height: '130',
         radius: '0',
-        width: '161',
-        x: '703.25',
+        width: '20',
+        x: '94.46875',
         y: '135',
       },
       {
-        d: 'M 300.75,200 h 161 v 65 h -161 Z',
+        d: 'M 144.78125,200 h 20 v 65 h -20 Z',
         height: '65',
         radius: '0',
-        width: '161',
-        x: '300.75',
+        width: '20',
+        x: '144.78125',
         y: '200',
       },
       {
-        d: 'M -705.5,70 h 161 v 195 h -161 Z',
+        d: 'M 270.5625,70 h 20 v 195 h -20 Z',
         height: '195',
         radius: '0',
-        width: '161',
-        x: '-705.5',
+        width: '20',
+        x: '270.5625',
         y: '70',
       },
       {
-        d: 'M -101.75,102.5 h 161 v 162.5 h -161 Z',
+        d: 'M 195.09375,102.5 h 20 v 162.5 h -20 Z',
         height: '162.5',
         radius: '0',
-        width: '161',
-        x: '-101.75',
+        width: '20',
+        x: '195.09375',
         y: '102.5',
       },
       {
-        d: 'M -303,5 h 161 v 260 h -161 Z',
+        d: 'M 220.25,5 h 20 v 260 h -20 Z',
         height: '260',
         radius: '0',
-        width: '161',
-        x: '-303',
+        width: '20',
+        x: '220.25',
         y: '5',
       },
       {
-        d: 'M 502,83.00000000000001 h 161 v 182 h -161 Z',
+        d: 'M 119.625,83.00000000000001 h 20 v 182 h -20 Z',
         height: '182',
         radius: '0',
-        width: '161',
-        x: '502',
+        width: '20',
+        x: '119.625',
         y: '83.00000000000001',
       },
     ]);
     expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 170]);
     expectXAxisTicks(container, [
       {
+        textContent: '90',
+        x: '79.375',
+        y: '273',
+      },
+      {
+        textContent: '110',
+        x: '129.6875',
+        y: '273',
+      },
+      {
         textContent: '130',
         x: '180',
         y: '273',
       },
       {
+        textContent: '150',
+        x: '230.3125',
+        y: '273',
+      },
+      {
         textContent: '170',
-        x: '0',
+        x: '280.625',
         y: '273',
       },
     ]);
@@ -675,72 +690,87 @@ describe('<XAxis />', () => {
 
     expectBars(container, [
       {
-        d: 'M 36309.5,206.5 h 6951 v 58.5 h -6951 Z',
+        d: 'M 251.1875,206.5 h 868 v 58.5 h -868 Z',
         height: '58.5',
         radius: '0',
-        width: '6951',
-        x: '36309.5',
+        width: '868',
+        x: '251.1875',
         y: '206.5',
       },
       {
-        d: 'M 27620.75,135 h 6951 v 130 h -6951 Z',
+        d: 'M 1337.28125,135 h 868 v 130 h -868 Z',
         height: '130',
         radius: '0',
-        width: '6951',
-        x: '27620.75',
+        width: '868',
+        x: '1337.28125',
         y: '135',
       },
       {
-        d: 'M 10243.25,200 h 6951 v 65 h -6951 Z',
+        d: 'M 3509.46875,200 h 868 v 65 h -868 Z',
         height: '65',
         radius: '0',
-        width: '6951',
-        x: '10243.25',
+        width: '868',
+        x: '3509.46875',
         y: '200',
       },
       {
-        d: 'M -33200.5,70 h 6951 v 195 h -6951 Z',
+        d: 'M 8939.9375,70 h 868 v 195 h -868 Z',
         height: '195',
         radius: '0',
-        width: '6951',
-        x: '-33200.5',
+        width: '868',
+        x: '8939.9375',
         y: '70',
       },
       {
-        d: 'M -7134.25,102.5 h 6951 v 162.5 h -6951 Z',
+        d: 'M 5681.65625,102.5 h 868 v 162.5 h -868 Z',
         height: '162.5',
         radius: '0',
-        width: '6951',
-        x: '-7134.25',
+        width: '868',
+        x: '5681.65625',
         y: '102.5',
       },
       {
-        d: 'M -15823,5 h 6951 v 260 h -6951 Z',
+        d: 'M 6767.75,5 h 868 v 260 h -868 Z',
         height: '260',
         radius: '0',
-        width: '6951',
-        x: '-15823',
+        width: '868',
+        x: '6767.75',
         y: '5',
       },
       {
-        d: 'M 18932,83.00000000000001 h 6951 v 182 h -6951 Z',
+        d: 'M 2423.375,83.00000000000001 h 868 v 182 h -868 Z',
         height: '182',
         radius: '0',
-        width: '6951',
-        x: '18932',
+        width: '868',
+        x: '2423.375',
         y: '83.00000000000001',
       },
     ]);
     expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 170]);
     expectXAxisTicks(container, [
       {
+        textContent: '90',
+        x: '685.625',
+        y: '273',
+      },
+      {
+        textContent: '110',
+        x: '2857.8125',
+        y: '273',
+      },
+      {
         textContent: '130',
         x: '5030',
         y: '273',
       },
       {
+        textContent: '150',
+        x: '7202.1875',
+        y: '273',
+      },
+      {
         textContent: '170',
-        x: '0',
+        x: '9374.375',
         y: '273',
       },
     ]);
@@ -748,19 +778,18 @@ describe('<XAxis />', () => {
 
   describe.each(['gap', 'no-gap', { left: 3, right: 5 }] as const)('padding: %s', padding => {
     /* I am not entirely certain what is the relationship between the tickCount prop, and the actual tick count */
-    // TODO: Remove `brokenGapTickCount` once the bug is fixed.
     it.each([
-      { providedTickCount: 3, expectedTickCount: 3, brokenGapTickCount: { gap: 2, 'no-gap': 3 } },
-      { providedTickCount: 5, expectedTickCount: 5, brokenGapTickCount: { gap: 2, 'no-gap': 5 } },
-      { providedTickCount: 7, expectedTickCount: 6, brokenGapTickCount: { gap: 2, 'no-gap': 6 } },
-      { providedTickCount: 11, expectedTickCount: 11, brokenGapTickCount: { gap: 2, 'no-gap': 11 } },
-      { providedTickCount: 13, expectedTickCount: 12, brokenGapTickCount: { gap: 3, 'no-gap': 12 } },
-      { providedTickCount: 17, expectedTickCount: 17, brokenGapTickCount: { gap: 4, 'no-gap': 17 } },
-      { providedTickCount: 19, expectedTickCount: 17, brokenGapTickCount: { gap: 4, 'no-gap': 17 } },
-      { providedTickCount: 29, expectedTickCount: 27, brokenGapTickCount: { gap: 5, 'no-gap': 27 } },
+      { providedTickCount: 3, expectedTickCount: 3 },
+      { providedTickCount: 5, expectedTickCount: 5 },
+      { providedTickCount: 7, expectedTickCount: 6 },
+      { providedTickCount: 11, expectedTickCount: 11 },
+      { providedTickCount: 13, expectedTickCount: 12 },
+      { providedTickCount: 17, expectedTickCount: 17 },
+      { providedTickCount: 19, expectedTickCount: 17 },
+      { providedTickCount: 29, expectedTickCount: 27 },
     ])(
       'renders $expectedTickCount ticks when tickCount=$providedTickCount',
-      ({ providedTickCount, expectedTickCount, brokenGapTickCount }) => {
+      ({ providedTickCount, expectedTickCount }) => {
         const spy = vi.fn();
         const { container } = render(
           <BarChart width={100000} height={300} data={data}>
@@ -779,11 +808,7 @@ describe('<XAxis />', () => {
 
         expect(spy).toHaveBeenLastCalledWith([90, 170]);
         const allTicks = container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick-value');
-        if (padding === 'gap' || padding === 'no-gap') {
-          expect(allTicks).toHaveLength(brokenGapTickCount[padding]);
-        } else {
-          expect(allTicks).toHaveLength(expectedTickCount);
-        }
+        expect(allTicks).toHaveLength(expectedTickCount);
       },
     );
   });
@@ -801,72 +826,82 @@ describe('<XAxis />', () => {
 
     expectBars(container, [
       {
-        d: 'M 3540.967741935484,135 h 178 v 130 h -178 Z',
+        d: 'M 65.83766909469301,135 h 5 v 130 h -5 Z',
         height: '130',
         radius: '0',
-        width: '178',
-        x: '3540.967741935484',
+        width: '5',
+        x: '65.83766909469301',
         y: '135',
       },
       {
-        d: 'M 1092.5806451612902,120.55555555555554 h 178 v 144.44444444444446 h -178 Z',
+        d: 'M 144.81789802289285,120.55555555555554 h 5 v 144.44444444444446 h -5 Z',
         height: '144.44444444444446',
         radius: '0',
-        width: '178',
-        x: '1092.5806451612902',
+        width: '5',
+        x: '144.81789802289285',
         y: '120.55555555555554',
       },
       {
-        d: 'M 3318.387096774193,91.66666666666667 h 178 v 173.33333333333331 h -178 Z',
+        d: 'M 73.01768990634756,91.66666666666667 h 5 v 173.33333333333331 h -5 Z',
         height: '173.33333333333331',
         radius: '0',
-        width: '178',
-        x: '3318.387096774193',
+        width: '5',
+        x: '73.01768990634756',
         y: '91.66666666666667',
       },
       {
-        d: 'M -1133.2258064516125,19.44444444444445 h 178 v 245.55555555555554 h -178 Z',
+        d: 'M 216.61810613943808,19.44444444444445 h 5 v 245.55555555555554 h -5 Z',
         height: '245.55555555555554',
         radius: '0',
-        width: '178',
-        x: '-1133.2258064516125',
+        width: '5',
+        x: '216.61810613943808',
         y: '19.44444444444445',
       },
       {
-        d: 'M -20.322580645161224,62.77777777777777 h 178 v 202.22222222222223 h -178 Z',
+        d: 'M 180.71800208116545,62.77777777777777 h 5 v 202.22222222222223 h -5 Z',
         height: '202.22222222222223',
         radius: '0',
-        width: '178',
-        x: '-20.322580645161224',
+        width: '5',
+        x: '180.71800208116545',
         y: '62.77777777777777',
       },
       {
-        d: 'M -3359.032258064516,48.33333333333332 h 178 v 216.66666666666669 h -178 Z',
+        d: 'M 288.4183142559834,48.33333333333332 h 5 v 216.66666666666669 h -5 Z',
         height: '216.66666666666669',
         radius: '0',
-        width: '178',
-        x: '-3359.032258064516',
+        width: '5',
+        x: '288.4183142559834',
         y: '48.33333333333332',
       },
       {
-        d: 'M -688.0645161290324,106.1111111111111 h 178 v 158.8888888888889 h -178 Z',
+        d: 'M 202.25806451612905,106.1111111111111 h 5 v 158.8888888888889 h -5 Z',
         height: '158.8888888888889',
         radius: '0',
-        width: '178',
-        x: '-688.0645161290324',
+        width: '5',
+        x: '202.25806451612905',
         y: '106.1111111111111',
       },
     ]);
     expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 400]);
     expectXAxisTicks(container, [
       {
+        textContent: '90',
+        x: '68.70967741935483',
+        y: '273',
+      },
+      {
+        textContent: '170',
+        x: '126.14984391259105',
+        y: '273',
+      },
+      {
         textContent: '250',
-        x: '68.70967741935488',
+        x: '183.59001040582726',
         y: '273',
       },
       {
         textContent: '400',
-        x: '0',
+        x: '291.2903225806452',
         y: '273',
       },
     ]);
@@ -885,71 +920,71 @@ describe('<XAxis />', () => {
 
     expectBars(container, [
       {
-        d: 'M 208.97999999999996,206.5 h 6 v 58.5 h -6 Z',
+        d: 'M 65.99187500000001,206.5 h 20 v 58.5 h -20 Z',
         height: '58.5',
         radius: '0',
-        width: '6',
-        x: '208.97999999999996',
+        width: '20',
+        x: '65.99187500000001',
         y: '206.5',
       },
       {
-        d: 'M 200.93,135 h 6 v 130 h -6 Z',
+        d: 'M 91.90281250000001,135 h 20 v 130 h -20 Z',
         height: '130',
         radius: '0',
-        width: '6',
-        x: '200.93',
+        width: '20',
+        x: '91.90281250000001',
         y: '135',
       },
       {
-        d: 'M 184.82999999999998,200 h 6 v 65 h -6 Z',
+        d: 'M 143.72468750000002,200 h 20 v 65 h -20 Z',
         height: '65',
         radius: '0',
-        width: '6',
-        x: '184.82999999999998',
+        width: '20',
+        x: '143.72468750000002',
         y: '200',
       },
       {
-        d: 'M 144.5800000000001,70 h 6 v 195 h -6 Z',
+        d: 'M 273.2793750000001,70 h 20 v 195 h -20 Z',
         height: '195',
         radius: '0',
-        width: '6',
-        x: '144.5800000000001',
+        width: '20',
+        x: '273.2793750000001',
         y: '70',
       },
       {
-        d: 'M 168.73000000000005,102.5 h 6 v 162.5 h -6 Z',
+        d: 'M 195.5465625,102.5 h 20 v 162.5 h -20 Z',
         height: '162.5',
         radius: '0',
-        width: '6',
-        x: '168.73000000000005',
+        width: '20',
+        x: '195.5465625',
         y: '102.5',
       },
       {
-        d: 'M 160.68000000000006,5 h 6 v 260 h -6 Z',
+        d: 'M 221.45750000000004,5 h 20 v 260 h -20 Z',
         height: '260',
         radius: '0',
-        width: '6',
-        x: '160.68000000000006',
+        width: '20',
+        x: '221.45750000000004',
         y: '5',
       },
       {
-        d: 'M 192.88,83.00000000000001 h 6 v 182 h -6 Z',
+        d: 'M 117.81375000000003,83.00000000000001 h 20 v 182 h -20 Z',
         height: '182',
         radius: '0',
-        width: '6',
-        x: '192.88',
+        width: '20',
+        x: '117.81375000000003',
         y: '83.00000000000001',
       },
     ]);
     expectXAxisTicks(container, [
       {
         textContent: '90',
-        x: '212.19999999999993',
+        x: '76.35625',
         y: '273',
       },
       {
         textContent: '110',
-        x: '196.09999999999997',
+        x: '128.17812500000002',
         y: '273',
       },
       {
@@ -959,12 +994,12 @@ describe('<XAxis />', () => {
       },
       {
         textContent: '150',
-        x: '163.90000000000003',
+        x: '231.82187500000003',
         y: '273',
       },
       {
         textContent: '170',
-        x: '147.80000000000007',
+        x: '283.64375',
         y: '273',
       },
     ]);
