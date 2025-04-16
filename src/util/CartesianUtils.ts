@@ -4,7 +4,7 @@ import every from 'lodash/every';
 import { getTicksOfScale, parseScale, checkDomainOfScale, getBandSizeOfAxis } from './ChartUtils';
 import { findChildByType } from './ReactUtils';
 import { Coordinate, AxisType, Size } from './types';
-import { getPercentValue } from './DataUtils';
+import { compareValues, getPercentValue } from './DataUtils';
 import { Bar } from '../cartesian/Bar';
 
 /**
@@ -41,7 +41,7 @@ export const formatAxisMap = (props: any, axisMap: any, offset: any, axisType: A
     if (axis.type === 'number' && (axis.padding === 'gap' || axis.padding === 'no-gap')) {
       const diff = domain[1] - domain[0];
       let smallestDistanceBetweenValues = Infinity;
-      const sortedValues = axis.categoricalDomain.sort();
+      const sortedValues = axis.categoricalDomain.sort(compareValues);
       sortedValues.forEach((value: number, index: number) => {
         if (index > 0) {
           smallestDistanceBetweenValues = Math.min(

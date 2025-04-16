@@ -6,6 +6,7 @@ import { expectXAxisTicks } from '../helper/expectAxisTicks';
 
 describe('<XAxis />', () => {
   const data = [
+    { x: 90, y: 90, z: 90 },
     { x: 100, y: 200, z: 200 },
     { x: 120, y: 100, z: 260 },
     { x: 170, y: 300, z: 400 },
@@ -145,7 +146,7 @@ describe('<XAxis />', () => {
     );
 
     const bar = container.querySelector('.recharts-rectangle');
-    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(70);
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(69);
   });
 
   it('Render Bars with no gap', () => {
@@ -158,7 +159,7 @@ describe('<XAxis />', () => {
     );
 
     const bar = container.querySelector('.recharts-rectangle');
-    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(66);
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(65);
   });
 
   it('Render axis with tick for a single data point', () => {
@@ -172,7 +173,7 @@ describe('<XAxis />', () => {
 
     const tick = container.querySelector('.xAxis .recharts-cartesian-axis-tick-value');
     expect(tick).toBeInTheDocument();
-    expect(tick.textContent).toEqual('100');
+    expect(tick.textContent).toEqual('90');
     expect(tick?.getAttribute('x')).toEqual('180');
 
     // For a single data point, unless barSize is given, the bar will have no width and thus not be rendered.
@@ -200,7 +201,7 @@ describe('<XAxis />', () => {
     const { container } = render(
       <BarChart width={300} height={300} data={data.slice(0, 1)} barSize="50%">
         <Bar dataKey="y" isAnimationActive={false} />
-        <XAxis dataKey="x" type="number" domain={[50, 150]} />
+        <XAxis dataKey="x" type="number" domain={[40, 140]} />
         <YAxis dataKey="y" />
       </BarChart>,
     );
@@ -257,7 +258,7 @@ describe('<XAxis />', () => {
             <XAxis dataKey="x" type="number" domain={['auto', 'auto']} allowDataOverflow={allowDataOverflow} />
           </BarChart>,
         );
-        expectXAxisTicks(container, ['100', '120', '140', '160', '180']);
+        expectXAxisTicks(container, ['75', '100', '125', '150', '175']);
       });
 
       it('should render ticks from number, auto', () => {
@@ -303,14 +304,14 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="number" domain={[130, 175]} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '140', '175']);
+      expectXAxisTicks(container, ['90', '115', '140', '175']);
 
       rerender(
         <BarChart width={300} height={300} data={data}>
           <XAxis dataKey="x" type="number" domain={[130, 150]} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
+      expectXAxisTicks(container, ['90', '110', '130', '150', '170']);
     });
 
     it('should default to dataMin, dataMax for domain where the larger number is first', () => {
@@ -319,7 +320,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="number" domain={[100, 0]} />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
+      expectXAxisTicks(container, ['90', '110', '130', '150', '170']);
     });
 
     it('should render one tick for domain that does not have any gap', () => {
@@ -364,7 +365,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} allowDataOverflow />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
+      expectXAxisTicks(container, ['90', '110', '130', '150', '170']);
     });
 
     it('should default to dataMin, dataMax ANYWAY when domain is provided as strings? I do not understand this behaviour.', () => {
@@ -374,7 +375,7 @@ describe('<XAxis />', () => {
           <XAxis dataKey="x" type="number" domain={['-500', '500']} allowDataOverflow />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '140', '170']);
+      expectXAxisTicks(container, ['90', '110', '130', '150', '170']);
     });
 
     it('should allow a function that returns a domain, and pass inside a computed domain and allowDataOverflow prop', () => {
@@ -387,7 +388,7 @@ describe('<XAxis />', () => {
       );
       expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([100, 170], true);
+      expect(spy).toHaveBeenCalledWith([90, 170], true);
 
       rerender(
         <BarChart width={300} height={300} data={data}>
@@ -396,7 +397,7 @@ describe('<XAxis />', () => {
       );
       expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
       expect(spy).toHaveBeenCalledTimes(2);
-      expect(spy).toHaveBeenLastCalledWith([100, 170], false);
+      expect(spy).toHaveBeenLastCalledWith([90, 170], false);
     });
 
     it(`should allow array of functions,
@@ -412,7 +413,7 @@ describe('<XAxis />', () => {
       expectXAxisTicks(container, ['-500', '-250', '0', '250', '500']);
       expect(spyMin).toHaveBeenCalledTimes(1);
       expect(spyMax).toHaveBeenCalledTimes(1);
-      expect(spyMin).toHaveBeenCalledWith(100);
+      expect(spyMin).toHaveBeenCalledWith(90);
       expect(spyMax).toHaveBeenCalledWith(170);
     });
 
@@ -467,7 +468,7 @@ describe('<XAxis />', () => {
           <YAxis dataKey="y" />
         </BarChart>,
       );
-      expectXAxisTicks(container, ['100', '120', '170', '140', '150', '110']);
+      expectXAxisTicks(container, ['90', '100', '120', '170', '140', '150', '110']);
     });
 
     describe.each([true, false, undefined])('allowDecimals=%s', () => {
