@@ -146,9 +146,7 @@ describe('<XAxis />', () => {
     );
 
     const bar = container.querySelector('.recharts-rectangle');
-    // TODO: Fix this. -73 is very incorrect (and likely off-screen).
-    // See https://github.com/recharts/recharts/issues/5758.
-    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(-73);
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(69);
   });
 
   it('Render Bars with no gap', () => {
@@ -161,9 +159,7 @@ describe('<XAxis />', () => {
     );
 
     const bar = container.querySelector('.recharts-rectangle');
-    // TODO: Fix this. -57 is very incorrect (and likely off-screen).
-    // See https://github.com/recharts/recharts/issues/5758.
-    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(-57);
+    expect(parseInt(bar?.getAttribute('x') as string, 10)).toEqual(65);
   });
 
   it('Render axis with tick for a single data point', () => {

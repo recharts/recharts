@@ -159,3 +159,30 @@ export const getLinearRegression = (data: Array<{ cx?: number; cy?: number }>) =
     b: (ysum - a * xsum) / len,
   };
 };
+
+/**
+ * Compare values.
+ *
+ * This function is intended to be passed to `Array.prototype.sort()`. It properly compares generic homogeneous arrays that are either `string[]`,
+ * `number[]`, or `Date[]`. When comparing heterogeneous arrays or homogeneous arrays of other types, it will attempt to compare items properly but
+ * will fall back to string comparison for mismatched or unsupported types.
+ *
+ * For some background, `Array.prototype.sort()`'s default comparator coerces each of the array's items into a string and compares the strings. This
+ * often leads to undesirable behavior, especially with numerical items.
+ *
+ * @param {unknown} a The first item to compare
+ * @param {unknown} b The second item to compare
+ * @return {number} A negative number if a < b, a positive number if a > b, 0 if equal
+ */
+export const compareValues = (a: unknown, b: unknown): number => {
+  if (isNumber(a) && isNumber(b)) {
+    return a - b;
+  }
+  if (isString(a) && isString(b)) {
+    return a.localeCompare(b);
+  }
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() - b.getTime();
+  }
+  return String(a).localeCompare(String(b));
+};
