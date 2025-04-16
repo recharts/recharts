@@ -31,14 +31,6 @@ import {
 import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 
-const svgTagMustHaveLabelViolation = expect.objectContaining({
-  description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
-  help: '<svg> elements with an img role must have an alternative text',
-  helpUrl: 'https://dequeuniversity.com/rules/axe/4.9/svg-img-alt?application=axeAPI',
-  id: 'svg-img-alt',
-  impact: 'serious',
-});
-
 describe('Static scanning for accessibility markup issues', () => {
   test('Area chart', async () => {
     const { container } = render(
@@ -105,7 +97,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </FunnelChart>,
     );
 
-    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
@@ -160,7 +152,7 @@ describe('Static scanning for accessibility markup issues', () => {
 
   test('Sankey chart', async () => {
     const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
-    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
@@ -223,7 +215,7 @@ describe('Static scanning for accessibility markup issues', () => {
         width: '9.0270333367641',
       },
     ]);
-    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
@@ -246,7 +238,7 @@ describe('Static scanning for accessibility markup issues', () => {
       />,
     );
 
-    expect((await axe(container)).violations).toEqual([svgTagMustHaveLabelViolation]);
+    expect((await axe(container)).violations).toHaveLength(0);
     expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 });

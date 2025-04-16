@@ -246,7 +246,6 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             onClick={onClickFromContext(entry, i)}
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
-            role="img"
           >
             <ScatterSymbol option={option} isActive={isActive} {...symbolProps} />
           </Layer>

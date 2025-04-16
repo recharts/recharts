@@ -138,7 +138,7 @@ export const generateCategoricalChart = ({
       if (this.props.accessibilityLayer) {
         // Set tabIndex to 0 by default (can be overwritten)
         attrs.tabIndex = this.props.tabIndex ?? 0;
-        // Set role to img by default (can be overwritten)
+        // Set role to application by default (can be overwritten)
         attrs.role = this.props.role ?? 'application';
       }
 

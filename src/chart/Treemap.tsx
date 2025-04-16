@@ -428,7 +428,6 @@ function ContentItem({
         fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
         stroke="#fff"
         {...omit(nodeProps, 'children')}
-        role="img"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}
