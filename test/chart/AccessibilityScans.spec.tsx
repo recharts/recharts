@@ -31,14 +31,6 @@ import {
 import { PageData as data, exampleSankeyData, exampleTreemapData, exampleSunburstData } from '../_data';
 import { expectScatterPoints } from '../helper/expectScatterPoints';
 
-// const svgTagMustHaveLabelViolation = expect.objectContaining({
-//   description: 'Ensures <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text',
-//   help: '<svg> elements with an img role must have an alternative text',
-//   helpUrl: 'https://dequeuniversity.com/rules/axe/4.9/svg-img-alt?application=axeAPI',
-//   id: 'svg-img-alt',
-//   impact: 'serious',
-// });
-
 describe('Static scanning for accessibility markup issues', () => {
   test('Area chart', async () => {
     const { container } = render(
