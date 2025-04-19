@@ -42,14 +42,14 @@ export function getTooltipTranslateXY({
   viewBoxDimension,
 }: {
   allowEscapeViewBox: AllowInDimension;
-  coordinate: Partial<Coordinate>;
+  coordinate: Coordinate;
   key: Dimension2D;
   offsetTopLeft: number;
   position: Partial<Coordinate>;
   reverseDirection: AllowInDimension;
   tooltipDimension: number;
   viewBox: CartesianViewBox;
-  viewBoxDimension: number;
+  viewBoxDimension: number | undefined;
 }): number {
   if (position && isNumber(position[key])) {
     return position[key];
@@ -62,20 +62,29 @@ export function getTooltipTranslateXY({
     return reverseDirection[key] ? negative : positive;
   }
 
+  const viewBoxKey = viewBox[key];
+  if (viewBoxKey == null) {
+    return 0;
+  }
+
   if (reverseDirection[key]) {
     const tooltipBoundary = negative;
-    const viewBoxBoundary = viewBox[key];
+    const viewBoxBoundary = viewBoxKey;
     if (tooltipBoundary < viewBoxBoundary) {
-      return Math.max(positive, viewBox[key]);
+      return Math.max(positive, viewBoxKey);
     }
-    return Math.max(negative, viewBox[key]);
+    return Math.max(negative, viewBoxKey);
+  }
+
+  if (viewBoxDimension == null) {
+    return 0;
   }
   const tooltipBoundary = positive + tooltipDimension;
-  const viewBoxBoundary = viewBox[key] + viewBoxDimension;
+  const viewBoxBoundary = viewBoxKey + viewBoxDimension;
   if (tooltipBoundary > viewBoxBoundary) {
-    return Math.max(negative, viewBox[key]);
+    return Math.max(negative, viewBoxKey);
   }
-  return Math.max(positive, viewBox[key]);
+  return Math.max(positive, viewBoxKey);
 }
 
 export function getTransformStyle({
@@ -105,7 +114,7 @@ export function getTooltipTranslate({
   viewBox,
 }: {
   allowEscapeViewBox: AllowInDimension;
-  coordinate: Partial<Coordinate> | undefined;
+  coordinate: Coordinate | undefined;
   offsetTopLeft: number;
   position: Partial<Coordinate>;
   reverseDirection: AllowInDimension;

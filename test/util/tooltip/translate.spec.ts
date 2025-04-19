@@ -13,7 +13,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return position', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: {},
-        coordinate: {},
+        coordinate: { x: 1, y: 2 },
         key: dimension,
         offsetTopLeft: 100,
         position: { [dimension]: 8 },
@@ -30,7 +30,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return number outside of viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: true },
-        coordinate: { [dimension]: 150 },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -45,7 +45,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return number even outside of viewBox when reversed', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: true },
-        coordinate: { [dimension]: 150 },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -60,7 +60,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return number outside of viewBox even when offsetTopLeft is negative', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: true },
-        coordinate: { [dimension]: 900 },
+        coordinate: { x: 1, y: 2, [dimension]: 900 },
         key: dimension,
         offsetTopLeft: -35,
         position: {},
@@ -72,14 +72,14 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
       expect(result).toBe(865);
     });
 
-    it('should return Y even outside of viewBox when reversed', () => {
+    it('should return number even outside of viewBox when reversed', () => {
       const result = getTooltipTranslateXY({
-        allowEscapeViewBox: { y: true },
-        coordinate: { y: 150 },
-        key: 'y',
+        allowEscapeViewBox: { [dimension]: true },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
+        key: dimension,
         offsetTopLeft: 3,
-        position: { x: 6 },
-        reverseDirection: { y: true },
+        position: {},
+        reverseDirection: { [dimension]: true },
         tooltipDimension: 15,
         viewBox: {},
         viewBoxDimension: 4,
@@ -92,7 +92,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return viewBox.dimension if it is larger', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 150 },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -107,7 +107,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return calculated number if viewBox is smaller', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 150 },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -124,7 +124,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should return calculated translate', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 150 },
+        coordinate: { x: 1, y: 2, [dimension]: 150 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -141,7 +141,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should try to fit translate inside the viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 190 },
+        coordinate: { x: 1, y: 2, [dimension]: 190 },
         key: dimension,
         offsetTopLeft: 3,
         position: {},
@@ -158,7 +158,7 @@ describe.each(dimensions)('getTooltipTranslateXY dimension %s', dimension => {
     it('should try to fit translate inside the viewBox', () => {
       const result = getTooltipTranslateXY({
         allowEscapeViewBox: { [dimension]: false },
-        coordinate: { [dimension]: 900 },
+        coordinate: { x: 1, y: 2, [dimension]: 900 },
         key: dimension,
         offsetTopLeft: -35,
         position: {},
@@ -255,7 +255,7 @@ describe('getTooltipTranslate', () => {
     expect(
       getTooltipTranslate({
         allowEscapeViewBox: {},
-        coordinate: {},
+        coordinate: { x: 1, y: 2 },
         offsetTopLeft: 0,
         position: {},
         reverseDirection: {},
@@ -267,7 +267,7 @@ describe('getTooltipTranslate', () => {
     expect(
       getTooltipTranslate({
         allowEscapeViewBox: {},
-        coordinate: {},
+        coordinate: { x: 1, y: 2 },
         offsetTopLeft: 0,
         position: {},
         reverseDirection: {},
@@ -279,7 +279,7 @@ describe('getTooltipTranslate', () => {
     expect(
       getTooltipTranslate({
         allowEscapeViewBox: {},
-        coordinate: {},
+        coordinate: { x: 1, y: 2 },
         offsetTopLeft: 0,
         position: {},
         reverseDirection: {},
@@ -291,7 +291,7 @@ describe('getTooltipTranslate', () => {
     expect(
       getTooltipTranslate({
         allowEscapeViewBox: {},
-        coordinate: {},
+        coordinate: { x: 1, y: 2 },
         offsetTopLeft: 0,
         position: {},
         reverseDirection: {},
