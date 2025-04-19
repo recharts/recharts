@@ -16,7 +16,7 @@ describe('TooltipBoundingBox', () => {
     active: true,
     hasPayload: true,
     children: 'Hello world!',
-    coordinate: {},
+    coordinate: { x: 1, y: 2 },
     allowEscapeViewBox: {
       x: false,
       y: false,
