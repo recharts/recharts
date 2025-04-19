@@ -173,7 +173,7 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
     axisId,
   } = props;
   const dispatch = useAppDispatch();
-  const defaultIndexAsString: string | undefined =
+  const defaultIndexAsString: string | null | undefined =
     typeof defaultIndex === 'number' ? String(defaultIndex) : defaultIndex;
 
   useEffect(() => {
