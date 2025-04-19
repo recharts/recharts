@@ -42,7 +42,7 @@ export function getTooltipTranslateXY({
   viewBoxDimension,
 }: {
   allowEscapeViewBox: AllowInDimension;
-  coordinate: Partial<Coordinate>;
+  coordinate: Coordinate;
   key: Dimension2D;
   offsetTopLeft: number;
   position: Partial<Coordinate>;
@@ -105,7 +105,7 @@ export function getTooltipTranslate({
   viewBox,
 }: {
   allowEscapeViewBox: AllowInDimension;
-  coordinate: Partial<Coordinate> | undefined;
+  coordinate: Coordinate | undefined;
   offsetTopLeft: number;
   position: Partial<Coordinate>;
   reverseDirection: AllowInDimension;

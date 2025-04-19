@@ -9,7 +9,7 @@ export type TooltipBoundingBoxProps = {
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
   children: ReactNode;
-  coordinate: Partial<Coordinate>;
+  coordinate: Coordinate;
   hasPayload: boolean;
   isAnimationActive: boolean;
   offset: number;
