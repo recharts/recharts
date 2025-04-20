@@ -187,6 +187,7 @@
   "lib/util/isWellBehavedNumber.js",
   "lib/util/payload",
   "lib/util/payload/getUniqPayload.js",
+  "lib/util/resolveDefaultProps.js",
   "lib/util/scale",
   "lib/util/scale/getNiceTickValues.js",
   "lib/util/scale/index.js",

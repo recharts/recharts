@@ -29,6 +29,7 @@ import { setTooltipSettingsState, TooltipIndex, TooltipPayload } from '../state/
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useTooltipChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 import { useTooltipEventType } from '../state/selectors/selectTooltipEventType';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type ContentType<TValue extends ValueType, TName extends NameType> =
   | ReactElement
@@ -138,16 +139,6 @@ const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
   useTranslate3d: false,
   wrapperStyle: {},
 };
-
-function resolveDefaultProps<T extends Record<string, any>>(realProps: T, defaultProps: Partial<T>): T {
-  const resolvedProps: T = { ...realProps };
-  return (Object.keys(defaultProps) as (keyof T)[]).reduce((acc: T, key: keyof T): T => {
-    if (acc[key] === undefined) {
-      acc[key] = defaultProps[key];
-    }
-    return acc;
-  }, resolvedProps);
-}
 
 export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);

@@ -187,6 +187,7 @@
   "types/util/isWellBehavedNumber.d.ts",
   "types/util/payload",
   "types/util/payload/getUniqPayload.d.ts",
+  "types/util/resolveDefaultProps.d.ts",
   "types/util/scale",
   "types/util/scale/getNiceTickValues.d.ts",
   "types/util/scale/index.d.ts",
