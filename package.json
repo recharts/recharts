@@ -163,7 +163,7 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
     "update-browserslist-db": "^1.1.0",
-    "vitest": "^2.0.4",
+    "vitest": "^3.1.1",
     "vitest-axe": "^0.1.0",
     "webpack": "^5.93.0",
     "webpack-bundle-analyzer": "^4.10.2",
