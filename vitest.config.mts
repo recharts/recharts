@@ -17,5 +17,8 @@ export default defineConfig({
       include: ['src', 'test'],
     },
     restoreMocks: true,
+    typecheck: {
+      enabled: true,
+    },
   },
 });
