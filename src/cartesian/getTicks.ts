@@ -1,4 +1,4 @@
-import { CartesianTickItem, CartesianViewBox, Size } from '../util/types';
+import { CartesianTickItem, CartesianViewBoxRequired, Size } from '../util/types';
 import { mathSign, isNumber } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
@@ -127,7 +127,7 @@ export type GetTicksInput = {
   tickFormatter: CartesianAxisSettings['tickFormatter'];
   ticks: ReadonlyArray<CartesianTickItem>;
   unit: CartesianAxisSettings['unit'];
-  viewBox: CartesianViewBox;
+  viewBox: CartesianViewBoxRequired;
 };
 
 export function getTicks(

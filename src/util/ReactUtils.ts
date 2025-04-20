@@ -107,7 +107,13 @@ export function findAllByType<
  * @param  {Object} el A chart element
  * @return {Boolean}   true If the props width and height are number, and greater than 0
  */
-export const validateWidthHeight = ({ width, height }: { width: number; height: number }): boolean => {
+export const validateWidthHeight = ({
+  width,
+  height,
+}: {
+  readonly width?: number | undefined;
+  readonly height?: number | undefined;
+}): boolean => {
   if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
     return false;
   }
@@ -141,7 +147,7 @@ export const isValidSpreadableProp = (
    * to determine if there are attributes that should only exist on that element type.
    * @todo Add an internal cjs version of https://github.com/wooorm/svg-element-attributes for full coverage.
    */
-  const matchingElementTypeKeys = FilteredElementKeyMap?.[svgElementType] ?? [];
+  const matchingElementTypeKeys = (svgElementType && FilteredElementKeyMap?.[svgElementType]) ?? [];
 
   return (
     key.startsWith('data-') ||
