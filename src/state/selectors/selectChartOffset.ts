@@ -1,7 +1,14 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
 import { selectLegendSettings, selectLegendSize } from './legendSelectors';
-import { CartesianViewBox, ChartOffset, Margin, Size } from '../../util/types';
+import {
+  CartesianViewBoxRequired,
+  ChartOffsetRequired,
+  Margin,
+  OffsetHorizontal,
+  OffsetVertical,
+  Size,
+} from '../../util/types';
 import { XAxisSettings, YAxisSettings } from '../cartesianAxisSlice';
 import { LegendSettings } from '../legendSlice';
 import { appendOffsetOfLegend } from '../../util/ChartUtils';
@@ -11,7 +18,7 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
-export const selectChartOffset: (state: RechartsRootState) => ChartOffset = createSelector(
+export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequired = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -31,9 +38,9 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
     yAxes: YAxisSettings[],
     legendSettings: LegendSettings,
     legendSize: Size,
-  ): ChartOffset => {
-    const offsetH = yAxes.reduce(
-      (result, entry) => {
+  ): ChartOffsetRequired => {
+    const offsetH: OffsetHorizontal = yAxes.reduce(
+      (result: OffsetHorizontal, entry: YAxisSettings): OffsetHorizontal => {
         const { orientation } = entry;
 
         if (!entry.mirror && !entry.hide) {
@@ -45,8 +52,8 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
       { left: margin.left || 0, right: margin.right || 0 },
     );
 
-    const offsetV = xAxes.reduce(
-      (result, entry) => {
+    const offsetV: OffsetVertical = xAxes.reduce(
+      (result: OffsetVertical, entry: XAxisSettings): OffsetVertical => {
         const { orientation } = entry;
 
         if (!entry.mirror && !entry.hide) {
@@ -58,7 +65,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
       { top: margin.top || 0, bottom: margin.bottom || 0 },
     );
 
-    let offset: ChartOffset = { ...offsetV, ...offsetH };
+    let offset = { ...offsetV, ...offsetH };
 
     const brushBottom = offset.bottom;
 
@@ -81,7 +88,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffset = crea
 
 export const selectChartViewBox = createSelector(
   selectChartOffset,
-  (offset: ChartOffset): CartesianViewBox => ({
+  (offset: ChartOffsetRequired): CartesianViewBoxRequired => ({
     x: offset.left,
     y: offset.top,
     width: offset.width,
@@ -92,7 +99,7 @@ export const selectChartViewBox = createSelector(
 export const selectAxisViewBox = createSelector(
   selectChartWidth,
   selectChartHeight,
-  (width: number, height: number): CartesianViewBox => ({
+  (width: number, height: number): CartesianViewBoxRequired => ({
     x: 0,
     y: 0,
     width,

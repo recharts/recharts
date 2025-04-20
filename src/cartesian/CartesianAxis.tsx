@@ -330,7 +330,11 @@ export class CartesianAxis extends Component<Props, IState> {
 
     const { ticks } = this.props;
 
-    if (width <= 0 || height <= 0) {
+    /*
+     * This is different condition from what validateWidthHeight is doing;
+     * the CartesianAxis does allow width or height to be undefined.
+     */
+    if ((width != null && width <= 0) || (height != null && height <= 0)) {
       return null;
     }
 

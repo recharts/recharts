@@ -38,7 +38,7 @@ export const useViewBox = (): CartesianViewBox => {
   const rootViewBox = useAppSelector(selectChartViewBox);
   const brushDimensions = useAppSelector(selectBrushDimensions);
   const brushPadding = useAppSelector(selectBrushSettings)?.padding;
-  if (!panorama) {
+  if (!panorama || !brushDimensions || !brushPadding) {
     return rootViewBox;
   }
   return {

@@ -24,6 +24,8 @@ import {
   DataKey,
   LayoutType,
   NumberDomain,
+  OffsetHorizontal,
+  OffsetVertical,
   PolarViewBox,
   RangeObj,
   Size,
@@ -155,10 +157,10 @@ export type BarPositionPosition = {
 };
 
 export const appendOffsetOfLegend = (
-  offset: ChartOffset,
+  offset: OffsetVertical & OffsetHorizontal,
   legendSettings: LegendSettings,
   legendSize: Size,
-): ChartOffset => {
+): OffsetVertical & OffsetHorizontal => {
   if (legendSettings && legendSize) {
     const { width: boxWidth, height: boxHeight } = legendSize;
     const { align, verticalAlign, layout } = legendSettings;

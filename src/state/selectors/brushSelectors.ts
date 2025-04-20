@@ -13,14 +13,14 @@ export type BrushDimensions = {
   height: number;
 };
 
-export const selectBrushDimensions = createSelector(
+export const selectBrushDimensions: (state: RechartsRootState) => BrushDimensions = createSelector(
   [selectBrushSettings, selectChartOffset, selectMargin],
-  (brushSettings, offset, margin) => ({
+  (brushSettings, offset, margin): BrushDimensions => ({
     height: brushSettings.height,
     x: isNumber(brushSettings.x) ? brushSettings.x : offset.left,
     y: isNumber(brushSettings.y)
       ? brushSettings.y
-      : offset.top + offset.height + offset.brushBottom - (margin.bottom || 0),
+      : offset.top + offset.height + offset.brushBottom - (margin?.bottom || 0),
     width: isNumber(brushSettings.width) ? brushSettings.width : offset.width,
   }),
 );

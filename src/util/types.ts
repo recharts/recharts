@@ -1038,6 +1038,16 @@ export type AnimationTiming = 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 
 /** Specifies the duration of animation, the unit of this option is ms. */
 export type AnimationDuration = number;
 
+export type OffsetVertical = {
+  top: number;
+  bottom: number;
+};
+
+export type OffsetHorizontal = {
+  left: number;
+  right: number;
+};
+
 /** the offset of a chart, which define the blank space all around */
 export interface ChartOffset {
   top?: number;
@@ -1048,6 +1058,8 @@ export interface ChartOffset {
   height?: number;
   brushBottom?: number;
 }
+
+export type ChartOffsetRequired = Required<ChartOffset>;
 
 export interface Padding {
   top?: number;
@@ -1206,6 +1218,8 @@ export interface CartesianViewBox {
   width?: number;
   height?: number;
 }
+
+export type CartesianViewBoxRequired = Required<CartesianViewBox>;
 
 export interface PolarViewBox {
   cx?: number;
