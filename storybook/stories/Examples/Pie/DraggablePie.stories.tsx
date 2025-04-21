@@ -40,9 +40,8 @@ function computeAngle(cx: number, cy: number, e: React.MouseEvent): number {
  * @constructor
  */
 function DraggablePoint({ cx, cy, angle, radius }: { cx: number; cy: number; angle: number; radius: number }) {
-  const pointRadius = 10;
-  const pointCx = cx + radius * Math.cos((angle * Math.PI) / 180) - pointRadius / 2;
-  const pointCy = cy - radius * Math.sin((angle * Math.PI) / 180) - pointRadius / 2;
+  const pointCx = cx + radius * Math.cos((angle * Math.PI) / 180);
+  const pointCy = cy - radius * Math.sin((angle * Math.PI) / 180);
   return <circle cx={pointCx} cy={pointCy} r={10} fill="red" />;
 }
 
