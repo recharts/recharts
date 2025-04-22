@@ -142,7 +142,7 @@ export function getTicks(
   }
 
   if (isNumber(interval) || Global.isSsr) {
-    return getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0);
+    return getNumberIntervalTicks(ticks, isNumber(interval) ? interval : 0) ?? [];
   }
 
   let candidates: ReadonlyArray<CartesianTickItem> = [];
