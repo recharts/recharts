@@ -1,6 +1,6 @@
 import { getAngledRectangleWidth } from './CartesianUtils';
 import { getEveryNthWithCondition } from './getEveryNthWithCondition';
-import { Size, CartesianViewBox, CartesianTickItem } from './types';
+import { Size, CartesianTickItem, CartesianViewBoxRequired } from './types';
 
 export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: number) {
   const size = { width: contentSize.width + unitSize.width, height: contentSize.height + unitSize.height };
@@ -8,7 +8,7 @@ export function getAngledTickWidth(contentSize: Size, unitSize: Size, angle: num
   return getAngledRectangleWidth(size, angle);
 }
 
-export function getTickBoundaries(viewBox: CartesianViewBox, sign: number, sizeKey: string) {
+export function getTickBoundaries(viewBox: CartesianViewBoxRequired, sign: number, sizeKey: string) {
   const isWidth = sizeKey === 'width';
   const { x, y, width, height } = viewBox;
   if (sign === 1) {
@@ -44,6 +44,6 @@ export function isVisible(
 export function getNumberIntervalTicks(
   ticks: ReadonlyArray<CartesianTickItem>,
   interval: number,
-): ReadonlyArray<CartesianTickItem> {
+): ReadonlyArray<CartesianTickItem> | undefined {
   return getEveryNthWithCondition(ticks, interval + 1);
 }

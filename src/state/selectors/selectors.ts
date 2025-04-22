@@ -24,11 +24,11 @@ import { ChartDataState } from '../chartDataSlice';
 import {
   AxisType,
   BaseAxisProps,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   LayoutType,
-  PolarViewBox,
+  PolarViewBoxRequired,
   TickItem,
   TooltipEventType,
 } from '../../util/types';
@@ -304,13 +304,13 @@ export const selectIsTooltipActive: (
 export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
   layout: LayoutType | undefined,
-  polarViewBox: PolarViewBox | undefined,
+  polarViewBox: PolarViewBoxRequired | undefined,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
-  offset: ChartOffset,
-): ActiveTooltipProps => {
+  offset: ChartOffsetRequired,
+): ActiveTooltipProps | undefined => {
   if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }

@@ -7,6 +7,7 @@ import { RechartsRootState } from '../../src/state/store';
 import { RechartsStoreProvider } from '../../src/state/RechartsStoreProvider';
 import { arrayTooltipSearcher } from '../../src/state/optionsSlice';
 import { produceState } from '../helper/produceState';
+import { emptyOffset } from '../helper/offsetHelpers';
 
 const defaultProps: CursorProps = {
   cursor: true,
@@ -68,7 +69,7 @@ describe('Cursor', () => {
         ...defaultProps,
         tooltipAxisBandSize: 1,
         chartName: 'BarChart',
-        offset: { top: 0, height: 0 },
+        offset: emptyOffset,
         coordinate: baseCoord,
       };
       const { container } = render(
@@ -85,7 +86,7 @@ describe('Cursor', () => {
       const coordinate = { endAngle: 2, radius: 1, startAngle: 1, x: 0, y: 0 };
       const props: CursorConnectedProps = {
         chartName: '',
-        offset: {},
+        offset: emptyOffset,
         tooltipAxisBandSize: 0,
         ...defaultProps,
         layout: 'radial',

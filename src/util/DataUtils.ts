@@ -11,7 +11,7 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isNan = (value: any): boolean => {
+export const isNan = (value: unknown): boolean => {
   // eslint-disable-next-line eqeqeq
   return typeof value == 'number' && value != +value;
 };
@@ -22,8 +22,7 @@ export const isPercent = (value: string | number): value is `${number}%` =>
 export const isNumber = (value: unknown): value is number =>
   (typeof value === 'number' || value instanceof Number) && !isNan(value);
 
-export const isNumOrStr = (value: unknown): value is number | string =>
-  isNumber(value as number) || typeof value === 'string';
+export const isNumOrStr = (value: unknown): value is number | string => isNumber(value) || typeof value === 'string';
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {

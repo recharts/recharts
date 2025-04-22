@@ -13,7 +13,7 @@ const CONVERSION_RATES: Record<string, number> = {
   in: 96,
   Q: 96 / (2.54 * 40),
   px: 1,
-} as const;
+};
 
 const FIXED_CSS_LENGTH_UNITS: Array<keyof typeof CONVERSION_RATES> = Object.keys(CONVERSION_RATES);
 const STR_NAN = 'NaN';
@@ -127,8 +127,10 @@ const PARENTHESES_REGEX = /\(([^()]*)\)/;
 
 function calculateParentheses(expr: string): string {
   let newExpr = expr;
-  while (newExpr.includes('(')) {
-    const [, parentheticalExpression] = PARENTHESES_REGEX.exec(newExpr);
+  let match: ReturnType<typeof RegExp.prototype.exec> | null;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = PARENTHESES_REGEX.exec(newExpr)) != null) {
+    const [, parentheticalExpression] = match;
     newExpr = newExpr.replace(PARENTHESES_REGEX, calculateArithmetic(parentheticalExpression));
   }
 
@@ -147,7 +149,6 @@ export function safeEvaluateExpression(expression: string): string {
   try {
     return evaluateExpression(expression);
   } catch {
-    /* istanbul ignore next */
     return STR_NAN;
   }
 }
@@ -156,7 +157,6 @@ export function reduceCSSCalc(expression: string): string {
   const result = safeEvaluateExpression(expression.slice(5, -1));
 
   if (result === STR_NAN) {
-    // notify the user
     return '';
   }
 

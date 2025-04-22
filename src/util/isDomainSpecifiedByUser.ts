@@ -131,7 +131,7 @@ export function parseNumericalUserDomain(
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
-    let finalMin, finalMax: string | number;
+    let finalMin, finalMax: string | number | undefined;
 
     if (providedMin === 'auto') {
       if (dataDomain != null) {
@@ -148,9 +148,13 @@ export function parseNumericalUserDomain(
         /* ignore the exception and compute domain from data later */
       }
     } else if (typeof providedMin === 'string' && MIN_VALUE_REG.test(providedMin)) {
-      const value = +MIN_VALUE_REG.exec(providedMin)[1];
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      finalMin = dataDomain?.[0] - value;
+      const match = MIN_VALUE_REG.exec(providedMin);
+      if (match == null || dataDomain == null) {
+        finalMin = undefined;
+      } else {
+        const value = +match[1];
+        finalMin = dataDomain[0] - value;
+      }
     } else {
       finalMin = dataDomain?.[0];
     }
@@ -170,15 +174,22 @@ export function parseNumericalUserDomain(
         /* ignore the exception and compute domain from data later */
       }
     } else if (typeof providedMax === 'string' && MAX_VALUE_REG.test(providedMax)) {
-      const value = +MAX_VALUE_REG.exec(providedMax)[1];
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      finalMax = dataDomain?.[1] + value;
+      const match = MAX_VALUE_REG.exec(providedMax);
+      if (match == null || dataDomain == null) {
+        finalMax = undefined;
+      } else {
+        const value = +match[1];
+        finalMax = dataDomain[1] + value;
+      }
     } else {
       finalMax = dataDomain?.[1];
     }
 
     const candidate = [finalMin, finalMax];
     if (isWellFormedNumberDomain(candidate)) {
+      if (dataDomain == null) {
+        return candidate;
+      }
       return extendDomain(candidate, dataDomain, allowDataOverflow);
     }
   }

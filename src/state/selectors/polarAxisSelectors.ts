@@ -7,7 +7,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
-import { LayoutType, PolarViewBox } from '../../util/types';
+import { LayoutType, PolarViewBoxRequired } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
 import { AxisRange } from './axisSelectors';
@@ -19,14 +19,14 @@ export const implicitAngleAxis: AngleAxisSettings = {
   allowDecimals: false,
   allowDuplicatedCategory: false, // defaultPolarAngleAxisProps.allowDuplicatedCategory has it set to true but the actual axis rendering ignores the prop because reasons,
   dataKey: undefined,
-  domain: defaultPolarAngleAxisProps.domain,
+  domain: undefined,
   id: undefined,
   includeHidden: false,
   name: undefined,
   reversed: defaultPolarAngleAxisProps.reversed,
   scale: defaultPolarAngleAxisProps.scale,
   tick: defaultPolarAngleAxisProps.tick,
-  tickCount: defaultPolarAngleAxisProps.tickCount,
+  tickCount: undefined,
   ticks: undefined,
   type: defaultPolarAngleAxisProps.type,
   unit: undefined,
@@ -37,7 +37,7 @@ export const implicitRadiusAxis: RadiusAxisSettings = {
   allowDecimals: false,
   allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
-  domain: defaultPolarRadiusAxisProps.domain,
+  domain: undefined,
   id: undefined,
   includeHidden: false,
   name: undefined,
@@ -55,14 +55,14 @@ export const implicitRadialBarAngleAxis: AngleAxisSettings = {
   allowDecimals: false,
   allowDuplicatedCategory: defaultPolarAngleAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
-  domain: defaultPolarAngleAxisProps.domain,
+  domain: undefined,
   id: undefined,
   includeHidden: false,
   name: undefined,
   reversed: false,
   scale: defaultPolarAngleAxisProps.scale,
   tick: defaultPolarAngleAxisProps.tick,
-  tickCount: defaultPolarAngleAxisProps.tickCount,
+  tickCount: undefined,
   ticks: undefined,
   type: 'number',
   unit: undefined,
@@ -73,7 +73,7 @@ export const implicitRadialBarRadiusAxis: RadiusAxisSettings = {
   allowDecimals: false,
   allowDuplicatedCategory: defaultPolarRadiusAxisProps.allowDuplicatedCategory,
   dataKey: undefined,
-  domain: defaultPolarRadiusAxisProps.domain,
+  domain: undefined,
   id: undefined,
   includeHidden: false,
   name: undefined,
@@ -106,7 +106,7 @@ export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId)
   return implicitRadiusAxis;
 };
 
-export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | undefined => state.polarOptions;
+export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | null => state.polarOptions;
 
 export const selectMaxRadius: (state: RechartsRootState) => number = createSelector(
   [selectChartWidth, selectChartHeight, selectChartOffset],
@@ -115,7 +115,7 @@ export const selectMaxRadius: (state: RechartsRootState) => number = createSelec
 
 const selectInnerRadius: (state: RechartsRootState) => number | undefined = createSelector(
   [selectPolarOptions, selectMaxRadius],
-  (polarChartOptions: PolarChartOptions | undefined, maxRadius: number) => {
+  (polarChartOptions: PolarChartOptions | null, maxRadius: number) => {
     if (polarChartOptions == null) {
       return undefined;
     }
@@ -125,7 +125,7 @@ const selectInnerRadius: (state: RechartsRootState) => number | undefined = crea
 
 export const selectOuterRadius: (state: RechartsRootState) => number | undefined = createSelector(
   [selectPolarOptions, selectMaxRadius],
-  (polarChartOptions: PolarChartOptions | undefined, maxRadius: number) => {
+  (polarChartOptions: PolarChartOptions | null, maxRadius: number) => {
     if (polarChartOptions == null) {
       return undefined;
     }
@@ -133,7 +133,7 @@ export const selectOuterRadius: (state: RechartsRootState) => number | undefined
   },
 );
 
-const combineAngleAxisRange = (polarOptions: PolarChartOptions | undefined): AxisRange => {
+const combineAngleAxisRange = (polarOptions: PolarChartOptions | null): AxisRange => {
   if (polarOptions == null) {
     return [0, 0];
   }
@@ -146,33 +146,40 @@ export const selectAngleAxisRange: (state: RechartsRootState) => AxisRange = cre
   combineAngleAxisRange,
 );
 
-export const selectAngleAxisRangeWithReversed: (state: RechartsRootState, angleAxisId: AxisId) => AxisRange =
-  createSelector([selectAngleAxis, selectAngleAxisRange], combineAxisRangeWithReverse);
+export const selectAngleAxisRangeWithReversed: (
+  state: RechartsRootState,
+  angleAxisId: AxisId,
+) => AxisRange | undefined = createSelector([selectAngleAxis, selectAngleAxisRange], combineAxisRangeWithReverse);
 
-export const selectRadiusAxisRange: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange = createSelector(
-  [selectMaxRadius, selectInnerRadius, selectOuterRadius],
-  (maxRadius, innerRadius, outerRadius) => {
+export const selectRadiusAxisRange: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange | undefined =
+  createSelector([selectMaxRadius, selectInnerRadius, selectOuterRadius], (maxRadius, innerRadius, outerRadius) => {
     if (maxRadius == null || innerRadius == null || outerRadius == null) {
       return undefined;
     }
     return [innerRadius, outerRadius];
-  },
-);
+  });
 
-export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange =
-  createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
+export const selectRadiusAxisRangeWithReversed: (
+  state: RechartsRootState,
+  radiusAxisId: AxisId,
+) => AxisRange | undefined = createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
-export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox | undefined = createSelector(
+export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequired | undefined = createSelector(
   [selectChartLayout, selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
   (
     layout: LayoutType,
-    polarOptions: PolarChartOptions | undefined,
+    polarOptions: PolarChartOptions | null,
     innerRadius,
     outerRadius,
     width,
     height,
-  ): PolarViewBox | undefined => {
-    if ((layout !== 'centric' && layout !== 'radial') || polarOptions == null) {
+  ): PolarViewBoxRequired | undefined => {
+    if (
+      (layout !== 'centric' && layout !== 'radial') ||
+      polarOptions == null ||
+      innerRadius == null ||
+      outerRadius == null
+    ) {
       return undefined;
     }
     const { cx, cy, startAngle, endAngle } = polarOptions;

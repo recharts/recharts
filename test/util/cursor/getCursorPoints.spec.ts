@@ -2,8 +2,9 @@ import { vi } from 'vitest';
 
 import { RADIAN } from '../../../src/util/PolarUtils';
 import { getCursorPoints } from '../../../src/util/cursor/getCursorPoints';
-import { ChartCoordinate, ChartOffset, Coordinate } from '../../../src/util/types';
+import { ChartCoordinate, ChartOffsetRequired, Coordinate } from '../../../src/util/types';
 import { getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
+import { emptyOffset, makeChartOffset } from '../../helper/offsetHelpers';
 
 vi.mock('../../../src/util/cursor/getRadialCursorPoints');
 
@@ -16,10 +17,10 @@ describe('getCursorPoints', () => {
         x: 18,
         y: 0,
       };
-      const offset: ChartOffset = {
+      const offset: ChartOffsetRequired = makeChartOffset({
         top: 12,
         height: 10,
-      };
+      });
       const result = getCursorPoints('horizontal', activeCoordinate, offset);
       const expected: [Coordinate, Coordinate] = [
         {
@@ -41,10 +42,10 @@ describe('getCursorPoints', () => {
         x: 18,
         y: 99,
       };
-      const offset: ChartOffset = {
+      const offset: ChartOffsetRequired = makeChartOffset({
         left: 42,
         width: 60,
-      };
+      });
       const result = getCursorPoints('vertical', activeCoordinate, offset);
       const expected: [Coordinate, Coordinate] = [
         {
@@ -65,7 +66,7 @@ describe('getCursorPoints', () => {
         x: 1,
         y: 1,
       };
-      const offset: ChartOffset = {};
+      const offset: ChartOffsetRequired = makeChartOffset({});
       const result = getCursorPoints('centric', activeCoordinate, offset);
       const expected: object[] = [
         {
@@ -89,8 +90,7 @@ describe('getCursorPoints', () => {
         x: 0,
         y: 0,
       };
-      const offset: ChartOffset = {};
-      const result = getCursorPoints('centric', activeCoordinate, offset);
+      const result = getCursorPoints('centric', activeCoordinate, emptyOffset);
       const expected: [Coordinate, Coordinate] = [
         {
           x: 24.999999979701798,
@@ -113,8 +113,7 @@ describe('getCursorPoints', () => {
         x: 0,
         y: 0,
       };
-      const emptyOffset: ChartOffset = {};
-      const fullOffset: ChartOffset = {
+      const fullOffset: ChartOffsetRequired = {
         bottom: 87,
         brushBottom: 23,
         height: 35,
@@ -135,8 +134,7 @@ describe('getCursorPoints', () => {
         x: 1,
         y: 1,
       };
-      const offset: ChartOffset = {};
-      const result = getCursorPoints('radial', activeCoordinate, offset);
+      const result = getCursorPoints('radial', activeCoordinate, emptyOffset);
       const expected: object[] = [
         {
           x: undefined,
@@ -159,10 +157,10 @@ describe('getCursorPoints', () => {
         x: 0,
         y: 0,
       };
-      const offset: ChartOffset = {
+      const offset: ChartOffsetRequired = makeChartOffset({
         left: 42,
         width: 60,
-      };
+      });
       getCursorPoints('radial', activeCoordinate, offset);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(activeCoordinate);
