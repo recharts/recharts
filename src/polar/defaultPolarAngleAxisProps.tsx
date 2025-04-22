@@ -1,6 +1,6 @@
 import { Props } from './PolarAngleAxis';
 
-export const defaultPolarAngleAxisProps: Partial<Props> = {
+export const defaultPolarAngleAxisProps = {
   allowDuplicatedCategory: true, // if I set this to false then Tooltip synchronisation stops working in Radar, wtf
   angleAxisId: 0,
   axisLine: true,
@@ -13,4 +13,4 @@ export const defaultPolarAngleAxisProps: Partial<Props> = {
   tickLine: true,
   tickSize: 8,
   type: 'category',
-};
+} as const satisfies Props;

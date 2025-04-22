@@ -7,7 +7,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectChartOffset } from './selectChartOffset';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
-import { LayoutType, PolarViewBox } from '../../util/types';
+import { LayoutType, PolarViewBoxRequired } from '../../util/types';
 import { defaultPolarAngleAxisProps } from '../../polar/defaultPolarAngleAxisProps';
 import { defaultPolarRadiusAxisProps } from '../../polar/defaultPolarRadiusAxisProps';
 import { AxisRange } from './axisSelectors';
@@ -19,14 +19,14 @@ export const implicitAngleAxis: AngleAxisSettings = {
   allowDecimals: false,
   allowDuplicatedCategory: false, // defaultPolarAngleAxisProps.allowDuplicatedCategory has it set to true but the actual axis rendering ignores the prop because reasons,
   dataKey: undefined,
-  domain: defaultPolarAngleAxisProps.domain,
+  domain: undefined,
   id: undefined,
   includeHidden: false,
   name: undefined,
   reversed: defaultPolarAngleAxisProps.reversed,
   scale: defaultPolarAngleAxisProps.scale,
   tick: defaultPolarAngleAxisProps.tick,
-  tickCount: defaultPolarAngleAxisProps.tickCount,
+  tickCount: undefined,
   ticks: undefined,
   type: defaultPolarAngleAxisProps.type,
   unit: undefined,
@@ -162,7 +162,7 @@ export const selectRadiusAxisRange: (state: RechartsRootState, radiusAxisId: Axi
 export const selectRadiusAxisRangeWithReversed: (state: RechartsRootState, radiusAxisId: AxisId) => AxisRange =
   createSelector([selectRadiusAxis, selectRadiusAxisRange], combineAxisRangeWithReverse);
 
-export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox | undefined = createSelector(
+export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBoxRequired | undefined = createSelector(
   [selectChartLayout, selectPolarOptions, selectInnerRadius, selectOuterRadius, selectChartWidth, selectChartHeight],
   (
     layout: LayoutType,
@@ -171,8 +171,13 @@ export const selectPolarViewBox: (state: RechartsRootState) => PolarViewBox | un
     outerRadius,
     width,
     height,
-  ): PolarViewBox | undefined => {
-    if ((layout !== 'centric' && layout !== 'radial') || polarOptions == null) {
+  ): PolarViewBoxRequired | undefined => {
+    if (
+      (layout !== 'centric' && layout !== 'radial') ||
+      polarOptions == null ||
+      innerRadius == null ||
+      outerRadius == null
+    ) {
       return undefined;
     }
     const { cx, cy, startAngle, endAngle } = polarOptions;
