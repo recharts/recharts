@@ -9,6 +9,7 @@ import {
 } from '../../src/context/chartLayoutContext';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { emptyOffset } from '../helper/offsetHelpers';
 
 describe('ChartLayoutContextProvider', () => {
   const mockContextProviderProps: ChartLayoutContextProviderProps = {
@@ -157,11 +158,11 @@ describe('ChartLayoutContextProvider', () => {
 });
 
 describe('useOffset', () => {
-  it('should return empty object when used outside of chart', () => {
+  it('should return offset with all zeroes when used outside of chart', () => {
     expect.assertions(1);
     const Comp = (): null => {
       const offset = useOffset();
-      expect(offset).toEqual({});
+      expect(offset).toEqual(emptyOffset);
       return null;
     };
     render(<Comp />);

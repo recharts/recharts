@@ -18,7 +18,7 @@ import {
   AxisType,
   CartesianTickItem,
   CategoricalDomain,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   LayoutType,
@@ -647,7 +647,7 @@ export const selectAllAppliedNumericalValuesIncludingErrorValues: (
   combineAppliedNumericalValuesIncludingErrorValues,
 );
 
-function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date {
+function onlyAllowNumbersAndStringsAndDates(item: { value: unknown }): string | number | Date | undefined {
   const { value } = item;
   if (isNumOrStr(value) || value instanceof Date) {
     return value;
@@ -770,7 +770,10 @@ export const selectReferenceLinesByAxis: (
   filterReferenceElements,
 );
 
-export const combineDotsDomain = (dots: ReadonlyArray<ReferenceDotSettings>, axisType: XorYType): NumberDomain => {
+export const combineDotsDomain = (
+  dots: ReadonlyArray<ReferenceDotSettings>,
+  axisType: XorYType,
+): NumberDomain | undefined => {
   const allCoords = onlyAllowNumbers(dots.map(dot => (axisType === 'xAxis' ? dot.x : dot.y)));
   if (allCoords.length === 0) {
     return undefined;
@@ -780,7 +783,10 @@ export const combineDotsDomain = (dots: ReadonlyArray<ReferenceDotSettings>, axi
 
 const selectReferenceDotsDomain = createSelector(selectReferenceDotsByAxis, pickAxisType, combineDotsDomain);
 
-export const combineAreasDomain = (areas: ReadonlyArray<ReferenceAreaSettings>, axisType: XorYType): NumberDomain => {
+export const combineAreasDomain = (
+  areas: ReadonlyArray<ReferenceAreaSettings>,
+  axisType: XorYType,
+): NumberDomain | undefined => {
   const allCoords = onlyAllowNumbers(
     areas.flatMap(area => [axisType === 'xAxis' ? area.x1 : area.y1, axisType === 'xAxis' ? area.x2 : area.y2]),
   );
@@ -792,7 +798,10 @@ export const combineAreasDomain = (areas: ReadonlyArray<ReferenceAreaSettings>, 
 
 const selectReferenceAreasDomain = createSelector([selectReferenceAreasByAxis, pickAxisType], combineAreasDomain);
 
-export const combineLinesDomain = (lines: ReadonlyArray<ReferenceLineSettings>, axisType: XorYType): NumberDomain => {
+export const combineLinesDomain = (
+  lines: ReadonlyArray<ReferenceLineSettings>,
+  axisType: XorYType,
+): NumberDomain | undefined => {
   const allCoords = onlyAllowNumbers(lines.map(line => (axisType === 'xAxis' ? line.x : line.y)));
   if (allCoords.length === 0) {
     return undefined;
@@ -872,7 +881,7 @@ export const combineAxisDomain = (
   axisType: XorYorZType,
   numericalDomain: NumberDomain | undefined,
 ): NumberDomain | CategoricalDomain | undefined => {
-  if (axisSettings == null || displayedData.length === 0) {
+  if (axisSettings == null || displayedData == null || displayedData.length === 0) {
     return undefined;
   }
 
@@ -1072,7 +1081,7 @@ export const selectAxisDomainIncludingNiceTicks: (
   axisType: XorYorZType,
   axisId: AxisId,
   isPanorama: boolean,
-) => NumberDomain | CategoricalDomain = createSelector(
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
   [selectBaseAxis, selectAxisDomain, selectNiceTicks, pickAxisType],
   combineAxisDomainWithNiceTicks,
 );
@@ -1128,10 +1137,10 @@ const selectCalculatedPadding: (
     smallestDistanceInPercent: number | undefined,
     layout: LayoutType,
     barCategoryGap: number | string,
-    offset: ChartOffset,
+    offset: ChartOffsetRequired,
     padding: string,
   ) => {
-    if (!Number.isFinite(smallestDistanceInPercent)) {
+    if (!isWellBehavedNumber(smallestDistanceInPercent)) {
       return 0;
     }
     const rangeWidth = layout === 'vertical' ? offset.height : offset.width;
@@ -1217,7 +1226,7 @@ export const combineXAxisRange: (
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffset,
+    offset: ChartOffsetRequired,
     padding,
     brushDimensions: BrushDimensions,
     { padding: brushPadding },
@@ -1246,7 +1255,7 @@ export const combineYAxisRange: (
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffset,
+    offset: ChartOffsetRequired,
     layout: LayoutType,
     padding: { top: number; bottom: number },
     brushDimensions: BrushDimensions,
@@ -1363,7 +1372,7 @@ const selectAllYAxesWithOffsetType: (
       .sort(compareIds),
 );
 
-const getXAxisSize = (offset: ChartOffset, axisSettings: XAxisSettings | undefined): Size => {
+const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings | undefined): Size | undefined => {
   if (axisSettings == null) {
     return undefined;
   }
@@ -1373,7 +1382,7 @@ const getXAxisSize = (offset: ChartOffset, axisSettings: XAxisSettings | undefin
   };
 };
 
-const getYAxisSize = (offset: ChartOffset, axisSettings: YAxisSettings | undefined): Size => {
+const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings | undefined): Size | undefined => {
   if (axisSettings == null) {
     return undefined;
   }
@@ -1391,7 +1400,11 @@ export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Siz
 
 type AxisOffsetSteps = Record<AxisId, number>;
 
-const combineXAxisPositionStartingPoint = (offset: ChartOffset, orientation: XAxisOrientation, chartHeight: number) => {
+const combineXAxisPositionStartingPoint = (
+  offset: ChartOffsetRequired,
+  orientation: XAxisOrientation,
+  chartHeight: number,
+) => {
   switch (orientation) {
     case 'top':
       return offset.top;
@@ -1402,7 +1415,11 @@ const combineXAxisPositionStartingPoint = (offset: ChartOffset, orientation: XAx
   }
 };
 
-const combineYAxisPositionStartingPoint = (offset: ChartOffset, orientation: YAxisOrientation, chartWidth: number) => {
+const combineYAxisPositionStartingPoint = (
+  offset: ChartOffsetRequired,
+  orientation: YAxisOrientation,
+  chartWidth: number,
+) => {
   switch (orientation) {
     case 'left':
       return offset.left;
@@ -1449,7 +1466,7 @@ export const selectAllYAxesOffsetSteps: (
   selectAllYAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
-  (chartWidth, offset, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
+  (chartWidth, offset: ChartOffsetRequired, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
     const steps: AxisOffsetSteps = {};
     let position: number;
     allAxesWithSameOffsetType.forEach(axis => {
@@ -1496,7 +1513,7 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size | undefined = createSelector(
   selectChartOffset,
   selectYAxisSettings,
-  (offset: ChartOffset, axisSettings: YAxisSettings): Size | undefined => {
+  (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size | undefined => {
     if (axisSettings == null) {
       return undefined;
     }
@@ -1602,7 +1619,7 @@ export const selectAxisPropsNeededForCartesianGridTicksGenerator = createSelecto
     axisRange,
     niceTicks,
     axisType: AxisType,
-  ): AxisPropsForCartesianGridTicksGeneration => {
+  ): AxisPropsForCartesianGridTicksGeneration | null => {
     if (axis == null) {
       return null;
     }
@@ -1640,7 +1657,7 @@ export const combineAxisTicks = (
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: XorYType,
-): ReadonlyArray<CartesianTickItem> | null => {
+): ReadonlyArray<CartesianTickItem> | undefined => {
   if (axis == null || scale == null) {
     return undefined;
   }

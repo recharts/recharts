@@ -1,11 +1,11 @@
 import { polarToCartesian } from '../PolarUtils';
-import { ChartCoordinate, Coordinate, ChartOffset, LayoutType } from '../types';
+import { ChartCoordinate, Coordinate, LayoutType, ChartOffsetRequired } from '../types';
 import { RadialCursorPoints, getRadialCursorPoints } from './getRadialCursorPoints';
 
 export function getCursorPoints(
   layout: LayoutType,
   activeCoordinate: ChartCoordinate,
-  offset: ChartOffset,
+  offset: ChartOffsetRequired,
 ): [Coordinate, Coordinate] | RadialCursorPoints {
   let x1, y1, x2, y2;
 
