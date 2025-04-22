@@ -83,6 +83,27 @@ const cssLengthPair = cssLengthUnits.reduce<string[][]>((result, unit1, index1) 
 }, []);
 
 describe('reduceCSSCalc', () => {
+  it.each([
+    ['calc(123px)', '123px'],
+    ['calc(0px)', '0px'],
+    ['calc(50% + 25%)', '75%'],
+    ['calc(10px - 5px)', '5px'],
+    ['calc(2 * 3px)', '6px'],
+    ['calc(10px / 2)', '5px'],
+    ['calc(1rem + 2rem - 3rem)', '0rem'],
+    ['calc(100vw - 50vw)', '50vw'],
+    ['calc(10px + 5%)', ''], // Invalid mixed units return empty string instead of NaN
+    ['calc(10px * 2%)', ''], // Invalid mixed units return empty string instead of NaN
+    ['calc(10px / 0)', 'Infinitypx'], // Division by zero doesn't look like it returns anything useful
+    // test cases with nested parentheses
+    ['calc((10px + 5px) * 2)', '30px'],
+    ['calc(10px + (5px - 2px))', '13px'],
+    ['calc(10px + (5px * 2))', '20px'],
+    ['calc(10px / (2 + 3))', '2px'],
+  ])('should transform %s -> %s', (input, expected) => {
+    expect(reduceCSSCalc(input)).toEqual(expected);
+  });
+
   cssLengthPair.forEach(([unit1, unit2]) => {
     [
       { capHeight: `123${unit1}`, lineHeight: `456${unit2}`, wordsByLines: 3 },
