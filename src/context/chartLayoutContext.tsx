@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect } from 'react';
-import { CartesianViewBox, ChartOffset, LayoutType, Margin, Size } from '../util/types';
+import { CartesianViewBoxRequired, ChartOffsetRequired, LayoutType, Margin, Size } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setMargin } from '../state/layoutSlice';
@@ -33,7 +33,7 @@ export const useClipPathId = (): string | undefined => {
   return useContext(ClipPathIdContext);
 };
 
-export const useViewBox = (): CartesianViewBox => {
+export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   const panorama = useIsPanorama();
   const rootViewBox = useAppSelector(selectChartViewBox);
   const brushDimensions = useAppSelector(selectBrushDimensions);
@@ -49,16 +49,24 @@ export const useViewBox = (): CartesianViewBox => {
   };
 };
 
-const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffset = {};
-export const useOffset = (): ChartOffset => {
+const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetRequired = {
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  width: 0,
+  height: 0,
+  brushBottom: 0,
+};
+export const useOffset = (): ChartOffsetRequired => {
   return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
-export const useChartWidth = (): number => {
+export const useChartWidth = (): number | undefined => {
   return useAppSelector(selectChartWidth);
 };
 
-export const useChartHeight = (): number => {
+export const useChartHeight = (): number | undefined => {
   return useAppSelector(selectChartHeight);
 };
 
