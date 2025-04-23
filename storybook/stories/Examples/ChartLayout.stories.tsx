@@ -1,6 +1,6 @@
 import React from 'react';
 import { StoryContext } from '@storybook/react';
-import { ComposedChart, ResponsiveContainer, useChartHeight, useChartWidth } from '../../../src';
+import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
@@ -32,40 +32,6 @@ export default {
     docs: {
       source: { type: 'code' },
     },
-  },
-};
-
-export const WithResponsiveContainer = {
-  render: (args: Record<string, any>, context: StoryContext) => {
-    return (
-      <ResponsiveContainer {...args}>
-        <ComposedChart>
-          <ChartSizeDimensions />
-          <ShowScale />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
-        </ComposedChart>
-      </ResponsiveContainer>
-    );
-  },
-  args: {
-    width: '100%',
-    height: 400,
-  },
-};
-
-export const WithStaticDimensions = {
-  render: (args: Record<string, any>, context: StoryContext) => {
-    return (
-      <ComposedChart {...args}>
-        <ChartSizeDimensions />
-        <ShowScale />
-        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
-      </ComposedChart>
-    );
-  },
-  args: {
-    width: 500,
-    height: 500,
   },
 };
 
