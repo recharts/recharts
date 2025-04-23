@@ -112,3 +112,5 @@ export type { LegendType } from './util/types';
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
 
 export { useActiveTooltipLabel } from './hooks';
+
+export { useChartHeight, useChartWidth } from './context/chartLayoutContext';
