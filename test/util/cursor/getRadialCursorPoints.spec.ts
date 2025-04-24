@@ -1,31 +1,9 @@
 import { RadialCursorPoints, getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
-import { ChartCoordinate } from '../../../src/util/types';
+import { PolarCoordinate } from '../../../src/util/types';
 
 describe('getRadialCursorPoints', () => {
-  it('should return undefineds and NaNs when passed trivial ChartCoordinate', () => {
-    const activeCoordinate: ChartCoordinate = {
-      x: 0,
-      y: 0,
-    };
-    const result = getRadialCursorPoints(activeCoordinate);
-    const expected: RadialCursorPoints = {
-      points: [
-        { x: NaN, y: NaN },
-        { x: NaN, y: NaN },
-      ],
-      cx: undefined,
-      cy: undefined,
-      radius: undefined,
-      startAngle: undefined,
-      endAngle: undefined,
-    };
-    expect(result).toEqual(expected);
-  });
-
-  it('should add cartesian startPoint and endPoint to activeCoordinate', () => {
-    const activeCoordinate: ChartCoordinate = {
-      x: 0,
-      y: 0,
+  it('should add startPoint and endPoint to activeCoordinate', () => {
+    const activeCoordinate: PolarCoordinate = {
       cx: 10,
       cy: 15,
       radius: 5,
