@@ -29,6 +29,7 @@ export function getCursorPoints(
       x2 = outerPoint.x;
       y2 = outerPoint.y;
     } else {
+      // @ts-expect-error TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
       return getRadialCursorPoints(activeCoordinate);
     }
   }

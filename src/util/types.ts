@@ -92,6 +92,14 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
+export type PolarCoordinate = {
+  cx: number;
+  cy: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+};
+
 export type ScaleType =
   | 'auto'
   | 'linear'

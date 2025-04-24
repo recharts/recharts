@@ -120,7 +120,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
 
 const emptyPayload: TooltipPayload = [];
 
-const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
+const defaultTooltipProps = {
   allowEscapeViewBox: { x: false, y: false },
   animationDuration: 400,
   animationEasing: 'ease',
@@ -138,7 +138,7 @@ const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
   trigger: 'hover',
   useTranslate3d: false,
   wrapperStyle: {},
-};
+} as const satisfies Partial<TooltipProps<any, any>>;
 
 export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);
