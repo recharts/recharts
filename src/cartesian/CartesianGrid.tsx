@@ -378,22 +378,16 @@ export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const offset = useOffset();
-  const propsIncludingDefaults = resolveDefaultProps(props, defaultProps);
+  const propsIncludingDefaults = {
+    ...resolveDefaultProps(props, defaultProps),
+    x: isNumber(props.x) ? props.x : offset.left,
+    y: isNumber(props.y) ? props.y : offset.top,
+    width: isNumber(props.width) ? props.width : offset.width,
+    height: isNumber(props.height) ? props.height : offset.height,
+  };
 
-  const {
-    xAxisId,
-    yAxisId,
-    x: xFromProps,
-    y: yFromProps,
-    width,
-    height,
-    syncWithTicks,
-    horizontalValues,
-    verticalValues,
-  } = propsIncludingDefaults;
-
-  const x = isNumber(xFromProps) ? xFromProps : offset.left;
-  const y = isNumber(yFromProps) ? yFromProps : offset.top;
+  const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
+    propsIncludingDefaults;
 
   const isPanorama = useIsPanorama();
   const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
