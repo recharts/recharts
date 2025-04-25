@@ -37,6 +37,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AreaPointItem } from '../state/selectors/areaSelectors';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -571,7 +572,7 @@ class LineWithState extends Component<InternalProps> {
   }
 }
 
-const defaultLineProps: Partial<Props> = {
+const defaultLineProps = {
   activeDot: true,
   animateNewValues: true,
   animationBegin: 0,
@@ -588,10 +589,27 @@ const defaultLineProps: Partial<Props> = {
   strokeWidth: 1,
   xAxisId: 0,
   yAxisId: 0,
-};
+} as const satisfies Partial<Props>;
 
 function LineImpl(props: Props) {
-  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const {
+    activeDot,
+    animateNewValues,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    connectNulls,
+    dot,
+    hide,
+    isAnimationActive,
+    label,
+    legendType,
+    xAxisId,
+    yAxisId,
+    ...everythingElse
+  } = resolveDefaultProps(props, defaultLineProps);
+
+  const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const { height, width, left, top } = useOffset();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
@@ -600,29 +618,12 @@ function LineImpl(props: Props) {
     [props.dataKey, props.data],
   );
   const points: ReadonlyArray<LinePointItem> = useAppSelector(state =>
-    selectLinePoints(state, props.xAxisId, props.yAxisId, isPanorama, lineSettings),
+    selectLinePoints(state, xAxisId, yAxisId, isPanorama, lineSettings),
   );
   if (layout !== 'horizontal' && layout !== 'vertical') {
     // Cannot render Line in an unsupported layout
     return null;
   }
-
-  const {
-    activeDot = defaultLineProps.activeDot,
-    animateNewValues = defaultLineProps.animateNewValues,
-    animationBegin = defaultLineProps.animationBegin,
-    animationDuration = defaultLineProps.animationDuration,
-    animationEasing = defaultLineProps.animationEasing,
-    connectNulls = defaultLineProps.connectNulls,
-    dot = defaultLineProps.dot,
-    hide = defaultLineProps.hide,
-    isAnimationActive = defaultLineProps.isAnimationActive,
-    label = defaultLineProps.label,
-    legendType = defaultLineProps.legendType,
-    xAxisId = defaultLineProps.xAxisId,
-    yAxisId = defaultLineProps.yAxisId,
-    ...everythingElse
-  } = props;
 
   return (
     <LineWithState

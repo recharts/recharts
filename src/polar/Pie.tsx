@@ -51,6 +51,7 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -712,7 +713,7 @@ function PieWithTouchMove(props: InternalProps) {
   );
 }
 
-const defaultPieProps: Partial<Props> = {
+const defaultPieProps = {
   stroke: '#fff',
   fill: '#808080',
   legendType: 'rect',
@@ -732,9 +733,12 @@ const defaultPieProps: Partial<Props> = {
   animationEasing: 'ease',
   nameKey: 'name',
   rootTabIndex: 0,
-};
+} as const satisfies Partial<Props>;
 
 function PieImpl(props: Props) {
+  const { animationBegin, animationDuration, animationEasing, hide, isAnimationActive, legendType, ...everythingElse } =
+    resolveDefaultProps(props, defaultPieProps);
+
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
   const presentationProps = filterProps(props, false);
 
@@ -780,16 +784,6 @@ function PieImpl(props: Props) {
   );
 
   const sectors = useAppSelector(state => selectPieSectors(state, pieSettings, cells));
-
-  const {
-    animationBegin = defaultPieProps.animationBegin,
-    animationDuration = defaultPieProps.animationDuration,
-    animationEasing = defaultPieProps.animationEasing,
-    hide = defaultPieProps.hide,
-    isAnimationActive = defaultPieProps.isAnimationActive,
-    legendType = defaultPieProps.legendType,
-    ...everythingElse
-  } = props;
 
   return (
     <>

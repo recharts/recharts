@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type RectRadius = [number, number, number, number];
 
@@ -94,10 +95,10 @@ const defaultProps = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
-};
+} as const satisfies Partial<Props>;
 
 export const Rectangle: React.FC<Props> = rectangleProps => {
-  const props = { ...defaultProps, ...rectangleProps };
+  const props = resolveDefaultProps(rectangleProps, defaultProps);
   const pathRef = useRef<SVGPathElement>();
   const [totalLength, setTotalLength] = useState(-1);
 

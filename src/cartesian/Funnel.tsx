@@ -36,6 +36,7 @@ import { useOffset } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export interface FunnelTrapezoidItem extends TrapezoidProps {
   value?: number | string;
@@ -354,7 +355,7 @@ export class FunnelWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultFunnelProps: Partial<Props> = {
+const defaultFunnelProps = {
   stroke: '#fff',
   fill: '#808080',
   legendType: 'rect',
@@ -365,24 +366,24 @@ const defaultFunnelProps: Partial<Props> = {
   animationEasing: 'ease',
   nameKey: 'name',
   lastShapeType: 'triangle',
-};
+} as const satisfies Partial<Props>;
 
 function FunnelImpl(props: Props) {
   const { height, width } = useOffset();
 
   const {
-    stroke = defaultFunnelProps.stroke,
-    fill = defaultFunnelProps.fill,
-    legendType = defaultFunnelProps.legendType,
-    hide = defaultFunnelProps.hide,
-    isAnimationActive = defaultFunnelProps.isAnimationActive,
-    animationBegin = defaultFunnelProps.animationBegin,
-    animationDuration = defaultFunnelProps.animationDuration,
-    animationEasing = defaultFunnelProps.animationEasing,
-    nameKey = defaultFunnelProps.nameKey,
-    lastShapeType = defaultFunnelProps.lastShapeType,
+    stroke,
+    fill,
+    legendType,
+    hide,
+    isAnimationActive,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    nameKey,
+    lastShapeType,
     ...everythingElse
-  } = props;
+  } = resolveDefaultProps(props, defaultFunnelProps);
 
   const presentationProps = filterProps(props, false);
   const cells = findAllByType(props.children, Cell);

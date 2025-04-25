@@ -263,9 +263,9 @@ describe('<Pie />', () => {
     const renderedSectors2 = container.querySelectorAll('.recharts-sector');
     expect(renderedSectors2).toHaveLength(PageData.length);
     expect(renderedSectors2[0].getAttributeNames()).toEqual([
+      'fill',
       'cx',
       'cy',
-      'fill',
       'stroke',
       'name',
       'tabindex',

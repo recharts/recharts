@@ -7,6 +7,7 @@ import { GeometrySector } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {
   const sign = mathSign(endAngle - startAngle);
@@ -208,7 +209,7 @@ const defaultProps = {
 };
 
 export const Sector: React.FC<Props> = sectorProps => {
-  const props = { ...defaultProps, ...sectorProps };
+  const props = resolveDefaultProps(sectorProps, defaultProps);
   const {
     cx,
     cy,
