@@ -23,7 +23,7 @@ import {
   JSX,
 } from 'react';
 import isObject from 'lodash/isObject';
-import { ScaleContinuousNumeric as D3ScaleContinuousNumeric } from 'victory-vendor/d3-scale';
+import * as d3Scale from 'victory-vendor/d3-scale';
 import type { Props as XAxisProps } from '../cartesian/XAxis';
 import type { Props as YAxisProps } from '../cartesian/YAxis';
 
@@ -92,22 +92,11 @@ export interface ChartCoordinate extends Coordinate {
   outerRadius?: number;
 }
 
-export type ScaleType =
-  | 'auto'
-  | 'linear'
-  | 'pow'
-  | 'sqrt'
-  | 'log'
-  | 'identity'
-  | 'time'
-  | 'band'
-  | 'point'
-  | 'ordinal'
-  | 'quantile'
-  | 'quantize'
-  | 'utc'
-  | 'sequential'
-  | 'threshold';
+type D3ScaleType = {
+  [K in keyof typeof d3Scale]: K extends `scale${infer U}` ? Uncapitalize<U> : never;
+}[keyof typeof d3Scale];
+
+export type ScaleType = 'auto' | D3ScaleType;
 
 //
 // Event Handler Types -- Copied from @types/react/index.d.ts and adapted for Props.
@@ -1068,7 +1057,7 @@ export interface GeometrySector {
   cornerIsExternal?: boolean;
 }
 
-export type D3Scale<T> = D3ScaleContinuousNumeric<T, number>;
+export type D3Scale<T> = d3Scale.ScaleContinuousNumeric<T, number>;
 
 export type AxisDomainItem = string | number | Function | 'auto' | 'dataMin' | 'dataMax';
 
