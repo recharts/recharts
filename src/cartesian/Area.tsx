@@ -36,6 +36,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -673,7 +674,7 @@ class AreaWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultAreaProps: Partial<Props> = {
+const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
   animationDuration: 1500,
@@ -688,43 +689,43 @@ const defaultAreaProps: Partial<Props> = {
   stroke: '#3182bd',
   xAxisId: 0,
   yAxisId: 0,
-};
+} as const satisfies Partial<Props>;
 
 function AreaImpl(props: Props) {
+  const {
+    activeDot,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    connectNulls,
+    dot,
+    fill,
+    fillOpacity,
+    hide,
+    isAnimationActive,
+    legendType,
+    stroke,
+    xAxisId,
+    yAxisId,
+    ...everythingElse
+  } = resolveDefaultProps(props, defaultAreaProps);
   const layout = useChartLayout();
   const chartName = useChartName();
-  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const {
-    activeDot = defaultAreaProps.activeDot,
-    animationBegin = defaultAreaProps.animationBegin,
-    animationDuration = defaultAreaProps.animationDuration,
-    animationEasing = defaultAreaProps.animationEasing,
-    connectNulls = defaultAreaProps.connectNulls,
-    dot = defaultAreaProps.dot,
-    fill = defaultAreaProps.fill,
-    fillOpacity = defaultAreaProps.fillOpacity,
-    hide = defaultAreaProps.hide,
-    isAnimationActive = defaultAreaProps.isAnimationActive,
-    legendType = defaultAreaProps.legendType,
-    stroke = defaultAreaProps.stroke,
-    xAxisId = defaultAreaProps.xAxisId,
-    yAxisId = defaultAreaProps.yAxisId,
-    ...everythingElse
-  } = props;
+  const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
-  const areaSettings = useMemo(
+  const areaSettings: AreaSettings = useMemo(
     () => ({
       baseValue: props.baseValue,
       stackId: props.stackId,
-      connectNulls: props.connectNulls,
+      connectNulls,
       data: props.data,
       dataKey: props.dataKey,
     }),
-    [props.baseValue, props.stackId, props.connectNulls, props.data, props.dataKey],
+    [props.baseValue, props.stackId, connectNulls, props.data, props.dataKey],
   );
   const { points, isRange, baseLine } =
-    useAppSelector(state => selectArea(state, props.xAxisId, props.yAxisId, isPanorama, areaSettings)) ?? {};
+    useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
   const { height, width, left, top } = useOffset();
 
   if (layout !== 'horizontal' && layout !== 'vertical') {

@@ -1868,8 +1868,7 @@ describe('<Legend />', () => {
       const { container } = render(
         <AreaChart width={500} height={500} data={numericalData}>
           <Legend />
-          {/* ts-expect-error TypeScript should say that dataKey is required here! */}
-          <Area />
+          <Area dataKey={undefined} />
         </AreaChart>,
       );
       expectLegendLabels(container, [{ fill: 'none', textContent: '' }]);

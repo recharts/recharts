@@ -16,6 +16,7 @@ import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 /**
  * The <CartesianGrid horizontal
@@ -23,7 +24,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
   key: LineItemProps['key'] | undefined;
-  // offset is not present in LineItemProps but it is read from context and then passed to the GridLineType function and element
+  // offset is not present in LineItemProps, but it is read from context and then passed to the GridLineType function and element
   offset: ChartOffset;
 };
 
@@ -356,7 +357,7 @@ const defaultHorizontalCoordinatesGenerator: HorizontalCoordinatesGenerator = (
     syncWithTicks,
   );
 
-const defaultProps: Partial<Props> = {
+const defaultProps = {
   horizontal: true,
   vertical: true,
   // The ordinates of horizontal grid lines
@@ -369,30 +370,30 @@ const defaultProps: Partial<Props> = {
   // The fill of colors of grid lines
   verticalFill: [],
   horizontalFill: [],
-};
+  xAxisId: 0,
+  yAxisId: 0,
+} as const satisfies Partial<Props>;
 
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const offset = useOffset();
-  const propsIncludingDefaults: Props = {
-    ...props,
-    stroke: props.stroke ?? defaultProps.stroke,
-    fill: props.fill ?? defaultProps.fill,
-    horizontal: props.horizontal ?? defaultProps.horizontal,
-    horizontalFill: props.horizontalFill ?? defaultProps.horizontalFill,
-    vertical: props.vertical ?? defaultProps.vertical,
-    verticalFill: props.verticalFill ?? defaultProps.verticalFill,
-    x: isNumber(props.x) ? props.x : offset.left,
-    y: isNumber(props.y) ? props.y : offset.top,
-    width: isNumber(props.width) ? props.width : offset.width,
-    height: isNumber(props.height) ? props.height : offset.height,
-    xAxisId: props.xAxisId ?? 0,
-    yAxisId: props.yAxisId ?? 0,
-  };
+  const propsIncludingDefaults = resolveDefaultProps(props, defaultProps);
 
-  const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
-    propsIncludingDefaults;
+  const {
+    xAxisId,
+    yAxisId,
+    x: xFromProps,
+    y: yFromProps,
+    width,
+    height,
+    syncWithTicks,
+    horizontalValues,
+    verticalValues,
+  } = propsIncludingDefaults;
+
+  const x = isNumber(xFromProps) ? xFromProps : offset.left;
+  const y = isNumber(yFromProps) ? yFromProps : offset.top;
 
   const isPanorama = useIsPanorama();
   const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
@@ -417,7 +418,7 @@ export function CartesianGrid(props: Props) {
 
   /*
    * verticalCoordinatesGenerator and horizontalCoordinatesGenerator are defined
-   * outside of the propsIncludingDefaults because they were never part of the original props
+   * outside the propsIncludingDefaults because they were never part of the original props
    * and they were never passed as a prop down to horizontal/vertical custom elements.
    * If we add these two to propsIncludingDefaults then we are changing public API.
    * Not a bad thing per se but also not necessary.

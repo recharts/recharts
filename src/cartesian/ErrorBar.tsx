@@ -11,6 +11,7 @@ import { LinePointItem } from './Line';
 import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { useXAxis, useYAxis } from '../hooks';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -210,7 +211,7 @@ export function SetErrorBarPreferredDirection({
   return <ErrorBarPreferredDirection.Provider value={direction}>{children}</ErrorBarPreferredDirection.Provider>;
 }
 
-const errorBarDefaultProps: Partial<Props> = {
+const errorBarDefaultProps = {
   stroke: 'black',
   strokeWidth: 1.5,
   width: 5,
@@ -219,18 +220,15 @@ const errorBarDefaultProps: Partial<Props> = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'ease-in-out',
-};
+} as const satisfies Partial<Props>;
 
 function ErrorBarInternal(props: Props) {
   const realDirection: ErrorBarDirection = useErrorBarDirection(props.direction);
 
-  const {
-    width = errorBarDefaultProps.width,
-    isAnimationActive = errorBarDefaultProps.isAnimationActive,
-    animationBegin = errorBarDefaultProps.animationBegin,
-    animationDuration = errorBarDefaultProps.animationDuration,
-    animationEasing = errorBarDefaultProps.animationEasing,
-  } = props;
+  const { width, isAnimationActive, animationBegin, animationDuration, animationEasing } = resolveDefaultProps(
+    props,
+    errorBarDefaultProps,
+  );
 
   return (
     <>
