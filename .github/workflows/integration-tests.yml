@@ -44,6 +44,12 @@ jobs:
           echo "Packed library file: $tgz_file"
           echo "tgz_filename=$tgz_file" >> $GITHUB_OUTPUT
 
+      - name: Publish Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: recharts-snapshot.tgz
+          path: ${{ steps.pack_library.outputs.tgz_filename }}
+
       - name: Run Integration Tests
         working-directory: ./recharts-integ
         run: ./run-test.sh integrations-npm/ts-react18 # ${{ steps.pack_library.outputs.tgz_filename }}
