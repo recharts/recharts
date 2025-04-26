@@ -9,7 +9,7 @@ jobs:
   integration-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout mane Repo @ PR Commit
+      - name: Checkout recharts @ PR Commit
         uses: actions/checkout@v4
         with:
           path: 'recharts' # Checkout into a specific directory
