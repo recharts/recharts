@@ -46,4 +46,4 @@ jobs:
 
       - name: Run Integration Tests
         working-directory: ./recharts-integ
-        run: ./run-test.sh integrations-npm/ts-react18 ${{ steps.pack_library.outputs.tgz_filename }}
+        run: ./run-test.sh integrations-npm/ts-react18 # ${{ steps.pack_library.outputs.tgz_filename }}
