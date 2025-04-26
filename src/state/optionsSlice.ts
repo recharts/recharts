@@ -15,7 +15,7 @@ import { isNan } from '../util/DataUtils';
  */
 export type ChartOptions = {
   chartName: string;
-  defaultTooltipEventType?: TooltipEventType;
+  defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes?: ReadonlyArray<TooltipEventType>;
   // Should this instead be a property of a graphical item? Do we want to mix items with different data types in one chart?
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined;
@@ -40,6 +40,7 @@ const initialState: ChartOptions = {
   chartName: '',
   tooltipPayloadSearcher: undefined,
   eventEmitter: undefined,
+  defaultTooltipEventType: 'axis',
 };
 
 const optionsSlice = createSlice({

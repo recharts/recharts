@@ -22,6 +22,7 @@ import {
 import { selectPolarGridAngles, selectPolarGridRadii } from '../../src/state/selectors/polarGridSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
 import { selectAllPolarAppliedNumericalValues, selectPolarNiceTicks } from '../../src/state/selectors/polarSelectors';
+import { TickItem } from '../../src/util/types';
 
 type ExpectedLine = {
   x1: string;
@@ -827,23 +828,27 @@ describe('<PolarGrid />', () => {
 
       it('should select ticks', () => {
         const { spy } = renderTestCase(state => selectPolarAxisTicks(state, 'angleAxis', 'axis-pv', false));
-        expect(spy).toHaveBeenLastCalledWith([
+        const expected: ReadonlyArray<TickItem> = [
           {
             coordinate: 0,
             offset: -0,
             value: 0,
+            index: 0,
           },
           {
             coordinate: 180,
             offset: -0,
             value: 600,
+            index: 1,
           },
           {
             coordinate: 360,
             offset: -0,
             value: 1200,
+            index: 2,
           },
-        ]);
+        ];
+        expect(spy).toHaveBeenLastCalledWith(expected);
       });
 
       it('should select angles', () => {

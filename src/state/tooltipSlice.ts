@@ -65,7 +65,7 @@ export type TooltipPayloadConfiguration = {
    * If undefined, then Recharts will use mouse interaction coordinates, or the axis coordinates,
    * with some defaults (like, top/left of the chart).
    */
-  positions: Record<TooltipIndex, Coordinate> | ReadonlyArray<Coordinate> | undefined;
+  positions: Record<NonNullable<TooltipIndex>, Coordinate> | ReadonlyArray<Coordinate> | undefined;
 };
 
 export type ActiveTooltipProps = {
@@ -73,20 +73,22 @@ export type ActiveTooltipProps = {
   activeCoordinate: ChartCoordinate | undefined;
 };
 
+/**
+ * So this informs the "tooltip event type". Tooltip event type can be either "axis" or "item"
+ * and it is used for two things:
+ * 1. Sets the active area
+ * 2. Sets the background and cursor highlights
+ *
+ * Some charts only allow to have one type of tooltip event type, some allow both.
+ * Those charts that allow both will have one default, and the "shared" prop will be used to switch between them.
+ * Undefined means "use the chart default".
+ *
+ * Charts that only allow one tooltip event type, will ignore the shared prop.
+ */
+export type SharedTooltipSettings = boolean | undefined;
+
 export type TooltipSettingsState = {
-  /**
-   * So this informs the "tooltip event type". Tooltip event type can be either "axis" or "item"
-   * and it is used for two things:
-   * 1. Sets the active area
-   * 2. Sets the background and cursor highlights
-   *
-   * Some charts only allow to have one type of tooltip event type, some allow both.
-   * Those charts that allow both will have one default, and the "shared" prop will be used to switch between them.
-   * Undefined means "use the chart default".
-   *
-   * Charts that only allow one tooltip event type, will ignore the shared prop.
-   */
-  shared: boolean | undefined;
+  shared: SharedTooltipSettings;
   trigger: TooltipTrigger;
   axisId: AxisId;
   /**
@@ -153,7 +155,7 @@ export type TooltipInteractionState = {
 
 export type TooltipSyncState = TooltipInteractionState & {
   /**
-   * Tooltip syncronisation is a feature that allows multiple charts to share the same interaction state.
+   * Tooltip synchronization is a feature that allows multiple charts to share the same interaction state.
    * This comes with one specialty - the syncMethod. `syncMethod=value` allows the user to synchronise charts
    * based on the active label (which is rendered as the title of the Tooltip).
    * To allow that, we need the label to be stored in the sync state.

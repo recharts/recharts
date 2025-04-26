@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { scaleLinear } from 'victory-vendor/d3-scale';
 import { Surface, CartesianAxis } from '../../src';
-import { CartesianTickItem } from '../../src/util/types';
+import { TickItem } from '../../src/util/types';
 import { RechartsScale } from '../../src/util/ChartUtils';
 
 const CustomizeLabel = ({ x, y }: any) => (
@@ -22,12 +22,12 @@ const CustomizedTick = ({ x, y }: any) => (
 const exampleScale: RechartsScale = scaleLinear();
 
 describe('<CartesianAxis />', () => {
-  const ticks: ReadonlyArray<CartesianTickItem> = [
-    { value: 10, coordinate: 50 },
-    { value: 1000, coordinate: 100 },
-    { value: 20, coordinate: 150 },
-    { value: 40, coordinate: 200 },
-    { value: 90, coordinate: 250 },
+  const ticks: ReadonlyArray<TickItem> = [
+    { value: 10, coordinate: 50, index: 0 },
+    { value: 1000, coordinate: 100, index: 1 },
+    { value: 20, coordinate: 150, index: 2 },
+    { value: 40, coordinate: 200, index: 3 },
+    { value: 90, coordinate: 250, index: 4 },
   ];
 
   it('Renders 5 ticks in simple CartesianAxis', () => {

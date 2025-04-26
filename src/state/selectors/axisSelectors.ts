@@ -1053,7 +1053,7 @@ export const combineAxisDomainWithNiceTicks = (
   domain: NumberDomain | CategoricalDomain | undefined,
   niceTicks: ReadonlyArray<number> | undefined,
   axisType: XorYType,
-) => {
+): NumberDomain | CategoricalDomain | undefined => {
   if (
     /*
      * Angle axis for some reason uses nice ticks when rendering axis tick labels,
@@ -1372,27 +1372,21 @@ const selectAllYAxesWithOffsetType: (
       .sort(compareIds),
 );
 
-const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings | undefined): Size | undefined => {
-  if (axisSettings == null) {
-    return undefined;
-  }
+const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings): Size => {
   return {
     width: offset.width,
     height: axisSettings.height,
   };
 };
 
-const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings | undefined): Size | undefined => {
-  if (axisSettings == null) {
-    return undefined;
-  }
+const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
   return {
     width: axisSettings.width,
     height: offset.height,
   };
 };
 
-export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Size | undefined = createSelector(
+export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Size = createSelector(
   selectChartOffset,
   selectXAxisSettings,
   getXAxisSize,
@@ -1510,13 +1504,10 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
   return { x: stepOfThisAxis, y: offset.top };
 };
 
-export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size | undefined = createSelector(
+export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size = createSelector(
   selectChartOffset,
   selectYAxisSettings,
-  (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size | undefined => {
-    if (axisSettings == null) {
-      return undefined;
-    }
+  (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
     return {
       width: axisSettings.width,
       height: offset.height,
@@ -1657,7 +1648,7 @@ export const combineAxisTicks = (
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: XorYType,
-): ReadonlyArray<CartesianTickItem> | undefined => {
+): ReadonlyArray<TickItem> | undefined => {
   if (axis == null || scale == null) {
     return undefined;
   }
@@ -1676,30 +1667,29 @@ export const combineAxisTicks = (
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (ticks || niceTicks) {
-    const result = (ticks || niceTicks).map((entry: AxisTick): CartesianTickItem => {
+    const result = (ticks || niceTicks).map((entry: AxisTick, index: number): TickItem => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
+        index,
         // If the scaleContent is not a number, the coordinate will be NaN.
         // That could be the case for example with a PointScale and a string as domain.
         coordinate: scale(scaleContent) + offset,
         value: entry,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       };
     });
 
-    return result.filter((row: CartesianTickItem) => !isNan(row.coordinate));
+    return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
     return categoricalDomain.map(
-      (entry: any, index: number): CartesianTickItem => ({
+      (entry: any, index: number): TickItem => ({
         coordinate: scale(entry) + offset,
         value: entry,
         index,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
     );
@@ -1710,17 +1700,16 @@ export const combineAxisTicks = (
       scale
         .ticks(tickCount)
         // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): CartesianTickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
     );
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
   return scale.domain().map(
-    (entry: any, index: number): CartesianTickItem => ({
+    (entry: any, index: number): TickItem => ({
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
-      // @ts-expect-error why does the offset go here? The type does not require it
       offset,
     }),
   );
@@ -1773,7 +1762,6 @@ export const combineGraphicalItemTicks = (
         coordinate: scale(entry) + offset,
         value: entry,
         index,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
     );
@@ -1794,7 +1782,6 @@ export const combineGraphicalItemTicks = (
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
-      // @ts-expect-error why does the offset go here? The type does not require it
       offset,
     }),
   );
