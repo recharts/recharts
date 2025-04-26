@@ -14,20 +14,18 @@ jobs:
         with:
           path: 'recharts' # Checkout into a specific directory
 
-      # 2. Checkout Integration Tests Code
       - name: Checkout Integration Tests
         uses: actions/checkout@v4
         with:
           repository: recharts/recharts-integ
           path: 'recharts-integ'
 
-      # 3. Setup Node, Build & Pack Library
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your preferred Node.js version
+          node-version: '20'
           cache: 'npm'
-          cache-dependency-path: 'recharts/package-lock.json' # Adjust if needed
+          cache-dependency-path: 'recharts/package-lock.json'
 
       - name: Install Dependencies
         working-directory: ./recharts
@@ -46,7 +44,6 @@ jobs:
           echo "Packed library file: $tgz_file"
           echo "tgz_filename=$tgz_file" >> $GITHUB_OUTPUT
 
-      # 4. Run Integration Tests
       - name: Run Integration Tests
-        working-directory: ./recharts-integ # Go into the checked-out tests directory
-        run: ./run-test integrations-npm/ts-react18 ${{ steps.pack_library.outputs.tgz_filename }}
+        working-directory: ./recharts-integ
+        run: ./run-test.sh integrations-npm/ts-react18 ${{ steps.pack_library.outputs.tgz_filename }}
