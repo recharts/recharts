@@ -10,7 +10,7 @@ import {
   AxisPropsNeededForTicksGenerator,
   isCategoricalAxis,
 } from '../../src/util/ChartUtils';
-import { AxisType, DataKey, LayoutType } from '../../src/util/types';
+import { AxisType, DataKey, LayoutType, TickItem } from '../../src/util/types';
 import { BaseAxisWithScale } from '../../src/state/selectors/axisSelectors';
 
 describe('getTicksForAxis', () => {
@@ -115,26 +115,31 @@ describe('getTicksForAxis', () => {
     expect(getTicksOfAxis(XAxisWithActiveBrush, true, undefined)).toEqual([
       {
         coordinate: 5,
+        index: 1,
         offset: 0,
         value: '13',
       },
       {
         coordinate: 220.25,
+        index: 2,
         offset: 0,
         value: '14',
       },
       {
         coordinate: 435.5,
+        index: 3,
         offset: 0,
         value: '15',
       },
       {
         coordinate: 650.75,
+        index: 4,
         offset: 0,
         value: '16',
       },
       {
         coordinate: 866,
+        index: 5,
         offset: 0,
         value: '17',
       },
@@ -143,11 +148,11 @@ describe('getTicksForAxis', () => {
 
   it('Works for yAxis', () => {
     expect(getTicksOfAxis(Y_AXIS_EXAMPLE, true, undefined)).toEqual([
-      { coordinate: 0, offset: 0, value: 0 },
-      { coordinate: 400, offset: 0, value: 400 },
-      { coordinate: 800, offset: 0, value: 800 },
-      { coordinate: 1200, offset: 0, value: 1200 },
-      { coordinate: 1600, offset: 0, value: 1600 },
+      { coordinate: 0, offset: 0, value: 0, index: 0 },
+      { coordinate: 400, offset: 0, value: 400, index: 1 },
+      { coordinate: 800, offset: 0, value: 800, index: 2 },
+      { coordinate: 1200, offset: 0, value: 1200, index: 3 },
+      { coordinate: 1600, offset: 0, value: 1600, index: 4 },
     ]);
   });
 
@@ -159,11 +164,11 @@ describe('getTicksForAxis', () => {
     };
 
     expect(getTicksOfAxis(axis, true, undefined)).toEqual([
-      { coordinate: 0, offset: 0, value: 0 },
-      { coordinate: 250, offset: 0, value: 400 },
-      { coordinate: 500, offset: 0, value: 800 },
-      { coordinate: 750, offset: 0, value: 1200 },
-      { coordinate: 1000, offset: 0, value: 1600 },
+      { coordinate: 0, offset: 0, value: 0, index: 0 },
+      { coordinate: 250, offset: 0, value: 400, index: 1 },
+      { coordinate: 500, offset: 0, value: 800, index: 2 },
+      { coordinate: 750, offset: 0, value: 1200, index: 3 },
+      { coordinate: 1000, offset: 0, value: 1600, index: 4 },
     ]);
   });
 });
@@ -188,7 +193,11 @@ describe('getBandSizeOfAxis', () => {
       // @ts-expect-error we need to wrap the d3 scales in unified interface
       scale: scaleLinear(),
     };
-    const ticks = [{ coordinate: 13 }, { coordinate: 15 }, { coordinate: 20 }];
+    const ticks: ReadonlyArray<TickItem> = [
+      { coordinate: 13, index: 0, value: 'a' },
+      { coordinate: 15, index: 1, value: 'b' },
+      { coordinate: 20, index: 2, value: 'c' },
+    ];
     expect(getBandSizeOfAxis(axis, ticks)).toBe(2);
   });
 });
@@ -286,11 +295,11 @@ describe('getValueByDataKey', () => {
 });
 
 describe('calculateActiveTickIndex', () => {
-  const ticks = [
-    { coordinate: 0, index: 0 },
-    { coordinate: 12, index: 1 },
-    { coordinate: 14, index: 2 },
-    { coordinate: 15, index: 3 },
+  const ticks: ReadonlyArray<TickItem> = [
+    { coordinate: 0, index: 0, value: 'a' },
+    { coordinate: 12, index: 1, value: 'b' },
+    { coordinate: 14, index: 2, value: 'c' },
+    { coordinate: 15, index: 3, value: 'd' },
   ];
   it('calculateActiveTickIndex(12, ticks) should return 1', () => {
     expect(calculateActiveTickIndex(12, ticks, [], 'radiusAxis', [0, 100])).toBe(1);

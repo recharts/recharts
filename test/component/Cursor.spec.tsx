@@ -35,6 +35,7 @@ const preloadedState: Partial<RechartsRootState> = {
     chartName: '',
     tooltipPayloadSearcher: arrayTooltipSearcher,
     eventEmitter: undefined,
+    defaultTooltipEventType: 'axis',
   },
 };
 

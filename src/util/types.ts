@@ -1070,10 +1070,10 @@ export interface ChartOffset {
 export type ChartOffsetRequired = Required<ChartOffset>;
 
 export interface Padding {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
 }
 
 export interface GeometrySector {
@@ -1202,9 +1202,10 @@ export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveS
 export type AxisTick = number | string;
 
 export interface TickItem {
-  value?: any;
+  value: any;
   coordinate: number;
-  index?: number;
+  index: number;
+  offset?: number;
 }
 
 export interface CartesianTickItem extends TickItem {

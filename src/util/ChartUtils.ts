@@ -63,7 +63,7 @@ export const calculateActiveTickIndex = (
    */
   coordinate: number,
   ticks: ReadonlyArray<TickItem>,
-  unsortedTicks: ReadonlyArray<TickItem> | undefined,
+  unsortedTicks: ReadonlyArray<TickItem>,
   axisType: AxisType | undefined,
   range: AxisRange | undefined,
 ): number => {
@@ -302,7 +302,7 @@ export const getTicksOfAxis = (
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {
-    const result = (ticks || niceTicks).map((entry: AxisTick) => {
+    const result = (ticks || niceTicks).map((entry: AxisTick, index: number): TickItem => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -311,6 +311,7 @@ export const getTicksOfAxis = (
         coordinate: scale(scaleContent) + offset,
         value: entry,
         offset,
+        index,
       };
     });
 
@@ -324,19 +325,17 @@ export const getTicksOfAxis = (
         coordinate: scale(entry) + offset,
         value: entry,
         index,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
     );
   }
 
   if (scale.ticks && !isAll) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+    return scale
+      .ticks(tickCount)
+      .map(
+        (entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }),
+      );
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
@@ -345,7 +344,6 @@ export const getTicksOfAxis = (
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
-      // @ts-expect-error why does the offset go here? The type does not require it
       offset,
     }),
   );

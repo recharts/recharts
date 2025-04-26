@@ -57,9 +57,9 @@ describe('getCateCoordinateOfLine', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
         axis: { type: 'category', scale: mockScale },
-        ticks: [{ coordinate: 8 }],
-        index: 0,
         bandSize: 2,
+        index: 0,
+        ticks: [{ coordinate: 8, index: 0, value: 'foo' }],
       });
       expect(actual).toBe(9);
     });
@@ -68,9 +68,12 @@ describe('getCateCoordinateOfLine', () => {
       // @ts-expect-error incomplete mock data
       const actual = getCateCoordinateOfLine({
         axis: { type: 'category', dataKey: 'foo', scale: mockScale },
-        entry: { foo: 'bar' },
-        ticks: [{ coordinate: 8 }, { coordinate: 16, value: 'bar' }],
         bandSize: 4,
+        entry: { foo: 'bar' },
+        ticks: [
+          { coordinate: 8, index: 0, value: 'foo' },
+          { coordinate: 16, index: 1, value: 'bar' },
+        ],
       });
       expect(actual).toBe(18);
     });

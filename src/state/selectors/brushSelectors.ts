@@ -3,8 +3,9 @@ import { RechartsRootState } from '../store';
 import { selectChartOffset } from './selectChartOffset';
 import { selectMargin } from './containerSelectors';
 import { isNumber } from '../../util/DataUtils';
+import { BrushSettings } from '../brushSlice';
 
-export const selectBrushSettings = (state: RechartsRootState) => state.brush;
+export const selectBrushSettings = (state: RechartsRootState): BrushSettings => state.brush;
 
 export type BrushDimensions = {
   x: number;

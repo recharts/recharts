@@ -567,9 +567,15 @@ describe('<YAxis />', () => {
       offset: 0,
       tickCoord: 395,
       value: 0,
+      index: 0,
     };
     const eventIndex = 0;
-    const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
+    const eventExpect = expect.objectContaining({
+      type: 'click',
+      pageX: 0,
+      pageY: 0,
+      target: expect.any(Object),
+    });
 
     // click
     fireEvent.click(firstTick);
