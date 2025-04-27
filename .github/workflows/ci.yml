@@ -18,9 +18,6 @@ jobs:
   checkout:
     name: Checkout Code and install dependencies
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
