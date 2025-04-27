@@ -3,34 +3,118 @@
 
 name: Node.js CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - 3.x
+
+env:
+  NODE_VERSION: 20.x
 
 jobs:
-  build-and-test:
-    name: Build and Test on ${{ matrix.node-version }}
+  checkout:
+    name: Checkout Code and install dependencies
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [20.x]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'recharts'
+
+      - name: Checkout Integration Tests
+        uses: actions/checkout@v4
+        with:
+          repository: recharts/recharts-integ
+          path: 'recharts-integ'
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'recharts/package-lock.json'
+
+      - name: Install Dependencies
+        working-directory: ./recharts
+        run: npm ci
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: checkout
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run build
-        run: npm run build --if-present
-      - name: Typecheck
-        run: npm run check-types
-      - name: Lint
-        run: npm run lint
-      - name: Test
+      - name: Build
+        working-directory: ./recharts
+        run: npm run build
+
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Unit Tests
+        working-directory: ./recharts
         run: npm run test-coverage
-      - name: Serve Storybook and run tests
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Typecheck
+        working-directory: ./recharts
+        run: npm run check-types
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Lint
+        working-directory: ./recharts
+        run: npm run lint
+
+  storybook:
+    name: Storybook
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Serve Storybook
+        working-directory: ./recharts
         run: npm run test-storybook:ci
+
+  pack:
+    name: Pack
+    runs-on: ubuntu-latest
+    needs: [checkout, build]
+    steps:
+      - name: Pack
+        id: pack_library
+        working-directory: ./recharts
+        run: |
+          npm pack
+          tgz_file=$(ls *.tgz)
+          echo "Packed library file: $tgz_file"
+          echo "tgz_filename=$tgz_file" >> $GITHUB_OUTPUT
+
+      - name: Publish Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: recharts-snapshot.tgz
+          path: ${{ steps.pack_library.outputs.tgz_filename }}
+
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [checkout, pack]
+    steps:
+      - name: Run Integration Tests
+        working-directory: ./recharts-integ
+        run: ./run-test.sh integrations-npm/ts-react18 # ${{ steps.pack_library.outputs.tgz_filename }}
