@@ -1,7 +1,6 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# This workflow runs all CI steps within a single job.
 
-name: Node.js CI
+name: Node.js CI - Single Job
 
 on:
   push:
@@ -13,105 +12,84 @@ on:
 
 env:
   NODE_VERSION: 20.x
+  # Define the path where the main repository code will be checked out
+  RECHARTS_PATH: 'recharts'
+  # Define the path where the integration test repository code will be checked out
+  INTEG_PATH: 'recharts-integ'
 
 jobs:
-  checkout:
-    name: Checkout Code and install dependencies
+  ci:
+    name: Build, Test, Pack, and Integrate
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      # Step 1: Checkout Main Repository
+      - name: Checkout Recharts Repository
         uses: actions/checkout@v4
         with:
-          path: 'recharts'
+          path: ${{ env.RECHARTS_PATH }}
 
-      - name: Checkout Integration Tests
+      # Step 2: Checkout Integration Tests Repository
+      - name: Checkout Integration Tests Repository
         uses: actions/checkout@v4
         with:
           repository: recharts/recharts-integ
-          path: 'recharts-integ'
+          path: ${{ env.INTEG_PATH }}
 
+      # Step 3: Setup Node.js Environment
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: 'recharts/package-lock.json'
+          # Cache depends on the lock file within the checked-out path
+          cache-dependency-path: '${{ env.RECHARTS_PATH }}/package-lock.json'
 
+      # Step 4: Install Main Dependencies
       - name: Install Dependencies
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm ci
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: checkout
-
-    steps:
+      # Step 5: Build
       - name: Build
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm run build
 
-  unit-test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: checkout
-    steps:
+      # Step 6: Run Unit Tests
       - name: Unit Tests
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm run test-coverage
 
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    needs: checkout
-    steps:
+      # Step 7: Run Type Checking
       - name: Typecheck
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm run check-types
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    needs: checkout
-    steps:
+      # Step 8: Run Linting
       - name: Lint
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm run lint
 
-  storybook:
-    name: Storybook
-    runs-on: ubuntu-latest
-    needs: checkout
-    steps:
-      - name: Serve Storybook
-        working-directory: ./recharts
+      # Step 9: Run Storybook Test
+      - name: Storybook Test
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: npm run test-storybook:ci
 
-  pack:
-    name: Pack
-    runs-on: ubuntu-latest
-    needs: [checkout, build]
-    steps:
-      - name: Pack
+      # Step 10: Pack the Library
+      # Give this step an ID so we can reference its output
+      - name: Pack Library
         id: pack_library
-        working-directory: ./recharts
+        working-directory: ./${{ env.RECHARTS_PATH }}
         run: |
-          npm pack
-          tgz_file=$(ls *.tgz)
-          echo "Packed library file: $tgz_file"
-          echo "tgz_filename=$tgz_file" >> $GITHUB_OUTPUT
+          # Run npm pack and capture the output filename
+          tgz_filename=$(npm pack | tail -n 1)
+          echo "Packed library file: $tgz_filename"
+          # Make the filename available as an output variable for this step
+          echo "tgz_filename=$tgz_filename" >> $GITHUB_OUTPUT
 
-      - name: Publish Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: recharts-snapshot.tgz
-          path: ${{ steps.pack_library.outputs.tgz_filename }}
-
-  integration-test:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: [checkout, pack]
-    steps:
+      # Step 11: Run Integration Tests
+      # Note: If integration tests need their own `npm ci`, add that step here.
       - name: Run Integration Tests
-        working-directory: ./recharts-integ
-        run: ./run-test.sh integrations-npm/ts-react18 # ${{ steps.pack_library.outputs.tgz_filename }}
+        working-directory: ./${{ env.INTEG_PATH }}
+        # Use the output from the 'pack_library' step
+        # The path to the .tgz file is relative to the integration tests' working directory
+        run: ./run-test.sh integrations-npm/ts-react18 ../${{ env.RECHARTS_PATH }}/${{ steps.pack_library.outputs.tgz_filename }}
