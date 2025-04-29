@@ -3,9 +3,6 @@
 name: Build and test
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - 3.x
@@ -93,3 +90,15 @@ jobs:
         # Use the output from the 'pack_library' step
         # The path to the .tgz file is relative to the integration tests' working directory
         run: ./run-test.sh integrations-npm/ts-react18 ../${{ env.RECHARTS_PATH }}/${{ steps.pack_library.outputs.tgz_filename }}
+
+      # Step 12: Publish visual regression tests to Chromatic
+      # Chromatic gives us only this many free credits per month
+      # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
+      - name: Publish to Chromatic
+        # Chromatic action from https://www.chromatic.com/docs/github-actions
+        # Using this github action from https://github.com/lightspeedretail/actions-label-prs
+        uses: chromaui/action@latest
+        # Chromatic GitHub Action options
+        with:
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
