@@ -89,8 +89,8 @@ jobs:
       - name: Run Integration Tests
         working-directory: ./${{ env.INTEG_PATH }}
         # Use the output from the 'pack_library' step
-        # The path to the .tgz file is relative to the integration tests' working directory
-        run: ./run-test.sh integrations-npm/ts-react18 ../${{ env.RECHARTS_PATH }}/${{ steps.pack_library.outputs.tgz_filename }}
+        # The path to the .tgz file is absolute
+        run: ./run-test.sh integrations-npm/ts-react18 ${{ steps.pack_library.outputs.tgz_filename }}
 
       # Step 12: Upload Coverage Report
       # Now that we know all the tests are passing, let's report code coverage
