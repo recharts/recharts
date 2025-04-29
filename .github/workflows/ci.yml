@@ -27,9 +27,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: recharts/recharts-integ
-          sparse-checkout: | # Optional: Speed up checkout if only top-level dirs are needed
-            *
-            !*/*
 
       - name: List Integration Test Directories
         id: set_matrix
