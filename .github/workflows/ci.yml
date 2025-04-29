@@ -1,6 +1,6 @@
 # This workflow runs all CI steps within a single job.
 
-name: Node.js CI - Single Job
+name: Build and test
 
 on:
   push:
