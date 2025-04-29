@@ -79,9 +79,10 @@ jobs:
         run: |
           # Run npm pack and capture the output filename
           tgz_filename=$(npm pack | tail -n 1)
-          echo "Packed library file: $tgz_filename"
-          # Make the filename available as an output variable for this step
-          echo "tgz_filename=$tgz_filename" >> $GITHUB_OUTPUT
+          tgz_absolute_path=$(realpath "$tgz_filename")
+          echo "Packed library file: $tgz_absolute_path"
+          # Make the absolute path available as an output variable for this step
+          echo "tgz_filename=$tgz_absolute_path" >> $GITHUB_OUTPUT
 
       # Step 11: Run Integration Tests
       # Note: If integration tests need their own `npm ci`, add that step here.
