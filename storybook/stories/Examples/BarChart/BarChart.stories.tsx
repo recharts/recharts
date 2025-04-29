@@ -1013,7 +1013,7 @@ export const ChangingDataKey = {
             stroke="#8884d8"
             strokeDasharray="5 5"
             label={{ fill: 'red' }}
-            animationDuration={3000}
+            animationDuration={1000}
           />
         </BarChart>
       </>
@@ -1090,7 +1090,7 @@ export const ChangingDataKeyAndStacked = {
             stroke="yellow"
             strokeDasharray="5 5"
             label={{ fill: 'red' }}
-            animationDuration={3000}
+            animationDuration={1000}
           />
         </BarChart>
       </>
