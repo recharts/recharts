@@ -67,17 +67,17 @@ jobs:
       - name: Build
         run: npm run build
 
-#      - name: Unit Tests
-#        run: npm run test-coverage
-#
-#      - name: Typecheck
-#        run: npm run check-types
-#
-#      - name: Lint
-#        run: npm run lint
-#
-#      - name: Storybook Test
-#        run: npm run test-storybook:ci
+      - name: Unit Tests
+        run: npm run test-coverage
+
+      - name: Typecheck
+        run: npm run check-types
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Storybook Test
+        run: npm run test-storybook:ci
 
       - name: Pack Library
         # Give this step an ID so we can reference its output
@@ -100,25 +100,25 @@ jobs:
           path: ${{ steps.pack_library.outputs.tgz_name }}
           retention-days: 14
 
-#      # Now that we know all the tests are passing, let's report code coverage
-#      - name: Upload coverage report to Codecov
-#        uses: codecov/codecov-action@v5
-#        with:
-#          slug: recharts/recharts
-#          files: ./coverage/coverage-final.json
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#
-#      # Chromatic gives us only this many free credits per month
-#      # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
-#      - name: Publish visual regression tests to Chromatic
-#        # Chromatic action from https://www.chromatic.com/docs/github-actions
-#        uses: chromaui/action@latest
-#        # Chromatic GitHub Action options
-#        with:
-#          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
-#          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-#          # Let's say that we don't want to use our Chromatic credits for PRs from dependabot
-#          skip: "dependabot/**"
+      # Now that we know all the tests are passing, let's report code coverage
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: recharts/recharts
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # Chromatic gives us only this many free credits per month
+      # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
+      - name: Publish visual regression tests to Chromatic
+        # Chromatic action from https://www.chromatic.com/docs/github-actions
+        uses: chromaui/action@latest
+        # Chromatic GitHub Action options
+        with:
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Let's say that we don't want to use our Chromatic credits for PRs from dependabot
+          skip: "dependabot/**"
 
   integration_tests:
     name: Test ${{ matrix.test_dir }}
@@ -150,12 +150,6 @@ jobs:
           # path is the directory where the artifact will be downloaded
           # so the full path to the artifact will be ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
           path: ${{ runner.temp }}
-
-      - name: Debug
-        # Print the contents of the integration test directory
-        run: |
-          ls -la ${{ runner.temp }}
-          ls -la ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
 
       - name: Run Test
         # Use the output from the 'pack_library' step
