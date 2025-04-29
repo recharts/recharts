@@ -142,14 +142,14 @@ jobs:
         with:
           name: ${{ env.PACKED_ARTIFACT_NAME }}
           # Download it to a predictable location
-          path: ${{ runner.temp }}/recharts-snapshot.tgz
+          path: ${{ runner.temp }}
 
       - name: Debug
         # Print the contents of the integration test directory
         run: |
           ls -la ${{ runner.temp }}
-          ls -la ${{ runner.temp }}/recharts-snapshot.tgz
+          ls -la ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
 
       - name: Run Test
         # Use the output from the 'pack_library' step
-        run: ./run-test.sh integrations-npm/ts-react18 "file:${{ runner.temp }}/recharts-snapshot.tgz"
+        run: ./run-test.sh integrations-npm/ts-react18 "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
