@@ -117,7 +117,7 @@ jobs:
           skip: "dependabot/**"
 
   integration_tests:
-    name: Run Integration Test (${{ matrix.test_dir }})
+    name: Test ${{ matrix.test_dir }}
     runs-on: ubuntu-latest
     needs: [list_integration_tests, build_test_pack]
     strategy:
@@ -142,9 +142,8 @@ jobs:
         with:
           name: ${{ env.PACKED_ARTIFACT_NAME }}
           # Download it to a predictable location
-          path: ./recharts-snapshot.tgz
+          path: $HOME/recharts-snapshot.tgz
 
-      - name: Run Integration Tests
+      - name: Run Test
         # Use the output from the 'pack_library' step
-        # The path to the .tgz file is absolute
-        run: ./run-test.sh integrations-npm/ts-react18 "file:./recharts-snapshot.tgz"
+        run: ./run-test.sh integrations-npm/ts-react18 "file:$HOME/recharts-snapshot.tgz"
