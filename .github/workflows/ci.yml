@@ -30,19 +30,10 @@ jobs:
 
       - name: List Integration Test Directories
         id: set_matrix
-        # This command finds directories directly under INTEG_PATH
+        # This command finds all integration test directories
         # and formats them as a JSON array.
         run: |
-          # note that OSX find does not support -printf so this will not work on OSX unless you install GNU find
-          # with brew install findutils
-          DIRS_LIST=$(find integrations* -mindepth 1 -maxdepth 1 -type d -printf '"%f",')
-          # Check if DIRS_LIST is empty before removing trailing comma
-          if [ -z "$DIRS_LIST" ]; then
-            JSON_ARRAY="[]"
-          else
-            # Remove the trailing comma and wrap in brackets
-            JSON_ARRAY="[${DIRS_LIST%,}]"
-          fi
+          JSON_ARRAY=$(find integrations* -maxdepth 1 -mindepth 1 -type d | awk 'BEGIN { printf "[" } NR > 1 { printf "," } { printf "\"%s\"", $0 } END { printf "]" }')
           echo "Generated directory list: $JSON_ARRAY"
           echo "directories=$JSON_ARRAY" >> $GITHUB_OUTPUT
 
