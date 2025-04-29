@@ -106,7 +106,6 @@ jobs:
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish to Chromatic
         # Chromatic action from https://www.chromatic.com/docs/github-actions
-        # Using this github action from https://github.com/lightspeedretail/actions-label-prs
         uses: chromaui/action@latest
         # Chromatic GitHub Action options
         with:
