@@ -35,7 +35,7 @@ jobs:
         run: |
           # note that OSX find does not support -printf so this will not work on OSX unless you install GNU find
           # with brew install findutils
-          DIRS_LIST=$(find * -maxdepth 0 -type d -printf '"%f",')
+          DIRS_LIST=$(find integrations* -mindepth 1 -maxdepth 1 -type d -printf '"%f",')
           # Check if DIRS_LIST is empty before removing trailing comma
           if [ -z "$DIRS_LIST" ]; then
             JSON_ARRAY="[]"
