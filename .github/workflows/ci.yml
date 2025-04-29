@@ -85,8 +85,10 @@ jobs:
         run: |
           # Run npm pack and capture the output filename (relative to current dir)
           tgz_filename=$(npm pack | tail -n 1)
-          echo "Packed library file: $tgz_filename"
-          echo "tgz_name=$tgz_filename" >> $GITHUB_OUTPUT
+          # rename from the default packed name to PACKED_ARTIFACT_NAME so that we don't need to guess the name later - the artifact download remembers the original name
+          mv $tgz_filename ${{ env.PACKED_ARTIFACT_NAME }}
+          echo "Packed library file: $tgz_filename renamed to ${{ env.PACKED_ARTIFACT_NAME }}"
+          echo "tgz_name=${{ env.PACKED_ARTIFACT_NAME }}" >> $GITHUB_OUTPUT
 
       - name: Upload Packed Library Artifact
         uses: actions/upload-artifact@v4
@@ -140,8 +142,11 @@ jobs:
       - name: Download Packed Library Artifact
         uses: actions/download-artifact@v4
         with:
+          # name is the filename, but somehow it also quite ignores this name and uses the `recharts-3.0.0-beta.0.tgz` name anyway
+          # which is why I rename the file during upload too
           name: ${{ env.PACKED_ARTIFACT_NAME }}
-          # Download it to a predictable location
+          # path is the directory where the artifact will be downloaded
+          # so the full path to the artifact will be ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
           path: ${{ runner.temp }}
 
       - name: Debug
