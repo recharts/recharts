@@ -85,7 +85,8 @@ jobs:
         run: |
           # Run npm pack and capture the output filename (relative to current dir)
           tgz_filename=$(npm pack | tail -n 1)
-          # rename from the default packed name to PACKED_ARTIFACT_NAME so that we don't need to guess the name later - the artifact download remembers the original name
+          # rename from the default packed name to PACKED_ARTIFACT_NAME so that we don't need to guess the name later.
+          # artifact upload/download in GitHub has a 'name' property but that's the artifact name, not the file name.
           mv $tgz_filename ${{ env.PACKED_ARTIFACT_NAME }}
           echo "Packed library file: $tgz_filename renamed to ${{ env.PACKED_ARTIFACT_NAME }}"
           echo "tgz_name=${{ env.PACKED_ARTIFACT_NAME }}" >> $GITHUB_OUTPUT
@@ -93,6 +94,7 @@ jobs:
       - name: Upload Packed Library Artifact
         uses: actions/upload-artifact@v4
         with:
+          # This is the "artifact name", it's not a file name. The file name remains original.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
           # Upload the file specified by the output of the 'pack_library' step
           path: ${{ steps.pack_library.outputs.tgz_name }}
@@ -142,8 +144,8 @@ jobs:
       - name: Download Packed Library Artifact
         uses: actions/download-artifact@v4
         with:
-          # name is the filename, but somehow it also quite ignores this name and uses the `recharts-3.0.0-beta.0.tgz` name anyway
-          # which is why I rename the file during upload too
+          # name is not the filename, it's the "artifact name". The actual filename is the original of what was uploaded.
+          # In this workflow we keep them the same but GitHub treats them differently.
           name: ${{ env.PACKED_ARTIFACT_NAME }}
           # path is the directory where the artifact will be downloaded
           # so the full path to the artifact will be ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
@@ -157,4 +159,4 @@ jobs:
 
       - name: Run Test
         # Use the output from the 'pack_library' step
-        run: ./run-test.sh integrations-npm/ts-react18 "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
+        run: ./run-test.sh ${{ matrix.test_dir }} "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
