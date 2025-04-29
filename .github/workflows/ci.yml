@@ -91,7 +91,16 @@ jobs:
         # The path to the .tgz file is relative to the integration tests' working directory
         run: ./run-test.sh integrations-npm/ts-react18 ../${{ env.RECHARTS_PATH }}/${{ steps.pack_library.outputs.tgz_filename }}
 
-      # Step 12: Publish visual regression tests to Chromatic
+      # Step 12: Upload Coverage Report
+      # Now that we know all the tests are passing, let's report code coverage
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: recharts/recharts
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # Step 13: Publish visual regression tests to Chromatic
       # Chromatic gives us only this many free credits per month
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish to Chromatic
