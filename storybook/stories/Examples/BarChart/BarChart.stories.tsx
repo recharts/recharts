@@ -718,7 +718,9 @@ export const WithMultiXAxis = {
       const month = date.getMonth();
       const quarterNo = Math.floor(month / 3) + 1;
       if (month % 3 === 1) {
-        return <text x={x + width / visibleTicksCount / 2 - offset} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</text>;
+        return (
+          <text x={x + width / visibleTicksCount / 2 - offset} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</text>
+        );
       }
 
       const isLast = month === 11;
