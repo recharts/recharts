@@ -1871,6 +1871,12 @@ export const selectChartDirection: (state: RechartsRootState) => AxisDirection |
       case 'vertical': {
         return allYAxes.some(axis => axis.reversed) ? 'bottom-to-top' : 'top-to-bottom';
       }
+      // TODO: make this better. For now, right arrow triggers "forward", left arrow "back"
+      // however, the tooltip moves an unintuitive direction because of how the indices are rendered
+      case 'centric':
+      case 'radial': {
+        return 'left-to-right';
+      }
       default: {
         return undefined;
       }
