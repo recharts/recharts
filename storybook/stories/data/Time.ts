@@ -78,4 +78,15 @@ const dateWithValueData = [
   { time: 1483178400000, value: 60 },
 ];
 
-export { dateData, timeData, dateWithValueData };
+const generateTimeData = (numPoints: number, intervalSeconds: number) => {
+  const start = new Date('2018-10-16T00:00:00.000Z').getTime();
+  return Array.from({ length: numPoints }, (_, i) => {
+    const time = new Date(start + i * intervalSeconds * 1000);
+    return {
+      x: time,
+      y: Math.floor(Math.sin((25 * i) / numPoints) * 100),
+    };
+  });
+};
+
+export { dateData, timeData, dateWithValueData, generateTimeData };

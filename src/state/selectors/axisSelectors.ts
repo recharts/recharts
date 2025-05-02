@@ -1683,8 +1683,9 @@ export const combineAxisTicks = (
     return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
-  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-  if (isCategorical && categoricalDomain) {
+  // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto".
+  // Unless the scale is a time scale or a custom scale, in which case defer to the scale.ticks function below.
+  if (isCategorical && categoricalDomain && axis.scale !== 'time' && typeof axis.scale !== 'function') {
     return categoricalDomain.map(
       (entry: any, index: number): TickItem => ({
         coordinate: scale(entry) + offset,
