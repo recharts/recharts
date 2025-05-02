@@ -1,7 +1,7 @@
 /**
  * @fileOverview X Axis
  */
-import React from 'react';
+import * as React from 'react';
 import clsx from 'clsx';
 import { useChartHeight, useChartWidth, useXAxisOrThrow } from '../context/chartLayoutContext';
 import { CartesianAxis } from './CartesianAxis';
