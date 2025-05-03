@@ -1,7 +1,7 @@
 /**
  * @fileOverview Z Axis
  */
-import React from 'react';
+import * as React from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
 
 export interface Props {

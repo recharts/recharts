@@ -1,7 +1,7 @@
 /**
  * @fileOverview Y Axis
  */
-import React from 'react';
+import * as React from 'react';
 import clsx from 'clsx';
 import { BaseAxisProps, AxisInterval, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { useChartHeight, useChartWidth, useYAxisOrThrow } from '../context/chartLayoutContext';

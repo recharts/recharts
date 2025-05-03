@@ -1,7 +1,7 @@
 /**
  * @fileOverview Dot
  */
-import React from 'react';
+import * as React from 'react';
 import clsx from 'clsx';
 import { PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';

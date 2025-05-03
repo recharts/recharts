@@ -1,7 +1,7 @@
 /**
  * @fileOverview Curve
  */
-import React from 'react';
+import * as React from 'react';
 import {
   line as shapeLine,
   area as shapeArea,
