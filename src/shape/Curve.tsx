@@ -1,7 +1,8 @@
 /**
  * @fileOverview Curve
  */
-import React, { Ref } from 'react';
+import * as React from 'react';
+import { Ref } from 'react';
 import {
   line as shapeLine,
   area as shapeArea,
@@ -21,7 +22,7 @@ import {
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber, upperFirst } from '../util/DataUtils';

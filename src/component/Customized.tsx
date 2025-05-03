@@ -1,7 +1,8 @@
 /**
  * @fileOverview Customized
  */
-import React, { isValidElement, cloneElement, createElement, Component, FunctionComponent, ReactElement } from 'react';
+import * as React from 'react';
+import { isValidElement, cloneElement, createElement, Component, FunctionComponent, ReactElement } from 'react';
 
 import { Layer } from '../container/Layer';
 import { warn } from '../util/LogUtils';

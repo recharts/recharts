@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false /* Must be disabled to prevent type issues at dependants. */,
     "baseUrl": ".",
     "declaration": true /* Generates corresponding '.d.ts' file. */,
     "declarationDir": "./types" /* Output directory for generated declaration files. */,
-    "esModuleInterop": true,
     "jsx": "react",
     "module": "commonjs",
     "noImplicitAny": true,

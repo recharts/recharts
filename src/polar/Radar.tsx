@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
-import React, {
+import * as React from 'react';
+import {
   PureComponent,
   ReactElement,
   MouseEvent,
@@ -13,7 +14,7 @@ import Animate from 'react-smooth';
 import { last } from 'es-toolkit';
 import { first } from 'es-toolkit/compat';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { interpolateNumber, isNullish } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { polarToCartesian } from '../util/PolarUtils';

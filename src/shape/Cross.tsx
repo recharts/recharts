@@ -1,8 +1,9 @@
 /**
  * @fileOverview Cross
  */
-import React, { SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { isNumber } from '../util/DataUtils';
 import { filterProps } from '../util/ReactUtils';
 

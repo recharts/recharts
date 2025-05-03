@@ -1,4 +1,5 @@
-import React, {
+import * as React from 'react';
+import {
   MutableRefObject,
   PureComponent,
   ReactElement,
@@ -12,7 +13,7 @@ import React, {
 import Animate from 'react-smooth';
 import { get } from 'es-toolkit/compat';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';

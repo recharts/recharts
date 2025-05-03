@@ -1,4 +1,5 @@
-import React, { Component, useEffect } from 'react';
+import * as React from 'react';
+import { Component, useEffect } from 'react';
 import { ScaleType, DataKey, AxisDomain } from '../util/types';
 import { addZAxis, removeZAxis, ZAxisSettings } from '../state/cartesianAxisSlice';
 import { useAppDispatch } from '../state/hooks';

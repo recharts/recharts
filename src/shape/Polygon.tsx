@@ -1,8 +1,9 @@
 /**
  * @fileOverview Polygon
  */
-import React, { SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { Coordinate } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 

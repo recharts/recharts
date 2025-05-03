@@ -1,6 +1,7 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { MutableRefObject, PureComponent, ReactElement, useCallback, useRef, useState } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { MutableRefObject, PureComponent, ReactElement, useCallback, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 
 import { Series } from 'victory-vendor/d3-shape';

@@ -1,5 +1,6 @@
-import React, { Component, FunctionComponent, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, FunctionComponent, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
 import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/cartesianAxisSlice';

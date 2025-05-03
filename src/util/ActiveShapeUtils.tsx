@@ -1,4 +1,5 @@
-import React, { cloneElement, isValidElement, SVGProps } from 'react';
+import * as React from 'react';
+import { cloneElement, isValidElement, SVGProps } from 'react';
 import { isPlainObject } from 'es-toolkit';
 
 import { Rectangle } from '../shape/Rectangle';

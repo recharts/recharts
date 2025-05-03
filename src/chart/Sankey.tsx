@@ -1,4 +1,5 @@
-import React, { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
+import * as React from 'react';
+import { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
 import { maxBy, sumBy } from 'es-toolkit';
 import { get } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';

@@ -1,4 +1,5 @@
-import React, { CSSProperties, PureComponent, useEffect } from 'react';
+import * as React from 'react';
+import { CSSProperties, PureComponent, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLegendPortal } from '../context/legendPortalContext';
 import { DefaultLegendContent, LegendPayload, Props as DefaultProps } from './DefaultLegendContent';

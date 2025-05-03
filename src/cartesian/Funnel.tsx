@@ -1,9 +1,10 @@
 /* eslint-disable max-classes-per-file */
-import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
+import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 import { omit } from 'es-toolkit';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
 import { Layer } from '../container/Layer';

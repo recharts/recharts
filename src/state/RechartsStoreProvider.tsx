@@ -1,4 +1,5 @@
-import React, { ReactNode, useRef } from 'react';
+import * as React from 'react';
+import { ReactNode, useRef } from 'react';
 import { Provider } from 'react-redux';
 import { createRechartsStore, RechartsRootState } from './store';
 import { useIsPanorama } from '../context/PanoramaContext';

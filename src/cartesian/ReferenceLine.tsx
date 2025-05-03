@@ -1,8 +1,9 @@
 /**
  * @fileOverview Reference Line
  */
-import React, { Component, ReactElement, SVGProps, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, ReactElement, SVGProps, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { IfOverflow } from '../util/IfOverflow';

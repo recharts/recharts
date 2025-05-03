@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { CSSProperties } from 'react';
 import { isNumber } from '../DataUtils';
 import { Coordinate, CartesianViewBox, AllowInDimension } from '../types';

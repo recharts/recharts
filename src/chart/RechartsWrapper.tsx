@@ -1,5 +1,6 @@
-import React, { CSSProperties, forwardRef, ReactNode, Ref } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { CSSProperties, forwardRef, ReactNode, Ref } from 'react';
+import { clsx } from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';

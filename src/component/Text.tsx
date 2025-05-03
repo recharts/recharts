@@ -1,6 +1,7 @@
-import React, { CSSProperties, SVGProps, useMemo } from 'react';
+import * as React from 'react';
+import { CSSProperties, SVGProps, useMemo } from 'react';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
 import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';

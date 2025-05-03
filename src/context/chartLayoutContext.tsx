@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useEffect } from 'react';
+import * as React from 'react';
+import { createContext, ReactNode, useContext, useEffect } from 'react';
 import { CartesianViewBoxRequired, ChartOffsetRequired, LayoutType, Margin, Size } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';

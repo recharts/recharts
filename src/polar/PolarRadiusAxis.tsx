@@ -1,7 +1,8 @@
-import React, { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
+import * as React from 'react';
+import { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
 import { maxBy, minBy } from 'es-toolkit';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { Layer } from '../container/Layer';

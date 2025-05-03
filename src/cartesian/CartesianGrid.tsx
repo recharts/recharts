@@ -1,7 +1,8 @@
 /**
  * @fileOverview Cartesian Grid
  */
-import React, { ReactElement, SVGProps } from 'react';
+import * as React from 'react';
+import { ReactElement, SVGProps } from 'react';
 
 import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';

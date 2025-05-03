@@ -1,8 +1,9 @@
 /**
  * @fileOverview Sector
  */
-import React, { SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { GeometrySector } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';

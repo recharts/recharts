@@ -1,8 +1,9 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { SVGProps, useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { SVGProps, useEffect, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';

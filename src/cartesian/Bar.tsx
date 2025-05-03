@@ -2,17 +2,9 @@
  * @fileOverview Render a group of bar
  */
 // eslint-disable-next-line max-classes-per-file
-import React, {
-  Key,
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Key, MutableRefObject, PureComponent, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
