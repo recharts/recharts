@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'es-toolkit/compat';
 
 import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';

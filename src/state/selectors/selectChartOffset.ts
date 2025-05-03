@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import get from 'lodash/get';
+import { get } from 'es-toolkit/compat';
 import { selectLegendSettings, selectLegendSize } from './legendSelectors';
 import {
   CartesianViewBoxRequired,

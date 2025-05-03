@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import omit from 'lodash/omit';
-import get from 'lodash/get';
+import { omit } from 'es-toolkit';
+import { get } from 'es-toolkit/compat';
 import Smooth from 'react-smooth';
 
 import { Layer } from '../container/Layer';
@@ -427,7 +427,7 @@ function ContentItem({
       <Rectangle
         fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
         stroke="#fff"
-        {...omit(nodeProps, 'children')}
+        {...omit(nodeProps, ['children'])}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onClick={onClick}

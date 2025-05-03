@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
-import maxBy from 'lodash/maxBy';
-import minBy from 'lodash/minBy';
+import { maxBy, minBy } from 'es-toolkit';
+
 import clsx from 'clsx';
 import { Text } from '../component/Text';
 import { Label } from '../component/Label';

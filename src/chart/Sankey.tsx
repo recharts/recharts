@@ -1,8 +1,6 @@
 import React, { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
-import maxBy from 'lodash/maxBy';
-import min from 'lodash/min';
-import get from 'lodash/get';
-import sumBy from 'lodash/sumBy';
+import { maxBy, sumBy } from 'es-toolkit';
+import { min, get } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';

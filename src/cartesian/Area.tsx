@@ -2,7 +2,6 @@
 import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import Animate from 'react-smooth';
-import max from 'lodash/max';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -321,12 +320,12 @@ function VerticalRect({
   const startY = points[0].y;
   const endY = points[points.length - 1].y;
   const height = alpha * Math.abs(startY - endY);
-  let maxX = max(points.map(entry => entry.x || 0));
+  let maxX = Math.max(...points.map(entry => entry.x || 0));
 
   if (isNumber(baseLine)) {
     maxX = Math.max(baseLine, maxX);
   } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
+    maxX = Math.max(...baseLine.map(entry => entry.x || 0), maxX);
   }
 
   if (isNumber(maxX)) {
@@ -357,12 +356,12 @@ function HorizontalRect({
   const startX = points[0].x;
   const endX = points[points.length - 1].x;
   const width = alpha * Math.abs(startX - endX);
-  let maxY = max(points.map(entry => entry.y || 0));
+  let maxY = Math.max(...points.map(entry => entry.y || 0));
 
   if (isNumber(baseLine)) {
     maxY = Math.max(baseLine, maxY);
   } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
+    maxY = Math.max(...baseLine.map(entry => entry.y || 0), maxY);
   }
 
   if (isNumber(maxY)) {

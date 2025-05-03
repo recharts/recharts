@@ -2,7 +2,6 @@
  * @fileOverview Reference Line
  */
 import React, { Component, ReactElement, SVGProps, useEffect } from 'react';
-import some from 'lodash/some';
 import clsx from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
@@ -134,7 +133,7 @@ export const getEndPoints = (
 
     const points = segment.map(p => scales.apply(p, { position }));
 
-    if (props.ifOverflow === 'discard' && some(points, p => !scales.isInRange(p))) {
+    if (props.ifOverflow === 'discard' && points.some(p => !scales.isInRange(p))) {
       return null;
     }
 

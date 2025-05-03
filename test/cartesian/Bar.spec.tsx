@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactNode } from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'es-toolkit/compat';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,

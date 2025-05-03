@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
-import omit from 'lodash/omit';
+import { omit } from 'es-toolkit';
 
 import clsx from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';
@@ -515,7 +515,7 @@ export function computeFunnelTrapezoids({
         val,
         tooltipPayload,
         tooltipPosition,
-        ...omit(entry, 'width'),
+        ...omit(entry, ['width']),
         payload: entry,
         parentViewBox,
         labelViewBox: {

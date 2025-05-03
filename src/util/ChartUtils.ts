@@ -1,5 +1,5 @@
-import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
+import { get, sortBy } from 'es-toolkit/compat';
+
 import {
   Series,
   type SeriesPoint,

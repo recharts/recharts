@@ -10,8 +10,8 @@ import React, {
   useState,
 } from 'react';
 import Animate from 'react-smooth';
-import last from 'lodash/last';
-import first from 'lodash/first';
+import { last } from 'es-toolkit';
+import { first } from 'es-toolkit/compat';
 
 import clsx from 'clsx';
 import { interpolateNumber, isNullish } from '../util/DataUtils';
