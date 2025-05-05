@@ -1507,16 +1507,18 @@ describe('<Pie />', () => {
 
       expectTooltipPayload(container, '', ['B : 250']);
 
+      // unsure why two are needed but they are in order to advance one
+      await userEvent.keyboard('{ArrowRight}');
       await userEvent.keyboard('{ArrowRight}');
 
-      // ArrowRight goes back instead of forwards?
-      expectTooltipPayload(container, '', ['A : 250']);
-
-      await userEvent.keyboard('{ArrowLeft}');
-      await userEvent.keyboard('{ArrowLeft}');
-
-      // ArrowLeft goes forwards instead of backwards?
+      // ArrowRight goes forwards
       expectTooltipPayload(container, '', ['C : 250']);
+
+      await userEvent.keyboard('{ArrowLeft}');
+      await userEvent.keyboard('{ArrowLeft}');
+
+      // ArrowLeft goes back
+      expectTooltipPayload(container, '', ['A : 250']);
     });
 
     test.fails('Arrows move between sectors, wrap around, and escape blurs', async () => {
