@@ -1,4 +1,5 @@
-import React, { createContext, useCallback, useContext, useEffect } from 'react';
+import * as React from 'react';
+import { createContext, useCallback, useContext, useEffect } from 'react';
 import { CartesianGraphicalItemType, ErrorBarsSettings } from '../state/graphicalItemsSlice';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';

@@ -1,10 +1,11 @@
 /**
  * @fileOverview Cartesian Axis
  */
-import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
+import * as React from 'react';
+import { ReactElement, ReactNode, Component, SVGProps } from 'react';
 
 import { get } from 'es-toolkit/compat';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';

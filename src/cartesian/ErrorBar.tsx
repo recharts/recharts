@@ -1,7 +1,8 @@
 /**
  * @fileOverview Render a group of error bar
  */
-import React, { Component, createContext, SVGProps, useContext } from 'react';
+import * as React from 'react';
+import { Component, createContext, SVGProps, useContext } from 'react';
 import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
 import { AnimationTiming, DataKey } from '../util/types';

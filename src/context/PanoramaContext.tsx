@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext } from 'react';
+import * as React from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 
 const PanoramaContext = createContext<boolean | null>(null);
 

@@ -1,5 +1,6 @@
-import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';

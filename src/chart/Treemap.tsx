@@ -1,4 +1,5 @@
-import React, { PureComponent } from 'react';
+import * as React from 'react';
+import { PureComponent } from 'react';
 import { omit } from 'es-toolkit';
 import { get } from 'es-toolkit/compat';
 import Smooth from 'react-smooth';

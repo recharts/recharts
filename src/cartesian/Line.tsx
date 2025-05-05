@@ -1,8 +1,9 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
+import { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';

@@ -1,6 +1,7 @@
 import { get } from 'es-toolkit/compat';
 
-import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
+import * as React from 'react';
+import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { isNullish, isNumber } from './DataUtils';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';

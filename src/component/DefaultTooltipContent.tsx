@@ -2,9 +2,10 @@
  * @fileOverview Default Tooltip Content
  */
 
-import React, { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
+import * as React from 'react';
+import { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
 import { sortBy } from 'es-toolkit/compat';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
 

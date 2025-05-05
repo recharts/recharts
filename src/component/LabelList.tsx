@@ -1,4 +1,5 @@
-import React, { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
+import * as React from 'react';
+import { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
 import { last } from 'es-toolkit';
 
 import { Label, ContentType, Props as LabelProps, LabelPosition, isLabelContentAFunction } from './Label';

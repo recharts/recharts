@@ -1,4 +1,5 @@
-import React, { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
+import * as React from 'react';
+import { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,

@@ -1,5 +1,6 @@
-import clsx from 'clsx';
-import React, {
+import { clsx } from 'clsx';
+import * as React from 'react';
+import {
   ReactElement,
   forwardRef,
   cloneElement,

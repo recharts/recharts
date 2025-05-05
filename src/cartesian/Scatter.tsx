@@ -1,7 +1,8 @@
-import React, { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import * as React from 'react';
+import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 import Animate from 'react-smooth';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { filterProps, findAllByType } from '../util/ReactUtils';

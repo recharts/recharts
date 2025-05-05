@@ -1,5 +1,6 @@
-import React, { FunctionComponent, PureComponent, ReactElement, SVGProps, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { FunctionComponent, PureComponent, ReactElement, SVGProps, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
 import { Polygon } from '../shape/Polygon';

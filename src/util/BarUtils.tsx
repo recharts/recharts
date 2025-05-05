@@ -1,4 +1,5 @@
-import React, { SVGProps } from 'react';
+import * as React from 'react';
+import { SVGProps } from 'react';
 import invariant from 'tiny-invariant';
 import { ActiveShape } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';

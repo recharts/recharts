@@ -1,4 +1,5 @@
-import React, { CSSProperties, PureComponent, ReactNode } from 'react';
+import * as React from 'react';
+import { CSSProperties, PureComponent, ReactNode } from 'react';
 import { AllowInDimension, AnimationDuration, AnimationTiming, CartesianViewBox, Coordinate } from '../util/types';
 import { getTooltipTranslate } from '../util/tooltip/translate';
 import { ElementOffset, SetElementOffset } from '../util/useElementOffset';

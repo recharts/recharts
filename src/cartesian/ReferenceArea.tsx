@@ -1,5 +1,6 @@
-import React, { Component, ReactElement, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, ReactElement, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelType, Label } from '../component/Label';
 import { createLabeledScales, rectWithPoints } from '../util/CartesianUtils';

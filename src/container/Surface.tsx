@@ -1,8 +1,9 @@
 /**
  * @fileOverview Surface
  */
-import React, { ReactNode, CSSProperties, SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { ReactNode, CSSProperties, SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { filterProps } from '../util/ReactUtils';
 
 interface SurfaceProps {

@@ -1,9 +1,10 @@
 /**
  * @fileOverview Default Legend Content
  */
-import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
+import * as React from 'react';
+import { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { sortBy } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';

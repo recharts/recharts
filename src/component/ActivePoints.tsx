@@ -1,4 +1,5 @@
-import React, { cloneElement, isValidElement } from 'react';
+import * as React from 'react';
+import { cloneElement, isValidElement } from 'react';
 import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { Dot } from '../shape/Dot';

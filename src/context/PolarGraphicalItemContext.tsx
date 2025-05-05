@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { PolarGraphicalItemSettings } from '../state/graphicalItemsSlice';
 

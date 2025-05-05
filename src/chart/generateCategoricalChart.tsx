@@ -1,4 +1,5 @@
-import React, { Component, forwardRef } from 'react';
+import * as React from 'react';
+import { Component, forwardRef } from 'react';
 import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 

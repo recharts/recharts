@@ -1,7 +1,8 @@
 /**
  * @fileOverview Curve
  */
-import React, { SVGProps } from 'react';
+import * as React from 'react';
+import { SVGProps } from 'react';
 
 import {
   symbol as shapeSymbol,
@@ -14,7 +15,7 @@ import {
   symbolWye,
   SymbolType as D3SymbolType,
 } from 'victory-vendor/d3-shape';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { SymbolType } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { upperFirst } from '../util/DataUtils';
