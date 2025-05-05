@@ -173,7 +173,7 @@ export const selectActiveLabel: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => string | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
+) => string | number | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
 
 function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
   /*
