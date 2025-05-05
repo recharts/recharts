@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'es-toolkit/compat';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {

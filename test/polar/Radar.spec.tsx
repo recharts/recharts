@@ -1,5 +1,5 @@
 import React from 'react';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'es-toolkit/compat';
 import { render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';

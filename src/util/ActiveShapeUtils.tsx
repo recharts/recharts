@@ -1,5 +1,5 @@
 import React, { cloneElement, isValidElement, SVGProps } from 'react';
-import isPlainObject from 'lodash/isPlainObject';
+import { isPlainObject } from 'es-toolkit';
 
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';

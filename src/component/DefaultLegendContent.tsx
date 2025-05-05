@@ -4,7 +4,7 @@
 import React, { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import clsx from 'clsx';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {

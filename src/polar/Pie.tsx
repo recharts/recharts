@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react';
 import Animate from 'react-smooth';
-import get from 'lodash/get';
+import { get } from 'es-toolkit/compat';
 
 import clsx from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
