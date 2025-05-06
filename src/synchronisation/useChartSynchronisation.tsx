@@ -174,7 +174,7 @@ export function useTooltipChartSynchronisation(
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   activeCoordinate: ChartCoordinate | undefined,
-  activeLabel: string | undefined,
+  activeLabel: string | number | undefined,
   activeIndex: string | undefined,
   isTooltipActive: boolean,
 ) {
@@ -204,7 +204,6 @@ export function useTooltipChartSynchronisation(
       coordinate: activeCoordinate,
       dataKey: activeDataKey,
       index: activeIndex,
-      // despite the typescript annotation, the state sometimes returns activeLabel as a number
       label: typeof activeLabel === 'number' ? String(activeLabel) : activeLabel,
     });
     eventCenter.emit(TOOLTIP_SYNC_EVENT, syncId, syncAction, eventEmitterSymbol);

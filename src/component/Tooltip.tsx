@@ -41,7 +41,7 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
 }
 
 export type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
-  label: string;
+  label?: string | number;
   payload: any[];
   coordinate: ChartCoordinate;
   active: boolean;

@@ -122,7 +122,7 @@ export const PercentAreaChart = {
       return toPercent(ratio, 2);
     };
 
-    const renderTooltipContent = (o: { payload?: Array<{ value?: number }>; label?: string }) => {
+    const renderTooltipContent = (o: { payload?: Array<{ value?: number }>; label?: string | number }) => {
       const { payload, label } = o;
       const total = payload?.reduce((result, entry) => result + (entry.value ?? 0), 0);
 
