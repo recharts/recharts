@@ -393,10 +393,18 @@ function ContentItem({
   onClick,
 }: ContentItemProps): React.ReactElement {
   if (React.isValidElement(content)) {
-    return React.cloneElement(content, nodeProps);
+    return (
+      <g onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+        {React.cloneElement(content, nodeProps)}
+      </g>
+    );
   }
   if (typeof content === 'function') {
-    return content(nodeProps);
+    return (
+      <g onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+        {content(nodeProps)}
+      </g>
+    );
   }
   // optimize default shape
   const { x, y, width, height, index } = nodeProps;
