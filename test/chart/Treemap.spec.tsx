@@ -174,7 +174,8 @@ describe('<Treemap />', () => {
       };
 
       const { container } = render(
-        <Treemap width={1000} height={500} data={exampleTreemapData} content={CustomNode}>
+        // @ts-expect-error typescript yells because we didn't pass props
+        <Treemap width={1000} height={500} data={exampleTreemapData} content={<CustomNode />}>
           <Tooltip trigger="hover" />
         </Treemap>,
       );
