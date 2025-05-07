@@ -40,6 +40,8 @@ jobs:
   build_test_pack:
     name: Build, Test, Pack
     runs-on: ubuntu-latest
+    env:
+      ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     outputs:
       # Output the *name* of the generated tgz file (relative to RECHARTS_PATH)
       # The actual file will be passed via artifact
@@ -110,7 +112,7 @@ jobs:
       # Chromatic gives us only this many free credits per month
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish visual regression tests to Chromatic
-        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        if: ${{ env.ENCRYPTED_CHROMATIC_TOKEN }}
         # Chromatic action from https://www.chromatic.com/docs/github-actions
         uses: chromaui/action@latest
         # Chromatic GitHub Action options
