@@ -19,20 +19,21 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 const CustomContent = ({ active, payload }: { active: boolean; payload: Array<DataPoint> }) => {
   if (active && payload && payload.length > 0) {
     return (
-      <div className="my-custom-tooltip">
+      <div
+        className="my-custom-tooltip"
+        style={{
+          border: 'solid 1px black',
+          fontSize: '13px',
+          fontWeight: '600',
+          fontFamily: 'sans-serif',
+          color: '#111',
+          backgroundColor: '#eee',
+          padding: '5px',
+          borderRadius: '10px',
+        }}
+      >
         {payload.map(pld => (
-          <p
-            key={pld.name}
-            style={{
-              borderStyle: 'solid 1px',
-              fontSize: '13px',
-              fontWeight: '600',
-              fontFamily: 'sans-serif',
-              color: '#fff',
-            }}
-          >
-            {`${pld.name} : ${pld.value}`}
-          </p>
+          <p key={pld.name}>{`${pld.name} : ${pld.value}`}</p>
         ))}
         <div className="tooltip-arrow" />
       </div>
@@ -55,7 +56,7 @@ export const PieWithTooltip = {
         // @ts-expect-error recharts needs more specific type for the event
         onMouseMove={(_: unknown, event: MouseEvent) => {
           // follow the mouse and adjust for some offset
-          setTtPos({ x: event.clientX - 185, y: event.clientY - 50 });
+          setTtPos({ x: event.clientX - 185, y: event.offsetY });
         }}
       >
         <Pie
