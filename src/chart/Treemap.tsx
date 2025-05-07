@@ -394,16 +394,16 @@ function ContentItem({
 }: ContentItemProps): React.ReactElement {
   if (React.isValidElement(content)) {
     return (
-      <g onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+      <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
         {React.cloneElement(content, nodeProps)}
-      </g>
+      </Layer>
     );
   }
   if (typeof content === 'function') {
     return (
-      <g onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
+      <Layer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
         {content(nodeProps)}
-      </g>
+      </Layer>
     );
   }
   // optimize default shape
