@@ -16,7 +16,6 @@ env:
   PACKED_ARTIFACT_NAME: 'recharts-snapshot.tgz'
 
 jobs:
-
   list_integration_tests:
     name: List Integration Test Directories
     runs-on: ubuntu-latest
@@ -111,6 +110,7 @@ jobs:
       # Chromatic gives us only this many free credits per month
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish visual regression tests to Chromatic
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         # Chromatic action from https://www.chromatic.com/docs/github-actions
         uses: chromaui/action@latest
         # Chromatic GitHub Action options
@@ -118,7 +118,7 @@ jobs:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           # Let's say that we don't want to use our Chromatic credits for PRs from dependabot
-          skip: "dependabot/**"
+          skip: 'dependabot/**'
 
   integration_tests:
     name: Test ${{ matrix.test_dir }}
