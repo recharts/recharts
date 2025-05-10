@@ -2,10 +2,9 @@ import * as React from 'react';
 import { Context, MutableRefObject, ReactNode, useRef } from 'react';
 import { Provider } from 'react-redux';
 import { Action, Store } from '@reduxjs/toolkit';
-import { ReactReduxContextValue } from 'react-redux/src/components/Context';
 import { createRechartsStore, RechartsRootState } from './store';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { RechartsReduxContext } from './RechartsReduxContext';
+import { RechartsReduxContext, RechartsReduxContextValue } from './RechartsReduxContext';
 
 type RechartsStoreProviderProps = {
   children: ReactNode;
@@ -43,8 +42,8 @@ export function RechartsStoreProvider({ preloadedState, children, reduxStoreName
     storeRef.current = createRechartsStore(preloadedState, reduxStoreName);
   }
 
-  // @ts-expect-error React-Redux types demand that the context internal value is not null but we have that as default.
-  const nonNullContext: Context<ReactReduxContextValue<RechartsRootState, Action>> = RechartsReduxContext;
+  // ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+  const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;
 
   return (
     <Provider context={nonNullContext} store={storeRef.current}>
