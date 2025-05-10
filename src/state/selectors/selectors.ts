@@ -110,9 +110,12 @@ export const selectActiveIndex: (
 
 export const selectTooltipDataKey = (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
 ): DataKey<any> | undefined => {
+  if (tooltipEventType == null) {
+    return undefined;
+  }
   const tooltipState = selectTooltipState(state);
   if (tooltipEventType === 'axis') {
     if (trigger === 'hover') {

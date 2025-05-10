@@ -131,7 +131,7 @@ export type TooltipInteractionState = {
    * This can come from mouse events, keyboard events, or hardcoded in props
    * in property `defaultIndex` on Tooltip.
    */
-  index: TooltipIndex;
+  index: TooltipIndex | undefined;
   /**
    * DataKey filter.
    *
