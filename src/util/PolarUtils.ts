@@ -113,4 +113,7 @@ export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBoxRequi
 
 export const getTickClassName = (
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean,
-) => (!isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' ? tick.className : '');
+) =>
+  !isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' && tick != null
+    ? tick.className
+    : '';
