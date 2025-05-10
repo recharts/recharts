@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectEventEmitter, selectSyncId, selectSyncMethod } from '../state/selectors/rootPropsSelectors';
 import { BRUSH_SYNC_EVENT, eventCenter, TOOLTIP_SYNC_EVENT } from '../util/Events';
 import { createEventEmitter } from '../state/optionsSlice';
-import { setSyncInteraction, TooltipSyncState } from '../state/tooltipSlice';
+import { setSyncInteraction, TooltipIndex, TooltipSyncState } from '../state/tooltipSlice';
 import { selectTooltipDataKey } from '../state/selectors/selectors';
 import { ChartCoordinate, Coordinate, TickItem, TooltipEventType } from '../util/types';
 import { TooltipTrigger } from '../chart/types';
@@ -75,7 +75,9 @@ function useTooltipSyncEventsListener() {
         activeTick = tooltipTicks.find(tick => String(tick.value) === action.payload.label);
       }
 
-      if (activeTick == null || action.payload.active === false) {
+      const { coordinate } = action.payload;
+
+      if (activeTick == null || action.payload.active === false || coordinate == null || viewBox == null) {
         dispatch(
           setSyncInteraction({
             active: false,
@@ -87,7 +89,8 @@ function useTooltipSyncEventsListener() {
         );
         return;
       }
-      const { x, y } = action.payload.coordinate;
+
+      const { x, y } = coordinate;
       const validateChartX = Math.min(x, viewBox.x + viewBox.width);
       const validateChartY = Math.min(y, viewBox.y + viewBox.height);
       const activeCoordinate: Coordinate = {
@@ -171,18 +174,19 @@ export function useSynchronisedEventsFromOtherCharts() {
  * @returns void
  */
 export function useTooltipChartSynchronisation(
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
   activeCoordinate: ChartCoordinate | undefined,
   activeLabel: string | number | undefined,
-  activeIndex: string | undefined,
+  activeIndex: TooltipIndex | undefined,
   isTooltipActive: boolean,
 ) {
   const activeDataKey = useAppSelector(state => selectTooltipDataKey(state, tooltipEventType, trigger));
   const eventEmitterSymbol = useAppSelector(selectEventEmitter);
   const syncId = useAppSelector(selectSyncId);
   const syncMethod = useAppSelector(selectSyncMethod);
-  const { active: isReceivingSynchronisation } = useAppSelector(selectSynchronisedTooltipState);
+  const tooltipState = useAppSelector(selectSynchronisedTooltipState);
+  const isReceivingSynchronisation = tooltipState?.active;
   useEffect(() => {
     if (isReceivingSynchronisation) {
       /*
@@ -196,6 +200,13 @@ export function useTooltipChartSynchronisation(
       /*
        * syncId is not set, means that this chart is not synchronised with any other chart,
        * means we don't need to send synchronisation events
+       */
+      return;
+    }
+    if (eventEmitterSymbol == null) {
+      /*
+       * When using Recharts internal hooks and selectors outside charts context,
+       * these properties will be undefined. Let's return silently instead of throwing an error.
        */
       return;
     }
@@ -227,7 +238,7 @@ export function useBrushChartSynchronisation() {
   const brushEndIndex = useAppSelector(state => state.chartData.dataEndIndex);
 
   useEffect(() => {
-    if (syncId == null) {
+    if (syncId == null || brushStartIndex == null || brushEndIndex == null || eventEmitterSymbol == null) {
       return;
     }
     const syncAction: BrushStartEndIndex = { startIndex: brushStartIndex, endIndex: brushEndIndex };
