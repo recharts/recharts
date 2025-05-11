@@ -37,7 +37,7 @@ import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendSettings } from '../state/legendSlice';
 import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 
-export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
@@ -256,7 +256,7 @@ export type AxisPropsNeededForTicksGenerator = {
    */
   range?: ReadonlyArray<number>;
   realScaleType?: 'scaleBand' | string;
-  scale: RechartsScale;
+  scale: RechartsScale | undefined;
   tickCount?: number;
   ticks?: ReadonlyArray<AxisTick>;
   type?: 'number' | 'category';
