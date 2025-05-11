@@ -1,0 +1,42 @@
+name: Upload code coverage
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - master
+      - 3.x
+# the ci.yml file already does the coverage check and upload on pull requests. This file is for 3.x and master branches only
+#  pull_request:
+
+env:
+  NODE_VERSION: 20.x
+
+jobs:
+  codecov:
+    name: Upload code coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test-coverage
+
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: recharts/recharts
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
