@@ -91,7 +91,7 @@ describe('getErrorDomainByDataKey', () => {
       errX: [3, 7],
       errY: [11, 13],
     };
-    const errorBars: ReadonlyArray<ErrorBarsSettings> = undefined;
+    const errorBars: ReadonlyArray<ErrorBarsSettings> | undefined = undefined;
     expect(getErrorDomainByDataKey(entry, 2, errorBars)).toEqual([]);
   });
 });
