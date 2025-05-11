@@ -151,10 +151,10 @@ export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: numb
 
 /**
  * Checks if the value is null or undefined
- * @param {any} value The value to check
- * @returns {boolean} true if the value is null or undefined
+ * @param value The value to check
+ * @returns true if the value is null or undefined
  */
-export const isNullish = (value: any): boolean => {
+export const isNullish = (value: unknown): boolean => {
   return value === null || typeof value === 'undefined';
 };
 

@@ -86,7 +86,7 @@ export const implicitRadialBarRadiusAxis: RadiusAxisSettings = {
   unit: undefined,
 };
 
-export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): AngleAxisSettings | undefined => {
+export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): AngleAxisSettings => {
   if (state.polarAxis.angleAxis[angleAxisId] != null) {
     return state.polarAxis.angleAxis[angleAxisId];
   }
@@ -96,7 +96,7 @@ export const selectAngleAxis = (state: RechartsRootState, angleAxisId: AxisId): 
   return implicitAngleAxis;
 };
 
-export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings | undefined => {
+export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId): RadiusAxisSettings => {
   if (state.polarAxis.radiusAxis[radiusAxisId] != null) {
     return state.polarAxis.radiusAxis[radiusAxisId];
   }

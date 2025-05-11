@@ -497,7 +497,7 @@ function onlyAllowNumbers(data: ReadonlyArray<unknown>): ReadonlyArray<number> {
 export function getErrorDomainByDataKey(
   entry: unknown,
   appliedValue: unknown,
-  relevantErrorBars: ReadonlyArray<ErrorBarsSettings>,
+  relevantErrorBars: ReadonlyArray<ErrorBarsSettings> | undefined,
 ): ReadonlyArray<number> {
   if (!relevantErrorBars || typeof appliedValue !== 'number' || isNan(appliedValue)) {
     return [];
@@ -1658,16 +1658,20 @@ export const combineAxisTicks = (
   const { type, ticks, tickCount } = axis;
 
   // This is testing for `scaleBand` but for band axis the type is reported as `band` so this looks like a dead code with a workaround elsewhere?
-  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+  const offsetForBand =
+    realScaleType === 'scaleBand' && typeof scale.bandwidth === 'function' ? scale.bandwidth() / 2 : 2;
 
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
   offset =
-    axisType === 'angleAxis' && axisRange?.length >= 2 ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset : offset;
+    axisType === 'angleAxis' && axisRange != null && axisRange.length >= 2
+      ? mathSign(axisRange[0] - axisRange[1]) * 2 * offset
+      : offset;
 
   // The ticks set by user should only affect the ticks adjacent to axis line
-  if (ticks || niceTicks) {
-    const result = (ticks || niceTicks).map((entry: AxisTick, index: number): TickItem => {
+  const ticksOrNiceTicks = ticks || niceTicks;
+  if (ticksOrNiceTicks) {
+    const result = ticksOrNiceTicks.map((entry: AxisTick, index: number): TickItem => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -1841,7 +1845,7 @@ export type ZAxisWithScale = ZAxisSettings & { scale: RechartsScale };
 export const selectZAxisWithScale = createSelector(
   (state: RechartsRootState, _axisType: 'zAxis', axisId: AxisId) => selectZAxisSettings(state, axisId),
   selectZAxisScale,
-  (axis: ZAxisSettings, scale: RechartsScale): ZAxisWithScale => {
+  (axis: ZAxisSettings, scale: RechartsScale | undefined): ZAxisWithScale | undefined => {
     if (axis == null || scale == null) {
       return undefined;
     }
@@ -1863,7 +1867,7 @@ export const selectChartDirection: (state: RechartsRootState) => AxisDirection |
     layout: LayoutType,
     allXAxes: ReadonlyArray<XAxisSettings>,
     allYAxes: ReadonlyArray<YAxisSettings>,
-  ): AxisDirection => {
+  ): AxisDirection | undefined => {
     switch (layout) {
       case 'horizontal': {
         return allXAxes.some(axis => axis.reversed) ? 'right-to-left' : 'left-to-right';
