@@ -1,10 +1,7 @@
-/**
- * @fileOverview Sector
- */
 import * as React from 'react';
 import { SVGProps } from 'react';
 import { clsx } from 'clsx';
-import { GeometrySector } from '../util/types';
+import { GeometrySector, GeometrySectorWithCornerRadius } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { polarToCartesian, RADIAN } from '../util/PolarUtils';
 import { getPercentValue, mathSign } from '../util/DataUtils';
@@ -18,13 +15,13 @@ const getDeltaAngle = (startAngle: number, endAngle: number) => {
 };
 
 interface TangentCircleDef {
-  cx?: number;
-  cy?: number;
-  radius?: number;
-  angle?: number;
-  sign?: number;
+  cx: number;
+  cy: number;
+  radius: number;
+  angle: number;
+  sign: number;
   isExternal?: boolean;
-  cornerRadius?: number;
+  cornerRadius: number;
   cornerIsExternal?: boolean;
 }
 
@@ -88,7 +85,7 @@ const getSectorWithCorner = ({
   cornerIsExternal,
   startAngle,
   endAngle,
-}: GeometrySector) => {
+}: GeometrySectorWithCornerRadius) => {
   const sign = mathSign(endAngle - startAngle);
   const {
     circleTangency: soct,
@@ -191,11 +188,11 @@ const getSectorWithCorner = ({
   return path;
 };
 
-interface SectorProps extends GeometrySector {
+interface SectorProps extends GeometrySectorWithCornerRadius {
   className?: string;
 }
 
-export type Props = SVGProps<SVGPathElement> & SectorProps;
+export type Props = SVGProps<SVGPathElement> & Partial<SectorProps>;
 
 const defaultProps = {
   cx: 0,
@@ -207,7 +204,7 @@ const defaultProps = {
   cornerRadius: 0,
   forceCornerRadius: false,
   cornerIsExternal: false,
-};
+} as const satisfies Partial<Props>;
 
 export const Sector: React.FC<Props> = sectorProps => {
   const props = resolveDefaultProps(sectorProps, defaultProps);
