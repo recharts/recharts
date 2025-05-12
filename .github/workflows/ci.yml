@@ -33,7 +33,7 @@ jobs:
         # This command finds all integration test directories
         # and formats them as a JSON array.
         run: |
-          JSON_ARRAY=$(find integrations* -maxdepth 1 -mindepth 1 -type d | awk 'BEGIN { printf "[" } NR > 1 { printf "," } { printf "\"%s\"", $0 } END { printf "]" }')
+          JSON_ARRAY=$(node list.js --ci --json)
           echo "Generated directory list: $JSON_ARRAY"
           echo "directories=$JSON_ARRAY" >> $GITHUB_OUTPUT
 
