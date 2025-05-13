@@ -49,39 +49,50 @@ export const PieWithTooltip = {
   render: (args: Args) => {
     const [ttPos, setTtPos] = useState(undefined);
     const [active, setActive] = useState(false);
+    const [randomData, setRandomData] = useState(data);
     return (
-      <PieChart
-        width={400}
-        height={400}
-        // @ts-expect-error recharts needs more specific type for the event
-        onMouseMove={(_: unknown, event: MouseEvent) => {
-          // follow the mouse and adjust for some offset
-          setTtPos({ x: event.clientX - 185, y: event.offsetY });
-        }}
-      >
-        <Pie
-          {...args}
-          dataKey="value"
-          onMouseEnter={() => {
-            setActive(true);
-          }}
-          onMouseLeave={() => {
-            setActive(false);
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setRandomData(old => old.map(d => ({ ...d, value: Math.round(Math.random() * 1000) })));
           }}
         >
-          {data.map((value: DataPoint, index: number) => (
-            <Cell key={`cell-${value.name}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip content={CustomContent} position={ttPos} active={active} />
-        <Legend />
-      </PieChart>
+          Change Data
+        </button>
+        <PieChart
+          width={400}
+          height={400}
+          data={randomData}
+          // @ts-expect-error recharts needs more specific type for the event
+          onMouseMove={(_: unknown, event: MouseEvent) => {
+            // follow the mouse and adjust for some offset
+            setTtPos({ x: event.clientX - 185, y: event.offsetY });
+          }}
+        >
+          <Pie
+            {...args}
+            dataKey="value"
+            onMouseEnter={() => {
+              setActive(true);
+            }}
+            onMouseLeave={() => {
+              setActive(false);
+            }}
+          >
+            {randomData.map((value: DataPoint, index: number) => (
+              <Cell key={`cell-${value.name}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip content={CustomContent} position={ttPos} active={active} />
+          <Legend />
+        </PieChart>
+      </>
     );
   },
   args: {
     cx: 200,
     cy: 200,
-    data,
     fill: '#8884d8',
     outerRadius: 80,
     labelLine: false,
