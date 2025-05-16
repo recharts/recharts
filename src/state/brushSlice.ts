@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Padding } from '../util/types';
 
 /**
- * From all Brush properties, only height has a default value and will be always defined.
+ * From all Brush properties, only height has a default value and will always be defined.
  * Other properties are nullable and will be computed from offsets and margins if they are not set.
  */
 export type BrushSettings = {

@@ -50,7 +50,7 @@ import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipP
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 
-export const useChartName = (): string => {
+export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
 };
 
@@ -178,7 +178,7 @@ export const selectActiveLabel: (
   defaultIndex: TooltipIndex | undefined,
 ) => string | number | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
 
-function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
+function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown> | undefined) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
@@ -298,7 +298,7 @@ export const selectIsTooltipActive: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
+) => { isActive: boolean; activeIndex: TooltipIndex | undefined } = createSelector(
   [selectTooltipInteractionState],
   (tooltipInteractionState: TooltipInteractionState) => {
     return { isActive: tooltipInteractionState.active, activeIndex: tooltipInteractionState.index };

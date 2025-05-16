@@ -249,7 +249,7 @@ export const initialState: TooltipState = {
 };
 
 export type TooltipActionPayload = {
-  activeIndex: TooltipIndex;
+  activeIndex: TooltipIndex | undefined;
   activeDataKey: DataKey<any> | undefined;
   activeCoordinate?: ChartCoordinate | undefined;
 };

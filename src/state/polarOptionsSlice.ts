@@ -11,9 +11,9 @@ export type PolarChartOptions = {
 
 const polarOptionsSlice = createSlice({
   name: 'polarOptions',
-  initialState: null,
+  initialState: null as PolarChartOptions | null,
   reducers: {
-    updatePolarOptions: (_state, action: PayloadAction<PolarChartOptions>) => {
+    updatePolarOptions: (_state: PolarChartOptions, action: PayloadAction<PolarChartOptions>): PolarChartOptions => {
       return action.payload;
     },
   },

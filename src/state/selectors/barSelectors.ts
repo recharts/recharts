@@ -23,6 +23,7 @@ import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { MinPointSize } from '../../util/BarUtils';
 import { selectChartOffset } from './selectChartOffset';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
+import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
 export type BarSettings = {
   barSize: number | string | undefined;
@@ -72,7 +73,10 @@ const getBarSize = (
 ): number | undefined => {
   const barSize: string | number | undefined = selfSize ?? globalSize;
 
-  return isNullish(barSize) ? undefined : getPercentValue(barSize, totalSize, 0);
+  if (isNullish(barSize)) {
+    return undefined;
+  }
+  return getPercentValue(barSize, totalSize, 0);
 };
 
 export const selectAllVisibleBars: (
@@ -204,8 +208,8 @@ export const selectBarBandSize: (
   const layout = selectChartLayout(state);
   const globalMaxBarSize: number | undefined = selectRootMaxBarSize(state);
   const { maxBarSize: childMaxBarSize } = barSettings;
-  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-  let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
+  const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  let axis: BaseAxisWithScale | undefined, ticks: ReadonlyArray<TickItem> | undefined;
   if (layout === 'horizontal') {
     axis = selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
     ticks = selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
@@ -223,7 +227,7 @@ const selectAxisBandSize = (
   isPanorama: boolean,
 ): number | undefined => {
   const layout = selectChartLayout(state);
-  let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
+  let axis: BaseAxisWithScale | undefined, ticks: ReadonlyArray<TickItem> | undefined;
   if (layout === 'horizontal') {
     axis = selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
     ticks = selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
@@ -239,10 +243,12 @@ function getBarPositions(
   barCategoryGap: string | number,
   bandSize: number,
   sizeList: SizeList,
-  maxBarSize: number,
-): ReadonlyArray<BarWithPosition> {
+  maxBarSize: number | undefined,
+): ReadonlyArray<BarWithPosition> | undefined {
   const len = sizeList.length;
-  if (len < 1) return null;
+  if (len < 1) {
+    return undefined;
+  }
 
   let realBarGap = getPercentValue(barGap, bandSize, 0, true);
 
@@ -299,7 +305,7 @@ function getBarPositions(
     if (originalSize > 1) {
       originalSize >>= 0;
     }
-    const size = maxBarSize === +maxBarSize ? Math.min(originalSize, maxBarSize) : originalSize;
+    const size = isWellBehavedNumber(maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
     result = sizeList.reduce(
       (res: ReadonlyArray<BarWithPosition>, entry: BarCategory, i): ReadonlyArray<BarWithPosition> => [
         ...res,
@@ -345,9 +351,9 @@ export const combineAllBarPositions = (
   bandSize: number,
   childMaxBarSize: number | undefined,
 ): ReadonlyArray<BarWithPosition> | undefined => {
-  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
 
-  let allBarPositions = getBarPositions(
+  let allBarPositions: ReadonlyArray<BarWithPosition> | undefined = getBarPositions(
     barGap,
     barCategoryGap,
     barBandSize !== bandSize ? barBandSize : bandSize,
@@ -426,6 +432,9 @@ export const combineStackedData = (
     return undefined;
   }
   const { stackId } = barSettings;
+  if (stackId == null) {
+    return undefined;
+  }
   const stackGroup: StackGroup = stackGroups[stackId];
   if (!stackGroup) {
     return undefined;
@@ -525,7 +534,7 @@ export const selectBarRectangles: (
     const { data } = barSettings;
 
     let displayedData: ChartData | undefined;
-    if (data?.length > 0) {
+    if (data != null && data.length > 0) {
       displayedData = data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);

@@ -825,7 +825,7 @@ export function computeArea({
   bandSize,
 }: {
   areaSettings: AreaSettings;
-  stackedData: number[][];
+  stackedData: number[][] | undefined;
   layout: 'horizontal' | 'vertical';
   chartBaseValue: BaseValue | undefined;
   xAxis: BaseAxisWithScale;
@@ -841,7 +841,7 @@ export function computeArea({
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
 
-  const points = displayedData.map((entry, index) => {
+  const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let value;
 
     if (hasStack) {

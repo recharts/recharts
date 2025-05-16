@@ -1,17 +1,17 @@
-import { ChartOffset, Coordinate, LayoutType, TickItem } from '../../../util/types';
+import { ChartOffsetRequired, Coordinate, LayoutType, TickItem } from '../../../util/types';
 import { TooltipIndex, TooltipPayloadConfiguration, TooltipPayloadSearcher } from '../../tooltipSlice';
 
 export const combineCoordinateForDefaultIndex = (
   width: number,
   height: number,
   layout: LayoutType,
-  offset: ChartOffset | undefined,
+  offset: ChartOffsetRequired,
   tooltipTicks: ReadonlyArray<TickItem>,
   defaultIndex: TooltipIndex | undefined,
   tooltipConfigurations: ReadonlyArray<TooltipPayloadConfiguration>,
   tooltipPayloadSearcher: TooltipPayloadSearcher | undefined,
 ): Coordinate | undefined => {
-  if (defaultIndex == null || offset == null) {
+  if (defaultIndex == null || tooltipPayloadSearcher == null) {
     return undefined;
   }
   // With defaultIndex alone, we don't have enough information to decide _which_ of the multiple tooltips to display. So we choose the first one.

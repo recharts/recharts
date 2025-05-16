@@ -76,6 +76,11 @@ export interface Coordinate {
   y: number;
 }
 
+export interface NullableCoordinate {
+  x: number | null;
+  y: number | null;
+}
+
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
   yAxis?: any;
@@ -1077,16 +1082,19 @@ export interface Padding {
 }
 
 export interface GeometrySector {
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  cornerRadius?: number;
-  forceCornerRadius?: boolean;
-  cornerIsExternal?: boolean;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
 }
+
+export type GeometrySectorWithCornerRadius = GeometrySector & {
+  cornerRadius: number;
+  forceCornerRadius: boolean;
+  cornerIsExternal: boolean;
+};
 
 export type AxisDomainItem = string | number | ((d: number) => string | number) | 'auto' | 'dataMin' | 'dataMax';
 

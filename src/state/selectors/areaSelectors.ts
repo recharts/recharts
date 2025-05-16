@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Series } from 'victory-vendor/d3-shape';
-import { Coordinate, DataKey } from '../../util/types';
+import { DataKey, NullableCoordinate } from '../../util/types';
 import { BaseValue, computeArea } from '../../cartesian/Area';
 import {
   selectAxisWithScale,
@@ -15,9 +15,10 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
-import { Point as CurvePoint } from '../../shape/Curve';
 
-export interface AreaPointItem extends CurvePoint {
+export interface AreaPointItem {
+  x: number | null;
+  y: number | null;
   value?: number | number[];
   payload?: any;
 }
@@ -31,7 +32,7 @@ export type AreaSettings = {
 
 export type ComputedArea = {
   points: ReadonlyArray<AreaPointItem>;
-  baseLine: number | Coordinate[];
+  baseLine: number | NullableCoordinate[];
   isRange: boolean;
 };
 
@@ -76,6 +77,9 @@ const selectGraphicalItemStackedData = (
     return undefined;
   }
   const { dataKey, stackId } = areaSettings;
+  if (stackId == null) {
+    return undefined;
+  }
   const groups: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> = stackGroups[stackId]?.stackedData;
   return groups?.find(v => v.key === dataKey);
 };
@@ -166,14 +170,15 @@ export const selectArea: (
       xAxisTicks == null ||
       yAxisTicks == null ||
       xAxisTicks.length === 0 ||
-      yAxisTicks.length === 0
+      yAxisTicks.length === 0 ||
+      bandSize == null
     ) {
       return undefined;
     }
     const { data } = areaSettings;
 
     let displayedData: ChartData | undefined;
-    if (data?.length > 0) {
+    if (data && data.length > 0) {
       displayedData = data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);
