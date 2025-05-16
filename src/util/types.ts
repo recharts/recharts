@@ -76,6 +76,11 @@ export interface Coordinate {
   y: number;
 }
 
+export interface NullableCoordinate {
+  x: number | null;
+  y: number | null;
+}
+
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
   yAxis?: any;

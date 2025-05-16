@@ -39,7 +39,12 @@ export const uniqueId = (prefix?: string) => {
  * @param {boolean} validate      If set to be true, the result will be validated
  * @return {number} value
  */
-export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
+export const getPercentValue = (
+  percent: number | string,
+  totalValue: number | undefined,
+  defaultValue = 0,
+  validate = false,
+) => {
   if (!isNumber(percent) && typeof percent !== 'string') {
     return defaultValue;
   }
@@ -47,6 +52,9 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
   let value: number;
 
   if (isPercent(percent)) {
+    if (totalValue == null) {
+      return defaultValue;
+    }
     const index = percent.indexOf('%');
     value = (totalValue * parseFloat((percent as string).slice(0, index))) / 100;
   } else {
@@ -57,7 +65,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
     value = defaultValue;
   }
 
-  if (validate && value > totalValue) {
+  if (validate && totalValue != null && value > totalValue) {
     value = totalValue;
   }
 
@@ -149,12 +157,14 @@ export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: numb
   };
 };
 
+type Nullish = null | undefined;
+
 /**
  * Checks if the value is null or undefined
  * @param value The value to check
  * @returns true if the value is null or undefined
  */
-export const isNullish = (value: unknown): boolean => {
+export const isNullish = (value: unknown): value is Nullish => {
   return value === null || typeof value === 'undefined';
 };
 

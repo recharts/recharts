@@ -29,7 +29,14 @@ export const combineTooltipInteractionState = (
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
 ): TooltipInteractionState => {
+  if (tooltipEventType == null) {
+    return noInteraction;
+  }
   const appropriateMouseInteraction = chooseAppropriateMouseInteraction(tooltipState, tooltipEventType, trigger);
+
+  if (appropriateMouseInteraction == null) {
+    return noInteraction;
+  }
 
   if (appropriateMouseInteraction.active) {
     return appropriateMouseInteraction;

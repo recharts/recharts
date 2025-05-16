@@ -6,7 +6,7 @@ export const combineActiveTooltipIndex = (
   tooltipInteraction: TooltipInteractionState,
   chartData: ChartData,
 ): TooltipIndex | null => {
-  const desiredIndex: TooltipIndex = tooltipInteraction?.index;
+  const desiredIndex: TooltipIndex | undefined = tooltipInteraction?.index;
   if (desiredIndex == null) {
     return null;
   }

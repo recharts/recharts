@@ -1746,9 +1746,9 @@ export const combineGraphicalItemTicks = (
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: XorYType,
-): TickItem[] | null => {
+): TickItem[] | undefined => {
   if (axis == null || scale == null || axisRange == null || axisRange[0] === axisRange[1]) {
-    return null;
+    return undefined;
   }
   const isCategorical = isCategoricalAxis(layout, axisType);
 
@@ -1796,7 +1796,7 @@ export const selectTicksOfGraphicalItem: (
   axisType: XorYType,
   axisId: AxisId,
   isPanorama: boolean,
-) => TickItem[] | null = createSelector(
+) => TickItem[] | undefined = createSelector(
   [
     selectChartLayout,
     selectAxisSettings,

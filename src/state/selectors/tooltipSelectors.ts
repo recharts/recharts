@@ -286,16 +286,16 @@ const combineTicksOfTooltipAxis = (
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: XorYType,
-): ReadonlyArray<TickItem> | null => {
+): ReadonlyArray<TickItem> | undefined => {
   if (!axis) {
-    return null;
+    return undefined;
   }
   const { type } = axis;
 
   const isCategorical = isCategoricalAxis(layout, axisType);
 
   if (!scale) {
-    return null;
+    return undefined;
   }
 
   const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
@@ -329,7 +329,7 @@ const combineTicksOfTooltipAxis = (
   );
 };
 
-export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | null = createSelector(
+export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | undefined = createSelector(
   [
     selectChartLayout,
     selectTooltipAxis,

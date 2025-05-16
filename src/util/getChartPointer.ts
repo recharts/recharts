@@ -13,7 +13,7 @@ import { ChartPointer, MousePointer } from '../chart/generateCategoricalChart';
  * @param event The mouse event from React event handlers
  * @return chartPointer The chart coordinates relative to the top-left corner of the chart
  */
-export const getChartPointer = (event: MousePointer): ChartPointer | undefined => {
+export const getChartPointer = (event: MousePointer): ChartPointer => {
   const rect = event.currentTarget.getBoundingClientRect();
   const scaleX = rect.width / event.currentTarget.offsetWidth;
   const scaleY = rect.height / event.currentTarget.offsetHeight;
