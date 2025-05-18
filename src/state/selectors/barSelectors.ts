@@ -152,16 +152,16 @@ export interface MaybeStackedGraphicalItem {
 /**
  * Some graphical items allow data stacking.
  * This interface is used to represent the items that are stacked
- * because the user has provided the stackId property.
+ * because the user has provided the stackId and dataKey properties.
  */
 export interface DefinitelyStackedGraphicalItem {
   stackId: StackId;
-  dataKey: DataKey<any> | undefined;
+  dataKey: DataKey<any>;
   barSize: number | string | undefined;
 }
 
 function isStacked(graphicalItem: MaybeStackedGraphicalItem): graphicalItem is DefinitelyStackedGraphicalItem {
-  return graphicalItem.stackId != null;
+  return graphicalItem.stackId != null && graphicalItem.dataKey != null;
 }
 
 export const combineBarSizeList = (
@@ -169,12 +169,12 @@ export const combineBarSizeList = (
   globalSize: number | undefined,
   totalSize: number,
 ): SizeList | undefined => {
-  const initialValue: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
+  const initialValue: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
 
   const stackedBars: ReadonlyArray<DefinitelyStackedGraphicalItem> = allBars.filter(isStacked);
   const unstackedBars = allBars.filter(b => b.stackId == null);
 
-  const groupByStack: Record<StackId, Array<MaybeStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
+  const groupByStack: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
     if (!acc[bar.stackId]) {
       acc[bar.stackId] = [];
     }
@@ -183,13 +183,13 @@ export const combineBarSizeList = (
   }, initialValue);
 
   const stackedSizeList: SizeList = Object.entries(groupByStack).map(([stackId, bars]): BarCategory => {
-    const dataKeys = bars.map(b => b.dataKey).filter(Boolean);
+    const dataKeys = bars.map(b => b.dataKey);
     const barSize: number | undefined = getBarSize(globalSize, totalSize, bars[0].barSize);
     return { stackId, dataKeys, barSize };
   });
 
   const unstackedSizeList: SizeList = unstackedBars.map((b): BarCategory => {
-    const dataKeys = [b.dataKey].filter(Boolean);
+    const dataKeys = [b.dataKey].filter(dk => dk != null);
     const barSize: number | undefined = getBarSize(globalSize, totalSize, b.barSize);
     return { stackId: undefined, dataKeys, barSize };
   });

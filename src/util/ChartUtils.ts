@@ -149,7 +149,8 @@ export type BarPositionPosition = {
   offset: number;
   /**
    * Size of the bar.
-   * If the input data is not well-formed, undefined or NaN, this will be 0.
+   * If the input data is undefined, this will be 0.
+   * If the input data is NaN then this size too will be NaN.
    */
   size: number;
 };
