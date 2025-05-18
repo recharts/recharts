@@ -588,7 +588,6 @@ export const combineDomainOfStackGroups = (
     // ZAxis ignores stacks
     return undefined;
   }
-  // @ts-expect-error typescript is unhappy with the two different types of StackGroups
   const domainOfStackGroups = getDomainOfStackGroups(stackGroups, dataStartIndex, dataEndIndex);
   if (domainOfStackGroups != null && domainOfStackGroups[0] === 0 && domainOfStackGroups[1] === 0) {
     return undefined;

@@ -11,7 +11,6 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { ReactElement } from 'react';
 import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
@@ -35,7 +34,7 @@ import {
 import { ValueType } from '../component/DefaultTooltipContent';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendSettings } from '../state/legendSlice';
-import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale, StackGroup } from '../state/selectors/axisSelectors';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -150,10 +149,9 @@ export type BarPositionPosition = {
   offset: number;
   /**
    * Size of the bar.
-   * This will be usually a number.
-   * But if the input data is not well-formed, undefined or NaN will be on the output too.
+   * If the input data is not well-formed, undefined or NaN, this will be 0.
    */
-  size: number | undefined | typeof NaN;
+  size: number;
 };
 
 export const appendOffsetOfLegend = (
@@ -534,21 +532,6 @@ export function getNormalizedStackId(publicStackId: StackId | undefined): Normal
   return publicStackId == null ? undefined : String(publicStackId);
 }
 
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-type GenericChildStackGroup<T> = {
-  numericAxisId: string;
-  cateAxisId: string;
-  items: Array<ReactElement>;
-  stackedData?: ReadonlyArray<T>;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
-
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,
   ticks,
@@ -645,11 +628,14 @@ const makeDomainFinite = (domain: NumberDomain): NumberDomain => {
 };
 
 export const getDomainOfStackGroups = (
-  stackGroups: Record<StackId, ChildStackGroup>,
+  stackGroups: Record<StackId, StackGroup> | undefined,
   startIndex: number,
   endIndex: number,
-): NumberDomain =>
-  makeDomainFinite(
+): NumberDomain | undefined => {
+  if (stackGroups == null) {
+    return undefined;
+  }
+  return makeDomainFinite(
     Object.keys(stackGroups).reduce(
       (result, stackId): NumberDomain => {
         const group = stackGroups[stackId];
@@ -668,6 +654,7 @@ export const getDomainOfStackGroups = (
       [Infinity, -Infinity],
     ),
   );
+};
 
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
