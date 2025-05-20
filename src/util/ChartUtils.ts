@@ -721,7 +721,7 @@ export function getTooltipEntry({
 
 export function getTooltipNameProp(
   nameFromItem: string | number | undefined | unknown,
-  dataKey: DataKey<any>,
+  dataKey: DataKey<any> | undefined,
 ): string | undefined {
   if (nameFromItem) {
     return String(nameFromItem);

@@ -2499,8 +2499,8 @@ describe('selectErrorBarsSettings', () => {
     // There are ErrorBars but they are specified for another XAxis
     expect(xAxisSpy).toHaveBeenLastCalledWith([]);
     expect(yAxisSpy).toHaveBeenLastCalledWith([]);
-    expect(xAxisSpy).toHaveBeenCalledTimes(3);
-    expect(yAxisSpy).toHaveBeenCalledTimes(3);
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return bars settings if present in BarChart', () => {
@@ -2635,7 +2635,7 @@ describe('selectErrorBarsSettings', () => {
       dataKey: undefined,
       domain: [0, 'auto'],
       hide: true,
-      id: undefined,
+      id: 0,
       includeHidden: false,
       interval: 'preserveEnd',
       minTickGap: 5,
@@ -3070,7 +3070,7 @@ describe('selectAxisWithScale', () => {
       domain: undefined,
       height: 30,
       hide: true,
-      id: undefined,
+      id: 0,
       includeHidden: false,
       interval: 'preserveEnd',
       minTickGap: 5,

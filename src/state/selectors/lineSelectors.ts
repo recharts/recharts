@@ -90,7 +90,7 @@ export const selectLinePoints: (
   yAxisId: AxisId,
   isPanorama: boolean,
   { dataKey, data }: ResolvedLineSettings,
-) => ReadonlyArray<LinePointItem> = createSelector(
+) => ReadonlyArray<LinePointItem> | undefined = createSelector(
   [
     selectChartLayout,
     selectXAxisWithScale,
@@ -110,7 +110,7 @@ export const selectLinePoints: (
     lineSettings,
     bandSize,
     { chartData, dataStartIndex, dataEndIndex },
-  ) => {
+  ): ReadonlyArray<LinePointItem> | undefined => {
     if (
       lineSettings == null ||
       xAxis == null ||
@@ -118,7 +118,8 @@ export const selectLinePoints: (
       xAxisTicks == null ||
       yAxisTicks == null ||
       xAxisTicks.length === 0 ||
-      yAxisTicks.length === 0
+      yAxisTicks.length === 0 ||
+      bandSize == null
     ) {
       return undefined;
     }
@@ -126,7 +127,7 @@ export const selectLinePoints: (
     const { dataKey, data } = lineSettings;
     let displayedData: ChartData | undefined;
 
-    if (data?.length > 0) {
+    if (data != null && data.length > 0) {
       displayedData = data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);
