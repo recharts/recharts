@@ -21,7 +21,6 @@ const preview: Preview = {
     // Sets a delay of 1550ms before each story to give them time to animate (recharts animation default is 1500ms)
     chromatic: { delay: 1550 },
   },
-  tags: ['autodocs'],
 };
 
 export default preview;
