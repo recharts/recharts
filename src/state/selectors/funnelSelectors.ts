@@ -10,12 +10,12 @@ import { CellProps } from '../..';
 
 type FunnelComposedData = {
   trapezoids: ReadonlyArray<FunnelTrapezoidItem>;
-  data: any[];
+  data: ChartData | undefined;
 };
 
 export type ResolvedFunnelSettings = {
   dataKey: DataKey<any>;
-  data: any[] | undefined;
+  data: ChartData | undefined;
   nameKey: DataKey<any>;
   tooltipType?: TooltipType;
   lastShapeType?: 'triangle' | 'rectangle';
@@ -48,7 +48,7 @@ export const selectFunnelTrapezoids: (
     offset,
     { data, dataKey, nameKey, tooltipType, lastShapeType, reversed, customWidth, cells, presentationProps },
     { chartData },
-  ) => {
+  ): FunnelComposedData => {
     let displayedData: ChartData | undefined;
     if (data != null && data.length > 0) {
       displayedData = data;
