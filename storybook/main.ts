@@ -26,7 +26,5 @@ module.exports = {
   features: {
     interactionsDebugger: true,
   },
-  docs: {
-    autodocs: false,
-  },
+  docs: {},
 };
