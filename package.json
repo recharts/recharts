@@ -88,7 +88,7 @@
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-react": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
-    "@babel/runtime": "^7.24.8",
+    "@babel/runtime": "^7.26.10",
     "@chromatic-com/storybook": "^3.2.6",
     "@reduxjs/toolkit": "^1.9.7",
     "@storybook/addon-a11y": "^8.6.13",
