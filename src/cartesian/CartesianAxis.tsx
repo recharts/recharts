@@ -234,11 +234,12 @@ export class CartesianAxis extends Component<Props, IState> {
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
     let tickItem;
+    const combinedClassName = clsx(props.className, 'recharts-cartesian-axis-tick-value');
 
     if (React.isValidElement(option)) {
-      tickItem = React.cloneElement(option, props);
+      tickItem = React.cloneElement(option, { ...props, className: combinedClassName });
     } else if (typeof option === 'function') {
-      tickItem = option(props);
+      tickItem = option({ ...props, className: combinedClassName });
     } else {
       let className = 'recharts-cartesian-axis-tick-value';
 
