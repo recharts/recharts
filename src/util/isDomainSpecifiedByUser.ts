@@ -66,7 +66,7 @@ export function numericalDomainSpecifiedWithoutRequiringData(
   }
   if (Array.isArray(userDomain) && userDomain.length === 2) {
     const [providedMin, providedMax] = userDomain;
-    let finalMin, finalMax: string | number;
+    let finalMin, finalMax: string | number | undefined;
 
     if (isWellBehavedNumber(providedMin)) {
       finalMin = providedMin;

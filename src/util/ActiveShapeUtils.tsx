@@ -48,7 +48,7 @@ function ShapeSelector<ShapePropsType>({
 }: {
   shapeType: ShapeType;
   elementProps: ShapePropsType;
-}) {
+}): React.ReactNode {
   switch (shapeType) {
     case 'rectangle':
       return <Rectangle {...elementProps} />;

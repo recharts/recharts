@@ -60,8 +60,8 @@ export const calculateActiveTickIndex = (
    * centric -> angle
    * radial -> radius
    */
-  coordinate: number,
-  ticks: ReadonlyArray<TickItem>,
+  coordinate: number | undefined,
+  ticks: ReadonlyArray<TickItem> | undefined,
   unsortedTicks: ReadonlyArray<TickItem>,
   axisType: AxisType | undefined,
   range: AxisRange | undefined,
@@ -69,8 +69,8 @@ export const calculateActiveTickIndex = (
   let index = -1;
   const len = ticks?.length ?? 0;
 
-  // if there are 1 or fewer ticks then the active tick is at index 0
-  if (len <= 1) {
+  // if there are 1 or fewer ticks or if there is no coordinate then the active tick is at index 0
+  if (len <= 1 || coordinate == null) {
     return 0;
   }
 
@@ -119,7 +119,7 @@ export const calculateActiveTickIndex = (
         }
       }
     }
-  } else {
+  } else if (ticks) {
     // ticks are distributed in a single direction
     for (let i = 0; i < len; i++) {
       if (
@@ -294,14 +294,14 @@ export const getTicksOfAxis = (
     return null;
   }
 
-  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+  const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset = axisType === 'angleAxis' && range && range.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {
-    const result = (ticks || niceTicks).map((entry: AxisTick, index: number): TickItem => {
+    const result = (ticks || niceTicks || []).map((entry: AxisTick, index: number): TickItem => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -329,7 +329,7 @@ export const getTicksOfAxis = (
     );
   }
 
-  if (scale.ticks && !isAll) {
+  if (scale.ticks && !isAll && tickCount != null) {
     return scale
       .ticks(tickCount)
       .map(
@@ -705,7 +705,7 @@ export function getTooltipEntry({
   name,
 }: {
   tooltipEntrySettings: TooltipEntrySettings;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   payload: any;
   value: ValueType;
   name: string | undefined;
