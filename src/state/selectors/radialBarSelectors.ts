@@ -47,7 +47,7 @@ import { isNullish } from '../../util/DataUtils';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
   dataKey: DataKey<any> | undefined;
-  minPointSize: number;
+  minPointSize: number | undefined;
   stackId: StackId | undefined;
   maxBarSize: number | undefined;
 }
@@ -364,8 +364,8 @@ const selectPolarStackedData: (
 
 export const selectRadialBarSectors: (
   state: RechartsRootState,
-  radiusAxisId: AxisId,
-  angleAxisId: AxisId,
+  radiusAxisId: AxisId | undefined,
+  angleAxisId: AxisId | undefined,
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ReadonlyArray<RadialBarDataItem> = createSelector(
@@ -439,28 +439,30 @@ export const selectRadialBarSectors: (
   },
 );
 
-export const selectRadialBarLegendPayload: (state: RechartsRootState, legendType: LegendType) => Array<LegendPayload> =
-  createSelector(
-    [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
-    ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {
-      if (chartData == null) {
-        return [];
-      }
-      const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
+export const selectRadialBarLegendPayload: (
+  state: RechartsRootState,
+  legendType: LegendType | undefined,
+) => Array<LegendPayload> = createSelector(
+  [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
+  ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {
+    if (chartData == null) {
+      return [];
+    }
+    const displayedData = chartData.slice(dataStartIndex, dataEndIndex + 1);
 
-      if (displayedData.length === 0) {
-        return [];
-      }
+    if (displayedData.length === 0) {
+      return [];
+    }
 
-      return displayedData.map(entry => {
-        return {
-          type: legendType,
-          // @ts-expect-error we need a better typing for our data inputs
-          value: entry.name,
-          // @ts-expect-error we need a better typing for our data inputs
-          color: entry.fill,
-          payload: entry,
-        };
-      });
-    },
-  );
+    return displayedData.map(entry => {
+      return {
+        type: legendType,
+        // @ts-expect-error we need a better typing for our data inputs
+        value: entry.name,
+        // @ts-expect-error we need a better typing for our data inputs
+        color: entry.fill,
+        payload: entry,
+      };
+    });
+  },
+);

@@ -52,6 +52,7 @@ import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
+import { AxisId } from '../state/cartesianAxisSlice';
 
 export type RadialBarDataItem = SectorProps & {
   value?: any;
@@ -126,7 +127,7 @@ function SectorsWithAnimation({
   previousSectorsRef,
 }: {
   props: RadialBarProps;
-  previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem>>;
+  previousSectorsRef: MutableRefObject<ReadonlyArray<RadialBarDataItem> | null>;
 }) {
   const {
     data,
@@ -172,7 +173,7 @@ function SectorsWithAnimation({
         const stepData =
           t === 1
             ? data
-            : data.map((entry, index) => {
+            : (data ?? []).map((entry, index) => {
                 const prev = prevData && prevData[index];
 
                 if (prev) {
@@ -193,12 +194,12 @@ function SectorsWithAnimation({
 
         if (t > 0) {
           // eslint-disable-next-line no-param-reassign
-          previousSectorsRef.current = stepData;
+          previousSectorsRef.current = stepData ?? null;
         }
 
         return (
           <Layer>
-            <RadialBarSectors sectors={stepData} allOtherRadialBarProps={props} showLabels={!isAnimating} />
+            <RadialBarSectors sectors={stepData ?? []} allOtherRadialBarProps={props} showLabels={!isAnimating} />
           </Layer>
         );
       }}
@@ -207,7 +208,7 @@ function SectorsWithAnimation({
 }
 
 function RenderSectors(props: RadialBarProps) {
-  const { data, isAnimationActive } = props;
+  const { data = [], isAnimationActive } = props;
 
   const previousSectorsRef = useRef<ReadonlyArray<RadialBarDataItem> | null>(null);
   const prevData = previousSectorsRef.current;
@@ -221,8 +222,8 @@ function RenderSectors(props: RadialBarProps) {
 
 interface InternalRadialBarProps {
   className?: string;
-  angleAxisId?: string | number;
-  radiusAxisId?: string | number;
+  angleAxisId?: AxisId;
+  radiusAxisId?: AxisId;
   startAngle?: number;
   endAngle?: number;
   shape?: ActiveShape<SectorProps, SVGPathElement>;
@@ -257,7 +258,7 @@ export type RadialBarProps = Omit<PresentationAttributesAdaptChildEvent<any, SVG
 
 function SetRadialBarPayloadLegend(props: RadialBarProps) {
   const legendPayload = useAppSelector(state => selectRadialBarLegendPayload(state, props.legendType));
-  return <SetPolarLegendPayload legendPayload={legendPayload} />;
+  return <SetPolarLegendPayload legendPayload={legendPayload ?? []} />;
 }
 
 function getTooltipEntrySettings(props: RadialBarProps): TooltipPayloadConfiguration {
@@ -342,9 +343,10 @@ function RadialBarImpl(props: RadialBarProps) {
     maxBarSize: props.maxBarSize,
     barSize: props.barSize,
   };
-  const data: ReadonlyArray<RadialBarDataItem> = useAppSelector(state =>
-    selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
-  );
+  const data: ReadonlyArray<RadialBarDataItem> =
+    useAppSelector(state =>
+      selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
+    ) ?? [];
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
@@ -433,7 +435,7 @@ export function computeRadialBarDataItems({
       });
       endAngle = angleAxis.scale(value[1]);
       startAngle = angleAxis.scale(value[0]);
-      outerRadius = innerRadius + pos.size;
+      outerRadius = (innerRadius ?? 0) + pos.size;
       const deltaAngle = endAngle - startAngle;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(deltaAngle) < Math.abs(minPointSize)) {
@@ -462,7 +464,7 @@ export function computeRadialBarDataItems({
         entry,
         index,
       });
-      endAngle = startAngle + pos.size;
+      endAngle = (startAngle ?? 0) + pos.size;
       const deltaRadius = outerRadius - innerRadius;
 
       if (Math.abs(minPointSize) > 0 && Math.abs(deltaRadius) < Math.abs(minPointSize)) {
@@ -498,11 +500,13 @@ export class RadialBar extends PureComponent<RadialBarProps> {
       <>
         <ReportBar />
         <PolarGraphicalItemContext
+          // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
           data={undefined} // data prop is injected through generator and overwrites what user passes in
           dataKey={this.props.dataKey}
-          hide={this.props.hide}
-          angleAxisId={this.props.angleAxisId}
-          radiusAxisId={this.props.radiusAxisId}
+          // TS is not smart enough to know defaultProps has values due to the explicit Partial type
+          hide={this.props.hide ?? defaultRadialBarProps.hide!}
+          angleAxisId={this.props.angleAxisId ?? defaultRadialBarProps.angleAxisId!}
+          radiusAxisId={this.props.radiusAxisId ?? defaultRadialBarProps.radiusAxisId!}
           stackId={this.props.stackId}
           barSize={this.props.barSize}
           type="radialBar"

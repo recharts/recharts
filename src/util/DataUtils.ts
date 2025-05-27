@@ -92,7 +92,7 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
 };
 
 /* @todo this function returns a function that is called immediately in all use-cases, make it just return the number and skip the anonymous function step */
-export const interpolateNumber = (numberA: number, numberB: number) => {
+export const interpolateNumber = (numberA: number | undefined, numberB: number | undefined) => {
   if (isNumber(numberA) && isNumber(numberB)) {
     return (t: number) => numberA + t * (numberB - numberA);
   }

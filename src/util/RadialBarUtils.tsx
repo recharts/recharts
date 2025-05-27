@@ -4,7 +4,7 @@ import { RadialBarProps } from '../polar/RadialBar';
 import { Props as SectorProps } from '../shape/Sector';
 import { Shape } from './ActiveShapeUtils';
 
-export function parseCornerRadius(cornerRadius: string | number): number {
+export function parseCornerRadius(cornerRadius: string | number | undefined): number | undefined {
   if (typeof cornerRadius === 'string') {
     return parseInt(cornerRadius, 10);
   }
@@ -32,7 +32,7 @@ export function typeGuardSectorProps(option: SVGProps<SVGPathElement>, props: Se
 export interface RadialBarSectorProps extends SectorProps {
   index?: number;
   option: RadialBarProps['activeShape'];
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 export function RadialBarSector(props: RadialBarSectorProps) {
