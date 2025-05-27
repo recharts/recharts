@@ -100,7 +100,7 @@ const defaultProps = {
 
 export const Rectangle: React.FC<Props> = rectangleProps => {
   const props = resolveDefaultProps(rectangleProps, defaultProps);
-  const pathRef = useRef<SVGPathElement>();
+  const pathRef = useRef<SVGPathElement>(null);
   const [totalLength, setTotalLength] = useState(-1);
 
   useEffect(() => {
