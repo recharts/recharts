@@ -138,7 +138,8 @@
     {
       "files": ["scripts/*.js"],
       "rules": {
-        "@typescript-eslint/no-require-imports": "off"
+        "@typescript-eslint/no-require-imports": "off",
+        "no-console": "off"
       }
     }
   ],
