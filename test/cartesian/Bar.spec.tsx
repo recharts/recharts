@@ -1,7 +1,6 @@
 import React, { ComponentType, ReactNode } from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { uniqueId } from 'es-toolkit/compat';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCategoricalsChartsExcept,
@@ -792,7 +791,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     it('Will accept a function for the background prop', () => {
       const className = 'test-custom-background';
       const backgroundComponent = () => {
-        return <div key={uniqueId()} className={className} />;
+        return <div className={className} />;
       };
       const { container } = render(
         <ChartElement data={composedDataWithBackground}>
