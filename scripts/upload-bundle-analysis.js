@@ -3,7 +3,7 @@ const { createAndUploadReport } = require('@codecov/bundle-analyzer');
 const buildDirs = ['lib'];
 
 const coreOpts = {
-  dryRun: true,
+  dryRun: false,
   uploadToken: process.env.CODECOV_TOKEN,
   retryCount: 3,
   apiUrl: 'https://api.codecov.io',
