@@ -109,6 +109,11 @@ jobs:
           files: ./coverage/coverage-final.json
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Upload bundle analysis report to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: node ./scripts/upload-bundle-analysis.js
+
       # Chromatic gives us only this many free credits per month
       # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
       - name: Publish visual regression tests to Chromatic

@@ -90,6 +90,7 @@
     "@babel/preset-typescript": "^7.24.7",
     "@babel/runtime": "^7.26.10",
     "@chromatic-com/storybook": "^3.2.6",
+    "@codecov/bundle-analyzer": "^1.9.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@storybook/addon-a11y": "^8.6.13",
     "@storybook/addon-docs": "^8.6.13",
