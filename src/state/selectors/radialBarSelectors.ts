@@ -408,7 +408,7 @@ export const selectRadialBarSectors: (
       pos == null ||
       (layout !== 'centric' && layout !== 'radial')
     ) {
-      return undefined;
+      return [];
     }
     const { dataKey, minPointSize } = radialBarSettings;
     const { cx, cy, startAngle, endAngle } = polarViewBox;

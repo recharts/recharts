@@ -54,6 +54,8 @@ import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
 
+const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
+
 export type RadialBarDataItem = SectorProps & {
   value?: any;
   payload?: any;
@@ -173,7 +175,7 @@ function SectorsWithAnimation({
         const stepData =
           t === 1
             ? data
-            : (data ?? []).map((entry, index) => {
+            : (data ?? STABLE_EMPTY_ARRAY).map((entry, index) => {
                 const prev = prevData && prevData[index];
 
                 if (prev) {
@@ -199,7 +201,11 @@ function SectorsWithAnimation({
 
         return (
           <Layer>
-            <RadialBarSectors sectors={stepData ?? []} allOtherRadialBarProps={props} showLabels={!isAnimating} />
+            <RadialBarSectors
+              sectors={stepData ?? STABLE_EMPTY_ARRAY}
+              allOtherRadialBarProps={props}
+              showLabels={!isAnimating}
+            />
           </Layer>
         );
       }}
@@ -346,7 +352,7 @@ function RadialBarImpl(props: RadialBarProps) {
   const data: ReadonlyArray<RadialBarDataItem> =
     useAppSelector(state =>
       selectRadialBarSectors(state, props.radiusAxisId, props.angleAxisId, radialBarSettings, cells),
-    ) ?? [];
+    ) ?? STABLE_EMPTY_ARRAY;
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, data }} />
@@ -411,7 +417,7 @@ export function computeRadialBarDataItems({
   startAngle: number;
   endAngle: number;
 }) {
-  return displayedData.map((entry: unknown, index: number) => {
+  return (displayedData ?? []).map((entry: unknown, index: number) => {
     let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
     if (stackedData) {
