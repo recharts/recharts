@@ -6,12 +6,12 @@
     "plugin:react-hooks/recommended",
     "eslint-config-airbnb",
     "plugin:storybook/recommended",
-    "plugin:prettier/recommended",
+    "plugin:prettier/recommended"
   ],
   "env": {
     "browser": true,
     "node": true,
-    "jest": true,
+    "jest": true
   },
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "@typescript-eslint", "eslint-comments"],
@@ -27,16 +27,16 @@
         "useTabs": false,
         "trailingComma": "all",
         "arrowParens": "avoid",
-        "endOfLine": "auto",
-      },
+        "endOfLine": "auto"
+      }
     ],
     "import/extensions": "off",
     "valid-jsdoc": [
       "error",
       {
         "requireReturnType": false,
-        "requireParamType": false,
-      },
+        "requireParamType": false
+      }
     ],
     "react/no-did-update-set-state": "warn",
     "react/jsx-no-constructed-context-values": "warn",
@@ -62,8 +62,8 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": true,
-      },
+        "devDependencies": true
+      }
     ],
     "max-len": ["off"],
     "prefer-destructuring": "error",
@@ -100,8 +100,8 @@
       {
         "args": "after-used",
         "ignoreRestSiblings": true,
-        "argsIgnorePattern": "^_",
-      },
+        "argsIgnorePattern": "^_"
+      }
     ],
     "no-restricted-imports": [
       "error",
@@ -109,38 +109,44 @@
         "paths": [
           {
             "name": "lodash",
-            "message": "Import [module] from lodash/[module] instead",
-          },
-        ],
-      },
-    ],
+            "message": "Import [module] from lodash/[module] instead"
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
       "files": ["./test/**/*.tsx"],
       "rules": {
-        "react/jsx-no-useless-fragment": "off",
-      },
+        "react/jsx-no-useless-fragment": "off"
+      }
     },
     {
       "files": ["./storybook/**/*.stories.@(ts|tsx)", "./storybook/**/*.@(ts|tsx)", "*.js"],
       "rules": {
         "no-useless-constructor": "off",
         "import/no-default-export": "off",
-        "react-hooks/rules-of-hooks": "off",
-      },
+        "react-hooks/rules-of-hooks": "off"
+      }
     },
     {
       "files": ["src/state/*Slice.ts", "test/**/*.spec.tsx"],
       // param-reassign is allowed in slices following Redux recommendation: https://redux-toolkit.js.org/usage/immer-reducers#linting-state-mutations
-      "rules": { "no-param-reassign": ["error", { "props": false }] },
+      "rules": { "no-param-reassign": ["error", { "props": false }] }
     },
+    {
+      "files": ["scripts/*.js"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off"
+      }
+    }
   ],
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-      },
-    },
-  },
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
 }
