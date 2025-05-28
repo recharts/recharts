@@ -1,23 +1,31 @@
 const { createAndUploadReport } = require('@codecov/bundle-analyzer');
 
-const buildDirs = ['lib'];
+function uploadBundleAnalysis(directory, bundleName) {
+  const coreOpts = {
+    dryRun: false,
+    uploadToken: process.env.CODECOV_TOKEN,
+    retryCount: 3,
+    apiUrl: 'https://api.codecov.io',
+    bundleName,
+    enableBundleAnalysis: true,
+    debug: true,
+  };
 
-const coreOpts = {
-  dryRun: true,
-  uploadToken: process.env.CODECOV_TOKEN,
-  retryCount: 3,
-  apiUrl: 'https://api.codecov.io',
-  bundleName: 'recharts/bundle-cjs',
-  enableBundleAnalysis: true,
-  debug: true,
-};
+  const bundleAnalyzerOpts = {
+    beforeReportUpload: async original => original,
+    ignorePatterns: ['*.map'],
+    normalizeAssetsPattern: '[name]-[hash].js',
+  };
 
-const bundleAnalyzerOpts = {
-  beforeReportUpload: async original => original,
-  ignorePatterns: ['*.map'],
-  normalizeAssetsPattern: '[name]-[hash].js',
-};
+  return createAndUploadReport([directory], coreOpts, bundleAnalyzerOpts)
+    .then(reportAsJson => console.log(`Report successfully generated and uploaded: ${reportAsJson}`))
+    .catch(error => console.error('Failed to generate or upload report:', error));
+}
 
-createAndUploadReport(buildDirs, coreOpts, bundleAnalyzerOpts)
-  .then(reportAsJson => console.log(`Report successfully generated and uploaded: ${reportAsJson}`))
-  .catch(error => console.error('Failed to generate or upload report:', error));
+uploadBundleAnalysis('lib', 'recharts/bundle-cjs')
+  .then(() => {
+    return uploadBundleAnalysis('es6', 'recharts/bundle-es6');
+  })
+  .then(() => {
+    return uploadBundleAnalysis('umd', 'recharts/bundle-umd');
+  });
