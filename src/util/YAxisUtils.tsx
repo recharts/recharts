@@ -67,14 +67,15 @@ export const getCalculatedYAxisWidth = ({
     });
 
     // calculate width of the axis label
-    const labelWidth = labelRef.current ? labelRef.current.getBoundingClientRect().width : 0;
+    const labelNode = labelRef.current;
+    const labelWidth = labelNode ? labelNode.getBoundingClientRect().width : 0;
 
     // calculate tick width: tickSize + tickMargin
     const { tickSize, tickMargin } = axisComponent.props || {};
     const tickWidth = tickSize + tickMargin;
 
     // calculate the updated width of the y-axis
-    const updatedYAxisWidth = maxTickWidth + tickWidth + labelWidth + labelGapWithTick;
+    const updatedYAxisWidth = maxTickWidth + tickWidth + labelWidth + (labelNode ? labelGapWithTick : 0);
 
     return Math.ceil(updatedYAxisWidth);
   }
