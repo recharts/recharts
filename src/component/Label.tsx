@@ -49,8 +49,8 @@ interface LabelProps {
   angle?: number;
   index?: number;
   labelRef?: React.RefObject<SVGTextElement>;
-  verticalAnchor?: 'start' | 'end' | 'middle';
-  textAnchor?: 'start' | 'end' | 'middle';
+  verticalAnchor?: string;
+  textAnchor?: string;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;

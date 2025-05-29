@@ -29,11 +29,7 @@ interface LabelListProps<T extends Data> {
   formatter?: (label: React.ReactNode) => React.ReactNode;
 }
 
-// Only allow valid textAnchor values
-type TextAnchor = 'start' | 'middle' | 'end';
-
-export type Props<T extends Data> = Omit<SVGProps<SVGTextElement>, 'textAnchor'> &
-  LabelListProps<T> & { textAnchor?: TextAnchor };
+export type Props<T extends Data> = SVGProps<SVGTextElement> & LabelListProps<T>;
 
 export type ImplicitLabelListType<T extends Data> =
   | boolean
