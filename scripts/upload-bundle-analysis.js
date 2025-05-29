@@ -13,7 +13,7 @@ function uploadBundleAnalysis(directory, bundleName) {
 
   const bundleAnalyzerOpts = {
     beforeReportUpload: async original => original,
-    ignorePatterns: ['*.map'],
+    ignorePatterns: ['*.map', '*.html', '*.txt'],
     normalizeAssetsPattern: '[name]-[hash].js',
   };
 
