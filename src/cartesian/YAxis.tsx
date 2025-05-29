@@ -101,6 +101,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     cartesianAxisRef.current?.tickRefs,
     cartesianTickItems,
     axisSize?.width,
+    axisSize,
     dispatch,
     label,
     yAxisId,
