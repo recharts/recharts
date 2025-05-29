@@ -588,7 +588,7 @@ export const getCateCoordinateOfBar = ({
   bandSize: number;
   entry: any;
   index: number;
-}) => {
+}): number | null => {
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }

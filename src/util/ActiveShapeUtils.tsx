@@ -26,7 +26,7 @@ type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
   option: OptionType;
-  isActive: boolean;
+  isActive?: boolean;
   activeClassName?: string;
   propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
