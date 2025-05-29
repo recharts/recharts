@@ -1,4 +1,5 @@
-import { get } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 
 import * as React from 'react';
 import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
