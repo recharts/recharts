@@ -1,8 +1,23 @@
-import React, { Component, FunctionComponent, useEffect } from 'react';
+import React, {
+  Component,
+  FunctionComponent,
+  useMemo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  isValidElement,
+} from 'react';
 import clsx from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
-import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/cartesianAxisSlice';
+import {
+  addYAxis,
+  removeYAxis,
+  YAxisOrientation,
+  YAxisPadding,
+  YAxisSettings,
+  updateYAxisWidth,
+} from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   implicitYAxis,
@@ -13,6 +28,8 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { getModifiedYAxisProps, getCalculatedYAxisWidth } from '../util/YAxisUtils';
+import { isLabelContentAFunction } from '../component/Label';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -24,6 +41,7 @@ interface YAxisProps extends BaseAxisProps {
   ticks?: ReadonlyArray<AxisTick>;
   /** The width of axis, which need to be set by user */
   width?: number;
+  isWidthResponsive?: boolean;
   mirror?: boolean;
   orientation?: YAxisOrientation;
   padding?: YAxisPadding;
@@ -49,14 +67,45 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 }
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
-  const { yAxisId, className } = props;
+  const { yAxisId, className, isWidthResponsive } = props;
+
+  const cartesianAxisRef = useRef(null);
+  const labelRef = useRef(null);
+
   const viewBox = useAppSelector(selectAxisViewBox);
   const isPanorama = useIsPanorama();
+  const dispatch = useAppDispatch();
   const axisType = 'yAxis';
   const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
+
+  const { label } = useMemo(() => getModifiedYAxisProps({ label: props.label }), [props.label]);
+
+  useLayoutEffect(() => {
+    // Keep the default width of the axis if a function or react element is used for label
+    if (!isWidthResponsive || isLabelContentAFunction(label) || isValidElement(label)) return;
+
+    // get calculated width based on the label width, ticks etc
+    const updatedYAxisWidth = getCalculatedYAxisWidth({
+      cartesianAxisRef,
+      labelRef,
+    });
+
+    // if the width has changed, dispatch an action to update the width
+    if (Math.ceil(axisSize.width) !== Math.ceil(updatedYAxisWidth))
+      dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
+  }, [
+    cartesianAxisRef,
+    cartesianAxisRef.current?.tickRefs,
+    cartesianTickItems,
+    axisSize.width,
+    dispatch,
+    label,
+    yAxisId,
+    isWidthResponsive,
+  ]);
 
   if (axisSize == null || position == null) {
     return null;
@@ -67,9 +116,12 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   return (
     <CartesianAxis
       {...allOtherProps}
+      ref={cartesianAxisRef}
+      labelRef={labelRef}
       scale={scale}
       x={position.x}
       y={position.y}
+      label={isWidthResponsive ? label : props.label}
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
@@ -127,6 +179,7 @@ export const YAxisDefaultProps: Partial<Props> = {
   type: implicitYAxis.type,
   width: implicitYAxis.width,
   yAxisId: 0,
+  isWidthResponsive: false,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function

@@ -1,4 +1,4 @@
-import React, { CSSProperties, SVGProps, useMemo } from 'react';
+import React, { CSSProperties, SVGProps, useMemo, forwardRef } from 'react';
 
 import clsx from 'clsx';
 import { isNullish, isNumber, isNumOrStr } from '../util/DataUtils';
@@ -197,83 +197,91 @@ export const getWordsByLines = ({ width, scaleToFit, children, style, breakAll, 
 
 const DEFAULT_FILL = '#808080';
 
-export const Text = ({
-  x: propsX = 0,
-  y: propsY = 0,
-  lineHeight = '1em',
-  // Magic number from d3
-  capHeight = '0.71em',
-  scaleToFit = false,
-  textAnchor = 'start',
-  // Maintain compat with existing charts / default SVG behavior
-  verticalAnchor = 'end',
-  fill = DEFAULT_FILL,
-  ...props
-}: Props) => {
-  const wordsByLines: Array<Words> = useMemo(() => {
-    return getWordsByLines({
-      breakAll: props.breakAll,
-      children: props.children,
-      maxLines: props.maxLines,
-      scaleToFit,
-      style: props.style,
-      width: props.width,
-    });
-  }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
+export const Text = forwardRef<SVGTextElement, Props>(
+  (
+    {
+      x: propsX = 0,
+      y: propsY = 0,
+      lineHeight = '1em',
+      // Magic number from d3
+      capHeight = '0.71em',
+      scaleToFit = false,
+      textAnchor = 'start',
+      // Maintain compat with existing charts / default SVG behavior
+      verticalAnchor = 'end',
+      fill = DEFAULT_FILL,
+      ...props
+    },
+    ref,
+  ) => {
+    const wordsByLines: Array<Words> = useMemo(() => {
+      return getWordsByLines({
+        breakAll: props.breakAll,
+        children: props.children,
+        maxLines: props.maxLines,
+        scaleToFit,
+        style: props.style,
+        width: props.width,
+      });
+    }, [props.breakAll, props.children, props.maxLines, scaleToFit, props.style, props.width]);
 
-  const { dx, dy, angle, className, breakAll, ...textProps } = props;
+    const { dx, dy, angle, className, breakAll, ...textProps } = props;
 
-  if (!isNumOrStr(propsX) || !isNumOrStr(propsY)) {
-    return null;
-  }
-  const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
-  const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
+    if (!isNumOrStr(propsX) || !isNumOrStr(propsY)) {
+      return null;
+    }
+    const x = (propsX as number) + (isNumber(dx as number) ? (dx as number) : 0);
+    const y = (propsY as number) + (isNumber(dy as number) ? (dy as number) : 0);
 
-  let startDy: string;
-  switch (verticalAnchor) {
-    case 'start':
-      startDy = reduceCSSCalc(`calc(${capHeight})`);
-      break;
-    case 'middle':
-      startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
-      break;
-    default:
-      startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
-      break;
-  }
+    let startDy: string;
+    switch (verticalAnchor) {
+      case 'start':
+        startDy = reduceCSSCalc(`calc(${capHeight})`);
+        break;
+      case 'middle':
+        startDy = reduceCSSCalc(`calc(${(wordsByLines.length - 1) / 2} * -${lineHeight} + (${capHeight} / 2))`);
+        break;
+      default:
+        startDy = reduceCSSCalc(`calc(${wordsByLines.length - 1} * -${lineHeight})`);
+        break;
+    }
 
-  const transforms = [];
-  if (scaleToFit) {
-    const lineWidth = wordsByLines[0].width;
-    const { width } = props;
-    transforms.push(`scale(${isNumber(width as number) ? (width as number) / lineWidth : 1})`);
-  }
-  if (angle) {
-    transforms.push(`rotate(${angle}, ${x}, ${y})`);
-  }
-  if (transforms.length) {
-    textProps.transform = transforms.join(' ');
-  }
+    const transforms = [];
+    if (scaleToFit) {
+      const lineWidth = wordsByLines[0].width;
+      const { width } = props;
+      transforms.push(`scale(${isNumber(width as number) ? (width as number) / lineWidth : 1})`);
+    }
+    if (angle) {
+      transforms.push(`rotate(${angle}, ${x}, ${y})`);
+    }
+    if (transforms.length) {
+      textProps.transform = transforms.join(' ');
+    }
 
-  return (
-    <text
-      {...filterProps(textProps, true)}
-      x={x}
-      y={y}
-      className={clsx('recharts-text', className)}
-      textAnchor={textAnchor}
-      fill={fill.includes('url') ? DEFAULT_FILL : fill}
-    >
-      {wordsByLines.map((line, index) => {
-        const words = line.words.join(breakAll ? '' : ' ');
-        return (
-          // duplicate words will cause duplicate keys
-          // eslint-disable-next-line react/no-array-index-key
-          <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
-            {words}
-          </tspan>
-        );
-      })}
-    </text>
-  );
-};
+    return (
+      <text
+        {...filterProps(textProps, true)}
+        ref={ref}
+        x={x}
+        y={y}
+        className={clsx('recharts-text', className)}
+        textAnchor={textAnchor}
+        fill={fill.includes('url') ? DEFAULT_FILL : fill}
+      >
+        {wordsByLines.map((line, index) => {
+          const words = line.words.join(breakAll ? '' : ' ');
+          return (
+            // duplicate words will cause duplicate keys
+            // eslint-disable-next-line react/no-array-index-key
+            <tspan x={x} dy={index === 0 ? startDy : lineHeight} key={`${words}-${index}`}>
+              {words}
+            </tspan>
+          );
+        })}
+      </text>
+    );
+  },
+);
+
+Text.displayName = 'Text';
