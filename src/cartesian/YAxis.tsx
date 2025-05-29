@@ -85,7 +85,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
 
   useLayoutEffect(() => {
     // Keep the default width of the axis if a function or react element is used for label
-    if (!isWidthResponsive || isLabelContentAFunction(label) || isValidElement(label)) return;
+    if (!isWidthResponsive || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
 
     // get calculated width based on the label width, ticks etc
     const updatedYAxisWidth = getCalculatedYAxisWidth({
@@ -100,7 +100,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     cartesianAxisRef,
     cartesianAxisRef.current?.tickRefs,
     cartesianTickItems,
-    axisSize.width,
+    axisSize?.width,
     dispatch,
     label,
     yAxisId,
