@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Args } from '@storybook/react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from '../../../../src';
 
@@ -49,39 +49,61 @@ export const PieWithTooltip = {
   render: (args: Args) => {
     const [ttPos, setTtPos] = useState(undefined);
     const [active, setActive] = useState(false);
+    const [randomData, setRandomData] = useState(data);
+
+    const onMouseMove = useCallback(
+      (_: unknown, event: MouseEvent) => {
+        // follow the mouse and adjust for some offset
+        setTtPos({ x: event.clientX - 185, y: event.offsetY });
+      },
+      [setTtPos],
+    );
+
+    const cells = useMemo(
+      () =>
+        randomData.map((value: DataPoint, index: number) => (
+          <Cell key={`cell-${value.name}`} fill={COLORS[index % COLORS.length]} />
+        )),
+      [randomData],
+    );
+
+    const onMouseEnter = useCallback(() => {
+      setActive(true);
+    }, [setActive]);
+
+    const onMouseLeave = useCallback(() => {
+      setActive(false);
+    }, [setActive]);
+
     return (
-      <PieChart
-        width={400}
-        height={400}
-        // @ts-expect-error recharts needs more specific type for the event
-        onMouseMove={(_: unknown, event: MouseEvent) => {
-          // follow the mouse and adjust for some offset
-          setTtPos({ x: event.clientX - 185, y: event.offsetY });
-        }}
-      >
-        <Pie
-          {...args}
-          dataKey="value"
-          onMouseEnter={() => {
-            setActive(true);
-          }}
-          onMouseLeave={() => {
-            setActive(false);
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setRandomData(old => old.map(d => ({ ...d, value: Math.round(Math.random() * 1000) })));
           }}
         >
-          {data.map((value: DataPoint, index: number) => (
-            <Cell key={`cell-${value.name}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip content={CustomContent} position={ttPos} active={active} />
-        <Legend />
-      </PieChart>
+          Change Data
+        </button>
+        <PieChart
+          width={400}
+          height={400}
+          data={randomData}
+          // @ts-expect-error recharts needs more specific type for the event
+          onMouseMove={onMouseMove}
+        >
+          <Pie {...args} dataKey="value" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+            {cells}
+          </Pie>
+          <Tooltip content={CustomContent} position={ttPos} active={active} />
+          <Legend />
+        </PieChart>
+      </>
     );
   },
   args: {
     cx: 200,
     cy: 200,
-    data,
     fill: '#8884d8',
     outerRadius: 80,
     labelLine: false,
