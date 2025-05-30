@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { Component, forwardRef } from 'react';
-import { LegendPortalContext } from '../context/legendPortalContext';
 import { Surface } from '../container/Surface';
 
 import { filterProps, validateWidthHeight } from '../util/ReactUtils';
 import { uniqueId } from '../util/DataUtils';
 import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
 import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
-import { CategoricalChartState, ExternalMouseEvents } from './types';
+import { ExternalMouseEvents } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
-import { TooltipPortalContext } from '../context/tooltipPortalContext';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
@@ -88,12 +86,11 @@ export const generateCategoricalChart = ({
   defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
-  class CategoricalChartWrapper extends Component<CategoricalChartProps, CategoricalChartState> {
+  class CategoricalChartWrapper extends Component<CategoricalChartProps> {
     static displayName = chartName;
 
     clipPathId: string;
 
-    // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       accessibilityLayer: true,
       layout: defaultLayout,
@@ -106,14 +103,10 @@ export const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-    container?: HTMLElement;
-
     constructor(props: CategoricalChartProps) {
       super(props);
 
       this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-
-      this.state = {};
     }
 
     render() {
@@ -146,50 +139,30 @@ export const generateCategoricalChart = ({
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
-          <TooltipPortalContext.Provider value={this.state.tooltipPortal}>
-            <LegendPortalContext.Provider value={this.state.legendPortal}>
-              <ChartLayoutContextProvider clipPathId={this.clipPathId}>
-                <RechartsWrapper
-                  className={className}
-                  style={style}
-                  width={width}
-                  height={height}
-                  ref={(node: HTMLDivElement) => {
-                    this.container = node;
-                    if (this.state.tooltipPortal == null) {
-                      this.setState({ tooltipPortal: node });
-                    }
-                    if (this.state.legendPortal == null) {
-                      this.setState({ legendPortal: node });
-                    }
-                  }}
-                  onClick={this.props.onClick}
-                  onMouseLeave={this.props.onMouseLeave}
-                  onMouseEnter={this.props.onMouseEnter}
-                  onMouseMove={this.props.onMouseMove}
-                  onMouseDown={this.props.onMouseDown}
-                  onMouseUp={this.props.onMouseUp}
-                  onContextMenu={this.props.onContextMenu}
-                  onDoubleClick={this.props.onDoubleClick}
-                  onTouchStart={this.props.onTouchStart}
-                  onTouchMove={this.props.onTouchMove}
-                  onTouchEnd={this.props.onTouchEnd}
-                >
-                  <Surface
-                    {...attrs}
-                    width={width}
-                    height={height}
-                    title={title}
-                    desc={desc}
-                    style={FULL_WIDTH_AND_HEIGHT}
-                  >
-                    <ClipPath clipPathId={this.clipPathId} />
-                    {children}
-                  </Surface>
-                </RechartsWrapper>
-              </ChartLayoutContextProvider>
-            </LegendPortalContext.Provider>
-          </TooltipPortalContext.Provider>
+          <ChartLayoutContextProvider clipPathId={this.clipPathId}>
+            <RechartsWrapper
+              className={className}
+              style={style}
+              width={width}
+              height={height}
+              onClick={this.props.onClick}
+              onMouseLeave={this.props.onMouseLeave}
+              onMouseEnter={this.props.onMouseEnter}
+              onMouseMove={this.props.onMouseMove}
+              onMouseDown={this.props.onMouseDown}
+              onMouseUp={this.props.onMouseUp}
+              onContextMenu={this.props.onContextMenu}
+              onDoubleClick={this.props.onDoubleClick}
+              onTouchStart={this.props.onTouchStart}
+              onTouchMove={this.props.onTouchMove}
+              onTouchEnd={this.props.onTouchEnd}
+            >
+              <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+                <ClipPath clipPathId={this.clipPathId} />
+                {children}
+              </Surface>
+            </RechartsWrapper>
+          </ChartLayoutContextProvider>
         </>
       );
     }
