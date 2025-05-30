@@ -93,7 +93,6 @@ export const generateCategoricalChart = ({
 
     clipPathId: string;
 
-    // todo join specific chart propTypes
     static defaultProps: CategoricalChartProps = {
       accessibilityLayer: true,
       layout: defaultLayout,
@@ -105,8 +104,6 @@ export const generateCategoricalChart = ({
       syncMethod: 'index',
       ...defaultProps,
     };
-
-    container?: HTMLElement;
 
     constructor(props: CategoricalChartProps) {
       super(props);
@@ -155,7 +152,6 @@ export const generateCategoricalChart = ({
                   width={width}
                   height={height}
                   ref={(node: HTMLDivElement) => {
-                    this.container = node;
                     if (this.state.tooltipPortal == null) {
                       this.setState({ tooltipPortal: node });
                     }
