@@ -1,0 +1,40 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as ComponentStories from './dimensions.stories';
+
+<Meta of={ComponentStories} />
+
+# `useChartWidth`, `useChartHeight`
+
+The `useChartWidth` hook returns the width of the chart in pixels. `useChartHeight` returns the height of the chart in pixels.
+
+If you are using chart with hardcoded `width` and `height` props, then the width returned will be the same
+as the `width` and `height` prop on the main chart element.
+
+If you are using a chart with a `ResponsiveContainer`, the width and height will be the size of the chart
+as the ResponsiveContainer has decided it would be.
+
+If the chart has any axes or legend, the `width` and `height` will be the size of the chart
+including the axes and legend.
+
+The dimensions do not scale, meaning as user zoom in and out, the width/height number will not change
+as the chart gets visually larger or smaller.
+
+<Canvas>
+  <Story name="WithAxesAndLegend" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+The hooks can be used within any chart:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
+- `<Sankey/>`
+- `<ScatterChart/>`
+- `<SunburstChart/>`
+- `<Treemap/>`

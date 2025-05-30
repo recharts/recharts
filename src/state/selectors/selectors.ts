@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'es-toolkit/compat';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {
@@ -24,11 +24,11 @@ import { ChartDataState } from '../chartDataSlice';
 import {
   AxisType,
   BaseAxisProps,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   LayoutType,
-  PolarViewBox,
+  PolarViewBoxRequired,
   TickItem,
   TooltipEventType,
 } from '../../util/types';
@@ -50,7 +50,7 @@ import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipP
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 
-export const useChartName = (): string => {
+export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);
 };
 
@@ -110,9 +110,12 @@ export const selectActiveIndex: (
 
 export const selectTooltipDataKey = (
   state: RechartsRootState,
-  tooltipEventType: TooltipEventType,
+  tooltipEventType: TooltipEventType | undefined,
   trigger: TooltipTrigger,
 ): DataKey<any> | undefined => {
+  if (tooltipEventType == null) {
+    return undefined;
+  }
   const tooltipState = selectTooltipState(state);
   if (tooltipEventType === 'axis') {
     if (trigger === 'hover') {
@@ -160,6 +163,7 @@ export const selectActiveCoordinate: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
+  // TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
 ) => Coordinate | undefined = createSelector(
   [selectTooltipInteractionState, selectCoordinateForDefaultIndex],
   (tooltipInteractionState: TooltipInteractionState, defaultIndexCoordinate: Coordinate): Coordinate | undefined => {
@@ -172,9 +176,9 @@ export const selectActiveLabel: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => string | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
+) => string | number | undefined = createSelector(selectTooltipAxisTicks, selectActiveIndex, combineActiveLabel);
 
-function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown>) {
+function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown> | undefined) {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
@@ -294,7 +298,7 @@ export const selectIsTooltipActive: (
   tooltipEventType: TooltipEventType,
   trigger: TooltipTrigger,
   defaultIndex: TooltipIndex | undefined,
-) => { isActive: boolean; activeIndex: string | undefined } = createSelector(
+) => { isActive: boolean; activeIndex: TooltipIndex | undefined } = createSelector(
   [selectTooltipInteractionState],
   (tooltipInteractionState: TooltipInteractionState) => {
     return { isActive: tooltipInteractionState.active, activeIndex: tooltipInteractionState.index };
@@ -304,13 +308,13 @@ export const selectIsTooltipActive: (
 export const combineActiveProps = (
   chartEvent: ChartPointer | undefined,
   layout: LayoutType | undefined,
-  polarViewBox: PolarViewBox | undefined,
+  polarViewBox: PolarViewBoxRequired | undefined,
   tooltipAxisType: AxisType | undefined,
   tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
-  offset: ChartOffset,
-): ActiveTooltipProps => {
+  offset: ChartOffsetRequired,
+): ActiveTooltipProps | undefined => {
   if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;
   }

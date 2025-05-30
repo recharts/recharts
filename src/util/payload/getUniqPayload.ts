@@ -1,4 +1,4 @@
-import uniqBy from 'lodash/uniqBy';
+import { uniqBy } from 'es-toolkit';
 
 type UniqueFunc<T> = (entry: T) => unknown;
 

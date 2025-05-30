@@ -57,13 +57,13 @@ export const selectDisplayedData: (
   [selectChartDataAndAlwaysIgnoreIndexes, pickPieSettings, pickCells],
   ({ chartData }: ChartDataState, pieSettings: ResolvedPieSettings, cells): ChartData | undefined => {
     let displayedData: ChartData | undefined;
-    if (pieSettings?.data?.length > 0) {
+    if (pieSettings?.data != null && pieSettings.data.length > 0) {
       displayedData = pieSettings.data;
     } else {
       displayedData = chartData;
     }
 
-    if (!displayedData || !displayedData.length) {
+    if ((!displayedData || !displayedData.length) && cells != null) {
       displayedData = cells.map((cell: ReactElement<CellProps>) => ({
         ...pieSettings.presentationProps,
         ...cell.props,
@@ -85,10 +85,13 @@ export const selectPieLegend: (
 ) => ReadonlyArray<LegendPayload> | undefined = createSelector(
   [selectDisplayedData, pickPieSettings, pickCells],
   (
-    displayedData,
+    displayedData: ChartData | undefined,
     pieSettings: ResolvedPieSettings,
     cells: ReadonlyArray<ReactElement>,
-  ): ReadonlyArray<LegendPayload> => {
+  ): ReadonlyArray<LegendPayload> | undefined => {
+    if (displayedData == null) {
+      return undefined;
+    }
     return displayedData.map((entry, i): LegendPayload => {
       const name = getValueByDataKey(entry, pieSettings.nameKey, pieSettings.name);
       let color;

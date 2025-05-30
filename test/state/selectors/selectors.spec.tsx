@@ -138,6 +138,7 @@ const preloadedState: Partial<RechartsRootState> = {
     tooltipPayloadSearcher: arrayTooltipSearcher,
     chartName: '',
     eventEmitter: undefined,
+    defaultTooltipEventType: 'axis',
   },
 };
 

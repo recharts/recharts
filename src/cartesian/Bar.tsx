@@ -2,17 +2,9 @@
  * @fileOverview Render a group of bar
  */
 // eslint-disable-next-line max-classes-per-file
-import React, {
-  Key,
-  MutableRefObject,
-  PureComponent,
-  ReactElement,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Key, MutableRefObject, PureComponent, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
@@ -67,6 +59,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
@@ -526,7 +519,7 @@ class BarWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultBarProps: Partial<Props> = {
+const defaultBarProps = {
   activeBar: false,
   animationBegin: 0,
   animationDuration: 400,
@@ -537,10 +530,23 @@ const defaultBarProps: Partial<Props> = {
   minPointSize: defaultMinPointSize,
   xAxisId: 0,
   yAxisId: 0,
-};
+} as const satisfies Partial<Props>;
 
 function BarImpl(props: Props) {
-  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const {
+    xAxisId,
+    yAxisId,
+    hide,
+    legendType,
+    minPointSize,
+    activeBar,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    isAnimationActive,
+  } = resolveDefaultProps(props, defaultBarProps);
+
+  const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const layout = useChartLayout();
 
   const isPanorama = useIsPanorama();
@@ -551,17 +557,15 @@ function BarImpl(props: Props) {
       data: undefined,
       dataKey: props.dataKey,
       maxBarSize: props.maxBarSize,
-      minPointSize: props.minPointSize,
+      minPointSize,
       stackId: getNormalizedStackId(props.stackId),
     }),
-    [props.barSize, props.dataKey, props.maxBarSize, props.minPointSize, props.stackId],
+    [props.barSize, props.dataKey, props.maxBarSize, minPointSize, props.stackId],
   );
 
   const cells = findAllByType(props.children, Cell);
 
-  const rects = useAppSelector(state =>
-    selectBarRectangles(state, props.xAxisId, props.yAxisId, isPanorama, barSettings, cells),
-  );
+  const rects = useAppSelector(state => selectBarRectangles(state, xAxisId, yAxisId, isPanorama, barSettings, cells));
 
   if (layout !== 'vertical' && layout !== 'horizontal') {
     return null;
@@ -569,24 +573,11 @@ function BarImpl(props: Props) {
 
   let errorBarOffset: number;
   const firstDataPoint = rects?.[0];
-  if (firstDataPoint == null) {
+  if (firstDataPoint == null || firstDataPoint.height == null || firstDataPoint.width == null) {
     errorBarOffset = 0;
   } else {
     errorBarOffset = layout === 'vertical' ? firstDataPoint.height / 2 : firstDataPoint.width / 2;
   }
-
-  const {
-    xAxisId = defaultBarProps.xAxisId,
-    yAxisId = defaultBarProps.yAxisId,
-    hide = defaultBarProps.hide,
-    legendType = defaultBarProps.legendType,
-    minPointSize = defaultBarProps.minPointSize,
-    activeBar = defaultBarProps.activeBar,
-    animationBegin = defaultBarProps.animationBegin,
-    animationDuration = defaultBarProps.animationDuration,
-    animationEasing = defaultBarProps.animationEasing,
-    isAnimationActive = defaultBarProps.isAnimationActive,
-  } = props;
 
   return (
     <SetErrorBarContext

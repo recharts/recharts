@@ -1,10 +1,11 @@
 /**
  * @fileOverview Cartesian Axis
  */
-import React, { ReactElement, ReactNode, Component, SVGProps } from 'react';
+import * as React from 'react';
+import { ReactElement, ReactNode, Component, SVGProps } from 'react';
 
-import get from 'lodash/get';
-import clsx from 'clsx';
+import { get } from 'es-toolkit/compat';
+import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
@@ -238,11 +239,12 @@ export class CartesianAxis extends Component<Props, IState> {
 
   static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
     let tickItem;
+    const combinedClassName = clsx(props.className, 'recharts-cartesian-axis-tick-value');
 
     if (React.isValidElement(option)) {
-      tickItem = React.cloneElement(option, props);
+      tickItem = React.cloneElement(option, { ...props, className: combinedClassName });
     } else if (typeof option === 'function') {
-      tickItem = option(props);
+      tickItem = option({ ...props, className: combinedClassName });
     } else {
       let className = 'recharts-cartesian-axis-tick-value';
 

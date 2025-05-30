@@ -1,5 +1,6 @@
-import clsx from 'clsx';
-import React, {
+import { clsx } from 'clsx';
+import * as React from 'react';
+import {
   ReactElement,
   forwardRef,
   cloneElement,
@@ -11,7 +12,7 @@ import React, {
   CSSProperties,
   useCallback,
 } from 'react';
-import throttle from 'lodash/throttle';
+import { throttle } from 'es-toolkit';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -92,7 +93,9 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         onResizeRef.current?.(containerWidth, containerHeight);
       };
       if (debounce > 0) {
-        callback = throttle(callback, debounce, { trailing: true, leading: false });
+        callback = throttle(callback, debounce, {
+          edges: ['trailing'],
+        });
       }
       const observer = new ResizeObserver(callback);
 

@@ -1,4 +1,5 @@
-import React, { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
+import * as React from 'react';
+import { CSSProperties, ReactElement, ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
   DefaultTooltipContent,
@@ -40,7 +41,7 @@ function defaultUniqBy<TValue extends ValueType, TName extends NameType>(entry: 
 }
 
 export type TooltipContentProps<TValue extends ValueType, TName extends NameType> = TooltipProps<TValue, TName> & {
-  label: string;
+  label?: string | number;
   payload: any[];
   coordinate: ChartCoordinate;
   active: boolean;
@@ -120,7 +121,7 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
 
 const emptyPayload: TooltipPayload = [];
 
-const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
+const defaultTooltipProps = {
   allowEscapeViewBox: { x: false, y: false },
   animationDuration: 400,
   animationEasing: 'ease',
@@ -138,7 +139,7 @@ const defaultTooltipProps: Partial<TooltipProps<any, any>> = {
   trigger: 'hover',
   useTranslate3d: false,
   wrapperStyle: {},
-};
+} as const satisfies Partial<TooltipProps<any, any>>;
 
 export function Tooltip<TValue extends ValueType, TName extends NameType>(outsideProps: TooltipProps<TValue, TName>) {
   const props = resolveDefaultProps(outsideProps, defaultTooltipProps);

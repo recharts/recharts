@@ -76,6 +76,11 @@ export interface Coordinate {
   y: number;
 }
 
+export interface NullableCoordinate {
+  x: number | null;
+  y: number | null;
+}
+
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
   yAxis?: any;
@@ -91,6 +96,14 @@ export interface ChartCoordinate extends Coordinate {
   innerRadius?: number;
   outerRadius?: number;
 }
+
+export type PolarCoordinate = {
+  cx: number;
+  cy: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+};
 
 export type ScaleType =
   | 'auto'
@@ -1062,23 +1075,26 @@ export interface ChartOffset {
 export type ChartOffsetRequired = Required<ChartOffset>;
 
 export interface Padding {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
 }
 
 export interface GeometrySector {
-  cx?: number;
-  cy?: number;
-  innerRadius?: number;
-  outerRadius?: number;
-  startAngle?: number;
-  endAngle?: number;
-  cornerRadius?: number;
-  forceCornerRadius?: boolean;
-  cornerIsExternal?: boolean;
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
 }
+
+export type GeometrySectorWithCornerRadius = GeometrySector & {
+  cornerRadius: number;
+  forceCornerRadius: boolean;
+  cornerIsExternal: boolean;
+};
 
 export type AxisDomainItem = string | number | ((d: number) => string | number) | 'auto' | 'dataMin' | 'dataMax';
 
@@ -1194,9 +1210,10 @@ export type AxisInterval = number | 'preserveStart' | 'preserveEnd' | 'preserveS
 export type AxisTick = number | string;
 
 export interface TickItem {
-  value?: any;
+  value: any;
   coordinate: number;
-  index?: number;
+  index: number;
+  offset?: number;
 }
 
 export interface CartesianTickItem extends TickItem {
@@ -1230,6 +1247,8 @@ export interface PolarViewBox {
   endAngle?: number;
   clockWise?: boolean;
 }
+
+export type PolarViewBoxRequired = Required<PolarViewBox>;
 
 export type ViewBox = CartesianViewBox | PolarViewBox;
 
@@ -1396,6 +1415,7 @@ export type ActiveShape<PropsType = Record<string, any>, ElementType = SVGElemen
   | SVGProps<ElementType>
   | boolean;
 
+// TODO we need two different range objects, one for polar and another for cartesian layouts
 export type RangeObj = {
   x?: number;
   y?: number;

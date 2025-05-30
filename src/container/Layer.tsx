@@ -1,5 +1,6 @@
-import React, { ReactNode, SVGAttributes } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { ReactNode, SVGAttributes } from 'react';
+import { clsx } from 'clsx';
 import { filterProps } from '../util/ReactUtils';
 
 interface LayerProps {

@@ -1,5 +1,6 @@
-import React, { Component, ReactElement, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, ReactElement, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot, Props as DotProps } from '../shape/Dot';
 import { ImplicitLabelType, Label } from '../component/Label';

@@ -1,36 +1,163 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# This workflow runs all CI steps within a single job.
 
-name: Node.js CI
+name: Build and test
 
-on: [push, pull_request]
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches:
+      - 3.x
+
+env:
+  NODE_VERSION: 20.x
+  PACKED_ARTIFACT_NAME: 'recharts-snapshot.tgz'
 
 jobs:
-  build-and-test:
-    name: Build and Test on ${{ matrix.node-version }}
+  list_integration_tests:
+    name: List Integration Test Directories
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    outputs:
+      # Output the list of directories as a JSON array string
+      directories: ${{ steps.set_matrix.outputs.directories }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Checkout Integration Tests Repository
+        uses: actions/checkout@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          repository: recharts/recharts-integ
+
+      - name: List Integration Test Directories
+        id: set_matrix
+        # This command finds all integration test directories
+        # and formats them as a JSON array.
+        run: |
+          JSON_ARRAY=$(node list.js --ci --json)
+          echo "Generated directory list: $JSON_ARRAY"
+          echo "directories=$JSON_ARRAY" >> $GITHUB_OUTPUT
+
+  build_test_pack:
+    name: Build, Test, Pack
+    runs-on: ubuntu-latest
+    env:
+      ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+    outputs:
+      # Output the *name* of the generated tgz file (relative to RECHARTS_PATH)
+      # The actual file will be passed via artifact
+      tgz_name: ${{ steps.pack_library.outputs.tgz_name }}
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+        with:
+          # Chromatic needs access to full git history
+          # see https://www.chromatic.com/docs/github-actions/
+          fetch-depth: 0
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - name: Install dependencies
+          # Cache depends on the lock file within the checked-out path
+          cache-dependency-path: 'package-lock.json'
+
+      - name: Install Dependencies
         run: npm ci
-      - name: Run build
-        run: npm run build --if-present
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit Tests
+        run: npm run test-coverage
+
       - name: Typecheck
         run: npm run check-types
+
       - name: Lint
         run: npm run lint
-      - name: Test
-        run: npm run test-coverage
-      - name: Serve Storybook and run tests
+
+      - name: Storybook Test
         run: npm run test-storybook:ci
+
+      - name: Pack Library
+        # Give this step an ID so we can reference its output
+        id: pack_library
+        run: |
+          # Run npm pack and capture the output filename (relative to current dir)
+          tgz_filename=$(npm pack | tail -n 1)
+          # rename from the default packed name to PACKED_ARTIFACT_NAME so that we don't need to guess the name later.
+          # artifact upload/download in GitHub has a 'name' property but that's the artifact name, not the file name.
+          mv $tgz_filename ${{ env.PACKED_ARTIFACT_NAME }}
+          echo "Packed library file: $tgz_filename renamed to ${{ env.PACKED_ARTIFACT_NAME }}"
+          echo "tgz_name=${{ env.PACKED_ARTIFACT_NAME }}" >> $GITHUB_OUTPUT
+
+      - name: Upload Packed Library Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # This is the "artifact name", it's not a file name. The file name remains original.
+          name: ${{ env.PACKED_ARTIFACT_NAME }}
+          # Upload the file specified by the output of the 'pack_library' step
+          path: ${{ steps.pack_library.outputs.tgz_name }}
+          retention-days: 14
+
+      # Now that we know all the tests are passing, let's report code coverage
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: recharts/recharts
+          files: ./coverage/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload bundle analysis report to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: node ./scripts/upload-bundle-analysis.js
+
+      # Chromatic gives us only this many free credits per month
+      # so let's publish only at the end so that we don't waste them when we know we can't merge from the previous steps anyway.
+      - name: Publish visual regression tests to Chromatic
+        if: ${{ env.ENCRYPTED_CHROMATIC_TOKEN }}
+        # Chromatic action from https://www.chromatic.com/docs/github-actions
+        uses: chromaui/action@latest
+        # Chromatic GitHub Action options
+        with:
+          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Let's say that we don't want to use our Chromatic credits for PRs from dependabot
+          skip: 'dependabot/**'
+
+  integration_tests:
+    name: Test ${{ matrix.test_dir }}
+    runs-on: ubuntu-latest
+    needs: [list_integration_tests, build_test_pack]
+    strategy:
+      # Allow all integration tests to run even if one fails
+      fail-fast: false
+      matrix:
+        # Dynamically generate the matrix from the JSON output of the previous job
+        test_dir: ${{ fromJson(needs.list_integration_tests.outputs.directories) }}
+    steps:
+      - name: Checkout Integration Tests Repository
+        uses: actions/checkout@v4
+        with:
+          repository: recharts/recharts-integ # Checkout the test repo again but this time all directories and files
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download Packed Library Artifact
+        uses: actions/download-artifact@v4
+        with:
+          # name is not the filename, it's the "artifact name". The actual filename is the original of what was uploaded.
+          # In this workflow we keep them the same but GitHub treats them differently.
+          name: ${{ env.PACKED_ARTIFACT_NAME }}
+          # path is the directory where the artifact will be downloaded
+          # so the full path to the artifact will be ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
+          path: ${{ runner.temp }}
+
+      - name: Run Test
+        # Use the output from the 'pack_library' step
+        run: ./run-test.sh ${{ matrix.test_dir }} "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"

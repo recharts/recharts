@@ -1,13 +1,6 @@
-import React, {
-  Component,
-  FunctionComponent,
-  useMemo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  isValidElement,
-} from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, FunctionComponent, useEffect, useMemo, useRef, useLayoutEffect, isValidElement } from 'react';
+import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
 import {

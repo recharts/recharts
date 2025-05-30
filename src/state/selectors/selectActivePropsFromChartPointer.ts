@@ -13,7 +13,7 @@ const pickChartPointer = (_state: RechartsRootState, chartPointer: ChartPointer)
 export const selectActivePropsFromChartPointer: (
   state: RechartsRootState,
   chartPointer: ChartPointer,
-) => ActiveTooltipProps = createSelector(
+) => ActiveTooltipProps | undefined = createSelector(
   [
     pickChartPointer,
     selectChartLayout,

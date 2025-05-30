@@ -1,5 +1,6 @@
-import React, { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { cloneElement, isValidElement, ReactNode, ReactElement, createElement, SVGProps } from 'react';
+import { clsx } from 'clsx';
 import { Text } from './Text';
 import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
@@ -76,7 +77,7 @@ const getLabel = (props: Props) => {
 };
 
 export const isLabelContentAFunction = (content: unknown): content is (props: Props) => React.ReactNode => {
-  return content && typeof content === 'function';
+  return content != null && typeof content === 'function';
 };
 
 const getDeltaAngle = (startAngle: number, endAngle: number) => {

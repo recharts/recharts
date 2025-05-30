@@ -1,4 +1,4 @@
-import { ChartCoordinate, ChartOffset, LayoutType } from '../types';
+import { ChartCoordinate, ChartOffsetRequired, LayoutType } from '../types';
 
 export type CursorRectangle = {
   stroke: string;
@@ -12,7 +12,7 @@ export type CursorRectangle = {
 export function getCursorRectangle(
   layout: LayoutType,
   activeCoordinate: ChartCoordinate,
-  offset: ChartOffset,
+  offset: ChartOffsetRequired,
   tooltipAxisBandSize: number,
 ): CursorRectangle {
   const halfSize = tooltipAxisBandSize / 2;

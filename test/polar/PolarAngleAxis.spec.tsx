@@ -2581,51 +2581,61 @@ describe('<PolarAngleAxis />', () => {
           coordinate: 15222.537988541328,
           offset: -0,
           value: 1,
+          index: 0,
         },
         {
           coordinate: 13444.697559655799,
           offset: -0,
           value: 2,
+          index: 1,
         },
         {
           coordinate: 12404.727576491747,
           offset: -0,
           value: 3,
+          index: 2,
         },
         {
           coordinate: 11666.857130770273,
           offset: -0,
           value: 4,
+          index: 3,
         },
         {
           coordinate: 11094.520348485423,
           offset: -0,
           value: 5,
+          index: 4,
         },
         {
           coordinate: 10626.887147606221,
           offset: -0,
           value: 6,
+          index: 5,
         },
         {
           coordinate: 10231.508909876538,
           offset: -0,
           value: 7,
+          index: 6,
         },
         {
           coordinate: 9889.016701884744,
           offset: -0,
           value: 8,
+          index: 7,
         },
         {
           coordinate: 9586.91716444217,
           offset: -0,
           value: 9,
+          index: 8,
         },
         {
           coordinate: 9316.679919599894,
           offset: -0,
           value: 10,
+          index: 9,
         },
       ]);
       expect(angleAxisTicksSpy).toHaveBeenCalledTimes(3);

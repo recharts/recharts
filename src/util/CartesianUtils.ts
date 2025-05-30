@@ -1,5 +1,4 @@
-import mapValues from 'lodash/mapValues';
-import every from 'lodash/every';
+import { mapValues, every } from 'es-toolkit/compat';
 
 import { Coordinate, Size } from './types';
 
@@ -115,7 +114,7 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
       return mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
     },
 
-    isInRange(coord: any) {
+    isInRange(coord) {
       return every(coord, (value, label) => scales[label].isInRange(value));
     },
   } as LabeledScales<Record<string, any>>;

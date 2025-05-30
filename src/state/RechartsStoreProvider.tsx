@@ -1,8 +1,10 @@
-import React, { ReactNode, useRef } from 'react';
+import * as React from 'react';
+import { Context, MutableRefObject, ReactNode, useRef } from 'react';
 import { Provider } from 'react-redux';
+import { Action, Store } from '@reduxjs/toolkit';
 import { createRechartsStore, RechartsRootState } from './store';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { RechartsReduxContext } from './RechartsReduxContext';
+import { RechartsReduxContext, RechartsReduxContextValue } from './RechartsReduxContext';
 
 type RechartsStoreProviderProps = {
   children: ReactNode;
@@ -23,7 +25,7 @@ export function RechartsStoreProvider({ preloadedState, children, reduxStoreName
    * The alternative is to have everything in the store keyed by the chart id.
    * Which would make working with everything a little bit more painful because we need the chart id everywhere.
    */
-  const storeRef = useRef(null);
+  const storeRef: MutableRefObject<Store<RechartsRootState, Action> | null> = useRef(null);
 
   /*
    * Panorama means that this chart is not its own chart, it's only a "preview"
@@ -39,8 +41,12 @@ export function RechartsStoreProvider({ preloadedState, children, reduxStoreName
   if (storeRef.current == null) {
     storeRef.current = createRechartsStore(preloadedState, reduxStoreName);
   }
+
+  // ts-expect-error React-Redux types demand that the context internal value is not null, but we have that as default.
+  const nonNullContext: Context<RechartsReduxContextValue> = RechartsReduxContext;
+
   return (
-    <Provider context={RechartsReduxContext} store={storeRef.current}>
+    <Provider context={nonNullContext} store={storeRef.current}>
       {children}
     </Provider>
   );

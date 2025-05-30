@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { ActiveShape, SymbolType } from './types';
 import { ScatterPointItem } from '../cartesian/Scatter';
 import { Symbols } from '../shape/Symbols';

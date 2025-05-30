@@ -1,4 +1,5 @@
-import React, { SVGProps } from 'react';
+import * as React from 'react';
+import { SVGProps } from 'react';
 import { Props as FunnelProps, FunnelTrapezoidItem } from '../cartesian/Funnel';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { Shape, getPropsFromShapeOption } from './ActiveShapeUtils';

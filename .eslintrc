@@ -89,6 +89,7 @@
     "import/no-default-export": "error",
     "import/no-import-module-exports": "error",
     "import/no-relative-packages": "error",
+    "import/no-unresolved": ["error", { "ignore": ["es-toolkit/compat"] }],
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
@@ -130,12 +131,16 @@
       }
     },
     {
-      "files": [
-        "src/state/*Slice.ts",
-        "test/**/*.spec.tsx"
-      ],
+      "files": ["src/state/*Slice.ts", "test/**/*.spec.tsx"],
       // param-reassign is allowed in slices following Redux recommendation: https://redux-toolkit.js.org/usage/immer-reducers#linting-state-mutations
       "rules": { "no-param-reassign": ["error", { "props": false }] }
+    },
+    {
+      "files": ["scripts/*.js"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off",
+        "no-console": "off"
+      }
     }
   ],
   "settings": {

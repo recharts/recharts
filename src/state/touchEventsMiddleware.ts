@@ -47,7 +47,7 @@ touchEventMiddleware.startListening({
         return;
       }
       const itemIndex = target.getAttribute(DATA_ITEM_INDEX_ATTRIBUTE_NAME);
-      const dataKey = target.getAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME);
+      const dataKey = target.getAttribute(DATA_ITEM_DATAKEY_ATTRIBUTE_NAME) ?? undefined;
       const coordinate = selectTooltipCoordinate(listenerApi.getState(), itemIndex, dataKey);
 
       listenerApi.dispatch(

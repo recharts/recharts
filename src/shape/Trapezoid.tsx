@@ -1,11 +1,13 @@
 /**
  * @fileOverview Rectangle
  */
-import React, { SVGProps, useEffect, useRef, useState } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { SVGProps, useEffect, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
@@ -34,7 +36,7 @@ interface TrapezoidProps {
 
 export type Props = SVGProps<SVGPathElement> & TrapezoidProps;
 
-const defaultProps: Props = {
+const defaultProps = {
   x: 0,
   y: 0,
   upperWidth: 0,
@@ -44,10 +46,10 @@ const defaultProps: Props = {
   animationBegin: 0,
   animationDuration: 1500,
   animationEasing: 'ease',
-};
+} as const satisfies Partial<Props>;
 
 export const Trapezoid: React.FC<Props> = props => {
-  const trapezoidProps: Props = { ...defaultProps, ...props };
+  const trapezoidProps = resolveDefaultProps(props, defaultProps);
 
   const pathRef = useRef<SVGPathElement>();
   const [totalLength, setTotalLength] = useState(-1);

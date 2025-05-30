@@ -1,5 +1,6 @@
-import React, { cloneElement, isValidElement, SVGProps } from 'react';
-import isPlainObject from 'lodash/isPlainObject';
+import * as React from 'react';
+import { cloneElement, isValidElement, SVGProps } from 'react';
+import { isPlainObject } from 'es-toolkit';
 
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';
@@ -25,7 +26,7 @@ type ShapeType = 'trapezoid' | 'rectangle' | 'sector' | 'symbols';
 export type ShapeProps<OptionType, ExtraProps, ShapePropsType> = {
   shapeType: ShapeType;
   option: OptionType;
-  isActive: boolean;
+  isActive?: boolean;
   activeClassName?: string;
   propTransformer?: (option: OptionType, props: unknown) => ShapePropsType;
 } & ExtraProps;
@@ -47,7 +48,7 @@ function ShapeSelector<ShapePropsType>({
 }: {
   shapeType: ShapeType;
   elementProps: ShapePropsType;
-}) {
+}): React.ReactNode {
   switch (shapeType) {
     case 'rectangle':
       return <Rectangle {...elementProps} />;

@@ -50,7 +50,7 @@ keyboardEventsMiddleware.startListening({
     const directionMultiplier = direction === 'left-to-right' ? 1 : -1;
     const movement = key === 'ArrowRight' ? 1 : -1;
     const nextIndex = currentIndex + movement * directionMultiplier;
-    if (nextIndex >= tooltipTicks.length || nextIndex < 0) {
+    if (tooltipTicks == null || nextIndex >= tooltipTicks.length || nextIndex < 0) {
       return;
     }
     const coordinate = selectCoordinateForDefaultIndex(state, 'axis', 'hover', String(nextIndex));

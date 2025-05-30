@@ -1,8 +1,9 @@
 /**
  * @fileOverview X Axis
  */
-import React, { Component, useEffect } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { Component, useEffect } from 'react';
+import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';

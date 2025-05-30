@@ -1,16 +1,18 @@
 import { CursorRectangle, getCursorRectangle } from '../../../src/util/cursor/getCursorRectangle';
-import { ChartCoordinate, ChartOffset, LayoutType } from '../../../src/util/types';
+import { ChartCoordinate, ChartOffsetRequired, LayoutType } from '../../../src/util/types';
+import { makeChartOffset } from '../../helper/offsetHelpers';
 
 const activeCoordinate: ChartCoordinate = {
   x: 100,
   y: 170,
 };
-const offset: ChartOffset = {
+const offset: ChartOffsetRequired = makeChartOffset({
   left: 10,
   top: 80,
   width: 13,
   height: 17,
-};
+});
+
 const tooltipAxisBandSize = 256;
 
 describe('getCursorRectangle', () => {

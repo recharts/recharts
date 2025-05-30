@@ -9,7 +9,6 @@ import {
   BarChart,
   ScatterChart,
   AreaChart,
-  Surface,
   Area,
   YAxis,
   XAxis,
@@ -564,15 +563,6 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
           expect
             .soft(container.querySelectorAll('.recharts-cartesian-grid-vertical line'))
             .toHaveLength(verticalPoints.length);
-        });
-
-        test("Don't render any lines when verticalPoints and horizontalPoints are empty", () => {
-          const { container } = render(
-            <Surface width={500} height={500}>
-              <CartesianGrid width={500} height={500} />
-            </Surface>,
-          );
-          expect(container.querySelectorAll('line')).toHaveLength(0);
         });
 
         test.each([0, -1, NaN, -Infinity])("Don't render any lines when width is %s", w => {

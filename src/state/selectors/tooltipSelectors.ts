@@ -56,7 +56,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { TooltipIndex, TooltipInteractionState } from '../tooltipSlice';
+import { TooltipIndex, TooltipInteractionState, TooltipSettingsState } from '../tooltipSlice';
 
 import {
   combineTooltipEventType,
@@ -232,16 +232,17 @@ export const selectTooltipAxisDomain: (state: RechartsRootState) => NumberDomain
     combineAxisDomain,
   );
 
-const selectTooltipNiceTicks: (state: RechartsRootState) => ReadonlyArray<number | string> = createSelector(
+const selectTooltipNiceTicks: (state: RechartsRootState) => ReadonlyArray<number> | undefined = createSelector(
   [selectTooltipAxisDomain, selectTooltipAxis, selectTooltipAxisRealScaleType],
   combineNiceTicks,
 );
 
-export const selectTooltipAxisDomainIncludingNiceTicks: (state: RechartsRootState) => NumberDomain | CategoricalDomain =
-  createSelector(
-    [selectTooltipAxis, selectTooltipAxisDomain, selectTooltipNiceTicks, selectTooltipAxisType],
-    combineAxisDomainWithNiceTicks,
-  );
+export const selectTooltipAxisDomainIncludingNiceTicks: (
+  state: RechartsRootState,
+) => NumberDomain | CategoricalDomain | undefined = createSelector(
+  [selectTooltipAxis, selectTooltipAxisDomain, selectTooltipNiceTicks, selectTooltipAxisType],
+  combineAxisDomainWithNiceTicks,
+);
 
 const selectTooltipAxisRange = (state: RechartsRootState): AxisRange | undefined => {
   const axisType = selectTooltipAxisType(state);
@@ -285,22 +286,25 @@ const combineTicksOfTooltipAxis = (
   duplicateDomain: ReadonlyArray<unknown> | undefined,
   categoricalDomain: ReadonlyArray<unknown> | undefined,
   axisType: XorYType,
-): ReadonlyArray<TickItem> | null => {
+): ReadonlyArray<TickItem> | undefined => {
   if (!axis) {
-    return null;
+    return undefined;
   }
   const { type } = axis;
 
   const isCategorical = isCategoricalAxis(layout, axisType);
 
   if (!scale) {
-    return null;
+    return undefined;
   }
 
-  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+  const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset =
+    axisType === 'angleAxis' && range != null && range?.length >= 2
+      ? mathSign(range[0] - range[1]) * 2 * offset
+      : offset;
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
@@ -309,7 +313,6 @@ const combineTicksOfTooltipAxis = (
         coordinate: scale(entry) + offset,
         value: entry,
         index,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
     );
@@ -321,13 +324,12 @@ const combineTicksOfTooltipAxis = (
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
-      // @ts-expect-error why does the offset go here? The type does not require it
       offset,
     }),
   );
 };
 
-export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | null = createSelector(
+export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray<TickItem> | undefined = createSelector(
   [
     selectChartLayout,
     selectTooltipAxis,
@@ -343,7 +345,7 @@ export const selectTooltipAxisTicks: (state: RechartsRootState) => ReadonlyArray
 
 const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | undefined = createSelector(
   [selectDefaultTooltipEventType, selectValidateTooltipEventTypes, selectTooltipSettings],
-  (defaultTooltipEventType, validateTooltipEventType, settings) =>
+  (defaultTooltipEventType, validateTooltipEventType, settings: TooltipSettingsState) =>
     combineTooltipEventType(settings.shared, defaultTooltipEventType, validateTooltipEventType),
 );
 

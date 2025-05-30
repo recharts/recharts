@@ -2,7 +2,8 @@
  * After we refactor classes to functional components, we can remove this eslint-disable
  */
 /* eslint-disable max-classes-per-file */
-import React, {
+import * as React from 'react';
+import {
   Children,
   PureComponent,
   ReactElement,
@@ -13,9 +14,9 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
-import range from 'lodash/range';
+import { range } from 'es-toolkit';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';

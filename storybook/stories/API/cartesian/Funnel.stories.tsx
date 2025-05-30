@@ -52,7 +52,7 @@ export const API = {
     return (
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
-          <Funnel {...args}>
+          <Funnel dataKey={args.dataKey} {...args}>
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
             <Legend />
           </Funnel>

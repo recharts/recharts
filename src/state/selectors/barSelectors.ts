@@ -23,6 +23,7 @@ import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { MinPointSize } from '../../util/BarUtils';
 import { selectChartOffset } from './selectChartOffset';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
+import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
 export type BarSettings = {
   barSize: number | string | undefined;
@@ -72,7 +73,10 @@ const getBarSize = (
 ): number | undefined => {
   const barSize: string | number | undefined = selfSize ?? globalSize;
 
-  return isNullish(barSize) ? undefined : getPercentValue(barSize, totalSize, 0);
+  if (isNullish(barSize)) {
+    return undefined;
+  }
+  return getPercentValue(barSize, totalSize, 0);
 };
 
 export const selectAllVisibleBars: (
@@ -109,7 +113,7 @@ type BarCategory = {
   /**
    * Width (in horizontal chart) or height (in vertical chart) of this stack of items
    */
-  barSize: number;
+  barSize: number | undefined;
 };
 
 export type SizeList = ReadonlyArray<BarCategory>;
@@ -145,17 +149,32 @@ export interface MaybeStackedGraphicalItem {
   barSize: number | string | undefined;
 }
 
+/**
+ * Some graphical items allow data stacking.
+ * This interface is used to represent the items that are stacked
+ * because the user has provided the stackId and dataKey properties.
+ */
+export interface DefinitelyStackedGraphicalItem {
+  stackId: StackId;
+  dataKey: DataKey<any>;
+  barSize: number | string | undefined;
+}
+
+function isStacked(graphicalItem: MaybeStackedGraphicalItem): graphicalItem is DefinitelyStackedGraphicalItem {
+  return graphicalItem.stackId != null && graphicalItem.dataKey != null;
+}
+
 export const combineBarSizeList = (
   allBars: ReadonlyArray<MaybeStackedGraphicalItem>,
   globalSize: number | undefined,
   totalSize: number,
 ): SizeList | undefined => {
-  const initialValue: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
+  const initialValue: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
 
-  const stackedBars = allBars.filter(b => b.stackId != null);
+  const stackedBars: ReadonlyArray<DefinitelyStackedGraphicalItem> = allBars.filter(isStacked);
   const unstackedBars = allBars.filter(b => b.stackId == null);
 
-  const groupByStack: Record<StackId, Array<MaybeStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
+  const groupByStack: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = stackedBars.reduce((acc, bar) => {
     if (!acc[bar.stackId]) {
       acc[bar.stackId] = [];
     }
@@ -165,13 +184,13 @@ export const combineBarSizeList = (
 
   const stackedSizeList: SizeList = Object.entries(groupByStack).map(([stackId, bars]): BarCategory => {
     const dataKeys = bars.map(b => b.dataKey);
-    const barSize: number = getBarSize(globalSize, totalSize, bars[0].barSize);
+    const barSize: number | undefined = getBarSize(globalSize, totalSize, bars[0].barSize);
     return { stackId, dataKeys, barSize };
   });
 
   const unstackedSizeList: SizeList = unstackedBars.map((b): BarCategory => {
-    const dataKeys = [b.dataKey];
-    const barSize: number = getBarSize(globalSize, totalSize, b.barSize);
+    const dataKeys = [b.dataKey].filter(dk => dk != null);
+    const barSize: number | undefined = getBarSize(globalSize, totalSize, b.barSize);
     return { stackId: undefined, dataKeys, barSize };
   });
 
@@ -204,8 +223,8 @@ export const selectBarBandSize: (
   const layout = selectChartLayout(state);
   const globalMaxBarSize: number | undefined = selectRootMaxBarSize(state);
   const { maxBarSize: childMaxBarSize } = barSettings;
-  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
-  let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
+  const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  let axis: BaseAxisWithScale | undefined, ticks: ReadonlyArray<TickItem> | undefined;
   if (layout === 'horizontal') {
     axis = selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
     ticks = selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
@@ -223,7 +242,7 @@ const selectAxisBandSize = (
   isPanorama: boolean,
 ): number | undefined => {
   const layout = selectChartLayout(state);
-  let axis: BaseAxisWithScale, ticks: ReadonlyArray<TickItem>;
+  let axis: BaseAxisWithScale | undefined, ticks: ReadonlyArray<TickItem> | undefined;
   if (layout === 'horizontal') {
     axis = selectAxisWithScale(state, 'xAxis', xAxisId, isPanorama);
     ticks = selectTicksOfGraphicalItem(state, 'xAxis', xAxisId, isPanorama);
@@ -239,10 +258,12 @@ function getBarPositions(
   barCategoryGap: string | number,
   bandSize: number,
   sizeList: SizeList,
-  maxBarSize: number,
-): ReadonlyArray<BarWithPosition> {
+  maxBarSize: number | undefined,
+): ReadonlyArray<BarWithPosition> | undefined {
   const len = sizeList.length;
-  if (len < 1) return null;
+  if (len < 1) {
+    return undefined;
+  }
 
   let realBarGap = getPercentValue(barGap, bandSize, 0, true);
 
@@ -251,10 +272,10 @@ function getBarPositions(
 
   // whether is barSize set by user
   // Okay but why does it check only for the first element? What if the first element is set but others are not?
-  if (sizeList[0].barSize === +sizeList[0].barSize) {
+  if (isWellBehavedNumber(sizeList[0].barSize)) {
     let useFull = false;
-    let fullBarSize = bandSize / len;
-    let sum = sizeList.reduce((res, entry) => res + entry.barSize || 0, 0);
+    let fullBarSize: number = bandSize / len;
+    let sum = sizeList.reduce((res, entry) => res + (entry.barSize || 0), 0);
     sum += (len - 1) * realBarGap;
 
     if (sum >= bandSize) {
@@ -277,7 +298,7 @@ function getBarPositions(
           dataKeys: entry.dataKeys,
           position: {
             offset: prev.offset + prev.size + realBarGap,
-            size: useFull ? fullBarSize : entry.barSize,
+            size: useFull ? fullBarSize : (entry.barSize ?? 0),
           },
         };
         const newRes: Array<BarWithPosition> = [...res, newPosition];
@@ -299,7 +320,7 @@ function getBarPositions(
     if (originalSize > 1) {
       originalSize >>= 0;
     }
-    const size = maxBarSize === +maxBarSize ? Math.min(originalSize, maxBarSize) : originalSize;
+    const size = isWellBehavedNumber(maxBarSize) ? Math.min(originalSize, maxBarSize) : originalSize;
     result = sizeList.reduce(
       (res: ReadonlyArray<BarWithPosition>, entry: BarCategory, i): ReadonlyArray<BarWithPosition> => [
         ...res,
@@ -345,9 +366,9 @@ export const combineAllBarPositions = (
   bandSize: number,
   childMaxBarSize: number | undefined,
 ): ReadonlyArray<BarWithPosition> | undefined => {
-  const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+  const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
 
-  let allBarPositions = getBarPositions(
+  let allBarPositions: ReadonlyArray<BarWithPosition> | undefined = getBarPositions(
     barGap,
     barCategoryGap,
     barBandSize !== bandSize ? barBandSize : bandSize,
@@ -426,6 +447,9 @@ export const combineStackedData = (
     return undefined;
   }
   const { stackId } = barSettings;
+  if (stackId == null) {
+    return undefined;
+  }
   const stackGroup: StackGroup = stackGroups[stackId];
   if (!stackGroup) {
     return undefined;
@@ -518,14 +542,15 @@ export const selectBarRectangles: (
       xAxis == null ||
       yAxis == null ||
       xAxisTicks == null ||
-      yAxisTicks == null
+      yAxisTicks == null ||
+      bandSize == null
     ) {
       return undefined;
     }
     const { data } = barSettings;
 
     let displayedData: ChartData | undefined;
-    if (data?.length > 0) {
+    if (data != null && data.length > 0) {
       displayedData = data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);

@@ -1,5 +1,6 @@
-import clsx from 'clsx';
-import React, { SVGProps } from 'react';
+import { clsx } from 'clsx';
+import * as React from 'react';
+import { SVGProps } from 'react';
 import { polarToCartesian } from '../util/PolarUtils';
 import { filterProps } from '../util/ReactUtils';
 import { AxisId } from '../state/cartesianAxisSlice';

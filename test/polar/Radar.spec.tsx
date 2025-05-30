@@ -1,5 +1,4 @@
 import React from 'react';
-import uniqueId from 'lodash/uniqueId';
 import { render, screen } from '@testing-library/react';
 
 import { expect, it, vi } from 'vitest';
@@ -17,20 +16,14 @@ const CustomizedShape = ({ points }: { points: point[] }) => {
     '',
   );
 
-  return <path d={d} key={uniqueId()} data-testid="customized-shape" />;
+  return <path d={d} data-testid="customized-shape" />;
 };
 
 const CustomizedLabel = () => {
-  return (
-    <text key={uniqueId()} data-testid="customized-label">
-      test
-    </text>
-  );
+  return <text data-testid="customized-label">test</text>;
 };
 
-const CustomizedDot = ({ x, y }: point) => (
-  <circle key={uniqueId()} cx={x} cy={y} r={10} data-testid="customized-dot" />
-);
+const CustomizedDot = ({ x, y }: point) => <circle cx={x} cy={y} r={10} data-testid="customized-dot" />;
 
 describe('<Radar />', () => {
   it('should render a polygon in a simple Radar', () => {

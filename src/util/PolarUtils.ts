@@ -1,5 +1,5 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import { Coordinate, ChartOffset, RangeObj, PolarViewBox } from './types';
+import { Coordinate, ChartOffset, RangeObj, PolarViewBoxRequired } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -34,11 +34,11 @@ export const distanceBetweenPoints = (point: Coordinate, anotherPoint: Coordinat
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 };
 
-export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBox) => {
+export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBoxRequired) => {
   const radius = distanceBetweenPoints({ x, y }, { x: cx, y: cy });
 
   if (radius <= 0) {
-    return { radius };
+    return { radius, angle: 0 };
   }
 
   const cos = (x - cx) / radius;
@@ -51,7 +51,7 @@ export const getAngleOfPoint = ({ x, y }: Coordinate, { cx, cy }: PolarViewBox) 
   return { radius, angle: radianToDegree(angleInRadian), angleInRadian };
 };
 
-export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBox) => {
+export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBoxRequired) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -62,7 +62,7 @@ export const formatAngleOfSector = ({ startAngle, endAngle }: PolarViewBox) => {
   };
 };
 
-const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: PolarViewBox) => {
+const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: PolarViewBoxRequired) => {
   const startCnt = Math.floor(startAngle / 360);
   const endCnt = Math.floor(endAngle / 360);
   const min = Math.min(startCnt, endCnt);
@@ -70,18 +70,16 @@ const reverseFormatAngleOfSector = (angle: number, { startAngle, endAngle }: Pol
   return angle + min * 360;
 };
 
-export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBox): RangeObj | null => {
+export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBoxRequired): RangeObj | null => {
   const { radius, angle } = getAngleOfPoint({ x, y }, viewBox);
   const { innerRadius, outerRadius } = viewBox;
 
   if (radius < innerRadius || radius > outerRadius) {
-    // @ts-expect-error usages of this method expect it to always return RangeObj, not boolean
-    return false;
+    return null;
   }
 
   if (radius === 0) {
-    // @ts-expect-error usages of this method expect it to always return RangeObj, not boolean
-    return true;
+    return null;
   }
 
   const { startAngle, endAngle } = formatAngleOfSector(viewBox);
@@ -115,4 +113,7 @@ export const inRangeOfSector = ({ x, y }: Coordinate, viewBox: PolarViewBox): Ra
 
 export const getTickClassName = (
   tick?: SVGProps<SVGTextElement> | ReactElement<SVGElement> | ((props: any) => ReactElement<SVGElement>) | boolean,
-) => (!isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' ? tick.className : '');
+) =>
+  !isValidElement(tick) && typeof tick !== 'function' && typeof tick !== 'boolean' && tick != null
+    ? tick.className
+    : '';

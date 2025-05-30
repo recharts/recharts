@@ -1,6 +1,7 @@
-import get from 'lodash/get';
+import { get } from 'es-toolkit/compat';
 
-import React, { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
+import * as React from 'react';
+import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
 import { isNullish, isNumber } from './DataUtils';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
@@ -94,6 +95,7 @@ export function findAllByType<
 
   toArray(children).forEach(child => {
     const childType = get(child, 'type.displayName') || get(child, 'type.name');
+    // ts-expect-error toArray and lodash.get are not compatible. Let's get rid of the whole findAllByType function
     if (types.indexOf(childType) !== -1) {
       result.push(child as DetailedElement);
     }

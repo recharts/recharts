@@ -1,5 +1,5 @@
-import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
+import { get, sortBy } from 'es-toolkit/compat';
+
 import {
   Series,
   type SeriesPoint,
@@ -11,7 +11,6 @@ import {
   stackOrderNone,
 } from 'victory-vendor/d3-shape';
 
-import { ReactElement } from 'react';
 import { findEntryInArray, isNan, isNullish, isNumber, isNumOrStr, mathSign } from './DataUtils';
 
 import { TooltipEntrySettings, TooltipPayloadEntry } from '../state/tooltipSlice';
@@ -20,13 +19,13 @@ import {
   AxisType,
   BaseAxisProps,
   ChartCoordinate,
-  ChartOffset,
+  ChartOffsetRequired,
   DataKey,
   LayoutType,
   NumberDomain,
   OffsetHorizontal,
   OffsetVertical,
-  PolarViewBox,
+  PolarViewBoxRequired,
   RangeObj,
   Size,
   StackOffsetType,
@@ -35,9 +34,9 @@ import {
 import { ValueType } from '../component/DefaultTooltipContent';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendSettings } from '../state/legendSlice';
-import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale, StackGroup } from '../state/selectors/axisSelectors';
 
-export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T>, defaultValue?: any): unknown {
+export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
     return defaultValue;
   }
@@ -61,17 +60,17 @@ export const calculateActiveTickIndex = (
    * centric -> angle
    * radial -> radius
    */
-  coordinate: number,
-  ticks: ReadonlyArray<TickItem>,
-  unsortedTicks: ReadonlyArray<TickItem> | undefined,
+  coordinate: number | undefined,
+  ticks: ReadonlyArray<TickItem> | undefined,
+  unsortedTicks: ReadonlyArray<TickItem>,
   axisType: AxisType | undefined,
   range: AxisRange | undefined,
 ): number => {
   let index = -1;
   const len = ticks?.length ?? 0;
 
-  // if there are 1 or fewer ticks then the active tick is at index 0
-  if (len <= 1) {
+  // if there are 1 or fewer ticks or if there is no coordinate then the active tick is at index 0
+  if (len <= 1 || coordinate == null) {
     return 0;
   }
 
@@ -120,7 +119,7 @@ export const calculateActiveTickIndex = (
         }
       }
     }
-  } else {
+  } else if (ticks) {
     // ticks are distributed in a single direction
     for (let i = 0; i < len; i++) {
       if (
@@ -150,10 +149,10 @@ export type BarPositionPosition = {
   offset: number;
   /**
    * Size of the bar.
-   * This will be usually a number.
-   * But if the input data is not well-formed, undefined or NaN will be on the output too.
+   * If the input data is undefined, this will be 0.
+   * If the input data is NaN then this size too will be NaN.
    */
-  size: number | undefined | typeof NaN;
+  size: number;
 };
 
 export const appendOffsetOfLegend = (
@@ -256,7 +255,7 @@ export type AxisPropsNeededForTicksGenerator = {
    */
   range?: ReadonlyArray<number>;
   realScaleType?: 'scaleBand' | string;
-  scale: RechartsScale;
+  scale: RechartsScale | undefined;
   tickCount?: number;
   ticks?: ReadonlyArray<AxisTick>;
   type?: 'number' | 'category';
@@ -295,14 +294,14 @@ export const getTicksOfAxis = (
     return null;
   }
 
-  const offsetForBand = realScaleType === 'scaleBand' ? scale.bandwidth() / 2 : 2;
+  const offsetForBand = realScaleType === 'scaleBand' && scale.bandwidth ? scale.bandwidth() / 2 : 2;
   let offset = (isGrid || isAll) && type === 'category' && scale.bandwidth ? scale.bandwidth() / offsetForBand : 0;
 
-  offset = axisType === 'angleAxis' && range?.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
+  offset = axisType === 'angleAxis' && range && range.length >= 2 ? mathSign(range[0] - range[1]) * 2 * offset : offset;
 
   // The ticks set by user should only affect the ticks adjacent to axis line
   if (isGrid && (ticks || niceTicks)) {
-    const result = (ticks || niceTicks).map((entry: AxisTick) => {
+    const result = (ticks || niceTicks || []).map((entry: AxisTick, index: number): TickItem => {
       const scaleContent = duplicateDomain ? duplicateDomain.indexOf(entry) : entry;
 
       return {
@@ -311,6 +310,7 @@ export const getTicksOfAxis = (
         coordinate: scale(scaleContent) + offset,
         value: entry,
         offset,
+        index,
       };
     });
 
@@ -324,19 +324,17 @@ export const getTicksOfAxis = (
         coordinate: scale(entry) + offset,
         value: entry,
         index,
-        // @ts-expect-error why does the offset go here? The type does not require it
         offset,
       }),
     );
   }
 
-  if (scale.ticks && !isAll) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+  if (scale.ticks && !isAll && tickCount != null) {
+    return scale
+      .ticks(tickCount)
+      .map(
+        (entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }),
+      );
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
@@ -345,7 +343,6 @@ export const getTicksOfAxis = (
       coordinate: scale(entry) + offset,
       value: duplicateDomain ? duplicateDomain[entry] : entry,
       index,
-      // @ts-expect-error why does the offset go here? The type does not require it
       offset,
     }),
   );
@@ -536,21 +533,6 @@ export function getNormalizedStackId(publicStackId: StackId | undefined): Normal
   return publicStackId == null ? undefined : String(publicStackId);
 }
 
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-type GenericChildStackGroup<T> = {
-  numericAxisId: string;
-  cateAxisId: string;
-  items: Array<ReactElement>;
-  stackedData?: ReadonlyArray<T>;
-};
-
-/**
- * @deprecated do not use - depends on passing around DOM elements
- */
-type ChildStackGroup = GenericChildStackGroup<Series<Record<string, unknown>, DataKey<any>>>;
-
 export function getCateCoordinateOfLine<T extends Record<string, unknown>>({
   axis,
   ticks,
@@ -606,7 +588,7 @@ export const getCateCoordinateOfBar = ({
   bandSize: number;
   entry: any;
   index: number;
-}) => {
+}): number | null => {
   if (axis.type === 'category') {
     return ticks[index] ? ticks[index].coordinate + offset : null;
   }
@@ -647,11 +629,14 @@ const makeDomainFinite = (domain: NumberDomain): NumberDomain => {
 };
 
 export const getDomainOfStackGroups = (
-  stackGroups: Record<StackId, ChildStackGroup>,
+  stackGroups: Record<StackId, StackGroup> | undefined,
   startIndex: number,
   endIndex: number,
-): NumberDomain =>
-  makeDomainFinite(
+): NumberDomain | undefined => {
+  if (stackGroups == null) {
+    return undefined;
+  }
+  return makeDomainFinite(
     Object.keys(stackGroups).reduce(
       (result, stackId): NumberDomain => {
         const group = stackGroups[stackId];
@@ -670,6 +655,7 @@ export const getDomainOfStackGroups = (
       [Infinity, -Infinity],
     ),
   );
+};
 
 export const MIN_VALUE_REG = /^dataMin[\s]*-[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
 export const MAX_VALUE_REG = /^dataMax[\s]*\+[\s]*([0-9]+([.]{1}[0-9]+){0,1})$/;
@@ -719,7 +705,7 @@ export function getTooltipEntry({
   name,
 }: {
   tooltipEntrySettings: TooltipEntrySettings;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   payload: any;
   value: ValueType;
   name: string | undefined;
@@ -735,7 +721,7 @@ export function getTooltipEntry({
 
 export function getTooltipNameProp(
   nameFromItem: string | number | undefined | unknown,
-  dataKey: DataKey<any>,
+  dataKey: DataKey<any> | undefined,
 ): string | undefined {
   if (nameFromItem) {
     return String(nameFromItem);
@@ -750,9 +736,9 @@ export function inRange(
   x: number,
   y: number,
   layout: LayoutType,
-  polarViewBox: PolarViewBox | undefined,
-  offset: ChartOffset,
-): RangeObj {
+  polarViewBox: PolarViewBoxRequired | undefined,
+  offset: ChartOffsetRequired,
+): RangeObj | null {
   if (layout === 'horizontal' || layout === 'vertical') {
     const isInRange =
       x >= offset.left && x <= offset.left + offset.width && y >= offset.top && y <= offset.top + offset.height;

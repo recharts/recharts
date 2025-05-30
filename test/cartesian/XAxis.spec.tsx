@@ -150,6 +150,7 @@ describe('<XAxis />', () => {
       offset: 0,
       tickCoord: 5,
       value: 0,
+      index: 0,
     };
     const eventIndex = 0;
     const eventExpect = expect.objectContaining({ type: 'click', pageX: 0, pageY: 0, target: expect.any(Object) });
@@ -350,6 +351,21 @@ describe('<XAxis />', () => {
         scaleTypeSpy(useAppSelector(state => selectRealScaleType(state, 'xAxis', 0)));
         return null;
       };
+
+      const tickFormatter = (value: number) =>
+        new Date(value).toLocaleString('en-US', {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZone: 'UTC',
+          timeZoneName: 'long',
+          hourCycle: 'h23',
+        });
+
       const { container } = render(
         <LineChart width={600} height={300} data={timeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <XAxis
@@ -357,6 +373,7 @@ describe('<XAxis />', () => {
             domain={[timeData[0].x.getTime(), timeData[timeData.length - 1].x.getTime()]}
             scale="time"
             type="number"
+            tickFormatter={tickFormatter}
           />
           <YAxis />
           <Line type="monotone" dataKey="y" stroke="#8884d8" activeDot={{ r: 8 }} />
@@ -369,37 +386,37 @@ describe('<XAxis />', () => {
       expect(container.querySelectorAll('.recharts-xAxis .recharts-cartesian-axis-tick')).toHaveLength(timeData.length);
       expectXAxisTicks(container, [
         {
-          textContent: 'Thu Jul 04 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Thu, Jul 04, 2019, 00:00:00 Coordinated Universal Time',
           x: '80',
           y: '273',
         },
         {
-          textContent: 'Fri Jul 05 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Fri, Jul 05, 2019, 00:00:00 Coordinated Universal Time',
           x: '161.66666666666669',
           y: '273',
         },
         {
-          textContent: 'Sat Jul 06 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Sat, Jul 06, 2019, 00:00:00 Coordinated Universal Time',
           x: '243.33333333333334',
           y: '273',
         },
         {
-          textContent: 'Sun Jul 07 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Sun, Jul 07, 2019, 00:00:00 Coordinated Universal Time',
           x: '325',
           y: '273',
         },
         {
-          textContent: 'Mon Jul 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Mon, Jul 08, 2019, 00:00:00 Coordinated Universal Time',
           x: '406.6666666666667',
           y: '273',
         },
         {
-          textContent: 'Tue Jul 09 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Tue, Jul 09, 2019, 00:00:00 Coordinated Universal Time',
           x: '488.3333333333333',
           y: '273',
         },
         {
-          textContent: 'Wed Jul 10 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+          textContent: 'Wed, Jul 10, 2019, 00:00:00 Coordinated Universal Time',
           x: '570',
           y: '273',
         },

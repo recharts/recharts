@@ -4,7 +4,7 @@ import { type AppDispatch, type RechartsRootState } from './store';
 
 import { RechartsReduxContext } from './RechartsReduxContext';
 
-const noopDispatch: AppDispatch = (): undefined => {};
+const noopDispatch: AppDispatch = a => a;
 
 export const useAppDispatch = (): AppDispatch => {
   const context = useContext(RechartsReduxContext);

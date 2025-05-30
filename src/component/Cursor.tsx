@@ -1,6 +1,7 @@
-import React, { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
-import clsx from 'clsx';
-import { ChartCoordinate, ChartOffset, LayoutType, TooltipEventType } from '../util/types';
+import * as React from 'react';
+import { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
+import { clsx } from 'clsx';
+import { ChartCoordinate, ChartOffsetRequired, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -32,7 +33,7 @@ export type CursorProps = {
 export type CursorConnectedProps = CursorProps & {
   tooltipAxisBandSize: number;
   layout: LayoutType;
-  offset: ChartOffset;
+  offset: ChartOffsetRequired;
   coordinate: ChartCoordinate;
   payload: TooltipPayload;
   index: string;
@@ -59,6 +60,7 @@ export function CursorInternal(props: CursorConnectedProps) {
     restProps = getCursorRectangle(layout, activeCoordinate, offset, tooltipAxisBandSize);
     cursorComp = Rectangle;
   } else if (layout === 'radial') {
+    // @ts-expect-error TODO the state is marked as containing Coordinate but actually in polar charts it contains PolarCoordinate, we should keep the polar state separate
     const { cx, cy, radius, startAngle, endAngle } = getRadialCursorPoints(activeCoordinate);
     restProps = {
       cx,

@@ -1,7 +1,8 @@
 /**
  * @fileOverview Curve
  */
-import React, { Ref } from 'react';
+import * as React from 'react';
+import { Ref } from 'react';
 import {
   line as shapeLine,
   area as shapeArea,
@@ -21,7 +22,7 @@ import {
   curveStepBefore,
 } from 'victory-vendor/d3-shape';
 
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber, upperFirst } from '../util/DataUtils';
@@ -73,7 +74,7 @@ const defined = (p: Point) => p.x === +p.x && p.y === +p.y;
 const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
-const getCurveFactory = (type: CurveType, layout: LayoutType) => {
+const getCurveFactory = (type: CurveType, layout: LayoutType | undefined) => {
   if (typeof type === 'function') {
     return type;
   }
@@ -154,14 +155,14 @@ export const Curve: React.FC<Props> = props => {
     return null;
   }
 
-  const realPath = points && points.length ? getPath(props) : path;
+  const realPath: string | null | undefined = points && points.length ? getPath(props) : path;
 
   return (
     <path
       {...filterProps(props, false)}
       {...adaptEventHandlers(props)}
       className={clsx('recharts-curve', className)}
-      d={realPath}
+      d={realPath === null ? undefined : realPath}
       ref={pathRef}
     />
   );

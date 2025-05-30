@@ -1,4 +1,4 @@
-import get from 'lodash/get';
+import { get } from 'es-toolkit/compat';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -11,7 +11,7 @@ export const mathSign = (value: number) => {
   return -1;
 };
 
-export const isNan = (value: any): boolean => {
+export const isNan = (value: unknown): boolean => {
   // eslint-disable-next-line eqeqeq
   return typeof value == 'number' && value != +value;
 };
@@ -22,8 +22,7 @@ export const isPercent = (value: string | number): value is `${number}%` =>
 export const isNumber = (value: unknown): value is number =>
   (typeof value === 'number' || value instanceof Number) && !isNan(value);
 
-export const isNumOrStr = (value: unknown): value is number | string =>
-  isNumber(value as number) || typeof value === 'string';
+export const isNumOrStr = (value: unknown): value is number | string => isNumber(value) || typeof value === 'string';
 
 let idCounter = 0;
 export const uniqueId = (prefix?: string) => {
@@ -40,7 +39,12 @@ export const uniqueId = (prefix?: string) => {
  * @param {boolean} validate      If set to be true, the result will be validated
  * @return {number} value
  */
-export const getPercentValue = (percent: number | string, totalValue: number, defaultValue = 0, validate = false) => {
+export const getPercentValue = (
+  percent: number | string,
+  totalValue: number | undefined,
+  defaultValue = 0,
+  validate = false,
+) => {
   if (!isNumber(percent) && typeof percent !== 'string') {
     return defaultValue;
   }
@@ -48,6 +52,9 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
   let value: number;
 
   if (isPercent(percent)) {
+    if (totalValue == null) {
+      return defaultValue;
+    }
     const index = percent.indexOf('%');
     value = (totalValue * parseFloat((percent as string).slice(0, index))) / 100;
   } else {
@@ -58,7 +65,7 @@ export const getPercentValue = (percent: number | string, totalValue: number, de
     value = defaultValue;
   }
 
-  if (validate && value > totalValue) {
+  if (validate && totalValue != null && value > totalValue) {
     value = totalValue;
   }
 
@@ -85,7 +92,7 @@ export const hasDuplicate = (ary: ReadonlyArray<unknown>): boolean => {
 };
 
 /* @todo this function returns a function that is called immediately in all use-cases, make it just return the number and skip the anonymous function step */
-export const interpolateNumber = (numberA: number, numberB: number) => {
+export const interpolateNumber = (numberA: number | undefined, numberB: number | undefined) => {
   if (isNumber(numberA) && isNumber(numberB)) {
     return (t: number) => numberA + t * (numberB - numberA);
   }
@@ -150,12 +157,14 @@ export const getLinearRegression = (data: ReadonlyArray<{ cx?: number; cy?: numb
   };
 };
 
+type Nullish = null | undefined;
+
 /**
  * Checks if the value is null or undefined
- * @param {any} value The value to check
- * @returns {boolean} true if the value is null or undefined
+ * @param value The value to check
+ * @returns true if the value is null or undefined
  */
-export const isNullish = (value: any): boolean => {
+export const isNullish = (value: unknown): value is Nullish => {
   return value === null || typeof value === 'undefined';
 };
 

@@ -1,8 +1,7 @@
-import React, { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
-import maxBy from 'lodash/maxBy';
-import min from 'lodash/min';
-import get from 'lodash/get';
-import sumBy from 'lodash/sumBy';
+import * as React from 'react';
+import { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
+import { maxBy, sumBy } from 'es-toolkit';
+import { get } from 'es-toolkit/compat';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
@@ -158,8 +157,8 @@ const updateYOfTree = (
   nodePadding: number,
   links: LinkDataItem[],
 ): SankeyLink[] => {
-  const yRatio: number = min(
-    depthTree.map(nodes => (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)),
+  const yRatio: number = Math.min(
+    ...depthTree.map(nodes => (height - (nodes.length - 1) * nodePadding) / sumBy(nodes, getValue)),
   );
 
   for (let d = 0, maxDepth = depthTree.length; d < maxDepth; d++) {

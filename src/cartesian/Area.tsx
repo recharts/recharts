@@ -1,8 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
-import React, { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
-import clsx from 'clsx';
+import * as React from 'react';
+import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
+import { clsx } from 'clsx';
 import Animate from 'react-smooth';
-import max from 'lodash/max';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -36,6 +36,7 @@ import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -320,12 +321,12 @@ function VerticalRect({
   const startY = points[0].y;
   const endY = points[points.length - 1].y;
   const height = alpha * Math.abs(startY - endY);
-  let maxX = max(points.map(entry => entry.x || 0));
+  let maxX = Math.max(...points.map(entry => entry.x || 0));
 
   if (isNumber(baseLine)) {
     maxX = Math.max(baseLine, maxX);
   } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxX = Math.max(max(baseLine.map(entry => entry.x || 0)), maxX);
+    maxX = Math.max(...baseLine.map(entry => entry.x || 0), maxX);
   }
 
   if (isNumber(maxX)) {
@@ -356,12 +357,12 @@ function HorizontalRect({
   const startX = points[0].x;
   const endX = points[points.length - 1].x;
   const width = alpha * Math.abs(startX - endX);
-  let maxY = max(points.map(entry => entry.y || 0));
+  let maxY = Math.max(...points.map(entry => entry.y || 0));
 
   if (isNumber(baseLine)) {
     maxY = Math.max(baseLine, maxY);
   } else if (baseLine && Array.isArray(baseLine) && baseLine.length) {
-    maxY = Math.max(max(baseLine.map(entry => entry.y || 0)), maxY);
+    maxY = Math.max(...baseLine.map(entry => entry.y || 0), maxY);
   }
 
   if (isNumber(maxY)) {
@@ -673,7 +674,7 @@ class AreaWithState extends PureComponent<InternalProps> {
   }
 }
 
-const defaultAreaProps: Partial<Props> = {
+const defaultAreaProps = {
   activeDot: true,
   animationBegin: 0,
   animationDuration: 1500,
@@ -688,43 +689,43 @@ const defaultAreaProps: Partial<Props> = {
   stroke: '#3182bd',
   xAxisId: 0,
   yAxisId: 0,
-};
+} as const satisfies Partial<Props>;
 
 function AreaImpl(props: Props) {
+  const {
+    activeDot,
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    connectNulls,
+    dot,
+    fill,
+    fillOpacity,
+    hide,
+    isAnimationActive,
+    legendType,
+    stroke,
+    xAxisId,
+    yAxisId,
+    ...everythingElse
+  } = resolveDefaultProps(props, defaultAreaProps);
   const layout = useChartLayout();
   const chartName = useChartName();
-  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
-  const {
-    activeDot = defaultAreaProps.activeDot,
-    animationBegin = defaultAreaProps.animationBegin,
-    animationDuration = defaultAreaProps.animationDuration,
-    animationEasing = defaultAreaProps.animationEasing,
-    connectNulls = defaultAreaProps.connectNulls,
-    dot = defaultAreaProps.dot,
-    fill = defaultAreaProps.fill,
-    fillOpacity = defaultAreaProps.fillOpacity,
-    hide = defaultAreaProps.hide,
-    isAnimationActive = defaultAreaProps.isAnimationActive,
-    legendType = defaultAreaProps.legendType,
-    stroke = defaultAreaProps.stroke,
-    xAxisId = defaultAreaProps.xAxisId,
-    yAxisId = defaultAreaProps.yAxisId,
-    ...everythingElse
-  } = props;
+  const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
-  const areaSettings = useMemo(
+  const areaSettings: AreaSettings = useMemo(
     () => ({
       baseValue: props.baseValue,
       stackId: props.stackId,
-      connectNulls: props.connectNulls,
+      connectNulls,
       data: props.data,
       dataKey: props.dataKey,
     }),
-    [props.baseValue, props.stackId, props.connectNulls, props.data, props.dataKey],
+    [props.baseValue, props.stackId, connectNulls, props.data, props.dataKey],
   );
   const { points, isRange, baseLine } =
-    useAppSelector(state => selectArea(state, props.xAxisId, props.yAxisId, isPanorama, areaSettings)) ?? {};
+    useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
   const { height, width, left, top } = useOffset();
 
   if (layout !== 'horizontal' && layout !== 'vertical') {
@@ -824,7 +825,7 @@ export function computeArea({
   bandSize,
 }: {
   areaSettings: AreaSettings;
-  stackedData: number[][];
+  stackedData: number[][] | undefined;
   layout: 'horizontal' | 'vertical';
   chartBaseValue: BaseValue | undefined;
   xAxis: BaseAxisWithScale;
@@ -840,7 +841,7 @@ export function computeArea({
   const isHorizontalLayout = layout === 'horizontal';
   let isRange = false;
 
-  const points = displayedData.map((entry, index) => {
+  const points: ReadonlyArray<AreaPointItem> = displayedData.map((entry, index): AreaPointItem => {
     let value;
 
     if (hasStack) {

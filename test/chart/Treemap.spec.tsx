@@ -84,6 +84,114 @@ describe('<Treemap />', () => {
       expect(tooltip).not.toBeVisible();
     });
 
+    it('should display/hide Tooltip on mouse enter/leave when custom content is passed as a function', () => {
+      const { container } = render(
+        <Treemap
+          width={1000}
+          height={500}
+          data={exampleTreemapData}
+          content={props => {
+            const { depth, x, y, width, height, index, name } = props;
+
+            return (
+              <g>
+                <rect
+                  x={x}
+                  y={y}
+                  width={width}
+                  height={height}
+                  style={{
+                    fill: '#111',
+                    stroke: '#fff',
+                    strokeWidth: 2 / (depth + 1e-10),
+                    strokeOpacity: 1 / (depth + 1e-10),
+                  }}
+                  // needed for unit tests to find the tooltip
+                  className="recharts-rectangle"
+                />
+                {depth === 1 ? (
+                  <text x={x + width / 2} y={y + height / 2 + 7} textAnchor="middle" fill="#fff" fontSize={14}>
+                    {name}
+                  </text>
+                ) : null}
+                {depth === 1 ? (
+                  <text x={x + 4} y={y + 18} fill="#fff" fontSize={16} fillOpacity={0.9}>
+                    {index + 1}
+                  </text>
+                ) : null}
+              </g>
+            );
+          }}
+        >
+          <Tooltip trigger="hover" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = showTooltip(container, treemapNodeChartMouseHoverTooltipSelector);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
+    it('should display/hide Tooltip on mouse enter/leave when custom content is passed as React component', () => {
+      const CustomNode = (props: TreemapNode) => {
+        const { depth, x, y, width, height, index, name } = props;
+
+        return (
+          <g>
+            <rect
+              x={x}
+              y={y}
+              width={width}
+              height={height}
+              style={{
+                fill: '#111',
+                stroke: '#fff',
+                strokeWidth: 2 / (depth + 1e-10),
+                strokeOpacity: 1 / (depth + 1e-10),
+              }}
+              // needed for unit tests to find the tooltip
+              className="recharts-rectangle"
+            />
+            {depth === 1 ? (
+              <text x={x + width / 2} y={y + height / 2 + 7} textAnchor="middle" fill="#fff" fontSize={14}>
+                {name}
+              </text>
+            ) : null}
+            {depth === 1 ? (
+              <text x={x + 4} y={y + 18} fill="#fff" fontSize={16} fillOpacity={0.9}>
+                {index + 1}
+              </text>
+            ) : null}
+          </g>
+        );
+      };
+
+      const { container } = render(
+        // @ts-expect-error typescript yells because we didn't pass props
+        <Treemap width={1000} height={500} data={exampleTreemapData} content={<CustomNode />}>
+          <Tooltip trigger="hover" />
+        </Treemap>,
+      );
+
+      const tooltip = getTooltip(container);
+      expect(tooltip).not.toBeVisible();
+
+      const tooltipTriggerElement = showTooltip(container, treemapNodeChartMouseHoverTooltipSelector);
+
+      expect(tooltip).toBeVisible();
+
+      fireEvent.mouseOut(tooltipTriggerElement);
+
+      expect(tooltip).not.toBeVisible();
+    });
+
     it('should not display Tooltip when clicking on a Node', () => {
       const { container } = render(
         <Treemap width={1000} height={500} data={exampleTreemapData}>

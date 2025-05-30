@@ -712,19 +712,21 @@ export const WithMultiXAxis = {
     };
 
     const renderQuarterTick = (tickProps: any) => {
-      const { x, y, payload } = tickProps;
+      const { x, y, payload, width, visibleTicksCount } = tickProps;
       const { value, offset } = payload;
       const date = new Date(value);
       const month = date.getMonth();
       const quarterNo = Math.floor(month / 3) + 1;
       if (month % 3 === 1) {
-        return <text x={x} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</text>;
+        return (
+          <text x={x + width / visibleTicksCount / 2 - offset} y={y - 4} textAnchor="middle">{`Q${quarterNo}`}</text>
+        );
       }
 
       const isLast = month === 11;
 
       if (month % 3 === 0 || isLast) {
-        const pathX = Math.floor(isLast ? x + offset : x - offset) + 0.5;
+        const pathX = Math.floor(isLast ? x - offset + width / visibleTicksCount : x - offset) + 0.5;
 
         return <path d={`M${pathX},${y - 4}v${-35}`} stroke="red" />;
       }
@@ -1013,7 +1015,7 @@ export const ChangingDataKey = {
             stroke="#8884d8"
             strokeDasharray="5 5"
             label={{ fill: 'red' }}
-            animationDuration={3000}
+            animationDuration={1000}
           />
         </BarChart>
       </>
@@ -1090,7 +1092,7 @@ export const ChangingDataKeyAndStacked = {
             stroke="yellow"
             strokeDasharray="5 5"
             label={{ fill: 'red' }}
-            animationDuration={3000}
+            animationDuration={1000}
           />
         </BarChart>
       </>

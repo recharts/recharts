@@ -89,7 +89,10 @@ const Candlestick = (props: {
 const CustomTooltip = ({ active, payload }: { active: boolean; payload: Record<string, any> }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="custom-tooltip" style={{ backgroundColor: '#fff' }}>
+      <div
+        className="custom-tooltip"
+        style={{ backgroundColor: '#fff', padding: '5px 10px', borderRadius: '10px', border: '1px solid black' }}
+      >
         <p className="label">{payload[0].payload.date}</p>
         <p className="label">{`high : ${payload[0].payload.high}`}</p>
         <p className="label">{`low : ${payload[0].payload.low}`}</p>
@@ -121,14 +124,13 @@ export const StockPriceChart = {
           <XAxis dataKey="date" />
           <YAxis domain={[minValue, maxValue]} />
           <Legend />
+          <Tooltip content={props => <CustomTooltip {...props} />} />
           {/* @ts-expect-error custom components do not have a good type support */}
           <Bar dataKey="openClose" fill="#8884d8" shape={<Candlestick />}>
             {data.map(({ date }: any) => (
               <Cell key={`cell-${date}`} />
             ))}
           </Bar>
-          {/* @ts-expect-error custom components do not have a good type support */}
-          <Tooltip content={<CustomTooltip />} />
         </BarChart>
       </ResponsiveContainer>
     );
