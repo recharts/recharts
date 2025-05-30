@@ -1,4 +1,5 @@
-import React, { isValidElement, ReactElement } from 'react';
+import * as React from 'react';
+import { isValidElement, ReactElement } from 'react';
 import { isNumOrStr } from './DataUtils';
 
 /**
