@@ -1,4 +1,7 @@
-import { get, sortBy } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
+import sortBy from 'lodash.sortby';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 
 import {
   Series,
@@ -681,7 +684,7 @@ export const getBandSizeOfAxis = (
   }
 
   if (axis && ticks && ticks.length >= 2) {
-    const orderedTicks = sortBy(ticks, o => o.coordinate);
+    const orderedTicks = sortBy(ticks, (o: { coordinate: any }) => o.coordinate);
     let bandSize = Infinity;
 
     for (let i = 1, len = orderedTicks.length; i < len; i++) {

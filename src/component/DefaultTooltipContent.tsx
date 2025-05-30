@@ -4,7 +4,8 @@
 
 import * as React from 'react';
 import { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
-import { sortBy } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
+import sortBy from 'lodash.sortby';
 import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';
@@ -80,44 +81,46 @@ export const DefaultTooltipContent = <TValue extends ValueType, TName extends Na
     if (payload && payload.length) {
       const listStyle = { padding: 0, margin: 0 };
 
-      const items = (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry, i) => {
-        if (entry.type === 'none') {
-          return null;
-        }
-
-        const finalFormatter = entry.formatter || formatter || defaultFormatter;
-        const { value, name } = entry;
-        let finalValue: React.ReactNode = value;
-        let finalName: React.ReactNode = name;
-        if (finalFormatter) {
-          const formatted = finalFormatter(value, name, entry, i, payload);
-          if (Array.isArray(formatted)) {
-            [finalValue, finalName] = formatted;
-          } else if (formatted != null) {
-            finalValue = formatted;
-          } else {
+      const items = (itemSorter ? sortBy(payload, itemSorter) : payload).map(
+        (entry: { type?: any; formatter?: any; color?: any; unit?: any; value?: any; name?: any }, i: any) => {
+          if (entry.type === 'none') {
             return null;
           }
-        }
 
-        const finalItemStyle = {
-          display: 'block',
-          paddingTop: 4,
-          paddingBottom: 4,
-          color: entry.color || '#000',
-          ...itemStyle,
-        };
+          const finalFormatter = entry.formatter || formatter || defaultFormatter;
+          const { value, name } = entry;
+          let finalValue: React.ReactNode = value;
+          let finalName: React.ReactNode = name;
+          if (finalFormatter) {
+            const formatted = finalFormatter(value, name, entry, i, payload);
+            if (Array.isArray(formatted)) {
+              [finalValue, finalName] = formatted;
+            } else if (formatted != null) {
+              finalValue = formatted;
+            } else {
+              return null;
+            }
+          }
 
-        return (
-          // eslint-disable-next-line react/no-array-index-key
-          <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
-            {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-name">{finalName}</span> : null}
-            {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}
-            <span className="recharts-tooltip-item-value">{finalValue}</span>
-            <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
-          </li>
-        );
-      });
+          const finalItemStyle = {
+            display: 'block',
+            paddingTop: 4,
+            paddingBottom: 4,
+            color: entry.color || '#000',
+            ...itemStyle,
+          };
+
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <li className="recharts-tooltip-item" key={`tooltip-item-${i}`} style={finalItemStyle}>
+              {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-name">{finalName}</span> : null}
+              {isNumOrStr(finalName) ? <span className="recharts-tooltip-item-separator">{separator}</span> : null}
+              <span className="recharts-tooltip-item-value">{finalValue}</span>
+              <span className="recharts-tooltip-item-unit">{entry.unit || ''}</span>
+            </li>
+          );
+        },
+      );
 
       return (
         <ul className="recharts-tooltip-item-list" style={listStyle}>
