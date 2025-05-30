@@ -81,7 +81,7 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
 
-  tickRefs: React.MutableRefObject<SVGTextElement[]>;
+  tickRefs: React.MutableRefObject<Element[]>;
 
   static defaultProps: Partial<Props> = {
     x: 0,
@@ -109,7 +109,7 @@ export class CartesianAxis extends Component<Props, IState> {
 
   constructor(props: Props) {
     super(props);
-    this.tickRefs = React.createRef() as React.MutableRefObject<SVGTextElement[]>;
+    this.tickRefs = React.createRef<Element[]>();
     this.tickRefs.current = [];
     this.state = { fontSize: '', letterSpacing: '' };
   }
@@ -351,7 +351,7 @@ export class CartesianAxis extends Component<Props, IState> {
         ref={ref => {
           if (ref) {
             const tickNodes = ref.getElementsByClassName('recharts-cartesian-axis-tick-value');
-            this.tickRefs.current = Array.from(tickNodes) as SVGTextElement[];
+            this.tickRefs.current = Array.from(tickNodes);
             const tick: Element | undefined = tickNodes[0];
 
             if (tick) {
