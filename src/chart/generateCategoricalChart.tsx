@@ -126,33 +126,30 @@ export const generateCategoricalChart = ({
       }
 
       return (
-        <>
-          <ChartDataContextProvider chartData={this.props.data} />
-          <ClipPathProvider>
-            <RechartsWrapper
-              className={className}
-              style={style}
-              width={width}
-              height={height}
-              onClick={this.props.onClick}
-              onMouseLeave={this.props.onMouseLeave}
-              onMouseEnter={this.props.onMouseEnter}
-              onMouseMove={this.props.onMouseMove}
-              onMouseDown={this.props.onMouseDown}
-              onMouseUp={this.props.onMouseUp}
-              onContextMenu={this.props.onContextMenu}
-              onDoubleClick={this.props.onDoubleClick}
-              onTouchStart={this.props.onTouchStart}
-              onTouchMove={this.props.onTouchMove}
-              onTouchEnd={this.props.onTouchEnd}
-            >
-              <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-                <ClipPath />
-                {children}
-              </Surface>
-            </RechartsWrapper>
-          </ClipPathProvider>
-        </>
+        <ClipPathProvider>
+          <RechartsWrapper
+            className={className}
+            style={style}
+            width={width}
+            height={height}
+            onClick={this.props.onClick}
+            onMouseLeave={this.props.onMouseLeave}
+            onMouseEnter={this.props.onMouseEnter}
+            onMouseMove={this.props.onMouseMove}
+            onMouseDown={this.props.onMouseDown}
+            onMouseUp={this.props.onMouseUp}
+            onContextMenu={this.props.onContextMenu}
+            onDoubleClick={this.props.onDoubleClick}
+            onTouchStart={this.props.onTouchStart}
+            onTouchMove={this.props.onTouchMove}
+            onTouchEnd={this.props.onTouchEnd}
+          >
+            <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+              <ClipPath />
+              {children}
+            </Surface>
+          </RechartsWrapper>
+        </ClipPathProvider>
       );
     }
   }
@@ -182,6 +179,7 @@ export const generateCategoricalChart = ({
     }
     return (
       <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
+        <ChartDataContextProvider chartData={props.data} />
         <ReportMainChartProps
           width={props.width}
           height={props.height}
