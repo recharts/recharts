@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Component, forwardRef } from 'react';
-import { Surface } from '../container/Surface';
 
 import { filterProps, validateWidthHeight } from '../util/ReactUtils';
 import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
@@ -15,6 +14,7 @@ import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { SyncMethod } from '../synchronisation/types';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ClipPathProvider } from '../container/ClipPathProvider';
+import { RootSurface } from '../container/RootSurface';
 
 /**
  * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
@@ -36,8 +36,6 @@ export interface ChartPointer {
   chartX: number;
   chartY: number;
 }
-
-const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
 export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
   accessibilityLayer?: boolean;
@@ -105,20 +103,13 @@ export const generateCategoricalChart = ({
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others, false);
 
-      // The "compact" mode is mainly used as the panorama within Brush
+      // The "compact" mode is used as the panorama within Brush
       if (compact) {
         return (
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+          <RootSurface otherAttributes={attrs} title={title} desc={desc}>
             {children}
-          </Surface>
+          </RootSurface>
         );
-      }
-
-      if (this.props.accessibilityLayer) {
-        // Set tabIndex to 0 by default (can be overwritten)
-        attrs.tabIndex = this.props.tabIndex ?? 0;
-        // Set role to application by default (can be overwritten)
-        attrs.role = this.props.role ?? 'application';
       }
 
       return (
@@ -139,9 +130,9 @@ export const generateCategoricalChart = ({
           onTouchMove={this.props.onTouchMove}
           onTouchEnd={this.props.onTouchEnd}
         >
-          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+          <RootSurface otherAttributes={attrs} title={title} desc={desc}>
             <ClipPathProvider>{children}</ClipPathProvider>
-          </Surface>
+          </RootSurface>
         </RechartsWrapper>
       );
     }
@@ -184,7 +175,7 @@ export const generateCategoricalChart = ({
           margin={props.margin ?? defaultMargin}
         />
         <ReportChartProps
-          accessibilityLayer={props.accessibilityLayer}
+          accessibilityLayer={props.accessibilityLayer ?? true}
           barCategoryGap={props.barCategoryGap ?? '10%'}
           maxBarSize={props.maxBarSize}
           stackOffset={props.stackOffset ?? 'none'}

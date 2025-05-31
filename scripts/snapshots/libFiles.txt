@@ -51,6 +51,7 @@
   "lib/container",
   "lib/container/ClipPathProvider.js",
   "lib/container/Layer.js",
+  "lib/container/RootSurface.js",
   "lib/container/Surface.js",
   "lib/context",
   "lib/context/CartesianGraphicalItemContext.js",

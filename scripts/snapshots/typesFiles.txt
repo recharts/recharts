@@ -51,6 +51,7 @@
   "types/container",
   "types/container/ClipPathProvider.d.ts",
   "types/container/Layer.d.ts",
+  "types/container/RootSurface.d.ts",
   "types/container/Surface.d.ts",
   "types/context",
   "types/context/CartesianGraphicalItemContext.d.ts",
