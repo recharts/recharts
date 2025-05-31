@@ -4,7 +4,9 @@ import { it, vi } from 'vitest';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<ComposedChart />', () => {
   const data = [

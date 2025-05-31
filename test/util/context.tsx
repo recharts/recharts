@@ -1,13 +1,9 @@
 import React, { ComponentType, ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import {
-  useChartHeight,
-  useChartWidth,
-  useClipPathId,
-  useOffset,
-  useViewBox,
-} from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffset, useViewBox } from '../../src/context/chartLayoutContext';
 import { CartesianViewBox, ChartOffset } from '../../src/util/types';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 type AllContextPropertiesMixed = {
   clipPathId: string | undefined;

@@ -4,10 +4,12 @@ import { describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { Customized, SunburstChart } from '../../src';
 import { exampleSunburstData } from '../_data';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { sunburstChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { assertNotNull } from '../helper/assertNotNull';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<Sunburst />', () => {
   it('renders each sector in order under the correct category', () => {

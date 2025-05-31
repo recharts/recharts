@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import { Customized, Sankey, Tooltip, XAxis, YAxis } from '../../src';
 import { exampleSankeyData } from '../_data';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { assertNotNull } from '../helper/assertNotNull';
 import {
@@ -11,6 +11,8 @@ import {
   sankeyNodeMouseHoverTooltipSelector,
 } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<Sankey />', () => {
   it('renders 48 nodes in simple SankeyChart', () => {

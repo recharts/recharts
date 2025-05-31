@@ -3,12 +3,9 @@ import { Component, forwardRef } from 'react';
 import { Surface } from '../container/Surface';
 
 import { filterProps, validateWidthHeight } from '../util/ReactUtils';
-import { uniqueId } from '../util/DataUtils';
 import { CategoricalChartOptions, DataKey, LayoutType, Margin, StackOffsetType } from '../util/types';
-import { ChartLayoutContextProvider } from '../context/chartLayoutContext';
 import { ExternalMouseEvents } from './types';
 import { ChartDataContextProvider } from '../context/chartDataContext';
-import { ClipPath } from '../container/ClipPath';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { RechartsWrapper } from './RechartsWrapper';
@@ -17,6 +14,7 @@ import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { SyncMethod } from '../synchronisation/types';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
+import { ClipPath, ClipPathProvider } from '../container/ClipPathProvider';
 
 /**
  * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
@@ -86,10 +84,10 @@ export const generateCategoricalChart = ({
   defaultProps = {},
   tooltipPayloadSearcher,
 }: CategoricalChartOptions) => {
+  // Refactor this to a functional component is coming next PR
+  // eslint-disable-next-line react/prefer-stateless-function
   class CategoricalChartWrapper extends Component<CategoricalChartProps> {
     static displayName = chartName;
-
-    clipPathId: string;
 
     static defaultProps: CategoricalChartProps = {
       accessibilityLayer: true,
@@ -103,12 +101,6 @@ export const generateCategoricalChart = ({
       ...defaultProps,
     };
 
-    constructor(props: CategoricalChartProps) {
-      super(props);
-
-      this.clipPathId = `${props.id ?? uniqueId('recharts')}-clip`;
-    }
-
     render() {
       if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
         return null;
@@ -120,12 +112,12 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <ChartLayoutContextProvider clipPathId={this.clipPathId}>
+          <ClipPathProvider>
             <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-              <ClipPath clipPathId={this.clipPathId} />
+              <ClipPath />
               {children}
             </Surface>
-          </ChartLayoutContextProvider>
+          </ClipPathProvider>
         );
       }
 
@@ -139,7 +131,7 @@ export const generateCategoricalChart = ({
       return (
         <>
           <ChartDataContextProvider chartData={this.props.data} />
-          <ChartLayoutContextProvider clipPathId={this.clipPathId}>
+          <ClipPathProvider>
             <RechartsWrapper
               className={className}
               style={style}
@@ -158,11 +150,11 @@ export const generateCategoricalChart = ({
               onTouchEnd={this.props.onTouchEnd}
             >
               <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-                <ClipPath clipPathId={this.clipPathId} />
+                <ClipPath />
                 {children}
               </Surface>
             </RechartsWrapper>
-          </ChartLayoutContextProvider>
+          </ClipPathProvider>
         </>
       );
     }

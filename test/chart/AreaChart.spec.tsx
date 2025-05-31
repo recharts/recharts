@@ -8,8 +8,10 @@ import { pageData } from '../../storybook/stories/data';
 import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
 import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 type ExpectedArea = {
   d: string;

@@ -8,11 +8,12 @@ import { isNumOrStr } from '../util/DataUtils';
 import { IfOverflow } from '../util/IfOverflow';
 import { createLabeledScales } from '../util/CartesianUtils';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId } from '../context/chartLayoutContext';
 import { addDot, ReferenceDotSettings, removeDot } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
+
+import { useClipPathId } from '../container/ClipPathProvider';
 
 interface ReferenceDotProps {
   r?: number;

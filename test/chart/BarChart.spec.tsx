@@ -5,13 +5,7 @@ import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
-import {
-  useChartHeight,
-  useChartWidth,
-  useClipPathId,
-  useMargin,
-  useViewBox,
-} from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
 import {
@@ -31,6 +25,8 @@ import { BarRectangleItem } from '../../src/cartesian/Bar';
 import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 type DataType = {
   name: string;

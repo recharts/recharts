@@ -28,8 +28,10 @@ import { expectTooltipPayload, showTooltip } from '../component/Tooltip/tooltipT
 import { TickItem } from '../../src/util/types';
 import { MouseHandlerDataParam } from '../../src/synchronisation/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { expectLines } from '../helper/expectLine';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<LineChart />', () => {
   beforeEach(() => {
@@ -856,7 +858,10 @@ describe('<LineChart />', () => {
 
   describe('LineChart - test ref access', () => {
     test('should allow access to the CategoricalChartWrapper through the ref prop forwarded from CategoricalChart', () => {
-      let refNode: { clipPathId: string };
+      // TODO we need to fix the ref typing in generateCategoricalChart, this class is created dynamically and cannot be typed
+      // @ts-expect-error TODO remove in followup PR
+      // eslint-disable-next-line no-undef
+      let refNode: CategoricalChartWrapper | null = null;
 
       const MyComponent = () => {
         return (
@@ -878,7 +883,7 @@ describe('<LineChart />', () => {
       render(<MyComponent />);
 
       expect(refNode).toBeDefined();
-      expect(refNode.clipPathId).toMatch(/recharts\d+-clip/);
+      expect(refNode.props).toBeDefined();
     });
   });
 

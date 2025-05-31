@@ -49,7 +49,7 @@
   "lib/component/Tooltip.js",
   "lib/component/TooltipBoundingBox.js",
   "lib/container",
-  "lib/container/ClipPath.js",
+  "lib/container/ClipPathProvider.js",
   "lib/container/Layer.js",
   "lib/container/Surface.js",
   "lib/context",
