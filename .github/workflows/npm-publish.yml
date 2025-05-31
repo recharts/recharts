@@ -3,6 +3,9 @@
 
 name: npm publish
 
+permissions:
+  contents: read
+
 on:
   release:
     types: [published]
