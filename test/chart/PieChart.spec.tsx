@@ -3,7 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
-import { useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
   const sectorNodes = container.querySelectorAll('.recharts-pie-sector');

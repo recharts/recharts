@@ -47,7 +47,9 @@ import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/toolt
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [

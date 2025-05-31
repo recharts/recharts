@@ -6,7 +6,9 @@ import { expectRadialBarLabels, expectRadialBars } from '../helper/expectRadialB
 import { selectRootBarSize } from '../../src/state/selectors/rootPropsSelectors';
 import { useAppSelector } from '../../src/state/hooks';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 function assertActiveShapeInteractions(container: HTMLElement) {
   const sectorNodes = container.querySelectorAll('.recharts-sector');

@@ -49,7 +49,7 @@
   "types/component/Tooltip.d.ts",
   "types/component/TooltipBoundingBox.d.ts",
   "types/container",
-  "types/container/ClipPath.d.ts",
+  "types/container/ClipPathProvider.d.ts",
   "types/container/Layer.d.ts",
   "types/container/Surface.d.ts",
   "types/context",

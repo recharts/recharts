@@ -3,7 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { Funnel, FunnelChart } from '../../src';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 const data = [
   { value: 100, name: '展现' },
