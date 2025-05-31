@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { CartesianViewBoxRequired, ChartOffsetRequired, LayoutType, Margin, Size } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
@@ -7,11 +7,6 @@ import { selectChartOffset, selectChartViewBox } from '../state/selectors/select
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
-
-export type ChartLayoutContextProviderProps = {
-  children: ReactNode;
-  clipPathId: string;
-};
 
 export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   const panorama = useIsPanorama();
