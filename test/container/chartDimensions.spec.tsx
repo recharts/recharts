@@ -248,7 +248,7 @@ describe('Chart dimensions', () => {
 
       it('should return clipPath ID from the main chart', () => {
         const { spy } = renderTestCase(useClipPathId);
-        expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip/));
+        expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
       });
 
       it('should select clipPath ID of the panorama chart', () => {
