@@ -129,10 +129,10 @@ describe('Chart dimensions', () => {
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
       });
 
-      it('should render 2 clipPaths, one for main chart another for panorama', () => {
+      it('should render 1 clipPath', () => {
         const { container } = renderTestCase();
         const clipPaths = container.querySelectorAll('clipPath');
-        expect(clipPaths.length).toBe(2);
+        expect(clipPaths.length).toBe(1);
         const clipPath1 = clipPaths[0];
         expect(clipPath1).toBeInTheDocument();
         expect(clipPath1).toHaveAttribute('id', expect.stringMatching(/^recharts\d+-clip$/));
@@ -143,17 +143,6 @@ describe('Chart dimensions', () => {
         expect(rect1).toHaveAttribute('y', '11');
         expect(rect1).toHaveAttribute('width', '74');
         expect(rect1).toHaveAttribute('height', '136');
-
-        // Why is there a second clipPath with the same dimensions? We may just as well use the same clipPath for both main chart and panorama.
-        const clipPath2 = clipPaths[1];
-        expect(clipPath2).toBeInTheDocument();
-        expect(clipPath2).toHaveAttribute('id', expect.stringMatching(/^recharts\d+-clip/));
-        const rect2 = clipPath2.querySelector('rect');
-        expect(rect2).toBeInTheDocument();
-        expect(rect2).toHaveAttribute('x', '14');
-        expect(rect2).toHaveAttribute('y', '11');
-        expect(rect2).toHaveAttribute('width', '74');
-        expect(rect2).toHaveAttribute('height', '136');
       });
 
       it('should select clipPath ID of the main chart', () => {
@@ -162,13 +151,10 @@ describe('Chart dimensions', () => {
         const clipPathId = spy.mock.calls[spy.mock.calls.length - 1][0];
 
         const clipPaths = container.querySelectorAll(`clipPath`);
-        expect(clipPaths.length).toBe(2);
+        expect(clipPaths.length).toBe(1);
 
         const clipPath1 = clipPaths[0];
         expect(clipPath1).toHaveAttribute('id', clipPathId);
-
-        const clipPath2 = clipPaths[1];
-        expect(clipPath2).not.toHaveAttribute('id', clipPathId);
       });
 
       it('should select brush dimensions', () => {
@@ -251,20 +237,16 @@ describe('Chart dimensions', () => {
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip/));
       });
 
-      it('should select clipPath ID of the panorama chart', () => {
+      it('should select clipPath ID of the main chart', () => {
         const { container, spy } = renderTestCase(useClipPathId);
         expect(spy).toHaveBeenCalledWith(expect.stringMatching(/^recharts\d+-clip$/));
         const clipPathId = spy.mock.calls[spy.mock.calls.length - 1][0];
 
         const clipPaths = container.querySelectorAll(`clipPath`);
-        expect(clipPaths.length).toBe(2);
+        expect(clipPaths.length).toBe(1);
 
         const clipPath1 = clipPaths[0];
-        expect(clipPath1).not.toHaveAttribute('id', clipPathId);
-
-        // so here we select clip ID of the panorama chart - but what's the point if the rect is the same?
-        const clipPath2 = clipPaths[1];
-        expect(clipPath2).toHaveAttribute('id', clipPathId);
+        expect(clipPath1).toHaveAttribute('id', clipPathId);
       });
 
       it('should select brush dimensions', () => {

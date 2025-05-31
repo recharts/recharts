@@ -112,12 +112,9 @@ export const generateCategoricalChart = ({
       // The "compact" mode is mainly used as the panorama within Brush
       if (compact) {
         return (
-          <ClipPathProvider>
-            <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
-              <ClipPath />
-              {children}
-            </Surface>
-          </ClipPathProvider>
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc}>
+            {children}
+          </Surface>
         );
       }
 
