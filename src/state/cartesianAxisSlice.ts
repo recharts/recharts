@@ -69,9 +69,11 @@ export type XAxisSettings = CartesianAxisSettings & {
   orientation: XAxisOrientation;
 };
 
+export type YAxisWidth = number | 'auto';
+
 export type YAxisSettings = CartesianAxisSettings & {
   padding: YAxisPadding;
-  width: number;
+  width: YAxisWidth;
   orientation: YAxisOrientation;
 };
 

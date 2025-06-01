@@ -72,6 +72,7 @@ import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { MaybeStackedGraphicalItem } from './barSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -157,7 +158,7 @@ export const implicitYAxis: YAxisSettings = {
   ticks: undefined,
   type: 'number',
   unit: undefined,
-  width: 60,
+  width: DEFAULT_Y_AXIS_WIDTH,
 };
 
 export const selectYAxisSettings = (state: RechartsRootState, axisId: AxisId): YAxisSettings => {
@@ -1379,8 +1380,9 @@ const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings):
 };
 
 const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+  const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
   return {
-    width: axisSettings.width,
+    width,
     height: offset.height,
   };
 };
@@ -1507,8 +1509,10 @@ export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Siz
   selectChartOffset,
   selectYAxisSettings,
   (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+    const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
+
     return {
-      width: axisSettings.width,
+      width,
       height: offset.height,
     };
   },

@@ -10,6 +10,7 @@ import {
   YAxisPadding,
   YAxisSettings,
   updateYAxisWidth,
+  YAxisWidth,
 } from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -32,9 +33,11 @@ interface YAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: ReadonlyArray<AxisTick>;
-  /** The width of axis, which need to be set by user */
-  width?: number;
-  isWidthResponsive?: boolean;
+  /**
+   * The width of axis, which need to be set by user.
+   * When set to 'auto', the width will be calculated dynamically based on tick labels and axis labels.
+   */
+  width?: YAxisWidth;
   mirror?: boolean;
   orientation?: YAxisOrientation;
   padding?: YAxisPadding;
@@ -60,7 +63,7 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 }
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
-  const { yAxisId, className, isWidthResponsive } = props;
+  const { yAxisId, className, width } = props;
 
   const cartesianAxisRef = useRef(null);
   const labelRef = useRef(null);
@@ -78,7 +81,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
 
   useLayoutEffect(() => {
     // Keep the default width of the axis if a function or react element is used for label
-    if (!isWidthResponsive || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
+    if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
 
     // get calculated width based on the label width, ticks etc
     const updatedYAxisWidth = getCalculatedYAxisWidth({
@@ -98,7 +101,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     dispatch,
     label,
     yAxisId,
-    isWidthResponsive,
+    width,
   ]);
 
   if (axisSize == null || position == null) {
@@ -115,7 +118,7 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
       scale={scale}
       x={position.x}
       y={position.y}
-      label={isWidthResponsive ? label : props.label}
+      label={width === 'auto' ? label : props.label}
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
@@ -173,7 +176,6 @@ export const YAxisDefaultProps: Partial<Props> = {
   type: implicitYAxis.type,
   width: implicitYAxis.width,
   yAxisId: 0,
-  isWidthResponsive: false,
 };
 
 // eslint-disable-next-line react/prefer-stateless-function

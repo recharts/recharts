@@ -38,10 +38,9 @@ export const getModifiedYAxisProps = ({
 
 /**
  * Calculates the width of the Y-axis based on the tick labels and the axis label.
- *
  * @param {Object} params - The parameters object.
  * @param {React.RefObject<any>} params.cartesianAxisRef - The ref to the CartesianAxis component.
- * @param {React.RefObject<SVGElement>} params.labelRef - The ref to the label element.
+ * @param {React.RefObject<Element>} params.labelRef - The ref to the label element.
  * @param {number} [params.labelGapWithTick=5] - The gap between the label and the tick.
  * @returns {number} The calculated width of the Y-axis.
  */
@@ -51,7 +50,7 @@ export const getCalculatedYAxisWidth = ({
   labelGapWithTick = 5, // Default gap between label and tick
 }: {
   cartesianAxisRef: React.RefObject<any>;
-  labelRef: React.RefObject<SVGElement>;
+  labelRef: React.RefObject<Element>;
   labelGapWithTick?: number;
 }): number => {
   if (!cartesianAxisRef || !cartesianAxisRef.current) {
@@ -65,7 +64,7 @@ export const getCalculatedYAxisWidth = ({
   // find the max width of the tick labels
   let maxTickWidth = 0;
   if (tickNodes && tickNodes.length > 0) {
-    tickNodes.forEach((tickNode: SVGElement) => {
+    tickNodes.forEach((tickNode: Element) => {
       if (tickNode) {
         const bbox = tickNode.getBoundingClientRect();
 
