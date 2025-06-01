@@ -21,7 +21,7 @@ const GeneralProps: Args = {
   y: {
     description: `If set a string or a number, a horizontal line perpendicular to the y-axis specified by yAxisId
     will be drawn. If the specified y-axis is a number axis, the type of y must be Number. If the specified y-axis
-    is a category axis, the value of y must be one of the catagories, otherwise no line will be drawn.`,
+    is a category axis, the value of y must be one of the categories, otherwise no line will be drawn.`,
     table: { type: { summary: 'number | string' }, category: 'General' },
   },
   segment: {

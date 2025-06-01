@@ -14,7 +14,7 @@ export const TickPositioning = {
       <ResponsiveContainer>
         <LineChart
           data={ticks}
-          // Margins are neccessary to show ticks that extend beyond the chart (i.e. last and first tick).
+          // Margins are necessary to show ticks that extend beyond the chart (i.e. last and first tick).
           margin={{
             top: 20,
             right: 30,
