@@ -39,7 +39,7 @@ those on the ResponsiveContainer.
 
 If you're using ResponsiveContainer and you're rendering on the server (SSR), then initially on
 the Browser, the chart will not be shown until after hydration.
-As mentioned, this is becase while rendering on server, the dimensions cannot be calculated,
+As mentioned, this is because while rendering on server, the dimensions cannot be calculated,
 but if you need to have the chart rendered before hydration, you can pass `initialDimension`
 prop, which is an object like `{ width: 500, height: 500 }`, when passed, the chart will
 be rendered as a 500x500, when hydrated the actual width and height will be re-calculated

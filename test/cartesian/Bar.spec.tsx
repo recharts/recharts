@@ -538,7 +538,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       ]);
     });
 
-    it('should should do nothing if barSize is set', () => {
+    it('should do nothing if barSize is set', () => {
       const maxBarSize = 77;
       const { container } = render(
         <ChartElement layout="horizontal" data={data}>
