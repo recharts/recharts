@@ -102,10 +102,6 @@ export const generateCategoricalChart = ({
     };
 
     render() {
-      if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
-        return null;
-      }
-
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others, false);
 
@@ -155,6 +151,10 @@ export const generateCategoricalChart = ({
     props: CategoricalChartProps,
     ref,
   ) {
+    if (!validateWidthHeight({ width: props.width, height: props.height })) {
+      return null;
+    }
+
     const options: ChartOptions = {
       chartName,
       defaultTooltipEventType,
