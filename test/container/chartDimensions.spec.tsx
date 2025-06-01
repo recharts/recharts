@@ -5,6 +5,7 @@ import { PageData } from '../_data';
 import { useOffset } from '../../src/context/chartLayoutContext';
 import { selectBrushDimensions } from '../../src/state/selectors/brushSelectors';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { useIsPanorama } from '../../src/context/PanoramaContext';
 
 describe('Chart dimensions', () => {
   describe('simple chart', () => {
@@ -83,6 +84,12 @@ describe('Chart dimensions', () => {
       expect(surface).toHaveAttribute('style', 'width: 100%; height: 100%;');
       expect(surface).toHaveAttribute('tabindex', '0');
       expect(surface).toHaveAttribute('role', 'application');
+    });
+
+    it('should always say that the chart is not panorama', () => {
+      const { spy } = renderTestCase(useIsPanorama);
+      expect(spy).toHaveBeenCalledWith(false);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -193,6 +200,12 @@ describe('Chart dimensions', () => {
         expect(surface2).not.toHaveAttribute('tabindex');
         expect(surface2).not.toHaveAttribute('role');
       });
+
+      it('should always say that the chart is not panorama', () => {
+        const { spy } = renderTestCase(useIsPanorama);
+        expect(spy).toHaveBeenCalledWith(false);
+        expect(spy).toHaveBeenCalledTimes(3);
+      });
     });
 
     describe('dimensions in the panorama chart', () => {
@@ -258,6 +271,20 @@ describe('Chart dimensions', () => {
           y: 147,
         });
         expect(spy).toHaveBeenCalledTimes(1);
+      });
+
+      it('should always say that the chart is panorama', () => {
+        const { spy } = renderTestCase(useIsPanorama);
+        expect(spy).toHaveBeenCalledTimes(2);
+        /*
+         * it's important that the panorama is always true, and this selector is stable,
+         * because if it was oscillating between true and false,
+         * then various configuration-push components would push configuration
+         * into the main chart state.
+         */
+        expect(spy).toHaveBeenCalledWith(true);
+        expect(spy).toHaveBeenNthCalledWith(1, true);
+        expect(spy).toHaveBeenNthCalledWith(2, true);
       });
     });
   });

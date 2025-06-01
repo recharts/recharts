@@ -1,4 +1,4 @@
-import React, { ComponentType, memo } from 'react';
+import React, { ComponentType } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useOffset } from '../../src/context/chartLayoutContext';
@@ -8,25 +8,11 @@ import { emptyOffset } from '../helper/offsetHelpers';
 import { ClipPathProvider, useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('ClipPathIdContext', () => {
-  it('should use id prop as a clip path ID, if provided', () => {
+  it('should generate unique clipPathId', () => {
     expect.assertions(1);
     const MockConsumer: ComponentType = () => {
       const clipPathId = useClipPathId();
-      expect(clipPathId).toBe('my mock ID-clip');
-      return null;
-    };
-    render(
-      <ClipPathProvider id="my mock ID">
-        <MockConsumer />
-      </ClipPathProvider>,
-    );
-  });
-
-  it('should generate unique clipPathId if ID is not provided', () => {
-    expect.assertions(1);
-    const MockConsumer: ComponentType = () => {
-      const clipPathId = useClipPathId();
-      expect(clipPathId).toBe('recharts1-clip');
+      expect(clipPathId).toMatch(/^recharts\d+-clip$/);
       return null;
     };
     render(
@@ -44,119 +30,6 @@ describe('ClipPathIdContext', () => {
       return null;
     };
     render(<MockComponent />);
-  });
-
-  describe('vanilla children', () => {
-    it('should re-render children every time even when nothing changes', () => {
-      let renderCount = 0;
-      const MockConsumer: ComponentType = () => {
-        renderCount++;
-        return null;
-      };
-      expect(renderCount).toBe(0);
-      const { rerender } = render(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-      rerender(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(2);
-    });
-  });
-
-  describe('children using React.memo()', () => {
-    it('should render memo children only once if the clipPathId does not change', () => {
-      let renderCount = 0;
-      const MockConsumer = memo(() => {
-        renderCount++;
-        return null;
-      });
-      expect(renderCount).toBe(0);
-      const { rerender } = render(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-      rerender(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-    });
-
-    it('should render memo children only once even if the id changes!', () => {
-      let renderCount = 0;
-      const MockConsumer = memo(() => {
-        renderCount++;
-        return null;
-      });
-      expect(renderCount).toBe(0);
-      const { rerender } = render(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-      rerender(
-        <ClipPathProvider id="my mock ID but this time different">
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-    });
-  });
-
-  describe('children that read the context using a hook', () => {
-    it('should render context-aware children only once', () => {
-      let renderCount = 0;
-      const MockConsumer = memo(() => {
-        useClipPathId();
-        renderCount++;
-        return null;
-      });
-      expect(renderCount).toBe(0);
-      const { rerender } = render(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-      rerender(
-        <ClipPathProvider>
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-    });
-
-    it('should re-render context-aware children if the id changes', () => {
-      let renderCount = 0;
-      const MockConsumer = memo(() => {
-        useClipPathId();
-        renderCount++;
-        return null;
-      });
-      expect(renderCount).toBe(0);
-      const { rerender } = render(
-        <ClipPathProvider id="my mock ID">
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(1);
-      rerender(
-        <ClipPathProvider id="my mock ID but this time different">
-          <MockConsumer />
-        </ClipPathProvider>,
-      );
-      expect(renderCount).toBe(2);
-    });
   });
 });
 

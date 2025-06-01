@@ -14,7 +14,7 @@ import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
 import { SyncMethod } from '../synchronisation/types';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
-import { ClipPath, ClipPathProvider } from '../container/ClipPathProvider';
+import { ClipPathProvider } from '../container/ClipPathProvider';
 
 /**
  * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
@@ -102,10 +102,6 @@ export const generateCategoricalChart = ({
     };
 
     render() {
-      if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
-        return null;
-      }
-
       const { children, className, width, height, style, compact, title, desc, ...others } = this.props;
       const attrs = filterProps(others, false);
 
@@ -126,33 +122,27 @@ export const generateCategoricalChart = ({
       }
 
       return (
-        <>
-          <ChartDataContextProvider chartData={this.props.data} />
-          <ClipPathProvider>
-            <RechartsWrapper
-              className={className}
-              style={style}
-              width={width}
-              height={height}
-              onClick={this.props.onClick}
-              onMouseLeave={this.props.onMouseLeave}
-              onMouseEnter={this.props.onMouseEnter}
-              onMouseMove={this.props.onMouseMove}
-              onMouseDown={this.props.onMouseDown}
-              onMouseUp={this.props.onMouseUp}
-              onContextMenu={this.props.onContextMenu}
-              onDoubleClick={this.props.onDoubleClick}
-              onTouchStart={this.props.onTouchStart}
-              onTouchMove={this.props.onTouchMove}
-              onTouchEnd={this.props.onTouchEnd}
-            >
-              <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
-                <ClipPath />
-                {children}
-              </Surface>
-            </RechartsWrapper>
-          </ClipPathProvider>
-        </>
+        <RechartsWrapper
+          className={className}
+          style={style}
+          width={width}
+          height={height}
+          onClick={this.props.onClick}
+          onMouseLeave={this.props.onMouseLeave}
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseMove={this.props.onMouseMove}
+          onMouseDown={this.props.onMouseDown}
+          onMouseUp={this.props.onMouseUp}
+          onContextMenu={this.props.onContextMenu}
+          onDoubleClick={this.props.onDoubleClick}
+          onTouchStart={this.props.onTouchStart}
+          onTouchMove={this.props.onTouchMove}
+          onTouchEnd={this.props.onTouchEnd}
+        >
+          <Surface {...attrs} width={width} height={height} title={title} desc={desc} style={FULL_WIDTH_AND_HEIGHT}>
+            <ClipPathProvider>{children}</ClipPathProvider>
+          </Surface>
+        </RechartsWrapper>
       );
     }
   }
@@ -161,6 +151,10 @@ export const generateCategoricalChart = ({
     props: CategoricalChartProps,
     ref,
   ) {
+    if (!validateWidthHeight({ width: props.width, height: props.height })) {
+      return null;
+    }
+
     const options: ChartOptions = {
       chartName,
       defaultTooltipEventType,
@@ -182,6 +176,7 @@ export const generateCategoricalChart = ({
     }
     return (
       <RechartsStoreProvider preloadedState={{ options, polarOptions }} reduxStoreName={props.id ?? chartName}>
+        <ChartDataContextProvider chartData={props.data} />
         <ReportMainChartProps
           width={props.width}
           height={props.height}
