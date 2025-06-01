@@ -857,11 +857,13 @@ describe('<LineChart />', () => {
   });
 
   describe('LineChart - test ref access', () => {
-    test('should allow access to the CategoricalChartWrapper through the ref prop forwarded from CategoricalChart', () => {
-      // TODO we need to fix the ref typing in generateCategoricalChart, this class is created dynamically and cannot be typed
-      // @ts-expect-error TODO remove in followup PR
-      // eslint-disable-next-line no-undef
-      let refNode: CategoricalChartWrapper | null = null;
+    test('should allow access to the main SVG through the ref prop forwarded from CategoricalChart', () => {
+      /*
+       * This is a breaking change from v2.0.0, where the ref was not forwarded
+       * and used to refer to the CategoricalChartWrapper component instead.
+       * In 3.0 we no longer use CategoricalChartWrapper, and the ref now refers to the main SVG element.
+       */
+      let refNode: SVGSVGElement | null = null;
 
       const MyComponent = () => {
         return (
@@ -883,7 +885,9 @@ describe('<LineChart />', () => {
       render(<MyComponent />);
 
       expect(refNode).toBeDefined();
-      expect(refNode.props).toBeDefined();
+      expect(refNode).not.toBeNull();
+      expect(refNode.tagName).toBe('svg');
+      expect(refNode).toHaveAttribute('class', 'recharts-surface');
     });
   });
 

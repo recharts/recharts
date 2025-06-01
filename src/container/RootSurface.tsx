@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
 import { validateWidthHeight } from '../util/ReactUtils';
@@ -17,7 +17,7 @@ type RootSurfaceProps = {
 
 const FULL_WIDTH_AND_HEIGHT = { width: '100%', height: '100%' };
 
-const MainChartSurface = (props: RootSurfaceProps) => {
+const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: RootSurfaceProps, ref) => {
   const width = useChartWidth();
   const height = useChartHeight();
   const hasAccessibilityLayer = useAccessibilityLayer();
@@ -51,11 +51,12 @@ const MainChartSurface = (props: RootSurfaceProps) => {
       width={width}
       height={height}
       style={FULL_WIDTH_AND_HEIGHT}
+      ref={ref}
     >
       {children}
     </Surface>
   );
-};
+});
 
 const BrushPanoramaSurface = ({ children }: { children: ReactNode }) => {
   const brushDimensions = useAppSelector(selectBrushDimensions);
@@ -73,11 +74,17 @@ const BrushPanoramaSurface = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const RootSurface = ({ children, ...rest }: RootSurfaceProps) => {
-  const isPanorama = useIsPanorama();
+export const RootSurface = forwardRef<SVGSVGElement, RootSurfaceProps>(
+  ({ children, ...rest }: RootSurfaceProps, ref) => {
+    const isPanorama = useIsPanorama();
 
-  if (isPanorama) {
-    return <BrushPanoramaSurface>{children}</BrushPanoramaSurface>;
-  }
-  return <MainChartSurface {...rest}>{children}</MainChartSurface>;
-};
+    if (isPanorama) {
+      return <BrushPanoramaSurface>{children}</BrushPanoramaSurface>;
+    }
+    return (
+      <MainChartSurface ref={ref} {...rest}>
+        {children}
+      </MainChartSurface>
+    );
+  },
+);

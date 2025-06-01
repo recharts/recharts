@@ -2,7 +2,7 @@
  * @fileOverview Surface
  */
 import * as React from 'react';
-import { ReactNode, CSSProperties, SVGProps } from 'react';
+import { ReactNode, CSSProperties, SVGProps, forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { filterProps } from '../util/ReactUtils';
 
@@ -24,7 +24,7 @@ interface SurfaceProps {
 
 export type Props = Omit<SVGProps<SVGSVGElement>, 'viewBox'> & SurfaceProps;
 
-export function Surface(props: Props) {
+export const Surface = forwardRef<SVGSVGElement, Props>((props: Props, ref) => {
   const { children, width, height, viewBox, className, style, title, desc, ...others } = props;
   const svgView = viewBox || { width, height, x: 0, y: 0 };
   const layerClass = clsx('recharts-surface', className);
@@ -37,10 +37,11 @@ export function Surface(props: Props) {
       height={height}
       style={style}
       viewBox={`${svgView.x} ${svgView.y} ${svgView.width} ${svgView.height}`}
+      ref={ref}
     >
       <title>{title}</title>
       <desc>{desc}</desc>
       {children}
     </svg>
   );
-}
+});

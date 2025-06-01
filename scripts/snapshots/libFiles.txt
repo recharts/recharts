@@ -21,6 +21,7 @@
   "lib/chart",
   "lib/chart/AreaChart.js",
   "lib/chart/BarChart.js",
+  "lib/chart/CartesianChart.js",
   "lib/chart/ComposedChart.js",
   "lib/chart/FunnelChart.js",
   "lib/chart/LineChart.js",
