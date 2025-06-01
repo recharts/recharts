@@ -59,7 +59,7 @@ describe('when a Recharts chart is used in another Redux app as a neighbour', ()
   it('should allow selecting data from recharts store', () => {
     const spy = vi.fn();
     render(<App spy={spy} />);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(100);
   });
 
@@ -108,7 +108,7 @@ describe('when a Recharts chart is used in another Redux app as a parent', () =>
   it('should allow selecting data from recharts store', () => {
     const spy = vi.fn();
     render(<App spy={spy} />);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(100);
   });
 

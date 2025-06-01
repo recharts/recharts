@@ -337,7 +337,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -371,7 +371,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart height', () => {
@@ -388,7 +388,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 

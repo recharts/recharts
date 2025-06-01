@@ -19,7 +19,7 @@ describe('selectChartOffset', () => {
   });
 
   it('should be stable', () => {
-    expect.assertions(4);
+    expect.assertions(2);
     const Comp = (): null => {
       const offset1 = useAppSelector(selectChartOffset);
       const offset2 = useAppSelector(selectChartOffset);

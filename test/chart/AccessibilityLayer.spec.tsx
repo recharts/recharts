@@ -46,8 +46,20 @@ function arrowLeft(container: Element) {
   });
 }
 
+function getMainSurface(container: HTMLElement | SVGElement): HTMLElement | SVGElement {
+  // DefaultLegendContent renders its own SVG surface, so we need to exclude it
+  const mainSurface = container.querySelector(
+    'svg.recharts-surface:not(.recharts-default-legend svg.recharts-surface)',
+  );
+  assertNotNull(mainSurface);
+  if (!(mainSurface instanceof HTMLElement || mainSurface instanceof SVGElement)) {
+    throw new Error('Main surface is not an HTMLElement or SVGElement');
+  }
+  return mainSurface;
+}
+
 function assertNoKeyboardInteractions(container: HTMLElement) {
-  const svg = container.querySelector('svg');
+  const svg = getMainSurface(container);
   assertNotNull(svg);
   expectTooltipNotVisible(container);
   act(() => {
@@ -87,7 +99,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expectTooltipNotVisible(container);
 
       // Once the chart receives focus, the tooltip should display
-      act(() => container.querySelector('svg')?.focus());
+      act(() => getMainSurface(container).focus());
 
       expectTooltipPayload(container, 'Page A', ['uv : 400']);
     });
@@ -105,7 +117,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       expect(tooltip.textContent).toBe('');
 
       // Once the chart receives focus, the tooltip should display
-      act(() => container.querySelector('svg')?.focus());
+      act(() => container.querySelector('svg').focus());
       expect(tooltip).toHaveTextContent('uv : 400');
 
       // Use keyboard to move around
@@ -134,7 +146,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </AreaChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -204,7 +216,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </AreaChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -292,7 +304,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
         const pre = container.querySelector('pre');
         assertNotNull(pre);
-        const svg = container.querySelector('svg');
+        const svg = getMainSurface(container);
         assertNotNull(svg);
 
         expect(pre.textContent).toBe('6');
@@ -385,7 +397,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
 
       expect(container.querySelectorAll('button')).toHaveLength(1);
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -437,7 +449,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
     test('When a tooltip is removed, the AccessibilityLayer does not throw', () => {
       const { container } = render(<BugExample />);
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -486,7 +498,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
     test('AccessibilityLayer respects dynamic changes to the XAxis orientation', () => {
       const { container } = render(<DirectionSwitcher />);
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -515,7 +527,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </PieChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertChartA11yAttributes(svg);
     });
 
@@ -541,7 +553,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </FunnelChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertChartA11yAttributes(svg);
     });
 
@@ -557,7 +569,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
       const tooltip = getTooltip(container);
       expect(tooltip).toHaveTextContent('');
 
-      act(() => container.querySelector('svg')?.focus());
+      act(() => getMainSurface(container).focus());
       expect(tooltip).toHaveTextContent('');
     });
 
@@ -578,7 +590,7 @@ describe.each([true, undefined])('AccessibilityLayer with accessibilityLayer=%s'
         </FunnelChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNotNull(svg);
       const tooltip = getTooltip(container);
 
@@ -641,7 +653,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </AreaChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNoA11yAttributes(svg);
     });
 
@@ -668,7 +680,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </FunnelChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNoA11yAttributes(svg);
     });
 
@@ -693,7 +705,7 @@ describe('AccessibilityLayer with accessibilityLayer=false', () => {
         </PieChart>,
       );
 
-      const svg = container.querySelector('svg');
+      const svg = getMainSurface(container);
       assertNoA11yAttributes(svg);
     });
 
@@ -728,7 +740,7 @@ describe('AreaChart horizontal', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
-    const svg = container.querySelector('svg');
+    const svg = getMainSurface(container);
     assertNotNull(svg);
 
     act(() => svg.focus());
@@ -739,7 +751,7 @@ describe('AreaChart horizontal', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
-    const svg = container.querySelector('svg');
+    const svg = getMainSurface(container);
     assertNotNull(svg);
 
     act(() => svg.focus());
@@ -753,7 +765,7 @@ describe('AreaChart horizontal', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
-    const svg = container.querySelector('svg');
+    const svg = getMainSurface(container);
     assertNotNull(svg);
 
     act(() => svg.focus());
@@ -767,7 +779,7 @@ describe('AreaChart horizontal', () => {
     const { container } = renderTestCase();
 
     expectTooltipNotVisible(container);
-    const svg = container.querySelector('svg');
+    const svg = getMainSurface(container);
     assertNotNull(svg);
 
     act(() => svg.focus());
@@ -811,7 +823,7 @@ describe('AreaChart vertical', () => {
     expectTooltipNotVisible(container);
 
     // Once the chart receives focus, the tooltip should display
-    act(() => container.querySelector('svg')?.focus());
+    act(() => getMainSurface(container).focus());
 
     expectTooltipPayload(container, 'Page A', ['uv : 400']);
   });

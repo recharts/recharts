@@ -57,7 +57,7 @@ describe('useOffset', () => {
       </ComposedChart>,
     );
 
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
     expect(offsetSpy).toHaveBeenLastCalledWith({
       top: 5,
       right: 5,
@@ -82,7 +82,7 @@ describe('useOffset', () => {
       </ComposedChart>,
     );
 
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
     expect(offsetSpy).toHaveBeenLastCalledWith({
       top: 10,
       right: 20,

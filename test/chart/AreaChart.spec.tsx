@@ -533,7 +533,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
     });
 
@@ -565,7 +565,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(100);
     });
 
@@ -581,7 +581,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(50);
     });
   });

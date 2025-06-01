@@ -1623,7 +1623,7 @@ describe('Tooltip payload', () => {
         activeIndex: null,
         isActive: false,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(3);
 
       showTooltipOnCoordinate(
         container,
@@ -1635,7 +1635,7 @@ describe('Tooltip payload', () => {
         activeIndex: '4',
         isActive: true,
       });
-      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenCalledTimes(4);
     });
   });
 
