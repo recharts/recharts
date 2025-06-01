@@ -177,6 +177,7 @@
   "lib/util/ScatterUtils.js",
   "lib/util/ShallowEqual.js",
   "lib/util/TickUtils.js",
+  "lib/util/YAxisUtils.js",
   "lib/util/cursor",
   "lib/util/cursor/getCursorPoints.js",
   "lib/util/cursor/getCursorRectangle.js",

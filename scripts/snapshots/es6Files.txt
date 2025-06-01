@@ -177,6 +177,7 @@
   "es6/util/ScatterUtils.js",
   "es6/util/ShallowEqual.js",
   "es6/util/TickUtils.js",
+  "es6/util/YAxisUtils.js",
   "es6/util/cursor",
   "es6/util/cursor/getCursorPoints.js",
   "es6/util/cursor/getCursorRectangle.js",
