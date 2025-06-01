@@ -12,12 +12,10 @@ const ClipPathIdContext = createContext<string | undefined>(undefined);
  * To read the clip path ID, use the `useClipPathId` hook,
  * or render `<ClipPath>` component which will automatically use the ID from this context.
  *
- * @param props optional `id` prop to set a custom ID for the clip path in case you want to use the same clip path in multiple charts.
+ * @param props children - React children to be wrapped by the provider
  * @returns React Context Provider
  */
-export const ClipPathProvider = (props: { children: ReactNode }) => {
-  const { children } = props;
-
+export const ClipPathProvider = ({ children }: { children: ReactNode }) => {
   const [clipPathId] = useState<string>(`${uniqueId('recharts')}-clip`);
 
   const offset = useOffset();
