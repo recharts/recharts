@@ -49,9 +49,7 @@ interface LabelProps {
   textBreakAll?: boolean;
   angle?: number;
   index?: number;
-  labelRef?: React.RefObject<SVGTextElement>;
-  verticalAnchor?: string;
-  textAnchor?: string;
+  labelRef?: React.RefObject<Element>;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -180,7 +178,7 @@ const getAttrsOfPolarLabel = (props: Props) => {
 };
 
 const getAttrsOfCartesianLabel = (props: Props) => {
-  const { viewBox, parentViewBox, offset, position, textAnchor, verticalAnchor } = props;
+  const { viewBox, parentViewBox, offset, position } = props;
   const { x, y, width, height } = viewBox as CartesianViewBox;
 
   // Define vertical offsets and position inverts based on the value being positive or negative
@@ -199,8 +197,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     const attrs = {
       x: x + width / 2,
       y: y - verticalSign * offset,
-      textAnchor: textAnchor || 'middle',
-      verticalAnchor: verticalAnchor || verticalEnd,
+      textAnchor: 'middle',
+      verticalAnchor: verticalEnd,
     };
 
     return {
@@ -218,8 +216,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     const attrs = {
       x: x + width / 2,
       y: y + height + verticalOffset,
-      textAnchor: textAnchor || 'middle',
-      verticalAnchor: verticalAnchor || verticalStart,
+      textAnchor: 'middle',
+      verticalAnchor: verticalStart,
     };
 
     return {
@@ -240,8 +238,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     const attrs = {
       x: x - horizontalOffset,
       y: y + height / 2,
-      textAnchor: textAnchor || horizontalEnd,
-      verticalAnchor: verticalAnchor || 'middle',
+      textAnchor: horizontalEnd,
+      verticalAnchor: 'middle',
     };
 
     return {
@@ -259,8 +257,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     const attrs = {
       x: x + width + horizontalOffset,
       y: y + height / 2,
-      textAnchor: textAnchor || horizontalStart,
-      verticalAnchor: verticalAnchor || 'middle',
+      textAnchor: horizontalStart,
+      verticalAnchor: 'middle',
     };
     return {
       ...attrs,
@@ -282,8 +280,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + horizontalOffset,
       y: y + height / 2,
-      textAnchor: textAnchor || horizontalStart,
-      verticalAnchor: verticalAnchor || 'middle',
+      textAnchor: horizontalStart,
+      verticalAnchor: 'middle',
       ...sizeAttrs,
     };
   }
@@ -292,8 +290,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + width - horizontalOffset,
       y: y + height / 2,
-      textAnchor: textAnchor || horizontalEnd,
-      verticalAnchor: verticalAnchor || 'middle',
+      textAnchor: horizontalEnd,
+      verticalAnchor: 'middle',
       ...sizeAttrs,
     };
   }
@@ -302,8 +300,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + width / 2,
       y: y + verticalOffset,
-      textAnchor: textAnchor || 'middle',
-      verticalAnchor: verticalAnchor || verticalStart,
+      textAnchor: 'middle',
+      verticalAnchor: verticalStart,
       ...sizeAttrs,
     };
   }
@@ -312,8 +310,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + width / 2,
       y: y + height - verticalOffset,
-      textAnchor: textAnchor || 'middle',
-      verticalAnchor: verticalAnchor || verticalEnd,
+      textAnchor: 'middle',
+      verticalAnchor: verticalEnd,
       ...sizeAttrs,
     };
   }
@@ -322,8 +320,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + horizontalOffset,
       y: y + verticalOffset,
-      textAnchor: textAnchor || horizontalStart,
-      verticalAnchor: verticalAnchor || verticalStart,
+      textAnchor: horizontalStart,
+      verticalAnchor: verticalStart,
       ...sizeAttrs,
     };
   }
@@ -332,8 +330,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + width - horizontalOffset,
       y: y + verticalOffset,
-      textAnchor: textAnchor || horizontalEnd,
-      verticalAnchor: verticalAnchor || verticalStart,
+      textAnchor: horizontalEnd,
+      verticalAnchor: verticalStart,
       ...sizeAttrs,
     };
   }
@@ -342,8 +340,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + horizontalOffset,
       y: y + height - verticalOffset,
-      textAnchor: textAnchor || horizontalStart,
-      verticalAnchor: verticalAnchor || verticalEnd,
+      textAnchor: horizontalStart,
+      verticalAnchor: verticalEnd,
       ...sizeAttrs,
     };
   }
@@ -352,8 +350,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + width - horizontalOffset,
       y: y + height - verticalOffset,
-      textAnchor: textAnchor || horizontalEnd,
-      verticalAnchor: verticalAnchor || verticalEnd,
+      textAnchor: horizontalEnd,
+      verticalAnchor: verticalEnd,
       ...sizeAttrs,
     };
   }
@@ -367,8 +365,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
     return {
       x: x + getPercentValue(position.x, width),
       y: y + getPercentValue(position.y, height),
-      textAnchor: textAnchor || 'end',
-      verticalAnchor: verticalAnchor || 'end',
+      textAnchor: 'end',
+      verticalAnchor: 'end',
       ...sizeAttrs,
     };
   }
@@ -376,8 +374,8 @@ const getAttrsOfCartesianLabel = (props: Props) => {
   return {
     x: x + width / 2,
     y: y + height / 2,
-    textAnchor: textAnchor || 'middle',
-    verticalAnchor: verticalAnchor || 'middle',
+    textAnchor: 'middle',
+    verticalAnchor: 'middle',
     ...sizeAttrs,
   };
 };
@@ -492,7 +490,7 @@ const parseViewBox = (props: any): ViewBox => {
   return {};
 };
 
-const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject<SVGTextElement>) => {
+const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
   if (!label) {
     return null;
   }
@@ -530,7 +528,7 @@ const renderCallByParent = (
   parentProps: {
     children?: ReactNode;
     label?: unknown;
-    labelRef?: React.RefObject<SVGTextElement>;
+    labelRef?: React.RefObject<Element>;
   },
   viewBox?: ViewBox,
   checkPropsLabel = true,

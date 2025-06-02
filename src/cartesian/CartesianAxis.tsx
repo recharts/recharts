@@ -62,7 +62,7 @@ export interface CartesianAxisProps {
    * this is Recharts scale, based on d3-scale.
    */
   scale: RechartsScale;
-  labelRef?: React.RefObject<SVGTextElement>;
+  labelRef?: React.RefObject<Element>;
 }
 
 interface IState {

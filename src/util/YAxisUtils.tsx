@@ -1,40 +1,4 @@
 import * as React from 'react';
-import { isValidElement, ReactElement } from 'react';
-import { isNumOrStr } from './DataUtils';
-
-/**
- * Returns modified Y-axis label and position based on the provided label.
- * The modified props shows the y-axis rotated by 270 degrees and centered along y-axis.
- * If the label is a number or string, it returns a default label object with common properties.
- * If the label is an object, it merges common properties with the provided label properties.
- *
- * @param {Object} params - The parameters object.
- * @param {any} params.label - The label to be modified.
- * @returns {Object} An object containing the modified label
- */
-export const getModifiedYAxisProps = ({
-  label,
-}: {
-  label: string | number | ReactElement | object;
-}): { label: object } => {
-  let modifiedLabel = label;
-
-  const commonLabelProps = { angle: 270, position: 'insideLeft', textAnchor: 'middle', verticalAnchor: 'start' };
-
-  if (isNumOrStr(modifiedLabel)) {
-    modifiedLabel = {
-      value: label,
-      ...commonLabelProps,
-    };
-  } else if (label && typeof label === 'object' && !isValidElement(label)) {
-    modifiedLabel = {
-      ...commonLabelProps,
-      ...label,
-    };
-  }
-
-  return { label: modifiedLabel };
-};
 
 /**
  * Calculates the width of the Y-axis based on the tick labels and the axis label.

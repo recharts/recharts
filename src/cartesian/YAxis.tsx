@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, FunctionComponent, useEffect, useMemo, useRef, useLayoutEffect, isValidElement } from 'react';
+import { Component, FunctionComponent, useEffect, useRef, useLayoutEffect, isValidElement } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
@@ -22,7 +22,7 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { getModifiedYAxisProps, getCalculatedYAxisWidth } from '../util/YAxisUtils';
+import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { isLabelContentAFunction } from '../component/Label';
 
 interface YAxisProps extends BaseAxisProps {
@@ -63,7 +63,7 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 }
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
-  const { yAxisId, className, width } = props;
+  const { yAxisId, className, width, label } = props;
 
   const cartesianAxisRef = useRef(null);
   const labelRef = useRef(null);
@@ -77,10 +77,9 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
 
-  const { label } = useMemo(() => getModifiedYAxisProps({ label: props.label }), [props.label]);
-
   useLayoutEffect(() => {
-    // Keep the default width of the axis if a function or react element is used for label
+    // No dynamic width calculation is done when width !== 'auto'
+    // or when a function/react element is used for label
     if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
 
     // get calculated width based on the label width, ticks etc
@@ -118,7 +117,6 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
       scale={scale}
       x={position.x}
       y={position.y}
-      label={width === 'auto' ? label : props.label}
       width={axisSize.width}
       height={axisSize.height}
       className={clsx(`recharts-${axisType} ${axisType}`, className)}
