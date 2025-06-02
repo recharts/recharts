@@ -2126,8 +2126,8 @@ describe('<PolarAngleAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith({
           startAngle: 20,
           endAngle: 220,
-          cx: undefined,
-          cy: undefined,
+          cx: '50%',
+          cy: '50%',
           innerRadius: 0,
           outerRadius: '80%',
         });
