@@ -36,7 +36,6 @@ export const getCalculatedYAxisWidth = ({
           maxTickWidth = bbox.width;
         }
       }
-      return 0;
     });
 
     // calculate width of the axis label
