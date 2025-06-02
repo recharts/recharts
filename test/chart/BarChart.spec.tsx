@@ -3240,7 +3240,7 @@ describe('<BarChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith({ x: 5, y: 5, width: 90, height: 40 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -3271,7 +3271,7 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(100);
     });
 
@@ -3287,7 +3287,7 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(50);
     });
   });
@@ -3404,7 +3404,7 @@ describe('<BarChart />', () => {
         right: 2,
         top: 1,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(2);
+      expect(marginSpy).toHaveBeenCalledTimes(1);
 
       rerender(
         <BarChart width={100} height={100} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
@@ -3417,7 +3417,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(4);
+      expect(marginSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

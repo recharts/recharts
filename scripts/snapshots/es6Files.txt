@@ -51,6 +51,7 @@
   "es6/container",
   "es6/container/ClipPathProvider.js",
   "es6/container/Layer.js",
+  "es6/container/RootSurface.js",
   "es6/container/Surface.js",
   "es6/context",
   "es6/context/CartesianGraphicalItemContext.js",

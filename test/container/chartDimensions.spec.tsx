@@ -6,15 +6,28 @@ import { useOffset } from '../../src/context/chartLayoutContext';
 import { selectBrushDimensions } from '../../src/state/selectors/brushSelectors';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { useAccessibilityLayer } from '../../src/context/accessibilityContext';
 
 describe('Chart dimensions', () => {
   describe('simple chart', () => {
     const renderTestCase = createSelectorTestCase(({ children }) => (
-      <LineChart width={100} height={200} data={PageData} margin={{ top: 11, right: 12, bottom: 13, left: 14 }}>
+      <LineChart
+        width={100}
+        height={200}
+        data={PageData}
+        margin={{ top: 11, right: 12, bottom: 13, left: 14 }}
+        title="Line Chart"
+        desc="This is a line chart"
+      >
         <Line dataKey="uv" />
         {children}
       </LineChart>
     ));
+
+    it('should select accessibility layer', () => {
+      const { spy } = renderTestCase(useAccessibilityLayer);
+      expect(spy).toHaveBeenCalledWith(true);
+    });
 
     it('should return chart width', () => {
       const { spy } = renderTestCase(useChartWidth);
@@ -69,7 +82,7 @@ describe('Chart dimensions', () => {
         x: 0,
         y: 0,
       });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should render one root Surface', () => {
@@ -86,6 +99,17 @@ describe('Chart dimensions', () => {
       expect(surface).toHaveAttribute('role', 'application');
     });
 
+    it('should render title and desc', () => {
+      const { container } = renderTestCase();
+      const title = container.querySelector('title');
+      expect(title).toBeInTheDocument();
+      expect(title).toHaveTextContent('Line Chart');
+
+      const desc = container.querySelector('desc');
+      expect(desc).toBeInTheDocument();
+      expect(desc).toHaveTextContent('This is a line chart');
+    });
+
     it('should always say that the chart is not panorama', () => {
       const { spy } = renderTestCase(useIsPanorama);
       expect(spy).toHaveBeenCalledWith(false);
@@ -96,7 +120,14 @@ describe('Chart dimensions', () => {
   describe('chart with brush and panorama', () => {
     describe('dimensions in the main chart', () => {
       const renderTestCase = createSelectorTestCase(({ children }) => (
-        <LineChart width={100} height={200} data={PageData} margin={{ top: 11, right: 12, bottom: 13, left: 14 }}>
+        <LineChart
+          width={100}
+          height={200}
+          data={PageData}
+          margin={{ top: 11, right: 12, bottom: 13, left: 14 }}
+          title="Line Chart"
+          desc="This is a line chart"
+        >
           <Line dataKey="uv" />
           <Brush>
             <LineChart data={PageData}>
@@ -106,6 +137,22 @@ describe('Chart dimensions', () => {
           {children}
         </LineChart>
       ));
+
+      it('should select accessibility layer', () => {
+        const { spy } = renderTestCase(useAccessibilityLayer);
+        expect(spy).toHaveBeenCalledWith(true);
+      });
+
+      it('should render title and desc', () => {
+        const { container } = renderTestCase();
+        const title = container.querySelector('title');
+        expect(title).toBeInTheDocument();
+        expect(title).toHaveTextContent('Line Chart');
+
+        const desc = container.querySelector('desc');
+        expect(desc).toBeInTheDocument();
+        expect(desc).toHaveTextContent('This is a line chart');
+      });
 
       it('should return chart width', () => {
         const { spy } = renderTestCase(useChartWidth);
@@ -220,6 +267,11 @@ describe('Chart dimensions', () => {
           </Brush>
         </LineChart>
       ));
+
+      it('should select accessibility layer', () => {
+        const { spy } = renderTestCase(useAccessibilityLayer);
+        expect(spy).toHaveBeenCalledWith(true);
+      });
 
       it('should return chart width from the main chart', () => {
         const { spy } = renderTestCase(useChartWidth);

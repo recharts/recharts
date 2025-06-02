@@ -163,7 +163,7 @@ describe('selectRadarPoints', () => {
         },
       ],
     });
-    expect(radarPointsSpy).toHaveBeenCalledTimes(3);
+    expect(radarPointsSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return new data after interaction', () => {
@@ -330,11 +330,7 @@ describe('selectRadarPoints', () => {
 
     expect(spy).toHaveBeenNthCalledWith(1, undefined); // first render does not yet have the state done and parsed so it will provide undefined
     expect(spy).toHaveBeenNthCalledWith(2, expectedResultBefore); // second render has the right sectors
-    // third render is because Radar has dispatched new information after the first sectors it had received.
-    expect(spy).toHaveBeenNthCalledWith(3, expectedResultBefore);
-    // the sectors however did not change so they should be the same reference
-    expect(spy.mock.calls[1][0]).toBe(spy.mock.calls[2][0]);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spy).toHaveBeenCalledTimes(2);
 
     const button = container.querySelector('button');
     assertNotNull(button);
@@ -477,12 +473,10 @@ describe('selectRadarPoints', () => {
       ],
     };
 
-    // fourth render is when the Radar has dispatched new information and chart is in the middle of synchronization
-    expect(spy).toHaveBeenNthCalledWith(4, undefined);
-    // render five is stabilized, the points are now updated
-    expect(spy).toHaveBeenNthCalledWith(5, expectedResultAfter);
+    // render four is stabilized, the points are now updated
+    expect(spy).toHaveBeenNthCalledWith(4, expectedResultAfter);
 
-    expect(spy).toHaveBeenCalledTimes(5);
+    expect(spy).toHaveBeenCalledTimes(4);
   });
 });
 

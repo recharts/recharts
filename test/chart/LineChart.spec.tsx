@@ -902,7 +902,7 @@ describe('<LineChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -936,7 +936,7 @@ describe('<LineChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide height', () => {
@@ -953,7 +953,7 @@ describe('<LineChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(50);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });
@@ -1448,7 +1448,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     const { container } = render(chart);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(6);
+    expect(axisSpy).toHaveBeenCalledTimes(4);
 
     fireEvent.mouseEnter(container, { clientX: 30, clientY: 200, bubbles: true, cancelable: true });
 
@@ -1457,7 +1457,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseLeave(container);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(6);
+    expect(axisSpy).toHaveBeenCalledTimes(4);
   });
 
   // protect against the future where someone might mess up our clean rendering
@@ -1465,7 +1465,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     const { container } = render(chart);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(6);
+    expect(axisSpy).toHaveBeenCalledTimes(4);
 
     const leftCursor = container.querySelector('.recharts-brush-traveller');
     assertNotNull(leftCursor);
@@ -1474,7 +1474,7 @@ describe('<LineChart /> - Pure Rendering with legend', () => {
     fireEvent.mouseUp(window);
 
     spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-    expect(axisSpy).toHaveBeenCalledTimes(6);
+    expect(axisSpy).toHaveBeenCalledTimes(4);
   });
 });
 
