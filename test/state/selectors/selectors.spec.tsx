@@ -12,7 +12,7 @@ import {
 } from '../../../src/state/selectors/selectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
 import { RechartsStoreProvider } from '../../../src/state/RechartsStoreProvider';
-import { BaseAxisProps, ChartCoordinate, Coordinate, TooltipEventType } from '../../../src/util/types';
+import { BaseAxisProps, ChartCoordinate, ChartPointer, Coordinate, TooltipEventType } from '../../../src/util/types';
 import { useAppSelector } from '../../../src/state/hooks';
 import {
   addTooltipEntrySettings,
@@ -36,7 +36,6 @@ import {
 import { TooltipTrigger } from '../../../src/chart/types';
 import { produceState } from '../../helper/produceState';
 import { arrayTooltipSearcher } from '../../../src/state/optionsSlice';
-import { ChartPointer } from '../../../src/chart/generateCategoricalChart';
 import { Area, BarChart, ComposedChart, Customized, Line, LineChart, Pie, PieChart, Scatter } from '../../../src';
 import { PageData } from '../../_data';
 import { pageData } from '../../../storybook/stories/data';

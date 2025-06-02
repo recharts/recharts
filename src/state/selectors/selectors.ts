@@ -25,6 +25,7 @@ import {
   AxisType,
   BaseAxisProps,
   ChartOffsetRequired,
+  ChartPointer,
   Coordinate,
   DataKey,
   LayoutType,
@@ -34,7 +35,6 @@ import {
 } from '../../util/types';
 import { findEntryInArray } from '../../util/DataUtils';
 import { TooltipTrigger } from '../../chart/types';
-import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxis, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
 import { AxisRange } from './axisSelectors';

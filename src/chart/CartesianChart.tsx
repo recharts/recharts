@@ -8,8 +8,7 @@ import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
-import { CategoricalChartProps } from './generateCategoricalChart';
-import { Margin, TooltipEventType } from '../util/types';
+import { CategoricalChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 

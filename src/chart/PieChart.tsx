@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { CategoricalChartProps } from './generateCategoricalChart';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 import { PolarChart } from './PolarChart';
-import { TooltipEventType } from '../util/types';
+import { CategoricalChartProps, TooltipEventType } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { CategoricalChartProps } from './generateCategoricalChart';
 import { filterProps } from '../util/ReactUtils';
 import { RootSurface } from '../container/RootSurface';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ClipPathProvider } from '../container/ClipPathProvider';
+import { CategoricalChartProps } from '../util/types';
 
 export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartProps>(
   (props: CategoricalChartProps, ref) => {

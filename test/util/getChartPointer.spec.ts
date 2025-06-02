@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { ChartPointer, MousePointer } from '../../src/chart/generateCategoricalChart';
 import { getChartPointer } from '../../src/util/getChartPointer';
 import { getMockDomRect } from '../helper/mockGetBoundingClientRect';
+import { ChartPointer, MousePointer } from '../../src/util/types';
 
 describe('getChartPointer', () => {
   it('should return chart coordinates relative to the top-left corner of the chart', () => {

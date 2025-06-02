@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Pie, PieChart } from '../../../../src';
 import { getChartPointer } from '../../../../src/util/getChartPointer';
-import { ChartPointer } from '../../../../src/chart/generateCategoricalChart';
+
+import { ChartPointer } from '../../../../src/util/types';
 
 export default {
   component: Pie,
