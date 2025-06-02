@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { forwardRef } from 'react';
+import * as React from 'react';
 import { validateWidthHeight } from '../util/ReactUtils';
 import { ChartOptions } from '../state/optionsSlice';
 import { PolarChartOptions } from '../state/polarOptionsSlice';
@@ -26,7 +26,7 @@ const defaultProps: Partial<CategoricalChartProps> = {
   syncMethod: 'index',
 };
 
-export type CartesianChartProps = {
+export type PolarChartProps = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
@@ -34,10 +34,7 @@ export type CartesianChartProps = {
   categoricalChartProps: CategoricalChartProps;
 };
 
-export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartProps>(function CartesianChart(
-  props: CartesianChartProps,
-  ref,
-) {
+export const PolarChart = forwardRef<SVGSVGElement, PolarChartProps>(function PolarChart(props: PolarChartProps, ref) {
   if (!validateWidthHeight({ width: props.categoricalChartProps.width, height: props.categoricalChartProps.height })) {
     return null;
   }
