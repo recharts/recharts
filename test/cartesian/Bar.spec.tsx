@@ -7,6 +7,7 @@ import {
   AreaChartCase,
   BarChartCase,
   ComposedChartCase,
+  FunnelChartCase,
   includingCompact,
   LineChartCase,
 } from '../helper/parameterizedTestCases';
@@ -42,7 +43,8 @@ const chartsThatSupportBar: ReadonlyArray<TestCase> = [ComposedChartCase, BarCha
 
 const chartsThatDoNotSupportBar: ReadonlyArray<TestCase> = includingCompact(
   // both AreaChart and LineChart will now render Bar but ... differently.
-  allCategoricalsChartsExcept([...chartsThatSupportBar, LineChartCase, AreaChartCase]),
+  // also FunnelChart renders bars now!
+  allCategoricalsChartsExcept([...chartsThatSupportBar, LineChartCase, AreaChartCase, FunnelChartCase]),
 );
 
 const data = [
