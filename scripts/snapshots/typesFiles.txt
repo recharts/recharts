@@ -21,6 +21,7 @@
   "types/chart",
   "types/chart/AreaChart.d.ts",
   "types/chart/BarChart.d.ts",
+  "types/chart/CartesianChart.d.ts",
   "types/chart/ComposedChart.d.ts",
   "types/chart/FunnelChart.d.ts",
   "types/chart/LineChart.d.ts",
