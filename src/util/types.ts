@@ -42,7 +42,14 @@ import { SyncMethod } from '../synchronisation/types';
  * (note that the `diverging` offset in d3 is named `sign` in recharts)
  */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
-export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
+export type CartesianLayout = 'horizontal' | 'vertical';
+export type PolarLayout = 'centric' | 'radial';
+/**
+ * @deprecated use either `CartesianLayout` or `PolarLayout` instead.
+ * Mixing both charts families leads to ambiguity in the type system.
+ * These two layouts share very few properties, so it is best to keep them separate.
+ */
+export type LayoutType = CartesianLayout | PolarLayout;
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type AxisDomainType = 'number' | 'category';
 export type DataKey<T> = string | number | ((obj: T) => any);
@@ -1448,7 +1455,7 @@ export interface ChartPointer {
   chartY: number;
 }
 
-export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
+export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
   accessibilityLayer?: boolean;
   barCategoryGap?: number | string;
   barGap?: number | string;
@@ -1456,23 +1463,17 @@ export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
   children?: any;
   className?: string;
   compact?: boolean;
-  cx?: number | string;
-  cy?: number | string;
   data?: any[];
   dataKey?: DataKey<any>;
   desc?: string;
-  endAngle?: number;
   height?: number;
   id?: string;
-  innerRadius?: number | string;
-  layout?: LayoutType;
+  layout?: CartesianLayout;
   margin?: Margin;
   maxBarSize?: number;
-  outerRadius?: number | string;
   reverseStackOrder?: boolean;
   role?: string;
   stackOffset?: StackOffsetType;
-  startAngle?: number;
   style?: any;
   syncId?: number | string;
   syncMethod?: SyncMethod;
@@ -1489,7 +1490,6 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   barSize?: number | string;
   children?: any;
   className?: string;
-  compact?: boolean;
   cx?: number | string;
   cy?: number | string;
   data?: any[];
@@ -1499,7 +1499,7 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   height?: number;
   id?: string;
   innerRadius?: number | string;
-  layout?: LayoutType;
+  layout?: PolarLayout;
   margin?: Margin;
   maxBarSize?: number;
   outerRadius?: number | string;

@@ -5,7 +5,7 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
-import { CategoricalChartProps, Margin, TooltipEventType } from '../util/types';
+import { CartesianChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -22,7 +22,7 @@ const defaultProps = {
   margin: defaultMargin,
   reverseStackOrder: false,
   syncMethod: 'index',
-} as const satisfies Partial<CategoricalChartProps>;
+} as const satisfies Partial<CartesianChartProps>;
 
 /**
  * These are one-time, immutable options that decide the chart's behavior.
@@ -34,7 +34,7 @@ export type CartesianChartOptions = {
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: CategoricalChartProps;
+  categoricalChartProps: CartesianChartProps;
 };
 
 export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(function CartesianChart(

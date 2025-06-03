@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode } from 'react';
-import { LayoutType } from '../../src/util/types';
+import { CartesianLayout, PolarChartProps } from '../../src/util/types';
 import {
   AreaChart,
   BarChart,
@@ -28,14 +28,15 @@ import { PageData, exampleSankeyData, exampleSunburstData, exampleTreemapData } 
  * Useful for basic shared interactions but if you want to test specific behaviour
  * then you probably want to write bespoke tests for that.
  */
-export type ChartTestCase = {
+export type CartesianChartTestCase = {
   ChartElement: ComponentType<{
     children?: ReactNode;
     width?: number;
     height?: number;
     data?: any[];
-    layout?: LayoutType;
+    layout?: CartesianLayout;
     compact?: boolean;
+    className?: string;
     onClick?: (param: unknown) => void;
     onMouseEnter?: (param: unknown) => void;
     onMouseMove?: (param: unknown) => void;
@@ -47,8 +48,13 @@ export type ChartTestCase = {
   testName: string;
 };
 
-function makeCompact({ ChartElement, testName }: ChartTestCase) {
-  const compactTestCase: ChartTestCase = {
+export type PolarChartTestCase = {
+  ChartElement: ComponentType<PolarChartProps>;
+  testName: string;
+};
+
+function makeCompact({ ChartElement, testName }: CartesianChartTestCase) {
+  const compactTestCase: CartesianChartTestCase = {
     ChartElement: props => <ChartElement {...props} compact />,
     testName: `compact ${testName}`,
   };
@@ -70,8 +76,10 @@ function makeCompact({ ChartElement, testName }: ChartTestCase) {
  * @param testCases - array of test cases
  * @returns array of test cases twice the size
  */
-export function includingCompact(testCases: ReadonlyArray<ChartTestCase>): ReadonlyArray<ChartTestCase> {
-  const result: ChartTestCase[] = [];
+export function includingCompact(
+  testCases: ReadonlyArray<CartesianChartTestCase>,
+): ReadonlyArray<CartesianChartTestCase> {
+  const result: CartesianChartTestCase[] = [];
   testCases.forEach(testCase => {
     result.push(testCase);
     result.push(makeCompact(testCase));
@@ -79,31 +87,31 @@ export function includingCompact(testCases: ReadonlyArray<ChartTestCase>): Reado
   return result;
 }
 
-export function onlyCompact(testCases: ReadonlyArray<ChartTestCase>): ReadonlyArray<ChartTestCase> {
+export function onlyCompact(testCases: ReadonlyArray<CartesianChartTestCase>): ReadonlyArray<CartesianChartTestCase> {
   return testCases.map(makeCompact);
 }
 
-export const ComposedChartCase: ChartTestCase = {
+export const ComposedChartCase: CartesianChartTestCase = {
   ChartElement: props => <ComposedChart width={500} height={500} {...props} />,
   testName: 'ComposedChart',
 };
 
-export const AreaChartCase: ChartTestCase = {
+export const AreaChartCase: CartesianChartTestCase = {
   ChartElement: props => <AreaChart width={500} height={500} {...props} />,
   testName: 'AreaChart',
 };
 
-export const BarChartCase: ChartTestCase = {
+export const BarChartCase: CartesianChartTestCase = {
   ChartElement: props => <BarChart width={500} height={500} {...props} />,
   testName: 'BarChart',
 };
 
-export const LineChartCase: ChartTestCase = {
+export const LineChartCase: CartesianChartTestCase = {
   ChartElement: props => <LineChart width={500} height={500} {...props} />,
   testName: 'LineChart',
 };
 
-export const ScatterChartCase: ChartTestCase = {
+export const ScatterChartCase: CartesianChartTestCase = {
   ChartElement: props => (
     <ScatterChart width={500} height={500} {...props}>
       <Scatter />
@@ -112,7 +120,7 @@ export const ScatterChartCase: ChartTestCase = {
   testName: 'ScatterChart',
 };
 
-export const PieChartCase: ChartTestCase = {
+export const PieChartCase: PolarChartTestCase = {
   ChartElement: props => (
     <PieChart width={500} height={500} {...props}>
       <Pie data={PageData} dataKey="uv" />
@@ -121,7 +129,7 @@ export const PieChartCase: ChartTestCase = {
   testName: 'PieChart',
 };
 
-export const RadarChartCase: ChartTestCase = {
+export const RadarChartCase: PolarChartTestCase = {
   ChartElement: props => (
     <RadarChart width={500} height={500} {...props}>
       <Radar dataKey="pv" />
@@ -130,7 +138,7 @@ export const RadarChartCase: ChartTestCase = {
   testName: 'RadarChart',
 };
 
-export const RadialBarChartCase: ChartTestCase = {
+export const RadialBarChartCase: PolarChartTestCase = {
   ChartElement: props => (
     <RadialBarChart width={500} height={500} {...props}>
       <RadialBar dataKey="pv" />
@@ -139,12 +147,12 @@ export const RadialBarChartCase: ChartTestCase = {
   testName: 'RadialBarChart',
 };
 
-export const FunnelChartCase: ChartTestCase = {
+export const FunnelChartCase: CartesianChartTestCase = {
   ChartElement: props => <FunnelChart width={500} height={500} {...props} />,
   testName: 'FunnelChart',
 };
 
-export const TreemapChartCase: ChartTestCase = {
+export const TreemapChartCase: CartesianChartTestCase = {
   ChartElement: props => (
     <Treemap
       isAnimationActive={false}
@@ -160,7 +168,7 @@ export const TreemapChartCase: ChartTestCase = {
   testName: 'Treemap',
 };
 
-export const SankeyChartCase: ChartTestCase = {
+export const SankeyChartCase: CartesianChartTestCase = {
   ChartElement: props => {
     const { data, ...rest } = props;
     return <Sankey width={400} height={400} {...rest} data={exampleSankeyData} />;
@@ -168,7 +176,7 @@ export const SankeyChartCase: ChartTestCase = {
   testName: 'Sankey',
 };
 
-export const SunburstChartCase: ChartTestCase = {
+export const SunburstChartCase: CartesianChartTestCase = {
   ChartElement: props => {
     const { data, ...rest } = props;
     return <SunburstChart {...rest} data={exampleSunburstData} />;
@@ -177,24 +185,22 @@ export const SunburstChartCase: ChartTestCase = {
 };
 
 /**
- * All charts coming out of generateCategoricalChart.
- * Treemap and Sankey are left out because they do not
- * use generateCategoricalChart - write tests for those separately.
+ * All charts using CartesianChartProps.
+ * Treemap and Sankey are left out because they use their own props system.
  */
-export const allCategoricalChartCases: ReadonlyArray<ChartTestCase> = [
+export const allCartesianChartCases: ReadonlyArray<CartesianChartTestCase> = [
   ComposedChartCase,
   AreaChartCase,
   BarChartCase,
   LineChartCase,
   ScatterChartCase,
-  PieChartCase,
-  RadarChartCase,
-  RadialBarChartCase,
   FunnelChartCase,
 ];
 
-export const allCharts: ReadonlyArray<ChartTestCase> = [].concat(
-  allCategoricalChartCases,
+export const allPolarChartCases: ReadonlyArray<PolarChartTestCase> = [PieChartCase, RadarChartCase, RadialBarChartCase];
+
+export const allCharts: ReadonlyArray<CartesianChartTestCase> = [].concat(
+  allCartesianChartCases,
   TreemapChartCase,
   SankeyChartCase,
   SunburstChartCase,
@@ -210,6 +216,8 @@ export const allCharts: ReadonlyArray<ChartTestCase> = [].concat(
  * @param exceptions charts that will be excluded from allCategoricalChartCases
  * @returns chart test cases that are left
  */
-export function allCategoricalsChartsExcept(exceptions: ReadonlyArray<ChartTestCase>): ReadonlyArray<ChartTestCase> {
-  return allCategoricalChartCases.filter(testCase => !exceptions.includes(testCase));
+export function allCartesianChartsExcept(
+  exceptions: ReadonlyArray<CartesianChartTestCase>,
+): ReadonlyArray<CartesianChartTestCase> {
+  return allCartesianChartCases.filter(testCase => !exceptions.includes(testCase));
 }

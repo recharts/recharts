@@ -44,7 +44,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
 ) {
   const polarChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
-  const { width, height } = polarChartProps;
+  const { width, height, layout, ...otherCategoricalProps } = polarChartProps;
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
@@ -63,12 +63,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={polarChartProps.data} />
-      <ReportMainChartProps
-        width={width}
-        height={height}
-        layout={polarChartProps.layout}
-        margin={polarChartProps.margin}
-      />
+      <ReportMainChartProps width={width} height={height} layout={layout} margin={polarChartProps.margin} />
       <ReportChartProps
         accessibilityLayer={polarChartProps.accessibilityLayer}
         barCategoryGap={polarChartProps.barCategoryGap}
@@ -88,7 +83,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
         innerRadius={polarChartProps.innerRadius}
         outerRadius={polarChartProps.outerRadius}
       />
-      <CategoricalChart {...polarChartProps} ref={ref} />
+      <CategoricalChart {...otherCategoricalProps} ref={ref} />
     </RechartsStoreProvider>
   );
 });

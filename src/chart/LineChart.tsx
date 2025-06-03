@@ -2,11 +2,11 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 import { CartesianChart } from './CartesianChart';
-import { CategoricalChartProps, TooltipEventType } from '../util/types';
+import { CartesianChartProps, TooltipEventType } from '../util/types';
 
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis'];
 
-export const LineChart = forwardRef<SVGSVGElement, CategoricalChartProps>((props: CategoricalChartProps, ref) => {
+export const LineChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
   return (
     <CartesianChart
       chartName="LineChart"
