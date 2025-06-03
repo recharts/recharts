@@ -22,11 +22,11 @@ import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { BarRectangleItem } from '../../src/cartesian/Bar';
-import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { CategoricalChartProps } from '../../src/util/types';
 
 type DataType = {
   name: string;

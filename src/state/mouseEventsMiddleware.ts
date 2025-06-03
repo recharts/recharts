@@ -1,11 +1,11 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { MousePointer } from '../chart/generateCategoricalChart';
 import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
 import { getChartPointer } from '../util/getChartPointer';
+import { MousePointer } from '../util/types';
 
 export const mouseClickAction = createAction<MousePointer>('mouseClick');
 

@@ -9,6 +9,7 @@ import {
   FormEvent,
   FunctionComponent,
   isValidElement,
+  JSX,
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
@@ -20,12 +21,13 @@ import {
   TransitionEvent,
   UIEvent,
   WheelEvent,
-  JSX,
 } from 'react';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { RechartsScale } from './ChartUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
+import { ExternalMouseEvents } from '../chart/types';
+import { SyncMethod } from '../synchronisation/types';
 
 /**
  * Determines how values are stacked:
@@ -1424,3 +1426,58 @@ export type RangeObj = {
   angle?: number;
   radius?: number;
 };
+
+/**
+ * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
+ *
+ * This is meant to represent the React.MouseEvent
+ * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+ */
+export interface MousePointer {
+  clientX: number;
+  clientY: number;
+  currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+}
+
+/**
+ * Coordinates relative to the top-left corner of the chart.
+ * Also include scale which means that a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ */
+export interface ChartPointer {
+  chartX: number;
+  chartY: number;
+}
+
+export interface CategoricalChartProps extends Partial<ExternalMouseEvents> {
+  accessibilityLayer?: boolean;
+  barCategoryGap?: number | string;
+  barGap?: number | string;
+  barSize?: number | string;
+  children?: any;
+  className?: string;
+  compact?: boolean;
+  cx?: number | string;
+  cy?: number | string;
+  data?: any[];
+  dataKey?: DataKey<any>;
+  desc?: string;
+  endAngle?: number;
+  height?: number;
+  id?: string;
+  innerRadius?: number | string;
+  layout?: LayoutType;
+  margin?: Margin;
+  maxBarSize?: number;
+  outerRadius?: number | string;
+  reverseStackOrder?: boolean;
+  role?: string;
+  stackOffset?: StackOffsetType;
+  startAngle?: number;
+  style?: any;
+  syncId?: number | string;
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  throttleDelay?: number;
+  title?: string;
+  width?: number;
+}

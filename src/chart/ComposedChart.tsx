@@ -1,10 +1,20 @@
-/**
- * @fileOverview Composed Chart
- */
-import { generateCategoricalChart } from './generateCategoricalChart';
+import * as React from 'react';
+import { forwardRef } from 'react';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
+import { CartesianChart } from './CartesianChart';
+import { CategoricalChartProps, TooltipEventType } from '../util/types';
 
-export const ComposedChart = generateCategoricalChart({
-  chartName: 'ComposedChart',
-  tooltipPayloadSearcher: arrayTooltipSearcher,
+const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis'];
+
+export const ComposedChart = forwardRef<SVGSVGElement, CategoricalChartProps>((props: CategoricalChartProps, ref) => {
+  return (
+    <CartesianChart
+      chartName="ComposedChart"
+      defaultTooltipEventType="axis"
+      validateTooltipEventTypes={allowedTooltipTypes}
+      tooltipPayloadSearcher={arrayTooltipSearcher}
+      categoricalChartProps={props}
+      ref={ref}
+    />
+  );
 });
