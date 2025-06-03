@@ -105,17 +105,15 @@ export function findAllByType<
 }
 
 /**
- * validate the width and height props of a chart element
- * @param  {Object} el A chart element
- * @return {Boolean}   true If the props width and height are number, and greater than 0
+ * validate the width and height
+ * @param  {{ width, height }} dimensions to check
+ * @return {boolean} true If the props width and height are number, and greater than 0
  */
-export const validateWidthHeight = ({
-  width,
-  height,
-}: {
+export const validateWidthHeight = (dimensions: {
   readonly width?: number | undefined;
   readonly height?: number | undefined;
-}): boolean => {
+}): dimensions is { width: number; height: number } => {
+  const { width, height } = dimensions;
   if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
     return false;
   }
