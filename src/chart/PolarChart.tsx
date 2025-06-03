@@ -14,6 +14,9 @@ import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
+/**
+ * These default props are the same for all PolarChart components.
+ */
 const defaultProps = {
   accessibilityLayer: true,
   stackOffset: 'none',
@@ -26,6 +29,23 @@ const defaultProps = {
 } as const satisfies Partial<PolarChartProps>;
 
 /**
+ * These props are required for the PolarChart to function correctly.
+ * Users usually would not need to specify these explicitly,
+ * because the convenience components like PieChart, RadarChart, etc.
+ * will provide these defaults.
+ * We can't have the defaults in this file because each of those convenience components
+ * have their own opinions about what they should be.
+ */
+type PolarChartPropsWithDefaults = PolarChartProps & {
+  cx: NonNullable<PolarChartProps['cx']>;
+  cy: NonNullable<PolarChartProps['cy']>;
+  startAngle: NonNullable<PolarChartProps['startAngle']>;
+  endAngle: NonNullable<PolarChartProps['endAngle']>;
+  innerRadius: NonNullable<PolarChartProps['innerRadius']>;
+  outerRadius: NonNullable<PolarChartProps['outerRadius']>;
+};
+
+/**
  * These are one-time, immutable options that decide the chart's behavior.
  * Users who wish to call CartesianChart may decide to pass these options explicitly,
  * but usually we would expect that they use one of the convenience components like PieChart, RadarChart, etc.
@@ -35,7 +55,7 @@ export type PolarChartOptions = {
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: PolarChartProps;
+  categoricalChartProps: PolarChartPropsWithDefaults;
 };
 
 export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function PolarChart(
