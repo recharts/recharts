@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { validateWidthHeight } from '../util/ReactUtils';
 import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartDataContextProvider } from '../context/chartDataContext';
@@ -10,6 +9,7 @@ import { CategoricalChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
@@ -40,7 +40,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartProps>(fun
 
   const { width, height } = rootChartProps;
 
-  if (!validateWidthHeight({ width, height })) {
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
 

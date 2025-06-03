@@ -3,7 +3,7 @@ import { get } from 'es-toolkit/compat';
 import * as React from 'react';
 import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
-import { isNullish, isNumber } from './DataUtils';
+import { isNullish } from './DataUtils';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 export const SCALE_TYPES = [
@@ -103,23 +103,6 @@ export function findAllByType<
 
   return result;
 }
-
-/**
- * validate the width and height
- * @param  {{ width, height }} dimensions to check
- * @return {boolean} true If the props width and height are number, and greater than 0
- */
-export const validateWidthHeight = (dimensions: {
-  readonly width?: number | undefined;
-  readonly height?: number | undefined;
-}): dimensions is { width: number; height: number } => {
-  const { width, height } = dimensions;
-  if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
-    return false;
-  }
-
-  return true;
-};
 
 export const isClipDot = (dot: ActiveDotType): boolean => {
   if (dot && typeof dot === 'object' && 'clipDot' in dot) {
