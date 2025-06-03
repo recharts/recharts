@@ -1,16 +1,8 @@
-import { render } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 
-import { Bar, Line, LineChart } from '../../src';
-import {
-  filterProps,
-  findAllByType,
-  getDisplayName,
-  isValidSpreadableProp,
-  toArray,
-  validateWidthHeight,
-} from '../../src/util/ReactUtils';
+import { Bar, Line } from '../../src';
+import { filterProps, findAllByType, getDisplayName, isValidSpreadableProp, toArray } from '../../src/util/ReactUtils';
 import { adaptEventHandlers, adaptEventsOfChild } from '../../src/util/types';
 
 describe('ReactUtils untest tests', () => {
@@ -150,27 +142,6 @@ describe('ReactUtils untest tests', () => {
     test('adaptEventsOfChild return null when input is not a props', () => {
       expect(adaptEventsOfChild(null as any, undefined, 0)).toEqual(null);
       expect(adaptEventsOfChild(1 as any, undefined, 0)).toEqual(null);
-    });
-  });
-
-  describe('validateWidthHeight', () => {
-    test('validateWidthHeight return false when input is not of the correct form', () => {
-      const { container } = render(
-        <LineChart width={0} height={0}>
-          <Line dataKey="a" />
-          <Line dataKey="b" />
-          <Bar dataKey="c" />
-        </LineChart>,
-      );
-      expect(validateWidthHeight(container as any)).toEqual(false);
-    });
-
-    test('validateWidthHeight return false when input is 0s', () => {
-      expect(validateWidthHeight({ width: 0, height: 0 })).toEqual(false);
-    });
-
-    test('validateWidthHeight returns true when height and width are positive numbers', () => {
-      expect(validateWidthHeight({ width: 5, height: 10 })).toEqual(true);
     });
   });
 

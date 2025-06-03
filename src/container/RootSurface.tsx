@@ -2,11 +2,11 @@ import * as React from 'react';
 import { forwardRef, ReactNode } from 'react';
 import { useChartHeight, useChartWidth } from '../context/chartLayoutContext';
 import { useAccessibilityLayer } from '../context/accessibilityContext';
-import { validateWidthHeight } from '../util/ReactUtils';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { Surface } from './Surface';
 import { useAppSelector } from '../state/hooks';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 type RootSurfaceProps = {
   children: ReactNode;
@@ -22,9 +22,10 @@ const MainChartSurface = forwardRef<SVGSVGElement, RootSurfaceProps>((props: Roo
   const height = useChartHeight();
   const hasAccessibilityLayer = useAccessibilityLayer();
 
-  if (!validateWidthHeight({ width, height })) {
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
+
   const { children, otherAttributes, title, desc } = props;
 
   let tabIndex: number | undefined, role: string | undefined;

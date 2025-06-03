@@ -1,12 +1,12 @@
-import React, { ComponentType, FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Area, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
-import { LayoutType } from '../../src/util/types';
 import {
-  allCategoricalsChartsExcept,
+  allCartesianChartsExcept,
   AreaChartCase,
+  CartesianChartTestCase,
   ComposedChartCase,
   includingCompact,
 } from '../helper/parameterizedTestCases';
@@ -17,22 +17,12 @@ import { mockXAxisWithScale, mockYAxisWithScale } from '../helper/mockAxes';
 import { useLegendPayload } from '../../src/context/legendPayloadContext';
 import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
 
-type TestCase = {
-  ChartElement: ComponentType<{
-    children?: ReactNode;
-    width?: number;
-    height?: number;
-    data?: any[];
-    layout?: LayoutType;
-    className?: string;
-  }>;
-  testName: string;
-};
+type TestCase = CartesianChartTestCase;
 
 const chartsThatSupportArea: ReadonlyArray<TestCase> = [ComposedChartCase, AreaChartCase];
 
 const chartsThatDoNotSupportArea: ReadonlyArray<TestCase> = includingCompact(
-  allCategoricalsChartsExcept(chartsThatSupportArea),
+  allCartesianChartsExcept(chartsThatSupportArea),
 );
 
 const data = [

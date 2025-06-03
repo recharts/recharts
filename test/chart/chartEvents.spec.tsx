@@ -5,7 +5,7 @@ import {
   SankeyChartCase,
   SunburstChartCase,
   TreemapChartCase,
-  allCategoricalsChartsExcept,
+  allCartesianChartsExcept,
   allCharts,
   onlyCompact,
 } from '../helper/parameterizedTestCases';
@@ -19,11 +19,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
  * These three charts accept the same named events - but they only trigger them when user interacts with the graphics.
  * There are no calls when user interacts with the chart area alone.
  */
-const chartsThatSupportWrapperEvents = allCategoricalsChartsExcept([
-  TreemapChartCase,
-  SankeyChartCase,
-  SunburstChartCase,
-]);
+const chartsThatSupportWrapperEvents = allCartesianChartsExcept([TreemapChartCase, SankeyChartCase, SunburstChartCase]);
 
 function expectLastCalledWithData(spy: Mock, expectedNextState: MouseHandlerDataParam) {
   const lastCall = spy.mock.calls[spy.mock.calls.length - 1];

@@ -26,7 +26,7 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
-import { CategoricalChartProps } from '../../src/util/types';
+import { CartesianChartProps } from '../../src/util/types';
 
 type DataType = {
   name: string;
@@ -3080,7 +3080,7 @@ describe('<BarChart />', () => {
   });
 
   test('renders chart when wrapped in a custom component', () => {
-    const MyBarChart = (props: CategoricalChartProps) => {
+    const MyBarChart = (props: CartesianChartProps) => {
       return <BarChart {...props} />;
     };
 

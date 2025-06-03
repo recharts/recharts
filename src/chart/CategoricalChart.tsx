@@ -4,10 +4,15 @@ import { filterProps } from '../util/ReactUtils';
 import { RootSurface } from '../container/RootSurface';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ClipPathProvider } from '../container/ClipPathProvider';
-import { CategoricalChartProps } from '../util/types';
+import { CartesianChartProps } from '../util/types';
 
-export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartProps>(
-  (props: CategoricalChartProps, ref) => {
+type CategoricalChartRequiredProps = CartesianChartProps & {
+  width: NonNullable<CartesianChartProps['width']>;
+  height: NonNullable<CartesianChartProps['height']>;
+};
+
+export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartRequiredProps>(
+  (props: CategoricalChartRequiredProps, ref) => {
     const { children, className, width, height, style, compact, title, desc, ...others } = props;
     const attrs = filterProps(others, false);
 

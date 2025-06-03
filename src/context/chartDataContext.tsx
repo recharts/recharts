@@ -5,7 +5,7 @@ import { RechartsRootState } from '../state/store';
 import { BrushStartEndIndex } from './brushUpdateContext';
 import { useIsPanorama } from './PanoramaContext';
 
-export const ChartDataContextProvider = (props: { chartData: ChartData }): null => {
+export const ChartDataContextProvider = (props: { chartData: ChartData | undefined }): null => {
   const { chartData } = props;
   const dispatch = useAppDispatch();
   const isPanorama = useIsPanorama();

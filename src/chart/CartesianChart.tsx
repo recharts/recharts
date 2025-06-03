@@ -1,20 +1,19 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { validateWidthHeight } from '../util/ReactUtils';
 import { ChartOptions } from '../state/optionsSlice';
-import { PolarChartOptions } from '../state/polarOptionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
-import { ReportPolarOptions } from '../state/ReportPolarOptions';
-import { CategoricalChartProps, Margin, TooltipEventType } from '../util/types';
+import { CartesianChartProps, Margin, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const defaultMargin: Margin = { top: 5, right: 5, bottom: 5, left: 5 };
 
-const defaultProps: Partial<CategoricalChartProps> = {
+const defaultProps = {
   accessibilityLayer: true,
   layout: 'horizontal',
   stackOffset: 'none',
@@ -23,21 +22,30 @@ const defaultProps: Partial<CategoricalChartProps> = {
   margin: defaultMargin,
   reverseStackOrder: false,
   syncMethod: 'index',
-};
+} as const satisfies Partial<CartesianChartProps>;
 
-export type CartesianChartProps = {
+/**
+ * These are one-time, immutable options that decide the chart's behavior.
+ * Users who wish to call CartesianChart may decide to pass these options explicitly,
+ * but usually we would expect that they use one of the convenience components like BarChart, LineChart, etc.
+ */
+export type CartesianChartOptions = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: CategoricalChartProps;
+  categoricalChartProps: CartesianChartProps;
 };
 
-export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartProps>(function CartesianChart(
-  props: CartesianChartProps,
+export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(function CartesianChart(
+  props: CartesianChartOptions,
   ref,
 ) {
-  if (!validateWidthHeight({ width: props.categoricalChartProps.width, height: props.categoricalChartProps.height })) {
+  const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
+
+  const { width, height, ...otherCategoricalProps } = rootChartProps;
+
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
 
@@ -56,50 +64,28 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartProps>(fun
     tooltipPayloadSearcher,
     eventEmitter: undefined,
   };
-  let polarOptions: PolarChartOptions;
-  const { innerRadius = defaultProps.innerRadius, outerRadius = defaultProps.outerRadius } = categoricalChartProps;
-  if (defaultProps.startAngle != null) {
-    polarOptions = {
-      cx: categoricalChartProps.cx,
-      cy: categoricalChartProps.cy,
-      startAngle: defaultProps.startAngle,
-      endAngle: defaultProps.endAngle,
-      innerRadius,
-      outerRadius,
-    };
-  }
+
   return (
-    <RechartsStoreProvider
-      preloadedState={{ options, polarOptions }}
-      reduxStoreName={categoricalChartProps.id ?? chartName}
-    >
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={categoricalChartProps.id ?? chartName}>
       <ChartDataContextProvider chartData={categoricalChartProps.data} />
       <ReportMainChartProps
-        width={categoricalChartProps.width}
-        height={categoricalChartProps.height}
-        layout={categoricalChartProps.layout ?? defaultProps.layout}
-        margin={categoricalChartProps.margin ?? defaultMargin}
+        width={width}
+        height={height}
+        layout={rootChartProps.layout}
+        margin={rootChartProps.margin}
       />
       <ReportChartProps
-        accessibilityLayer={categoricalChartProps.accessibilityLayer ?? true}
-        barCategoryGap={categoricalChartProps.barCategoryGap ?? '10%'}
-        maxBarSize={categoricalChartProps.maxBarSize}
-        stackOffset={categoricalChartProps.stackOffset ?? 'none'}
-        barGap={categoricalChartProps.barGap}
-        barSize={categoricalChartProps.barSize}
-        syncId={categoricalChartProps.syncId}
-        syncMethod={categoricalChartProps.syncMethod ?? 'index'}
-        className={categoricalChartProps.className}
+        accessibilityLayer={rootChartProps.accessibilityLayer}
+        barCategoryGap={rootChartProps.barCategoryGap}
+        maxBarSize={rootChartProps.maxBarSize}
+        stackOffset={rootChartProps.stackOffset}
+        barGap={rootChartProps.barGap}
+        barSize={rootChartProps.barSize}
+        syncId={rootChartProps.syncId}
+        syncMethod={rootChartProps.syncMethod}
+        className={rootChartProps.className}
       />
-      <ReportPolarOptions
-        cx={categoricalChartProps.cx}
-        cy={categoricalChartProps.cy}
-        startAngle={categoricalChartProps.startAngle ?? defaultProps.startAngle}
-        endAngle={categoricalChartProps.endAngle ?? defaultProps.endAngle}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-      />
-      <CategoricalChart {...categoricalChartProps} ref={ref} />
+      <CategoricalChart {...otherCategoricalProps} width={width} height={height} ref={ref} />
     </RechartsStoreProvider>
   );
 });

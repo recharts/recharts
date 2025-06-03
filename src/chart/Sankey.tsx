@@ -6,7 +6,7 @@ import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';
 import { shallowEqual } from '../util/ShallowEqual';
-import { validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { filterProps } from '../util/ReactUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import { Margin, DataKey, SankeyLink, SankeyNode } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
@@ -25,6 +25,7 @@ import {
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { ChartOptions } from '../state/optionsSlice';
 import { SetComputedData } from '../context/chartDataContext';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const interpolationGenerator = (a: number, b: number) => {
   const ka = +a;
@@ -892,11 +893,12 @@ export class Sankey extends PureComponent<Props, State> {
   }
 
   render() {
-    if (!validateWidthHeight({ width: this.props.width, height: this.props.height })) {
+    const { width, height, className, style, children, ...others } = this.props;
+
+    if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
       return null;
     }
 
-    const { width, height, className, style, children, ...others } = this.props;
     const { links, modifiedNodes, modifiedLinks } = this.state;
     const attrs = filterProps(others, false);
 
