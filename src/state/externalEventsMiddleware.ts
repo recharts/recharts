@@ -13,7 +13,7 @@ import { AppDispatch, RechartsRootState } from './store';
 
 type ExternalEventActionPayload = {
   reactEvent: SyntheticEvent;
-  handler: null | CategoricalChartFunc;
+  handler: CategoricalChartFunc | undefined;
 };
 
 export const externalEventAction = createAction<ExternalEventActionPayload>('externalEvent');

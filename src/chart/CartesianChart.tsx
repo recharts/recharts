@@ -43,7 +43,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
 ) {
   const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
-  const { width, height } = rootChartProps;
+  const { width, height, ...otherCategoricalProps } = rootChartProps;
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
@@ -85,7 +85,7 @@ export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(f
         syncMethod={rootChartProps.syncMethod}
         className={rootChartProps.className}
       />
-      <CategoricalChart {...rootChartProps} ref={ref} />
+      <CategoricalChart {...otherCategoricalProps} width={width} height={height} ref={ref} />
     </RechartsStoreProvider>
   );
 });

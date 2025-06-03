@@ -103,7 +103,7 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function 
         innerRadius={polarChartProps.innerRadius}
         outerRadius={polarChartProps.outerRadius}
       />
-      <CategoricalChart {...otherCategoricalProps} ref={ref} />
+      <CategoricalChart width={width} height={height} {...otherCategoricalProps} ref={ref} />
     </RechartsStoreProvider>
   );
 });
