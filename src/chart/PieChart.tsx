@@ -2,7 +2,7 @@ import * as React from 'react';
 import { forwardRef } from 'react';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
 import { PolarChart } from './PolarChart';
-import { CategoricalChartProps, TooltipEventType } from '../util/types';
+import { PolarChartProps, TooltipEventType } from '../util/types';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['item'];
@@ -15,9 +15,9 @@ const defaultProps = {
   cy: '50%',
   innerRadius: 0,
   outerRadius: '80%',
-} as const satisfies Partial<CategoricalChartProps>;
+} as const satisfies Partial<PolarChartProps>;
 
-export const PieChart = forwardRef<SVGSVGElement, CategoricalChartProps>((props: CategoricalChartProps, ref) => {
+export const PieChart = forwardRef<SVGSVGElement, PolarChartProps>((props: PolarChartProps, ref) => {
   const propsWithDefaults = resolveDefaultProps(props, defaultProps);
   return (
     <PolarChart

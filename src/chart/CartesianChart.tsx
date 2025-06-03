@@ -24,7 +24,12 @@ const defaultProps = {
   syncMethod: 'index',
 } as const satisfies Partial<CategoricalChartProps>;
 
-export type CartesianChartProps = {
+/**
+ * These are one-time, immutable options that decide the chart's behavior.
+ * Users who wish to call CartesianChart may decide to pass these options explicitly,
+ * but usually we would expect that they use one of the convenience components like BarChart, LineChart, etc.
+ */
+export type CartesianChartOptions = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
@@ -32,8 +37,8 @@ export type CartesianChartProps = {
   categoricalChartProps: CategoricalChartProps;
 };
 
-export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartProps>(function CartesianChart(
-  props: CartesianChartProps,
+export const CartesianChart = forwardRef<SVGSVGElement, CartesianChartOptions>(function CartesianChart(
+  props: CartesianChartOptions,
   ref,
 ) {
   const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);

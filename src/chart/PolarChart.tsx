@@ -6,7 +6,7 @@ import { ChartDataContextProvider } from '../context/chartDataContext';
 import { ReportMainChartProps } from '../state/ReportMainChartProps';
 import { ReportChartProps } from '../state/ReportChartProps';
 import { ReportPolarOptions } from '../state/ReportPolarOptions';
-import { CategoricalChartProps, Margin, TooltipEventType } from '../util/types';
+import { Margin, PolarChartProps, TooltipEventType } from '../util/types';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { CategoricalChart } from './CategoricalChart';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
@@ -23,20 +23,28 @@ const defaultProps = {
   reverseStackOrder: false,
   syncMethod: 'index',
   layout: 'radial',
-} as const satisfies Partial<CategoricalChartProps>;
+} as const satisfies Partial<PolarChartProps>;
 
-export type PolarChartProps = {
+/**
+ * These are one-time, immutable options that decide the chart's behavior.
+ * Users who wish to call CartesianChart may decide to pass these options explicitly,
+ * but usually we would expect that they use one of the convenience components like PieChart, RadarChart, etc.
+ */
+export type PolarChartOptions = {
   chartName: string;
   defaultTooltipEventType: TooltipEventType;
   validateTooltipEventTypes: ReadonlyArray<TooltipEventType>;
   tooltipPayloadSearcher: TooltipPayloadSearcher;
-  categoricalChartProps: CategoricalChartProps;
+  categoricalChartProps: PolarChartProps;
 };
 
-export const PolarChart = forwardRef<SVGSVGElement, PolarChartProps>(function PolarChart(props: PolarChartProps, ref) {
-  const rootChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
+export const PolarChart = forwardRef<SVGSVGElement, PolarChartOptions>(function PolarChart(
+  props: PolarChartOptions,
+  ref,
+) {
+  const polarChartProps = resolveDefaultProps(props.categoricalChartProps, defaultProps);
 
-  const { width, height } = rootChartProps;
+  const { width, height } = polarChartProps;
 
   if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
@@ -53,34 +61,34 @@ export const PolarChart = forwardRef<SVGSVGElement, PolarChartProps>(function Po
   };
 
   return (
-    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={rootChartProps.id ?? chartName}>
-      <ChartDataContextProvider chartData={rootChartProps.data} />
+    <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={polarChartProps.id ?? chartName}>
+      <ChartDataContextProvider chartData={polarChartProps.data} />
       <ReportMainChartProps
         width={width}
         height={height}
-        layout={rootChartProps.layout}
-        margin={rootChartProps.margin}
+        layout={polarChartProps.layout}
+        margin={polarChartProps.margin}
       />
       <ReportChartProps
-        accessibilityLayer={rootChartProps.accessibilityLayer}
-        barCategoryGap={rootChartProps.barCategoryGap}
-        maxBarSize={rootChartProps.maxBarSize}
-        stackOffset={rootChartProps.stackOffset}
-        barGap={rootChartProps.barGap}
-        barSize={rootChartProps.barSize}
-        syncId={rootChartProps.syncId}
-        syncMethod={rootChartProps.syncMethod}
-        className={rootChartProps.className}
+        accessibilityLayer={polarChartProps.accessibilityLayer}
+        barCategoryGap={polarChartProps.barCategoryGap}
+        maxBarSize={polarChartProps.maxBarSize}
+        stackOffset={polarChartProps.stackOffset}
+        barGap={polarChartProps.barGap}
+        barSize={polarChartProps.barSize}
+        syncId={polarChartProps.syncId}
+        syncMethod={polarChartProps.syncMethod}
+        className={polarChartProps.className}
       />
       <ReportPolarOptions
-        cx={rootChartProps.cx}
-        cy={rootChartProps.cy}
-        startAngle={rootChartProps.startAngle}
-        endAngle={rootChartProps.endAngle}
-        innerRadius={rootChartProps.innerRadius}
-        outerRadius={rootChartProps.outerRadius}
+        cx={polarChartProps.cx}
+        cy={polarChartProps.cy}
+        startAngle={polarChartProps.startAngle}
+        endAngle={polarChartProps.endAngle}
+        innerRadius={polarChartProps.innerRadius}
+        outerRadius={polarChartProps.outerRadius}
       />
-      <CategoricalChart {...rootChartProps} ref={ref} />
+      <CategoricalChart {...polarChartProps} ref={ref} />
     </RechartsStoreProvider>
   );
 });
