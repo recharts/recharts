@@ -14,7 +14,7 @@ export const getCalculatedYAxisWidth = ({
   labelGapWithTick = 5, // Default gap between label and tick
 }: {
   cartesianAxisRef: React.RefObject<any>;
-  labelRef: React.RefObject<Element>;
+  labelRef?: React.RefObject<Element>;
   labelGapWithTick?: number;
 }): number => {
   if (!cartesianAxisRef || !cartesianAxisRef.current) {
@@ -39,17 +39,17 @@ export const getCalculatedYAxisWidth = ({
     });
 
     // calculate width of the axis label
-    const labelNode = labelRef.current;
+    const labelNode = labelRef?.current;
     const labelWidth = labelNode ? labelNode.getBoundingClientRect().width : 0;
 
     // calculate tick width: tickSize + tickMargin
-    const { tickSize, tickMargin } = axisComponent.props || {};
+    const { tickSize = 0, tickMargin = 0 } = axisComponent.props || {};
     const tickWidth = tickSize + tickMargin;
 
     // calculate the updated width of the y-axis
     const updatedYAxisWidth = maxTickWidth + tickWidth + labelWidth + (labelNode ? labelGapWithTick : 0);
 
-    return Math.ceil(updatedYAxisWidth);
+    return Math.round(updatedYAxisWidth);
   }
 
   return 0;

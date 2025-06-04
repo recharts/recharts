@@ -26,6 +26,8 @@ import { YAxisSettings } from '../../src/state/cartesianAxisSlice';
 import { expectYAxisTicks } from '../helper/expectAxisTicks';
 import { IfOverflow } from '../../src/util/IfOverflow';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
+import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { getCalculatedYAxisWidth } from '../../src/util/YAxisUtils';
 
 describe('<YAxis />', () => {
   const data = [
@@ -2136,5 +2138,59 @@ describe('<YAxis />', () => {
     );
 
     expect(container.querySelector('.yAxis')).toBeVisible();
+  });
+
+  it('should render the y-axis with given width in the prop', () => {
+    const yAxisWidth = 40;
+
+    const { container } = render(
+      <BarChart width={100} height={100} data={data}>
+        <YAxis width={yAxisWidth} />
+        <Bar dataKey="amt" />
+      </BarChart>,
+    );
+
+    const yAxis = container.querySelector('.yAxis');
+    const yAxisLine = yAxis.querySelector('line');
+
+    expect(yAxis).toBeVisible();
+    expect(yAxisLine).toHaveAttribute('width', String(yAxisWidth));
+  });
+
+  it('should render y-axis with dynamically calculated width', async () => {
+    mockGetBoundingClientRect({ width: 80, height: 30 });
+
+    const { container } = render(
+      <BarChart width={400} height={300} data={data}>
+        <YAxis width="auto" ticks={[0, 800, 1600, 2400]} />
+        <Bar dataKey="amt" />
+      </BarChart>,
+    );
+
+    // Get all tick elements from the rendered Y-axis
+    const tickElements = container.querySelectorAll('.recharts-cartesian-axis-tick-value');
+
+    const yAxis = container.querySelector('.yAxis');
+    const yAxisLine = yAxis.querySelector('line');
+
+    // Create a mock CartesianAxis ref
+    const mockCartesianAxisRef = {
+      current: {
+        tickRefs: {
+          current: Array.from(tickElements),
+        },
+        props: {
+          tickSize: 6,
+          tickMargin: 2,
+        },
+      },
+    };
+
+    const calculatedYAxisWidth = getCalculatedYAxisWidth({
+      cartesianAxisRef: mockCartesianAxisRef,
+    });
+
+    expect(calculatedYAxisWidth).toBe(88); // 80 width + 6 tick size + 2 tick margin
+    expect(yAxisLine).toHaveAttribute('width', '88');
   });
 });
