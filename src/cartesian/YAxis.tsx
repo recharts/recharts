@@ -99,7 +99,16 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     // if the width has changed, dispatch an action to update the width
     if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth))
       dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
-  }, [cartesianAxisRef, axisSize?.width, axisSize, dispatch, label, yAxisId, width]);
+  }, [
+    cartesianAxisRef,
+    cartesianAxisRef?.current?.tickRefs?.current, // required to do re-calculation when using brush
+    axisSize?.width,
+    axisSize,
+    dispatch,
+    label,
+    yAxisId,
+    width,
+  ]);
 
   if (axisSize == null || position == null) {
     return null;
