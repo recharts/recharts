@@ -2173,21 +2173,12 @@ describe('<YAxis />', () => {
     const yAxis = container.querySelector('.yAxis');
     const yAxisLine = yAxis.querySelector('line');
 
-    // Create a mock CartesianAxis ref
-    const mockCartesianAxisRef = {
-      current: {
-        tickRefs: {
-          current: Array.from(tickElements),
-        },
-        props: {
-          tickSize: 6,
-          tickMargin: 2,
-        },
-      },
-    };
-
     const calculatedYAxisWidth = getCalculatedYAxisWidth({
-      cartesianAxisRef: mockCartesianAxisRef,
+      ticks: Array.from(tickElements),
+      tickSize: 6,
+      tickMargin: 2,
+      label: undefined,
+      labelGapWithTick: 5,
     });
 
     expect(calculatedYAxisWidth).toBe(88); // 80 width + 6 tick size + 2 tick margin

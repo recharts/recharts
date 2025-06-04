@@ -82,26 +82,24 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
     // or when a function/react element is used for label
     if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
 
+    const axisComponent = cartesianAxisRef.current;
+    const tickNodes = axisComponent?.tickRefs?.current;
+
+    const { tickSize, tickMargin } = axisComponent.props;
+
     // get calculated width based on the label width, ticks etc
     const updatedYAxisWidth = getCalculatedYAxisWidth({
-      cartesianAxisRef,
-      labelRef,
+      ticks: tickNodes,
+      label: labelRef.current,
+      labelGapWithTick: 5,
+      tickSize,
+      tickMargin,
     });
 
     // if the width has changed, dispatch an action to update the width
     if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth))
       dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
-  }, [
-    cartesianAxisRef,
-    cartesianAxisRef.current?.tickRefs,
-    cartesianTickItems,
-    axisSize?.width,
-    axisSize,
-    dispatch,
-    label,
-    yAxisId,
-    width,
-  ]);
+  }, [cartesianAxisRef, axisSize?.width, axisSize, dispatch, label, yAxisId, width]);
 
   if (axisSize == null || position == null) {
     return null;
