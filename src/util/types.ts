@@ -120,6 +120,7 @@ export type ScaleType =
   | 'pow'
   | 'sqrt'
   | 'log'
+  | 'symlog'
   | 'identity'
   | 'time'
   | 'band'
