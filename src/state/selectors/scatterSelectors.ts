@@ -123,7 +123,7 @@ export const selectScatterPoints: (
   scatterSettings: ResolvedScatterSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
   isPanorama: boolean,
-) => ReadonlyArray<ScatterPointItem> = createSelector(
+) => ReadonlyArray<ScatterPointItem> | undefined = createSelector(
   [
     scatterChartDataSelector,
     selectXAxisWithScale,
@@ -148,7 +148,7 @@ export const selectScatterPoints: (
       return undefined;
     }
     let displayedData: ChartData | undefined;
-    if (scatterSettings?.data?.length > 0) {
+    if (scatterSettings?.data != null && scatterSettings.data.length > 0) {
       displayedData = scatterSettings.data;
     } else {
       displayedData = chartData?.slice(dataStartIndex, dataEndIndex + 1);
@@ -157,6 +157,8 @@ export const selectScatterPoints: (
       displayedData == null ||
       xAxis == null ||
       yAxis == null ||
+      xAxisTicks == null ||
+      yAxisTicks == null ||
       xAxisTicks?.length === 0 ||
       yAxisTicks?.length === 0
     ) {

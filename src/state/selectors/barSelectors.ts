@@ -167,7 +167,7 @@ function isStacked(graphicalItem: MaybeStackedGraphicalItem): graphicalItem is D
 export const combineBarSizeList = (
   allBars: ReadonlyArray<MaybeStackedGraphicalItem>,
   globalSize: number | undefined,
-  totalSize: number,
+  totalSize: number | undefined,
 ): SizeList | undefined => {
   const initialValue: Record<StackId, Array<DefinitelyStackedGraphicalItem>> = {};
 
@@ -441,7 +441,7 @@ export const selectBarPosition: (
 
 export const combineStackedData = (
   stackGroups: Record<StackId, StackGroup> | undefined,
-  barSettings: MaybeStackedGraphicalItem,
+  barSettings: MaybeStackedGraphicalItem | undefined,
 ): Series<Record<number, number>, DataKey<any>> | undefined => {
   if (!stackGroups || barSettings?.dataKey == null) {
     return undefined;

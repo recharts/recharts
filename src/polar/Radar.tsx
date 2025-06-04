@@ -81,7 +81,7 @@ export type RadiusAxisForRadar = { scale: RechartsScale };
 export type AngleAxisForRadar = {
   scale: RechartsScale;
   type: 'number' | 'category';
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   cx: number;
   cy: number;
 };

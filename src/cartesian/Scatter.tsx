@@ -392,11 +392,7 @@ export function computeScatterPoints({
   xAxis: BaseAxisWithScale;
   yAxis: BaseAxisWithScale;
   zAxis: ZAxisWithScale;
-  scatterSettings: {
-    dataKey: DataKey<any> | undefined;
-    tooltipType: TooltipType;
-    name: string | number;
-  };
+  scatterSettings: ResolvedScatterSettings;
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   cells: ReadonlyArray<ReactElement> | undefined;

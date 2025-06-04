@@ -7,7 +7,7 @@ import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAx
 import { AxisId } from '../cartesianAxisSlice';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartDataState } from '../chartDataSlice';
-import { DataKey, LayoutType, PolarViewBox, TickItem } from '../../util/types';
+import { DataKey, LayoutType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { getBandSizeOfAxis, isCategoricalAxis, RechartsScale } from '../../util/ChartUtils';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
@@ -16,15 +16,13 @@ import { selectUnfilteredPolarItems } from './polarSelectors';
 const selectRadiusAxisScale = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
   selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
 
-const selectRadiusAxisForRadar: (state: RechartsRootState, radiusAxisId: AxisId) => RadiusAxisForRadar = createSelector(
-  [selectRadiusAxisScale],
-  (scale: RechartsScale | undefined): RadiusAxisForRadar => {
+const selectRadiusAxisForRadar: (state: RechartsRootState, radiusAxisId: AxisId) => RadiusAxisForRadar | undefined =
+  createSelector([selectRadiusAxisScale], (scale: RechartsScale | undefined): RadiusAxisForRadar | undefined => {
     if (scale == null) {
       return undefined;
     }
     return { scale };
-  },
-);
+  });
 
 export const selectRadiusAxisForBandSize: (
   state: RechartsRootState,
@@ -93,10 +91,14 @@ export const selectAngleAxisWithScaleAndViewport: (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
-) => AngleAxisForRadar = createSelector(
+) => AngleAxisForRadar | undefined = createSelector(
   [selectAngleAxisForRadar, selectPolarAxisScaleForRadar, selectPolarViewBox],
-  (axisOptions: AngleAxisSettings, scale: RechartsScale | undefined, polarViewBox: PolarViewBox | undefined) => {
-    if (polarViewBox == null) {
+  (
+    axisOptions: AngleAxisSettings,
+    scale: RechartsScale | undefined,
+    polarViewBox: PolarViewBoxRequired | undefined,
+  ): AngleAxisForRadar | undefined => {
+    if (polarViewBox == null || scale == null) {
       return undefined;
     }
     return {
@@ -167,7 +169,7 @@ export const selectRadarPoints: (
   angleAxisId: AxisId,
   isPanorama: boolean,
   radarDataKey: DataKey<any> | undefined,
-) => RadarComposedData = createSelector(
+) => RadarComposedData | undefined = createSelector(
   [
     selectRadiusAxisForRadar,
     selectAngleAxisWithScaleAndViewport,
@@ -181,7 +183,7 @@ export const selectRadarPoints: (
     { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
     dataKey: DataKey<any> | undefined,
     bandSize: number | undefined,
-  ) => {
+  ): RadarComposedData | undefined => {
     if (radiusAxis == null || angleAxis == null || chartData == null || bandSize == null || dataKey == null) {
       return undefined;
     }
