@@ -1071,7 +1071,7 @@ describe('<Pie />', () => {
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
-          id: undefined,
+          id: 0,
           includeHidden: false,
           name: undefined,
           reversed: false,
