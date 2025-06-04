@@ -47,6 +47,7 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
+import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
 interface ScatterPointNode {
   x?: number | string;
@@ -529,7 +530,7 @@ function ScatterWithId(props: InternalProps) {
   );
 }
 
-const defaultScatterProps: Partial<Props> = {
+const defaultScatterProps = {
   xAxisId: 0,
   yAxisId: 0,
   zAxisId: 0,
@@ -544,11 +545,28 @@ const defaultScatterProps: Partial<Props> = {
   animationBegin: 0,
   animationDuration: 400,
   animationEasing: 'linear',
-};
+} as const satisfies Partial<Props>;
 
 function ScatterImpl(props: Props) {
-  const { needClip } = useNeedsClip(props.xAxisId, props.yAxisId);
+  const {
+    animationBegin,
+    animationDuration,
+    animationEasing,
+    hide,
+    isAnimationActive,
+    legendType,
+    lineJointType,
+    lineType,
+    shape,
+    xAxisId,
+    yAxisId,
+    zAxisId,
+    ...everythingElse
+  } = resolveDefaultProps(props, defaultScatterProps);
+
+  const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
+
   const scatterSettings: ResolvedScatterSettings = useMemo(
     () => ({
       name: props.name,
@@ -561,24 +579,11 @@ function ScatterImpl(props: Props) {
 
   const isPanorama = useIsPanorama();
   const points = useAppSelector(state => {
-    return selectScatterPoints(state, props.xAxisId, props.yAxisId, props.zAxisId, scatterSettings, cells, isPanorama);
+    return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, scatterSettings, cells, isPanorama);
   });
-  const {
-    animationBegin = defaultScatterProps.animationBegin,
-    animationDuration = defaultScatterProps.animationDuration,
-    animationEasing = defaultScatterProps.animationEasing,
-    hide = defaultScatterProps.hide,
-    isAnimationActive = defaultScatterProps.isAnimationActive,
-    legendType = defaultScatterProps.legendType,
-    lineJointType = defaultScatterProps.lineJointType,
-    lineType = defaultScatterProps.lineType,
-    shape = defaultScatterProps.shape,
-    xAxisId = defaultScatterProps.xAxisId,
-    yAxisId = defaultScatterProps.yAxisId,
-    zAxisId = defaultScatterProps.zAxisId,
-    ...everythingElse
-  } = props;
-
+  if (points == null || !points.length || needClip == null) {
+    return null;
+  }
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />

@@ -19,7 +19,7 @@ export type ResolvedScatterSettings = {
   data: ChartData | undefined;
   dataKey: DataKey<any> | undefined;
   tooltipType: TooltipType | undefined;
-  name: string | number;
+  name: string | number | undefined;
 };
 
 const selectXAxisWithScale = (
