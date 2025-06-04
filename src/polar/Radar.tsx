@@ -12,7 +12,6 @@ import {
 } from 'react';
 import Animate from 'react-smooth';
 import { last } from 'es-toolkit';
-import { first } from 'es-toolkit/compat';
 
 import { clsx } from 'clsx';
 import { interpolateNumber, isNullish } from '../util/DataUtils';
@@ -203,7 +202,7 @@ export function computeRadarPoints({
   if (isRange) {
     points.forEach(point => {
       if (Array.isArray(point.value)) {
-        const baseValue = first(point.value);
+        const baseValue = point.value[0];
         const radius = isNullish(baseValue) ? undefined : radiusAxis.scale(baseValue);
 
         baseLinePoints.push({

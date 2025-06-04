@@ -4,7 +4,8 @@
 import * as React from 'react';
 import { ReactElement, ReactNode, Component, SVGProps } from 'react';
 
-import { get } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';

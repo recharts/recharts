@@ -77,6 +77,8 @@
     "es-toolkit": "^1.37.1",
     "eventemitter3": "^5.0.1",
     "immer": "^10.1.1",
+    "lodash.get": "^4.4.2",
+    "lodash.sortby": "^4.7.0",
     "react-redux": "8.x.x || 9.x.x",
     "react-smooth": "^4.0.1",
     "reselect": "5.1.1",
