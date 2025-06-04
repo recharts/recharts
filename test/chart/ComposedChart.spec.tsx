@@ -4,7 +4,9 @@ import { it, vi } from 'vitest';
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('<ComposedChart />', () => {
   const data = [
@@ -87,7 +89,7 @@ describe('<ComposedChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -119,7 +121,7 @@ describe('<ComposedChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide height', () => {
@@ -135,7 +137,7 @@ describe('<ComposedChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(50);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

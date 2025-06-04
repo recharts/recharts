@@ -5,13 +5,7 @@ import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
-import {
-  useChartHeight,
-  useChartWidth,
-  useClipPathId,
-  useMargin,
-  useViewBox,
-} from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
 import {
@@ -28,9 +22,11 @@ import { pageData } from '../../storybook/stories/data';
 import { boxPlotData } from '../_data';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { BarRectangleItem } from '../../src/cartesian/Bar';
-import { CategoricalChartProps } from '../../src/chart/generateCategoricalChart';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { CartesianChartProps } from '../../src/util/types';
 
 type DataType = {
   name: string;
@@ -3084,7 +3080,7 @@ describe('<BarChart />', () => {
   });
 
   test('renders chart when wrapped in a custom component', () => {
-    const MyBarChart = (props: CategoricalChartProps) => {
+    const MyBarChart = (props: CartesianChartProps) => {
       return <BarChart {...props} />;
     };
 
@@ -3244,7 +3240,7 @@ describe('<BarChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith({ x: 5, y: 5, width: 90, height: 40 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -3275,7 +3271,7 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(100);
     });
 
@@ -3291,7 +3287,7 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(50);
     });
   });
@@ -3408,7 +3404,7 @@ describe('<BarChart />', () => {
         right: 2,
         top: 1,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(2);
+      expect(marginSpy).toHaveBeenCalledTimes(1);
 
       rerender(
         <BarChart width={100} height={100} margin={{ top: 10, right: 20, bottom: 30, left: 40 }}>
@@ -3421,7 +3417,7 @@ describe('<BarChart />', () => {
         right: 20,
         top: 10,
       });
-      expect(marginSpy).toHaveBeenCalledTimes(4);
+      expect(marginSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

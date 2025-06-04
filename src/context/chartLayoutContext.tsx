@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { createContext, ReactNode, useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { CartesianViewBoxRequired, ChartOffsetRequired, LayoutType, Margin, Size } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
@@ -8,31 +7,6 @@ import { selectChartOffset, selectChartViewBox } from '../state/selectors/select
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
-
-export const ClipPathIdContext = createContext<string | undefined>(undefined);
-
-export type ChartLayoutContextProviderProps = {
-  children: ReactNode;
-  clipPathId: string;
-};
-
-/**
- * Will add all the properties required to render all individual Recharts components into a React Context.
- *
- * If you want to read these properties, see the collection of hooks exported from this file.
- *
- * @param {object} props CategoricalChartState, plus children
- * @returns React Context Provider
- */
-export const ChartLayoutContextProvider = (props: ChartLayoutContextProviderProps) => {
-  const { clipPathId, children } = props;
-
-  return <ClipPathIdContext.Provider value={clipPathId}>{children}</ClipPathIdContext.Provider>;
-};
-
-export const useClipPathId = (): string | undefined => {
-  return useContext(ClipPathIdContext);
-};
 
 export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   const panorama = useIsPanorama();

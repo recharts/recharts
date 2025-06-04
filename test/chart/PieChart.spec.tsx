@@ -3,7 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, Mock, vi } from 'vitest';
 import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
-import { useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
   const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
@@ -335,7 +337,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -369,7 +371,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart height', () => {
@@ -386,7 +388,7 @@ describe('<PieChart />', () => {
       );
 
       expect(spy).toBeCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 

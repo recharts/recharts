@@ -1,5 +1,3 @@
-import { mapValues, every } from 'es-toolkit/compat';
-
 import { Coordinate, Size } from './types';
 
 export const rectWithPoints = ({ x: x1, y: y1 }: Coordinate, { x: x2, y: y2 }: Coordinate) => ({
@@ -111,11 +109,13 @@ export const createLabeledScales = (options: Record<string, any>): LabeledScales
   return {
     ...scales,
     apply(coord: any, { bandAware, position }: any = {}) {
-      return mapValues(coord, (value, label) => scales[label].apply(value, { bandAware, position }));
+      return Object.fromEntries(
+        Object.entries(coord).map(([label, value]) => [label, scales[label].apply(value, { bandAware, position })]),
+      );
     },
 
     isInRange(coord) {
-      return every(coord, (value, label) => scales[label].isInRange(value));
+      return Object.keys(coord).every(label => scales[label].isInRange(coord[label]));
     },
   } as LabeledScales<Record<string, any>>;
 };

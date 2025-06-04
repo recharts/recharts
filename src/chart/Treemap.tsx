@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { PureComponent } from 'react';
 import { omit } from 'es-toolkit';
-import { get } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 import Smooth from 'react-smooth';
 
 import { Layer } from '../container/Layer';
@@ -13,7 +14,7 @@ import { COLOR_PANEL } from '../util/Constants';
 import { isNan, uniqueId } from '../util/DataUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { Global } from '../util/Global';
-import { validateWidthHeight, filterProps } from '../util/ReactUtils';
+import { filterProps } from '../util/ReactUtils';
 import { AnimationDuration, AnimationTiming, DataKey, Margin } from '../util/types';
 import { ReportChartMargin, ReportChartSize } from '../context/chartLayoutContext';
 import { TooltipPortalContext } from '../context/tooltipPortalContext';
@@ -30,6 +31,7 @@ import { ChartOptions } from '../state/optionsSlice';
 import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
+import { isPositiveNumber } from '../util/isWellBehavedNumber';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -918,13 +920,15 @@ function TreemapDispatchInject(props: Props) {
 }
 
 export function Treemap(props: Props) {
-  if (!validateWidthHeight({ width: props.width, height: props.height })) {
+  const { width, height } = props;
+
+  if (!isPositiveNumber(width) || !isPositiveNumber(height)) {
     return null;
   }
 
   return (
     <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={props.className ?? 'Treemap'}>
-      <ReportChartSize width={props.width} height={props.height} />
+      <ReportChartSize width={width} height={height} />
       <ReportChartMargin margin={defaultTreemapMargin} />
       <TreemapDispatchInject {...props} />
     </RechartsStoreProvider>

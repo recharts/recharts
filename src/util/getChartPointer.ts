@@ -1,4 +1,4 @@
-import { ChartPointer, MousePointer } from '../chart/generateCategoricalChart';
+import { ChartPointer, MousePointer } from './types';
 
 /**
  * Computes the chart coordinates from the mouse event.

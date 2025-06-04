@@ -13,7 +13,7 @@ import { CartesianViewBox } from '../util/types';
 import { Props as XAxisProps } from './XAxis';
 import { Props as YAxisProps } from './YAxis';
 import { filterProps } from '../util/ReactUtils';
-import { useClipPathId, useViewBox } from '../context/chartLayoutContext';
+import { useViewBox } from '../context/chartLayoutContext';
 import { addLine, ReferenceLineSettings, removeLine } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
@@ -23,6 +23,8 @@ import {
   selectYAxisSettings,
 } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
+
+import { useClipPathId } from '../container/ClipPathProvider';
 
 interface InternalReferenceLineProps {
   viewBox?: CartesianViewBox;

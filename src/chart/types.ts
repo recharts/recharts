@@ -1,11 +1,6 @@
 import { SyntheticEvent } from 'react';
 import { MouseHandlerDataParam } from '../synchronisation/types';
 
-export interface CategoricalChartState {
-  tooltipPortal?: HTMLElement | null;
-  legendPortal?: HTMLElement | null;
-}
-
 export type TooltipTrigger = 'hover' | 'click';
 
 export type CategoricalChartFunc = (nextState: MouseHandlerDataParam, event: SyntheticEvent) => void;

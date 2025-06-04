@@ -9,12 +9,13 @@ import { isNumOrStr } from '../util/DataUtils';
 import { Props as RectangleProps, Rectangle } from '../shape/Rectangle';
 import { filterProps } from '../util/ReactUtils';
 
-import { useClipPathId } from '../context/chartLayoutContext';
 import { addArea, ReferenceAreaSettings, removeArea } from '../state/referenceElementsSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectAxisScale } from '../state/selectors/axisSelectors';
 import { RechartsScale } from '../util/ChartUtils';
 import { useIsPanorama } from '../context/PanoramaContext';
+
+import { useClipPathId } from '../container/ClipPathProvider';
 
 interface ReferenceAreaProps {
   ifOverflow?: IfOverflow;

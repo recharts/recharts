@@ -1,21 +1,21 @@
-import React, { ComponentType, ReactNode } from 'react';
+import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
-  allCategoricalsChartsExcept,
+  allCartesianChartsExcept,
   AreaChartCase,
   BarChartCase,
+  CartesianChartTestCase,
   ComposedChartCase,
+  FunnelChartCase,
   includingCompact,
   LineChartCase,
 } from '../helper/parameterizedTestCases';
 import { useAppSelector } from '../../src/state/hooks';
 import { CartesianGraphicalItemSettings } from '../../src/state/graphicalItemsSlice';
 import { expectBarIsActive, expectBarIsNotActive, expectBars, getAllBars } from '../helper/expectBars';
-import { ChartData } from '../../src/state/chartDataSlice';
 import { expectLabels } from '../helper/expectLabel';
-import { LayoutType } from '../../src/util/types';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import {
   expectTooltipCoordinate,
@@ -27,22 +27,14 @@ import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipM
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
 
-type TestCase = {
-  ChartElement: ComponentType<{
-    children?: ReactNode;
-    width?: number;
-    height?: number;
-    data?: ChartData;
-    layout?: LayoutType;
-  }>;
-  testName: string;
-};
+type TestCase = CartesianChartTestCase;
 
 const chartsThatSupportBar: ReadonlyArray<TestCase> = [ComposedChartCase, BarChartCase];
 
 const chartsThatDoNotSupportBar: ReadonlyArray<TestCase> = includingCompact(
   // both AreaChart and LineChart will now render Bar but ... differently.
-  allCategoricalsChartsExcept([...chartsThatSupportBar, LineChartCase, AreaChartCase]),
+  // also FunnelChart renders bars now!
+  allCartesianChartsExcept([...chartsThatSupportBar, LineChartCase, AreaChartCase, FunnelChartCase]),
 );
 
 const data = [
@@ -538,7 +530,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       ]);
     });
 
-    it('should should do nothing if barSize is set', () => {
+    it('should do nothing if barSize is set', () => {
       const maxBarSize = 77;
       const { container } = render(
         <ChartElement layout="horizontal" data={data}>

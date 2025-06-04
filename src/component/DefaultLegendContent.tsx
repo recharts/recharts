@@ -5,7 +5,8 @@ import * as React from 'react';
 import { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import { clsx } from 'clsx';
-import { sortBy } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
+import sortBy from 'lodash.sortby';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {
@@ -152,7 +153,7 @@ export class DefaultLegendContent extends PureComponent<Props> {
     };
     const svgStyle = { display: 'inline-block', verticalAlign: 'middle', marginRight: 4 };
 
-    return (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry, i) => {
+    return (itemSorter ? sortBy(payload, itemSorter) : payload).map((entry: LegendPayload, i: number) => {
       const finalFormatter = entry.formatter || formatter;
       const className = clsx({
         'recharts-legend-item': true,

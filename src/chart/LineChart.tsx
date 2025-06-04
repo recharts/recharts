@@ -1,10 +1,20 @@
-/**
- * @fileOverview Line Chart
- */
-import { generateCategoricalChart } from './generateCategoricalChart';
+import * as React from 'react';
+import { forwardRef } from 'react';
 import { arrayTooltipSearcher } from '../state/optionsSlice';
+import { CartesianChart } from './CartesianChart';
+import { CartesianChartProps, TooltipEventType } from '../util/types';
 
-export const LineChart = generateCategoricalChart({
-  chartName: 'LineChart',
-  tooltipPayloadSearcher: arrayTooltipSearcher,
+const allowedTooltipTypes: ReadonlyArray<TooltipEventType> = ['axis'];
+
+export const LineChart = forwardRef<SVGSVGElement, CartesianChartProps>((props: CartesianChartProps, ref) => {
+  return (
+    <CartesianChart
+      chartName="LineChart"
+      defaultTooltipEventType="axis"
+      validateTooltipEventTypes={allowedTooltipTypes}
+      tooltipPayloadSearcher={arrayTooltipSearcher}
+      categoricalChartProps={props}
+      ref={ref}
+    />
+  );
 });

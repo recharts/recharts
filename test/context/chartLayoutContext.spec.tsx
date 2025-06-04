@@ -1,159 +1,35 @@
-import React, { ComponentType, memo } from 'react';
+import React, { ComponentType } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import {
-  ChartLayoutContextProvider,
-  ChartLayoutContextProviderProps,
-  useClipPathId,
-  useOffset,
-} from '../../src/context/chartLayoutContext';
+import { useOffset } from '../../src/context/chartLayoutContext';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { emptyOffset } from '../helper/offsetHelpers';
+import { ClipPathProvider, useClipPathId } from '../../src/container/ClipPathProvider';
 
-describe('ChartLayoutContextProvider', () => {
-  const mockContextProviderProps: ChartLayoutContextProviderProps = {
-    clipPathId: 'my mock ID',
-    children: <div />,
-  };
+describe('ClipPathIdContext', () => {
+  it('should generate unique clipPathId', () => {
+    expect.assertions(1);
+    const MockConsumer: ComponentType = () => {
+      const clipPathId = useClipPathId();
+      expect(clipPathId).toMatch(/^recharts\d+-clip$/);
+      return null;
+    };
+    render(
+      <ClipPathProvider>
+        <MockConsumer />
+      </ClipPathProvider>,
+    );
+  });
 
-  describe('ClipPathIdContext', () => {
-    it('should add clipPathId to context', () => {
-      expect.assertions(1);
-      const MockConsumer: ComponentType = () => {
-        const clipPathId = useClipPathId();
-        expect(clipPathId).toBe('my mock ID');
-        return null;
-      };
-      render(
-        <ChartLayoutContextProvider {...mockContextProviderProps}>
-          <MockConsumer />
-        </ChartLayoutContextProvider>,
-      );
-    });
-
-    it('should return undefined when using the hook outside of context', () => {
-      expect.assertions(1);
-      const MockComponent: ComponentType = () => {
-        const clipPathId = useClipPathId();
-        expect(clipPathId).toBe(undefined);
-        return null;
-      };
-      render(<MockComponent />);
-    });
-
-    describe('vanilla children', () => {
-      it('should re-render children every time even when nothing changes', () => {
-        let renderCount = 0;
-        const MockConsumer: ComponentType = () => {
-          renderCount++;
-          return null;
-        };
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(2);
-      });
-    });
-
-    describe('children using React.memo()', () => {
-      it('should render memo children only once if the clipPathId does not change', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-
-      it('should render memo children only once even if the clipPathId changes!', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          renderCount++;
-          return null;
-        });
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} clipPathId="my mock ID but this time different">
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-    });
-
-    describe('children that read the context using a hook', () => {
-      it('should render context-aware children only once', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          useClipPathId();
-          renderCount++;
-          return null;
-        });
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-      });
-
-      it('should re-render context-aware children if the clipPathId changes', () => {
-        let renderCount = 0;
-        const MockConsumer = memo(() => {
-          useClipPathId();
-          renderCount++;
-          return null;
-        });
-        expect(renderCount).toBe(0);
-        const { rerender } = render(
-          <ChartLayoutContextProvider {...mockContextProviderProps}>
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(1);
-        rerender(
-          <ChartLayoutContextProvider {...mockContextProviderProps} clipPathId="my mock ID but this time different">
-            <MockConsumer />
-          </ChartLayoutContextProvider>,
-        );
-        expect(renderCount).toBe(2);
-      });
-    });
+  it('should return undefined when using the hook outside of context', () => {
+    expect.assertions(1);
+    const MockComponent: ComponentType = () => {
+      const clipPathId = useClipPathId();
+      expect(clipPathId).toBe(undefined);
+      return null;
+    };
+    render(<MockComponent />);
   });
 });
 
@@ -181,7 +57,7 @@ describe('useOffset', () => {
       </ComposedChart>,
     );
 
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
     expect(offsetSpy).toHaveBeenLastCalledWith({
       top: 5,
       right: 5,
@@ -206,7 +82,7 @@ describe('useOffset', () => {
       </ComposedChart>,
     );
 
-    expect(offsetSpy).toHaveBeenCalledTimes(2);
+    expect(offsetSpy).toHaveBeenCalledTimes(1);
     expect(offsetSpy).toHaveBeenLastCalledWith({
       top: 10,
       right: 20,

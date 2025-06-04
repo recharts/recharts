@@ -8,8 +8,10 @@ import { pageData } from '../../storybook/stories/data';
 import { AreaSettings, selectArea } from '../../src/state/selectors/areaSelectors';
 import { selectTicksOfAxis } from '../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 type ExpectedArea = {
   d: string;
@@ -531,7 +533,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
     });
 
@@ -563,7 +565,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(100);
     });
 
@@ -579,7 +581,7 @@ describe('AreaChart', () => {
         </AreaChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(50);
     });
   });

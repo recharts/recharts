@@ -9,6 +9,7 @@ import {
   FormEvent,
   FunctionComponent,
   isValidElement,
+  JSX,
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
@@ -20,12 +21,13 @@ import {
   TransitionEvent,
   UIEvent,
   WheelEvent,
-  JSX,
 } from 'react';
 import type { Props as DotProps } from '../shape/Dot';
 import { TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { RechartsScale } from './ChartUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
+import { ExternalMouseEvents } from '../chart/types';
+import { SyncMethod } from '../synchronisation/types';
 
 /**
  * Determines how values are stacked:
@@ -40,7 +42,14 @@ import { AxisRange } from '../state/selectors/axisSelectors';
  * (note that the `diverging` offset in d3 is named `sign` in recharts)
  */
 export type StackOffsetType = 'sign' | 'expand' | 'none' | 'wiggle' | 'silhouette' | 'positive';
-export type LayoutType = 'horizontal' | 'vertical' | 'centric' | 'radial';
+export type CartesianLayout = 'horizontal' | 'vertical';
+export type PolarLayout = 'centric' | 'radial';
+/**
+ * @deprecated use either `CartesianLayout` or `PolarLayout` instead.
+ * Mixing both charts families leads to ambiguity in the type system.
+ * These two layouts share very few properties, so it is best to keep them separate.
+ */
+export type LayoutType = CartesianLayout | PolarLayout;
 export type AxisType = 'xAxis' | 'yAxis' | 'zAxis' | 'angleAxis' | 'radiusAxis';
 export type AxisDomainType = 'number' | 'category';
 export type DataKey<T> = string | number | ((obj: T) => any);
@@ -1424,3 +1433,85 @@ export type RangeObj = {
   angle?: number;
   radius?: number;
 };
+
+/**
+ * Simplified version of the MouseEvent so that we don't have to mock the whole thing in tests.
+ *
+ * This is meant to represent the React.MouseEvent
+ * which is a wrapper on top of https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent
+ */
+export interface MousePointer {
+  clientX: number;
+  clientY: number;
+  currentTarget: Pick<HTMLElement, 'getBoundingClientRect' | 'offsetWidth' | 'offsetHeight'>;
+}
+
+/**
+ * Coordinates relative to the top-left corner of the chart.
+ * Also include scale which means that a chart that's scaled will return the same coordinates as a chart that's not scaled.
+ */
+export interface ChartPointer {
+  chartX: number;
+  chartY: number;
+}
+
+export interface CartesianChartProps extends Partial<ExternalMouseEvents> {
+  accessibilityLayer?: boolean;
+  barCategoryGap?: number | string;
+  barGap?: number | string;
+  barSize?: number | string;
+  children?: any;
+  className?: string;
+  compact?: boolean;
+  data?: any[];
+  dataKey?: DataKey<any>;
+  desc?: string;
+  height?: number;
+  id?: string;
+  layout?: CartesianLayout;
+  margin?: Margin;
+  maxBarSize?: number;
+  reverseStackOrder?: boolean;
+  role?: string;
+  stackOffset?: StackOffsetType;
+  style?: any;
+  syncId?: number | string;
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  throttleDelay?: number;
+  title?: string;
+  width?: number;
+}
+
+export interface PolarChartProps extends Partial<ExternalMouseEvents> {
+  accessibilityLayer?: boolean;
+  barCategoryGap?: number | string;
+  barGap?: number | string;
+  barSize?: number | string;
+  children?: any;
+  className?: string;
+  cx?: number | string;
+  cy?: number | string;
+  data?: any[];
+  dataKey?: DataKey<any>;
+  desc?: string;
+  endAngle?: number;
+  height?: number;
+  id?: string;
+  innerRadius?: number | string;
+  layout?: PolarLayout;
+  margin?: Margin;
+  maxBarSize?: number;
+  outerRadius?: number | string;
+  reverseStackOrder?: boolean;
+  role?: string;
+  stackOffset?: StackOffsetType;
+  startAngle?: number;
+  style?: any;
+  syncId?: number | string;
+  syncMethod?: SyncMethod;
+  tabIndex?: number;
+  throttleDelay?: number;
+  title?: string;
+  width?: number;
+}

@@ -135,7 +135,7 @@ describe('<PolarAngleAxis />', () => {
           type: 'category',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select polar items', () => {
@@ -152,19 +152,19 @@ describe('<PolarAngleAxis />', () => {
             radiusAxisId: 0,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([90, -270]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select real scale type', () => {
@@ -176,7 +176,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [420, 460, 999, 500, 864, 650, 765, 365], range: [90, -270] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select ticks', () => {
@@ -231,7 +231,7 @@ describe('<PolarAngleAxis />', () => {
             value: 365,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select nice ticks', () => {
@@ -252,7 +252,7 @@ describe('<PolarAngleAxis />', () => {
           { value: 765 },
           { value: 365 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render axis ticks', () => {
@@ -384,7 +384,7 @@ describe('<PolarAngleAxis />', () => {
           type: 'category',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select polar items', () => {
@@ -401,19 +401,19 @@ describe('<PolarAngleAxis />', () => {
             radiusAxisId: 0,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([90, -270]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select real scale type', () => {
@@ -424,7 +424,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select applied data', () => {
@@ -439,7 +439,7 @@ describe('<PolarAngleAxis />', () => {
           { value: 765 },
           { value: 365 },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render ticks', () => {
@@ -559,7 +559,7 @@ describe('<PolarAngleAxis />', () => {
           allowDuplicatedCategory: false,
           dataKey: undefined,
           domain: undefined,
-          id: undefined,
+          id: 0,
           includeHidden: false,
           name: undefined,
           reversed: false,
@@ -587,7 +587,7 @@ describe('<PolarAngleAxis />', () => {
             radiusAxisId: 0,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select applied values', () => {
@@ -607,13 +607,13 @@ describe('<PolarAngleAxis />', () => {
       it('should select angle axis domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([0, 1, 2, 3, 4, 5, 6, 7]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([90, -270]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select real scale type', () => {
@@ -624,7 +624,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 1, 2, 3, 4, 5, 6, 7], range: [90, -270] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should not render ticks', () => {
@@ -673,7 +673,7 @@ describe('<PolarAngleAxis />', () => {
           type: 'number',
           unit: undefined,
         });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select polar items', () => {
@@ -690,31 +690,31 @@ describe('<PolarAngleAxis />', () => {
             radiusAxisId: 0,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis domain', () => {
         const { spy } = renderTestCase(state => selectPolarAxisDomain(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([0, 360]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select angle axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([90, -270]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('linear');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select scale', () => {
         const { spy } = renderTestCase(state => selectPolarAxisScale(state, 'angleAxis', 0));
         expectLastCalledWithScale(spy, { domain: [0, 360], range: [90, -270] });
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select ticks', () => {
@@ -745,7 +745,7 @@ describe('<PolarAngleAxis />', () => {
             value: 270,
           },
         ]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should select nice ticks', () => {
@@ -757,7 +757,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select applied data', () => {
         const { spy } = renderTestCase(state => selectPolarAppliedValues(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([{ value: 0 }, { value: 90 }, { value: 180 }, { value: 270 }]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(2);
       });
 
       it('should render axis ticks', () => {
@@ -1081,7 +1081,7 @@ describe('<PolarAngleAxis />', () => {
         </RadarChart>,
       );
 
-      expect(tick).toHaveBeenCalledTimes(exampleRadarData.length);
+      expect(tick).toHaveBeenCalledTimes(2 * exampleRadarData.length);
       expect(tick).toHaveBeenNthCalledWith(1, {
         cx: 250,
         cy: 250,
@@ -1749,7 +1749,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 360]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -1760,7 +1760,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('linear');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select polarItemsSettings', () => {
@@ -1824,7 +1824,7 @@ describe('<PolarAngleAxis />', () => {
           allowDuplicatedCategory: true,
           dataKey: undefined,
           domain: undefined,
-          id: undefined,
+          id: 0,
           includeHidden: false,
           name: undefined,
           reversed: false,
@@ -1859,7 +1859,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([0, 360]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -1871,7 +1871,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select real scale type', () => {
         const { spy } = renderTestCase(state => selectRealScaleType(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith('linear');
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select polarItemsSettings', () => {
@@ -2126,8 +2126,8 @@ describe('<PolarAngleAxis />', () => {
         expect(spy).toHaveBeenLastCalledWith({
           startAngle: 20,
           endAngle: 220,
-          cx: undefined,
-          cy: undefined,
+          cx: '50%',
+          cy: '50%',
           innerRadius: 0,
           outerRadius: '80%',
         });
@@ -2142,7 +2142,7 @@ describe('<PolarAngleAxis />', () => {
       it('should select axis range', () => {
         const { spy } = renderTestCase(state => selectAngleAxisRangeWithReversed(state, 0));
         expect(spy).toHaveBeenLastCalledWith([20, 220]);
-        expect(spy).toHaveBeenCalledTimes(3);
+        expect(spy).toHaveBeenCalledTimes(1);
       });
 
       it('should select scale', () => {
@@ -2452,7 +2452,7 @@ describe('<PolarAngleAxis />', () => {
       );
 
       expect(realScaleTypeSpy).toHaveBeenLastCalledWith(expectedScale);
-      expect(realScaleTypeSpy).toHaveBeenCalledTimes(3);
+      expect(realScaleTypeSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -2564,15 +2564,15 @@ describe('<PolarAngleAxis />', () => {
         unit: undefined,
       };
       expect(axisSettingsSpy).toHaveBeenLastCalledWith(expectedSettings);
-      expect(axisSettingsSpy).toHaveBeenCalledTimes(3);
+      expect(axisSettingsSpy).toHaveBeenCalledTimes(2);
 
       expect(angleAxisRangeSpy).toHaveBeenLastCalledWith([-270, 90]);
-      expect(angleAxisRangeSpy).toHaveBeenCalledTimes(3);
+      expect(angleAxisRangeSpy).toHaveBeenCalledTimes(2);
 
       expect(angleAxisDomainSpy).toHaveBeenLastCalledWith([420, 460, 999, 500, 864, 650, 765, 365]);
-      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(3);
+      expect(angleAxisDomainSpy).toHaveBeenCalledTimes(2);
 
-      expect(angleAxisScaleSpy).toHaveBeenCalledTimes(3);
+      expect(angleAxisScaleSpy).toHaveBeenCalledTimes(2);
 
       expectLastCalledWithScale(angleAxisScaleSpy, { domain: [420, 365], range: [-270, 90] });
 
@@ -2638,10 +2638,10 @@ describe('<PolarAngleAxis />', () => {
           index: 9,
         },
       ]);
-      expect(angleAxisTicksSpy).toHaveBeenCalledTimes(3);
+      expect(angleAxisTicksSpy).toHaveBeenCalledTimes(2);
 
       expect(angleAxisNiceTicksSpy).toHaveBeenLastCalledWith(undefined);
-      expect(angleAxisNiceTicksSpy).toHaveBeenCalledTimes(3);
+      expect(angleAxisNiceTicksSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

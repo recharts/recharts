@@ -36,7 +36,7 @@ describe('<RadarChart />', () => {
         allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
-        id: undefined,
+        id: 0,
         includeHidden: false,
         name: undefined,
         reversed: false,
@@ -67,7 +67,7 @@ describe('<RadarChart />', () => {
         allowDuplicatedCategory: false,
         dataKey: undefined,
         domain: undefined,
-        id: undefined,
+        id: 0,
         includeHidden: false,
         name: undefined,
         reversed: false,
@@ -156,7 +156,7 @@ describe('<RadarChart />', () => {
       allowDuplicatedCategory: false,
       dataKey: undefined,
       domain: undefined,
-      id: undefined,
+      id: 0,
       includeHidden: false,
       name: undefined,
       reversed: false,
@@ -550,7 +550,7 @@ describe('<RadarChart />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -567,7 +567,7 @@ describe('<RadarChart />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart width', () => {
@@ -584,7 +584,7 @@ describe('<RadarChart />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart height', () => {
@@ -601,7 +601,7 @@ describe('<RadarChart />', () => {
       );
 
       expect(spy).toHaveBeenLastCalledWith(50);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

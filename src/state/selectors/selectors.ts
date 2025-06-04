@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
-import { sortBy } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
+import sortBy from 'lodash.sortby';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {
@@ -25,6 +26,7 @@ import {
   AxisType,
   BaseAxisProps,
   ChartOffsetRequired,
+  ChartPointer,
   Coordinate,
   DataKey,
   LayoutType,
@@ -34,7 +36,6 @@ import {
 } from '../../util/types';
 import { findEntryInArray } from '../../util/DataUtils';
 import { TooltipTrigger } from '../../chart/types';
-import { ChartPointer } from '../../chart/generateCategoricalChart';
 import { selectChartDataWithIndexes } from './dataSelectors';
 import { selectTooltipAxis, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
 import { AxisRange } from './axisSelectors';
@@ -85,7 +86,7 @@ function getSliced<T>(
 }
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
-  sortBy(ticks, o => o.coordinate),
+  sortBy(ticks, (o: { coordinate: any }) => o.coordinate),
 );
 
 export const selectTooltipInteractionState: (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CSSProperties, forwardRef, ReactNode, Ref } from 'react';
+import { CSSProperties, forwardRef, ReactNode, Ref, useState, useCallback } from 'react';
 import { clsx } from 'clsx';
 import { mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch } from '../state/hooks';
@@ -10,6 +10,8 @@ import { useReportScale } from '../util/useReportScale';
 import { ExternalMouseEvents } from './types';
 import { externalEventAction } from '../state/externalEventsMiddleware';
 import { touchEventAction } from '../state/touchEventsMiddleware';
+import { TooltipPortalContext } from '../context/tooltipPortalContext';
+import { LegendPortalContext } from '../context/legendPortalContext';
 
 type Nullable<T> = {
   [P in keyof T]: T[P] | undefined;
@@ -47,56 +49,102 @@ export const RechartsWrapper = forwardRef(
     ref: Ref<HTMLDivElement>,
   ) => {
     const dispatch = useAppDispatch();
+    const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
+    const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
 
     useSynchronisedEventsFromOtherCharts();
 
     const setScaleRef = useReportScale();
 
-    const innerRef = (node: HTMLDivElement | null) => {
-      setScaleRef(node);
-      if (typeof ref === 'function') {
-        ref(node);
-      }
-    };
-    const myOnClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(mouseClickAction(e));
-      dispatch(externalEventAction({ handler: onClick, reactEvent: e }));
-    };
-    const myOnMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(mouseMoveAction(e));
-      dispatch(externalEventAction({ handler: onMouseEnter, reactEvent: e }));
-    };
-    const myOnMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-      // clear tooltip state if things happen to still be visible onMouseLeave of the wrapper
-      dispatch(mouseLeaveChart());
-      dispatch(externalEventAction({ handler: onMouseLeave, reactEvent: e }));
-    };
-    const myOnMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(mouseMoveAction(e));
-      dispatch(externalEventAction({ handler: onMouseMove, reactEvent: e }));
-    };
-    const onFocus = () => {
+    const innerRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        setScaleRef(node);
+        if (typeof ref === 'function') {
+          ref(node);
+        }
+        setTooltipPortal(node);
+        setLegendPortal(node);
+      },
+      [setScaleRef, ref, setTooltipPortal, setLegendPortal],
+    );
+
+    const myOnClick = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(mouseClickAction(e));
+        dispatch(externalEventAction({ handler: onClick, reactEvent: e }));
+      },
+      [dispatch, onClick],
+    );
+
+    const myOnMouseEnter = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(mouseMoveAction(e));
+        dispatch(externalEventAction({ handler: onMouseEnter, reactEvent: e }));
+      },
+      [dispatch, onMouseEnter],
+    );
+
+    const myOnMouseLeave = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(mouseLeaveChart());
+        dispatch(externalEventAction({ handler: onMouseLeave, reactEvent: e }));
+      },
+      [dispatch, onMouseLeave],
+    );
+
+    const myOnMouseMove = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(mouseMoveAction(e));
+        dispatch(externalEventAction({ handler: onMouseMove, reactEvent: e }));
+      },
+      [dispatch, onMouseMove],
+    );
+
+    const onFocus = useCallback(() => {
       dispatch(focusAction());
-    };
-    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
-      dispatch(keyDownAction(e.key));
-    };
-    const myOnContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onContextMenu, reactEvent: e }));
-    };
-    const myOnDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onDoubleClick, reactEvent: e }));
-    };
-    const myOnMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onMouseDown, reactEvent: e }));
-    };
-    const myOnMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onMouseUp, reactEvent: e }));
-    };
-    const myOnTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onTouchStart, reactEvent: e }));
-    };
+    }, [dispatch]);
+
+    const onKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        dispatch(keyDownAction(e.key));
+      },
+      [dispatch],
+    );
+
+    const myOnContextMenu = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onContextMenu, reactEvent: e }));
+      },
+      [dispatch, onContextMenu],
+    );
+
+    const myOnDoubleClick = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onDoubleClick, reactEvent: e }));
+      },
+      [dispatch, onDoubleClick],
+    );
+
+    const myOnMouseDown = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onMouseDown, reactEvent: e }));
+      },
+      [dispatch, onMouseDown],
+    );
+
+    const myOnMouseUp = useCallback(
+      (e: React.MouseEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onMouseUp, reactEvent: e }));
+      },
+      [dispatch, onMouseUp],
+    );
+
+    const myOnTouchStart = useCallback(
+      (e: React.TouchEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onTouchStart, reactEvent: e }));
+      },
+      [dispatch, onTouchStart],
+    );
 
     /*
      * onTouchMove is special because it behaves different from mouse events.
@@ -107,37 +155,49 @@ export const RechartsWrapper = forwardRef(
      * ourselves. Fortunately, there's a convenient method for that:
      * https://developer.mozilla.org/en-US/docs/Web/API/Document/elementFromPoint
      */
-    const myOnTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-      dispatch(touchEventAction(e));
-      dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));
-    };
-    const myOnTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-      dispatch(externalEventAction({ handler: onTouchEnd, reactEvent: e }));
-    };
+    const myOnTouchMove = useCallback(
+      (e: React.TouchEvent<HTMLDivElement>) => {
+        dispatch(touchEventAction(e));
+        dispatch(externalEventAction({ handler: onTouchMove, reactEvent: e }));
+      },
+      [dispatch, onTouchMove],
+    );
+
+    const myOnTouchEnd = useCallback(
+      (e: React.TouchEvent<HTMLDivElement>) => {
+        dispatch(externalEventAction({ handler: onTouchEnd, reactEvent: e }));
+      },
+      [dispatch, onTouchEnd],
+    );
+
     return (
-      // TODO fix these two a11y violations - we should probably add AccessibilityManager in here ?
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-      <div
-        className={clsx('recharts-wrapper', className)}
-        style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-        role="application"
-        onClick={myOnClick}
-        onContextMenu={myOnContextMenu}
-        onDoubleClick={myOnDoubleClick}
-        onFocus={onFocus}
-        onKeyDown={onKeyDown}
-        onMouseDown={myOnMouseDown}
-        onMouseEnter={myOnMouseEnter}
-        onMouseLeave={myOnMouseLeave}
-        onMouseMove={myOnMouseMove}
-        onMouseUp={myOnMouseUp}
-        onTouchEnd={myOnTouchEnd}
-        onTouchMove={myOnTouchMove}
-        onTouchStart={myOnTouchStart}
-        ref={innerRef}
-      >
-        {children}
-      </div>
+      <TooltipPortalContext.Provider value={tooltipPortal}>
+        <LegendPortalContext.Provider value={legendPortal}>
+          {/* TODO fix these two a11y violations - we should probably add AccessibilityManager in here ? */}
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+          <div
+            className={clsx('recharts-wrapper', className)}
+            style={{ position: 'relative', cursor: 'default', width, height, ...style }}
+            role="application"
+            onClick={myOnClick}
+            onContextMenu={myOnContextMenu}
+            onDoubleClick={myOnDoubleClick}
+            onFocus={onFocus}
+            onKeyDown={onKeyDown}
+            onMouseDown={myOnMouseDown}
+            onMouseEnter={myOnMouseEnter}
+            onMouseLeave={myOnMouseLeave}
+            onMouseMove={myOnMouseMove}
+            onMouseUp={myOnMouseUp}
+            onTouchEnd={myOnTouchEnd}
+            onTouchMove={myOnTouchMove}
+            onTouchStart={myOnTouchStart}
+            ref={innerRef}
+          >
+            {children}
+          </div>
+        </LegendPortalContext.Provider>
+      </TooltipPortalContext.Provider>
     );
   },
 );

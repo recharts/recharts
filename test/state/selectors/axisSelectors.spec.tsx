@@ -613,7 +613,6 @@ describe('selectAxisDomain', () => {
       expectXAxisTicks(container, []);
     });
 
-    // this test fails because the generateCategoricalChart code path throws
     it('should not throw an error when the data includes a Symbol', () => {
       const data = [{ x: Symbol.for('unit test') }];
       const spy = vi.fn();
@@ -630,7 +629,7 @@ describe('selectAxisDomain', () => {
         </BarChart>,
       );
       expect(spy).toHaveBeenLastCalledWith(undefined);
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(2);
     });
 
     it('should parse strings, and ignore values that are not numbers', () => {
@@ -2244,7 +2243,7 @@ describe('selectDisplayedData', () => {
         z: 1184,
       },
     ]);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should slice chart root data by dataStartIndex and dataEndIndex', () => {
@@ -2451,7 +2450,7 @@ describe('selectAllAppliedValues', () => {
         },
       },
     ]);
-    expect(displayedDataSpy).toHaveBeenCalledTimes(2);
+    expect(displayedDataSpy).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -3236,8 +3235,6 @@ describe('selectAxisWithScale', () => {
     const { container } = render(<TestCase />);
 
     expect(xAxisSpy).toHaveBeenCalledTimes(2);
-    // first call is with undefined, the chart is still parsing, fine
-    expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
     const expectedXAxis: XAxisSettings & BaseAxisWithScale = {
       allowDataOverflow: false,
       allowDecimals: true,
@@ -3314,7 +3311,6 @@ describe('selectAxisWithScale', () => {
     expect(xAxisSpy).toHaveBeenCalledTimes(4);
     expect(xAxisSpy).toHaveBeenNthCalledWith(3, expectedXAxis);
     expect(xAxisSpy).toHaveBeenNthCalledWith(4, expectedXAxis);
-    expect(xAxisSpy.mock.calls[0][0]).toBe(undefined);
     expect(xAxisSpy.mock.calls[1][0]).toBe(xAxisSpy.mock.calls[2][0]);
 
     /*

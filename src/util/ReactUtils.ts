@@ -1,9 +1,10 @@
-import { get } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 
 import * as React from 'react';
 import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
-import { isNullish, isNumber } from './DataUtils';
+import { isNullish } from './DataUtils';
 import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 export const SCALE_TYPES = [
@@ -103,25 +104,6 @@ export function findAllByType<
 
   return result;
 }
-
-/**
- * validate the width and height props of a chart element
- * @param  {Object} el A chart element
- * @return {Boolean}   true If the props width and height are number, and greater than 0
- */
-export const validateWidthHeight = ({
-  width,
-  height,
-}: {
-  readonly width?: number | undefined;
-  readonly height?: number | undefined;
-}): boolean => {
-  if (!isNumber(width) || width <= 0 || !isNumber(height) || height <= 0) {
-    return false;
-  }
-
-  return true;
-};
 
 export const isClipDot = (dot: ActiveDotType): boolean => {
   if (dot && typeof dot === 'object' && 'clipDot' in dot) {

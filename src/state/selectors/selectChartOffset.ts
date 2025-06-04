@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
-import { get } from 'es-toolkit/compat';
+// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
+import get from 'lodash.get';
 import { selectLegendSettings, selectLegendSize } from './legendSelectors';
 import {
   CartesianViewBoxRequired,

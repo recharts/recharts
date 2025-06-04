@@ -3,7 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 import { cleanupMockAnimation, mockAnimation } from '../helper/animation-frame-helper';
 import { Funnel, FunnelChart } from '../../src';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 const data = [
   { value: 100, name: '展现' },
@@ -115,7 +117,7 @@ describe('<FunnelChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith({ height: 40, width: 90, x: 5, y: 5 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
@@ -147,7 +149,7 @@ describe('<FunnelChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(100);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide height', () => {
@@ -163,7 +165,7 @@ describe('<FunnelChart />', () => {
       );
 
       expect(spy).toHaveBeenCalledWith(50);
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

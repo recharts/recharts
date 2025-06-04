@@ -62,9 +62,9 @@ describe('selectChartDataWithIndexes', () => {
       </ComposedChart>,
     );
     const expected: ChartDataState = {
-      chartData: undefined,
-      dataEndIndex: 0,
+      chartData: PageData,
       dataStartIndex: 0,
+      dataEndIndex: 5,
       computedData: undefined,
     };
     expect(spy).toHaveBeenCalledWith(expected);

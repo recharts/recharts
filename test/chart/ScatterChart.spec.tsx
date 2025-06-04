@@ -47,7 +47,9 @@ import { TooltipPayloadConfiguration, TooltipState } from '../../src/state/toolt
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 import { selectTooltipState } from '../../src/state/selectors/selectTooltipState';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
-import { useChartHeight, useChartWidth, useClipPathId, useViewBox } from '../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
+
+import { useClipPathId } from '../../src/container/ClipPathProvider';
 
 describe('ScatterChart of three dimension data', () => {
   const data01 = [
@@ -224,7 +226,7 @@ describe('ScatterChart of three dimension data', () => {
     expect(container.querySelectorAll('.recharts-symbol')).toHaveLength(0);
   });
 
-  test('mouse enter on one circle will trigger one Cross', () => {
+  test('mouse enter on scatter symbol should call onMouseEnter from props', () => {
     const onMouseEnter = vi.fn();
     const { container } = render(
       <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -239,7 +241,7 @@ describe('ScatterChart of three dimension data', () => {
       </ScatterChart>,
     );
 
-    const symbol = container.querySelectorAll('.recharts-symbols')[0];
+    const symbol = container.querySelectorAll('.recharts-scatter-symbol .recharts-symbols')[0];
     fireEvent.mouseEnter(symbol);
 
     expect(onMouseEnter).toHaveBeenCalled();
@@ -1287,7 +1289,7 @@ describe('ScatterChart of two dimension data', () => {
         </ScatterChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith({ x: 5, y: 5, width: 90, height: 40 });
     });
 
@@ -1319,7 +1321,7 @@ describe('ScatterChart of two dimension data', () => {
         </ScatterChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(100);
     });
 
@@ -1335,7 +1337,7 @@ describe('ScatterChart of two dimension data', () => {
         </ScatterChart>,
       );
 
-      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(50);
     });
   });
