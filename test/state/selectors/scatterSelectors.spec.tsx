@@ -429,14 +429,12 @@ describe('selectScatterPoints', () => {
         </Scatter>
       </ScatterChart>,
     );
-    expect(scatterPointsSpy).toHaveBeenCalledTimes(3);
-    expect(scatterPointsSpy).toHaveBeenNthCalledWith(1, undefined);
-    expect(scatterPointsSpy).toHaveBeenNthCalledWith(2, expectedPoints);
-    expect(scatterPointsSpy).toHaveBeenNthCalledWith(3, expectedPoints);
+    expect(scatterPointsSpy).toHaveBeenCalledTimes(1);
+    expect(scatterPointsSpy).toHaveBeenCalledWith(expectedPoints);
   });
 
   it('should be stable', () => {
-    expect.assertions(3);
+    expect.assertions(1);
     const Comp = (): null => {
       const result1 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false));
       const result2 = useAppSelector(state => selectScatterPoints(state, 0, 0, 0, scatterSettings, undefined, false));

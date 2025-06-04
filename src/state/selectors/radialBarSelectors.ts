@@ -6,7 +6,7 @@ import { selectChartDataAndAlwaysIgnoreIndexes, selectChartDataWithIndexes } fro
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
-import { DataKey, LayoutType, LegendType, PolarViewBox, TickItem } from '../../util/types';
+import { DataKey, LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
 import { BaseAxisWithScale, combineStackGroups, StackGroup } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
@@ -58,16 +58,18 @@ const selectRadiusAxisForRadialBar = (state: RechartsRootState, radiusAxisId: Ax
 const selectRadiusAxisScaleForRadar = (state: RechartsRootState, radiusAxisId: AxisId): RechartsScale | undefined =>
   selectPolarAxisScale(state, 'radiusAxis', radiusAxisId);
 
-export const selectRadiusAxisWithScale: (state: RechartsRootState, radiusAxisId: AxisId) => BaseAxisWithScale =
-  createSelector(
-    [selectRadiusAxisForRadialBar, selectRadiusAxisScaleForRadar],
-    (axis: RadiusAxisSettings, scale: RechartsScale | undefined) => {
-      if (axis == null || scale == null) {
-        return undefined;
-      }
-      return { ...axis, scale };
-    },
-  );
+export const selectRadiusAxisWithScale: (
+  state: RechartsRootState,
+  radiusAxisId: AxisId,
+) => BaseAxisWithScale | undefined = createSelector(
+  [selectRadiusAxisForRadialBar, selectRadiusAxisScaleForRadar],
+  (axis: RadiusAxisSettings, scale: RechartsScale | undefined): BaseAxisWithScale | undefined => {
+    if (axis == null || scale == null) {
+      return undefined;
+    }
+    return { ...axis, scale };
+  },
+);
 
 export const selectRadiusAxisTicks = (
   state: RechartsRootState,
@@ -94,9 +96,9 @@ export const selectAngleAxisWithScale: (
   state: RechartsRootState,
   _radiusAxisId: AxisId,
   angleAxisId: AxisId,
-) => BaseAxisWithScale = createSelector(
+) => BaseAxisWithScale | undefined = createSelector(
   [selectAngleAxisForRadialBar, selectAngleAxisScaleForRadialBar],
-  (axis: AngleAxisSettings, scale: RechartsScale | undefined) => {
+  (axis: AngleAxisSettings, scale: RechartsScale | undefined): BaseAxisWithScale | undefined => {
     if (axis == null || scale == null) {
       return undefined;
     }
@@ -279,7 +281,7 @@ export const selectPolarBarBandSize: (
     radiusAxisTicks,
     childMaxBarSize: number | undefined,
   ): number | undefined => {
-    const maxBarSize: number = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
+    const maxBarSize: number | undefined = isNullish(childMaxBarSize) ? globalMaxBarSize : childMaxBarSize;
     if (layout === 'centric') {
       return getBandSizeOfAxis(angleAxis, angleAxisTicks, true) ?? maxBarSize ?? 0;
     }
@@ -319,7 +321,8 @@ export const selectPolarBarPosition: (
       return undefined;
     }
     const position = allBarPositions.find(
-      (p: BarWithPosition) => p.stackId === barSettings.stackId && p.dataKeys.includes(barSettings.dataKey),
+      (p: BarWithPosition) =>
+        p.stackId === barSettings.stackId && barSettings.dataKey != null && p.dataKeys.includes(barSettings.dataKey),
     );
     if (position == null) {
       return undefined;
@@ -357,7 +360,7 @@ const selectPolarStackedData: (
   angleAxisId: AxisId,
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => Series<Record<number, number>, DataKey<any>> = createSelector(
+) => Series<Record<number, number>, DataKey<any>> | undefined = createSelector(
   [selectRadialBarStackGroups, selectSynchronisedRadialBarSettings],
   combineStackedData,
 );
@@ -394,11 +397,11 @@ export const selectRadialBarSectors: (
     bandSize: number | undefined,
     layout: LayoutType,
     baseValue: number | unknown,
-    polarViewBox: PolarViewBox,
+    polarViewBox: PolarViewBoxRequired,
     cells: ReadonlyArray<ReactElement> | undefined,
     pos: BarPositionPosition | undefined,
     stackedData: Series<Record<number, number>, DataKey<any>> | undefined,
-  ) => {
+  ): ReadonlyArray<RadialBarDataItem> => {
     if (
       radialBarSettings == null ||
       radiusAxis == null ||
@@ -442,9 +445,12 @@ export const selectRadialBarSectors: (
 export const selectRadialBarLegendPayload: (
   state: RechartsRootState,
   legendType: LegendType | undefined,
-) => Array<LegendPayload> = createSelector(
+) => ReadonlyArray<LegendPayload> = createSelector(
   [selectChartDataAndAlwaysIgnoreIndexes, (_s: RechartsRootState, l: LegendType) => l],
-  ({ chartData, dataStartIndex, dataEndIndex }: ChartDataState, legendType: LegendType) => {
+  (
+    { chartData, dataStartIndex, dataEndIndex }: ChartDataState,
+    legendType: LegendType,
+  ): ReadonlyArray<LegendPayload> => {
     if (chartData == null) {
       return [];
     }
@@ -454,7 +460,7 @@ export const selectRadialBarLegendPayload: (
       return [];
     }
 
-    return displayedData.map(entry => {
+    return displayedData.map((entry): LegendPayload => {
       return {
         type: legendType,
         // @ts-expect-error we need a better typing for our data inputs

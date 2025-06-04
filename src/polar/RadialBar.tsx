@@ -401,22 +401,22 @@ export function computeRadialBarDataItems({
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
   dataStartIndex: number;
   stackedDomain: ReadonlyArray<unknown> | null;
-  dataKey: DataKey<any>;
+  dataKey: DataKey<any> | undefined;
   baseValue: number | unknown;
   layout: LayoutType;
   radiusAxis: BaseAxisWithScale;
-  radiusAxisTicks: ReadonlyArray<TickItem>;
+  radiusAxisTicks: ReadonlyArray<TickItem> | undefined;
   bandSize: number;
   pos: BarPositionPosition;
   angleAxis: BaseAxisWithScale;
-  minPointSize: number;
+  minPointSize: number | undefined;
   cx: number;
   cy: number;
-  angleAxisTicks: ReadonlyArray<TickItem>;
+  angleAxisTicks: ReadonlyArray<TickItem> | undefined;
   cells: ReadonlyArray<ReactElement> | undefined;
   startAngle: number;
   endAngle: number;
-}) {
+}): ReadonlyArray<RadialBarDataItem> {
   return (displayedData ?? []).map((entry: unknown, index: number) => {
     let value, innerRadius, outerRadius, startAngle, endAngle, backgroundSector;
 
@@ -492,7 +492,7 @@ export function computeRadialBarDataItems({
       startAngle,
       endAngle,
       ...(cells && cells[index] && cells[index].props),
-    };
+    } satisfies RadialBarDataItem;
   });
 }
 
