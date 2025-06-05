@@ -5,6 +5,7 @@ import { RootSurface } from '../container/RootSurface';
 import { RechartsWrapper } from './RechartsWrapper';
 import { ClipPathProvider } from '../container/ClipPathProvider';
 import { CartesianChartProps } from '../util/types';
+import { ZoomPanContainer } from '../context/zoomPanContext';
 
 type CategoricalChartRequiredProps = CartesianChartProps & {
   width: NonNullable<CartesianChartProps['width']>;
@@ -44,7 +45,13 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartRequir
         onTouchEnd={props.onTouchEnd}
       >
         <RootSurface otherAttributes={attrs} title={title} desc={desc} ref={ref}>
-          <ClipPathProvider>{children}</ClipPathProvider>
+          {props.zoom ? (
+            <ClipPathProvider>
+              <ZoomPanContainer config={props.zoom}>{children}</ZoomPanContainer>
+            </ClipPathProvider>
+          ) : (
+            <ClipPathProvider>{children}</ClipPathProvider>
+          )}
         </RootSurface>
       </RechartsWrapper>
     );
