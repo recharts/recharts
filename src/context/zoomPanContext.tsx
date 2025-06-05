@@ -63,6 +63,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     // start with animations enabled so initial mount is unaffected
     disableAnimation: false,
   });
+  const interacted = useRef(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{
@@ -89,6 +90,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleWheel = useCallback(
     (e: React.WheelEvent<SVGGElement>) => {
       e.preventDefault();
+      interacted.current = true;
       const local = getLocalCoords(e);
       const anchorX = local.x - state.offsetX;
       const anchorY = local.y - state.offsetY;
@@ -115,7 +117,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         next.offsetX = state.offsetX - anchorX * (ratioX - 1);
       }
 
-      next.disableAnimation = disableAnimation;
+      next.disableAnimation = interacted.current && disableAnimation;
       update(next);
     },
     [state, minScale, maxScale, update, mode, getLocalCoords, disableAnimation],
@@ -123,6 +125,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
+      interacted.current = true;
       (e.target as Element).setPointerCapture?.(e.pointerId);
       const { x: localX, y: localY } = getLocalCoords(e);
       pointers.current.set(e.pointerId, { x: localX, y: localY });
@@ -148,6 +151,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<SVGGElement>) => {
       if (pointerSupported) return;
+      interacted.current = true;
       Array.from(e.changedTouches).forEach(t => {
         const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
         pointers.current.set(t.identifier, local);
@@ -206,7 +210,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
         }
 
-        next.disableAnimation = disableAnimation;
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
         update(next);
         return;
       }
@@ -221,7 +226,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           offsetX: state.offsetX + dx,
           offsetY: state.offsetY + dy,
         };
-        next.disableAnimation = disableAnimation;
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
         update(next);
       }
     },
@@ -264,7 +270,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
         }
 
-        next.disableAnimation = disableAnimation;
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
         update(next);
         return;
       }
@@ -280,7 +287,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           offsetX: state.offsetX + dx,
           offsetY: state.offsetY + dy,
         };
-        next.disableAnimation = disableAnimation;
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
         update(next);
       }
     },
@@ -288,7 +296,13 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   );
 
   const handleDoubleClick = useCallback(() => {
-    update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, disableAnimation });
+    update({
+      scaleX: 1,
+      scaleY: 1,
+      offsetX: 0,
+      offsetY: 0,
+      disableAnimation: interacted.current && disableAnimation,
+    });
   }, [update, disableAnimation]);
 
   const handleTouchEnd = useCallback(
