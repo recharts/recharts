@@ -1018,11 +1018,21 @@ function applyZoomToScale(
   axisRange: [number, number],
 ): RechartsScale {
   if (zoomScale === 1 && offset === 0) return scale;
-  if (typeof scale.invert !== 'function') return scale;
   const [r0, r1] = axisRange;
-  const domainStart = scale.invert((r0 - offset) / zoomScale);
-  const domainEnd = scale.invert((r1 - offset) / zoomScale);
-  return scale.copy().domain([domainStart, domainEnd]);
+  if (typeof (scale as any).invert === 'function') {
+    const domainStart = (scale as any).invert((r0 - offset) / zoomScale);
+    const domainEnd = (scale as any).invert((r1 - offset) / zoomScale);
+    return (scale as any).copy().domain([domainStart, domainEnd]);
+  }
+  if (typeof (scale as any).bandwidth === 'function') {
+    const domain = (scale as any).domain() as ReadonlyArray<any>;
+    const step = (scale as any).step ? (scale as any).step() : (scale as any).bandwidth();
+    const startIndex = Math.max(0, Math.floor((r0 - offset) / (step * zoomScale)));
+    const endIndex = Math.min(domain.length, Math.ceil((r1 - offset) / (step * zoomScale)));
+    const newDomain = domain.slice(startIndex, endIndex);
+    return (scale as any).copy().domain(newDomain).range([r0, r1]);
+  }
+  return scale;
 }
 
 export const combineNiceTicks = (
