@@ -55,7 +55,14 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }, []);
   const dispatch = useAppDispatch();
-  const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, disableAnimation });
+  const [state, setState] = useState<ZoomState>({
+    scaleX: 1,
+    scaleY: 1,
+    offsetX: 0,
+    offsetY: 0,
+    // start with animations enabled so initial mount is unaffected
+    disableAnimation: false,
+  });
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{
