@@ -69,9 +69,11 @@ export type XAxisSettings = CartesianAxisSettings & {
   orientation: XAxisOrientation;
 };
 
+export type YAxisWidth = number | 'auto';
+
 export type YAxisSettings = CartesianAxisSettings & {
   padding: YAxisPadding;
-  width: number;
+  width: YAxisWidth;
   orientation: YAxisOrientation;
 };
 
@@ -121,9 +123,19 @@ const cartesianAxisSlice = createSlice({
     removeZAxis(state, action: PayloadAction<ZAxisSettings>) {
       delete state.zAxis[action.payload.id];
     },
+    updateYAxisWidth(state, action: PayloadAction<{ id: AxisId; width: number }>) {
+      const { id, width } = action.payload;
+      if (state.yAxis[id]) {
+        state.yAxis[id] = {
+          ...state.yAxis[id],
+          width,
+        };
+      }
+    },
   },
 });
 
-export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis } = cartesianAxisSlice.actions;
+export const { addXAxis, removeXAxis, addYAxis, removeYAxis, addZAxis, removeZAxis, updateYAxisWidth } =
+  cartesianAxisSlice.actions;
 
 export const cartesianAxisReducer = cartesianAxisSlice.reducer;

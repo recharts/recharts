@@ -54,3 +54,5 @@ export const DATA_ITEM_INDEX_ATTRIBUTE_NAME = 'data-recharts-item-index';
  * Which makes it a convenient way of using recharts to render a chart but horrible identifier.
  */
 export const DATA_ITEM_DATAKEY_ATTRIBUTE_NAME = 'data-recharts-item-data-key';
+
+export const DEFAULT_Y_AXIS_WIDTH = 60;

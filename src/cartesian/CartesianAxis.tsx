@@ -63,6 +63,7 @@ export interface CartesianAxisProps {
    * this is Recharts scale, based on d3-scale.
    */
   scale: RechartsScale;
+  labelRef?: React.RefObject<Element>;
 }
 
 interface IState {
@@ -80,6 +81,8 @@ export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>,
 
 export class CartesianAxis extends Component<Props, IState> {
   static displayName = 'CartesianAxis';
+
+  tickRefs: React.MutableRefObject<Element[]>;
 
   static defaultProps: Partial<Props> = {
     x: 0,
@@ -107,6 +110,8 @@ export class CartesianAxis extends Component<Props, IState> {
 
   constructor(props: Props) {
     super(props);
+    this.tickRefs = React.createRef<Element[]>();
+    this.tickRefs.current = [];
     this.state = { fontSize: '', letterSpacing: '' };
   }
 
@@ -346,7 +351,10 @@ export class CartesianAxis extends Component<Props, IState> {
         className={clsx('recharts-cartesian-axis', className)}
         ref={ref => {
           if (ref) {
-            const tick: Element | undefined = ref.getElementsByClassName('recharts-cartesian-axis-tick-value')[0];
+            const tickNodes = ref.getElementsByClassName('recharts-cartesian-axis-tick-value');
+            this.tickRefs.current = Array.from(tickNodes);
+            const tick: Element | undefined = tickNodes[0];
+
             if (tick) {
               const calculatedFontSize = window.getComputedStyle(tick).fontSize;
               const calculatedLetterSpacing = window.getComputedStyle(tick).letterSpacing;

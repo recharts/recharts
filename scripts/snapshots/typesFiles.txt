@@ -180,6 +180,7 @@
   "types/util/ScatterUtils.d.ts",
   "types/util/ShallowEqual.d.ts",
   "types/util/TickUtils.d.ts",
+  "types/util/YAxisUtils.d.ts",
   "types/util/cursor",
   "types/util/cursor/getCursorPoints.d.ts",
   "types/util/cursor/getCursorRectangle.d.ts",

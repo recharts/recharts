@@ -49,6 +49,7 @@ interface LabelProps {
   textBreakAll?: boolean;
   angle?: number;
   index?: number;
+  labelRef?: React.RefObject<Element>;
 }
 
 export type Props = Omit<SVGProps<SVGTextElement>, 'viewBox'> & LabelProps;
@@ -384,7 +385,7 @@ const isPolar = (viewBox: CartesianViewBox | PolarViewBox): viewBox is PolarView
 
 export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
-  const { viewBox, position, value, children, content, className = '', textBreakAll } = props;
+  const { viewBox, position, value, children, content, className = '', textBreakAll, labelRef } = props;
 
   if (
     !viewBox ||
@@ -418,7 +419,13 @@ export function Label({ offset = 5, ...restProps }: Props) {
   const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
 
   return (
-    <Text className={clsx('recharts-label', className)} {...attrs} {...(positionAttrs as any)} breakAll={textBreakAll}>
+    <Text
+      ref={labelRef}
+      className={clsx('recharts-label', className)}
+      {...attrs}
+      {...(positionAttrs as any)}
+      breakAll={textBreakAll}
+    >
       {label}
     </Text>
   );
@@ -483,47 +490,53 @@ const parseViewBox = (props: any): ViewBox => {
   return {};
 };
 
-const parseLabel = (label: unknown, viewBox: ViewBox) => {
+const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
   if (!label) {
     return null;
   }
 
+  const commonProps = { viewBox, labelRef };
+
   if (label === true) {
-    return <Label key="label-implicit" viewBox={viewBox} />;
+    return <Label key="label-implicit" {...commonProps} />;
   }
 
   if (isNumOrStr(label)) {
-    return <Label key="label-implicit" viewBox={viewBox} value={label} />;
+    return <Label key="label-implicit" value={label} {...commonProps} />;
   }
 
   if (isValidElement(label)) {
     if (label.type === Label) {
-      return cloneElement<LabelProps>(label, { key: 'label-implicit', viewBox });
+      return cloneElement<LabelProps>(label, { key: 'label-implicit', ...commonProps });
     }
 
-    return <Label key="label-implicit" content={label} viewBox={viewBox} />;
+    return <Label key="label-implicit" content={label} {...commonProps} />;
   }
 
   if (isLabelContentAFunction(label)) {
-    return <Label key="label-implicit" content={label} viewBox={viewBox} />;
+    return <Label key="label-implicit" content={label} {...commonProps} />;
   }
 
   if (label && typeof label === 'object') {
-    return <Label viewBox={viewBox} {...label} key="label-implicit" />;
+    return <Label {...label} key="label-implicit" {...commonProps} />;
   }
 
   return null;
 };
 
 const renderCallByParent = (
-  parentProps: { children?: ReactNode; label?: unknown },
+  parentProps: {
+    children?: ReactNode;
+    label?: unknown;
+    labelRef?: React.RefObject<Element>;
+  },
   viewBox?: ViewBox,
   checkPropsLabel = true,
 ): ReactElement[] | null => {
   if (!parentProps || (!parentProps.children && checkPropsLabel && !parentProps.label)) {
     return null;
   }
-  const { children } = parentProps;
+  const { children, labelRef } = parentProps;
   const parentViewBox = parseViewBox(parentProps);
 
   const explicitChildren = findAllByType(children, Label).map((child, index) => {
@@ -537,7 +550,7 @@ const renderCallByParent = (
   if (!checkPropsLabel) {
     return explicitChildren;
   }
-  const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox);
+  const implicitLabel = parseLabel(parentProps.label, viewBox || parentViewBox, labelRef);
 
   return [implicitLabel, ...explicitChildren];
 };

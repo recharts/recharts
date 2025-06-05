@@ -1,9 +1,17 @@
 import * as React from 'react';
-import { Component, FunctionComponent, useEffect } from 'react';
+import { Component, FunctionComponent, useEffect, useRef, useLayoutEffect, isValidElement } from 'react';
 import { clsx } from 'clsx';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
 import { CartesianAxis } from './CartesianAxis';
-import { addYAxis, removeYAxis, YAxisOrientation, YAxisPadding, YAxisSettings } from '../state/cartesianAxisSlice';
+import {
+  addYAxis,
+  removeYAxis,
+  YAxisOrientation,
+  YAxisPadding,
+  YAxisSettings,
+  updateYAxisWidth,
+  YAxisWidth,
+} from '../state/cartesianAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import {
   implicitYAxis,
@@ -14,6 +22,8 @@ import {
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
 import { useIsPanorama } from '../context/PanoramaContext';
+import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
+import { isLabelContentAFunction } from '../component/Label';
 
 interface YAxisProps extends BaseAxisProps {
   /** The unique id of y-axis */
@@ -23,8 +33,11 @@ interface YAxisProps extends BaseAxisProps {
    * Ticks must be numbers when the axis is the type of number
    */
   ticks?: ReadonlyArray<AxisTick>;
-  /** The width of axis, which need to be set by user */
-  width?: number;
+  /**
+   * The width of axis, which need to be set by user.
+   * When set to 'auto', the width will be calculated dynamically based on tick labels and axis labels.
+   */
+  width?: YAxisWidth;
   mirror?: boolean;
   orientation?: YAxisOrientation;
   padding?: YAxisPadding;
@@ -50,14 +63,52 @@ function SetYAxisSettings(settings: YAxisSettings): null {
 }
 
 const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
-  const { yAxisId, className } = props;
+  const { yAxisId, className, width, label } = props;
+
+  const cartesianAxisRef = useRef(null);
+  const labelRef = useRef(null);
+
   const viewBox = useAppSelector(selectAxisViewBox);
   const isPanorama = useIsPanorama();
+  const dispatch = useAppDispatch();
   const axisType = 'yAxis';
   const scale = useAppSelector(state => selectAxisScale(state, axisType, yAxisId, isPanorama));
   const axisSize = useAppSelector(state => selectYAxisSize(state, yAxisId));
   const position = useAppSelector(state => selectYAxisPosition(state, yAxisId));
   const cartesianTickItems = useAppSelector(state => selectTicksOfAxis(state, axisType, yAxisId, isPanorama));
+
+  useLayoutEffect(() => {
+    // No dynamic width calculation is done when width !== 'auto'
+    // or when a function/react element is used for label
+    if (width !== 'auto' || !axisSize || isLabelContentAFunction(label) || isValidElement(label)) return;
+
+    const axisComponent = cartesianAxisRef.current;
+    const tickNodes = axisComponent?.tickRefs?.current;
+
+    const { tickSize, tickMargin } = axisComponent.props;
+
+    // get calculated width based on the label width, ticks etc
+    const updatedYAxisWidth = getCalculatedYAxisWidth({
+      ticks: tickNodes,
+      label: labelRef.current,
+      labelGapWithTick: 5,
+      tickSize,
+      tickMargin,
+    });
+
+    // if the width has changed, dispatch an action to update the width
+    if (Math.round(axisSize.width) !== Math.round(updatedYAxisWidth))
+      dispatch(updateYAxisWidth({ id: yAxisId, width: updatedYAxisWidth }));
+  }, [
+    cartesianAxisRef,
+    cartesianAxisRef?.current?.tickRefs?.current, // required to do re-calculation when using brush
+    axisSize?.width,
+    axisSize,
+    dispatch,
+    label,
+    yAxisId,
+    width,
+  ]);
 
   if (axisSize == null || position == null) {
     return null;
@@ -68,6 +119,8 @@ const YAxisImpl: FunctionComponent<Props> = (props: Props) => {
   return (
     <CartesianAxis
       {...allOtherProps}
+      ref={cartesianAxisRef}
+      labelRef={labelRef}
       scale={scale}
       x={position.x}
       y={position.y}
