@@ -2,7 +2,12 @@ export function applyZoomToScale(scale: any, zoomScale: number, offset: number, 
   if (zoomScale === 1 && offset === 0) return scale;
   const [r0, r1] = axisRange;
   const base: any = scale;
-  const zoomed = (value: unknown) => base(value) * zoomScale + offset;
+  const min = Math.min(r0, r1);
+  const max = Math.max(r0, r1);
+  const zoomed = (value: unknown) => {
+    const raw = base(value) * zoomScale + offset;
+    return Math.min(Math.max(raw, min), max);
+  };
   zoomed.domain = base.domain;
   zoomed.range = () => [r0, r1];
   if (typeof base.invert === 'function') {
