@@ -65,6 +65,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   });
   const interacted = useRef(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
+  const barDrag = useRef<'x' | 'y' | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{
     distance: number;
@@ -305,6 +306,25 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     });
   }, [update, disableAnimation]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<SVGRectElement>) => {
+      if (e.key === '+' || (e.key === '=' && e.ctrlKey)) {
+        handleWheel({ ...e, deltaY: -100 } as unknown as React.WheelEvent<SVGGElement>);
+      } else if (e.key === '-' || (e.key === '_' && e.ctrlKey)) {
+        handleWheel({ ...e, deltaY: 100 } as unknown as React.WheelEvent<SVGGElement>);
+      } else if (e.key === 'ArrowLeft') {
+        update({ ...state, offsetX: state.offsetX + 20 });
+      } else if (e.key === 'ArrowRight') {
+        update({ ...state, offsetX: state.offsetX - 20 });
+      } else if (e.key === 'ArrowUp') {
+        update({ ...state, offsetY: state.offsetY + 20 });
+      } else if (e.key === 'ArrowDown') {
+        update({ ...state, offsetY: state.offsetY - 20 });
+      }
+    },
+    [handleWheel, update, state],
+  );
+
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<SVGGElement>) => {
       if (pointerSupported) return;
@@ -338,32 +358,69 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     [disableAnimation],
   );
 
-  const barElements = showScrollBar
-    ? [
-        mode !== 'y' && (
-          <rect
-            key="xbar"
-            x={left - state.offsetX / state.scaleX}
-            y={top + height - 4}
-            width={width / state.scaleX}
-            height={3}
-            fill="rgba(0,0,0,0.3)"
-            rx={1}
-          />
-        ),
-        mode !== 'x' && (
-          <rect
-            key="ybar"
-            x={left + width - 4}
-            y={top - state.offsetY / state.scaleY}
-            width={3}
-            height={height / state.scaleY}
-            fill="rgba(0,0,0,0.3)"
-            rx={1}
-          />
-        ),
-      ].filter(Boolean)
-    : null;
+  const handleBarPointerDown = useCallback(
+    (axis: 'x' | 'y') => (e: React.PointerEvent<SVGRectElement>) => {
+      e.stopPropagation();
+      (e.target as Element).setPointerCapture?.(e.pointerId);
+      barDrag.current = axis;
+    },
+    [],
+  );
+
+  const handleBarPointerMove = useCallback(
+    (e: React.PointerEvent<SVGRectElement>) => {
+      if (!barDrag.current) return;
+      const local = getLocalCoords(e);
+      const next = { ...state };
+      if (barDrag.current === 'x') {
+        const xPos = local.x - left;
+        next.offsetX = -xPos * state.scaleX;
+      } else {
+        const yPos = local.y - top;
+        next.offsetY = -yPos * state.scaleY;
+      }
+      update(next);
+    },
+    [state, update, getLocalCoords, left, top],
+  );
+
+  const handleBarPointerUp = useCallback(() => {
+    barDrag.current = null;
+  }, []);
+
+  const barElements =
+    showScrollBar && (state.scaleX > 1 || state.scaleY > 1)
+      ? [
+          mode !== 'y' && (
+            <rect
+              key="xbar"
+              x={left - state.offsetX / state.scaleX}
+              y={top + height - 4}
+              width={width / state.scaleX}
+              height={3}
+              fill="rgba(0,0,0,0.3)"
+              rx={1}
+              onPointerDown={handleBarPointerDown('x')}
+              onPointerMove={handleBarPointerMove}
+              onPointerUp={handleBarPointerUp}
+            />
+          ),
+          mode !== 'x' && (
+            <rect
+              key="ybar"
+              x={left + width - 4}
+              y={top - state.offsetY / state.scaleY}
+              width={3}
+              height={height / state.scaleY}
+              fill="rgba(0,0,0,0.3)"
+              rx={1}
+              onPointerDown={handleBarPointerDown('y')}
+              onPointerMove={handleBarPointerMove}
+              onPointerUp={handleBarPointerUp}
+            />
+          ),
+        ].filter(Boolean)
+      : null;
 
   const childArray = React.Children.toArray(children);
   const [clippedChildren, tooltipChildren, otherChildren] = childArray.reduce<
@@ -401,6 +458,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         height={height}
         fill="transparent"
         pointerEvents="all"
+        tabIndex={0}
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -410,6 +468,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={handleKeyDown}
       />
       {barElements}
     </g>
