@@ -40,3 +40,8 @@ export const ClipPathProvider = ({ children }: { children: ReactNode }) => {
 export const useClipPathId = (): string | undefined => {
   return useContext(ClipPathIdContext);
 };
+
+export const ClipChartRect = ({ children }: { children: React.ReactNode }) => {
+  const clipPathId = useClipPathId();
+  return <g clipPath={clipPathId ? `url(#${clipPathId})` : undefined}>{children}</g>;
+};

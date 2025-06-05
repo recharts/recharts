@@ -13,6 +13,7 @@ import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis 
 import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
 import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import { useClipPathId } from '../container/ClipPathProvider';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
@@ -397,6 +398,7 @@ export function CartesianGrid(props: Props) {
   const yAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'yAxis', yAxisId, isPanorama),
   );
+  const clipPathId = useClipPathId();
 
   if (
     !isNumber(width) ||
@@ -480,7 +482,7 @@ export function CartesianGrid(props: Props) {
   }
 
   return (
-    <g className="recharts-cartesian-grid">
+    <g className="recharts-cartesian-grid" clipPath={clipPathId ? `url(#${clipPathId})` : undefined}>
       <Background
         fill={propsIncludingDefaults.fill}
         fillOpacity={propsIncludingDefaults.fillOpacity}

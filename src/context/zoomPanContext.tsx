@@ -1,5 +1,6 @@
 import React, { ReactNode, useCallback, useRef, useState } from 'react';
 import { useOffset } from './chartLayoutContext';
+import { ClipChartRect } from '../container/ClipPathProvider';
 import { useAppDispatch } from '../state/hooks';
 import { setZoom } from '../state/zoomSlice';
 
@@ -343,9 +344,29 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       ].filter(Boolean)
     : null;
 
+  const childArray = React.Children.toArray(children);
+  const [clippedChildren, otherChildren] = childArray.reduce<[React.ReactNode[], React.ReactNode[]]>(
+    (acc, child) => {
+      if (
+        React.isValidElement(child) &&
+        /Axis$|Legend|Tooltip|Brush/.test(
+          // @ts-expect-error displayName might not exist
+          child.type.displayName || child.type.name || '',
+        )
+      ) {
+        acc[1].push(child);
+      } else {
+        acc[0].push(child);
+      }
+      return acc;
+    },
+    [[], []],
+  );
+
   return (
     <g style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}>
-      {children}
+      <ClipChartRect>{clippedChildren}</ClipChartRect>
+      {otherChildren}
       <rect
         ref={overlayRef}
         x={left}
