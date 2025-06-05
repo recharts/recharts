@@ -8,7 +8,7 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolate, interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, StackId } from '../util/ChartUtils';
 import {
   ActiveDotType,
@@ -72,7 +72,7 @@ interface InternalAreaProps {
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
 
-  points?: ReadonlyArray<AreaPointItem>;
+  points: ReadonlyArray<AreaPointItem>;
   stackId?: StackId;
 
   tooltipType?: TooltipType;
@@ -254,7 +254,7 @@ function StaticArea({
   props,
   showLabels,
 }: {
-  points: ReadonlyArray<AreaPointItem> | undefined;
+  points: ReadonlyArray<AreaPointItem>;
   baseLine: Props['baseLine'];
   needClip: boolean;
   clipPathId: string;
@@ -409,8 +409,8 @@ function AreaWithAnimation({
   needClip: boolean;
   clipPathId: string;
   props: InternalProps;
-  previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem>>;
-  previousBaselineRef: MutableRefObject<InternalProps['baseLine']>;
+  previousPointsRef: MutableRefObject<ReadonlyArray<AreaPointItem> | null>;
+  previousBaselineRef: MutableRefObject<InternalProps['baseLine'] | null>;
 }) {
   const {
     points,
@@ -457,7 +457,7 @@ function AreaWithAnimation({
       {({ t }: { t: number }) => {
         if (prevPoints) {
           const prevPointsDiffFactor = prevPoints.length / points.length;
-          const stepPoints =
+          const stepPoints: ReadonlyArray<AreaPointItem> =
             /*
              * Here it is important that at the very end of the animation, on the last frame,
              * we render the original points without any interpolation.
@@ -467,14 +467,12 @@ function AreaWithAnimation({
              */
             t === 1
               ? points
-              : points.map((entry, index) => {
+              : points.map((entry, index): AreaPointItem => {
                   const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
                   if (prevPoints[prevPointIndex]) {
-                    const prev = prevPoints[prevPointIndex];
-                    const interpolatorX = interpolateNumber(prev.x, entry.x);
-                    const interpolatorY = interpolateNumber(prev.y, entry.y);
+                    const prev: AreaPointItem = prevPoints[prevPointIndex];
 
-                    return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                    return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.x, entry.x, t) };
                   }
 
                   return entry;
@@ -578,7 +576,7 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
    * If this was a useState, then every step in the animation would trigger a re-render.
    * So, useRef it is.
    */
-  const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>();
+  const previousPointsRef = useRef<ReadonlyArray<AreaPointItem> | null>(null);
   const previousBaselineRef = useRef<InternalProps['baseLine'] | null>();
 
   const prevPoints = previousPointsRef.current;
@@ -735,6 +733,11 @@ function AreaImpl(props: Props) {
 
   if (chartName !== 'AreaChart' && chartName !== 'ComposedChart') {
     // There is nothing stopping us from rendering Area in other charts, except for historical reasons. Do we want to allow that?
+    return null;
+  }
+
+  if (!points || !points.length) {
+    // No points to render, so we return null
     return null;
   }
 
