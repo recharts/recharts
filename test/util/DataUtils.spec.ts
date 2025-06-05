@@ -12,6 +12,7 @@ import {
   isNullish,
   upperFirst,
   isNan,
+  interpolate,
 } from '../../src/util/DataUtils';
 
 /**
@@ -168,6 +169,29 @@ describe('interpolateNumber', () => {
   });
 });
 
+describe('interpolate', () => {
+  it('should return a number when called with two numbers', () => {
+    expect(interpolate(10, 20, 0.5)).toBe(15);
+    expect(interpolate(10, 20, 0)).toBe(10);
+    expect(interpolate(10, 20, 1)).toBe(20);
+    expect(interpolate(10, 20, 0.25)).toBe(12.5);
+    expect(interpolate(10, 20, 0.75)).toBe(17.5);
+    expect(interpolate(10, 20, 0.1)).toBe(11);
+    expect(interpolate(20, 620, 0.8)).toBe(500);
+  });
+
+  it('should return second number if the first is null', () => {
+    expect(interpolate(null, 20, 0.5)).toBe(20);
+    expect(interpolate(null, 20, 0.3)).toBe(20);
+    expect(interpolate(null, 20, 0.9)).toBe(20);
+  });
+
+  it('should return null if second number is null', () => {
+    expect(interpolate(10, null, 0.5)).toBeNull();
+    expect(interpolate(null, null, 0.5)).toBeNull();
+  });
+});
+
 describe('findEntryInArray', () => {
   const dataList = [
     { name: 'a', address: { street: 'somewhere' } },
@@ -185,12 +209,12 @@ describe('findEntryInArray', () => {
     expect(findEntryInArray(dataList, v => v.address.street, 'here')).toStrictEqual(dataList[2]);
   });
 
-  it('should return null if first argument is null or undefined or empty array', () => {
+  it('should return undefined if first argument is null or undefined or empty array', () => {
     /** @see noteNeverCasting */
-    expect(findEntryInArray(null as never, 0, '0')).toEqual(null);
+    expect(findEntryInArray(null as never, 0, '0')).toEqual(undefined);
     /** @see noteNeverCasting */
-    expect(findEntryInArray(undefined as never, 0, '0')).toEqual(null);
-    expect(findEntryInArray([], 0, '0')).toEqual(null);
+    expect(findEntryInArray(undefined as never, 0, '0')).toEqual(undefined);
+    expect(findEntryInArray([], 0, '0')).toEqual(undefined);
   });
 });
 

@@ -2,7 +2,12 @@ import * as React from 'react';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { useOffset } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
-import { selectXAxisSettings, selectYAxisSettings } from '../state/selectors/axisSelectors';
+import {
+  implicitXAxis,
+  implicitYAxis,
+  selectXAxisSettings,
+  selectYAxisSettings,
+} from '../state/selectors/axisSelectors';
 
 type GraphicalItemClipPathProps = {
   xAxisId: AxisId;
@@ -14,8 +19,8 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
   const xAxis = useAppSelector(state => selectXAxisSettings(state, xAxisId));
   const yAxis = useAppSelector(state => selectYAxisSettings(state, yAxisId));
 
-  const needClipX = xAxis && xAxis.allowDataOverflow;
-  const needClipY = yAxis && yAxis.allowDataOverflow;
+  const needClipX: boolean = xAxis?.allowDataOverflow ?? implicitXAxis.allowDataOverflow;
+  const needClipY: boolean = yAxis?.allowDataOverflow ?? implicitYAxis.allowDataOverflow;
   const needClip = needClipX || needClipY;
 
   return { needClip, needClipX, needClipY };

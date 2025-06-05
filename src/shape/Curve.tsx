@@ -26,6 +26,7 @@ import { clsx } from 'clsx';
 import { LayoutType, PresentationAttributesWithProps, adaptEventHandlers } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { isNumber, upperFirst } from '../util/DataUtils';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 interface CurveFactories {
   [index: string]: CurveFactory;
@@ -65,12 +66,25 @@ export type CurveType =
   | 'stepAfter'
   | CurveFactory;
 
+/**
+ * @deprecated use {@link Coordinate} instead
+ * Duplicated with `Coordinate` in `util/types.ts`
+ */
 export interface Point {
   readonly x: number;
   readonly y: number;
 }
 
-const defined = (p: Point) => p.x === +p.x && p.y === +p.y;
+/**
+ * @deprecated use {@link NullableCoordinate} instead
+ * Duplicated with `NullableCoordinate` in `util/types.ts`
+ */
+export interface NullablePoint {
+  readonly x: number | null;
+  readonly y: number | null;
+}
+
+const defined = (p: NullablePoint): p is Point => isWellBehavedNumber(p.x) && isWellBehavedNumber(p.y);
 const getX = (p: Point) => p.x;
 const getY = (p: Point) => p.y;
 
@@ -91,8 +105,8 @@ interface CurveProps {
   className?: string;
   type?: CurveType;
   layout?: LayoutType;
-  baseLine?: number | ReadonlyArray<Point>;
-  points?: ReadonlyArray<Point>;
+  baseLine?: number | ReadonlyArray<NullablePoint>;
+  points?: ReadonlyArray<NullablePoint>;
   connectNulls?: boolean;
   path?: string;
   pathRef?: Ref<SVGPathElement>;
@@ -114,7 +128,7 @@ export const getPath = ({
   connectNulls = false,
 }: GetPathProps): string | null => {
   const curveFactory = getCurveFactory(type, layout);
-  const formatPoints = connectNulls ? points.filter(entry => defined(entry)) : points;
+  const formatPoints: ReadonlyArray<NullablePoint> = connectNulls ? points.filter(defined) : points;
   let lineFunction;
 
   if (Array.isArray(baseLine)) {

@@ -113,7 +113,14 @@
           }
         ]
       }
-    ]
+    ],
+    /*
+     * Typescript already handles no-redeclare, so we don't need to enforce it with ESLint.
+     * Also, Typescript handles it better because TS can handle function overloads
+     * which ESLint doesn't.
+     * See: https://typescript-eslint.io/rules/no-redeclare/
+     */
+    "no-redeclare": "off"
   },
   "overrides": [
     {
