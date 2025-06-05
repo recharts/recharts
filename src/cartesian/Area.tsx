@@ -129,14 +129,6 @@ type InternalProps = AreaSvgProps & InternalAreaProps;
 
 export type Props = AreaSvgProps & AreaProps;
 
-interface State {
-  prevPoints?: ReadonlyArray<AreaPointItem>;
-  prevBaseLine?: number | Coordinate[];
-  curPoints?: ReadonlyArray<AreaPointItem>;
-  curBaseLine?: number | Coordinate[];
-  isAnimationFinished?: boolean;
-}
-
 function getLegendItemColor(stroke: string | undefined, fill: string): string {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
@@ -906,7 +898,7 @@ export function computeArea({
   };
 }
 
-export class Area extends PureComponent<Props, State> {
+export class Area extends PureComponent<Props> {
   static displayName = 'Area';
 
   static defaultProps = defaultAreaProps;
