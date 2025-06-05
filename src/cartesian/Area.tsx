@@ -68,7 +68,7 @@ interface InternalAreaProps {
 
   legendType: LegendType;
   name?: string | number;
-  needClip?: boolean;
+  needClip: boolean;
   onAnimationEnd?: () => void;
   onAnimationStart?: () => void;
 
