@@ -1461,6 +1461,7 @@ export interface ZoomConfig {
   maxScale?: number;
   onZoomChange?: (state: { scaleX: number; scaleY: number; offsetX: number; offsetY: number }) => void;
   resetKey?: 'dblclick' | 'dbltap';
+  showScrollBar?: boolean;
 }
 
 export interface CartesianChartProps extends Partial<ExternalMouseEvents> {

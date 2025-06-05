@@ -10,6 +10,7 @@ export interface ZoomConfig {
   maxScale?: number;
   onZoomChange?: (state: ZoomState) => void;
   resetKey?: 'dblclick' | 'dbltap';
+  showScrollBar?: boolean;
 }
 
 interface ZoomState {
@@ -33,7 +34,7 @@ function restrictOffsets(mode: 'x' | 'y' | 'xy', s: ZoomState, w: number, h: num
 }
 
 export function ZoomPanContainer({ children, config }: { children: ReactNode; config: ZoomConfig }): React.JSX.Element {
-  const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange } = config;
+  const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange, showScrollBar = false } = config;
   const { width, height, left, top } = useOffset();
   const overlayRef = useRef<SVGRectElement>(null);
   const pointerSupported = typeof window !== 'undefined' && 'PointerEvent' in window;
@@ -293,11 +294,36 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     if (pointers.current.size === 0) dragStart.current = null;
   }, []);
 
+  const barElements = showScrollBar
+    ? [
+        mode !== 'y' && (
+          <rect
+            key="xbar"
+            x={left - state.offsetX / state.scaleX}
+            y={top + height - 4}
+            width={width / state.scaleX}
+            height={3}
+            fill="rgba(0,0,0,0.3)"
+            rx={1}
+          />
+        ),
+        mode !== 'x' && (
+          <rect
+            key="ybar"
+            x={left + width - 4}
+            y={top - state.offsetY / state.scaleY}
+            width={3}
+            height={height / state.scaleY}
+            fill="rgba(0,0,0,0.3)"
+            rx={1}
+          />
+        ),
+      ].filter(Boolean)
+    : null;
+
   return (
-    <g
-      clipPath={clipPathId ? `url(#${clipPathId})` : undefined}
-      style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}
-    >
+    <g style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}>
+      <g clipPath={clipPathId ? `url(#${clipPathId})` : undefined}>{children}</g>
       <rect
         ref={overlayRef}
         x={left}
@@ -316,7 +342,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         onTouchEnd={handleTouchEnd}
         onDoubleClick={handleDoubleClick}
       />
-      {children}
+      {barElements}
     </g>
   );
 }

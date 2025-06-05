@@ -1730,49 +1730,36 @@ export const combineAxisTicks = (
       };
     });
 
-    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-    return result.filter(
-      (row: TickItem) =>
-        !isNan(row.coordinate) && row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd),
-    );
+    return result.filter((row: TickItem) => !isNan(row.coordinate));
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-    return categoricalDomain
-      .map(
-        (entry: any, index: number): TickItem => ({
-          coordinate: scale(entry) + offset,
-          value: entry,
-          index,
-          offset,
-        }),
-      )
-      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
-  }
-
-  if (scale.ticks) {
-    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-    return scale
-      .ticks(tickCount)
-      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
-  }
-
-  // When axis has duplicated text, serial numbers are used to generate scale
-  const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-  return scale
-    .domain()
-    .map(
+    return categoricalDomain.map(
       (entry: any, index: number): TickItem => ({
         coordinate: scale(entry) + offset,
-        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        value: entry,
         index,
         offset,
       }),
-    )
-    .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
+    );
+  }
+
+  if (scale.ticks) {
+    return scale
+      .ticks(tickCount)
+      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+  }
+
+  // When axis has duplicated text, serial numbers are used to generate scale
+  return scale.domain().map(
+    (entry: any, index: number): TickItem => ({
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
+      offset,
+    }),
+  );
 };
 export const selectTicksOfAxis: (
   state: RechartsRootState,
@@ -1817,40 +1804,31 @@ export const combineGraphicalItemTicks = (
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-    return categoricalDomain
-      .map(
-        (entry: any, index: number): TickItem => ({
-          coordinate: scale(entry) + offset,
-          value: entry,
-          index,
-          offset,
-        }),
-      )
-      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
-  }
-
-  if (scale.ticks) {
-    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-    return scale
-      .ticks(tickCount)
-      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
-  }
-
-  // When axis has duplicated text, serial numbers are used to generate scale
-  const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
-  return scale
-    .domain()
-    .map(
+    return categoricalDomain.map(
       (entry: any, index: number): TickItem => ({
         coordinate: scale(entry) + offset,
-        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        value: entry,
         index,
         offset,
       }),
-    )
-    .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
+    );
+  }
+
+  if (scale.ticks) {
+    return scale
+      .ticks(tickCount)
+      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+  }
+
+  // When axis has duplicated text, serial numbers are used to generate scale
+  return scale.domain().map(
+    (entry: any, index: number): TickItem => ({
+      coordinate: scale(entry) + offset,
+      value: duplicateDomain ? duplicateDomain[entry] : entry,
+      index,
+      offset,
+    }),
+  );
 };
 
 export const selectTicksOfGraphicalItem: (

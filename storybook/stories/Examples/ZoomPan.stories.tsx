@@ -7,6 +7,8 @@ import {
   Bar,
   ScatterChart,
   Scatter,
+  AreaChart,
+  Area,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -78,6 +80,21 @@ export const ScatterXYZoom = {
         <Scatter dataKey="length" fill="#8884d8" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
       </ScatterChart>
+    </ResponsiveContainer>
+  ),
+};
+
+export const AreaZoomWithScrollBar = {
+  render: (_: Record<string, any>, context: StoryContext) => (
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart width={500} height={300} data={pageData} zoom={{ mode: 'xy', showScrollBar: true }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
+        <YAxis label={{ value: 'UV', angle: -90, position: 'insideLeft' }} />
+        <Tooltip />
+        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+      </AreaChart>
     </ResponsiveContainer>
   ),
 };
