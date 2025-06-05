@@ -472,7 +472,7 @@ function AreaWithAnimation({
                   if (prevPoints[prevPointIndex]) {
                     const prev: AreaPointItem = prevPoints[prevPointIndex];
 
-                    return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.x, entry.x, t) };
+                    return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
                   }
 
                   return entry;
