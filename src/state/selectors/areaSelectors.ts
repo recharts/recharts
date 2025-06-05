@@ -15,10 +15,11 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
+import { Point } from '../../shape/Curve';
 
-export interface AreaPointItem {
-  x: number | null;
-  y: number | null;
+export interface AreaPointItem extends Point {
+  x: number;
+  y: number;
   value?: number | number[];
   payload?: any;
 }

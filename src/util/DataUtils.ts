@@ -101,6 +101,10 @@ export const interpolateNumber = (numberA: number | undefined, numberB: number |
   return () => numberB;
 };
 
+export function interpolate(start: number, end: number, t: number): number {
+  return start + t * (end - start);
+}
+
 export function findEntryInArray<T>(
   ary: ReadonlyArray<T>,
   specifiedKey: number | string | ((entry: T) => unknown),
