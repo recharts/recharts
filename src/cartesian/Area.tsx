@@ -3,20 +3,20 @@ import * as React from 'react';
 import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import Animate from 'react-smooth';
-import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
+import { Curve, CurveType, NullablePoint, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolate, interpolateNumber, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolate, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, StackId } from '../util/ChartUtils';
 import {
   ActiveDotType,
   AnimationDuration,
   AnimationTiming,
-  Coordinate,
   DataKey,
   LegendType,
+  NullableCoordinate,
   TickItem,
   TooltipType,
 } from '../util/types';
@@ -37,6 +37,7 @@ import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -48,7 +49,7 @@ interface InternalAreaProps {
   animationBegin: number;
   animationDuration: AnimationDuration;
   animationEasing: AnimationTiming;
-  baseLine?: number | Coordinate[];
+  baseLine: number | ReadonlyArray<NullableCoordinate> | undefined;
 
   baseValue?: BaseValue;
   className?: string;
@@ -129,7 +130,7 @@ type InternalProps = AreaSvgProps & InternalAreaProps;
 
 export type Props = AreaSvgProps & AreaProps;
 
-function getLegendItemColor(stroke: string | undefined, fill: string): string {
+function getLegendItemColor(stroke: string | undefined, fill: string | undefined): string | undefined {
   return stroke && stroke !== 'none' ? stroke : fill;
 }
 
@@ -229,7 +230,7 @@ function Dots({
     return renderDotItem(dot, dotProps);
   });
   const dotsProps = {
-    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : null,
+    clipPath: needClip ? `url(#clipPath-${clipDot ? '' : 'dots-'}${clipPathId})` : undefined,
   };
   return (
     <Layer className="recharts-area-dots" {...dotsProps}>
@@ -258,7 +259,7 @@ function StaticArea({
   return (
     <>
       {points?.length > 1 && (
-        <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+        <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <Curve
             {...filterProps(others, true)}
             points={points}
@@ -312,6 +313,9 @@ function VerticalRect({
 }) {
   const startY = points[0].y;
   const endY = points[points.length - 1].y;
+  if (!isWellBehavedNumber(startY) || !isWellBehavedNumber(endY)) {
+    return null;
+  }
   const height = alpha * Math.abs(startY - endY);
   let maxX = Math.max(...points.map(entry => entry.x || 0));
 
@@ -348,6 +352,9 @@ function HorizontalRect({
 }) {
   const startX = points[0].x;
   const endX = points[points.length - 1].x;
+  if (!isWellBehavedNumber(startX) || !isWellBehavedNumber(endX)) {
+    return null;
+  }
   const width = alpha * Math.abs(startX - endX);
   let maxY = Math.max(...points.map(entry => entry.y || 0));
 
@@ -469,23 +476,19 @@ function AreaWithAnimation({
 
                   return entry;
                 });
-          let stepBaseLine;
+          let stepBaseLine: number | ReadonlyArray<NullablePoint>;
 
           if (isNumber(baseLine)) {
-            const interpolator = interpolateNumber(prevBaseLine as number, baseLine);
-            stepBaseLine = interpolator(t);
+            stepBaseLine = interpolate(prevBaseLine, baseLine, t);
           } else if (isNullish(baseLine) || isNan(baseLine)) {
-            const interpolator = interpolateNumber(prevBaseLine as number, 0);
-            stepBaseLine = interpolator(t);
+            stepBaseLine = interpolate(prevBaseLine, 0, t);
           } else {
-            stepBaseLine = (baseLine as Coordinate[]).map((entry, index) => {
+            stepBaseLine = baseLine.map((entry, index) => {
               const prevPointIndex = Math.floor(index * prevPointsDiffFactor);
-              if ((prevBaseLine as Coordinate[])[prevPointIndex]) {
-                const prev = (prevBaseLine as Coordinate[])[prevPointIndex];
-                const interpolatorX = interpolateNumber(prev.x, entry.x);
-                const interpolatorY = interpolateNumber(prev.y, entry.y);
+              if (Array.isArray(prevBaseLine) && prevBaseLine[prevPointIndex]) {
+                const prev = prevBaseLine[prevPointIndex];
 
-                return { ...entry, x: interpolatorX(t), y: interpolatorY(t) };
+                return { ...entry, x: interpolate(prev.x, entry.x, t), y: interpolate(prev.y, entry.y, t) };
               }
 
               return entry;

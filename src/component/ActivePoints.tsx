@@ -10,8 +10,8 @@ import { useAppSelector } from '../state/hooks';
 import { selectActiveLabel, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 
 export interface PointType {
-  readonly x: number;
-  readonly y: number;
+  readonly x: number | null;
+  readonly y: number | null;
   readonly value?: any;
   readonly payload?: any;
 }
@@ -31,9 +31,9 @@ const renderActivePoint = ({
    * Different graphical elements have different opinion on what is their main color.
    * Sometimes stroke, sometimes fill, sometimes combination.
    */
-  mainColor: string;
+  mainColor: string | undefined;
 }) => {
-  if (activeDot === false) {
+  if (activeDot === false || point.x == null || point.y == null) {
     return null;
   }
   const dotProps: ActiveDotProps = {
@@ -42,7 +42,7 @@ const renderActivePoint = ({
     cx: point.x,
     cy: point.y,
     r: 4,
-    fill: mainColor,
+    fill: mainColor ?? 'none',
     strokeWidth: 2,
     stroke: '#fff',
     payload: point.payload,
@@ -67,7 +67,12 @@ const renderActivePoint = ({
 
 type ActivePointsProps = {
   points: ReadonlyArray<PointType>;
-  mainColor: string;
+  /**
+   * Different graphical elements have different opinion on what is their main color.
+   * Sometimes stroke, sometimes fill, sometimes combination.
+   * `undefined` means that the color is not set, and the point will be transparent.
+   */
+  mainColor: string | undefined;
   itemDataKey: DataKey<any>;
   activeDot: ActiveDotType;
 };
@@ -80,7 +85,7 @@ export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: Acti
     return null;
   }
 
-  let activePoint: PointType;
+  let activePoint: PointType | undefined;
 
   const tooltipAxisDataKey = tooltipAxis.dataKey;
   if (tooltipAxisDataKey && !tooltipAxis.allowDuplicatedCategory) {

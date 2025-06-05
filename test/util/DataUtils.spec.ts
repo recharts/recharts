@@ -185,12 +185,12 @@ describe('findEntryInArray', () => {
     expect(findEntryInArray(dataList, v => v.address.street, 'here')).toStrictEqual(dataList[2]);
   });
 
-  it('should return null if first argument is null or undefined or empty array', () => {
+  it('should return undefined if first argument is null or undefined or empty array', () => {
     /** @see noteNeverCasting */
-    expect(findEntryInArray(null as never, 0, '0')).toEqual(null);
+    expect(findEntryInArray(null as never, 0, '0')).toEqual(undefined);
     /** @see noteNeverCasting */
-    expect(findEntryInArray(undefined as never, 0, '0')).toEqual(null);
-    expect(findEntryInArray([], 0, '0')).toEqual(null);
+    expect(findEntryInArray(undefined as never, 0, '0')).toEqual(undefined);
+    expect(findEntryInArray([], 0, '0')).toEqual(undefined);
   });
 });
 

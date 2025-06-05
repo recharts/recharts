@@ -375,7 +375,7 @@ describe('ActiveDot', () => {
     it('should render default activeDot and give it props', () => {
       const { container, debug } = render(
         <RadarChart height={600} width={600} data={PageData}>
-          <Radar dataKey="uv" />
+          <Radar dataKey="uv" stroke="blue" fill="red" />
           <Tooltip />
         </RadarChart>,
       );
@@ -389,11 +389,12 @@ describe('ActiveDot', () => {
       const circle = activeDot.querySelector('circle');
       expect(circle).toBeVisible();
       // Not sure why does Radar activeDot not have fill but for some reason it does not.
-      expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', /* 'fill', */ 'stroke-width', 'stroke', 'class']);
+      expect(circle.getAttributeNames()).toEqual(['cx', 'cy', 'r', 'fill', 'stroke-width', 'stroke', 'class']);
       expect(circle.getAttribute('class')).toEqual('recharts-dot');
       expect(circle.getAttribute('cx')).toEqual('203.42950722399726');
       expect(circle.getAttribute('cy')).toEqual('244.245');
       expect(circle.getAttribute('r')).toEqual('4');
+      expect(circle.getAttribute('fill')).toEqual('blue');
       expect(circle.getAttribute('stroke-width')).toEqual('2');
       expect(circle.getAttribute('stroke')).toEqual('#fff');
 
@@ -404,7 +405,7 @@ describe('ActiveDot', () => {
     it('should clone custom Dot element and inject extra sneaky props', () => {
       const { container, debug } = render(
         <RadarChart height={600} width={600} data={PageData}>
-          <Radar dataKey="uv" activeDot={<g data-testid="my-custom-dot" />} />
+          <Radar dataKey="uv" activeDot={<g data-testid="my-custom-dot" />} stroke="blue" fill="red" />
           <Tooltip />
         </RadarChart>,
       );
@@ -425,7 +426,7 @@ describe('ActiveDot', () => {
         'cx',
         'cy',
         'r',
-        // 'fill',
+        'fill',
         'stroke-width',
         'stroke',
         'payload',
@@ -437,6 +438,7 @@ describe('ActiveDot', () => {
       expect(customElement.getAttribute('cx')).toEqual('203.42950722399726');
       expect(customElement.getAttribute('cy')).toEqual('244.245');
       expect(customElement.getAttribute('r')).toEqual('4');
+      expect(customElement.getAttribute('fill')).toEqual('blue');
       expect(customElement.getAttribute('stroke-width')).toEqual('2');
       expect(customElement.getAttribute('stroke')).toEqual('#fff');
       expect(customElement.getAttribute('payload')).toEqual('[object Object]'); // sic!
@@ -454,7 +456,7 @@ describe('ActiveDot', () => {
       };
       const { container, debug } = render(
         <RadarChart height={600} width={600} data={PageData}>
-          <Radar dataKey="uv" activeDot={MyCustomDot} />
+          <Radar dataKey="uv" activeDot={MyCustomDot} stroke="blue" fill="red" />
           <Tooltip />
         </RadarChart>,
       );
@@ -478,6 +480,7 @@ describe('ActiveDot', () => {
         stroke: '#fff',
         strokeWidth: 2,
         value: 189,
+        fill: 'blue',
       });
 
       fireEvent.mouseOut(tooltipTrigger);

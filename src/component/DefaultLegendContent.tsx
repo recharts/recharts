@@ -27,8 +27,9 @@ export type Formatter = (value: any, entry: LegendPayload, index: number) => Rea
 export interface LegendPayload {
   /**
    * This is the text that will be displayed in the legend in the DOM.
+   * If undefined, the text will not be displayed, so the icon will be rendered without text.
    */
-  value: string;
+  value: string | undefined;
   type?: LegendType;
   color?: string;
   payload?: {

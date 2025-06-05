@@ -485,7 +485,7 @@ describe('selectTooltipPayload', () => {
       arrayTooltipSearcher,
       'axis',
     );
-    const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: null, value: undefined };
+    const expected: TooltipPayloadEntry = { dataKey: 'dataKeyOnAxis', payload: undefined, value: undefined };
     expect(actual).toEqual([expected]);
   });
 
