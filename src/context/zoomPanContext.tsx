@@ -3,6 +3,7 @@ import { useOffset } from './chartLayoutContext';
 import { ClipChartRect } from '../container/ClipPathProvider';
 import { useAppDispatch } from '../state/hooks';
 import { setZoom } from '../state/zoomSlice';
+import { useChartData } from './chartDataContext';
 
 export interface ZoomConfig {
   mode?: 'x' | 'y' | 'xy';
@@ -16,6 +17,8 @@ export interface ZoomConfig {
   dragToZoom?: boolean;
   /** Automatically adjust Y domain based on the visible X range */
   autoScaleYDomain?: boolean;
+  /** Keep a specific line centered when zooming/panning */
+  followLineKey?: string;
 }
 
 interface ZoomState {
@@ -25,6 +28,7 @@ interface ZoomState {
   offsetY: number;
   disableAnimation?: boolean;
   autoScaleYDomain?: boolean;
+  followLineKey?: string;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -38,6 +42,7 @@ function restrictOffsets(mode: 'x' | 'y' | 'xy', s: ZoomState, w: number, h: num
     offsetX: mode === 'y' ? 0 : clamp(s.offsetX, minX, 0),
     offsetY: mode === 'x' ? 0 : clamp(s.offsetY, minY, 0),
     disableAnimation: s.disableAnimation,
+    followLineKey: s.followLineKey,
   };
 }
 
@@ -53,6 +58,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     autoScaleYDomain = false,
   } = config;
   const { width, height, left, top } = useOffset();
+  const chartData = useChartData();
   const overlayRef = useRef<SVGRectElement>(null);
   const pointerSupported = typeof window !== 'undefined' && 'PointerEvent' in window;
 
@@ -70,6 +76,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     // start with animations enabled so initial mount is unaffected
     disableAnimation: false,
     autoScaleYDomain,
+    followLineKey: config.followLineKey,
   });
   const interacted = useRef(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
@@ -92,11 +99,25 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     (next: ZoomState) => {
       const withFlag = { ...next, autoScaleYDomain };
       const restricted = restrictOffsets(mode, withFlag, width, height);
+      if (config.followLineKey && chartData && chartData.length > 0) {
+        const values = chartData.map(d => Number(d[config.followLineKey!]));
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const step = width / chartData.length;
+        const start = -restricted.offsetX / (step * restricted.scaleX);
+        const end = start + width / (step * restricted.scaleX);
+        const mid = Math.min(Math.max(Math.round((start + end) / 2), 0), chartData.length - 1);
+        const v = Number(chartData[mid][config.followLineKey!]);
+        if (Number.isFinite(v) && max !== min) {
+          const baseY = top + height - ((v - min) / (max - min)) * height;
+          restricted.offsetY += top + height / 2 - (baseY * restricted.scaleY + restricted.offsetY);
+        }
+      }
       setState(restricted);
       onZoomChange?.(restricted);
       dispatch(setZoom(restricted));
     },
-    [onZoomChange, dispatch, mode, width, height, autoScaleYDomain],
+    [onZoomChange, dispatch, mode, width, height, autoScaleYDomain, chartData, config.followLineKey, top],
   );
 
   const handleWheel = useCallback(
