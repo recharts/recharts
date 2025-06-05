@@ -1,6 +1,7 @@
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 import { useContext } from 'react';
 import { type AppDispatch, type RechartsRootState } from './store';
+import { selectDisableZoomAnimation } from './selectors/zoomSelectors';
 
 import { RechartsReduxContext } from './RechartsReduxContext';
 
@@ -47,4 +48,8 @@ export function useAppSelector<T>(selector: (state: RechartsRootState) => T): T 
     context ? selector : noop,
     refEquality,
   );
+}
+
+export function useZoomAnimationDisabled(): boolean {
+  return useAppSelector(selectDisableZoomAnimation) ?? false;
 }

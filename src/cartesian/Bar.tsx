@@ -54,7 +54,7 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { BarSettings, selectBarRectangles } from '../state/selectors/barSelectors';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
-import { useAppSelector } from '../state/hooks';
+import { useAppSelector, useZoomAnimationDisabled } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
@@ -548,6 +548,7 @@ function BarImpl(props: Props) {
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const layout = useChartLayout();
+  const zoomDisabled = useZoomAnimationDisabled();
 
   const isPanorama = useIsPanorama();
 
@@ -601,7 +602,7 @@ function BarImpl(props: Props) {
         animationBegin={animationBegin}
         animationDuration={animationDuration}
         animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive}
+        isAnimationActive={isAnimationActive && !zoomDisabled}
       />
     </SetErrorBarContext>
   );

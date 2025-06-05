@@ -349,13 +349,6 @@ const combineTicksOfTooltipAxis = (
     );
   })();
 
-  if (range) {
-    const [r0, r1] = range;
-    const min = Math.min(r0, r1);
-    const max = Math.max(r0, r1);
-    return ticks.filter(t => t.coordinate >= min && t.coordinate <= max);
-  }
-
   return ticks;
 };
 

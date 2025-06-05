@@ -34,7 +34,7 @@ import { useIsPanorama } from '../context/PanoramaContext';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
-import { useAppSelector } from '../state/hooks';
+import { useAppSelector, useZoomAnimationDisabled } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 
@@ -711,6 +711,7 @@ function AreaImpl(props: Props) {
   } = resolveDefaultProps(props, defaultAreaProps);
   const layout = useChartLayout();
   const chartName = useChartName();
+  const zoomDisabled = useZoomAnimationDisabled();
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
@@ -753,7 +754,7 @@ function AreaImpl(props: Props) {
       height={height}
       hide={hide}
       layout={layout}
-      isAnimationActive={isAnimationActive}
+      isAnimationActive={isAnimationActive && !zoomDisabled}
       isRange={isRange}
       legendType={legendType}
       needClip={needClip}

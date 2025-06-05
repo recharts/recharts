@@ -114,6 +114,7 @@ export { getNiceTickValues } from './util/scale/getNiceTickValues';
 export { useActiveTooltipLabel } from './hooks';
 
 export { useChartHeight, useChartWidth } from './context/chartLayoutContext';
+export { useZoomAnimationDisabled } from './state/hooks';
 export { ZoomPanContainer } from './context/zoomPanContext';
 export type { ZoomConfig } from './context/zoomPanContext';
 export { ClipChartRect } from './container/ClipPathProvider';
