@@ -21,6 +21,17 @@ interface ZoomState {
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
+function restrictOffsets(mode: 'x' | 'y' | 'xy', s: ZoomState, w: number, h: number): ZoomState {
+  const minX = w * (1 - s.scaleX);
+  const minY = h * (1 - s.scaleY);
+  return {
+    scaleX: s.scaleX,
+    scaleY: s.scaleY,
+    offsetX: mode === 'y' ? 0 : clamp(s.offsetX, minX, 0),
+    offsetY: mode === 'x' ? 0 : clamp(s.offsetY, minY, 0),
+  };
+}
+
 export function ZoomPanContainer({ children, config }: { children: ReactNode; config: ZoomConfig }): React.JSX.Element {
   const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange } = config;
   const { width, height, left, top } = useOffset();
@@ -50,11 +61,12 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   const update = useCallback(
     (next: ZoomState) => {
-      setState(next);
-      onZoomChange?.(next);
-      dispatch(setZoom(next));
+      const restricted = restrictOffsets(mode, next, width, height);
+      setState(restricted);
+      onZoomChange?.(restricted);
+      dispatch(setZoom(restricted));
     },
-    [onZoomChange, dispatch],
+    [onZoomChange, dispatch, mode, width, height],
   );
 
   const handleWheel = useCallback(

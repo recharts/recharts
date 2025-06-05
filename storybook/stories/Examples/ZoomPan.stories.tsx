@@ -27,8 +27,8 @@ export const BasicZoomPan = {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart width={500} height={300} data={pageData} zoom={{ mode: 'xy' }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
+        <YAxis label={{ value: 'UV', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
         <Line type="monotone" dataKey="uv" stroke="#8884d8" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
@@ -42,8 +42,8 @@ export const XAxisZoom = {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart width={500} height={300} data={pageData} zoom={{ mode: 'x', maxScale: 8 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
+        <YAxis label={{ value: 'PV', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
         <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
@@ -57,8 +57,8 @@ export const YAxisZoomBar = {
     <ResponsiveContainer width="100%" height="100%">
       <BarChart width={500} height={300} data={pageData} zoom={{ mode: 'y' }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
+        <YAxis label={{ value: 'Amount', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
         <Bar dataKey="amt" fill="#8884d8" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
@@ -72,8 +72,8 @@ export const ScatterXYZoom = {
     <ResponsiveContainer width="100%" height={400}>
       <ScatterChart data={babiesAndVideosCorrelation} zoom={{ mode: 'xy', minScale: 1, maxScale: 10 }}>
         <CartesianGrid />
-        <XAxis type="number" dataKey="year" />
-        <YAxis type="number" dataKey="babies" />
+        <XAxis type="number" dataKey="year" label={{ value: 'Year', position: 'bottom' }} />
+        <YAxis type="number" dataKey="babies" label={{ value: 'Births', angle: -90, position: 'insideLeft' }} />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
         <Scatter dataKey="length" fill="#8884d8" />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />

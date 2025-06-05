@@ -1019,25 +1019,23 @@ function applyZoomToScale(
 ): RechartsScale {
   if (zoomScale === 1 && offset === 0) return scale;
   const [r0, r1] = axisRange;
-  if (typeof (scale as any).invert === 'function') {
-    const domainStart = (scale as any).invert((r0 - offset) / zoomScale);
-    const domainEnd = (scale as any).invert((r1 - offset) / zoomScale);
-    return (scale as any).copy().domain([domainStart, domainEnd]);
+  const base: any = scale;
+  const zoomed = (value: unknown) => base(value) * zoomScale + offset;
+  zoomed.domain = base.domain;
+  zoomed.range = () => [r0, r1];
+  if (typeof base.invert === 'function') {
+    zoomed.invert = (val: number) => base.invert((val - offset) / zoomScale);
   }
-  if (typeof (scale as any).bandwidth === 'function') {
-    const base: any = scale;
-    const zoomed = (value: unknown) => base(value) * zoomScale + offset;
-    zoomed.domain = base.domain;
-    zoomed.range = () => [r0, r1];
-    if (typeof base.bandwidth === 'function') {
-      zoomed.bandwidth = () => base.bandwidth() * zoomScale;
-    }
-    if (typeof base.step === 'function') {
-      zoomed.step = () => base.step() * zoomScale;
-    }
-    return zoomed as RechartsScale;
+  if (typeof base.bandwidth === 'function') {
+    zoomed.bandwidth = () => base.bandwidth() * zoomScale;
   }
-  return scale;
+  if (typeof base.step === 'function') {
+    zoomed.step = () => base.step() * zoomScale;
+  }
+  if (typeof base.ticks === 'function') {
+    zoomed.ticks = (...args: any[]) => base.ticks(...args);
+  }
+  return zoomed as RechartsScale;
 }
 
 export const combineNiceTicks = (
