@@ -24,6 +24,13 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 export function ZoomPanContainer({ children, config }: { children: ReactNode; config: ZoomConfig }): React.JSX.Element {
   const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange } = config;
   const { width, height, left, top } = useOffset();
+  const overlayRef = useRef<SVGRectElement>(null);
+
+  const getLocalCoords = useCallback((e: { clientX: number; clientY: number }) => {
+    const rect = overlayRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }, []);
   const clipPathId = useClipPathId();
   const dispatch = useAppDispatch();
   const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
@@ -51,8 +58,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleWheel = useCallback(
     (e: React.WheelEvent<SVGGElement>) => {
       e.preventDefault();
-      const anchorX = e.clientX - left - state.offsetX;
-      const anchorY = e.clientY - top - state.offsetY;
+      const local = getLocalCoords(e);
+      const anchorX = local.x - state.offsetX;
+      const anchorY = local.y - state.offsetY;
       const delta = e.deltaY < 0 ? 1.1 : 0.9;
 
       const next = { ...state };
@@ -78,15 +86,16 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
       update(next);
     },
-    [state, minScale, maxScale, update, mode, left, top],
+    [state, minScale, maxScale, update, mode, getLocalCoords],
   );
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
       (e.target as Element).setPointerCapture?.(e.pointerId);
-      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const { x: localX, y: localY } = getLocalCoords(e);
+      pointers.current.set(e.pointerId, { x: localX, y: localY });
       if (pointers.current.size === 1) {
-        dragStart.current = { x: e.clientX, y: e.clientY };
+        dragStart.current = { x: localX, y: localY };
       }
       if (pointers.current.size === 2) {
         const [a, b] = Array.from(pointers.current.values());
@@ -96,19 +105,20 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           scaleY: state.scaleY,
           offsetX: state.offsetX,
           offsetY: state.offsetY,
-          centerX: (a.x + b.x) / 2 - left - state.offsetX,
-          centerY: (a.y + b.y) / 2 - top - state.offsetY,
+          centerX: (a.x + b.x) / 2 - state.offsetX,
+          centerY: (a.y + b.y) / 2 - state.offsetY,
         };
       }
     },
-    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, left, top],
+    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords],
   );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
       const prev = pointers.current.get(e.pointerId);
       if (!prev) return;
-      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const { x: localX, y: localY } = getLocalCoords(e);
+      pointers.current.set(e.pointerId, { x: localX, y: localY });
 
       if (pointers.current.size === 2 && pinchStart.current) {
         const [a, b] = Array.from(pointers.current.values());
@@ -141,9 +151,10 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       }
 
       if (dragStart.current) {
-        const dx = e.clientX - dragStart.current.x;
-        const dy = e.clientY - dragStart.current.y;
-        dragStart.current = { x: e.clientX, y: e.clientY };
+        const { x: localX2, y: localY2 } = getLocalCoords(e);
+        const dx = localX2 - dragStart.current.x;
+        const dy = localY2 - dragStart.current.y;
+        dragStart.current = { x: localX2, y: localY2 };
         const next = {
           ...state,
           offsetX: state.offsetX + dx,
@@ -152,7 +163,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         update(next);
       }
     },
-    [state, update, minScale, maxScale, mode, left, top],
+    [state, update, minScale, maxScale, mode, getLocalCoords],
   );
 
   const handlePointerUp = useCallback((e?: React.PointerEvent<SVGGElement>) => {
@@ -172,6 +183,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}
     >
       <rect
+        ref={overlayRef}
         x={left}
         y={top}
         width={width}
