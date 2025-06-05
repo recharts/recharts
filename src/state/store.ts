@@ -16,6 +16,7 @@ import { polarOptionsReducer } from './polarOptionsSlice';
 import { keyboardEventsMiddleware } from './keyboardEventsMiddleware';
 import { externalEventsMiddleware } from './externalEventsMiddleware';
 import { touchEventMiddleware } from './touchEventsMiddleware';
+import { zoomReducer } from './zoomSlice';
 
 const rootReducer = combineReducers({
   brush: brushReducer,
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   referenceElements: referenceElementsReducer,
   rootProps: rootPropsReducer,
   tooltip: tooltipReducer,
+  zoom: zoomReducer,
 });
 
 export const createRechartsStore = (

@@ -72,6 +72,7 @@ import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { MaybeStackedGraphicalItem } from './barSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { selectZoomState } from './zoomSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -1010,6 +1011,20 @@ export function combineScaleFunction(
   return scale;
 }
 
+function applyZoomToScale(
+  scale: RechartsScale,
+  zoomScale: number,
+  offset: number,
+  axisRange: [number, number],
+): RechartsScale {
+  if (zoomScale === 1 && offset === 0) return scale;
+  if (typeof scale.invert !== 'function') return scale;
+  const [r0, r1] = axisRange;
+  const domainStart = scale.invert((r0 - offset) / zoomScale);
+  const domainEnd = scale.invert((r1 - offset) / zoomScale);
+  return scale.copy().domain([domainStart, domainEnd]);
+}
+
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
   axisSettings: CartesianAxisSettings,
@@ -1306,8 +1321,27 @@ export const selectAxisScale: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => RechartsScale | undefined = createSelector(
-  [selectBaseAxis, selectRealScaleType, selectAxisDomainIncludingNiceTicks, selectAxisRangeWithReverse],
-  combineScaleFunction,
+  [
+    selectBaseAxis,
+    selectRealScaleType,
+    selectAxisDomainIncludingNiceTicks,
+    selectAxisRangeWithReverse,
+    selectZoomState,
+    pickAxisType,
+  ],
+  (axis, realScaleType, domain, axisRangeParam, zoom, axisType) => {
+    const base = combineScaleFunction(axis, realScaleType, domain, axisRangeParam);
+    if (!base) return base;
+    if (!zoom) return base;
+    const [r0, r1] = axisRangeParam ?? base.range();
+    if (axisType === 'xAxis') {
+      return applyZoomToScale(base, zoom.scaleX, zoom.offsetX, [r0, r1]);
+    }
+    if (axisType === 'yAxis') {
+      return applyZoomToScale(base, zoom.scaleY, zoom.offsetY, [r0, r1]);
+    }
+    return base;
+  },
 );
 
 export const selectErrorBarsSettings = createSelector(

@@ -1,6 +1,8 @@
 import React, { ReactNode, useCallback, useRef, useState } from 'react';
 import { useOffset } from './chartLayoutContext';
 import { useClipPathId } from '../container/ClipPathProvider';
+import { useAppDispatch } from '../state/hooks';
+import { setZoom } from '../state/zoomSlice';
 
 export interface ZoomConfig {
   mode?: 'x' | 'y' | 'xy';
@@ -23,6 +25,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange } = config;
   const { width, height, left, top } = useOffset();
   const clipPathId = useClipPathId();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
@@ -32,8 +35,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     (next: ZoomState) => {
       setState(next);
       onZoomChange?.(next);
+      dispatch(setZoom(next));
     },
-    [onZoomChange],
+    [onZoomChange, dispatch],
   );
 
   const handleWheel = useCallback(
@@ -122,19 +126,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
   }, [update]);
 
-  let transform = '';
-  if (mode === 'y') {
-    transform = `translate(0 ${state.offsetY}) scale(1 ${state.scaleY})`;
-  } else if (mode === 'xy') {
-    transform = `translate(${state.offsetX} ${state.offsetY}) scale(${state.scaleX} ${state.scaleY})`;
-  } else {
-    transform = `translate(${state.offsetX} 0) scale(${state.scaleX} 1)`;
-  }
-
   return (
     <g
       clipPath={clipPathId ? `url(#${clipPathId})` : undefined}
-      transform={transform}
       style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}
     >
       <rect
