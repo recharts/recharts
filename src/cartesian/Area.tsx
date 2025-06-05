@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
@@ -712,6 +712,10 @@ function AreaImpl(props: Props) {
   const layout = useChartLayout();
   const chartName = useChartName();
   const zoomDisabled = useZoomAnimationDisabled();
+  const firstRender = useRef(true);
+  useEffect(() => {
+    firstRender.current = false;
+  }, []);
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const isPanorama = useIsPanorama();
 
@@ -754,7 +758,7 @@ function AreaImpl(props: Props) {
       height={height}
       hide={hide}
       layout={layout}
-      isAnimationActive={isAnimationActive && !zoomDisabled}
+      isAnimationActive={isAnimationActive && (!zoomDisabled || firstRender.current)}
       isRange={isRange}
       legendType={legendType}
       needClip={needClip}

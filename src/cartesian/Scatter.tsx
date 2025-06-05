@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import Animate from 'react-smooth';
 
 import { clsx } from 'clsx';
@@ -566,6 +566,10 @@ function ScatterImpl(props: Props) {
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const zoomDisabled = useZoomAnimationDisabled();
+  const firstRender = useRef(true);
+  useEffect(() => {
+    firstRender.current = false;
+  }, []);
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
 
   const scatterSettings: ResolvedScatterSettings = useMemo(
@@ -598,7 +602,7 @@ function ScatterImpl(props: Props) {
         legendType={legendType}
         shape={shape}
         hide={hide}
-        isAnimationActive={isAnimationActive && !zoomDisabled}
+        isAnimationActive={isAnimationActive && (!zoomDisabled || firstRender.current)}
         animationBegin={animationBegin}
         animationDuration={animationDuration}
         animationEasing={animationEasing}

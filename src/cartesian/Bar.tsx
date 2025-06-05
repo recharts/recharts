@@ -3,7 +3,17 @@
  */
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { Key, MutableRefObject, PureComponent, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  Key,
+  MutableRefObject,
+  PureComponent,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import { clsx } from 'clsx';
 import Animate from 'react-smooth';
 import { Series } from 'victory-vendor/d3-shape';
@@ -549,6 +559,10 @@ function BarImpl(props: Props) {
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
   const layout = useChartLayout();
   const zoomDisabled = useZoomAnimationDisabled();
+  const firstRender = useRef(true);
+  useEffect(() => {
+    firstRender.current = false;
+  }, []);
 
   const isPanorama = useIsPanorama();
 
@@ -602,7 +616,7 @@ function BarImpl(props: Props) {
         animationBegin={animationBegin}
         animationDuration={animationDuration}
         animationEasing={animationEasing}
-        isAnimationActive={isAnimationActive && !zoomDisabled}
+        isAnimationActive={isAnimationActive && (!zoomDisabled || firstRender.current)}
       />
     </SetErrorBarContext>
   );

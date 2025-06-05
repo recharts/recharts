@@ -352,26 +352,31 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     : null;
 
   const childArray = React.Children.toArray(children);
-  const [clippedChildren, otherChildren] = childArray.reduce<[React.ReactNode[], React.ReactNode[]]>(
+  const [clippedChildren, tooltipChildren, otherChildren] = childArray.reduce<
+    [React.ReactNode[], React.ReactNode[], React.ReactNode[]]
+  >(
     (acc, child) => {
       if (
         React.isValidElement(child) &&
-        /Axis$|Legend|Tooltip|Brush/.test(
+        /Axis$|Legend|Brush/.test(
           // @ts-expect-error displayName might not exist
           child.type.displayName || child.type.name || '',
         )
       ) {
+        acc[2].push(child);
+      } else if (React.isValidElement(child) && /Tooltip/.test(child.type.displayName || child.type.name || '')) {
         acc[1].push(child);
       } else {
         acc[0].push(child);
       }
       return acc;
     },
-    [[], []],
+    [[], [], []],
   );
 
   return (
     <g style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}>
+      {tooltipChildren}
       <ClipChartRect>{clippedChildren}</ClipChartRect>
       {otherChildren}
       <rect

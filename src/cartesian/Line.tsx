@@ -1,6 +1,16 @@
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  Component,
+  MutableRefObject,
+  PureComponent,
+  Ref,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import Animate from 'react-smooth';
 
 import { clsx } from 'clsx';
@@ -614,6 +624,10 @@ function LineImpl(props: Props) {
   const { height, width, left, top } = useOffset();
   const layout = useChartLayout();
   const zoomDisabled = useZoomAnimationDisabled();
+  const firstRender = useRef(true);
+  useEffect(() => {
+    firstRender.current = false;
+  }, []);
   const isPanorama = useIsPanorama();
   const lineSettings: ResolvedLineSettings = useMemo(
     () => ({ dataKey: props.dataKey, data: props.data }),
@@ -627,7 +641,7 @@ function LineImpl(props: Props) {
     return null;
   }
 
-  const effectiveIsAnimationActive = isAnimationActive && !zoomDisabled;
+  const effectiveIsAnimationActive = isAnimationActive && (!zoomDisabled || firstRender.current);
 
   return (
     <LineWithState
