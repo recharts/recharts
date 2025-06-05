@@ -100,13 +100,23 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       const withFlag = { ...next, autoScaleYDomain };
       const restricted = restrictOffsets(mode, withFlag, width, height);
       if (config.followLineKey && chartData && chartData.length > 0) {
-        const values = chartData.map(d => Number(d[config.followLineKey!]));
-        const min = Math.min(...values);
-        const max = Math.max(...values);
         const step = width / chartData.length;
-        const start = -restricted.offsetX / (step * restricted.scaleX);
-        const end = start + width / (step * restricted.scaleX);
+        const start = Math.max(0, Math.floor(-restricted.offsetX / (step * restricted.scaleX)));
+        const end = Math.min(
+          chartData.length - 1,
+          Math.ceil((-restricted.offsetX + width) / (step * restricted.scaleX)) - 1,
+        );
         const mid = Math.min(Math.max(Math.round((start + end) / 2), 0), chartData.length - 1);
+        const yValues = chartData.map(d => Number(d[config.followLineKey!])).filter(Number.isFinite);
+        let min = Math.min(...yValues);
+        let max = Math.max(...yValues);
+        if (autoScaleYDomain) {
+          const slice = yValues.slice(start, end + 1);
+          if (slice.length > 0) {
+            min = Math.min(...slice);
+            max = Math.max(...slice);
+          }
+        }
         const v = Number(chartData[mid][config.followLineKey!]);
         if (Number.isFinite(v) && max !== min) {
           const baseY = top + height - ((v - min) / (max - min)) * height;
@@ -404,7 +414,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         setSelectRect(null);
       }
       const now = Date.now();
-      if (now - lastTap.current < 300) {
+      if (config.resetKey !== 'dblclick' && now - lastTap.current < 300) {
         handleDoubleClick();
       }
       lastTap.current = now;
@@ -573,7 +583,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onDoubleClick={handleDoubleClick}
+        onDoubleClick={config.resetKey !== 'dbltap' ? handleDoubleClick : undefined}
         onKeyDown={handleKeyDown}
       />
       {selectRect && (

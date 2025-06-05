@@ -10,4 +10,4 @@ export * from './BoxPlot';
 export * from './Impression';
 export * from './Error';
 export * from './PackageDownloads';
-export * from './spurriousCorrelations';
+export * from './spuriousCorrelations';

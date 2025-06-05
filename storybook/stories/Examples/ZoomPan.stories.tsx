@@ -163,3 +163,24 @@ export const BrushZoomIntegration = {
     </ResponsiveContainer>
   ),
 };
+
+export const FollowLineZoom = {
+  render: (_: Record<string, any>, context: StoryContext) => (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart
+        width={500}
+        height={300}
+        data={pageData}
+        zoom={{ mode: 'x', followLineKey: 'pv', showScrollBar: true, disableAnimation: true }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
+        <YAxis label={{ value: 'PV', angle: -90, position: 'insideLeft' }} />
+        <Tooltip />
+        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+      </LineChart>
+    </ResponsiveContainer>
+  ),
+};

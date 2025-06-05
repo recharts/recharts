@@ -18,7 +18,7 @@ import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
-import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
+import { babiesAndVideosCorrelation } from '../data/spuriousCorrelations';
 
 export default {
   component: ScatterChart,
