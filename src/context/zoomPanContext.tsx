@@ -29,7 +29,15 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
-  const pinchStart = useRef<{ distance: number; scaleX: number; scaleY: number } | null>(null);
+  const pinchStart = useRef<{
+    distance: number;
+    scaleX: number;
+    scaleY: number;
+    offsetX: number;
+    offsetY: number;
+    centerX: number;
+    centerY: number;
+  } | null>(null);
 
   const update = useCallback(
     (next: ZoomState) => {
@@ -43,19 +51,34 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleWheel = useCallback(
     (e: React.WheelEvent<SVGGElement>) => {
       e.preventDefault();
+      const anchorX = e.clientX - left - state.offsetX;
+      const anchorY = e.clientY - top - state.offsetY;
       const delta = e.deltaY < 0 ? 1.1 : 0.9;
-      const newScale = clamp(state.scaleX * delta, minScale, maxScale);
-      let next: ZoomState;
+
+      const next = { ...state };
+
       if (mode === 'y') {
-        next = { ...state, scaleY: newScale };
+        const newScaleY = clamp(state.scaleY * delta, minScale, maxScale);
+        const ratioY = newScaleY / state.scaleY;
+        next.scaleY = newScaleY;
+        next.offsetY = state.offsetY - anchorY * (ratioY - 1);
       } else if (mode === 'xy') {
-        next = { ...state, scaleX: newScale, scaleY: newScale };
+        const newScale = clamp(state.scaleX * delta, minScale, maxScale);
+        const ratio = newScale / state.scaleX;
+        next.scaleX = newScale;
+        next.scaleY = newScale;
+        next.offsetX = state.offsetX - anchorX * (ratio - 1);
+        next.offsetY = state.offsetY - anchorY * (ratio - 1);
       } else {
-        next = { ...state, scaleX: newScale };
+        const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
+        const ratioX = newScaleX / state.scaleX;
+        next.scaleX = newScaleX;
+        next.offsetX = state.offsetX - anchorX * (ratioX - 1);
       }
+
       update(next);
     },
-    [state, minScale, maxScale, update, mode],
+    [state, minScale, maxScale, update, mode, left, top],
   );
 
   const handlePointerDown = useCallback(
@@ -71,10 +94,14 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           distance: Math.hypot(a.x - b.x, a.y - b.y),
           scaleX: state.scaleX,
           scaleY: state.scaleY,
+          offsetX: state.offsetX,
+          offsetY: state.offsetY,
+          centerX: (a.x + b.x) / 2 - left - state.offsetX,
+          centerY: (a.y + b.y) / 2 - top - state.offsetY,
         };
       }
     },
-    [state.scaleX, state.scaleY],
+    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, left, top],
   );
 
   const handlePointerMove = useCallback(
@@ -87,15 +114,28 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         const [a, b] = Array.from(pointers.current.values());
         const dist = Math.hypot(a.x - b.x, a.y - b.y);
         const ratio = dist / pinchStart.current.distance;
-        const newScale = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
-        let next: ZoomState;
+
+        const next = { ...state };
+
         if (mode === 'y') {
-          next = { ...state, scaleY: newScale };
+          const newScaleY = clamp(pinchStart.current.scaleY * ratio, minScale, maxScale);
+          const rY = newScaleY / pinchStart.current.scaleY;
+          next.scaleY = newScaleY;
+          next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (rY - 1);
         } else if (mode === 'xy') {
-          next = { ...state, scaleX: newScale, scaleY: newScale };
+          const newScale = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+          const r = newScale / pinchStart.current.scaleX;
+          next.scaleX = newScale;
+          next.scaleY = newScale;
+          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (r - 1);
+          next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (r - 1);
         } else {
-          next = { ...state, scaleX: newScale };
+          const newScaleX = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+          const rX = newScaleX / pinchStart.current.scaleX;
+          next.scaleX = newScaleX;
+          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
         }
+
         update(next);
         return;
       }
@@ -112,7 +152,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         update(next);
       }
     },
-    [state, update, minScale, maxScale, mode],
+    [state, update, minScale, maxScale, mode, left, top],
   );
 
   const handlePointerUp = useCallback((e?: React.PointerEvent<SVGGElement>) => {
