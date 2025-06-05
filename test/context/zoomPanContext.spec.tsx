@@ -18,7 +18,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 describe('ZoomPanContainer', () => {
   it('zooms with wheel event', () => {
     const store = configureStore({ reducer: { zoom: zoomReducer } });
-    const { getByTestId } = render(
+    const { container } = render(
       <Provider store={store}>
         <Wrapper>
           <ZoomPanContainer config={{ mode: 'xy' }}>
@@ -27,14 +27,16 @@ describe('ZoomPanContainer', () => {
         </Wrapper>
       </Provider>,
     );
-    const g = getByTestId('content').parentElement as SVGGElement;
-    fireEvent.wheel(g, { deltaY: -100 });
+    const overlay = container.querySelector('rect') as SVGRectElement;
+    overlay.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100 }) as DOMRect;
+    fireEvent.wheel(overlay, { deltaY: -100, clientX: 50, clientY: 50 });
     expect(store.getState().zoom.scaleX).not.toBe(1);
   });
 
   it('resets on double click', () => {
     const store = configureStore({ reducer: { zoom: zoomReducer } });
-    const { getByTestId } = render(
+    const { container } = render(
       <Provider store={store}>
         <Wrapper>
           <ZoomPanContainer config={{ mode: 'xy' }}>
@@ -43,9 +45,11 @@ describe('ZoomPanContainer', () => {
         </Wrapper>
       </Provider>,
     );
-    const g = getByTestId('content').parentElement as SVGGElement;
-    fireEvent.wheel(g, { deltaY: -100 });
-    fireEvent.dblClick(g);
+    const overlay = container.querySelector('rect') as SVGRectElement;
+    overlay.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100 }) as DOMRect;
+    fireEvent.wheel(overlay, { deltaY: -100, clientX: 50, clientY: 50 });
+    fireEvent.dblClick(overlay);
     expect(store.getState().zoom.scaleX).toBe(1);
   });
 });

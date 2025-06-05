@@ -5,6 +5,7 @@ export type ZoomState = {
   scaleY: number;
   offsetX: number;
   offsetY: number;
+  disableAnimation?: boolean;
 };
 
 const initialState: ZoomState = {
@@ -12,6 +13,7 @@ const initialState: ZoomState = {
   scaleY: 1,
   offsetX: 0,
   offsetY: 0,
+  disableAnimation: false,
 };
 
 const zoomSlice = createSlice({

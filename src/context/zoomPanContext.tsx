@@ -1,6 +1,5 @@
 import React, { ReactNode, useCallback, useRef, useState } from 'react';
 import { useOffset } from './chartLayoutContext';
-import { useClipPathId } from '../container/ClipPathProvider';
 import { useAppDispatch } from '../state/hooks';
 import { setZoom } from '../state/zoomSlice';
 
@@ -11,6 +10,7 @@ export interface ZoomConfig {
   onZoomChange?: (state: ZoomState) => void;
   resetKey?: 'dblclick' | 'dbltap';
   showScrollBar?: boolean;
+  disableAnimation?: boolean;
 }
 
 interface ZoomState {
@@ -18,6 +18,7 @@ interface ZoomState {
   scaleY: number;
   offsetX: number;
   offsetY: number;
+  disableAnimation?: boolean;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -30,11 +31,19 @@ function restrictOffsets(mode: 'x' | 'y' | 'xy', s: ZoomState, w: number, h: num
     scaleY: s.scaleY,
     offsetX: mode === 'y' ? 0 : clamp(s.offsetX, minX, 0),
     offsetY: mode === 'x' ? 0 : clamp(s.offsetY, minY, 0),
+    disableAnimation: s.disableAnimation,
   };
 }
 
 export function ZoomPanContainer({ children, config }: { children: ReactNode; config: ZoomConfig }): React.JSX.Element {
-  const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange, showScrollBar = false } = config;
+  const {
+    mode = 'x',
+    minScale = 1,
+    maxScale = 20,
+    onZoomChange,
+    showScrollBar = false,
+    disableAnimation = false,
+  } = config;
   const { width, height, left, top } = useOffset();
   const overlayRef = useRef<SVGRectElement>(null);
   const pointerSupported = typeof window !== 'undefined' && 'PointerEvent' in window;
@@ -44,9 +53,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     if (!rect) return { x: 0, y: 0 };
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }, []);
-  const clipPathId = useClipPathId();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
+  const [state, setState] = useState<ZoomState>({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, disableAnimation });
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{
@@ -99,9 +107,10 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         next.offsetX = state.offsetX - anchorX * (ratioX - 1);
       }
 
+      next.disableAnimation = disableAnimation;
       update(next);
     },
-    [state, minScale, maxScale, update, mode, getLocalCoords],
+    [state, minScale, maxScale, update, mode, getLocalCoords, disableAnimation],
   );
 
   const handlePointerDown = useCallback(
@@ -189,6 +198,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
         }
 
+        next.disableAnimation = disableAnimation;
         update(next);
         return;
       }
@@ -203,10 +213,11 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           offsetX: state.offsetX + dx,
           offsetY: state.offsetY + dy,
         };
+        next.disableAnimation = disableAnimation;
         update(next);
       }
     },
-    [state, update, minScale, maxScale, mode, getLocalCoords],
+    [state, update, minScale, maxScale, mode, getLocalCoords, disableAnimation],
   );
 
   const handleTouchMove = useCallback(
@@ -245,6 +256,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
         }
 
+        next.disableAnimation = disableAnimation;
         update(next);
         return;
       }
@@ -260,15 +272,16 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           offsetX: state.offsetX + dx,
           offsetY: state.offsetY + dy,
         };
+        next.disableAnimation = disableAnimation;
         update(next);
       }
     },
-    [pointerSupported, state, update, minScale, maxScale, mode, getLocalCoords],
+    [pointerSupported, state, update, minScale, maxScale, mode, getLocalCoords, disableAnimation],
   );
 
   const handleDoubleClick = useCallback(() => {
-    update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
-  }, [update]);
+    update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0, disableAnimation });
+  }, [update, disableAnimation]);
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<SVGGElement>) => {
@@ -283,16 +296,25 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         handleDoubleClick();
       }
       lastTap.current = now;
+      if (disableAnimation) {
+        setState(s => ({ ...s, disableAnimation }));
+      }
     },
-    [pointerSupported, handleDoubleClick],
+    [pointerSupported, handleDoubleClick, disableAnimation],
   );
 
-  const handlePointerUp = useCallback((e?: React.PointerEvent<SVGGElement>) => {
-    if (e) (e.target as Element).releasePointerCapture?.(e.pointerId);
-    pointers.current.delete(e?.pointerId ?? 0);
-    if (pointers.current.size < 2) pinchStart.current = null;
-    if (pointers.current.size === 0) dragStart.current = null;
-  }, []);
+  const handlePointerUp = useCallback(
+    (e?: React.PointerEvent<SVGGElement>) => {
+      if (e) (e.target as Element).releasePointerCapture?.(e.pointerId);
+      pointers.current.delete(e?.pointerId ?? 0);
+      if (pointers.current.size < 2) pinchStart.current = null;
+      if (pointers.current.size === 0) dragStart.current = null;
+      if (disableAnimation) {
+        setState(s => ({ ...s, disableAnimation }));
+      }
+    },
+    [disableAnimation],
+  );
 
   const barElements = showScrollBar
     ? [
@@ -323,7 +345,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   return (
     <g style={{ touchAction: 'none', cursor: dragStart.current ? 'grabbing' : 'grab' }}>
-      <g clipPath={clipPathId ? `url(#${clipPathId})` : undefined}>{children}</g>
+      {children}
       <rect
         ref={overlayRef}
         x={left}
