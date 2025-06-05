@@ -25,6 +25,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const { mode = 'x', minScale = 1, maxScale = 20, onZoomChange } = config;
   const { width, height, left, top } = useOffset();
   const overlayRef = useRef<SVGRectElement>(null);
+  const pointerSupported = typeof window !== 'undefined' && 'PointerEvent' in window;
 
   const getLocalCoords = useCallback((e: { clientX: number; clientY: number }) => {
     const rect = overlayRef.current?.getBoundingClientRect();
@@ -45,6 +46,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     centerX: number;
     centerY: number;
   } | null>(null);
+  const lastTap = useRef<number>(0);
 
   const update = useCallback(
     (next: ZoomState) => {
@@ -113,6 +115,34 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords],
   );
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      Array.from(e.changedTouches).forEach(t => {
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        pointers.current.set(t.identifier, local);
+      });
+      if (pointers.current.size === 1) {
+        const t = e.changedTouches[0];
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        dragStart.current = { x: local.x, y: local.y };
+      }
+      if (pointers.current.size === 2) {
+        const [a, b] = Array.from(pointers.current.values());
+        pinchStart.current = {
+          distance: Math.hypot(a.x - b.x, a.y - b.y),
+          scaleX: state.scaleX,
+          scaleY: state.scaleY,
+          offsetX: state.offsetX,
+          offsetY: state.offsetY,
+          centerX: (a.x + b.x) / 2 - state.offsetX,
+          centerY: (a.y + b.y) / 2 - state.offsetY,
+        };
+      }
+    },
+    [pointerSupported, state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords],
+  );
+
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
       const prev = pointers.current.get(e.pointerId);
@@ -166,16 +196,90 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     [state, update, minScale, maxScale, mode, getLocalCoords],
   );
 
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      Array.from(e.changedTouches).forEach(t => {
+        const prev = pointers.current.get(t.identifier);
+        if (!prev) return;
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        pointers.current.set(t.identifier, local);
+      });
+
+      if (pointers.current.size === 2 && pinchStart.current) {
+        const [a, b] = Array.from(pointers.current.values());
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        const ratio = dist / pinchStart.current.distance;
+
+        const next = { ...state };
+
+        if (mode === 'y') {
+          const newScaleY = clamp(pinchStart.current.scaleY * ratio, minScale, maxScale);
+          const rY = newScaleY / pinchStart.current.scaleY;
+          next.scaleY = newScaleY;
+          next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (rY - 1);
+        } else if (mode === 'xy') {
+          const newScale = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+          const r = newScale / pinchStart.current.scaleX;
+          next.scaleX = newScale;
+          next.scaleY = newScale;
+          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (r - 1);
+          next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (r - 1);
+        } else {
+          const newScaleX = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+          const rX = newScaleX / pinchStart.current.scaleX;
+          next.scaleX = newScaleX;
+          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1);
+        }
+
+        update(next);
+        return;
+      }
+
+      if (dragStart.current) {
+        const t = e.changedTouches[0];
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        const dx = local.x - dragStart.current.x;
+        const dy = local.y - dragStart.current.y;
+        dragStart.current = { x: local.x, y: local.y };
+        const next = {
+          ...state,
+          offsetX: state.offsetX + dx,
+          offsetY: state.offsetY + dy,
+        };
+        update(next);
+      }
+    },
+    [pointerSupported, state, update, minScale, maxScale, mode, getLocalCoords],
+  );
+
+  const handleDoubleClick = useCallback(() => {
+    update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
+  }, [update]);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      Array.from(e.changedTouches).forEach(t => {
+        pointers.current.delete(t.identifier);
+      });
+      if (pointers.current.size < 2) pinchStart.current = null;
+      if (pointers.current.size === 0) dragStart.current = null;
+      const now = Date.now();
+      if (now - lastTap.current < 300) {
+        handleDoubleClick();
+      }
+      lastTap.current = now;
+    },
+    [pointerSupported, handleDoubleClick],
+  );
+
   const handlePointerUp = useCallback((e?: React.PointerEvent<SVGGElement>) => {
     if (e) (e.target as Element).releasePointerCapture?.(e.pointerId);
     pointers.current.delete(e?.pointerId ?? 0);
     if (pointers.current.size < 2) pinchStart.current = null;
     if (pointers.current.size === 0) dragStart.current = null;
   }, []);
-
-  const handleDoubleClick = useCallback(() => {
-    update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
-  }, [update]);
 
   return (
     <g
@@ -195,6 +299,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         onDoubleClick={handleDoubleClick}
       />
       {children}

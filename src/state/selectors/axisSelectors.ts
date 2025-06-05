@@ -1025,12 +1025,17 @@ function applyZoomToScale(
     return (scale as any).copy().domain([domainStart, domainEnd]);
   }
   if (typeof (scale as any).bandwidth === 'function') {
-    const domain = (scale as any).domain() as ReadonlyArray<any>;
-    const step = (scale as any).step ? (scale as any).step() : (scale as any).bandwidth();
-    const startIndex = Math.max(0, Math.floor((r0 - offset) / (step * zoomScale)));
-    const endIndex = Math.min(domain.length, Math.ceil((r1 - offset) / (step * zoomScale)));
-    const newDomain = domain.slice(startIndex, endIndex);
-    return (scale as any).copy().domain(newDomain).range([r0, r1]);
+    const base: any = scale;
+    const zoomed = (value: unknown) => base(value) * zoomScale + offset;
+    zoomed.domain = base.domain;
+    zoomed.range = () => [r0, r1];
+    if (typeof base.bandwidth === 'function') {
+      zoomed.bandwidth = () => base.bandwidth() * zoomScale;
+    }
+    if (typeof base.step === 'function') {
+      zoomed.step = () => base.step() * zoomScale;
+    }
+    return zoomed as RechartsScale;
   }
   return scale;
 }
@@ -1727,39 +1732,49 @@ export const combineAxisTicks = (
       };
     });
 
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
+    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+    return result.filter(
+      (row: TickItem) =>
+        !isNan(row.coordinate) && row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd),
+    );
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+    return categoricalDomain
+      .map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          offset,
+        }),
+      )
+      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
   }
 
   if (scale.ticks) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+    return scale
+      .ticks(tickCount)
+      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+  return scale
+    .domain()
+    .map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      }),
+    )
+    .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
 };
 export const selectTicksOfAxis: (
   state: RechartsRootState,
@@ -1804,34 +1819,40 @@ export const combineGraphicalItemTicks = (
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
   if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
-      (entry: any, index: number): TickItem => ({
-        coordinate: scale(entry) + offset,
-        value: entry,
-        index,
-        offset,
-      }),
-    );
+    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+    return categoricalDomain
+      .map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          offset,
+        }),
+      )
+      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
   }
 
   if (scale.ticks) {
-    return (
-      scale
-        .ticks(tickCount)
-        // @ts-expect-error why does the offset go here? The type does not require it
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
-    );
+    const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+    return scale
+      .ticks(tickCount)
+      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }))
+      .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  const [rStart, rEnd] = axisRange ?? [Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY];
+  return scale
+    .domain()
+    .map(
+      (entry: any, index: number): TickItem => ({
+        coordinate: scale(entry) + offset,
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
+        index,
+        offset,
+      }),
+    )
+    .filter(row => row.coordinate >= Math.min(rStart, rEnd) && row.coordinate <= Math.max(rStart, rEnd));
 };
 
 export const selectTicksOfGraphicalItem: (
