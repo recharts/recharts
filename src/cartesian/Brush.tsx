@@ -26,11 +26,12 @@ import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
 import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
-import { useAppDispatch, useAppSelector } from '../state/hooks';
+import { useAppDispatch, useAppSelector, useSetZoom } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
 import { BrushSettings, setBrushSettings } from '../state/brushSlice';
 import { PanoramaContextProvider } from '../context/PanoramaContext';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
+import { selectChartWidth } from '../state/selectors/containerSelectors';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
@@ -64,6 +65,9 @@ interface BrushProps {
   onDragEnd?: OnBrushUpdate;
   leaveTimeOut?: number;
   alwaysShowText?: boolean;
+
+  /** Integrate with zoom/pan system instead of truncating data */
+  useZoomPan?: boolean;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
@@ -891,11 +895,13 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
 function BrushInternal(props: Props) {
   const dispatch = useAppDispatch();
+  const setZoom = useSetZoom();
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
   const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
+  const chartWidth = useAppSelector(selectChartWidth);
 
   useEffect(() => {
     // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
@@ -910,9 +916,26 @@ function BrushInternal(props: Props) {
         onChangeFromContext?.(nextState);
         onChangeFromProps?.(nextState);
         dispatch(setDataStartEndIndexes(nextState));
+        if (props.useZoomPan && chartData.length > 0) {
+          const diff = nextState.endIndex - nextState.startIndex + 1;
+          const scaleX = chartData.length / diff;
+          const step = chartWidth / chartData.length;
+          const offsetX = -nextState.startIndex * step * scaleX;
+          setZoom({ scaleX, scaleY: 1, offsetX, offsetY: 0, disableAnimation: true, autoScaleYDomain: false });
+        }
       }
     },
-    [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex],
+    [
+      onChangeFromProps,
+      onChangeFromContext,
+      dispatch,
+      startIndex,
+      endIndex,
+      props.useZoomPan,
+      chartData.length,
+      chartWidth,
+      setZoom,
+    ],
   );
 
   const { x, y, width } = useAppSelector(selectBrushDimensions);

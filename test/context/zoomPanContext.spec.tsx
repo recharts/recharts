@@ -52,4 +52,24 @@ describe('ZoomPanContainer', () => {
     fireEvent.dblClick(overlay);
     expect(store.getState().zoom.scaleX).toBe(1);
   });
+
+  it('zooms with drag selection', () => {
+    const store = configureStore({ reducer: { zoom: zoomReducer } });
+    const { container } = render(
+      <Provider store={store}>
+        <Wrapper>
+          <ZoomPanContainer config={{ mode: 'xy', dragToZoom: true }}>
+            <g />
+          </ZoomPanContainer>
+        </Wrapper>
+      </Provider>,
+    );
+    const overlay = container.querySelector('rect') as SVGRectElement;
+    overlay.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100 }) as DOMRect;
+    fireEvent.pointerDown(overlay, { clientX: 10, clientY: 10, pointerId: 1, shiftKey: true });
+    fireEvent.pointerMove(overlay, { clientX: 90, clientY: 90, pointerId: 1 });
+    fireEvent.pointerUp(overlay, { clientX: 90, clientY: 90, pointerId: 1 });
+    expect(store.getState().zoom.scaleX).toBeGreaterThan(1);
+  });
 });

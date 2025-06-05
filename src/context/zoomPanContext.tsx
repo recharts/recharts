@@ -12,6 +12,10 @@ export interface ZoomConfig {
   resetKey?: 'dblclick' | 'dbltap';
   showScrollBar?: boolean;
   disableAnimation?: boolean;
+  /** Enable selecting an area with Shift+Drag to zoom into */
+  dragToZoom?: boolean;
+  /** Automatically adjust Y domain based on the visible X range */
+  autoScaleYDomain?: boolean;
 }
 
 interface ZoomState {
@@ -20,6 +24,7 @@ interface ZoomState {
   offsetX: number;
   offsetY: number;
   disableAnimation?: boolean;
+  autoScaleYDomain?: boolean;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -44,6 +49,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     onZoomChange,
     showScrollBar = false,
     disableAnimation = false,
+    dragToZoom = false,
+    autoScaleYDomain = false,
   } = config;
   const { width, height, left, top } = useOffset();
   const overlayRef = useRef<SVGRectElement>(null);
@@ -62,9 +69,12 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     offsetY: 0,
     // start with animations enabled so initial mount is unaffected
     disableAnimation: false,
+    autoScaleYDomain,
   });
   const interacted = useRef(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
+  const selectStart = useRef<{ x: number; y: number } | null>(null);
+  const [selectRect, setSelectRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const barDrag = useRef<'x' | 'y' | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{
@@ -80,12 +90,13 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   const update = useCallback(
     (next: ZoomState) => {
-      const restricted = restrictOffsets(mode, next, width, height);
+      const withFlag = { ...next, autoScaleYDomain };
+      const restricted = restrictOffsets(mode, withFlag, width, height);
       setState(restricted);
       onZoomChange?.(restricted);
       dispatch(setZoom(restricted));
     },
-    [onZoomChange, dispatch, mode, width, height],
+    [onZoomChange, dispatch, mode, width, height, autoScaleYDomain],
   );
 
   const handleWheel = useCallback(
@@ -129,6 +140,11 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       interacted.current = true;
       (e.target as Element).setPointerCapture?.(e.pointerId);
       const { x: localX, y: localY } = getLocalCoords(e);
+      if (dragToZoom && e.shiftKey) {
+        selectStart.current = { x: localX, y: localY };
+        setSelectRect({ x: localX, y: localY, w: 0, h: 0 });
+        return;
+      }
       pointers.current.set(e.pointerId, { x: localX, y: localY });
       if (pointers.current.size === 1) {
         dragStart.current = { x: localX, y: localY };
@@ -146,7 +162,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         };
       }
     },
-    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords],
+    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords, dragToZoom],
   );
 
   const handleTouchStart = useCallback(
@@ -180,6 +196,16 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
+      if (selectStart.current) {
+        const { x: lx, y: ly } = getLocalCoords(e);
+        setSelectRect({
+          x: Math.min(selectStart.current.x, lx),
+          y: Math.min(selectStart.current.y, ly),
+          w: Math.abs(lx - selectStart.current.x),
+          h: Math.abs(ly - selectStart.current.y),
+        });
+        return;
+      }
       const prev = pointers.current.get(e.pointerId);
       if (!prev) return;
       const { x: localX, y: localY } = getLocalCoords(e);
@@ -333,6 +359,29 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       });
       if (pointers.current.size < 2) pinchStart.current = null;
       if (pointers.current.size === 0) dragStart.current = null;
+      if (selectStart.current && selectRect) {
+        const { x, y, w, h } = selectRect;
+        if (dragToZoom && w > 10 && h > 10) {
+          const next = { ...state };
+          const startPrevX = (x - state.offsetX) / state.scaleX;
+          const endPrevX = (x + w - state.offsetX) / state.scaleX;
+          const startPrevY = (y - state.offsetY) / state.scaleY;
+          const endPrevY = (y + h - state.offsetY) / state.scaleY;
+          if (mode !== 'y') {
+            next.scaleX = clamp(width / (endPrevX - startPrevX), minScale, maxScale);
+            next.offsetX = -startPrevX * next.scaleX;
+          }
+          if (mode !== 'x') {
+            next.scaleY = clamp(height / (endPrevY - startPrevY), minScale, maxScale);
+            next.offsetY = -startPrevY * next.scaleY;
+          }
+          interacted.current = true;
+          next.disableAnimation = interacted.current && disableAnimation;
+          update(next);
+        }
+        selectStart.current = null;
+        setSelectRect(null);
+      }
       const now = Date.now();
       if (now - lastTap.current < 300) {
         handleDoubleClick();
@@ -342,7 +391,20 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         setState(s => ({ ...s, disableAnimation }));
       }
     },
-    [pointerSupported, handleDoubleClick, disableAnimation],
+    [
+      pointerSupported,
+      handleDoubleClick,
+      disableAnimation,
+      dragToZoom,
+      selectRect,
+      state,
+      update,
+      mode,
+      width,
+      height,
+      minScale,
+      maxScale,
+    ],
   );
 
   const handlePointerUp = useCallback(
@@ -351,11 +413,34 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       pointers.current.delete(e?.pointerId ?? 0);
       if (pointers.current.size < 2) pinchStart.current = null;
       if (pointers.current.size === 0) dragStart.current = null;
+      if (selectStart.current && selectRect) {
+        const { x, y, w, h } = selectRect;
+        if (dragToZoom && w > 10 && h > 10) {
+          const next = { ...state };
+          const startPrevX = (x - state.offsetX) / state.scaleX;
+          const endPrevX = (x + w - state.offsetX) / state.scaleX;
+          const startPrevY = (y - state.offsetY) / state.scaleY;
+          const endPrevY = (y + h - state.offsetY) / state.scaleY;
+          if (mode !== 'y') {
+            next.scaleX = clamp(width / (endPrevX - startPrevX), minScale, maxScale);
+            next.offsetX = -startPrevX * next.scaleX;
+          }
+          if (mode !== 'x') {
+            next.scaleY = clamp(height / (endPrevY - startPrevY), minScale, maxScale);
+            next.offsetY = -startPrevY * next.scaleY;
+          }
+          interacted.current = true;
+          next.disableAnimation = interacted.current && disableAnimation;
+          update(next);
+        }
+        selectStart.current = null;
+        setSelectRect(null);
+      }
       if (disableAnimation) {
         setState(s => ({ ...s, disableAnimation }));
       }
     },
-    [disableAnimation],
+    [disableAnimation, dragToZoom, selectRect, state, update, mode, width, height, minScale, maxScale],
   );
 
   const handleBarPointerDown = useCallback(
@@ -470,6 +555,17 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         onDoubleClick={handleDoubleClick}
         onKeyDown={handleKeyDown}
       />
+      {selectRect && (
+        <rect
+          x={selectRect.x}
+          y={selectRect.y}
+          width={selectRect.w}
+          height={selectRect.h}
+          fill="rgba(0,0,0,0.1)"
+          stroke="rgba(0,0,0,0.3)"
+          pointerEvents="none"
+        />
+      )}
       {barElements}
     </g>
   );

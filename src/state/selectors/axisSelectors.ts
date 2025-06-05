@@ -38,7 +38,11 @@ import {
   ZAxisSettings,
 } from '../cartesianAxisSlice';
 import { RechartsRootState } from '../store';
-import { selectChartDataWithIndexes, selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
+import {
+  selectChartDataWithIndexes,
+  selectChartDataWithIndexesIfNotInPanorama,
+  selectChartDataAndAlwaysIgnoreIndexes,
+} from './dataSelectors';
 import {
   isWellFormedNumberDomain,
   numericalDomainSpecifiedWithoutRequiringData,
@@ -918,8 +922,46 @@ export const selectAxisDomain: (
     selectStackOffsetType,
     pickAxisType,
     selectNumericalDomain,
+    selectZoomState,
+    selectChartWidth,
+    selectChartDataAndAlwaysIgnoreIndexes,
   ],
-  combineAxisDomain,
+  (
+    axisSettings: BaseCartesianAxis,
+    layout: LayoutType,
+    displayedData: ChartData,
+    allValues: AppliedChartData,
+    stackOffsetType: StackOffsetType,
+    axisType: XorYorZType,
+    numericalDomain: NumberDomain | undefined,
+    zoom,
+    width: number,
+    fullData: ChartDataState,
+  ) => {
+    let domain = combineAxisDomain(
+      axisSettings,
+      layout,
+      displayedData,
+      allValues,
+      stackOffsetType,
+      axisType,
+      numericalDomain,
+    );
+    if (axisType === 'yAxis' && zoom?.autoScaleYDomain && fullData.chartData && fullData.chartData.length > 1) {
+      const dataLen = fullData.chartData.length;
+      const step = width / dataLen;
+      const startIdx = Math.max(0, Math.floor(-zoom.offsetX / (step * zoom.scaleX)));
+      const endIdx = Math.min(dataLen - 1, Math.ceil((-zoom.offsetX + width) / (step * zoom.scaleX)) - 1);
+      const slice = allValues
+        .slice(startIdx, endIdx + 1)
+        .map(v => Number(v.value))
+        .filter(isNumber);
+      if (slice.length > 0) {
+        domain = [Math.min(...slice), Math.max(...slice)];
+      }
+    }
+    return domain;
+  },
 );
 
 export const combineRealScaleType = (
