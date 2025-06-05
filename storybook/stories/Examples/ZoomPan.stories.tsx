@@ -92,7 +92,7 @@ export const AreaZoomWithScrollBar = {
         <XAxis dataKey="name" label={{ value: 'Pages', position: 'bottom' }} />
         <YAxis label={{ value: 'UV', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
-        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+        <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" isAnimationActive={false} />
         <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
       </AreaChart>
     </ResponsiveContainer>

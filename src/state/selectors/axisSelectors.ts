@@ -72,6 +72,7 @@ import { pickAxisType } from './pickAxisType';
 import { pickAxisId } from './pickAxisId';
 import { MaybeStackedGraphicalItem } from './barSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
+import { applyZoomToScale } from '../../util/applyZoomToScale';
 import { selectZoomState } from './zoomSelectors';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
@@ -1011,33 +1012,6 @@ export function combineScaleFunction(
   return scale;
 }
 
-function applyZoomToScale(
-  scale: RechartsScale,
-  zoomScale: number,
-  offset: number,
-  axisRange: [number, number],
-): RechartsScale {
-  if (zoomScale === 1 && offset === 0) return scale;
-  const [r0, r1] = axisRange;
-  const base: any = scale;
-  const zoomed = (value: unknown) => base(value) * zoomScale + offset;
-  zoomed.domain = base.domain;
-  zoomed.range = () => [r0, r1];
-  if (typeof base.invert === 'function') {
-    zoomed.invert = (val: number) => base.invert((val - offset) / zoomScale);
-  }
-  if (typeof base.bandwidth === 'function') {
-    zoomed.bandwidth = () => base.bandwidth() * zoomScale;
-  }
-  if (typeof base.step === 'function') {
-    zoomed.step = () => base.step() * zoomScale;
-  }
-  if (typeof base.ticks === 'function') {
-    zoomed.ticks = (...args: any[]) => base.ticks(...args);
-  }
-  return zoomed as RechartsScale;
-}
-
 export const combineNiceTicks = (
   axisDomain: NumberDomain | CategoricalDomain | undefined,
   axisSettings: CartesianAxisSettings,
@@ -1730,36 +1704,53 @@ export const combineAxisTicks = (
       };
     });
 
-    return result.filter((row: TickItem) => !isNan(row.coordinate));
+    const filtered = result.filter((row: TickItem) => !isNan(row.coordinate));
+    if (axisRange) {
+      const [r0, r1] = axisRange;
+      const min = Math.min(r0, r1);
+      const max = Math.max(r0, r1);
+      return filtered.filter(t => t.coordinate >= min && t.coordinate <= max);
+    }
+    return filtered;
   }
 
   // When axis is a categorical axis, but the type of axis is number or the scale of axis is not "auto"
-  if (isCategorical && categoricalDomain) {
-    return categoricalDomain.map(
+  const ticksArr: ReadonlyArray<TickItem> = ((): ReadonlyArray<TickItem> => {
+    if (isCategorical && categoricalDomain) {
+      return categoricalDomain.map(
+        (entry: any, index: number): TickItem => ({
+          coordinate: scale(entry) + offset,
+          value: entry,
+          index,
+          offset,
+        }),
+      );
+    }
+
+    if (scale.ticks) {
+      return scale
+        .ticks(tickCount)
+        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+    }
+
+    return scale.domain().map(
       (entry: any, index: number): TickItem => ({
         coordinate: scale(entry) + offset,
-        value: entry,
+        value: duplicateDomain ? duplicateDomain[entry] : entry,
         index,
         offset,
       }),
     );
+  })();
+
+  if (axisRange) {
+    const [r0, r1] = axisRange;
+    const min = Math.min(r0, r1);
+    const max = Math.max(r0, r1);
+    return ticksArr.filter(t => t.coordinate >= min && t.coordinate <= max);
   }
 
-  if (scale.ticks) {
-    return scale
-      .ticks(tickCount)
-      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
-  }
-
-  // When axis has duplicated text, serial numbers are used to generate scale
-  return scale.domain().map(
-    (entry: any, index: number): TickItem => ({
-      coordinate: scale(entry) + offset,
-      value: duplicateDomain ? duplicateDomain[entry] : entry,
-      index,
-      offset,
-    }),
-  );
+  return ticksArr;
 };
 export const selectTicksOfAxis: (
   state: RechartsRootState,
