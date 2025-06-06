@@ -690,7 +690,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { brushMoveStartX, movingTravellerId, scaleValues } = this.state;
+    const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
     const prevValue = this.state[movingTravellerId];
 
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
@@ -706,13 +706,31 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     params[movingTravellerId] = prevValue + delta;
 
     const newIndex = getIndex(params);
+    const { startIndex, endIndex } = newIndex;
+    const isFullGap = () => {
+      const lastIndex = data.length - 1;
+      if (
+        (movingTravellerId === 'startX' && (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0)) ||
+        (endX < startX && endIndex === lastIndex) ||
+        (movingTravellerId === 'endX' && (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0)) ||
+        (endX > startX && endIndex === lastIndex)
+      ) {
+        return true;
+      }
+      return false;
+    };
+
     this.setState(
       {
         [movingTravellerId]: prevValue + delta,
         brushMoveStartX: e.pageX,
       },
       () => {
-        onChange?.(newIndex);
+        if (onChange) {
+          if (isFullGap()) {
+            onChange(newIndex);
+          }
+        }
       },
     );
   }
