@@ -6,7 +6,7 @@ import { uniqueId } from './DataUtils';
  * If input changes (as in, reference equality is different), the animation id will change.
  * If input does not change, the animation id will not change.
  *
- * This is useful for react-smooth animations. The Animate component
+ * This is useful for animations. The Animate component
  * does have a `shouldReAnimate` prop but that doesn't seem to be doing what the name implies.
  * Also, we don't always want to re-animate on every render;
  * we only want to re-animate when the input changes. Not the internal state (e.g. `isAnimating`).

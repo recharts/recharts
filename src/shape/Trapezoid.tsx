@@ -4,10 +4,10 @@
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 const getTrapezoidPath = (x: number, y: number, upperWidth: number, lowerWidth: number, height: number): string => {
   const widthGap = upperWidth - lowerWidth;
@@ -102,6 +102,7 @@ export const Trapezoid: React.FC<Props> = props => {
       from={{ upperWidth: 0, lowerWidth: 0, height, x, y }}
       to={{ upperWidth, lowerWidth, height, x, y }}
       duration={animationDuration}
+      // @ts-expect-error TODO - fix the type error
       animationEasing={animationEasing}
       isActive={isUpdateAnimationActive}
     >
@@ -120,7 +121,9 @@ export const Trapezoid: React.FC<Props> = props => {
       }) => (
         <Animate
           canBegin={totalLength > 0}
+          // @ts-expect-error TODO - fix the type error
           from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+          // @ts-expect-error TODO - fix the type error
           to={`${totalLength}px 0px`}
           attributeName="strokeDasharray"
           begin={animationBegin}

@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { Component, createContext, SVGProps, useContext } from 'react';
-import Animate from 'react-smooth';
 import { Layer } from '../container/Layer';
 import { AnimationTiming, DataKey } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
@@ -13,6 +12,7 @@ import { ScatterPointItem } from './Scatter';
 import { ReportErrorBarSettings, useErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { useXAxis, useYAxis } from '../hooks';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 export interface ErrorBarDataItem {
   x: number;
@@ -174,6 +174,7 @@ function ErrorBarImpl(props: ErrorBarInternalProps) {
               isActive={isAnimationActive}
               duration={animationDuration}
               key={`line-${coordinates.x1}-${coordinates.x2}-${coordinates.y1}-${coordinates.y2}`}
+              // @ts-expect-error TODO - fix the type error
               style={{
                 transformOrigin,
               }}

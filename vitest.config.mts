@@ -11,7 +11,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts'],
     globalSetup: './test/vitest.global-setup.ts',
-    exclude: ['react-smooth', 'node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
     coverage: {
       provider: 'v8',
       include: ['src', 'test'],

@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import Animate from 'react-smooth';
 import { Curve, CurveType, NullablePoint, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
@@ -38,6 +37,7 @@ import { useAppSelector } from '../state/hooks';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
+import { Animate } from '../animation/Animate';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 

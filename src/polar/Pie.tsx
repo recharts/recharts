@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import Animate from 'react-smooth';
 // @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
 import get from 'lodash.get';
 
@@ -54,6 +53,7 @@ import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */

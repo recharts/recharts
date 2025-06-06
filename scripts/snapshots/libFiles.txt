@@ -1,4 +1,11 @@
 [
+  "lib/animation",
+  "lib/animation/Animate.js",
+  "lib/animation/AnimationManager.js",
+  "lib/animation/configUpdate.js",
+  "lib/animation/easing.js",
+  "lib/animation/setRafTimeout.js",
+  "lib/animation/util.js",
   "lib/cartesian",
   "lib/cartesian/Area.js",
   "lib/cartesian/Bar.js",

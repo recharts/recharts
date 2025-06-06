@@ -5,7 +5,6 @@
 import * as React from 'react';
 import { Key, MutableRefObject, PureComponent, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import Animate from 'react-smooth';
 import { Series } from 'victory-vendor/d3-shape';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
@@ -60,6 +59,7 @@ import { selectActiveTooltipDataKey, selectActiveTooltipIndex } from '../state/s
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];

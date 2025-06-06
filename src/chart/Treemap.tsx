@@ -3,7 +3,6 @@ import { PureComponent } from 'react';
 import { omit } from 'es-toolkit';
 // @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
 import get from 'lodash.get';
-import Smooth from 'react-smooth';
 
 import { Layer } from '../container/Layer';
 import { Surface } from '../container/Surface';
@@ -32,6 +31,7 @@ import { RechartsStoreProvider } from '../state/RechartsStoreProvider';
 import { useAppDispatch } from '../state/hooks';
 import { AppDispatch } from '../state/store';
 import { isPositiveNumber } from '../util/isWellBehavedNumber';
+import { Animate } from '../animation/Animate';
 
 const NODE_VALUE_KEY = 'value';
 
@@ -713,7 +713,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     }
 
     return (
-      <Smooth
+      <Animate
         begin={animationBegin}
         duration={animationDuration}
         isActive={isAnimationActive}
@@ -725,8 +725,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         onAnimationEnd={this.handleAnimationEnd}
       >
         {({ x: currX, y: currY, width: currWidth, height: currHeight }: TreemapNode) => (
-          <Smooth
+          <Animate
+            // @ts-expect-error TODO - fix the type error
             from={`translate(${translateX}px, ${translateX}px)`}
+            // @ts-expect-error TODO - fix the type error
             to="translate(0, 0)"
             attributeName="transform"
             begin={animationBegin}
@@ -755,9 +757,9 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
                 />
               )}
             </Layer>
-          </Smooth>
+          </Animate>
         )}
-      </Smooth>
+      </Animate>
     );
   }
 

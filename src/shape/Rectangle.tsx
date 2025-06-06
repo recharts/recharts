@@ -4,10 +4,10 @@
 import * as React from 'react';
 import { SVGProps, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import Animate from 'react-smooth';
 import { AnimationDuration, AnimationTiming } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 export type RectRadius = [number, number, number, number];
 
@@ -137,13 +137,16 @@ export const Rectangle: React.FC<Props> = rectangleProps => {
       from={{ width, height, x, y }}
       to={{ width, height, x, y }}
       duration={animationDuration}
+      // @ts-expect-error TODO - fix the type error
       animationEasing={animationEasing}
       isActive={isUpdateAnimationActive}
     >
       {({ width: currWidth, height: currHeight, x: currX, y: currY }: any) => (
         <Animate
           canBegin={totalLength > 0}
+          // @ts-expect-error TODO - fix the type error
           from={`0px ${totalLength === -1 ? 1 : totalLength}px`}
+          // @ts-expect-error TODO - fix the type error
           to={`${totalLength}px 0px`}
           attributeName="strokeDasharray"
           begin={animationBegin}
