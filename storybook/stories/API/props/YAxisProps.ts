@@ -14,13 +14,16 @@ export const YAxisProps: StorybookArgs = {
     },
   },
   width: {
-    description: 'The width of axis element in pixels.',
+    description: 'The width of axis element in pixels. When set to "auto", the width will be calculated dynamically.',
     table: {
       type: {
-        summary: 'Number',
+        summary: 'Number | "auto"',
       },
       defaultValue: 60,
       category: 'Layout',
+    },
+    control: {
+      type: 'text',
     },
   },
   orientation: {
