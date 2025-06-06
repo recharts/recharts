@@ -295,7 +295,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleTouchMove = useCallback(
     (e: React.TouchEvent<SVGGElement>) => {
       if (pointerSupported) return;
-      Array.from(e.changedTouches).forEach(t => {
+      Array.from(e.changedTouches).forEach((t: Touch) => {
         const prev = pointers.current.get(t.identifier);
         if (!prev) return;
         const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
@@ -385,7 +385,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<SVGGElement>) => {
       if (pointerSupported) return;
-      Array.from(e.changedTouches).forEach(t => {
+      Array.from(e.changedTouches).forEach((t: Touch) => {
         pointers.current.delete(t.identifier);
       });
       if (pointers.current.size < 2) pinchStart.current = null;
@@ -542,14 +542,8 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const [clippedChildren, tooltipChildren, otherChildren] = childArray.reduce<
     [React.ReactNode[], React.ReactNode[], React.ReactNode[]]
   >(
-    (acc, child) => {
-      if (
-        React.isValidElement(child) &&
-        /Axis$|Legend|Brush/.test(
-          // @ts-expect-error displayName might not exist
-          child.type.displayName || child.type.name || '',
-        )
-      ) {
+    (acc: [React.ReactNode[], React.ReactNode[], React.ReactNode[]], child: React.ReactNode) => {
+      if (React.isValidElement(child) && /Axis$|Legend|Brush/.test(child.type.displayName || child.type.name || '')) {
         acc[2].push(child);
       } else if (React.isValidElement(child) && /Tooltip/.test(child.type.displayName || child.type.name || '')) {
         acc[1].push(child);
