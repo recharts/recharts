@@ -17,8 +17,8 @@ export function setRafTimeout(callback: CallbackType, timeout: number = 0): void
     if (now - currTime > timeout) {
       callback(now);
       currTime = -1;
-    } else {
-      // requestAnimationFrame is available across most browsers
+      // tests fail without the extra if, even when five lines below it's not needed
+    } else if (typeof requestAnimationFrame === 'function') {
       requestAnimationFrame(shouldUpdate);
     }
   };

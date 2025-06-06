@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { MutableRefObject, PureComponent, ReactElement, useCallback, useRef, useState } from 'react';
 import { clsx } from 'clsx';
-import Animate from 'react-smooth';
 
 import { Series } from 'victory-vendor/d3-shape';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
@@ -53,6 +52,7 @@ import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
+import { Animate } from '../animation/Animate';
 
 const STABLE_EMPTY_ARRAY: readonly RadialBarDataItem[] = [];
 

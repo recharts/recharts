@@ -35,7 +35,7 @@ type AnimateState = {
   style: Record<string, any>;
 };
 
-class Animate extends PureComponent<AnimateProps, AnimateState> {
+export class Animate extends PureComponent<AnimateProps, AnimateState> {
   static displayName = 'Animate';
 
   static defaultProps: Partial<AnimateProps> = {
@@ -346,6 +346,3 @@ class Animate extends PureComponent<AnimateProps, AnimateState> {
     return <div>{Children.map(children, child => cloneContainer(child))}</div>;
   }
 }
-
-// eslint-disable-next-line import/no-default-export
-export default Animate;

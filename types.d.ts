@@ -1,5 +1,3 @@
-declare module 'react-smooth';
-
 interface Array<T> {
   /**
    * Filters out null and undefined values from an array.

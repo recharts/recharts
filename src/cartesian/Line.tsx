@@ -1,7 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
 import { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
-import Animate from 'react-smooth';
 
 import { clsx } from 'clsx';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
@@ -39,6 +38,7 @@ import { SetLegendPayload } from '../state/SetLegendPayload';
 import { AreaPointItem } from '../state/selectors/areaSelectors';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import Animate from '../../src/animation/Animate';
+import { Animate } from '../../src/animation/Animate';
 
 describe('Animate', () => {
   it('Should change the style of children', () => {

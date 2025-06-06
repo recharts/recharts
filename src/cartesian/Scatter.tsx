@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
-import Animate from 'react-smooth';
 
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
@@ -48,6 +47,7 @@ import { SetLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
+import { Animate } from '../animation/Animate';
 
 interface ScatterPointNode {
   x?: number | string;

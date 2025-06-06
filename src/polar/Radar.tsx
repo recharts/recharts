@@ -10,7 +10,6 @@ import {
   MutableRefObject,
   useState,
 } from 'react';
-import Animate from 'react-smooth';
 import { last } from 'es-toolkit';
 
 import { clsx } from 'clsx';
@@ -34,6 +33,7 @@ import { useAppSelector } from '../state/hooks';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
+import { Animate } from '../animation/Animate';
 
 interface RadarPoint {
   x: number;
