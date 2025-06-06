@@ -1,4 +1,11 @@
 [
+  "es6/animation",
+  "es6/animation/Animate.js",
+  "es6/animation/AnimationManager.js",
+  "es6/animation/configUpdate.js",
+  "es6/animation/easing.js",
+  "es6/animation/setRafTimeout.js",
+  "es6/animation/util.js",
   "es6/cartesian",
   "es6/cartesian/Area.js",
   "es6/cartesian/Bar.js",
