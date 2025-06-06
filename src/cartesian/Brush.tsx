@@ -463,7 +463,12 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
 type BrushWithStateProps = Props &
-  PropertiesFromContext & { startIndexControlledFromProps?: number; endIndexControlledFromProps?: number };
+  PropertiesFromContext & {
+    startIndexControlledFromProps?: number;
+    endIndexControlledFromProps?: number;
+    /** callback for every pointer move with raw positions */
+    onBrushMove?: (startX: number, endX: number) => void;
+  };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   constructor(props: BrushWithStateProps) {
@@ -649,7 +654,7 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
     const { slideMoveStartX, startX, endX, scaleValues } = this.state;
-    const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap } = this.props;
+    const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap, onBrushMove } = this.props;
     let delta = e.pageX - slideMoveStartX;
 
     if (delta > 0) {
@@ -657,23 +662,31 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     } else if (delta < 0) {
       delta = Math.max(delta, x - startX, x - endX);
     }
+    const newStart = startX + delta;
+    const newEnd = endX + delta;
     const newIndex = getIndex({
-      startX: startX + delta,
-      endX: endX + delta,
+      startX: newStart,
+      endX: newEnd,
       data,
       gap,
       scaleValues,
     });
 
-    if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
-      onChange(newIndex);
-    }
+    const notify = () => {
+      if (newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) {
+        onChange?.(newIndex);
+      }
+      onBrushMove?.(this.state.startX, this.state.endX);
+    };
 
-    this.setState({
-      startX: startX + delta,
-      endX: endX + delta,
-      slideMoveStartX: e.pageX,
-    });
+    this.setState(
+      {
+        startX: newStart,
+        endX: newEnd,
+        slideMoveStartX: e.pageX,
+      },
+      notify,
+    );
   }
 
   handleTravellerDragStart(id: BrushTravellerId, e: MouseOrTouchEvent) {
@@ -690,9 +703,13 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { brushMoveStartX, movingTravellerId, endX, startX, scaleValues } = this.state;
-    const prevValue = this.state[movingTravellerId];
-
+    const { x, width, travellerWidth, onChange, gap, data, onBrushMove } = this.props;
+    const newPos = prevValue + delta;
+        [movingTravellerId]: newPos,
+        if (newIndex.startIndex !== params.startIndex || newIndex.endIndex !== params.endIndex) {
+          onChange?.(newIndex);
+        }
+        onBrushMove?.(this.state.startX, this.state.endX);
     const { x, width, travellerWidth, onChange, gap, data } = this.props;
     const params = { startX: this.state.startX, endX: this.state.endX, data, gap, scaleValues };
 
@@ -896,6 +913,23 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 function BrushInternal(props: Props) {
   const dispatch = useAppDispatch();
   const setZoom = useSetZoom();
+  const onBrushMove = useCallback(
+    (sX: number, eX: number) => {
+      if (!props.useZoomPan || chartData.length === 0) return;
+      const brushWidth = width - (props.travellerWidth ?? 5);
+      const stepBrush = brushWidth / (chartData.length - 1);
+      const startIdx = (sX - x) / stepBrush;
+      const endIdx = (eX - x) / stepBrush;
+      const visible = endIdx - startIdx;
+      if (visible <= 0) return;
+      const scaleX = chartData.length / visible;
+      const stepMain = chartWidth / chartData.length;
+      const offsetX = -startIdx * stepMain * scaleX;
+      setZoom({ scaleX, scaleY: 1, offsetX, offsetY: 0, disableAnimation: true, autoScaleYDomain: false });
+    },
+    [props.useZoomPan, chartData.length, width, x, chartWidth, setZoom, props.travellerWidth],
+  );
+      onBrushMove={onBrushMove}
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
