@@ -5,8 +5,7 @@ import * as React from 'react';
 import { PureComponent, ReactNode, MouseEvent, ReactElement } from 'react';
 
 import { clsx } from 'clsx';
-// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
-import sortBy from 'lodash.sortby';
+import sortBy from 'es-toolkit/compat/sortBy';
 import { Surface } from '../container/Surface';
 import { Symbols } from '../shape/Symbols';
 import {

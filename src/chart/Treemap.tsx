@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { PureComponent } from 'react';
-import { omit } from 'es-toolkit';
-// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
-import get from 'lodash.get';
+import omit from 'es-toolkit/compat/omit';
+import get from 'es-toolkit/compat/get';
 
 import { Layer } from '../container/Layer';
 import { Surface } from '../container/Surface';

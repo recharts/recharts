@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cloneElement, ReactElement, ReactNode, SVGProps } from 'react';
-import { last } from 'es-toolkit';
+import last from 'es-toolkit/compat/last';
 
 import { Label, ContentType, Props as LabelProps, LabelPosition, isLabelContentAFunction } from './Label';
 import { Layer } from '../container/Layer';

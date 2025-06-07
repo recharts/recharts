@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { range } from 'es-toolkit';
+import range from 'es-toolkit/compat/range';
 import { Series } from 'victory-vendor/d3-shape';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import { selectChartLayout } from '../../context/chartLayoutContext';

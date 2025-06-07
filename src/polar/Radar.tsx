@@ -10,7 +10,7 @@ import {
   MutableRefObject,
   useState,
 } from 'react';
-import { last } from 'es-toolkit';
+import last from 'es-toolkit/compat/last';
 
 import { clsx } from 'clsx';
 import { interpolateNumber, isNullish } from '../util/DataUtils';

@@ -16,7 +16,7 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
-import { range } from 'es-toolkit';
+import range from 'es-toolkit/compat/range';
 import { Layer } from '../container/Layer';
 import { Text } from '../component/Text';
 import { getValueByDataKey } from '../util/ChartUtils';

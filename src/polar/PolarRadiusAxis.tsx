@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FunctionComponent, PureComponent, ReactElement, useEffect } from 'react';
-import { maxBy, minBy } from 'es-toolkit';
+import maxBy from 'es-toolkit/compat/maxBy';
+import minBy from 'es-toolkit/compat/minBy';
 
 import { clsx } from 'clsx';
 import { Text } from '../component/Text';

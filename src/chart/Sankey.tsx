@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { MouseEvent, PureComponent, ReactElement, SVGProps } from 'react';
-import { maxBy, sumBy } from 'es-toolkit';
-// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
-import get from 'lodash.get';
+import maxBy from 'es-toolkit/compat/maxBy';
+import sumBy from 'es-toolkit/compat/sumBy';
+import get from 'es-toolkit/compat/get';
 import { Surface } from '../container/Surface';
 import { Layer } from '../container/Layer';
 import { Rectangle, Props as RectangleProps } from '../shape/Rectangle';

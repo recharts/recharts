@@ -12,7 +12,7 @@ import {
   CSSProperties,
   useCallback,
 } from 'react';
-import { throttle } from 'es-toolkit';
+import throttle from 'es-toolkit/compat/throttle';
 import { isPercent } from '../util/DataUtils';
 import { warn } from '../util/LogUtils';
 
@@ -94,7 +94,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       };
       if (debounce > 0) {
         callback = throttle(callback, debounce, {
-          edges: ['trailing'],
+          trailing: true,
+          leading: false,
         });
       }
       const observer = new ResizeObserver(callback);

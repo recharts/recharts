@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cloneElement, isValidElement, SVGProps } from 'react';
-import { isPlainObject } from 'es-toolkit';
+import isPlainObject from 'es-toolkit/compat/isPlainObject';
 
 import { Rectangle } from '../shape/Rectangle';
 import { Trapezoid } from '../shape/Trapezoid';

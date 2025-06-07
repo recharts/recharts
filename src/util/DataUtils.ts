@@ -1,5 +1,4 @@
-// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
-import get from 'lodash.get';
+import get from 'es-toolkit/compat/get';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
