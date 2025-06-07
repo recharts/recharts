@@ -2,26 +2,96 @@ import { describe, it, expect } from 'vitest';
 import { configBezier, configEasing, configSpring } from '../../src/animation/easing';
 
 describe('configBezier', () => {
-  it('should return a cubic-bezier function for valid arguments', () => {
+  it('should return a cubic-bezier function when given four numbers', () => {
     const bezier = configBezier(0.42, 0, 0.58, 1);
     expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.87, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  it('should create bezier function from string input', () => {
+    const bezier = configBezier('cubic-bezier(0.42,0,0.58,1)');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.87, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  it('should create bezier function from string input with spaces', () => {
+    const bezier = configBezier('cubic-bezier( 0.42 , 0 , 0.58 , 1 )');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.87, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  it('should create linear bezier function', () => {
+    const bezier = configBezier('linear');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.25, 4);
     expect(bezier(0.5)).toBeCloseTo(0.5, 4);
+    expect(bezier(0.75)).toBeCloseTo(0.75, 4);
+    expect(bezier(1)).toBe(1);
   });
 
-  it('should handle named easing functions', () => {
-    const ease = configBezier('ease');
-    const linear = configBezier('linear');
-
-    expect(ease).toBeInstanceOf(Function);
-    expect(linear).toBeInstanceOf(Function);
-
-    expect(ease(0.5)).toEqual(0.8024033875848569);
-    expect(linear(0.5)).toBeCloseTo(0.5, 4);
+  it('should create ease bezier function', () => {
+    const bezier = configBezier('ease');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBe(0);
+    expect(bezier(0.25)).toBeCloseTo(0.4, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.8, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.96, 1);
+    expect(bezier(1)).toBe(1);
   });
 
-  it('should handle invalid inputs and default return bezier function', () => {
+  it('should create ease-in bezier function', () => {
+    const bezier = configBezier('ease-in');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBeCloseTo(0, 4);
+    expect(bezier(0.25)).toBeCloseTo(0.09, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.31, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.62, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  it('should create ease-out bezier function', () => {
+    const bezier = configBezier('ease-out');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBeCloseTo(0, 4);
+    expect(bezier(0.25)).toBeCloseTo(0.13, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.5, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.91, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  it('should create ease-in-out bezier function', () => {
+    const bezier = configBezier('ease-in-out');
+    expect(typeof bezier).toBe('function');
+    expect(bezier(0)).toBeCloseTo(0, 4);
+    expect(bezier(0.25)).toBeCloseTo(0.37, 1);
+    expect(bezier(0.5)).toBeCloseTo(0.68, 1);
+    expect(bezier(0.75)).toBeCloseTo(0.9, 1);
+    expect(bezier(1)).toBe(1);
+  });
+
+  // perhaps this shouldn't return a function, but rather throw an error - the output is useless anyway
+  it('should return bezier function that returns all NaNs if the input is not a known function', () => {
+    // @ts-expect-error typescript correctly highlights that the input is invalid
     const bezier = configBezier('invalid');
     expect(bezier).toBeInstanceOf(Function);
+    expect(bezier(0)).toBe(NaN);
+    expect(bezier(0.25)).toBe(NaN);
+    expect(bezier(0.5)).toBe(NaN);
+    expect(bezier(0.75)).toBe(NaN);
+    expect(bezier(1)).toBe(NaN);
   });
 });
 

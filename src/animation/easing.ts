@@ -18,9 +18,15 @@ const derivativeCubicBezier = (c1: number, c2: number) => (t: number) => {
   return multyTime(newParams, t);
 };
 
+type CubicBezierTemplate = `cubic-bezier(${number},${number},${number},${number})`;
+
+type BezierInput =
+  | ['linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | CubicBezierTemplate]
+  | [number, number, number, number];
+
 // calculate cubic-bezier using Newton's method
-export const configBezier = (...args: any[]) => {
-  let [x1, y1, x2, y2] = args;
+export const configBezier = (...args: BezierInput) => {
+  let x1: number, x2: number, y1: number, y2: number;
 
   if (args.length === 1) {
     switch (args[0]) {
@@ -46,18 +52,11 @@ export const configBezier = (...args: any[]) => {
             .split(')')[0]
             .split(',')
             .map((x: string) => parseFloat(x));
-        } else {
-          // TODO replace with a typescript error
-          // warn(
-          //   false,
-          //   '[configBezier]: arguments should be one of ' +
-          //     "oneOf 'linear', 'ease', 'ease-in', 'ease-out', " +
-          //     "'ease-in-out','cubic-bezier(x1,y1,x2,y2)', instead received %s",
-          //   args,
-          // );
         }
       }
     }
+  } else if (args.length === 4) {
+    [x1, y1, x2, y2] = args;
   }
 
   // TODO replace with a typescript error
