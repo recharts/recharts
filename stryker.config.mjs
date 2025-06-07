@@ -9,12 +9,13 @@ const config = {
   testRunner_comment:
     'Take a look at https://stryker-mutator.io/docs/stryker-js/vitest-runner for information about the vitest plugin.',
   coverageAnalysis: 'perTest',
-  checkers: ["typescript"],
-  tsconfigFile: "tsconfig.json",
+  checkers: ['typescript'],
+  tsconfigFile: 'tsconfig.json',
   typescriptChecker: {
-    "prioritizePerformanceOverAccuracy": true
+    prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/state/axisSelectors.ts']
+  mutate: ['src/animation/util.ts'],
 };
+// eslint-disable-next-line import/no-default-export
 export default config;

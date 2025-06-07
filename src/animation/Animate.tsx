@@ -201,7 +201,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       this.stopJSAnimation = startAnimation();
     };
 
-    // @ts-expect-error TODO - fix the type error
     this.manager.start([onAnimationStart, begin, finalStartAnimation, duration, onAnimationEnd]);
   }
 
@@ -291,7 +290,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     const to = attributeName ? { [attributeName]: propsTo } : propsTo;
     const transition = getTransitionVal(Object.keys(to), duration, easing);
 
-    // @ts-expect-error TODO - fix the type error
     this.manager.start([onAnimationStart, begin, { ...to, transition }, duration, onAnimationEnd]);
   }
 

@@ -1,21 +1,34 @@
 import { setRafTimeout } from './setRafTimeout';
 
-type ReactSmoothStyleType = string | string[] | Record<string, unknown> | (() => void);
+type ReactSmoothStyle = object;
 
-type HandleChangeFn = (currentStyle?: ReactSmoothStyleType) => null | void;
+/**
+ * Represents a single item in the ReactSmoothQueue.
+ * The item can be:
+ * - A number representing a delay in milliseconds.
+ * - An object representing a style change
+ * - A function to be executed
+ */
+type ReactSmoothQueueItem = number | ReactSmoothStyle | (() => void);
+
+export type ReactSmoothQueue = ReadonlyArray<ReactSmoothQueueItem>;
+
+export type HandleChangeFn = (currentStyle: ReactSmoothStyle) => null | void;
 
 export type AnimationManager = {
   stop: () => void;
-  start: (style: ReactSmoothStyleType) => void;
-  subscribe: (handleChange: (style: unknown) => void) => () => void;
+  start: (style: ReactSmoothQueue) => void;
+  subscribe: (handleChange: (style: ReactSmoothStyle) => void) => () => void;
 };
 
-export function createAnimateManager() {
-  let currStyle: Record<any, any> = {};
-  let handleChange: (currentStyle?: ReactSmoothStyleType) => null | void = () => null;
+export type SetTimeoutFn = (callback: () => void, timeout?: number) => void;
+
+export function createAnimateManager(setTimeoutDi: SetTimeoutFn = setRafTimeout): AnimationManager {
+  let currStyle: ReactSmoothQueueItem | ReactSmoothQueue = {};
+  let handleChange: HandleChangeFn = () => null;
   let shouldStop = false;
 
-  const setStyle = (_style: unknown) => {
+  const setStyle = (_style: ReactSmoothQueueItem | ReactSmoothQueue) => {
     if (shouldStop) {
       return;
     }
@@ -25,17 +38,17 @@ export function createAnimateManager() {
         return;
       }
 
-      const styles: ReadonlyArray<unknown> = _style;
+      const styles = _style;
       const [curr, ...restStyles] = styles;
 
       if (typeof curr === 'number') {
-        setRafTimeout(setStyle.bind(null, restStyles), curr);
+        setTimeoutDi(setStyle.bind(null, restStyles), curr);
 
         return;
       }
 
       setStyle(curr);
-      setRafTimeout(setStyle.bind(null, restStyles));
+      setTimeoutDi(setStyle.bind(null, restStyles));
       return;
     }
 
@@ -53,7 +66,7 @@ export function createAnimateManager() {
     stop: () => {
       shouldStop = true;
     },
-    start: (style: ReactSmoothStyleType) => {
+    start: (style: ReactSmoothQueue) => {
       shouldStop = false;
       setStyle(style);
     },
