@@ -15,7 +15,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/animation/AnimationManager.ts'],
+  mutate: ['src/animation/util.ts'],
 };
 // eslint-disable-next-line import/no-default-export
 export default config;
