@@ -1,26 +1,37 @@
-const ACCURACY = 1e-4;
+export const ACCURACY = 1e-4;
 
 const cubicBezierFactor = (c1: number, c2: number) => [0, 3 * c1, 3 * c2 - 6 * c1, 3 * c1 - 3 * c2 + 1];
 
-const multyTime = (params: ReadonlyArray<number>, t: number) =>
+const evaluatePolynomial = (params: ReadonlyArray<number>, t: number) =>
   params.map((param, i) => param * t ** i).reduce((pre, curr) => pre + curr);
 
 const cubicBezier = (c1: number, c2: number) => (t: number) => {
   const params = cubicBezierFactor(c1, c2);
 
-  return multyTime(params, t);
+  return evaluatePolynomial(params, t);
 };
 
 const derivativeCubicBezier = (c1: number, c2: number) => (t: number) => {
   const params = cubicBezierFactor(c1, c2);
   const newParams = [...params.map((param, i) => param * i).slice(1), 0];
 
-  return multyTime(newParams, t);
+  return evaluatePolynomial(newParams, t);
+};
+
+type CubicBezierTemplate = `cubic-bezier(${number},${number},${number},${number})`;
+
+type NamedBezier = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | CubicBezierTemplate;
+
+type BezierInput = [NamedBezier] | [number, number, number, number];
+
+export type BezierEasingFunction = {
+  isStepper: false;
+  (t: number): number;
 };
 
 // calculate cubic-bezier using Newton's method
-export const configBezier = (...args: any[]) => {
-  let [x1, y1, x2, y2] = args;
+export const configBezier = (...args: BezierInput): BezierEasingFunction => {
+  let x1: number, x2: number, y1: number, y2: number;
 
   if (args.length === 1) {
     switch (args[0]) {
@@ -46,26 +57,12 @@ export const configBezier = (...args: any[]) => {
             .split(')')[0]
             .split(',')
             .map((x: string) => parseFloat(x));
-        } else {
-          // TODO replace with a typescript error
-          // warn(
-          //   false,
-          //   '[configBezier]: arguments should be one of ' +
-          //     "oneOf 'linear', 'ease', 'ease-in', 'ease-out', " +
-          //     "'ease-in-out','cubic-bezier(x1,y1,x2,y2)', instead received %s",
-          //   args,
-          // );
         }
       }
     }
+  } else if (args.length === 4) {
+    [x1, y1, x2, y2] = args;
   }
-
-  // TODO replace with a typescript error
-  // warn(
-  //   [x1, x2, y1, y2].every(num => typeof num === 'number' && num >= 0 && num <= 1),
-  //   '[configBezier]: arguments should be x1, y1, x2, y2 of [0, 1] instead received %s',
-  //   args,
-  // );
 
   const curveX = cubicBezier(x1, x2);
   const curveY = cubicBezier(y1, y2);
@@ -99,20 +96,26 @@ export const configBezier = (...args: any[]) => {
     return curveY(x);
   };
 
-  bezier.isStepper = false;
+  bezier.isStepper = false as const;
 
   return bezier;
 };
 
-type ConfigSpring = {
+type SpringInput = {
   stiff?: number;
   damping?: number;
   dt?: number;
 };
 
-export const configSpring = (config: ConfigSpring = {}) => {
+export type SpringEasingFunction = {
+  isStepper: true;
+  dt: number;
+  (currX: number, destX: number, currV: number): [number, number];
+};
+
+export const configSpring = (config: SpringInput = {}): SpringEasingFunction => {
   const { stiff = 100, damping = 8, dt = 17 } = config;
-  const stepper = (currX: number, destX: number, currV: number) => {
+  const stepper = (currX: number, destX: number, currV: number): ReturnType<SpringEasingFunction> => {
     const FSpring = -(currX - destX) * stiff;
     const FDamping = currV * damping;
     const newV = currV + ((FSpring - FDamping) * dt) / 1000;
@@ -124,15 +127,17 @@ export const configSpring = (config: ConfigSpring = {}) => {
     return [newX, newV];
   };
 
-  stepper.isStepper = true;
+  stepper.isStepper = true as const;
   stepper.dt = dt;
 
   return stepper;
 };
 
-export const configEasing = (...args: any[]) => {
-  const [easing] = args;
+export type EasingFunction = BezierEasingFunction | SpringEasingFunction;
 
+export type EasingInput = NamedBezier | 'spring' | EasingFunction;
+
+export const configEasing = (easing: EasingInput): EasingFunction => {
   if (typeof easing === 'string') {
     switch (easing) {
       case 'ease':
@@ -147,22 +152,12 @@ export const configEasing = (...args: any[]) => {
         if (easing.split('(')[0] === 'cubic-bezier') {
           return configBezier(easing);
         }
-      // TODO replace with a typescript error
-      // warn(
-      //   false,
-      //   "[configEasing]: first argument should be one of 'ease', 'ease-in', " +
-      //     "'ease-out', 'ease-in-out','cubic-bezier(x1,y1,x2,y2)', 'linear' and 'spring', instead  received %s",
-      //   args,
-      // );
     }
   }
 
   if (typeof easing === 'function') {
     return easing;
   }
-
-  // TODO replace with a typescript error
-  // warn(false, '[configEasing]: first argument type should be function or string, instead received %s', args);
 
   return null;
 };

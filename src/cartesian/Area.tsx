@@ -731,10 +731,14 @@ function AreaImpl(props: Props) {
     return null;
   }
 
-  if (!points || !points.length) {
-    // No points to render, so we return null
-    return null;
-  }
+  /*
+   * It is important to NOT have this condition here,
+   * because we need the Animate inside to receive an empty state
+   * so that it can properly reset its internal state and start a new animation.
+   */
+  // if (!points || !points.length) {
+  //   return null;
+  // }
 
   return (
     <AreaWithState

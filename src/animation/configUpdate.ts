@@ -1,4 +1,5 @@
 import { getIntersectionKeys, mapObject } from './util';
+import { EasingFunction, SpringEasingFunction } from './easing';
 
 export const alpha = (begin: number, end: number, k: number) => begin + (end - begin) * k;
 const needContinue = ({ from, to }: Val) => from !== to;
@@ -13,11 +14,7 @@ type Val = {
  * @description: cal new from value and velocity in each stepper
  * @return: { [styleProperty]: { from, to, velocity } }
  */
-const calStepperVals = (
-  easing: (arg0: any, arg1: any, arg2: any) => [any, any],
-  preVals: Record<string, Val>,
-  steps: number,
-) => {
+const calStepperVals = (easing: SpringEasingFunction, preVals: Record<string, Val>, steps: number) => {
   const nextStepVals: Record<string, Val> = mapObject((key, val: Val): Val => {
     if (needContinue(val)) {
       const [newX, newV] = easing(val.from, val.to, val.velocity);
@@ -53,13 +50,7 @@ const calStepperVals = (
 export default (
   from: Record<string, unknown>,
   to: Record<string, unknown>,
-  easing:
-    | ((arg0: any, arg1: any, arg2: any) => [any, any])
-    | {
-        (arg0: number): any;
-        dt: number;
-        isStepper: any;
-      },
+  easing: EasingFunction,
   duration: number,
   render: (arg0: any) => void,
 ) => {
@@ -100,6 +91,7 @@ export default (
     // @ts-expect-error TODO fix type
     const steps = deltaTime / easing.dt;
 
+    // @ts-expect-error TODO fix type
     stepperStyle = calStepperVals(easing, stepperStyle, steps);
     // get union set and add compatible prefix
     render({
