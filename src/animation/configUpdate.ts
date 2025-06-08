@@ -45,6 +45,18 @@ const calStepperVals = (easing: SpringEasingFunction, preVals: Record<string, Va
   return calStepperVals(easing, nextStepVals, steps - 1);
 };
 
+export type FrameId = number;
+
+export type RequestAnimationFrameCallback = (time: number) => void;
+
+export type RequestAnimationFrameDi = (callback: RequestAnimationFrameCallback) => FrameId;
+
+export type CancelAnimationFrameDi = (handle: FrameId) => void;
+
+export type CancelAnimationFunction = () => void;
+
+export type StartAnimationFunction = () => CancelAnimationFunction;
+
 // configure update function
 // eslint-disable-next-line import/no-default-export
 export default (
@@ -53,7 +65,9 @@ export default (
   easing: EasingFunction,
   duration: number,
   render: (arg0: any) => void,
-) => {
+  requestAnimationFrameDi: RequestAnimationFrameDi = requestAnimationFrame,
+  cancelAnimationFrameDi: CancelAnimationFrameDi = cancelAnimationFrame,
+): StartAnimationFunction => {
   const interKeys = getIntersectionKeys(from, to);
   const timingStyle = interKeys.reduce(
     (res, key) => ({
@@ -104,7 +118,7 @@ export default (
     preTime = now;
 
     if (!shouldStopAnimation()) {
-      cafId = requestAnimationFrame(update);
+      cafId = requestAnimationFrameDi(update);
     }
   };
 
@@ -126,7 +140,7 @@ export default (
     });
 
     if (t < 1) {
-      cafId = requestAnimationFrame(update);
+      cafId = requestAnimationFrameDi(update);
     } else {
       // @ts-expect-error TODO fix type
       const finalStyle = mapObject((key, val) => alpha(...val, easing(1)), timingStyle);
@@ -144,11 +158,11 @@ export default (
 
   // return start animation method
   return () => {
-    requestAnimationFrame(update);
+    requestAnimationFrameDi(update);
 
     // return stop animation method
     return () => {
-      cancelAnimationFrame(cafId);
+      cancelAnimationFrameDi(cafId);
     };
   };
 };
