@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PureComponent, cloneElement, Children } from 'react';
 import { isEqual } from 'es-toolkit';
 import { AnimationManager, createAnimateManager } from './AnimationManager';
-import { configEasing } from './easing';
+import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal, identity } from './util';
 
@@ -20,7 +20,7 @@ export interface AnimateProps {
   attributeName?: string;
   duration?: number;
   begin?: number;
-  easing?: string | ((...args: any[]) => any);
+  easing?: EasingInput;
   steps?: ReadonlyArray<AnimateStep>;
   children?: React.ReactNode | ((style: Record<string, any> | string) => React.ReactNode);
   isActive?: boolean;
