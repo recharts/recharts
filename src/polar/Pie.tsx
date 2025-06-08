@@ -10,8 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
-import get from 'lodash.get';
+import get from 'es-toolkit/compat/get';
 
 import { clsx } from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';

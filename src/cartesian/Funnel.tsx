@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import * as React from 'react';
 import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
-import { omit } from 'es-toolkit';
+import omit from 'es-toolkit/compat/omit';
 
 import { clsx } from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';

@@ -1,7 +1,5 @@
-// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
-import sortBy from 'lodash.sortby';
-// @ts-expect-error not installing types for lodash.get, I just want to see the bundle size difference
-import get from 'lodash.get';
+import sortBy from 'es-toolkit/compat/sortBy';
+import get from 'es-toolkit/compat/get';
 
 import {
   Series,

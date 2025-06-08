@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
-// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
-import sortBy from 'lodash.sortby';
+import sortBy from 'es-toolkit/compat/sortBy';
 import { useAppSelector } from '../hooks';
 import { RechartsRootState } from '../store';
 import {
@@ -86,7 +85,7 @@ function getSliced<T>(
 }
 
 export const selectOrderedTooltipTicks = createSelector(selectTooltipAxisTicks, (ticks: ReadonlyArray<TickItem>) =>
-  sortBy(ticks, (o: { coordinate: any }) => o.coordinate),
+  sortBy(ticks, o => o.coordinate),
 );
 
 export const selectTooltipInteractionState: (

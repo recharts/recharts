@@ -4,8 +4,7 @@
 
 import * as React from 'react';
 import { CSSProperties, HTMLAttributes, ReactNode, SVGProps } from 'react';
-// @ts-expect-error not installing types for lodash.sortBy, I just want to see the bundle size difference
-import sortBy from 'lodash.sortby';
+import sortBy from 'es-toolkit/compat/sortBy';
 import { clsx } from 'clsx';
 import { isNullish, isNumOrStr } from '../util/DataUtils';
 import { DataKey } from '../util/types';

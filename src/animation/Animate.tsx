@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PureComponent, cloneElement, Children } from 'react';
-import { isEqual } from 'es-toolkit';
+import isEqual from 'es-toolkit/compat/isEqual';
 import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing } from './easing';
 import configUpdate from './configUpdate';
