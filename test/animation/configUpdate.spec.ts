@@ -353,12 +353,8 @@ describe('animationFunction', () => {
     const render = vi.fn();
 
     beforeEach(() => {
-      // Reset the mock animation frame before each test
       mockAnimationFrame.clear();
       render.mockReset();
-    });
-
-    beforeEach(() => {
       // Reset mocks
       vi.resetAllMocks();
       vi.useFakeTimers({ toFake: ['requestAnimationFrame'] });
