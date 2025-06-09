@@ -13,10 +13,10 @@ import { setTooltipSettingsState } from '../state/tooltipSlice';
 
 // Context for axis label interactions
 const AxisInteractionContext = React.createContext<{
-  handleAxisZoom?: (axisType: 'x' | 'y', zoomRatio: number) => void;
-  handleAxisPan?: (axisType: 'x' | 'y', panDelta: number) => void;
-  isInteractionEnabled?: boolean;
-  mode?: 'x' | 'y' | 'xy';
+  handleAxisWheel?: (e: React.WheelEvent, axisType: 'x' | 'y') => void;
+  handleAxisDrag?: (e: React.PointerEvent, axisType: 'x' | 'y', action: 'start' | 'move' | 'end') => void;
+  handleAxisTouch?: (e: React.TouchEvent, axisType: 'x' | 'y', action: 'start' | 'move' | 'end') => void;
+  isLabelInteractionEnabled?: boolean;
 } | null>(null);
 
 export const useAxisInteraction = () => React.useContext(AxisInteractionContext);
@@ -59,6 +59,8 @@ export interface ZoomConfig {
     wheelPan?: boolean;
     /** Enable drag to pan in chart area */
     dragPan?: boolean;
+    /** Allow dragging to pan in main chart area (if false, only edge panning works) */
+    allowChartDragPan?: boolean;
     /** Enable drag on scroll bars */
     dragScrollBars?: boolean;
     /** Enable label dragging for zoom/pan */
@@ -71,6 +73,11 @@ export interface ZoomConfig {
     twoFingerPanThreshold?: number;
     /** Edge threshold for chart drag vs tooltip conflict resolution */
     edgeThreshold?: number;
+    /** Enable edge panning when dragging near chart edges */
+    edgePan?: boolean;
+    /** If true a finger that starts inside the chart auto-pans (tooltip remains active).
+     *  If false you must start the drag on the edge to pan. */
+    edgePanAutoSeek?: boolean;
   };
   
   // Event prevention
@@ -85,6 +92,9 @@ export interface ZoomConfig {
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+/* ---------- 15 % damping for raw pinch ratio -------------------------- */
+const damp = (r: number, k = 1) => 1 + (r - 1) * k;
 
 function restrictOffsets(mode: 'x' | 'y' | 'xy', s: ZoomState, w: number, h: number): ZoomState {
   const minX = w * (1 - s.scaleX);
@@ -135,6 +145,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     twoFingerPan: controls.twoFingerPan !== false,
     twoFingerPanThreshold: controls.twoFingerPanThreshold ?? 80,
     edgeThreshold: controls.edgeThreshold ?? 50,
+    edgePan: controls.edgePan !== false, // Enable edge panning by default
+    edgePanAutoSeek: controls.edgePanAutoSeek !== false, // Enable auto-seek mode by default
+    allowChartDragPan: controls.allowChartDragPan !== false,
   };
 
   // Default prevention settings
@@ -165,6 +178,31 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     if (!rect) return { x: 0, y: 0 };
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }, []);
+
+  // Helper function to check if touch is on scroll bar
+  const checkIfTouchOnScrollBar = useCallback((x: number, y: number) => {
+    if (!scrollBarConfig.show || (state.scaleX <= 1 && state.scaleY <= 1)) return false;
+    
+    const scrollBarThickness = scrollBarConfig.thickness;
+    
+    // Check X scroll bar (bottom)
+    if (mode !== 'y' && state.scaleX > 1) {
+      const xBarY = top + height - scrollBarThickness;
+      if (y >= xBarY && y <= xBarY + scrollBarThickness && x >= left && x <= left + width) {
+        return true;
+      }
+    }
+    
+    // Check Y scroll bar (right)
+    if (mode !== 'x' && state.scaleY > 1) {
+      const yBarX = left + width - scrollBarThickness;
+      if (x >= yBarX && x <= yBarX + scrollBarThickness && y >= top && y <= top + height) {
+        return true;
+      }
+    }
+    
+    return false;
+  }, [scrollBarConfig.show, scrollBarConfig.thickness, mode, state.scaleX, state.scaleY, top, height, left, width]);
   const interacted = useRef(false);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const selectStart = useRef<{ x: number; y: number } | null>(null);
@@ -172,6 +210,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const barDrag = useRef<'x' | 'y' | null>(null);
   const [barHover, setBarHover] = useState<'x' | 'y' | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const twoFingerStart = useRef<{ distance: number; centerX: number; centerY: number } | null>(null);
   const pinchStart = useRef<{
@@ -184,9 +223,13 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     centerY: number;
   } | null>(null);
   const lastTap = useRef<number>(0);
-  const doubleTapStart = useRef<{ x: number; y: number } | null>(null);
-  const axisGestureLock = useRef<'x' | 'y' | null>(null);
-
+  const tapCount = useRef(0);           // 0-3
+  const TAP_DELAY = 300;                // ms - same window as before
+  const doubleClickTimer = useRef<NodeJS.Timeout | null>(null);
+  const isDoubleClickHold = useRef<boolean>(false);
+  const doubleClickPos = useRef<{ x: number; y: number } | null>(null);
+  const updateCursorTimer = useRef<number | null>(null);
+  
   const update = useCallback(
     (next: Partial<ZoomState>) => {
       const withFlag: ZoomState = {
@@ -311,6 +354,22 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
       onZoomChange?.(restricted);
       dispatch(setZoom(restricted));
+
+      // Update cursor position during zoom operations
+      if (updateCursorTimer.current === null) {
+        // keep one single RAF running while the user is interacting
+        const loop = () => {
+          dispatch(setTooltipSettingsState({
+            active: true,
+            defaultIndex: undefined,
+            shared: undefined,
+            trigger: undefined,
+            axisId: undefined,
+          }));   // triggers selector recompute
+          updateCursorTimer.current = requestAnimationFrame(loop);
+        };
+        updateCursorTimer.current = requestAnimationFrame(loop);
+      }
     },
     [
       onZoomChange,
@@ -330,49 +389,116 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     ],
   );
 
-  const handleAxisZoom = useCallback((axisType: 'x' | 'y', zoomRatio: number) => {
-    const next: Partial<ZoomState> = {};
-    if (axisType === 'x') {
-      const newScaleX = clamp(state.scaleX * zoomRatio, minScale, maxScale);
-      const rX = newScaleX / state.scaleX;
-      const anchorX = width / 2 - state.offsetX;
-      next.scaleX = newScaleX;
-      next.offsetX = state.offsetX - anchorX * (rX - 1);
-    } else { // 'y'
-      const newScaleY = clamp(state.scaleY * zoomRatio, minScale, maxScale);
-      const rY = newScaleY / state.scaleY;
-      const anchorY = height / 2 - state.offsetY;
-      next.scaleY = newScaleY;
-      next.offsetY = state.offsetY - anchorY * (rY - 1);
-    }
-    update(next);
-  }, [state, minScale, maxScale, update, width, height]);
+  // Helper for gentle auto-panning when finger approaches edges during tooltip mode
+  const gentleAutoPan = useCallback((localX: number, localY: number, intensity = 0.35) => {
+    const { edgePan, edgeThreshold } = controlConfig;
+    if (!edgePan) return;
 
-  const handleAxisPan = useCallback((axisType: 'x' | 'y', panDelta: number) => {
-    const next: Partial<ZoomState> = {};
-    if (axisType === 'x') {
-      next.offsetX = state.offsetX + panDelta;
-    } else {
-      next.offsetY = state.offsetY + panDelta;
-    }
-    update(next);
-  }, [state, update]);
+    const dLeft = localX;
+    const dRight = width - localX;
+    const dTop = localY;
+    const dBottom = height - localY;
 
-  const axisInteractionValue = React.useMemo(() => ({
-    handleAxisZoom,
-    handleAxisPan,
-    isInteractionEnabled: controlConfig.labelDrag || controlConfig.wheelZoom,
-    mode,
-  }), [handleAxisZoom, handleAxisPan, controlConfig.labelDrag, controlConfig.wheelZoom, mode]);
+    let panX = 0, panY = 0;
+
+    if (mode !== 'y' && dLeft < edgeThreshold) panX = (edgeThreshold - dLeft) * intensity;
+    if (mode !== 'y' && dRight < edgeThreshold) panX = -(edgeThreshold - dRight) * intensity;
+    if (mode !== 'x' && dTop < edgeThreshold) panY = (edgeThreshold - dTop) * intensity;
+    if (mode !== 'x' && dBottom < edgeThreshold) panY = -(edgeThreshold - dBottom) * intensity;
+
+    if (panX || panY) {
+      update({
+        offsetX: state.offsetX + panX,
+        offsetY: state.offsetY + panY,
+        disableAnimation: true,
+      });
+    }
+  }, [controlConfig, mode, width, height, state.offsetX, state.offsetY, update]);
 
   const handleWheel = useCallback(
     (e: React.WheelEvent<SVGGElement>) => {
-      if (!controlConfig.wheelZoom) return;
-      
+      // ALWAYS prevent page scroll when over the chart area
       e.preventDefault();
-      if (preventConfig.pageScroll) {
-        e.stopPropagation();
+      e.stopPropagation();
+      
+      const local = getLocalCoords(e);
+      
+      // Check if scrolling on scroll bar area - if so, pan instead of zoom
+      const onScrollBarX = scrollBarConfig.show && (mode === 'x' || mode === 'xy') && state.scaleX > 1 && 
+        local.y >= height - scrollBarConfig.thickness && local.y <= height &&
+        local.x >= 0 && local.x <= width;
+        
+      const onScrollBarY = scrollBarConfig.show && (mode === 'y' || mode === 'xy') && state.scaleY > 1 && 
+        local.x >= width - scrollBarConfig.thickness && local.x <= width &&
+        local.y >= 0 && local.y <= height;
+        
+      const onScrollBar = onScrollBarX || onScrollBarY;
+      
+      if (onScrollBar && controlConfig.wheelPan) {
+        
+        if (e.shiftKey) {
+          // Shift+scroll in scrollbar area = zoom that axis
+          const delta = e.deltaY < 0 ? 1.1 : 0.9;
+          const next: Partial<ZoomState> = {};
+          
+          if (onScrollBarX) {
+            const anchorX = local.x - state.offsetX;
+            const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
+            const ratioX = newScaleX / state.scaleX;
+            next.scaleX = newScaleX;
+            next.offsetX = state.offsetX - anchorX * (ratioX - 1);
+          }
+          if (onScrollBarY) {
+            const anchorY = local.y - state.offsetY;
+            const newScaleY = clamp(state.scaleY * delta, minScale, maxScale);
+            const ratioY = newScaleY / state.scaleY;
+            next.scaleY = newScaleY;
+            next.offsetY = state.offsetY - anchorY * (ratioY - 1);
+          }
+          
+          interacted.current = true;
+          next.disableAnimation = interacted.current && disableAnimation;
+          update(next);
+        } else {
+          // Regular scroll in scrollbar area = pan
+          const panAmount = e.deltaY > 0 ? -30 : 30;
+          const next: Partial<ZoomState> = {};
+          
+          if (onScrollBarX && (mode === 'x' || mode === 'xy')) {
+            next.offsetX = Math.min(Math.max(state.offsetX + panAmount, width * (1 - state.scaleX)), 0);
+          }
+          if (onScrollBarY && (mode === 'y' || mode === 'xy')) {
+            next.offsetY = Math.min(Math.max(state.offsetY + panAmount, height * (1 - state.scaleY)), 0);
+          }
+          
+          update(next);
+        }
+        return;
       }
+      
+      // Main chart area interactions
+      if (e.shiftKey && controlConfig.wheelPan) {
+        const panAmount = e.deltaY > 0 ? -30 : 30;
+        const next: Partial<ZoomState> = {};
+        
+        if (e.ctrlKey) {
+          // Ctrl+Shift+scroll = pan Y axis
+          if (mode !== 'x') {
+            next.offsetY = Math.min(Math.max(state.offsetY + panAmount, height * (1 - state.scaleY)), 0);
+          }
+        } else {
+          // Shift+scroll = pan X axis
+          if (mode !== 'y') {
+            next.offsetX = Math.min(Math.max(state.offsetX + panAmount, width * (1 - state.scaleX)), 0);
+          }
+        }
+        
+        update(next);
+        return;
+      }
+      
+      // Regular zoom behavior for main chart area
+      if (!controlConfig.wheelZoom) return;
       
       // Clear tooltip when zooming with wheel
       dispatch(setTooltipSettingsState({
@@ -384,7 +510,6 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       }));
       
       interacted.current = true;
-      const local = getLocalCoords(e);
       const anchorX = local.x - state.offsetX;
       const anchorY = local.y - state.offsetY;
       const delta = e.deltaY < 0 ? 1.1 : 0.9;
@@ -396,7 +521,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         const ratioY = newScaleY / state.scaleY;
         next.scaleY = newScaleY;
         if (!config.followLineKey) {
-        next.offsetY = state.offsetY - anchorY * (ratioY - 1);
+          next.offsetY = state.offsetY - anchorY * (ratioY - 1);
         }
       } else if (mode === 'xy') {
         const newScale = clamp(state.scaleX * delta, minScale, maxScale);
@@ -405,7 +530,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         next.scaleY = newScale;
         next.offsetX = state.offsetX - anchorX * (ratio - 1);
         if (!config.followLineKey) {
-        next.offsetY = state.offsetY - anchorY * (ratio - 1);
+          next.offsetY = state.offsetY - anchorY * (ratio - 1);
         }
       } else {
         const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
@@ -417,13 +542,10 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       next.disableAnimation = interacted.current && disableAnimation;
       update(next);
     },
-    [state, minScale, maxScale, update, mode, getLocalCoords, disableAnimation, config.followLineKey, controlConfig.wheelZoom, preventConfig.pageScroll, dispatch],
+    [state, minScale, maxScale, update, mode, getLocalCoords, disableAnimation, config.followLineKey, controlConfig.wheelZoom, controlConfig.wheelPan, dispatch, scrollBarConfig.show, scrollBarConfig.thickness, width, height],
   );
 
-  const handleDoubleClick = useCallback(() => {
-    // Do not reset if a selection gesture is in progress
-    if (selectStart.current) return;
-
+  const handleDoubleClick = useCallback((e: React.MouseEvent<SVGRectElement>) => {
     // Clear any active tooltip to prevent it from remembering the old state
     dispatch(setTooltipSettingsState({
       active: false,
@@ -433,42 +555,462 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
       axisId: undefined,
     }));
 
-    update({
-      scaleX: 1,
-      scaleY: 1,
-      offsetX: 0,
-      offsetY: 0,
-    });
-  }, [update, dispatch]);
+    // If drag to zoom is enabled, start a timer to detect hold-and-drag
+    if (dragToZoom) {
+      const local = getLocalCoords(e);
+      doubleClickPos.current = { x: local.x, y: local.y };
+      isDoubleClickHold.current = true;
+      
+      // Clear any existing timer
+      if (doubleClickTimer.current) {
+        clearTimeout(doubleClickTimer.current);
+      }
+      
+      // Set a timer to reset zoom if no drag starts within 200ms (reduced from 300ms)
+      doubleClickTimer.current = setTimeout(() => {
+        if (isDoubleClickHold.current && !selectStart.current) {
+          // No drag detected, proceed with zoom reset
+          update({
+            scaleX: 1,
+            scaleY: 1,
+            offsetX: 0,
+            offsetY: 0,
+          });
+        }
+        isDoubleClickHold.current = false;
+        doubleClickPos.current = null;
+        doubleClickTimer.current = null;
+      }, 200);
+    } else {
+      // No drag to zoom, immediately reset
+      update({
+        scaleX: 1,
+        scaleY: 1,
+        offsetX: 0,
+        offsetY: 0,
+      });
+    }
+  }, [update, dispatch, dragToZoom, getLocalCoords]);
 
-  // Helper function to check if touch is on scroll bar
-  const checkIfTouchOnScrollBar = useCallback((x: number, y: number) => {
-    if (!scrollBarConfig.show || (state.scaleX <= 1 && state.scaleY <= 1)) return false;
-
-    const scrollBarThickness = scrollBarConfig.thickness;
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      
+      // Handle triple-tap detection FIRST, before any preventDefault calls
+      if (e.changedTouches.length === 1) {
+        const now = Date.now();
+        const t = e.changedTouches[0];
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
         
-    // Check X scroll bar (bottom)
-    if (mode !== 'y' && state.scaleX > 1) {
-      const xBarY = top + height - scrollBarThickness;
-      if (y >= xBarY && y <= xBarY + scrollBarThickness && x >= left && x <= left + width) {
-        return true;
+        // Reset counter if too much time has passed
+        if (lastTap.current > 0 && now - lastTap.current > TAP_DELAY) {
+          tapCount.current = 0; // too slow - start over
+        }
+        
+        // Increment tap count for every primary touch-down
+        tapCount.current += 1;
+        
+        // Check if this is a double-tap (within TAP_DELAY and 50px of last tap)
+        if (tapCount.current === 2 && lastTap.current > 0 && now - lastTap.current < TAP_DELAY && doubleClickPos.current) {
+          const distance = Math.hypot(local.x - doubleClickPos.current.x, local.y - doubleClickPos.current.y);
+          if (distance < 50) {
+            // This is a confirmed double-tap - NOW we can prevent default
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Reset tap counter after successful double-tap
+            tapCount.current = 0;
+            
+            // Force hide tooltip and start interaction state
+            setIsInteracting(true);
+            dispatch(setTooltipSettingsState({
+              active: false,
+              defaultIndex: undefined,
+              shared: undefined,
+              trigger: undefined,
+              axisId: undefined,
+            }));
+            
+            if (dragToZoom) {
+              // Enable drag mode for drag-to-zoom
+              isDoubleClickHold.current = true;
+              doubleClickPos.current = local;
+              lastTap.current = 0; // Reset to prevent issues
+              
+              // Set pointer for immediate availability
+              Array.from(e.changedTouches).forEach((touch: React.Touch) => {
+                const touchLocal = getLocalCoords({ clientX: touch.clientX, clientY: touch.clientY });
+                pointers.current.set(touch.identifier, touchLocal);
+              });
+              
+              return; // Exit early - we're now in double-tap-hold mode
+            } else {
+              // No drag to zoom enabled, immediately reset zoom
+              lastTap.current = 0; // Reset to prevent issues
+              update({
+                scaleX: 1,
+                scaleY: 1,
+                offsetX: 0,
+                offsetY: 0,
+              });
+              return;
+            }
+          }
+        }
+        
+        // Store this tap for potential double-tap (but don't prevent default yet)
+        lastTap.current = now;
+        doubleClickPos.current = local;
       }
-    }
-    
-    // Check Y scroll bar (right)
-    if (mode !== 'x' && state.scaleY > 1) {
-      const yBarX = left + width - scrollBarThickness;
-      if (x >= yBarX && x <= yBarX + scrollBarThickness && y >= top && y <= top + height) {
-        return true;
+      
+      // Check if touch is on scrollbar - if so, prevent page scroll but allow scrollbar interaction
+      const t = e.changedTouches[0];
+      const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+      const onScrollBar = checkIfTouchOnScrollBar(local.x, local.y);
+      
+      if (onScrollBar) {
+        // Prevent page scroll when touching scrollbars
+        e.preventDefault();
+        
+        // Force hide tooltip when interacting with scrollbars
+        setIsInteracting(true);
+        dispatch(setTooltipSettingsState({
+          active: false,
+          defaultIndex: undefined,
+          shared: undefined,
+          trigger: undefined,
+          axisId: undefined,
+        }));
       }
-    }
-    
-    return false;
-  }, [scrollBarConfig.show, scrollBarConfig.thickness, mode, state.scaleX, state.scaleY, top, height, left, width]);
+      
+      // Check if near edges for potential edge panning
+      const nearLeftEdge = controlConfig.edgePan && local.x < controlConfig.edgeThreshold;
+      const nearRightEdge = controlConfig.edgePan && local.x > width - controlConfig.edgeThreshold;
+      const nearTopEdge = controlConfig.edgePan && local.y < controlConfig.edgeThreshold;
+      const nearBottomEdge = controlConfig.edgePan && local.y > height - controlConfig.edgeThreshold;
+      const nearEdge = nearLeftEdge || nearRightEdge || nearTopEdge || nearBottomEdge;
+      
+      // Only prevent default for interactions that we definitely need to handle
+      if (nearEdge || onScrollBar || pointers.current.size >= 1) {
+        // For edge panning, scrollbar interaction, or multi-touch, we need control
+        if (!onScrollBar) { // scrollbar already handled above
+          e.preventDefault();
+        }
+        
+        // Force hide tooltip for these interactions
+        setIsInteracting(true);
+        dispatch(setTooltipSettingsState({
+          active: false,
+          defaultIndex: undefined,
+          shared: undefined,
+          trigger: undefined,
+          axisId: undefined,
+        }));
+      }
+      
+      interacted.current = true;
+      
+      Array.from(e.changedTouches).forEach((touch: React.Touch) => {
+        const touchLocal = getLocalCoords({ clientX: touch.clientX, clientY: touch.clientY });
+        pointers.current.set(touch.identifier, touchLocal);
+      });
+      
+      if (pointers.current.size === 1) {
+        // Set drag start for edge panning or scroll bar interaction
+        if (nearEdge || onScrollBar) {
+          dragStart.current = { x: local.x, y: local.y };
+        }
+        // For regular touches in main area, don't set dragStart to allow tooltip behavior
+      }
+      
+      if (pointers.current.size >= 2 && controlConfig.pinchZoom) {
+        // Prevent default for multi-touch gestures
+        e.preventDefault();
+        
+        const [a, b] = Array.from(pointers.current.values());
+        const distance = Math.hypot(a.x - b.x, a.y - b.y);
+        const centerX = (a.x + b.x) / 2;
+        const centerY = (a.y + b.y) / 2;
+        
+        pinchStart.current = {
+          distance,
+          scaleX: state.scaleX,
+          scaleY: state.scaleY,
+          offsetX: state.offsetX,
+          offsetY: state.offsetY,
+          centerX: centerX - state.offsetX,
+          centerY: centerY - state.offsetY,
+        };
+        
+        // Initialize two-finger tracking for simultaneous zoom+pan
+        twoFingerStart.current = {
+          distance,
+          centerX,
+          centerY,
+        };
+      }
+    },
+    [pointerSupported, state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords, controlConfig.pinchZoom, controlConfig.edgePan, controlConfig.edgeThreshold, checkIfTouchOnScrollBar, width, height, dispatch, dragToZoom, update, TAP_DELAY],
+  );
 
-  // Legacy touch handlers removed - modern browsers use pointer events
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      
+      Array.from(e.changedTouches).forEach((t: React.Touch) => {
+        const prev = pointers.current.get(t.identifier);
+        if (!prev) return;
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        pointers.current.set(t.identifier, local);
+      });
 
-  // Legacy touch handlers completely removed - pointer events handle everything
+      // Handle double-tap-and-hold drag to zoom
+      if (dragToZoom && isDoubleClickHold.current && doubleClickPos.current && pointers.current.size === 1) {
+        // Prevent default for drag-to-zoom interactions
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const t = e.changedTouches[0];
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        
+        // Check if we've moved enough to start drag selection
+        const distance = Math.hypot(local.x - doubleClickPos.current.x, local.y - doubleClickPos.current.y);
+        
+        if (distance > 10 && !selectStart.current) {
+          // Start drag to zoom selection
+          selectStart.current = doubleClickPos.current;
+          setSelectRect({ 
+            x: doubleClickPos.current.x + left, 
+            y: doubleClickPos.current.y + top, 
+            w: 0, 
+            h: 0 
+          });
+          
+          // Clear double-click state and timer
+          if (doubleClickTimer.current) {
+            clearTimeout(doubleClickTimer.current);
+            doubleClickTimer.current = null;
+          }
+          isDoubleClickHold.current = false;
+        }
+        
+        // Update selection rectangle if we're in drag mode
+        if (selectStart.current) {
+          let x = Math.min(selectStart.current.x, local.x);
+          let y = Math.min(selectStart.current.y, local.y);
+          let w = Math.abs(local.x - selectStart.current.x);
+          let h = Math.abs(local.y - selectStart.current.y);
+          
+          // Constrain selection rectangle based on zoom mode
+          if (mode === 'x') {
+            // X-only mode: selection should span full height
+            y = 0;
+            h = height;
+          } else if (mode === 'y') {
+            // Y-only mode: selection should span full width
+            x = 0;
+            w = width;
+          }
+          
+          setSelectRect({ x: x + left, y: y + top, w, h });
+          return;
+        }
+      }
+
+      // Two-finger gesture: simultaneous zoom and pan
+      if (pointers.current.size >= 2 && pinchStart.current && twoFingerStart.current && controlConfig.pinchZoom) {
+        // Prevent default for multi-touch gestures
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const [a, b] = Array.from(pointers.current.values());
+        const currentDistance = Math.hypot(a.x - b.x, a.y - b.y);
+        const currentCenterX = (a.x + b.x) / 2;
+        const currentCenterY = (a.y + b.y) / 2;
+
+        const zoomRatio = pinchStart.current.distance === 0 ? 1 : currentDistance / pinchStart.current.distance;
+
+        const isZoomIntentional = zoomRatio < 0.98 || zoomRatio > 1.02;
+
+        const panDeltaX = currentCenterX - twoFingerStart.current.centerX;
+        const panDeltaY = currentCenterY - twoFingerStart.current.centerY;
+
+        const next: Partial<ZoomState> = {};
+        
+        const currentScaleX = isZoomIntentional ? clamp(pinchStart.current.scaleX * zoomRatio, minScale, maxScale) : state.scaleX;
+        const currentScaleY = isZoomIntentional ? clamp(pinchStart.current.scaleY * zoomRatio, minScale, maxScale) : state.scaleY;
+
+        if (mode === 'y') {
+          const rY = pinchStart.current.scaleY === 0 ? 1 : currentScaleY / pinchStart.current.scaleY;
+          next.scaleY = currentScaleY;
+          if (!config.followLineKey) {
+            next.offsetY = isZoomIntentional ? (pinchStart.current.offsetY - pinchStart.current.centerY * (rY - 1) + panDeltaY) : (state.offsetY + panDeltaY);
+          } else {
+            next.offsetY = state.offsetY + panDeltaY;
+          }
+        } else if (mode === 'xy') {
+          // Treat X & Y independently so a previous axis-only zoom is preserved
+          const newScaleX = clamp(pinchStart.current.scaleX * zoomRatio, minScale, maxScale);
+          const newScaleY = clamp(pinchStart.current.scaleY * zoomRatio, minScale, maxScale);
+
+          const rX = pinchStart.current.scaleX === 0 ? 1 : newScaleX / pinchStart.current.scaleX;
+          const rY = pinchStart.current.scaleY === 0 ? 1 : newScaleY / pinchStart.current.scaleY;
+
+          next.scaleX = newScaleX;
+          next.scaleY = newScaleY;
+
+          if (isZoomIntentional) {
+            next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1) + panDeltaX;
+            next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (rY - 1) + panDeltaY;
+          } else {
+            next.offsetX = state.offsetX + panDeltaX;
+            next.offsetY = state.offsetY + panDeltaY;
+          }
+        } else { // mode 'x'
+          const rX = pinchStart.current.scaleX === 0 ? 1 : currentScaleX / pinchStart.current.scaleX;
+          next.scaleX = currentScaleX;
+          if (isZoomIntentional) {
+            next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1) + panDeltaX;
+          } else {
+            next.offsetX = state.offsetX + panDeltaX;
+          }
+          if (config.followLineKey) {
+            next.offsetY = state.offsetY + panDeltaY;
+          }
+        }
+
+        if (!isZoomIntentional) {
+          twoFingerStart.current.centerX = currentCenterX;
+          twoFingerStart.current.centerY = currentCenterY;
+        }
+        
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
+        update(next);
+        return;
+      }
+
+      // Single-finger gesture: handle scrollbar interaction and edge panning
+      if (pointers.current.size === 1) {
+        const t = e.changedTouches[0];
+        const local = getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+        
+        // Check if on scroll bars
+        const onScrollBar = checkIfTouchOnScrollBar(local.x, local.y);
+        
+        if (onScrollBar && dragStart.current && controlConfig.dragPan) {
+          // Prevent default for scrollbar dragging to avoid page scroll
+          e.preventDefault();
+          
+          // Handle scroll bar dragging
+          const dx = local.x - dragStart.current.x;
+          const dy = local.y - dragStart.current.y;
+          
+          dragStart.current = { x: local.x, y: local.y };
+          
+          const next: Partial<ZoomState> = {};
+          
+          // Apply panning based on mode and layout
+          if (mode !== 'y') {
+            next.offsetX = config.followLineKey && layout === 'vertical' ? state.offsetX : state.offsetX + dx;
+          }
+          if (mode !== 'x') {
+            next.offsetY = config.followLineKey && layout === 'horizontal' ? state.offsetY : state.offsetY + dy;
+          }
+          
+          interacted.current = true;
+          next.disableAnimation = interacted.current && disableAnimation;
+          update(next);
+        } else {
+          // Two-mode edge panning system
+          if (controlConfig.edgePanAutoSeek) {
+            // Auto-seek mode: finger started inside chart -> let tooltip survive & pan quietly
+            gentleAutoPan(local.x, local.y);
+          } else if (dragStart.current) {
+            // Classic drag mode: edge-pan via drag (finger started on an edge)
+            const dx = local.x - dragStart.current.x;
+            const dy = local.y - dragStart.current.y;
+            dragStart.current = { x: local.x, y: local.y };
+            
+            const next: Partial<ZoomState> = {};
+            if (mode !== 'y') next.offsetX = state.offsetX + dx;
+            if (mode !== 'x') next.offsetY = state.offsetY + dy;
+            update(next);
+          }
+          // For touches not triggering edge panning: allow normal behavior (no preventDefault)
+        }
+      }
+    },
+    [pointerSupported, state, update, minScale, maxScale, mode, getLocalCoords, disableAnimation, config.followLineKey, layout, controlConfig.pinchZoom, controlConfig.dragPan, controlConfig.edgePan, controlConfig.edgeThreshold, controlConfig.edgePanAutoSeek, controlConfig.allowChartDragPan, checkIfTouchOnScrollBar, width, height, dragToZoom, left, top, dispatch, isDragging, gentleAutoPan],
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGGElement>) => {
+      if (pointerSupported) return;
+      
+      /* ----- double-tap logic ------------------------------------------ */
+      if (isDoubleClickHold.current) {
+        // user finished the 2nd tap
+        if (!selectStart.current) {
+          // it was a quick double-tap → reset zoom
+          update({ scaleX: 1, scaleY: 1, offsetX: 0, offsetY: 0 });
+        }
+        isDoubleClickHold.current = false;
+        doubleClickPos.current    = null;
+        if (doubleClickTimer.current) {
+          clearTimeout(doubleClickTimer.current);
+          doubleClickTimer.current = null;
+        }
+      }
+      
+      // Always prevent default
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+      
+      Array.from(e.changedTouches).forEach((t: React.Touch) => {
+        pointers.current.delete(t.identifier);
+      });
+      
+      // Handle drag-to-zoom completion BEFORE cleanup
+      if (selectStart.current && selectRect) {
+        const { x, y, w, h } = selectRect;
+        if (dragToZoom && w > 10 && h > 10) {
+          const next: Partial<ZoomState> = {};
+          const startPrevX = (x - left - state.offsetX) / state.scaleX;
+          const endPrevX = (x - left + w - state.offsetX) / state.scaleX;
+          const startPrevY = (y - top - state.offsetY) / state.scaleY;
+          const endPrevY = (y - top + h - state.offsetY) / state.scaleY;
+          
+          // Only apply scale changes for allowed axes based on mode
+          if (mode === 'x' || mode === 'xy') {
+            next.scaleX = clamp(width / (endPrevX - startPrevX), minScale, maxScale);
+            next.offsetX = -startPrevX * next.scaleX;
+          }
+          if (mode === 'y' || mode === 'xy') {
+            next.scaleY = clamp(height / (endPrevY - startPrevY), minScale, maxScale);
+            next.offsetY = -startPrevY * next.scaleY;
+          }
+          
+          interacted.current = true;
+          next.disableAnimation = interacted.current && disableAnimation;
+          update(next);
+        }
+        selectStart.current = null;
+        setSelectRect(null);
+      }
+      
+      if (pointers.current.size < 2) {
+        pinchStart.current = null;
+        twoFingerStart.current = null;
+      }
+      if (pointers.current.size === 0) {
+        dragStart.current = null;
+        setIsInteracting(false);
+      }
+    },
+    [pointerSupported, selectStart, selectRect, dragToZoom, left, top, state.offsetX, state.offsetY, state.scaleX, state.scaleY, mode, width, height, minScale, maxScale, disableAnimation, update],
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<SVGRectElement>) => {
@@ -494,33 +1036,44 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           const anchorX = centerX - state.offsetX;
           const anchorY = centerY - state.offsetY;
 
-        const next: Partial<ZoomState> = {};
+          const next: Partial<ZoomState> = {};
 
-        if (mode === 'y') {
+          if (mode === 'y') {
             const newScaleY = clamp(state.scaleY * delta, minScale, maxScale);
             const ratioY = newScaleY / state.scaleY;
-          next.scaleY = newScaleY;
-          if (!config.followLineKey) {
+            next.scaleY = newScaleY;
+            if (!config.followLineKey) {
               next.offsetY = state.offsetY - anchorY * (ratioY - 1);
-          }
-        } else if (mode === 'xy') {
+            }
+            // Apply boundaries for Y axis
+            const minOffsetY = height * (1 - newScaleY);
+            next.offsetY = clamp(next.offsetY ?? state.offsetY, minOffsetY, 0);
+          } else if (mode === 'xy') {
             const newScale = clamp(state.scaleX * delta, minScale, maxScale);
             const ratio = newScale / state.scaleX;
-          next.scaleX = newScale;
-          next.scaleY = newScale;
+            next.scaleX = newScale;
+            next.scaleY = newScale;
             next.offsetX = state.offsetX - anchorX * (ratio - 1);
-          if (!config.followLineKey) {
+            if (!config.followLineKey) {
               next.offsetY = state.offsetY - anchorY * (ratio - 1);
-          }
-        } else {
+            }
+            // Apply boundaries for both axes
+            const minOffsetX = width * (1 - newScale);
+            const minOffsetY = height * (1 - newScale);
+            next.offsetX = clamp(next.offsetX, minOffsetX, 0);
+            next.offsetY = clamp(next.offsetY ?? state.offsetY, minOffsetY, 0);
+          } else {
             const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
             const ratioX = newScaleX / state.scaleX;
-          next.scaleX = newScaleX;
+            next.scaleX = newScaleX;
             next.offsetX = state.offsetX - anchorX * (ratioX - 1);
-        }
+            // Apply boundaries for X axis
+            const minOffsetX = width * (1 - newScaleX);
+            next.offsetX = clamp(next.offsetX, minOffsetX, 0);
+          }
 
           next.disableAnimation = disableAnimation;
-        update(next);
+          update(next);
           handled = true;
         }
       }
@@ -530,16 +1083,20 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         const next: Partial<ZoomState> = {};
         
         if (e.key === 'ArrowLeft') {
-          next.offsetX = state.offsetX + panAmount;
+          const minOffsetX = width * (1 - state.scaleX);
+          next.offsetX = clamp(state.offsetX + panAmount, minOffsetX, 0);
           handled = true;
-      } else if (e.key === 'ArrowRight') {
-          next.offsetX = state.offsetX - panAmount;
+        } else if (e.key === 'ArrowRight') {
+          const minOffsetX = width * (1 - state.scaleX);
+          next.offsetX = clamp(state.offsetX - panAmount, minOffsetX, 0);
           handled = true;
-      } else if (e.key === 'ArrowUp') {
-          next.offsetY = state.offsetY + panAmount;
+        } else if (e.key === 'ArrowUp') {
+          const minOffsetY = height * (1 - state.scaleY);
+          next.offsetY = clamp(state.offsetY + panAmount, minOffsetY, 0);
           handled = true;
-      } else if (e.key === 'ArrowDown') {
-          next.offsetY = state.offsetY - panAmount;
+        } else if (e.key === 'ArrowDown') {
+          const minOffsetY = height * (1 - state.scaleY);
+          next.offsetY = clamp(state.offsetY - panAmount, minOffsetY, 0);
           handled = true;
         }
         
@@ -585,9 +1142,18 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     pinchStart.current = null;
     twoFingerStart.current = null;
     barDrag.current = null;
-    doubleTapStart.current = null;
-    axisGestureLock.current = null;
+    isDoubleClickHold.current = false;
+    doubleClickPos.current = null;
+    if (doubleClickTimer.current) {
+      clearTimeout(doubleClickTimer.current);
+      doubleClickTimer.current = null;
+    }
+    if (updateCursorTimer.current) {
+      cancelAnimationFrame(updateCursorTimer.current);
+      updateCursorTimer.current = null;
+    }
     setIsInteracting(false);
+    setIsDragging(false);
     if (selectRect) {
       setSelectRect(null);
     }
@@ -596,24 +1162,9 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handlePointerUp = useCallback(
     (e?: React.PointerEvent<SVGGElement>) => {
       if (e) (e.target as Element).releasePointerCapture?.(e.pointerId);
-      
-      // If the pointer is lifted after a double-tap without a drag, it's a reset.
-      if (doubleTapStart.current) {
-        handleDoubleClick();
-        doubleTapStart.current = null;
-      }
-      
       pointers.current.delete(e?.pointerId ?? 0);
       
-      if (pointers.current.size === 0) {
-        // Last pointer is up, interaction is over.
-        setIsInteracting(false);
-        cleanupInteractionState();
-      } else if (pointers.current.size < 2) {
-        pinchStart.current = null;
-        twoFingerStart.current = null;
-        axisGestureLock.current = null;
-      }
+      // Handle drag-to-zoom completion BEFORE cleanup
       if (selectStart.current && selectRect) {
         const { x, y, w, h } = selectRect;
         if (dragToZoom && w > 10 && h > 10) {
@@ -622,20 +1173,30 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           const endPrevX = (x - left + w - state.offsetX) / state.scaleX;
           const startPrevY = (y - top - state.offsetY) / state.scaleY;
           const endPrevY = (y - top + h - state.offsetY) / state.scaleY;
-          if (mode !== 'y') {
+          
+          // Only apply scale changes for allowed axes based on mode
+          if (mode === 'x' || mode === 'xy') {
             next.scaleX = clamp(width / (endPrevX - startPrevX), minScale, maxScale);
             next.offsetX = -startPrevX * next.scaleX;
           }
-          if (mode !== 'x') {
+          if (mode === 'y' || mode === 'xy') {
             next.scaleY = clamp(height / (endPrevY - startPrevY), minScale, maxScale);
             next.offsetY = -startPrevY * next.scaleY;
           }
+          
           interacted.current = true;
           next.disableAnimation = interacted.current && disableAnimation;
           update(next);
         }
         selectStart.current = null;
         setSelectRect(null);
+      }
+      
+      if (pointers.current.size === 0) {
+        cleanupInteractionState();
+      } else if (pointers.current.size < 2) {
+        pinchStart.current = null;
+        twoFingerStart.current = null;
       }
     },
     [disableAnimation, dragToZoom, selectRect, state, update, mode, width, height, minScale, maxScale, left, top, cleanupInteractionState],
@@ -730,32 +1291,24 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
 
   const barDragStartRef = useRef<number>(0);
 
-  // Register native touch events with passive: false for mobile browsers
+  // Register native event listeners for comprehensive scroll prevention
   React.useEffect(() => {
     const overlay = overlayRef.current;
     if (!overlay) return;
     
-    const handleNativeTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 1) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
+    const handleNativeWheel = (e: WheelEvent) => {
+      // Only prevent page scroll when over chart, but let React handlers process the event
+      e.preventDefault();
     };
     
-    const handleNativeTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 1) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
-    };
+    // Remove aggressive touch event listeners that conflict with React handlers
+    // Let React event handlers handle touch events selectively
     
-    // Register with capture and passive: false
-    overlay.addEventListener('touchstart', handleNativeTouchStart, { passive: false, capture: true });
-    overlay.addEventListener('touchmove', handleNativeTouchMove, { passive: false, capture: true });
+    // Register only wheel events with passive: false
+    overlay.addEventListener('wheel', handleNativeWheel, { passive: false });
     
     return () => {
-      overlay.removeEventListener('touchstart', handleNativeTouchStart);
-      overlay.removeEventListener('touchmove', handleNativeTouchMove);
+      overlay.removeEventListener('wheel', handleNativeWheel);
     };
   }, []);
 
@@ -764,23 +1317,30 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     if (!scrollBarConfig.show) return;
 
     const handleScrollBarTouch = (e: TouchEvent) => {
-      // Prevent all page scroll when touching scroll bars
+      // Only prevent page scroll when touching scroll bars, allow interaction
       e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
+      // Don't stop propagation - let React handlers process the scrollbar interaction
+    };
+
+    const handleScrollBarWheel = (e: WheelEvent) => {
+      // Only prevent page scroll, but allow React handlers to process the event
+      e.preventDefault();
+      // Don't stop propagation - let React handlers work
     };
 
     // Find all scroll bar elements and add native listeners
     const scrollBars = document.querySelectorAll('[data-scroll-bar="true"]');
     scrollBars.forEach(bar => {
-      bar.addEventListener('touchstart', handleScrollBarTouch, { passive: false, capture: true });
-      bar.addEventListener('touchmove', handleScrollBarTouch, { passive: false, capture: true });
+      bar.addEventListener('touchstart', handleScrollBarTouch, { passive: false });
+      bar.addEventListener('touchmove', handleScrollBarTouch, { passive: false });
+      bar.addEventListener('wheel', handleScrollBarWheel, { passive: false });
     });
 
     return () => {
       scrollBars.forEach(bar => {
         bar.removeEventListener('touchstart', handleScrollBarTouch);
         bar.removeEventListener('touchmove', handleScrollBarTouch);
+        bar.removeEventListener('wheel', handleScrollBarWheel);
       });
     };
   }, [scrollBarConfig.show, state.scaleX, state.scaleY]);
@@ -838,6 +1398,53 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     setBarHover(null);
   }, []);
 
+  // Handle wheel events directly on scrollbar elements
+  const handleBarWheel = useCallback(
+    (axis: 'x' | 'y') => (e: React.WheelEvent<SVGRectElement>) => {
+      // ALWAYS prevent page scroll when scrolling on scrollbars
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (e.shiftKey && controlConfig.wheelZoom) {
+        // Shift+scroll on scrollbar = zoom that axis
+        const local = getLocalCoords(e);
+        const delta = e.deltaY < 0 ? 1.1 : 0.9;
+        const next: Partial<ZoomState> = {};
+        
+        if (axis === 'x') {
+          const anchorX = local.x - state.offsetX;
+          const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
+          const ratioX = newScaleX / state.scaleX;
+          next.scaleX = newScaleX;
+          next.offsetX = state.offsetX - anchorX * (ratioX - 1);
+        } else {
+          const anchorY = local.y - state.offsetY;
+          const newScaleY = clamp(state.scaleY * delta, minScale, maxScale);
+          const ratioY = newScaleY / state.scaleY;
+          next.scaleY = newScaleY;
+          next.offsetY = state.offsetY - anchorY * (ratioY - 1);
+        }
+        
+        interacted.current = true;
+        next.disableAnimation = interacted.current && disableAnimation;
+        update(next);
+      } else if (controlConfig.wheelPan) {
+        // Regular scroll on scrollbar = pan
+        const panAmount = e.deltaY > 0 ? -30 : 30;
+        const next: Partial<ZoomState> = {};
+        
+        if (axis === 'x' && (mode === 'x' || mode === 'xy')) {
+          next.offsetX = Math.min(Math.max(state.offsetX + panAmount, width * (1 - state.scaleX)), 0);
+        } else if (axis === 'y' && (mode === 'y' || mode === 'xy')) {
+          next.offsetY = Math.min(Math.max(state.offsetY + panAmount, height * (1 - state.scaleY)), 0);
+        }
+        
+        update(next);
+      }
+    },
+    [state, minScale, maxScale, update, mode, getLocalCoords, disableAnimation, controlConfig.wheelZoom, controlConfig.wheelPan, width, height],
+  );
+
   const barElements =
     scrollBarConfig.show && (state.scaleX > 1 || state.scaleY > 1)
       ? [
@@ -853,6 +1460,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
               fillOpacity={barHover === 'x' ? scrollBarConfig.hoverOpacity : scrollBarConfig.opacity}
               rx={scrollBarConfig.borderRadius}
               style={{ cursor: controlConfig.dragScrollBars ? 'grab' : 'default', touchAction: 'none' }}
+              onWheel={handleBarWheel('x')}
               onPointerDown={handleBarPointerDown('x')}
               onPointerMove={handleBarPointerMove}
               onPointerUp={handleBarPointerUp}
@@ -875,6 +1483,7 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
               fillOpacity={barHover === 'y' ? scrollBarConfig.hoverOpacity : scrollBarConfig.opacity}
               rx={scrollBarConfig.borderRadius}
               style={{ cursor: controlConfig.dragScrollBars ? 'grab' : 'default', touchAction: 'none' }}
+              onWheel={handleBarWheel('y')}
               onPointerDown={handleBarPointerDown('y')}
               onPointerMove={handleBarPointerMove}
               onPointerUp={handleBarPointerUp}
@@ -915,83 +1524,31 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
       const prev = pointers.current.get(e.pointerId);
-      // Do not track pointer if it's not held down
-      // But do continue if we're in selection mode
-      if (!prev && !selectStart.current) return;
-      
+      if (!prev) return;
       const { x: localX, y: localY } = getLocalCoords(e);
-      
-      // Handle drag-to-zoom rectangle drawing
-      if (selectStart.current) {
-        const { x, y } = selectStart.current;
-        const w = localX - x;
-        const h = localY - y;
-        
-        setSelectRect({
-          x: (w > 0 ? x : localX) + left,
-          y: (h > 0 ? y : localY) + top,
-          w: Math.abs(w),
-          h: Math.abs(h),
-        });
-        return; // Prevent other move actions while selecting
-      }
-      
-      // Handle the start of a drag-to-zoom gesture from a double-tap-and-hold
-      if (doubleTapStart.current && e.pointerType === 'touch') {
-        const { x, y } = doubleTapStart.current;
-        const dragDistance = Math.hypot(localX - x, localY - y);
-        const DRAG_THRESHOLD = 10;
-        
-        if (dragDistance > DRAG_THRESHOLD) {
-          // Start selection and hide tooltip
-          setIsInteracting(true);
-          selectStart.current = { x, y };
-          setSelectRect({ x: x + left, y: y + top, w: 0, h: 0 });
-          doubleTapStart.current = null;
-          dragStart.current = null;
-          return;
-        }
-      }
-
-      // PC drag-to-pan. MUST be before edge scroll.
-      if (dragStart.current && e.pointerType === 'mouse') {
-        const dx = localX - dragStart.current.x;
-        const dy = localY - dragStart.current.y;
-        dragStart.current = { x: localX, y: localY };
-
-        const next: Partial<ZoomState> = {
-          offsetX: state.offsetX + dx,
-          offsetY: state.offsetY + dy,
-        };
-        update(next);
-        // Return here to prevent edge scroll from firing simultaneously.
-        return; 
-      }
-      
-      // Mobile edge scrolling - works even when tooltip is active
-      if (
-        !dragStart.current && // Don't conflict with main drag
-        !selectStart.current && // Don't conflict with selection
-        pointers.current.size === 1 && // Single finger only
-        e.pointerType === 'touch' && // Touch only
-        state.scaleX > 1.01 // Only when zoomed
-      ) {
-        const edgeThreshold = 60;
-        const panAmount = 8;
-        let panDeltaX = 0;
-        
-        if (localX < edgeThreshold && state.offsetX < 0) {
-          panDeltaX = panAmount;
-        } else if (localX > width - edgeThreshold && state.offsetX > width * (1 - state.scaleX)) {
-          panDeltaX = -panAmount;
-        }
-
-        if (panDeltaX !== 0) {
-          update({ offsetX: state.offsetX + panDeltaX });
-        }
-      }
-      
       pointers.current.set(e.pointerId, { x: localX, y: localY });
+
+      // Handle drag-to-zoom selection rectangle updates
+      if (selectStart.current) {
+        let x = Math.min(selectStart.current.x, localX);
+        let y = Math.min(selectStart.current.y, localY);
+        let w = Math.abs(localX - selectStart.current.x);
+        let h = Math.abs(localY - selectStart.current.y);
+        
+        // Constrain selection rectangle based on zoom mode
+        if (mode === 'x') {
+          // X-only mode: selection should span full height
+          y = 0;
+          h = height;
+        } else if (mode === 'y') {
+          // Y-only mode: selection should span full width
+          x = 0;
+          w = width;
+        }
+        
+        setSelectRect({ x: x + left, y: y + top, w, h });
+        return;
+      }
 
       if (pointers.current.size >= 2 && pinchStart.current && controlConfig.pinchZoom && twoFingerStart.current) {
         const [a, b] = Array.from(pointers.current.values());
@@ -1015,13 +1572,18 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
             next.offsetY = pinchStart.current.offsetY + panDeltaY;
           }
         } else if (mode === 'xy') {
-          const newScale = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
-          const r = pinchStart.current.scaleX === 0 ? 1 : newScale / pinchStart.current.scaleX;
-          next.scaleX = newScale;
-          next.scaleY = newScale;
-          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (r - 1) + panDeltaX;
+          // Treat X & Y independently so a previous axis-only zoom is preserved
+          const newScaleX = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+          const newScaleY = clamp(pinchStart.current.scaleY * ratio, minScale, maxScale);
+
+          const rX = pinchStart.current.scaleX === 0 ? 1 : newScaleX / pinchStart.current.scaleX;
+          const rY = pinchStart.current.scaleY === 0 ? 1 : newScaleY / pinchStart.current.scaleY;
+
+          next.scaleX = newScaleX;
+          next.scaleY = newScaleY;
+          next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (rX - 1) + panDeltaX;
           if (!config.followLineKey) {
-            next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (r - 1) + panDeltaY;
+            next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (rY - 1) + panDeltaY;
           } else {
             next.offsetY = pinchStart.current.offsetY + panDeltaY;
           }
@@ -1040,94 +1602,356 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
         update(next);
         return;
       }
+
+      // Handle single-pointer drag-to-pan with two-mode edge panning
+      if (pointers.current.size === 1 && controlConfig.dragPan) {
+        // Check if we're not in a drag-to-zoom selection mode
+        if (!selectStart.current && !isDoubleClickHold.current) {
+          // Two-mode edge panning system for pointer events
+          if (controlConfig.edgePanAutoSeek && !dragStart.current) {
+            // Auto-seek mode: pointer not started on edge -> gentle auto-pan
+            gentleAutoPan(localX, localY);
+          } else if (dragStart.current) {
+            // Classic drag mode or pointer started on edge
+            const dragDistance = Math.hypot(localX - dragStart.current.x, localY - dragStart.current.y);
+            
+            // Use a 5px threshold to differentiate drag from click
+            if (dragDistance > 5) {
+              // Mark as dragging and clear tooltip to prevent conflicts
+              if (!isDragging) {
+                setIsDragging(true);
+                dispatch(setTooltipSettingsState({
+                  active: false,
+                  defaultIndex: undefined,
+                  shared: undefined,
+                  trigger: undefined,
+                  axisId: undefined,
+                }));
+              }
+              
+              const dx = localX - prev.x;
+              const dy = localY - prev.y;
+              
+              const next: Partial<ZoomState> = {};
+              
+              if (mode !== 'y') {
+                next.offsetX = state.offsetX + dx;
+              }
+              if (mode !== 'x') {
+                next.offsetY = state.offsetY + dy;
+              }
+              
+              interacted.current = true;
+              next.disableAnimation = interacted.current && disableAnimation;
+              update(next);
+            }
+          }
+        }
+      }
     },
-    [state, update, minScale, maxScale, mode, getLocalCoords, disableAnimation, config.followLineKey, layout, controlConfig.pinchZoom, left, top, width, controlConfig.dragPan],
+    [state, update, minScale, maxScale, mode, getLocalCoords, disableAnimation, config.followLineKey, layout, controlConfig.pinchZoom, controlConfig.dragPan, controlConfig.edgePan, controlConfig.edgeThreshold, controlConfig.edgePanAutoSeek, controlConfig.allowChartDragPan, checkIfTouchOnScrollBar, width, height, dragToZoom, left, top, dispatch, isDragging, gentleAutoPan],
   );
 
-  // Re-enable PC drag pan
+  // Axis label interaction handlers
+  const axisDragRef = useRef<{ axisType: 'x' | 'y'; startValue: number } | null>(null);
+
+  const handleAxisWheel = useCallback((e: React.WheelEvent, axisType: 'x' | 'y') => {
+    // Check if this axis type is allowed in the current mode
+    if ((mode === 'x' && axisType === 'y') || (mode === 'y' && axisType === 'x')) {
+      return; // Don't allow zoom on restricted axis
+    }
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Clear tooltip when interacting with axis
+    dispatch(setTooltipSettingsState({
+      active: false,
+      defaultIndex: undefined,
+      shared: undefined,
+      trigger: undefined,
+      axisId: undefined,
+    }));
+    
+    // Handle shift+scroll for panning
+    if (e.shiftKey && controlConfig.wheelPan) {
+      const panAmount = e.deltaY > 0 ? -30 : 30;
+      const next: Partial<ZoomState> = {};
+      
+      if (axisType === 'x' && mode !== 'y') {
+        // Shift + scroll on X axis = pan X
+        const minOffsetX = width * (1 - state.scaleX);
+        next.offsetX = clamp(state.offsetX + panAmount, minOffsetX, 0);
+      } else if (axisType === 'y' && mode !== 'x') {
+        // Shift + scroll on Y axis = pan Y
+        const minOffsetY = height * (1 - state.scaleY);
+        next.offsetY = clamp(state.offsetY + panAmount, minOffsetY, 0);
+      }
+      
+      if (Object.keys(next).length > 0) {
+        update(next);
+      }
+      return;
+    }
+    
+    // Regular wheel = zoom (only if wheelZoom is enabled)
+    if (!controlConfig.wheelZoom) return;
+    
+    interacted.current = true;
+    const local = getLocalCoords(e);
+    const anchorX = local.x - state.offsetX;
+    const anchorY = local.y - state.offsetY;
+    const delta = e.deltaY < 0 ? 1.1 : 0.9;
+
+    const next: Partial<ZoomState> = {};
+
+    if (axisType === 'y' && mode !== 'x') {
+      const newScaleY = clamp(state.scaleY * delta, minScale, maxScale);
+      const ratioY = newScaleY / state.scaleY;
+      next.scaleY = newScaleY;
+      if (!config.followLineKey) {
+        next.offsetY = state.offsetY - anchorY * (ratioY - 1);
+      }
+    } else if (axisType === 'x' && mode !== 'y') {
+      const newScaleX = clamp(state.scaleX * delta, minScale, maxScale);
+      const ratioX = newScaleX / state.scaleX;
+      next.scaleX = newScaleX;
+      next.offsetX = state.offsetX - anchorX * (ratioX - 1);
+    }
+
+    next.disableAnimation = interacted.current && disableAnimation;
+    update(next);
+  }, [mode, controlConfig.wheelZoom, controlConfig.wheelPan, state, minScale, maxScale, update, getLocalCoords, disableAnimation, config.followLineKey, dispatch, width, height]);
+
+  const handleAxisDrag = useCallback((e: React.PointerEvent, axisType: 'x' | 'y', action: 'start' | 'move' | 'end') => {
+    if (!controlConfig.labelDrag) return;
+    
+    if (action === 'start') {
+      const local = getLocalCoords(e);
+      axisDragRef.current = {
+        axisType,
+        startValue: axisType === 'x' ? local.x : local.y,
+      };
+      e.currentTarget.setPointerCapture?.(e.pointerId);
+    } else if (action === 'move' && axisDragRef.current) {
+      const local = getLocalCoords(e);
+      const currentValue = axisType === 'x' ? local.x : local.y;
+      const movement = currentValue - axisDragRef.current.startValue;
+      
+      // Update the start value for continuous dragging
+      axisDragRef.current.startValue = currentValue;
+      
+      const next: Partial<ZoomState> = {};
+      if (axisType === 'x') {
+        next.offsetX = state.offsetX + movement;
+      } else {
+        next.offsetY = state.offsetY + movement;
+      }
+      
+      update(next);
+    } else if (action === 'end') {
+      axisDragRef.current = null;
+      e.currentTarget.releasePointerCapture?.(e.pointerId);
+    }
+  }, [controlConfig.labelDrag, state.offsetX, state.offsetY, update, getLocalCoords]);
+
+  const handleAxisTouch = useCallback((e: React.TouchEvent, axisType: 'x' | 'y', action: 'start' | 'move' | 'end') => {
+    // Check if this axis type is allowed in the current mode
+    if ((mode === 'x' && axisType === 'y') || (mode === 'y' && axisType === 'x')) {
+      return; // Don't allow zoom on restricted axis
+    }
+    
+    if (!controlConfig.pinchZoom) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const touches = Array.from(e.touches);
+    
+    if (action === 'start' && touches.length >= 2) {
+      const [t1, t2] = touches;
+      const local1 = getLocalCoords({ clientX: t1.clientX, clientY: t1.clientY });
+      const local2 = getLocalCoords({ clientX: t2.clientX, clientY: t2.clientY });
+      const distance = Math.hypot(local1.x - local2.x, local1.y - local2.y);
+      const centerX = (local1.x + local2.x) / 2;
+      const centerY = (local1.y + local2.y) / 2;
+      
+      pinchStart.current = {
+        distance,
+        scaleX: state.scaleX,
+        scaleY: state.scaleY,
+        offsetX: state.offsetX,
+        offsetY: state.offsetY,
+        centerX: centerX - state.offsetX,
+        centerY: centerY - state.offsetY,
+      };
+    } else if (action === 'move' && touches.length >= 2 && pinchStart.current) {
+      const [t1, t2] = touches;
+      const local1 = getLocalCoords({ clientX: t1.clientX, clientY: t1.clientY });
+      const local2 = getLocalCoords({ clientX: t2.clientX, clientY: t2.clientY });
+      const currentDistance = Math.hypot(local1.x - local2.x, local1.y - local2.y);
+      const rawRatio        = pinchStart.current.distance === 0
+                               ? 1
+                               : currentDistance / pinchStart.current.distance;
+      const ratio           = damp(rawRatio);   // ≈ 15 % sensitivity
+      
+      const next: Partial<ZoomState> = {};
+      
+      if (axisType === 'y' && mode !== 'x') {
+        // Only zoom Y axis when pinching on Y axis
+        const newScaleY = clamp(pinchStart.current.scaleY * ratio, minScale, maxScale);
+        const ratioY = pinchStart.current.scaleY === 0 ? 1 : newScaleY / pinchStart.current.scaleY;
+        next.scaleY = newScaleY;
+        if (!config.followLineKey) {
+          next.offsetY = pinchStart.current.offsetY - pinchStart.current.centerY * (ratioY - 1);
+        }
+      } else if (axisType === 'x' && mode !== 'y') {
+        // Only zoom X axis when pinching on X axis (don't affect Y axis)
+        const newScaleX = clamp(pinchStart.current.scaleX * ratio, minScale, maxScale);
+        const ratioX = pinchStart.current.scaleX === 0 ? 1 : newScaleX / pinchStart.current.scaleX;
+        next.scaleX = newScaleX;
+        // Do NOT set scaleY when zooming X axis on mobile
+        next.offsetX = pinchStart.current.offsetX - pinchStart.current.centerX * (ratioX - 1);
+      }
+      
+      interacted.current = true;
+      next.disableAnimation = interacted.current && disableAnimation;
+      update(next);
+      
+      // Refresh the whole baseline, including distance & center
+      // This allows smooth direction changes during axis pinch zoom
+      if (pinchStart.current) {
+        const currentCenterX = (local1.x + local2.x) / 2;
+        const currentCenterY = (local1.y + local2.y) / 2;
+        
+        pinchStart.current.distance = currentDistance;
+        pinchStart.current.centerX = currentCenterX - (next.offsetX ?? state.offsetX);
+        pinchStart.current.centerY = currentCenterY - (next.offsetY ?? state.offsetY);
+
+        // Keep the scale/offset in sync so we still avoid compounding
+        pinchStart.current.scaleX = next.scaleX ?? state.scaleX;
+        pinchStart.current.scaleY = next.scaleY ?? state.scaleY;
+        pinchStart.current.offsetX = next.offsetX ?? state.offsetX;
+        pinchStart.current.offsetY = next.offsetY ?? state.offsetY;
+      }
+    } else if (action === 'end') {
+      pinchStart.current = null;
+    }
+  }, [mode, controlConfig.pinchZoom, state, minScale, maxScale, update, getLocalCoords, disableAnimation, config.followLineKey]);
+
+  const axisInteractionValue = React.useMemo(() => ({
+    handleAxisWheel,
+    handleAxisDrag,
+    handleAxisTouch,
+    isLabelInteractionEnabled: controlConfig.labelDrag || controlConfig.wheelPan,
+  }), [handleAxisWheel, handleAxisDrag, handleAxisTouch, controlConfig.labelDrag, controlConfig.wheelPan]);
+  
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<SVGGElement>) => {
-      // --- Stage 1: Seize control and reset state ---
-      // Prevent all default browser actions and stop event bubbling to prevent conflicts.
-      e.preventDefault();
-      e.stopPropagation();
+      if (preventConfig.contextMenu && e.button === 2) {
+        e.preventDefault();
+      }
       
-      // Immediately hide the tooltip and kill its state to prevent ghosting.
+      // Force hide tooltip and start interaction state
       setIsInteracting(true);
-      dispatch(setTooltipSettingsState({ active: false, defaultIndex: undefined, shared: null, trigger: null, axisId: null }));
-
-      // --- Stage 2: Gesture Detection ---
+      dispatch(setTooltipSettingsState({
+        active: false,
+        defaultIndex: undefined,
+        shared: undefined,
+        trigger: undefined,
+        axisId: undefined,
+      }));
+      
       interacted.current = true;
       (e.target as Element).setPointerCapture?.(e.pointerId);
       const { x: localX, y: localY } = getLocalCoords(e);
       
-      // Add the new pointer
-      pointers.current.set(e.pointerId, { x: localX, y: localY });
-
-      // --- Gesture Detection ---
-      // The order here is critical to prevent conflicts.
-
-      // 1. Two-finger pinch/pan always takes top priority
-      if (pointers.current.size >= 2) {
-        if (controlConfig.pinchZoom) {
-          const [a, b] = Array.from(pointers.current.values());
-          const distance = Math.hypot(a.x - b.x, a.y - b.y);
-          const centerX = (a.x + b.x) / 2;
-          const centerY = (a.y + b.y) / 2;
-          
-          pinchStart.current = {
-            distance,
-            scaleX: state.scaleX,
-            scaleY: state.scaleY,
-            offsetX: state.offsetX,
-            offsetY: state.offsetY,
-            centerX: centerX - state.offsetX,
-            centerY: centerY - state.offsetY,
-          };
-
-          if (controlConfig.twoFingerPan) {
-            twoFingerStart.current = { distance, centerX, centerY };
-          }
-          // Clear other potential gestures
-          dragStart.current = null;
-          doubleTapStart.current = null;
-          selectStart.current = null;
-        }
-        return; // Exit after handling multi-touch
-      }
-
-      // 2. Handle double-tap-and-hold for selection on touch devices
-      if (e.pointerType === 'touch' && dragToZoom) {
-        const now = Date.now();
-        const DOUBLE_TAP_TIMEOUT = 300;
+      // Check for double-click-and-hold drag to zoom
+      if (dragToZoom && isDoubleClickHold.current && doubleClickPos.current) {
+        // Calculate distance from double-click position
+        const distance = Math.hypot(localX - doubleClickPos.current.x, localY - doubleClickPos.current.y);
         
-        if (now - lastTap.current < DOUBLE_TAP_TIMEOUT) {
-          e.preventDefault();
-          doubleTapStart.current = { x: localX, y: localY };
-          lastTap.current = 0; // Reset tap timer
-          return; // Exit to wait for drag
+        // If we've moved enough distance (3px threshold), start drag to zoom
+        if (distance > 3) {
+          selectStart.current = doubleClickPos.current;
+          setSelectRect({ 
+            x: doubleClickPos.current.x + left, 
+            y: doubleClickPos.current.y + top, 
+            w: 0, 
+            h: 0 
+          });
+          
+          // Clear double-click state and timer
+          if (doubleClickTimer.current) {
+            clearTimeout(doubleClickTimer.current);
+            doubleClickTimer.current = null;
+          }
+          isDoubleClickHold.current = false;
+          doubleClickPos.current = null;
+          
+          pointers.current.set(e.pointerId, { x: localX, y: localY });
+          return;
         }
-        lastTap.current = now;
       }
       
-      // 3. Handle Shift+Drag to select on PC
+      // Standard shift+drag to zoom
       if (dragToZoom && e.shiftKey) {
         selectStart.current = { x: localX, y: localY };
         setSelectRect({ x: localX + left, y: localY + top, w: 0, h: 0 });
+        pointers.current.set(e.pointerId, { x: localX, y: localY });
         return;
       }
       
-      // 4. If nothing else, it's a potential single-pointer drag
+      pointers.current.set(e.pointerId, { x: localX, y: localY });
+      
       if (pointers.current.size === 1) {
-        // This now works for both mouse and touch, but only if not starting a double-tap select
-        if (!doubleTapStart.current) {
+        // For PC (pointer events), always set drag start to enable panning
+        // For touch devices, be more selective to avoid tooltip conflicts
+        if (e.pointerType !== 'touch') {
+          // PC - always enable drag to pan
           dragStart.current = { x: localX, y: localY };
+        } else {
+          // Mobile - only enable for edges or scroll bars
+          const nearLeftEdge = controlConfig.edgePan && localX < controlConfig.edgeThreshold;
+          const nearRightEdge = controlConfig.edgePan && localX > width - controlConfig.edgeThreshold;
+          const nearTopEdge = controlConfig.edgePan && localY < controlConfig.edgeThreshold;
+          const nearBottomEdge = controlConfig.edgePan && localY > height - controlConfig.edgeThreshold;
+          const nearEdge = nearLeftEdge || nearRightEdge || nearTopEdge || nearBottomEdge;
+          const onScrollBar = checkIfTouchOnScrollBar(localX, localY);
+          
+          if (nearEdge || onScrollBar) {
+            dragStart.current = { x: localX, y: localY };
+          }
         }
-      } else {
-        dragStart.current = null;
+      }
+      
+      if (pointers.current.size === 2 && controlConfig.pinchZoom) {
+        const [a, b] = Array.from(pointers.current.values());
+        const distance = Math.hypot(a.x - b.x, a.y - b.y);
+        const centerX = (a.x + b.x) / 2;
+        const centerY = (a.y + b.y) / 2;
+        
+        pinchStart.current = {
+          distance,
+          scaleX: state.scaleX,
+          scaleY: state.scaleY,
+          offsetX: state.offsetX,
+          offsetY: state.offsetY,
+          centerX: centerX - state.offsetX,
+          centerY: centerY - state.offsetY,
+        };
+        
+        // Initialize two-finger pan tracking
+        if (controlConfig.twoFingerPan) {
+          twoFingerStart.current = {
+            distance,
+            centerX,
+            centerY,
+          };
+        }
       }
     },
-    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords, dragToZoom, left, top, controlConfig.pinchZoom, controlConfig.twoFingerPan, preventConfig.contextMenu],
+    [state.scaleX, state.scaleY, state.offsetX, state.offsetY, getLocalCoords, dragToZoom, left, top, controlConfig.pinchZoom, controlConfig.twoFingerPan, preventConfig.contextMenu, dispatch],
   );
 
   return (
@@ -1147,16 +1971,10 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           tabIndex={0}
           style={{ 
             touchAction: 'none',
-            cursor: dragStart.current ? 'grabbing' : 'grab',
+            cursor: isDragging || dragStart.current ? 'grabbing' : 'grab',
             outline: 'none',
             zIndex: 1000,
             isolation: 'isolate',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
-            WebkitTouchCallout: 'none',
-            WebkitTapHighlightColor: 'transparent',
           }}
           onWheel={handleWheel}
           onPointerDown={handlePointerDown}
@@ -1164,22 +1982,16 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
           onPointerUp={handlePointerUp}
           onPointerLeave={cleanupInteractionState}
           onBlur={cleanupInteractionState}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onDoubleClick={config.resetKey !== 'dbltap' ? handleDoubleClick : undefined}
           onKeyDown={handleKeyDown}
           onFocus={handleOverlayFocus}
           onClick={handleOverlayClick}
-          onContextMenu={preventConfig.contextMenu ? (e: React.MouseEvent) => e.preventDefault() : undefined}
+          onContextMenu={preventConfig.contextMenu ? (e) => e.preventDefault() : undefined}
         />
-        {minimapChildren && minimapChildren.length > 0 && (
-          <g onPointerDown={(e) => {
-            setIsInteracting(true);
-            e.stopPropagation();
-          }}
-          onPointerUp={() => setIsInteracting(false)}
-          onPointerLeave={() => setIsInteracting(false)}
-          >
-            {minimapChildren}
-          </g>
-        )}
+        {minimapChildren}
         {selectRect && (
           <rect
             x={selectRect.x}
@@ -1196,4 +2008,3 @@ export function ZoomPanContainer({ children, config }: { children: ReactNode; co
     </AxisInteractionContext.Provider>
   );
 }
-

@@ -92,6 +92,12 @@ interface BrushProps {
 
   /** Enable animations in the main chart when brush changes (disabled by default) */
   enableAnimation?: boolean;
+
+  /** Enable scroll to zoom on brush */
+  allowScrollZoom?: boolean;
+
+  /** Enable pinch to zoom on mobile brush */
+  allowPinchZoom?: boolean;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
@@ -221,6 +227,7 @@ function TravellerLayer({
       aria-label={ariaLabelBrush}
       aria-valuenow={travellerPos}
       className="recharts-brush-traveller"
+      data-id={id}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
@@ -444,7 +451,13 @@ function Slide({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
-      onTouchStart={onTouchStart}
+      onTouchStart={(e) => {
+        // Only handle single-finger touches - let multi-finger go to master handler
+        if (e.touches.length === 1) {
+          onTouchStart(e);
+        }
+        // Don't preventDefault to allow pinch zoom
+      }}
       style={{ cursor: 'move' }}
       stroke="none"
       fill={stroke}
@@ -610,6 +623,29 @@ type BrushWithStateProps = Props &
   };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
+  private pinchStart: { distance: number; startX: number; endX: number; centerX: number; centerY: number } | null =
+    null;
+
+  private lastTap = 0;
+
+  private doubleClickTimer: NodeJS.Timeout | null = null;
+
+  private isDoubleClickHold = false;
+
+  private doubleClickPos: { x: number; y: number } | null = null;
+
+  private selectStart: { x: number; y: number } | null = null;
+
+  private selectRect: { x: number; y: number; w: number; h: number } | null = null;
+
+  private pointers = new Map<number, { x: number; y: number }>();
+
+  private gestureTimeout: NodeJS.Timeout | null = null;
+
+  private gestureDecided = false;
+
+
+
   constructor(props: BrushWithStateProps) {
     super(props);
 
@@ -691,15 +727,33 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       const newState: Partial<State> = {};
 
       if (nextProps.useZoomPan) {
-        // Add tolerance to prevent infinite loops due to floating-point precision
-        const tolerance = 0.01;
+        // ──────────────────────────────────────────────────────────────────────
+        // Clamp incoming controlled positions so the internal state never
+        // leaves the brush track when zoom‑syncing.
+        // ──────────────────────────────────────────────────────────────────────
         if (nextProps.controlledStart != null && 
-            (prevState.startX == null || Math.abs(nextProps.controlledStart - prevState.startX) > tolerance)) {
-          newState.startX = nextProps.controlledStart;
+            (prevState.startX == null || Math.abs(nextProps.controlledStart - (prevState.startX || 0)) > 1)) {
+          
+          if (isFinite(nextProps.controlledStart)) {
+            const brushStart = (layout === 'horizontal' ? x : y) || 0;
+            const brushSize = (layout === 'horizontal' ? width : height) || 0;
+            const travWidth = travellerWidth || 5;
+            const minPos = brushStart;
+            const maxPos = brushStart + brushSize - travWidth;
+            newState.startX = clamp(nextProps.controlledStart, minPos, maxPos);
+          }
         }
         if (nextProps.controlledEnd != null && 
-            (prevState.endX == null || Math.abs(nextProps.controlledEnd - prevState.endX) > tolerance)) {
-          newState.endX = nextProps.controlledEnd;
+            (prevState.endX == null || Math.abs(nextProps.controlledEnd - (prevState.endX || 0)) > 1)) {
+          
+          if (isFinite(nextProps.controlledEnd)) {
+            const brushStart = (layout === 'horizontal' ? x : y) || 0;
+            const brushSize = (layout === 'horizontal' ? width : height) || 0;
+            const travWidth = travellerWidth || 5;
+            const minPos = brushStart;
+            const maxPos = brushStart + brushSize - travWidth;
+            newState.endX = clamp(nextProps.controlledEnd, minPos, maxPos);
+          }
         }
       } else if (prevState.scale) {
         // Only snap to scale values when not interacting (like in original code)
@@ -707,7 +761,15 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
           startIndexControlledFromProps != null &&
           prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
         ) {
-          newState.startX = prevState.scale(startIndexControlledFromProps);
+          const scaleValue = prevState.scale(startIndexControlledFromProps);
+          // Apply boundaries to scale-based positions with absolute safety
+          const brushStart = (layout === 'horizontal' ? x : y) || 0;
+          const brushSize = (layout === 'horizontal' ? width : height) || 0;
+          const travWidth = travellerWidth || 5;
+          const minPos = brushStart;
+          const maxPos = brushStart + brushSize - travWidth;
+          const safeScaleValue = Math.max(minPos, Math.min(scaleValue, maxPos));
+          newState.startX = safeScaleValue;
           newState.prevStartIndexControlledFromProps = startIndexControlledFromProps;
         }
 
@@ -715,17 +777,56 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
           endIndexControlledFromProps != null &&
           prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
         ) {
-          newState.endX = prevState.scale(endIndexControlledFromProps);
+          const scaleValue = prevState.scale(endIndexControlledFromProps);
+          // Apply boundaries to scale-based positions with absolute safety
+          const brushStart = (layout === 'horizontal' ? x : y) || 0;
+          const brushSize = (layout === 'horizontal' ? width : height) || 0;
+          const travWidth = travellerWidth || 5;
+          const minPos = brushStart;
+          const maxPos = brushStart + brushSize - travWidth;
+          const safeScaleValue = Math.max(minPos, Math.min(scaleValue, maxPos));
+          newState.endX = safeScaleValue;
           newState.prevEndIndexControlledFromProps = endIndexControlledFromProps;
         }
       }
 
       if (Object.keys(newState).length > 0) {
+        // For zoom/pan mode, let controlled positions be outside boundaries to accurately represent zoom state
+        // Only apply boundary enforcement during user interactions (handled in interaction methods)
         return newState as State;
       }
     }
 
     return null;
+  }
+
+
+
+  componentDidMount() {
+    // Add more targeted event listeners for scroll prevention
+    setTimeout(() => {
+      const brushElement = document.querySelector('[data-brush-overlay="true"]');
+      if (brushElement) {
+        const handleWheelCapture = (e: WheelEvent) => {
+          e.preventDefault();
+        };
+        
+        const handleTouchCapture = (e: Event) => {
+          e.preventDefault();
+        };
+        
+        brushElement.addEventListener('wheel', handleWheelCapture, { passive: false, capture: true });
+        brushElement.addEventListener('touchstart', handleTouchCapture, { passive: false, capture: true });
+        brushElement.addEventListener('touchmove', handleTouchCapture, { passive: false, capture: true });
+        
+        // Store cleanup functions
+        this.nativeEventCleanup = () => {
+          brushElement.removeEventListener('wheel', handleWheelCapture);
+          brushElement.removeEventListener('touchstart', handleTouchCapture);
+          brushElement.removeEventListener('touchmove', handleTouchCapture);
+        };
+      }
+    }, 0);
   }
 
   componentWillUnmount() {
@@ -734,8 +835,18 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       this.leaveTimer = null;
     }
 
+    if (this.gestureTimeout) {
+      clearTimeout(this.gestureTimeout);
+      this.gestureTimeout = null;
+    }
+
     this.detachDragEndListener();
+    
+    // Clean up native event listeners
+    this.nativeEventCleanup?.();
   }
+
+  private nativeEventCleanup?: () => void;
 
   handleDrag = (e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) => {
     if (this.leaveTimer) {
@@ -751,9 +862,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   };
 
   handleTouchMove = (e: TouchEvent<SVGGElement>) => {
-    if (e.changedTouches != null && e.changedTouches.length > 0) {
-      this.handleDrag(e.changedTouches[0]);
-    }
+    // This now delegates to the master touch move handler
+    this.handleMasterTouchMove(e);
   };
 
   attachDragEndListener() {
@@ -850,14 +960,40 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     } else if (delta < 0) {
       delta = Math.max(delta, brushAreaStart - startX, brushAreaStart - endX);
     }
+    
     const newStart = startX + delta;
     const newEnd = endX + delta;
+    
+    // Apply strict boundaries to prevent going out of bounds
+    const minStartX = brushAreaStart;
+    const maxEndX = brushAreaEnd - travellerWidth;
+    const currentRange = Math.abs(endX - startX);
+    
+    // Ensure both positions stay within bounds while maintaining range
+    let clampedStart = newStart;
+    let clampedEnd = newEnd;
+    
+    // If trying to move beyond right edge, clamp end and adjust start
+    if (clampedEnd > maxEndX) {
+      clampedEnd = maxEndX;
+      clampedStart = clampedEnd - currentRange;
+    }
+    
+    // If trying to move beyond left edge, clamp start and adjust end
+    if (clampedStart < minStartX) {
+      clampedStart = minStartX;
+      clampedEnd = clampedStart + currentRange;
+    }
+    
+    // Final safety clamp to absolutely prevent overflow
+    const finalStart = Math.max(Math.min(clampedStart, maxEndX - currentRange), minStartX);
+    const finalEnd = Math.min(Math.max(clampedEnd, minStartX + currentRange), maxEndX);
 
     if (useZoomPan) {
       this.setState(
         {
-          startX: newStart,
-          endX: newEnd,
+          startX: finalStart,
+          endX: finalEnd,
           slideMoveStartX: pageCoord,
         },
         () => {
@@ -867,8 +1003,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     } else {
       // Legacy behavior: calculate indices and trigger onChange immediately
       const newIndex = getIndex({
-        startX: newStart,
-        endX: newEnd,
+        startX: finalStart,
+        endX: finalEnd,
         data,
         gap,
         scaleValues: this.state.scaleValues || [],
@@ -879,8 +1015,8 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       }
 
       this.setState({
-        startX: newStart,
-        endX: newEnd,
+        startX: finalStart,
+        endX: finalEnd,
         slideMoveStartX: pageCoord,
       });
     }
@@ -922,7 +1058,21 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       delta = Math.max(delta, brushAreaStart - prevValue);
     }
 
-    const newPos = prevValue + delta;
+    let newPos = prevValue + delta;
+    
+    // Apply strict boundaries to absolutely prevent going out of bounds
+    const minPos = brushAreaStart;
+    const maxPos = brushAreaEnd - travellerWidth;
+    
+    // Hard clamp to prevent any overflow whatsoever
+    newPos = Math.max(minPos, Math.min(newPos, maxPos));
+    
+    // Additional safety check to ensure travellers don't overlap
+    if (movingTravellerId === 'startX' && newPos >= (endX - travellerWidth)) {
+      newPos = endX - travellerWidth;
+    } else if (movingTravellerId === 'endX' && newPos <= (startX + travellerWidth)) {
+      newPos = startX + travellerWidth;
+    }
 
     const nextState = {
       ...this.state,
@@ -1037,6 +1187,446 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     });
   };
 
+  getLocalCoords = (e: { clientX: number; clientY: number }) => {
+    // Try to get the overlay element - fallback to any SVG parent
+    const svgElement = document.querySelector(`[data-brush-overlay]`) as SVGElement;
+    if (!svgElement) return { x: 0, y: 0 };
+    
+    const rect = svgElement.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+
+  // MASTER TOUCH HANDLERS
+  handleMasterTouchStart = (e: TouchEvent<SVGGElement>) => {
+    const { allowPinchZoom } = this.props;
+    const target = e.target as SVGElement;
+
+    // Always prevent default to stop page scroll, but be selective about propagation
+    e.preventDefault();
+    
+    // Only stop propagation for specific interactions
+    if (target.closest('.recharts-brush-traveller') || target.closest('.recharts-brush-slide')) {
+      e.stopPropagation();
+    }
+
+    // Always track pointers first
+    Array.from(e.changedTouches).forEach((t: React.Touch) => {
+      const local = this.getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+      this.pointers.set(t.identifier, local);
+    });
+
+    // If this is the first touch, reset gesture state and start timeout
+    if (this.pointers.size === 1) {
+      this.gestureDecided = false;
+      
+      // Clear any existing timeout
+      if (this.gestureTimeout) {
+        clearTimeout(this.gestureTimeout);
+      }
+      
+      // Set a short timeout to wait for potential second finger
+      this.gestureTimeout = setTimeout(() => {
+        // Timeout expired with only one finger - decide on single-finger gesture
+        if (this.pointers.size === 1 && !this.gestureDecided) {
+          this.gestureDecided = true;
+          this.decideSingleFingerGesture(e, target);
+        }
+        this.gestureTimeout = null;
+      }, 150); // 150ms timeout for second finger
+    }
+
+    // If we now have 2+ fingers and haven't decided yet, immediately switch to pinch
+    if (allowPinchZoom && this.pointers.size >= 2 && !this.gestureDecided) {
+      this.gestureDecided = true;
+      
+      // Clear the single-finger timeout
+      if (this.gestureTimeout) {
+        clearTimeout(this.gestureTimeout);
+        this.gestureTimeout = null;
+      }
+      
+      // Cancel any ongoing drag operation to start pinch zoom
+      if (this.state.isSlideMoving || this.state.isTravellerMoving) {
+        this.setState({
+          isSlideMoving: false,
+          isTravellerMoving: false,
+        });
+      }
+      
+      // Cancel any window drag listeners that might interfere
+      this.detachDragEndListener();
+      
+      const [a, b] = Array.from(this.pointers.values());
+      const distance = Math.hypot(a.x - b.x, a.y - b.y);
+      const centerX = (a.x + b.x) / 2;
+      const centerY = (a.y + b.y) / 2;
+      
+      this.pinchStart = {
+        distance,
+        startX: this.state.startX || 0,
+        endX: this.state.endX || 0,
+        centerX,
+        centerY,
+      };
+      
+      // Force stop any competing interactions
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Handle double-tap for drag-to-zoom if enabled (only for single finger)
+    if (allowPinchZoom && e.changedTouches.length === 1 && this.pointers.size === 1) {
+      const now = Date.now();
+      const t = e.changedTouches[0];
+      const local = this.getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+      
+      if (now - this.lastTap < 300 && this.doubleClickPos) {
+        const distance = Math.hypot(local.x - this.doubleClickPos.x, local.y - this.doubleClickPos.y);
+        if (distance < 50) {
+          this.isDoubleClickHold = true;
+          this.doubleClickPos = local;
+          this.gestureDecided = true; // Double-tap takes priority
+          // Clear timeout since we've decided
+          if (this.gestureTimeout) {
+            clearTimeout(this.gestureTimeout);
+            this.gestureTimeout = null;
+          }
+          return;
+        }
+      }
+      
+      this.lastTap = now;
+      this.doubleClickPos = local;
+    }
+  };
+
+  private decideSingleFingerGesture = (e: TouchEvent<SVGGElement>, target: SVGElement) => {
+    // This is called after the timeout when we're sure it's a single-finger gesture
+    
+    // Handle traveller/slide drag
+    if (target.closest('.recharts-brush-traveller')) {
+      const travellerId = target.closest('[data-id]')?.getAttribute('data-id') as BrushTravellerId;
+      if (travellerId) {
+        this.handleTravellerDragStart(travellerId, e);
+      }
+      return;
+    }
+    
+    if (target.closest('.recharts-brush-slide')) {
+      this.handleSlideDragStart(e);
+      return;
+    }
+
+    // For other areas, just track the pointer for potential pan
+    // (The actual panning will be handled in touchmove if the finger moves)
+  };
+
+  handleMasterTouchMove = (e: TouchEvent<SVGGElement>) => {
+    const { allowPinchZoom } = this.props;
+    
+    // Always prevent page scroll
+    e.preventDefault();
+
+    // Always update pointer positions
+    Array.from(e.changedTouches).forEach((t: React.Touch) => {
+      const local = this.getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+      this.pointers.set(t.identifier, local);
+    });
+
+    // If we have 2+ fingers and gesture isn't decided yet, immediately decide on pinch
+    if (allowPinchZoom && this.pointers.size >= 2 && !this.gestureDecided) {
+      this.gestureDecided = true;
+      
+      // Clear any single-finger timeout
+      if (this.gestureTimeout) {
+        clearTimeout(this.gestureTimeout);
+        this.gestureTimeout = null;
+      }
+      
+      // Cancel any ongoing drag operation to start pinch zoom
+      if (this.state.isSlideMoving || this.state.isTravellerMoving) {
+        this.setState({
+          isSlideMoving: false,
+          isTravellerMoving: false,
+        });
+        this.detachDragEndListener();
+      }
+      
+      const [a, b] = Array.from(this.pointers.values());
+      const distance = Math.hypot(a.x - b.x, a.y - b.y);
+      const centerX = (a.x + b.x) / 2;
+      const centerY = (a.y + b.y) / 2;
+      
+      this.pinchStart = {
+        distance,
+        startX: this.state.startX || 0,
+        endX: this.state.endX || 0,
+        centerX,
+        centerY,
+      };
+    }
+
+    // Handle pinch zoom
+    if (allowPinchZoom && this.pointers.size >= 2 && this.pinchStart && this.gestureDecided) {
+      e.stopPropagation();
+
+      const [a, b] = Array.from(this.pointers.values());
+      const currentDistance = Math.hypot(a.x - b.x, a.y - b.y);
+      const zoomFactor = this.pinchStart.distance === 0 ? 1 : this.pinchStart.distance / currentDistance;
+      
+      // Only process meaningful zoom changes
+      if (Math.abs(zoomFactor - 1) < 0.05) return;
+      
+      const { layout = 'horizontal', x, y, width, height, travellerWidth = 5 } = this.props;
+      const brushStart = (layout === 'horizontal' ? x : y) ?? 0;
+      const brushSize = (layout === 'horizontal' ? width : height) || 0;
+      const centerPoint = (layout === 'horizontal' ? this.pinchStart.centerX : this.pinchStart.centerY);
+      
+      const { newStart, newEnd } = this.calculateZoom(
+        this.pinchStart.startX,
+        this.pinchStart.endX,
+        zoomFactor,
+        centerPoint,
+        brushStart,
+        brushSize,
+        travellerWidth
+      );
+      
+      // Update pinch start for smooth continued zooming
+      this.pinchStart = {
+        ...this.pinchStart,
+        distance: currentDistance,
+        startX: newStart,
+        endX: newEnd,
+      };
+      
+      this.setState({
+        startX: newStart,
+        endX: newEnd,
+      }, () => {
+        if (this.props.useZoomPan) {
+          this.props.onBrushResize?.(newStart, newEnd, 'startX', layout);
+          this.props.onBrushMove?.(newStart, newEnd);
+        } else {
+          const { data, gap = 1 } = this.props;
+          const { scaleValues = [] } = this.state;
+          if (data) {
+            const newIndex = getIndex({ startX: newStart, endX: newEnd, scaleValues, gap, data });
+            this.props.onChange?.(newIndex);
+            this.props.onBrushMove?.(newStart, newEnd);
+          }
+        }
+      });
+
+      return;
+    }
+
+    // 2. Handle single-touch drag (if not pinching and gesture is decided)
+    if (this.gestureDecided && (this.state.isTravellerMoving || this.state.isSlideMoving)) {
+      if (e.changedTouches != null && e.changedTouches.length > 0) {
+        this.handleDrag(e.changedTouches[0]);
+      }
+      return;
+    }
+
+    // 3. Handle double-tap drag to zoom (if not pinching or dragging)
+    if (allowPinchZoom && this.isDoubleClickHold && this.doubleClickPos && this.pointers.size === 1) {
+      const t = e.changedTouches[0];
+      const local = this.getLocalCoords({ clientX: t.clientX, clientY: t.clientY });
+      
+      const distance = Math.hypot(local.x - this.doubleClickPos.x, local.y - this.doubleClickPos.y);
+      
+      if (distance > 15 && !this.selectStart) {
+        this.selectStart = this.doubleClickPos;
+        this.selectRect = { x: this.doubleClickPos.x, y: this.doubleClickPos.y, w: 0, h: 0 };
+        this.isDoubleClickHold = false;
+      }
+      
+      if (this.selectStart) {
+        const rectX = Math.min(this.selectStart.x, local.x);
+        const rectY = Math.min(this.selectStart.y, local.y);
+        const rectW = Math.abs(local.x - this.selectStart.x);
+        const rectH = Math.abs(local.y - this.selectStart.y);
+        this.selectRect = { x: rectX, y: rectY, w: rectW, h: rectH };
+      }
+    }
+  };
+
+  handleMasterTouchEnd = (e: TouchEvent<SVGGElement>) => {
+    Array.from(e.changedTouches).forEach((t: React.Touch) => {
+      this.pointers.delete(t.identifier);
+    });
+    
+    // Clear pinch state when less than 2 fingers
+    if (this.pointers.size < 2) {
+      this.pinchStart = null;
+    }
+    
+    // Clear all states when no fingers
+    if (this.pointers.size === 0) {
+      this.gestureDecided = false;
+      this.selectStart = null;
+      this.selectRect = null;
+      this.isDoubleClickHold = false;
+      this.doubleClickPos = null;
+      
+      if (this.doubleClickTimer) {
+        clearTimeout(this.doubleClickTimer);
+        this.doubleClickTimer = null;
+      }
+      
+      if (this.gestureTimeout) {
+        clearTimeout(this.gestureTimeout);
+        this.gestureTimeout = null;
+      }
+    }
+    // Do not call handleDragEnd here, as it's attached to window events
+  };
+
+  // Simple boundary clamp utility
+  private clampPosition = (value: number, brushStart: number, brushSize: number, travellerWidth: number): number => {
+    const min = brushStart;
+    const max = brushStart + brushSize - travellerWidth;
+    return Math.max(min, Math.min(value, max));
+  };
+
+  // Calculate new positions from zoom change
+  private calculateZoom = (
+    currentStart: number,
+    currentEnd: number,
+    zoomFactor: number,
+    anchorPoint: number,
+    brushStart: number,
+    brushSize: number,
+    travellerWidth: number
+  ): { newStart: number; newEnd: number } => {
+    const currentRange = Math.abs(currentEnd - currentStart);
+    const newRange = Math.max(travellerWidth * 2, Math.min(currentRange / zoomFactor, brushSize - travellerWidth));
+    
+    // Calculate new positions relative to anchor
+    const currentCenter = Math.min(currentStart, currentEnd) + currentRange / 2;
+    const anchorRatio = Math.max(0, Math.min(1, (anchorPoint - brushStart) / brushSize));
+    
+    const newCenter = currentCenter + (anchorPoint - currentCenter) * 0.1; // Slight anchor bias
+    const newStart = newCenter - newRange / 2;
+    const newEnd = newStart + newRange;
+    
+    // Simple boundary enforcement
+    if (newEnd > brushStart + brushSize - travellerWidth) {
+      const overflow = newEnd - (brushStart + brushSize - travellerWidth);
+      return {
+        newStart: newStart - overflow,
+        newEnd: brushStart + brushSize - travellerWidth
+      };
+    }
+    
+    if (newStart < brushStart) {
+      const underflow = brushStart - newStart;
+      return {
+        newStart: brushStart,
+        newEnd: newEnd + underflow
+      };
+    }
+    
+    return { newStart, newEnd };
+  };
+
+  // Completely refactored wheel handling
+  handleWheel = (e: React.WheelEvent<SVGGElement>) => {
+    // Always prevent page scroll
+    e.preventDefault();
+    
+    // ⇣ NEW ⇣   don't freeze traveller position while scrolling
+    if (this.state.isTextActive) {
+      this.setState({ isTextActive: false });
+    }
+    
+    if (!this.props.allowScrollZoom && !e.shiftKey) return;
+    
+    const { layout = 'horizontal', onBrushPan, useZoomPan, onChange, x, y, width, height, travellerWidth = 5 } = this.props;
+    const { startX = 0, endX = 0 } = this.state;
+    const local = this.getLocalCoords(e);
+    
+    // Pan mode (Shift + scroll)
+          if (e.shiftKey) {
+        const panAmount = e.deltaY > 0 ? -30 : 30;
+        const brushStart = (layout === 'horizontal' ? x : y) ?? 0;
+        const brushSize = (layout === 'horizontal' ? width : height) || 0;
+        
+        const currentRange = Math.abs(endX - startX);
+        const currentMin = Math.min(startX, endX);
+        
+        let newMin = currentMin + panAmount;
+        let newMax = newMin + currentRange;
+        
+        // Simple boundary check for panning
+        if (newMax > brushStart + brushSize - travellerWidth) {
+          newMax = brushStart + brushSize - travellerWidth;
+          newMin = newMax - currentRange;
+        }
+        if (newMin < brushStart) {
+          newMin = brushStart;
+          newMax = newMin + currentRange;
+        }
+        
+        this.setState({
+          startX: newMin,
+          endX: newMax,
+        }, () => {
+          if (useZoomPan && onBrushPan) {
+            onBrushPan(panAmount, layout);
+          }
+        });
+        
+        return;
+          } else {
+        // Zoom mode (regular scroll)
+        const brushStart = (layout === 'horizontal' ? x : y) ?? 0;
+        const brushSize = (layout === 'horizontal' ? width : height) || 0;
+        const anchorPoint = (layout === 'horizontal' ? local.x : local.y);
+        const zoomFactor = e.deltaY < 0 ? 1.15 : 0.87; // Slightly more responsive
+        
+        const { newStart, newEnd } = this.calculateZoom(
+          startX,
+          endX,
+          zoomFactor,
+          anchorPoint,
+          brushStart,
+          brushSize,
+          travellerWidth
+        );
+        
+        this.setState({
+          startX: newStart,
+          endX: newEnd,
+        }, () => {
+          if (useZoomPan) {
+            this.props.onBrushResize?.(newStart, newEnd, 'startX', layout);
+            this.props.onBrushMove?.(newStart, newEnd);
+          } else {
+            // Legacy mode
+            const { data, gap = 1 } = this.props;
+            const { scaleValues = [] } = this.state;
+            if (data && onChange) {
+              const newIndex = getIndex({
+                startX: newStart,
+                endX: newEnd,
+                scaleValues,
+                gap,
+                data,
+              });
+              onChange(newIndex);
+            }
+          }
+        });
+      }
+  };
+
+  handleKeyDown = (e: React.KeyboardEvent<SVGGElement>) => {
+    // ... logic moved from BrushInternal's handleKeyDown
+    // This will use this.props to access zoom state and setters
+  };
+
   render() {
     const {
       data,
@@ -1073,18 +1663,31 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     const layerClass = clsx('recharts-brush', className);
-    const style = generatePrefixStyle('userSelect', 'none');
+    const style = { ...generatePrefixStyle('userSelect', 'none'), touchAction: 'none' };
     const calculatedY = y + (dy ?? 0);
 
     const startIndex = isNumber(startX) ? getIndexInRange(scaleValues, startX) : this.props.startIndex;
     const endIndex = isNumber(endX) ? getIndexInRange(scaleValues, endX) : this.props.endIndex;
 
+    // Simple validation for rendering
+    if (isNumber(startX) && isNumber(endX) && (!isFinite(startX) || !isFinite(endX) || startX >= endX)) {
+      console.warn('[BRUSH] Invalid positions detected, skipping render:', { startX, endX });
+      return null;
+    }
+
     return (
       <Layer
         className={layerClass}
         onMouseLeave={this.handleLeaveWrapper}
-        onTouchMove={this.handleTouchMove}
         style={style}
+        onWheel={this.handleWheel}
+        onKeyDown={this.handleKeyDown}
+        onTouchStart={this.handleMasterTouchStart}
+        onTouchMove={this.handleMasterTouchMove}
+        onTouchEnd={this.handleMasterTouchEnd}
+        tabIndex={0}
+        data-brush-overlay="true"
+        data-brush-interaction="true"
       >
         <Background x={x} y={calculatedY} width={width} height={height} fill={fill} stroke={stroke} />
         <Panorama
@@ -1180,6 +1783,10 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
 function BrushInternal(props: Props) {
   const [isInteracting, setIsInteracting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectRect, setSelectRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const [selectStart, setSelectStart] = useState<{ x: number; y: number } | null>(null);
+
   const dispatch = useAppDispatch();
   const setZoomState = useSetZoom();
   const currentZoom = useZoom(); // Get current zoom state
@@ -1234,7 +1841,8 @@ function BrushInternal(props: Props) {
   const brushId = `${layout}-${props.dataKey || 'default'}`;
   
   // Calculate brush position and dimensions - memoize to prevent infinite re-renders
-  const calculatedDimensions = useMemo(() => 
+  const calculatedDimensions = useMemo(
+    () =>
     calculateBrushPosition(
       props,
       chartWidth || 0,
@@ -1261,8 +1869,8 @@ function BrushInternal(props: Props) {
       plotAreaHeight, 
       plotAreaLeft, 
       plotAreaTop,
-      allXAxes
-    ]
+      allXAxes,
+    ],
   );
   
   const brushDimensions = useAppSelector(selectBrushDimensions(brushId));
@@ -1283,17 +1891,21 @@ function BrushInternal(props: Props) {
         if (!width) return;
         const brushDataWidth = width - travellerWidth;
         const deltaOffsetX = -delta * ((plotAreaWidth * zoom.scaleX) / brushDataWidth);
+        const minOffsetX = plotAreaWidth * (1 - zoom.scaleX);
+        const newOffsetX = Math.min(Math.max(zoom.offsetX + deltaOffsetX, minOffsetX), 0);
         setZoom({
           ...zoom,
-          offsetX: zoom.offsetX + deltaOffsetX,
+          offsetX: newOffsetX,
         });
       } else {
         if (!height) return;
         const brushDataHeight = height - travellerWidth;
         const deltaOffsetY = -delta * ((plotAreaHeight * zoom.scaleY) / brushDataHeight);
+        const minOffsetY = plotAreaHeight * (1 - zoom.scaleY);
+        const newOffsetY = Math.min(Math.max(zoom.offsetY + deltaOffsetY, minOffsetY), 0);
         setZoom({
           ...zoom,
-          offsetY: zoom.offsetY + deltaOffsetY,
+          offsetY: newOffsetY,
         });
       }
     },
@@ -1398,24 +2010,50 @@ function BrushInternal(props: Props) {
       
       if (controlAxis === 'x') {
         if (width > 0 && plotAreaWidth > 0) {
-          const brushDataDimension = width - brushTravellerDimension;
-          const visibleDimensionInBrush = brushDataDimension / currentZoom.scaleX;
-          const startOffsetInBrush =
-            (-currentZoom.offsetX / (plotAreaWidth * currentZoom.scaleX)) * brushDataDimension;
+          // ───────────────────────────────────────────────────────────────
+          // Calculate brush window directly from the *viewport* just like
+          // the minimap & scroll‑bars do:           
+          //   viewportWidth   = trackWidth / scaleX
+          //   windowStart(px) = trackLeft + (-offsetX / (plotWidth·scaleX)) · trackWidth
+          // ----------------------------------------------------------------
+          const brushDataWidth = width - brushTravellerDimension;
+          const viewportWidth  = brushDataWidth / currentZoom.scaleX;
 
-          const brushPosition = x ?? 0;
-          controlledStart = brushPosition + startOffsetInBrush;
-          controlledEnd = controlledStart + visibleDimensionInBrush;
+          controlledStart = (x ?? 0) + (-currentZoom.offsetX / (plotAreaWidth * currentZoom.scaleX)) * brushDataWidth;
+          controlledEnd   = controlledStart + viewportWidth;
+
+          // ───────────────────────────────────────────────────────────────
+          // Clamp so the window never runs out of its rail
+          // ----------------------------------------------------------------
+          const minPos = (layout === 'horizontal' ? x : y) ?? 0;
+          const maxPos = minPos + brushDataWidth;
+
+          controlledStart = clamp(controlledStart, minPos, maxPos - viewportWidth);
+          controlledEnd   = controlledStart + viewportWidth;
+          // ───────────────────────────────────────────────────────────────
         }
-      } else if (height > 0 && plotAreaHeight > 0) {
-        const brushDataDimension = height - brushTravellerDimension;
-        const visibleDimensionInBrush = brushDataDimension / currentZoom.scaleY;
-        const startOffsetInBrush =
-          (-currentZoom.offsetY / (plotAreaHeight * currentZoom.scaleY)) * brushDataDimension;
+            } else if (height > 0 && plotAreaHeight > 0) {
+        // ───────────────────────────────────────────────────────────────
+        // Calculate brush window directly from the *viewport* just like
+        // the minimap & scroll‑bars do:           
+        //   viewportHeight  = trackHeight / scaleY
+        //   windowStart(px) = trackTop + (-offsetY / (plotHeight·scaleY)) · trackHeight
+        // ----------------------------------------------------------------
+        const brushDataHeight = height - brushTravellerDimension;
+        const viewportHeight  = brushDataHeight / currentZoom.scaleY;
 
-        const brushPosition = y ?? 0;
-        controlledStart = brushPosition + startOffsetInBrush;
-        controlledEnd = controlledStart + visibleDimensionInBrush;
+        controlledStart = (y ?? 0) + (-currentZoom.offsetY / (plotAreaHeight * currentZoom.scaleY)) * brushDataHeight;
+        controlledEnd   = controlledStart + viewportHeight;
+
+        // ───────────────────────────────────────────────────────────────
+        // Clamp so the window never runs out of its rail
+        // ----------------------------------------------------------------
+        const minPos = (layout === 'horizontal' ? x : y) ?? 0;
+        const maxPos = minPos + brushDataHeight;
+
+        controlledStart = clamp(controlledStart, minPos, maxPos - viewportHeight);
+        controlledEnd   = controlledStart + viewportHeight;
+        // ───────────────────────────────────────────────────────────────
       }
     }
     zoomPanProps = {
@@ -1428,6 +2066,48 @@ function BrushInternal(props: Props) {
     };
   }
 
+  // ─────────────────────────────────────────────────────────────────────
+  // NEW #2 – keep the *chart* in sync if the incoming zoom.offsetX / offsetY
+  // wanders outside its legal domain. This runs **after** the above clamp so
+  // it can compare the (potentially corrected) traveller positions with the
+  // current zoom state and nudge the zoom back into a valid range.
+  // ---------------------------------------------------------------------
+  useEffect(() => {
+    if (!useZoomPan || !currentZoom) return;
+
+    const { scaleX, scaleY, offsetX, offsetY } = currentZoom;
+
+    let needUpdate = false;
+    const nextZoom: typeof currentZoom = { ...currentZoom };
+
+    // Helper that mirrors restrictOffsets from zoomPanContext – we repeat it
+    // here because we're outside that context and want an immediate fix.
+    const clampOffset = (off: number, view: number, scale: number) => {
+      const min = view * (1 - scale);
+      return Math.min(Math.max(off, min), 0);
+    };
+
+    if ((props.axis ?? (layout === 'horizontal' ? 'x' : 'y')) !== 'y') {
+      const clamped = clampOffset(offsetX, plotAreaWidth, scaleX);
+      if (clamped !== offsetX) {
+        nextZoom.offsetX = clamped;
+        needUpdate = true;
+      }
+    }
+
+    if ((props.axis ?? (layout === 'horizontal' ? 'x' : 'y')) !== 'x') {
+      const clamped = clampOffset(offsetY, plotAreaHeight, scaleY);
+      if (clamped !== offsetY) {
+        nextZoom.offsetY = clamped;
+        needUpdate = true;
+      }
+    }
+
+    if (needUpdate) {
+      setZoomStateRef.current({ ...nextZoom, disableAnimation: true });
+    }
+  }, [useZoomPan, currentZoom, plotAreaWidth, plotAreaHeight, props.axis, layout]);
+
   return (
     <>
       <BrushSettingsDispatcher
@@ -1439,6 +2119,7 @@ function BrushInternal(props: Props) {
         padding={props.padding}
         layout={props.layout}
       />
+
       <BrushWithState
         {...props}
         {...contextProperties}
@@ -1529,6 +2210,8 @@ export class Brush extends PureComponent<Props, State> {
     alwaysShowText: false,
     layout: 'horizontal',
     enableAnimation: false,
+    allowScrollZoom: true,
+    allowPinchZoom: true,
   };
 
   render() {

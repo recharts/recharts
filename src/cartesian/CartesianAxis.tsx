@@ -9,7 +9,7 @@ import get from 'lodash.get';
 import { clsx } from 'clsx';
 import { shallowEqual } from '../util/ShallowEqual';
 import { Layer } from '../container/Layer';
-import { Text, TextProps } from '../component/Text';
+import { Text } from '../component/Text';
 import { Label } from '../component/Label';
 import { isNumber } from '../util/DataUtils';
 import {
@@ -18,7 +18,6 @@ import {
   PresentationAttributesAdaptChildEvent,
   CartesianTickItem,
   AxisInterval,
-  TickItem,
 } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { getTicks } from './getTicks';
@@ -31,8 +30,6 @@ export type Orientation = 'top' | 'bottom' | 'left' | 'right';
 export type Unit = string | number;
 /** The formatter function of tick */
 export type TickFormatter = (value: any, index: number) => string;
-
-type Tick = TickItem['value'];
 
 export interface CartesianAxisProps {
   className?: string;
@@ -67,8 +64,6 @@ export interface CartesianAxisProps {
    * this is Recharts scale, based on d3-scale.
    */
   scale: RechartsScale;
-  // The name of data displayed in the axis
-  name?: string;
 }
 
 interface IState {
@@ -84,152 +79,50 @@ interface IState {
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'viewBox' | 'scale'> &
   CartesianAxisProps;
 
-interface InteractiveTickProps {
-  tickElement: React.ReactNode;
-  rectX: number;
-  rectY: number;
-  rectWidth: number;
-  rectHeight: number;
-  axisInteraction: ReturnType<typeof useAxisInteraction>;
-  axisType: 'x' | 'y';
-}
-
-const InteractiveTick: React.FC<InteractiveTickProps> = ({
-  tickElement,
-  rectX,
-  rectY,
-  rectWidth,
-  rectHeight,
-  axisInteraction,
-  axisType,
-}) => {
-  const pointers = React.useRef(new Map<number, { x: number; y: number }>());
-  const pinchStartDistance = React.useRef<number>(0);
-  // This ref holds the state of a single-pointer pan gesture, immune to re-renders.
-  const panSession = React.useRef<{
-    id: number;
-    lastX: number;
-    lastY: number;
-  } | null>(null);
-
-  const handlePointerMove = (e: PointerEvent) => {
-    if (pointers.current.size === 0) return;
-
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-    // A. Single-pointer pan (works for mouse and touch)
-    if (panSession.current && panSession.current.id === e.pointerId) {
-      if (
-        (axisType === 'x' && (axisInteraction?.mode === 'x' || axisInteraction?.mode === 'xy')) ||
-        (axisType === 'y' && (axisInteraction?.mode === 'y' || axisInteraction?.mode === 'xy'))
-      ) {
-        const delta =
-          axisType === 'x'
-            ? e.clientX - panSession.current.lastX
-            : e.clientY - panSession.current.lastY;
-        
-        axisInteraction?.handleAxisPan?.(axisType, delta);
-        
-        // CRITICAL: Update the last position for the next movement calculation.
-        panSession.current.lastX = e.clientX;
-        panSession.current.lastY = e.clientY;
-      }
-    }
-    // B. Two-pointer pinch-to-zoom (touch-only)
-    else if (pointers.current.size === 2) {
-      if (
-        (axisType === 'x' && (axisInteraction?.mode === 'x' || axisInteraction?.mode === 'xy')) ||
-        (axisType === 'y' && (axisInteraction?.mode === 'y' || axisInteraction?.mode === 'xy'))
-      ) {
-        const [p1, p2] = Array.from(pointers.current.values());
-        const currentDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        const zoomRatio = pinchStartDistance.current === 0 ? 1 : currentDistance / pinchStartDistance.current;
-
-        if (Math.abs(zoomRatio - 1) > 0.01) {
-          axisInteraction?.handleAxisZoom?.(axisType, zoomRatio);
-          pinchStartDistance.current = currentDistance;
-        }
-      }
-    }
-  };
-
-  const handlePointerUp = (e: PointerEvent) => {
-    (e.target as Element).releasePointerCapture?.(e.pointerId);
-    pointers.current.delete(e.pointerId);
-    
-    if (panSession.current && panSession.current.id === e.pointerId) {
-      panSession.current = null;
-    }
-
-    if (pointers.current.size < 2) {
-      pinchStartDistance.current = 0;
-    }
-    if (pointers.current.size < 1) {
-      panSession.current = null;
-      window.removeEventListener('pointermove', handlePointerMove, { capture: true });
-      window.removeEventListener('pointerup', handlePointerUp, { capture: true });
-    }
-  };
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    e.stopPropagation();
-    e.preventDefault(); 
-    
-    (e.target as Element).setPointerCapture(e.pointerId);
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-    if (pointers.current.size === 1) {
-      panSession.current = { id: e.pointerId, lastX: e.clientX, lastY: e.clientY };
-      // Use capture: true to ensure we get ALL events
-      window.addEventListener('pointermove', handlePointerMove, { capture: true });
-      window.addEventListener('pointerup', handlePointerUp, { capture: true });
-    } else if (pointers.current.size === 2) {
-      panSession.current = null;
-      const [p1, p2] = Array.from(pointers.current.values());
-      pinchStartDistance.current = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-    }
-  };
-  
-  const handleWheel = (e: React.WheelEvent) => {
-    if (
-      (axisType === 'x' && (axisInteraction?.mode === 'x' || axisInteraction?.mode === 'xy')) ||
-      (axisType === 'y' && (axisInteraction?.mode === 'y' || axisInteraction?.mode === 'xy'))
-    ) {
-      e.stopPropagation();
-      e.preventDefault();
-      const zoomRatio = e.deltaY < 0 ? 1.1 : 0.9;
-      axisInteraction?.handleAxisZoom?.(axisType, zoomRatio);
-    }
-  };
-
-  return (
-    <g>
-      <rect
-        x={rectX}
-        y={rectY}
-        width={rectWidth}
-        height={rectHeight}
-        fill="transparent"
-        style={{ cursor: 'grab', touchAction: 'none' }}
-        onWheel={handleWheel}
-        onPointerDown={handlePointerDown}
-      />
-      {tickElement}
-    </g>
-  );
-};
-
 // Functional component wrapper to use hooks
 const CartesianAxisWithHooks: React.FC<Props> = (props) => {
   const [fontSize, setFontSize] = React.useState('');
   const [letterSpacing, setLetterSpacing] = React.useState('');
+  const axisRef = React.useRef<HTMLDivElement>(null);
   
   // Get axis interaction context
   const axisInteraction = useAxisInteraction();
   
   // Determine axis type for interactions
   const axisType: 'x' | 'y' = props.orientation === 'left' || props.orientation === 'right' ? 'y' : 'x';
-  const isInteractionEnabled = axisInteraction?.isInteractionEnabled;
+  const isInteractionEnabled = axisInteraction?.isLabelInteractionEnabled;
+
+  // Add native event listeners to prevent page scroll but allow axis interactions
+  React.useEffect(() => {
+    const handleGlobalWheel = (e: WheelEvent) => {
+      const target = e.target as Element;
+      // Check if the target is within our axis
+      if (target.closest('.recharts-cartesian-axis')) {
+        e.preventDefault();
+        // Don't stop propagation - let the axis interaction handlers work
+      }
+    };
+    
+    const handleGlobalTouch = (e: Event) => {
+      const target = e.target as Element;
+      // Check if the target is within our axis
+      if (target.closest('.recharts-cartesian-axis')) {
+        e.preventDefault();
+        // Don't stop propagation - let the axis interaction handlers work
+      }
+    };
+    
+    // Add global listeners to capture all wheel/touch events on axis
+    document.addEventListener('wheel', handleGlobalWheel, { passive: false, capture: true });
+    document.addEventListener('touchstart', handleGlobalTouch, { passive: false, capture: true });
+    document.addEventListener('touchmove', handleGlobalTouch, { passive: false, capture: true });
+    
+    return () => {
+      document.removeEventListener('wheel', handleGlobalWheel);
+      document.removeEventListener('touchstart', handleGlobalTouch);
+      document.removeEventListener('touchmove', handleGlobalTouch);
+    };
+  }, []);
 
   // Use effect to measure font size after render
   React.useEffect(() => {
@@ -435,44 +328,29 @@ export class CartesianAxisClass extends Component<EnhancedProps, IState> {
     return <line {...props} className={clsx('recharts-cartesian-axis-line', get(axisLine, 'className'))} />;
   }
 
-  static renderTickItem(option: Tick, props: any, value: string | number) {
-    if (!option) {
-      return null;
-    }
+  static renderTickItem(option: Props['tick'], props: any, value: ReactNode) {
+    let tickItem;
+    const combinedClassName = clsx(props.className, 'recharts-cartesian-axis-tick-value');
 
     if (React.isValidElement(option)) {
-      const newProps: any = { ...(props as any) };
-      if (option.type === Text) {
-        newProps.style = { ...(props as any).style, pointerEvents: 'none', userSelect: 'none' };
-      }
-      return React.cloneElement(option, newProps);
-    }
-    if (typeof option === 'function') {
-      const tickItem = option(props);
-      if (React.isValidElement(tickItem) && tickItem.type === Text) {
-        const newProps = {
-          ...(tickItem.props && typeof tickItem.props === 'object' ? tickItem.props : {}),
-          style: {
-            ...((tickItem.props as any)?.style),
-            pointerEvents: 'none',
-            userSelect: 'none',
-          },
-        };
-        return React.cloneElement(tickItem, newProps as any);
-      }
-      return tickItem;
-    }
-    
-    // The default case: a simple text label
-    const finalProps: TextProps = {
-      ...props,
-      ...adaptEventsOfChild(props, value, 0),
-      // This is the key to fixing the hover/cancellation issue
-      style: { ...(props as any).style, pointerEvents: 'none', userSelect: 'none' },
-      className: clsx('recharts-cartesian-axis-tick-value', (props as any)?.className),
-    };
+      tickItem = React.cloneElement(option, { ...props, className: combinedClassName });
+    } else if (typeof option === 'function') {
+      tickItem = option({ ...props, className: combinedClassName });
+    } else {
+      let className = 'recharts-cartesian-axis-tick-value';
 
-    return <Text {...finalProps}>{value}</Text>;
+      if (typeof option !== 'boolean') {
+        className = clsx(className, option.className);
+      }
+
+      tickItem = (
+        <Text {...props} className={className}>
+          {value}
+        </Text>
+      );
+    }
+
+    return tickItem;
   }
 
   /**
@@ -501,30 +379,6 @@ export class CartesianAxisClass extends Component<EnhancedProps, IState> {
     };
     const items = finalTicks.map((entry: CartesianTickItem, i) => {
       const { line: lineCoord, tick: tickCoord } = this.getTickLineCoord(entry);
-      
-      // Calculate dynamic hit area to cover the entire tick zone
-      const prevTick = finalTicks[i - 1];
-      const nextTick = finalTicks[i + 1];
-      const { orientation } = this.props;
-
-      let rectX: number, rectY: number, rectWidth: number, rectHeight: number;
-
-      if (orientation === 'top' || orientation === 'bottom') {
-        const xStart = prevTick ? (entry.coordinate + prevTick.coordinate) / 2 : this.props.x;
-        const xEnd = nextTick ? (entry.coordinate + nextTick.coordinate) / 2 : this.props.x + this.props.width;
-        rectX = Math.min(xStart, xEnd);
-        rectWidth = Math.abs(xEnd - xStart);
-        rectY = this.props.y;
-        rectHeight = this.props.height;
-      } else { // 'left' or 'right'
-        const yStart = prevTick ? (entry.coordinate + prevTick.coordinate) / 2 : this.props.y;
-        const yEnd = nextTick ? (entry.coordinate + nextTick.coordinate) / 2 : this.props.y + this.props.height;
-        rectY = Math.min(yStart, yEnd);
-        rectHeight = Math.abs(yEnd - yStart);
-        rectX = this.props.x;
-        rectWidth = this.props.width;
-      }
-
       const tickProps = {
         textAnchor,
         verticalAnchor,
@@ -545,17 +399,9 @@ export class CartesianAxisClass extends Component<EnhancedProps, IState> {
         `${typeof tickFormatter === 'function' ? tickFormatter(entry.value, i) : entry.value}${unit || ''}`,
       );
 
-      const interactiveTickElement = isInteractionEnabled && axisInteraction ? (
-        <InteractiveTick
-          tickElement={tickElement}
-          rectX={rectX}
-          rectY={rectY}
-          rectWidth={rectWidth}
-          rectHeight={rectHeight}
-          axisInteraction={axisInteraction}
-          axisType={axisType}
-        />
-      ) : tickElement;
+      // No longer wrap individual ticks - use the zone-based interaction instead
+      // This prevents individual labels from interfering with interactions
+      const interactiveTickElement = tickElement;
 
       return (
         <Layer
@@ -576,6 +422,92 @@ export class CartesianAxisClass extends Component<EnhancedProps, IState> {
     });
 
     return items.length > 0 ? <g className="recharts-cartesian-axis-ticks">{items}</g> : null;
+  }
+
+  renderAxisInteractionZone() {
+    const { x, y, width, height, orientation, axisInteraction, axisType, isInteractionEnabled } = this.props;
+    
+    if (!isInteractionEnabled || !axisInteraction) {
+      return null;
+    }
+
+    // Calculate the interaction zone based on orientation
+    let zoneX, zoneY, zoneWidth, zoneHeight;
+    const expandedSize = 30; // Expand the interaction zone beyond the axis
+
+    switch (orientation) {
+      case 'bottom':
+        zoneX = x;
+        zoneY = y;
+        zoneWidth = width;
+        zoneHeight = height + expandedSize;
+        break;
+      case 'top':
+        zoneX = x;
+        zoneY = y - expandedSize;
+        zoneWidth = width;
+        zoneHeight = height + expandedSize;
+        break;
+      case 'left':
+        zoneX = x - expandedSize;
+        zoneY = y;
+        zoneWidth = width + expandedSize;
+        zoneHeight = height;
+        break;
+      case 'right':
+        zoneX = x;
+        zoneY = y;
+        zoneWidth = width + expandedSize;
+        zoneHeight = height;
+        break;
+      default:
+        return null;
+    }
+
+    return (
+      <rect
+        x={zoneX}
+        y={zoneY}
+        width={zoneWidth}
+        height={zoneHeight}
+        fill="transparent"
+        pointerEvents="all"
+        style={{
+          cursor: 'grab',
+          touchAction: 'none',
+        }}
+        onWheel={(e) => {
+          // Page scroll is already prevented by native listeners
+          // Handle the axis wheel event if available
+          if (axisInteraction.handleAxisWheel) {
+            axisInteraction.handleAxisWheel(e, axisType);
+          }
+        }}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          axisInteraction.handleAxisDrag?.(e, axisType, 'start');
+        }}
+        onPointerMove={(e) => {
+          axisInteraction.handleAxisDrag?.(e, axisType, 'move');
+        }}
+        onPointerUp={(e) => {
+          axisInteraction.handleAxisDrag?.(e, axisType, 'end');
+        }}
+        onPointerCancel={(e) => {
+          axisInteraction.handleAxisDrag?.(e, axisType, 'end');
+        }}
+        onTouchStart={(e) => {
+          axisInteraction.handleAxisTouch?.(e, axisType, 'start');
+        }}
+        onTouchMove={(e) => {
+          axisInteraction.handleAxisTouch?.(e, axisType, 'move');
+        }}
+        onTouchEnd={(e) => {
+          axisInteraction.handleAxisTouch?.(e, axisType, 'end');
+        }}
+      />
+    );
   }
 
   render() {
@@ -600,6 +532,7 @@ export class CartesianAxisClass extends Component<EnhancedProps, IState> {
         {axisLine && this.renderAxisLine()}
         {this.renderTicks(fontSize, letterSpacing, ticks)}
         {Label.renderCallByParent(this.props)}
+        {this.renderAxisInteractionZone()}
       </Layer>
     );
   }

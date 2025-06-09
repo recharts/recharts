@@ -11,6 +11,7 @@ import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
 import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useClipPathId } from '../container/ClipPathProvider';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipPayload } from '../state/tooltipSlice';
@@ -51,6 +52,11 @@ export function CursorInternal(props: CursorConnectedProps) {
   if (!cursor || !activeCoordinate || (chartName !== 'ScatterChart' && tooltipEventType !== 'axis')) {
     return null;
   }
+
+  /* ---------- NEW: clip every cursor ---------- */
+  const clipPathId = useClipPathId();      // will be "recharts37-clip" in your sample
+  const commonSvgProps = { clipPath: `url(#${clipPathId})` } as const;
+
   let restProps, cursorComp: React.ComponentType<any>;
 
   if (chartName === 'ScatterChart') {
@@ -88,6 +94,7 @@ export function CursorInternal(props: CursorConnectedProps) {
     payload: activePayload,
     payloadIndex: activeTooltipIndex,
     className: clsx('recharts-tooltip-cursor', extraClassName),
+    ...commonSvgProps,                       // <-- HERE
   };
 
   return isValidElement(cursor) ? cloneElement(cursor, cursorProps) : createElement(cursorComp, cursorProps);

@@ -7,7 +7,6 @@ import { Global } from '../util/Global';
 import { filterProps } from '../util/ReactUtils';
 import { getStringSize } from '../util/DOMUtils';
 import { reduceCSSCalc } from '../util/ReduceCSSCalc';
-import { PresentationAttributes } from '../util/types';
 
 const BREAKING_SPACES = /[ \f\n\r\t\v\u2028\u2029]+/;
 
@@ -46,7 +45,7 @@ const calculateWordWidths = ({ children, breakAll, style }: CalculateWordWidthsP
 
 export type TextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 
-export interface TextProps extends PresentationAttributes<SVGTextElement>, SVGProps<SVGTextElement> {
+interface TextProps {
   scaleToFit?: boolean;
   angle?: number;
   textAnchor?: TextAnchor;
