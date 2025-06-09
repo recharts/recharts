@@ -8,6 +8,7 @@ import { useTooltipAxis } from '../context/useTooltipAxis';
 import { findEntryInArray, isNullish } from '../util/DataUtils';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveLabel, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { useIsPanorama } from '../context/PanoramaContext';
 
 export interface PointType {
   readonly x: number;
@@ -73,10 +74,13 @@ type ActivePointsProps = {
 };
 
 export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
+  const isPanorama = useIsPanorama();
   const tooltipAxis = useTooltipAxis();
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
   const activeLabel = useAppSelector(selectActiveLabel);
-  if (!activeTooltipIndex) {
+  
+  // Don't show active dots in panorama (brush preview) mode
+  if (isPanorama || !activeTooltipIndex) {
     return null;
   }
 

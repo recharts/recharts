@@ -1463,6 +1463,12 @@ export interface ZoomConfig {
   resetKey?: 'dblclick' | 'dbltap';
   showScrollBar?: boolean;
   disableAnimation?: boolean;
+  /** Enable selecting an area with Shift+Drag to zoom into */
+  dragToZoom?: boolean;
+  /** Automatically adjust Y domain based on the visible X range */
+  autoScaleYDomain?: boolean;
+  /** Keep a specific line centered when zooming/panning */
+  followLineKey?: string;
 }
 
 export interface CartesianChartProps extends Partial<ExternalMouseEvents> {

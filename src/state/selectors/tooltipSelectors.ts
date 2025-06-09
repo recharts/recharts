@@ -268,14 +268,14 @@ export const selectTooltipAxisScale: (state: RechartsRootState) => RechartsScale
     selectTooltipAxisType,
   ],
   (axis, realScaleType, domain, range, zoom, axisType) => {
-    const base = combineScaleFunction(axis, realScaleType, domain, range);
+    const base = combineScaleFunction(axis, realScaleType, domain, range as [number, number]);
     if (!base || !zoom) return base;
     const [r0, r1] = range ?? base.range();
     if (axisType === 'xAxis') {
-      return applyZoomToScale(base, zoom.scaleX, zoom.offsetX, [r0, r1]);
+      return applyZoomToScale(base, zoom.scaleX, zoom.offsetX, [r0 as number, r1 as number]);
     }
     if (axisType === 'yAxis') {
-      return applyZoomToScale(base, zoom.scaleY, zoom.offsetY, [r0, r1]);
+      return applyZoomToScale(base, zoom.scaleY, zoom.offsetY, [r0 as number, r1 as number]);
     }
     return base;
   },
@@ -336,7 +336,7 @@ const combineTicksOfTooltipAxis = (
     if (scale.ticks) {
       return scale
         .ticks(axis.tickCount)
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+        .map((entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }));
     }
 
     return scale.domain().map(

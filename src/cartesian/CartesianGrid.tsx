@@ -380,10 +380,12 @@ export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
   const offset = useOffset();
+  const isPanorama = useIsPanorama();
+
   const propsIncludingDefaults = {
     ...resolveDefaultProps(props, defaultProps),
-    x: isNumber(props.x) ? props.x : offset.left,
-    y: isNumber(props.y) ? props.y : offset.top,
+    x: isNumber(props.x) ? props.x : isPanorama ? 0 : offset.left,
+    y: isNumber(props.y) ? props.y : isPanorama ? 0 : offset.top,
     width: isNumber(props.width) ? props.width : offset.width,
     height: isNumber(props.height) ? props.height : offset.height,
   };
@@ -391,7 +393,6 @@ export function CartesianGrid(props: Props) {
   const { xAxisId, yAxisId, x, y, width, height, syncWithTicks, horizontalValues, verticalValues } =
     propsIncludingDefaults;
 
-  const isPanorama = useIsPanorama();
   const xAxis: AxisPropsForCartesianGridTicksGeneration = useAppSelector(state =>
     selectAxisPropsNeededForCartesianGridTicksGenerator(state, 'xAxis', xAxisId, isPanorama),
   );
@@ -482,7 +483,7 @@ export function CartesianGrid(props: Props) {
   }
 
   return (
-    <g className="recharts-cartesian-grid" clipPath={clipPathId ? `url(#${clipPathId})` : undefined}>
+    <g className="recharts-cartesian-grid" clipPath={clipPathId && !isPanorama ? `url(#${clipPathId})` : undefined}>
       <Background
         fill={propsIncludingDefaults.fill}
         fillOpacity={propsIncludingDefaults.fillOpacity}

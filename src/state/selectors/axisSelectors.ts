@@ -68,7 +68,7 @@ import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { selectChartOffset } from './selectChartOffset';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
-import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
+import { BrushDimensions, selectDefaultBrushDimensions, selectAllBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { selectAngleAxis, selectAngleAxisRange, selectRadiusAxis, selectRadiusAxisRange } from './polarAxisSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
@@ -925,6 +925,7 @@ export const selectAxisDomain: (
     selectZoomState,
     selectChartWidth,
     selectChartDataAndAlwaysIgnoreIndexes,
+    (state, axisType, axisId, isPanorama) => isPanorama, // Extract isPanorama
   ],
   (
     axisSettings: BaseCartesianAxis,
@@ -937,6 +938,7 @@ export const selectAxisDomain: (
     zoom,
     width: number,
     fullData: ChartDataState,
+    isPanorama: boolean,
   ) => {
     let domain = combineAxisDomain(
       axisSettings,
@@ -947,7 +949,8 @@ export const selectAxisDomain: (
       axisType,
       numericalDomain,
     );
-    if (axisType === 'yAxis' && zoom?.autoScaleYDomain && fullData.chartData && fullData.chartData.length > 1) {
+    // Don't apply auto-scale Y domain logic in panorama mode (brush previews)
+    if (axisType === 'yAxis' && zoom?.autoScaleYDomain && !isPanorama && fullData.chartData && fullData.chartData.length > 1) {
       const dataLen = fullData.chartData.length;
       const step = width / dataLen;
       const startIdx = Math.max(0, Math.floor(-zoom.offsetX / (step * zoom.scaleX)));
@@ -1264,17 +1267,19 @@ export const combineXAxisRange: (
   [
     selectChartOffset,
     selectXAxisPadding,
-    selectBrushDimensions,
-    selectBrushSettings,
+    selectDefaultBrushDimensions,
+    selectAllBrushSettings,
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
     offset: ChartOffsetRequired,
     padding,
     brushDimensions: BrushDimensions,
-    { padding: brushPadding },
+    allBrushSettings: Record<string, any>,
     isPanorama: boolean,
   ): AxisRange | undefined => {
+    const firstBrushSettings = Object.values(allBrushSettings)[0];
+    const brushPadding = firstBrushSettings?.padding || { left: 0, right: 0, top: 0, bottom: 0 };
     if (isPanorama) {
       return [brushPadding.left, brushDimensions.width - brushPadding.right];
     }
@@ -1293,8 +1298,8 @@ export const combineYAxisRange: (
     selectChartOffset,
     selectChartLayout,
     selectYAxisPadding,
-    selectBrushDimensions,
-    selectBrushSettings,
+    selectDefaultBrushDimensions,
+    selectAllBrushSettings,
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
@@ -1302,9 +1307,11 @@ export const combineYAxisRange: (
     layout: LayoutType,
     padding: { top: number; bottom: number },
     brushDimensions: BrushDimensions,
-    { padding: brushPadding },
+    allBrushSettings: Record<string, any>,
     isPanorama: boolean,
   ): AxisRange | undefined => {
+    const firstBrushSettings = Object.values(allBrushSettings)[0];
+    const brushPadding = firstBrushSettings?.padding || { left: 0, right: 0, top: 0, bottom: 0 };
     if (isPanorama) {
       return [brushDimensions.height - brushPadding.bottom, brushPadding.top];
     }
@@ -1357,17 +1364,19 @@ export const selectAxisScale: (
     selectAxisRangeWithReverse,
     selectZoomState,
     pickAxisType,
+    (state, axisType, axisId, isPanorama) => isPanorama, // Extract isPanorama
   ],
-  (axis, realScaleType, domain, axisRangeParam, zoom, axisType) => {
-    const base = combineScaleFunction(axis, realScaleType, domain, axisRangeParam);
+  (axis, realScaleType, domain, axisRangeParam, zoom, axisType, isPanorama) => {
+    const base = combineScaleFunction(axis, realScaleType, domain, axisRangeParam as [number, number]);
     if (!base) return base;
-    if (!zoom) return base;
+    // Don't apply zoom transformations in panorama mode (brush previews)
+    if (!zoom || isPanorama) return base;
     const [r0, r1] = axisRangeParam ?? base.range();
     if (axisType === 'xAxis') {
-      return applyZoomToScale(base, zoom.scaleX, zoom.offsetX, [r0, r1]);
+      return applyZoomToScale(base, zoom.scaleX, zoom.offsetX, [r0 as number, r1 as number]);
     }
     if (axisType === 'yAxis') {
-      return applyZoomToScale(base, zoom.scaleY, zoom.offsetY, [r0, r1]);
+      return applyZoomToScale(base, zoom.scaleY, zoom.offsetY, [r0 as number, r1 as number]);
     }
     return base;
   },
@@ -1772,7 +1781,7 @@ export const combineAxisTicks = (
     if (scale.ticks) {
       return scale
         .ticks(tickCount)
-        .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+        .map((entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }));
     }
 
     return scale.domain().map(
@@ -1850,7 +1859,7 @@ export const combineGraphicalItemTicks = (
   if (scale.ticks) {
     return scale
       .ticks(tickCount)
-      .map((entry: any): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset }));
+      .map((entry: any, index: number): TickItem => ({ coordinate: scale(entry) + offset, value: entry, offset, index }));
   }
 
   // When axis has duplicated text, serial numbers are used to generate scale

@@ -16,7 +16,7 @@ export const useAppDispatch = (): AppDispatch => {
   return noopDispatch;
 };
 
-const noop = (): undefined => {};
+const noop = (): undefined => { };
 
 const addNestedSubNoop = () => noop;
 

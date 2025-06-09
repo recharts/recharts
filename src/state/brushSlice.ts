@@ -11,29 +11,40 @@ export type BrushSettings = {
   width: number | undefined;
   height: number;
   padding: Padding;
+  layout?: 'horizontal' | 'vertical';
 };
 
-const initialState: BrushSettings = {
-  x: 0,
-  y: 0,
-  width: 0,
-  height: 0,
-  padding: { top: 0, right: 0, bottom: 0, left: 0 },
+export type BrushInstanceSettings = BrushSettings & {
+  id: string;
+};
+
+export type BrushState = {
+  brushes: Record<string, BrushSettings>;
+};
+
+const initialState: BrushState = {
+  brushes: {},
 };
 
 export const brushSlice = createSlice({
   name: 'brush',
   initialState,
   reducers: {
-    setBrushSettings(_state: BrushSettings, action: PayloadAction<BrushSettings | null>) {
+    setBrushSettings(state: BrushState, action: PayloadAction<BrushInstanceSettings | null>) {
       if (action.payload == null) {
-        return initialState;
+        // Clear all brushes if null payload
+        state.brushes = {};
+        return;
       }
-      return action.payload;
+      const { id, ...settings } = action.payload;
+      state.brushes[id] = settings;
+    },
+    removeBrushSettings(state: BrushState, action: PayloadAction<string>) {
+      delete state.brushes[action.payload];
     },
   },
 });
 
-export const { setBrushSettings } = brushSlice.actions;
+export const { setBrushSettings, removeBrushSettings } = brushSlice.actions;
 
 export const brushReducer = brushSlice.reducer;

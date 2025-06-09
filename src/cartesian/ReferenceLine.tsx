@@ -175,6 +175,11 @@ function ReferenceLineImpl(props: Props) {
     return null;
   }
 
+  // In panorama mode, use local coordinates instead of main chart coordinates
+  const adjustedViewBox = isPanorama 
+    ? { x: 1, y: 1, width: viewBox.width - 2, height: viewBox.height - 2 }
+    : viewBox;
+
   const scales = createLabeledScales({ x: xAxisScale, y: yAxisScale });
 
   const isSegment = segment && segment.length === 2;
@@ -184,7 +189,7 @@ function ReferenceLineImpl(props: Props) {
     isFixedX,
     isFixedY,
     isSegment,
-    viewBox,
+    adjustedViewBox,
     props.position,
     xAxis.orientation,
     yAxis.orientation,

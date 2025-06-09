@@ -13,6 +13,9 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 import { clsx } from 'clsx';
 import { scalePoint, ScalePoint } from 'victory-vendor/d3-scale';
@@ -25,14 +28,16 @@ import { generatePrefixStyle } from '../util/CssPrefixUtils';
 import { DataKey, Padding } from '../util/types';
 import { filterProps } from '../util/ReactUtils';
 import { useChartData, useDataIndex } from '../context/chartDataContext';
+import { useOffset } from '../context/chartLayoutContext';
 import { BrushStartEndIndex, OnBrushUpdate, BrushUpdateDispatchContext } from '../context/brushUpdateContext';
-import { useAppDispatch, useAppSelector, useSetZoom } from '../state/hooks';
+import { useAppDispatch, useAppSelector, useSetZoom, useZoom } from '../state/hooks';
 import { setDataStartEndIndexes } from '../state/chartDataSlice';
-import { BrushSettings, setBrushSettings } from '../state/brushSlice';
-import { PanoramaContextProvider } from '../context/PanoramaContext';
+import { BrushInstanceSettings, setBrushSettings, removeBrushSettings } from '../state/brushSlice';
 import { selectBrushDimensions } from '../state/selectors/brushSelectors';
-import { selectChartWidth } from '../state/selectors/containerSelectors';
+import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
+import { selectAllXAxes } from '../state/selectors/selectAllAxes';
 import { useBrushChartSynchronisation } from '../synchronisation/useChartSynchronisation';
+import { BrushPreview } from '../container/BrushPreview';
 
 type BrushTravellerType = ReactElement<SVGElement> | ((props: TravellerProps) => ReactElement<SVGElement>);
 
@@ -58,6 +63,7 @@ interface BrushProps {
   startIndex?: number;
   endIndex?: number;
   tickFormatter?: BrushTickFormatter;
+  layout?: 'horizontal' | 'vertical';
 
   children?: ReactElement;
 
@@ -68,6 +74,24 @@ interface BrushProps {
 
   /** Integrate with zoom/pan system instead of truncating data */
   useZoomPan?: boolean;
+
+  /** Automatically adjust Y domain based on the visible X range when using zoom */
+  autoScaleYDomain?: boolean;
+
+  /** Axis to control (auto-detected from layout if not specified) */
+  axis?: 'x' | 'y';
+
+  /** Position brush at top */
+  top?: boolean;
+  /** Position brush at bottom */
+  bottom?: boolean;
+  /** Position brush at left */
+  left?: boolean;
+  /** Position brush at right */
+  right?: boolean;
+
+  /** Enable animations in the main chart when brush changes (disabled by default) */
+  enableAnimation?: boolean;
 }
 
 export type Props = Omit<SVGProps<SVGElement>, 'onChange' | 'onDragEnd' | 'ref'> & BrushProps;
@@ -76,6 +100,7 @@ type PropertiesFromContext = {
   x: number;
   y: number;
   width: number;
+  height: number;
   data: any[];
   startIndex: number;
   endIndex: number;
@@ -84,8 +109,28 @@ type PropertiesFromContext = {
 
 type BrushTravellerId = 'startX' | 'endX';
 
+interface TravellerMoveParams {
+  startX: number;
+  endX: number;
+  data: any[];
+  gap: number;
+  scaleValues: number[];
+}
+
 function DefaultTraveller(props: TravellerProps) {
-  const { x, y, width, height, stroke } = props;
+  const { x, y, width, height, stroke, layout } = props;
+
+  if (layout === 'vertical') {
+    const lineX = Math.floor(x + width / 2) - 1;
+    return (
+      <>
+        <rect x={x} y={y} width={width} height={height} fill={stroke} stroke="none" />
+        <line x1={lineX} y1={y + 1} x2={lineX} y2={y + height - 1} fill="none" stroke="#fff" />
+        <line x1={lineX + 2} y1={y + 1} x2={lineX + 2} y2={y + height - 1} fill="none" stroke="#fff" />
+      </>
+    );
+  }
+
   const lineY = Math.floor(y + height / 2) - 1;
 
   return (
@@ -112,7 +157,7 @@ function Traveller(props: { travellerType: BrushTravellerType; travellerProps: T
 
 function TravellerLayer({
   otherProps,
-  travellerX,
+  travellerPos,
   id,
   onMouseEnter,
   onMouseLeave,
@@ -123,7 +168,7 @@ function TravellerLayer({
   onBlur,
 }: {
   id: BrushTravellerId;
-  travellerX: number;
+  travellerPos: number;
   otherProps: BrushWithStateProps;
   onMouseEnter: (e: MouseOrTouchEvent) => void;
   onMouseLeave: (e: MouseOrTouchEvent) => void;
@@ -133,15 +178,39 @@ function TravellerLayer({
   onFocus: () => void;
   onBlur: () => void;
 }) {
-  const { y, x: xFromProps, travellerWidth, height, traveller, ariaLabel, data, startIndex, endIndex } = otherProps;
-  const x = Math.max(travellerX, xFromProps);
+  const {
+    y: yFromProps,
+    x: xFromProps,
+    travellerWidth,
+    height,
+    traveller,
+    ariaLabel,
+    data,
+    startIndex,
+    endIndex,
+    layout = 'horizontal',
+  } = otherProps;
+
   const travellerProps: TravellerProps = {
     ...filterProps(otherProps, false),
-    x,
-    y,
-    width: travellerWidth,
-    height,
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    layout,
   };
+
+  if (layout === 'vertical') {
+    travellerProps.x = xFromProps;
+    travellerProps.y = Math.max(travellerPos, yFromProps);
+    travellerProps.width = otherProps.width;
+    travellerProps.height = travellerWidth;
+  } else {
+    travellerProps.x = Math.max(travellerPos, xFromProps);
+    travellerProps.y = yFromProps;
+    travellerProps.width = travellerWidth;
+    travellerProps.height = height;
+  }
 
   const ariaLabelBrush = ariaLabel || `Min value: ${data[startIndex]?.name}, Max value: ${data[endIndex]?.name}`;
 
@@ -150,23 +219,29 @@ function TravellerLayer({
       tabIndex={0}
       role="slider"
       aria-label={ariaLabelBrush}
-      aria-valuenow={travellerX}
+      aria-valuenow={travellerPos}
       className="recharts-brush-traveller"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
       onKeyDown={e => {
-        if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
           return;
         }
         e.preventDefault();
         e.stopPropagation();
-        onTravellerMoveKeyboard(e.key === 'ArrowRight' ? 1 : -1, id);
+        let direction: 1 | -1;
+        if (layout === 'horizontal') {
+          direction = e.key === 'ArrowRight' ? 1 : -1;
+        } else {
+          direction = e.key === 'ArrowDown' ? 1 : -1;
+        }
+        onTravellerMoveKeyboard(direction, id);
       }}
       onFocus={onFocus}
       onBlur={onBlur}
-      style={{ cursor: 'col-resize' }}
+      style={{ cursor: layout === 'vertical' ? 'row-resize' : 'col-resize' }}
     >
       <Traveller travellerType={traveller} travellerProps={travellerProps} />
     </Layer>
@@ -193,6 +268,8 @@ function getTextOfTick(props: TextOfTickProps): number | string {
 }
 
 function getIndexInRange(valueRange: number[], x: number) {
+  if (!valueRange) return -1;
+
   const len = valueRange.length;
   let start = 0;
   let end = len - 1;
@@ -264,6 +341,9 @@ function BrushText({
   data,
   startX,
   endX,
+  layout,
+  x,
+  width,
 }: {
   startIndex: number;
   endIndex: number;
@@ -276,6 +356,9 @@ function BrushText({
   data: any[];
   startX: number;
   endX: number;
+  layout: 'horizontal' | 'vertical';
+  x: number;
+  width: number;
 }) {
   const offset = 5;
   const attrs = {
@@ -283,10 +366,30 @@ function BrushText({
     fill: stroke,
   };
 
+  const text1 = getTextOfTick({ index: startIndex, tickFormatter, dataKey, data });
+  const text2 = getTextOfTick({ index: endIndex, tickFormatter, dataKey, data });
+
+  if (layout === 'vertical') {
+    const verticalAttrs = {
+      ...attrs,
+      x: x + width / 2,
+      textAnchor: 'middle' as const,
+    };
+    return (
+      <Layer className="recharts-brush-texts">
+        <Text verticalAnchor="end" y={Math.min(startX, endX) - offset} {...verticalAttrs}>
+          {text1}
+        </Text>
+        <Text verticalAnchor="start" y={Math.max(startX, endX) + travellerWidth + offset} {...verticalAttrs}>
+          {text2}
+        </Text>
+      </Layer>
+    );
+  }
   return (
     <Layer className="recharts-brush-texts">
       <Text textAnchor="end" verticalAnchor="middle" x={Math.min(startX, endX) - offset} y={y + height / 2} {...attrs}>
-        {getTextOfTick({ index: startIndex, tickFormatter, dataKey, data })}
+        {text1}
       </Text>
       <Text
         textAnchor="start"
@@ -295,37 +398,45 @@ function BrushText({
         y={y + height / 2}
         {...attrs}
       >
-        {getTextOfTick({ index: endIndex, tickFormatter, dataKey, data })}
+        {text2}
       </Text>
     </Layer>
   );
 }
 
 function Slide({
+  x,
   y,
+  width,
   height,
   stroke,
   travellerWidth,
   startX,
   endX,
+  layout,
   onMouseEnter,
   onMouseLeave,
   onMouseDown,
   onTouchStart,
 }: {
+  x: number;
   y: number;
+  width: number;
   height: number;
   stroke: string;
   travellerWidth: number;
   startX: number;
   endX: number;
+  layout: 'horizontal' | 'vertical';
   onMouseEnter: (e: MouseOrTouchEvent) => void;
   onMouseLeave: (e: MouseOrTouchEvent) => void;
   onMouseDown: (e: MouseOrTouchEvent) => void;
   onTouchStart: (e: MouseOrTouchEvent) => void;
 }) {
-  const x = Math.min(startX, endX) + travellerWidth;
-  const width = Math.max(Math.abs(endX - startX) - travellerWidth, 0);
+  const slideX = layout === 'vertical' ? x : Math.min(startX, endX) + travellerWidth;
+  const slideY = layout === 'vertical' ? Math.min(startX, endX) + travellerWidth : y;
+  const slideWidth = layout === 'vertical' ? width : Math.max(Math.abs(endX - startX) - travellerWidth, 0);
+  const slideHeight = layout === 'vertical' ? Math.max(Math.abs(endX - startX) - travellerWidth, 0) : height;
 
   return (
     <rect
@@ -338,10 +449,10 @@ function Slide({
       stroke="none"
       fill={stroke}
       fillOpacity={0.2}
-      x={x}
-      y={y}
-      width={width}
-      height={height}
+      x={slideX}
+      y={slideY}
+      width={slideWidth}
+      height={slideHeight}
     />
   );
 }
@@ -354,6 +465,7 @@ function Panorama({
   data,
   children,
   padding,
+  layout,
 }: {
   x: number;
   y: number;
@@ -362,6 +474,7 @@ function Panorama({
   data: any[];
   children: ReactElement;
   padding: Padding;
+  layout: 'horizontal' | 'vertical';
 }) {
   const isPanoramic = React.Children.count(children) === 1;
   if (!isPanoramic) {
@@ -373,15 +486,16 @@ function Panorama({
     return null;
   }
 
-  return React.cloneElement(chartElement, {
-    x,
-    y,
-    width,
-    height,
-    margin: padding,
-    compact: true,
-    data,
-  });
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      <BrushPreview width={width} height={height}>
+        {React.cloneElement(chartElement, {
+          data,
+          margin: padding,
+        })}
+      </BrushPreview>
+    </g>
+  );
 }
 
 interface State {
@@ -402,6 +516,8 @@ interface State {
   prevWidth?: number;
   prevX?: number;
   prevTravellerWidth?: number;
+  prevY?: number;
+  prevHeight?: number;
 
   /**
    * Used to prevent re-setting of traveller position unless controlled via props.
@@ -418,6 +534,7 @@ type TravellerProps = {
   width: number;
   height: number;
   stroke?: SVGAttributes<SVGElement>['stroke'];
+  layout?: 'horizontal' | 'vertical';
 };
 
 const createScale = ({
@@ -425,24 +542,33 @@ const createScale = ({
   startIndex,
   endIndex,
   x,
+  y,
   width,
+  height,
   travellerWidth,
+  layout,
 }: {
   data?: any[];
   startIndex?: number;
   endIndex?: number;
   x?: number;
+  y?: number;
   width?: number;
+  height?: number;
   travellerWidth?: number;
+  layout?: 'horizontal' | 'vertical';
 }) => {
   if (!data || !data.length) {
     return {};
   }
 
   const len = data.length;
-  const scale = scalePoint<number>()
-    .domain(range(0, len))
-    .range([x, x + width - travellerWidth]);
+  const scale = scalePoint<number>().domain(range(0, len));
+  if (layout === 'vertical') {
+    scale.range([y, y + height - travellerWidth]);
+  } else {
+    scale.range([x, x + width - travellerWidth]);
+  }
   const scaleValues = scale.domain().map(entry => scale(entry));
 
   return {
@@ -462,12 +588,25 @@ const isTouch = (e: TouchEvent<SVGElement> | React.MouseEvent<SVGElement>): e is
 
 type MouseOrTouchEvent = React.MouseEvent<SVGGElement> | TouchEvent<SVGGElement>;
 
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
 type BrushWithStateProps = Props &
   PropertiesFromContext & {
     startIndexControlledFromProps?: number;
     endIndexControlledFromProps?: number;
     /** callback for every pointer move with raw positions */
     onBrushMove?: (startX: number, endX: number) => void;
+    onBrushInteractionStart?: () => void;
+    onBrushInteractionEnd?: () => void;
+    onBrushPan?: (delta: number, layout: 'horizontal' | 'vertical') => void;
+    onBrushResize?: (
+      start: number,
+      end: number,
+      movingTravellerId: BrushTravellerId,
+      layout: 'horizontal' | 'vertical',
+    ) => void;
+    controlledStart?: number;
+    controlledEnd?: number;
   };
 
 class BrushWithState extends PureComponent<BrushWithStateProps, State> {
@@ -490,12 +629,15 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     const {
       data,
       width,
+      height,
       x,
+      y,
       travellerWidth,
       startIndex,
       endIndex,
       startIndexControlledFromProps,
       endIndexControlledFromProps,
+      layout,
     } = nextProps;
 
     if (data !== prevState.prevData) {
@@ -503,17 +645,27 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevData: data,
         prevTravellerWidth: travellerWidth,
         prevX: x,
+        prevY: y,
         prevWidth: width,
+        prevHeight: height,
         ...(data && data.length
-          ? createScale({ data, width, x, travellerWidth, startIndex, endIndex })
+          ? createScale({ data, width, x, travellerWidth, startIndex, endIndex, layout, y, height })
           : { scale: null, scaleValues: null }),
       };
     }
     if (
       prevState.scale &&
-      (width !== prevState.prevWidth || x !== prevState.prevX || travellerWidth !== prevState.prevTravellerWidth)
+      (width !== prevState.prevWidth ||
+        x !== prevState.prevX ||
+        travellerWidth !== prevState.prevTravellerWidth ||
+        y !== prevState.prevY ||
+        height !== prevState.prevHeight)
     ) {
-      prevState.scale.range([x, x + width - travellerWidth]);
+      if (layout === 'vertical') {
+        prevState.scale.range([y, y + height - travellerWidth]);
+      } else {
+        prevState.scale.range([x, x + width - travellerWidth]);
+      }
 
       const scaleValues = prevState.scale.domain().map(entry => prevState.scale(entry));
 
@@ -521,7 +673,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         prevData: data,
         prevTravellerWidth: travellerWidth,
         prevX: x,
+        prevY: y,
         prevWidth: width,
+        prevHeight: height,
         startX: prevState.scale(nextProps.startIndex),
         endX: prevState.scale(nextProps.endIndex),
         scaleValues,
@@ -529,36 +683,45 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     }
 
     if (
-      prevState.scale &&
-      !prevState.isSlideMoving &&
-      !prevState.isTravellerMoving &&
-      !prevState.isTravellerFocused &&
+      !prevState.isSlideMoving && 
+      !prevState.isTravellerMoving && 
+      !prevState.isTravellerFocused && 
       !prevState.isTextActive
     ) {
-      /*
-       * If the startIndex or endIndex are controlled from the outside,
-       * we need to keep the startX and end up to date.
-       * Also we do not want to do that while user is interacting in the brush,
-       * because this will trigger re-render and interrupt the drag&drop.
-       */
-      if (
-        startIndexControlledFromProps != null &&
-        prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
-      ) {
-        return {
-          startX: prevState.scale(startIndexControlledFromProps),
-          prevStartIndexControlledFromProps: startIndexControlledFromProps,
-        };
+      const newState: Partial<State> = {};
+
+      if (nextProps.useZoomPan) {
+        // Add tolerance to prevent infinite loops due to floating-point precision
+        const tolerance = 0.01;
+        if (nextProps.controlledStart != null && 
+            (prevState.startX == null || Math.abs(nextProps.controlledStart - prevState.startX) > tolerance)) {
+          newState.startX = nextProps.controlledStart;
+        }
+        if (nextProps.controlledEnd != null && 
+            (prevState.endX == null || Math.abs(nextProps.controlledEnd - prevState.endX) > tolerance)) {
+          newState.endX = nextProps.controlledEnd;
+        }
+      } else if (prevState.scale) {
+        // Only snap to scale values when not interacting (like in original code)
+        if (
+          startIndexControlledFromProps != null &&
+          prevState.prevStartIndexControlledFromProps !== startIndexControlledFromProps
+        ) {
+          newState.startX = prevState.scale(startIndexControlledFromProps);
+          newState.prevStartIndexControlledFromProps = startIndexControlledFromProps;
+        }
+
+        if (
+          endIndexControlledFromProps != null &&
+          prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
+        ) {
+          newState.endX = prevState.scale(endIndexControlledFromProps);
+          newState.prevEndIndexControlledFromProps = endIndexControlledFromProps;
+        }
       }
 
-      if (
-        endIndexControlledFromProps != null &&
-        prevState.prevEndIndexControlledFromProps !== endIndexControlledFromProps
-      ) {
-        return {
-          endX: prevState.scale(endIndexControlledFromProps),
-          prevEndIndexControlledFromProps: endIndexControlledFromProps,
-        };
+      if (Object.keys(newState).length > 0) {
+        return newState as State;
       }
     }
 
@@ -606,17 +769,21 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
   }
 
   handleDragEnd = () => {
+    this.props.onBrushInteractionEnd?.();
     this.setState(
       {
         isTravellerMoving: false,
         isSlideMoving: false,
       },
       () => {
-        const { endIndex, onDragEnd, startIndex } = this.props;
-        onDragEnd?.({
-          endIndex,
-          startIndex,
-        });
+        // Only call legacy onDragEnd if not in zoom/pan mode
+        if (!this.props.useZoomPan) {
+          const { endIndex, onDragEnd, startIndex } = this.props;
+          onDragEnd?.({
+            endIndex,
+            startIndex,
+          });
+        }
       },
     );
     this.detachDragEndListener();
@@ -642,156 +809,232 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
 
   handleSlideDragStart = (e: MouseOrTouchEvent) => {
     const event = isTouch(e) ? e.changedTouches[0] : e;
+    const { layout = 'horizontal' } = this.props;
 
+    this.props.onBrushInteractionStart?.();
     this.setState({
       isTravellerMoving: false,
       isSlideMoving: true,
-      slideMoveStartX: event.pageX,
+      slideMoveStartX: layout === 'horizontal' ? event.pageX : event.pageY,
     });
 
     this.attachDragEndListener();
   };
 
   handleSlideDrag(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { slideMoveStartX, startX, endX, scaleValues } = this.state;
-    const { x, width, travellerWidth, startIndex, endIndex, onChange, data, gap, onBrushMove } = this.props;
-    let delta = e.pageX - slideMoveStartX;
+    const { slideMoveStartX, startX, endX } = this.state;
+    const {
+      x,
+      width,
+      y,
+      height,
+      travellerWidth,
+      startIndex,
+      endIndex,
+      onChange,
+      data,
+      gap,
+      onBrushPan,
+      useZoomPan,
+      layout,
+    } = this.props;
+    const currentLayout = layout ?? 'horizontal';
+    const pageCoord = currentLayout === 'horizontal' ? e.pageX : e.pageY;
+    let delta = pageCoord - slideMoveStartX;
+
+    const [brushAreaStart, brushAreaEnd] =
+      currentLayout === 'horizontal' ? [x, x + width] : [y, y + height];
 
     if (delta > 0) {
-      delta = Math.min(delta, x + width - travellerWidth - endX, x + width - travellerWidth - startX);
+      delta = Math.min(delta, brushAreaEnd - travellerWidth - endX, brushAreaEnd - travellerWidth - startX);
     } else if (delta < 0) {
-      delta = Math.max(delta, x - startX, x - endX);
+      delta = Math.max(delta, brushAreaStart - startX, brushAreaStart - endX);
     }
     const newStart = startX + delta;
     const newEnd = endX + delta;
-    const newIndex = getIndex({
-      startX: newStart,
-      endX: newEnd,
-      data,
-      gap,
-      scaleValues,
-    });
 
-    const notify = () => {
-      if (newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) {
-        onChange?.(newIndex);
-      }
-      onBrushMove?.(this.state.startX, this.state.endX);
-    };
-
-    this.setState(
-      {
+    if (useZoomPan) {
+      this.setState(
+        {
+          startX: newStart,
+          endX: newEnd,
+          slideMoveStartX: pageCoord,
+        },
+        () => {
+          onBrushPan?.(delta, currentLayout);
+        },
+      );
+    } else {
+      // Legacy behavior: calculate indices and trigger onChange immediately
+      const newIndex = getIndex({
         startX: newStart,
         endX: newEnd,
-        slideMoveStartX: e.pageX,
-      },
-      notify,
-    );
+        data,
+        gap,
+        scaleValues: this.state.scaleValues || [],
+      });
+
+      if ((newIndex.startIndex !== startIndex || newIndex.endIndex !== endIndex) && onChange) {
+        onChange(newIndex);
+      }
+
+      this.setState({
+        startX: newStart,
+        endX: newEnd,
+        slideMoveStartX: pageCoord,
+      });
+    }
   }
 
   handleTravellerDragStart(id: BrushTravellerId, e: MouseOrTouchEvent) {
     const event = isTouch(e) ? e.changedTouches[0] : e;
+    const { layout = 'horizontal' } = this.props;
 
+    this.props.onBrushInteractionStart?.();
     this.setState({
       isSlideMoving: false,
       isTravellerMoving: true,
       movingTravellerId: id,
-      brushMoveStartX: event.pageX,
+      brushMoveStartX: layout === 'horizontal' ? event.pageX : event.pageY,
     });
 
     this.attachDragEndListener();
   }
 
   handleTravellerMove(e: React.Touch | React.MouseEvent<SVGGElement> | MouseEvent) {
-    const { x, width, travellerWidth, onChange, gap, data, onBrushMove } = this.props;
-    const newPos = prevValue + delta;
-        [movingTravellerId]: newPos,
-        if (newIndex.startIndex !== params.startIndex || newIndex.endIndex !== params.endIndex) {
-          onChange?.(newIndex);
-        }
-        onBrushMove?.(this.state.startX, this.state.endX);
-    const { x, width, travellerWidth, onChange, gap, data } = this.props;
-    const params = { startX: this.state.startX, endX: this.state.endX, data, gap, scaleValues };
-
-    let delta = e.pageX - brushMoveStartX;
-    if (delta > 0) {
-      delta = Math.min(delta, x + width - travellerWidth - prevValue);
-    } else if (delta < 0) {
-      delta = Math.max(delta, x - prevValue);
+    const { brushMoveStartX, movingTravellerId } = this.state;
+    if (movingTravellerId == null || brushMoveStartX == null) {
+      return;
     }
 
-    params[movingTravellerId] = prevValue + delta;
+    const { x, width, y, height, travellerWidth, layout = 'horizontal' } = this.props;
+    const { startX, endX } = this.state;
+    const prevValue = this.state[movingTravellerId];
+
+    const pageCoord = layout === 'horizontal' ? e.pageX : e.pageY;
+    let delta = pageCoord - brushMoveStartX;
+
+    const [brushAreaStart, brushAreaEnd] = layout === 'horizontal' ? [x, x + width] : [y, y + height];
+
+    if (delta > 0) {
+      delta = Math.min(delta, brushAreaEnd - travellerWidth - prevValue);
+    } else if (delta < 0) {
+      delta = Math.max(delta, brushAreaStart - prevValue);
+    }
+
+    const newPos = prevValue + delta;
+
+    const nextState = {
+      ...this.state,
+      [movingTravellerId]: newPos,
+      brushMoveStartX: pageCoord,
+    };
+
+    if (this.props.useZoomPan) {
+      // In zoom mode, we set state and call the resize callback.
+      this.setState(nextState, () => {
+        this.props.onBrushResize?.(
+          nextState.startX,
+          nextState.endX,
+          movingTravellerId,
+          this.props.layout ?? 'horizontal',
+        );
+      });
+      return;
+    }
+
+    // In legacy mode, restore the original smooth dragging behavior
+    const { data, gap, onChange, startIndex, endIndex } = this.props;
+    const { scaleValues } = this.state;
+
+    const params = { 
+      startX: movingTravellerId === 'startX' ? newPos : startX,
+      endX: movingTravellerId === 'endX' ? newPos : endX,
+      data, 
+      gap, 
+      scaleValues 
+    };
 
     const newIndex = getIndex(params);
-    const { startIndex, endIndex } = newIndex;
+
+    // Check if we should trigger onChange (original isFullGap logic)
     const isFullGap = () => {
       const lastIndex = data.length - 1;
+      const { startIndex: currentStartIndex, endIndex: currentEndIndex } = newIndex;
       if (
-        (movingTravellerId === 'startX' && (endX > startX ? startIndex % gap === 0 : endIndex % gap === 0)) ||
-        (endX < startX && endIndex === lastIndex) ||
-        (movingTravellerId === 'endX' && (endX > startX ? endIndex % gap === 0 : startIndex % gap === 0)) ||
-        (endX > startX && endIndex === lastIndex)
+        (movingTravellerId === 'startX' && (endX > startX ? currentStartIndex % gap === 0 : currentEndIndex % gap === 0)) ||
+        (endX < startX && currentEndIndex === lastIndex) ||
+        (movingTravellerId === 'endX' && (endX > startX ? currentEndIndex % gap === 0 : currentStartIndex % gap === 0)) ||
+        (endX > startX && currentEndIndex === lastIndex)
       ) {
         return true;
       }
       return false;
     };
 
-    this.setState(
-      {
-        [movingTravellerId]: prevValue + delta,
-        brushMoveStartX: e.pageX,
-      },
-      () => {
-        if (onChange) {
-          if (isFullGap()) {
-            onChange(newIndex);
-          }
-        }
-      },
-    );
+    this.setState(nextState, () => {
+      // Only trigger onChange when we hit a "full gap" position (original behavior)
+      if (onChange && isFullGap()) {
+        onChange(newIndex);
+      }
+    });
   }
 
   handleTravellerMoveKeyboard = (direction: 1 | -1, id: BrushTravellerId) => {
-    const { data, gap } = this.props;
-    // scaleValues are a list of coordinates. For example: [65, 250, 435, 620, 805, 990].
+    const { data, gap, useZoomPan, onBrushResize, layout = 'horizontal', onChange, onBrushMove } = this.props;
     const { scaleValues, startX, endX } = this.state;
-    // currentScaleValue refers to which coordinate the current traveller should be placed at.
     const currentScaleValue = this.state[id];
 
+    if (currentScaleValue == null) {
+      return;
+    }
+
+    if (useZoomPan) {
+      const newPos = currentScaleValue + direction;
+      // Prevent travellers from being on top of each other or overlapping
+      if ((id === 'startX' && newPos >= endX) || (id === 'endX' && newPos <= startX)) {
+        return;
+      }
+      const nextState = { ...this.state, [id]: newPos };
+      this.setState(nextState, () => {
+        onBrushResize(nextState.startX, nextState.endX, id, layout);
+        onBrushMove?.(nextState.startX, nextState.endX);
+      });
+      return;
+    }
+
+    // Legacy mode: snap to data points
+    if (scaleValues == null) {
+      return;
+    }
     const currentIndex = scaleValues.indexOf(currentScaleValue);
     if (currentIndex === -1) {
       return;
     }
-
     const newIndex = currentIndex + direction;
     if (newIndex === -1 || newIndex >= scaleValues.length) {
       return;
     }
-
     const newScaleValue = scaleValues[newIndex];
-
-    // Prevent travellers from being on top of each other or overlapping
     if ((id === 'startX' && newScaleValue >= endX) || (id === 'endX' && newScaleValue <= startX)) {
       return;
     }
-
-    this.setState(
-      {
-        [id]: newScaleValue,
-      },
-      () => {
-        this.props.onChange(
-          getIndex({
-            startX: this.state.startX,
-            endX: this.state.endX,
-            data,
-            gap,
-            scaleValues,
-          }),
-        );
-      },
-    );
+    const nextState = { ...this.state, [id]: newScaleValue };
+    this.setState(nextState, () => {
+      const newPositions = {
+        startX: nextState.startX,
+        endX: nextState.endX,
+      };
+      onChange(
+        getIndex({
+          ...newPositions,
+          data,
+          gap,
+          scaleValues,
+        }),
+      );
+      onBrushMove?.(nextState.startX, nextState.endX);
+    });
   };
 
   render() {
@@ -807,14 +1050,14 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
       alwaysShowText,
       fill,
       stroke,
-      startIndex,
-      endIndex,
       travellerWidth,
       tickFormatter,
       dataKey,
       padding,
+      layout = 'horizontal',
     } = this.props;
-    const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused } = this.state;
+    const { startX, endX, isTextActive, isSlideMoving, isTravellerMoving, isTravellerFocused, scaleValues } =
+      this.state;
 
     if (
       !data ||
@@ -833,6 +1076,9 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
     const style = generatePrefixStyle('userSelect', 'none');
     const calculatedY = y + (dy ?? 0);
 
+    const startIndex = isNumber(startX) ? getIndexInRange(scaleValues, startX) : this.props.startIndex;
+    const endIndex = isNumber(endX) ? getIndexInRange(scaleValues, endX) : this.props.endIndex;
+
     return (
       <Layer
         className={layerClass}
@@ -841,105 +1087,128 @@ class BrushWithState extends PureComponent<BrushWithStateProps, State> {
         style={style}
       >
         <Background x={x} y={calculatedY} width={width} height={height} fill={fill} stroke={stroke} />
-        <PanoramaContextProvider>
-          <Panorama x={x} y={calculatedY} width={width} height={height} data={data} padding={padding}>
-            {children}
-          </Panorama>
-        </PanoramaContextProvider>
-        <Slide
+        <Panorama
+          x={x}
           y={calculatedY}
+          width={width}
           height={height}
-          stroke={stroke}
-          travellerWidth={travellerWidth}
-          startX={startX}
-          endX={endX}
-          onMouseEnter={this.handleEnterSlideOrTraveller}
-          onMouseLeave={this.handleLeaveSlideOrTraveller}
-          onMouseDown={this.handleSlideDragStart}
-          onTouchStart={this.handleSlideDragStart}
-        />
-        <TravellerLayer
-          travellerX={startX}
-          id="startX"
-          otherProps={{ ...this.props, y: calculatedY }}
-          onMouseEnter={this.handleEnterSlideOrTraveller}
-          onMouseLeave={this.handleLeaveSlideOrTraveller}
-          onMouseDown={this.travellerDragStartHandlers.startX}
-          onTouchStart={this.travellerDragStartHandlers.startX}
-          onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
-          onFocus={() => {
-            this.setState({ isTravellerFocused: true });
-          }}
-          onBlur={() => {
-            this.setState({ isTravellerFocused: false });
-          }}
-        />
-        <TravellerLayer
-          travellerX={endX}
-          id="endX"
-          otherProps={{ ...this.props, y: calculatedY }}
-          onMouseEnter={this.handleEnterSlideOrTraveller}
-          onMouseLeave={this.handleLeaveSlideOrTraveller}
-          onMouseDown={this.travellerDragStartHandlers.endX}
-          onTouchStart={this.travellerDragStartHandlers.endX}
-          onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
-          onFocus={() => {
-            this.setState({ isTravellerFocused: true });
-          }}
-          onBlur={() => {
-            this.setState({ isTravellerFocused: false });
-          }}
-        />
-        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) && (
-          <BrushText
-            startIndex={startIndex}
-            endIndex={endIndex}
+          data={data}
+          padding={padding}
+          layout={layout}
+        >
+          {children}
+        </Panorama>
+        {isNumber(startX) && isNumber(endX) && (
+          <Slide
+            x={x}
             y={calculatedY}
+            width={width}
             height={height}
-            travellerWidth={travellerWidth}
             stroke={stroke}
-            tickFormatter={tickFormatter}
-            dataKey={dataKey}
-            data={data}
+            travellerWidth={travellerWidth}
             startX={startX}
             endX={endX}
+            layout={layout}
+            onMouseEnter={this.handleEnterSlideOrTraveller}
+            onMouseLeave={this.handleLeaveSlideOrTraveller}
+            onMouseDown={this.handleSlideDragStart}
+            onTouchStart={this.handleSlideDragStart}
           />
         )}
+        {isNumber(startX) && (
+          <TravellerLayer
+            travellerPos={startX}
+            id="startX"
+            otherProps={{ ...this.props, y: calculatedY }}
+            onMouseEnter={this.handleEnterSlideOrTraveller}
+            onMouseLeave={this.handleLeaveSlideOrTraveller}
+            onMouseDown={this.travellerDragStartHandlers.startX}
+            onTouchStart={this.travellerDragStartHandlers.startX}
+            onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
+            onFocus={() => {
+              this.setState({ isTravellerFocused: true });
+            }}
+            onBlur={() => {
+              this.setState({ isTravellerFocused: false });
+            }}
+          />
+        )}
+        {isNumber(endX) && (
+          <TravellerLayer
+            travellerPos={endX}
+            id="endX"
+            otherProps={{ ...this.props, y: calculatedY }}
+            onMouseEnter={this.handleEnterSlideOrTraveller}
+            onMouseLeave={this.handleLeaveSlideOrTraveller}
+            onMouseDown={this.travellerDragStartHandlers.endX}
+            onTouchStart={this.travellerDragStartHandlers.endX}
+            onTravellerMoveKeyboard={this.handleTravellerMoveKeyboard}
+            onFocus={() => {
+              this.setState({ isTravellerFocused: true });
+            }}
+            onBlur={() => {
+              this.setState({ isTravellerFocused: false });
+            }}
+          />
+        )}
+        {(isTextActive || isSlideMoving || isTravellerMoving || isTravellerFocused || alwaysShowText) &&
+          isNumber(startX) &&
+          isNumber(endX) &&
+          isNumber(startIndex) &&
+          isNumber(endIndex) && (
+            <BrushText
+              startIndex={startIndex}
+              endIndex={endIndex}
+              y={calculatedY}
+              height={height}
+              travellerWidth={travellerWidth}
+              stroke={stroke}
+              tickFormatter={tickFormatter}
+              dataKey={dataKey}
+              data={data}
+              startX={startX}
+              endX={endX}
+              layout={layout}
+              x={x}
+              width={width}
+            />
+          )}
       </Layer>
     );
   }
 }
 
 function BrushInternal(props: Props) {
+  const [isInteracting, setIsInteracting] = useState(false);
   const dispatch = useAppDispatch();
-  const setZoom = useSetZoom();
-  const onBrushMove = useCallback(
-    (sX: number, eX: number) => {
-      if (!props.useZoomPan || chartData.length === 0) return;
-      const brushWidth = width - (props.travellerWidth ?? 5);
-      const stepBrush = brushWidth / (chartData.length - 1);
-      const startIdx = (sX - x) / stepBrush;
-      const endIdx = (eX - x) / stepBrush;
-      const visible = endIdx - startIdx;
-      if (visible <= 0) return;
-      const scaleX = chartData.length / visible;
-      const stepMain = chartWidth / chartData.length;
-      const offsetX = -startIdx * stepMain * scaleX;
-      setZoom({ scaleX, scaleY: 1, offsetX, offsetY: 0, disableAnimation: true, autoScaleYDomain: false });
-    },
-    [props.useZoomPan, chartData.length, width, x, chartWidth, setZoom, props.travellerWidth],
-  );
-      onBrushMove={onBrushMove}
+  const setZoomState = useSetZoom();
+  const currentZoom = useZoom(); // Get current zoom state
   const chartData = useChartData();
   const { startIndex, endIndex } = useDataIndex();
   const onChangeFromContext = useContext(BrushUpdateDispatchContext);
   const onChangeFromProps = props.onChange;
-  const { startIndex: startIndexFromProps, endIndex: endIndexFromProps } = props;
+  const { startIndex: startIndexFromProps, endIndex: endIndexFromProps, useZoomPan } = props;
+  
+  // Use refs to avoid infinite re-renders due to changing values
+  const startIndexRef = useRef(startIndex);
+  const endIndexRef = useRef(endIndex);
+  const currentZoomRef = useRef(currentZoom);
+  const setZoomStateRef = useRef(setZoomState);
+  
+  startIndexRef.current = startIndex;
+  endIndexRef.current = endIndex;
+  currentZoomRef.current = currentZoom;
+  setZoomStateRef.current = setZoomState;
+  const { width: plotAreaWidth, height: plotAreaHeight, left: plotAreaLeft, top: plotAreaTop } = useOffset();
   const chartWidth = useAppSelector(selectChartWidth);
+  const chartHeight = useAppSelector(selectChartHeight);
+  const allXAxes = useAppSelector(selectAllXAxes);
 
   useEffect(() => {
     // start and end index can be controlled from props, and we need them to stay up-to-date in the Redux state too
-    dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
+    if (startIndexFromProps !== undefined && endIndexFromProps !== undefined) {
+      dispatch(setDataStartEndIndexes({ startIndex: startIndexFromProps, endIndex: endIndexFromProps }));
+    }
   }, [dispatch, endIndexFromProps, startIndexFromProps]);
 
   useBrushChartSynchronisation();
@@ -950,56 +1219,299 @@ function BrushInternal(props: Props) {
         onChangeFromContext?.(nextState);
         onChangeFromProps?.(nextState);
         dispatch(setDataStartEndIndexes(nextState));
-        if (props.useZoomPan && chartData.length > 0) {
-          const diff = nextState.endIndex - nextState.startIndex + 1;
-          const scaleX = chartData.length / diff;
-          const step = chartWidth / chartData.length;
-          const offsetX = -nextState.startIndex * step * scaleX;
-          setZoom({ scaleX, scaleY: 1, offsetX, offsetY: 0, disableAnimation: true, autoScaleYDomain: false });
+        
+        // Control animation based on enableAnimation flag
+        if (!props.enableAnimation && currentZoom) {
+          setZoomState({ ...currentZoom, disableAnimation: true });
         }
       }
     },
+    [onChangeFromProps, onChangeFromContext, dispatch, startIndex, endIndex, props.enableAnimation, currentZoom, setZoomState],
+  );
+
+  const { layout = 'horizontal' } = props;
+  // Generate a unique brush ID based on layout and dataKey
+  const brushId = `${layout}-${props.dataKey || 'default'}`;
+  
+  // Calculate brush position and dimensions - memoize to prevent infinite re-renders
+  const calculatedDimensions = useMemo(() => 
+    calculateBrushPosition(
+      props,
+      chartWidth || 0,
+      chartHeight || 0,
+      plotAreaWidth,
+      plotAreaHeight,
+      plotAreaLeft,
+      plotAreaTop,
+      allXAxes,
+    ), 
     [
-      onChangeFromProps,
-      onChangeFromContext,
-      dispatch,
-      startIndex,
-      endIndex,
-      props.useZoomPan,
-      chartData.length,
-      chartWidth,
-      setZoom,
+      props.layout, 
+      props.height, 
+      props.width, 
+      props.x, 
+      props.y, 
+      props.top, 
+      props.bottom, 
+      props.left, 
+      props.right,
+      chartWidth, 
+      chartHeight, 
+      plotAreaWidth, 
+      plotAreaHeight, 
+      plotAreaLeft, 
+      plotAreaTop,
+      allXAxes
+    ]
+  );
+  
+  const brushDimensions = useAppSelector(selectBrushDimensions(brushId));
+  const { x, y, width, height } = brushDimensions ?? calculatedDimensions;
+
+  const onBrushPan = useCallback(
+    (delta: number, panLayout: 'horizontal' | 'vertical') => {
+      const zoom = currentZoomRef.current;
+      const setZoom = setZoomStateRef.current;
+      
+      if (!useZoomPan || !zoom) return;
+      const { travellerWidth = 5 } = props;
+      
+      // Determine which axis to control
+      const controlAxis = props.axis || (panLayout === 'horizontal' ? 'x' : 'y');
+
+      if (controlAxis === 'x') {
+        if (!width) return;
+        const brushDataWidth = width - travellerWidth;
+        const deltaOffsetX = -delta * ((plotAreaWidth * zoom.scaleX) / brushDataWidth);
+        setZoom({
+          ...zoom,
+          offsetX: zoom.offsetX + deltaOffsetX,
+        });
+      } else {
+        if (!height) return;
+        const brushDataHeight = height - travellerWidth;
+        const deltaOffsetY = -delta * ((plotAreaHeight * zoom.scaleY) / brushDataHeight);
+        setZoom({
+          ...zoom,
+          offsetY: zoom.offsetY + deltaOffsetY,
+        });
+      }
+    },
+    [useZoomPan, width, plotAreaWidth, props.travellerWidth, height, plotAreaHeight, props.axis],
+  );
+
+  const onBrushResize = useCallback(
+    (s: number, e: number, movingTravellerId: BrushTravellerId, resizeLayout: 'horizontal' | 'vertical') => {
+      const zoom = currentZoomRef.current;
+      const setZoom = setZoomStateRef.current;
+      
+      if (!useZoomPan || !zoom) {
+        return;
+      }
+      const { travellerWidth = 5 } = props;
+      
+      // Determine which axis to control
+      const controlAxis = props.axis || (resizeLayout === 'horizontal' ? 'x' : 'y');
+      const brushDim = controlAxis === 'x' ? width : height;
+      const chartDim = controlAxis === 'x' ? plotAreaWidth : plotAreaHeight;
+      const brushPos = (controlAxis === 'x' ? x : y) ?? 0;
+
+      if (!brushDim || !chartDim) {
+        return;
+      }
+
+      const brushDataDim = brushDim - travellerWidth;
+      const min = Math.min(s, e);
+      const max = Math.max(s, e);
+      const selectionDim = max - min;
+
+      if (selectionDim <= 0) {
+        return;
+      }
+
+      // Apply scale constraints - default zoom config has minScale=1, maxScale=20
+      const rawNewScale = brushDataDim / selectionDim;
+      const newScale = clamp(rawNewScale, 1, 20);
+      
+      const anchor = movingTravellerId === 'startX' ? max : min;
+      const anchorOnScreen = (anchor - brushPos) / brushDataDim;
+
+      if (controlAxis === 'x') {
+        const { scaleX: oldScaleX, offsetX: oldOffsetX } = zoom;
+        const newOffsetX = anchorOnScreen * chartDim - ((anchorOnScreen * chartDim - oldOffsetX) / oldScaleX) * newScale;
+
+        setZoom({
+          ...zoom,
+          scaleX: newScale,
+          offsetX: newOffsetX,
+          disableAnimation: true,
+          autoScaleYDomain: props.autoScaleYDomain ?? false,
+        });
+      } else {
+        const { scaleY: oldScaleY, offsetY: oldOffsetY } = zoom;
+        const newOffsetY = anchorOnScreen * chartDim - ((anchorOnScreen * chartDim - oldOffsetY) / oldScaleY) * newScale;
+
+        setZoom({
+          ...zoom,
+          scaleY: newScale,
+          offsetY: newOffsetY,
+          disableAnimation: true,
+          autoScaleYDomain: props.autoScaleYDomain ?? false,
+        });
+      }
+    },
+    [
+      useZoomPan,
+      width,
+      height,
+      plotAreaWidth,
+      plotAreaHeight,
+      x,
+      y,
+      props.travellerWidth,
+      props.autoScaleYDomain,
+      props.axis,
     ],
   );
 
-  const { x, y, width } = useAppSelector(selectBrushDimensions);
   const contextProperties: PropertiesFromContext = {
-    data: chartData,
+    data: chartData || [],
     x,
     y,
     width,
+    height,
     startIndex,
     endIndex,
-    onChange,
+    onChange: useZoomPan ? () => {} : onChange,
   };
+
+  const brushTravellerDimension = props.travellerWidth ?? 5;
+
+  let zoomPanProps: Partial<BrushWithStateProps> = {};
+  if (useZoomPan) {
+    let controlledStart: number | undefined;
+    let controlledEnd: number | undefined;
+
+    if (currentZoom && !isInteracting) {
+      // Determine which axis to control
+      const controlAxis = props.axis || (layout === 'horizontal' ? 'x' : 'y');
+      
+      if (controlAxis === 'x') {
+        if (width > 0 && plotAreaWidth > 0) {
+          const brushDataDimension = width - brushTravellerDimension;
+          const visibleDimensionInBrush = brushDataDimension / currentZoom.scaleX;
+          const startOffsetInBrush =
+            (-currentZoom.offsetX / (plotAreaWidth * currentZoom.scaleX)) * brushDataDimension;
+
+          const brushPosition = x ?? 0;
+          controlledStart = brushPosition + startOffsetInBrush;
+          controlledEnd = controlledStart + visibleDimensionInBrush;
+        }
+      } else if (height > 0 && plotAreaHeight > 0) {
+        const brushDataDimension = height - brushTravellerDimension;
+        const visibleDimensionInBrush = brushDataDimension / currentZoom.scaleY;
+        const startOffsetInBrush =
+          (-currentZoom.offsetY / (plotAreaHeight * currentZoom.scaleY)) * brushDataDimension;
+
+        const brushPosition = y ?? 0;
+        controlledStart = brushPosition + startOffsetInBrush;
+        controlledEnd = controlledStart + visibleDimensionInBrush;
+      }
+    }
+    zoomPanProps = {
+      onBrushPan,
+      onBrushResize,
+      onBrushInteractionStart: () => setIsInteracting(true),
+      onBrushInteractionEnd: () => setIsInteracting(false),
+      controlledStart,
+      controlledEnd,
+    };
+  }
+
   return (
-    <BrushWithState
-      {...props}
-      {...contextProperties}
-      startIndexControlledFromProps={startIndexFromProps ?? undefined}
-      endIndexControlledFromProps={endIndexFromProps ?? undefined}
-    />
+    <>
+      <BrushSettingsDispatcher
+        id={brushId}
+        height={calculatedDimensions.height}
+        x={calculatedDimensions.x}
+        y={calculatedDimensions.y}
+        width={calculatedDimensions.width}
+        padding={props.padding}
+        layout={props.layout}
+      />
+      <BrushWithState
+        {...props}
+        {...contextProperties}
+        {...zoomPanProps}
+        startIndexControlledFromProps={startIndexFromProps ?? undefined}
+        endIndexControlledFromProps={endIndexFromProps ?? undefined}
+      />
+    </>
   );
 }
 
-function BrushSettingsDispatcher(props: BrushSettings): null {
+function calculateBrushPosition(
+  props: Props,
+  chartWidth: number,
+  chartHeight: number,
+  plotAreaWidth: number,
+  plotAreaHeight: number,
+  plotAreaLeft: number,
+  plotAreaTop: number,
+  allXAxes: readonly any[],
+): { x: number; y: number; width: number; height: number } {
+  const { layout = 'horizontal', height, width, x, y, top, bottom, left, right, padding } = props;
+
+  // If explicit x, y, width are provided, use them
+  if (isNumber(x) && isNumber(y) && isNumber(width)) {
+    return { x, y, width, height };
+  }
+
+  const { top: paddingTop = 0, bottom: paddingBottom = 0, left: paddingLeft = 0, right: paddingRight = 0 } =
+    padding || {};
+
+  // Calculate based on layout and positioning props
+  if (layout === 'horizontal') {
+    const brushWidth = plotAreaWidth;
+    const brushHeight = height;
+    const brushX = plotAreaLeft;
+    let brushY: number;
+
+    if (top) {
+      brushY = paddingTop;
+    } else {
+      // Default to bottom - position right after the plot area and X-axis
+      // Add space for X-axis only if there are X-axes defined
+      const xAxisOffset = allXAxes && allXAxes.length > 0 ? 30 : 0; // 30px for X-axis height
+      brushY = plotAreaTop + plotAreaHeight + xAxisOffset;
+    }
+
+    return { x: brushX, y: brushY, width: brushWidth, height: brushHeight };
+  }
+  // Vertical layout
+  const brushThickness = width ?? height;
+  const brushLength = plotAreaHeight;
+  const brushY = plotAreaTop;
+  let brushX: number;
+
+  if (left) {
+    brushX = paddingLeft;
+  } else {
+    // Default to right
+    brushX = chartWidth - brushThickness - paddingRight;
+  }
+
+  return { x: brushX, y: brushY, width: brushThickness, height: brushLength };
+}
+
+function BrushSettingsDispatcher(props: BrushInstanceSettings): null {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setBrushSettings(props));
     return () => {
-      dispatch(setBrushSettings(null));
+      dispatch(removeBrushSettings(props.id));
     };
-  }, [dispatch, props]);
+  }, [dispatch, props.id, props.x, props.y, props.width, props.height, props.layout]);
   return null;
 }
 
@@ -1015,20 +1527,11 @@ export class Brush extends PureComponent<Props, State> {
     padding: { top: 1, right: 1, bottom: 1, left: 1 },
     leaveTimeOut: 1000,
     alwaysShowText: false,
+    layout: 'horizontal',
+    enableAnimation: false,
   };
 
   render() {
-    return (
-      <>
-        <BrushSettingsDispatcher
-          height={this.props.height}
-          x={this.props.x}
-          y={this.props.y}
-          width={this.props.width}
-          padding={this.props.padding}
-        />
-        <BrushInternal {...this.props} />
-      </>
-    );
+    return <BrushInternal {...this.props} />;
   }
 }

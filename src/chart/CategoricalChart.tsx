@@ -21,7 +21,14 @@ export const CategoricalChart = forwardRef<SVGSVGElement, CategoricalChartRequir
     if (compact) {
       return (
         <RootSurface otherAttributes={attrs} title={title} desc={desc}>
-          {children}
+          {React.Children.map(children, child => {
+            if (React.isValidElement(child)) {
+              // The child is cast to any to allow passing width and height props.
+              // This is a specific solution for the compact chart scenario.
+              return React.cloneElement(child as any, { width, height });
+            }
+            return child;
+          })}
         </RootSurface>
       );
     }

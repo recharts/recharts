@@ -16,15 +16,23 @@ import { appendOffsetOfLegend } from '../../util/ChartUtils';
 import { selectChartHeight, selectChartWidth, selectMargin } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
 import { RechartsRootState } from '../store';
+import { BrushState } from '../brushSlice';
 
-export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
+export const selectBrushHeight = (state: RechartsRootState) => {
+  const brushes = Object.values(state.brush.brushes);
+  const horizontalBrush = brushes.find(brush => brush.layout !== 'vertical');
+  return horizontalBrush?.height || 0;
+};
+
+const selectBrushState = (state: RechartsRootState): BrushState => state.brush;
+const VERTICAL_BRUSH_GAP = 10;
 
 export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequired = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
     selectMargin,
-    selectBrushHeight,
+    selectBrushState,
     selectAllXAxes,
     selectAllYAxes,
     selectLegendSettings,
@@ -34,7 +42,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequire
     chartWidth: number,
     chartHeight: number,
     margin: Margin,
-    brushHeight: number,
+    brushState: BrushState,
     xAxes: XAxisSettings[],
     yAxes: YAxisSettings[],
     legendSettings: LegendSettings,
@@ -70,7 +78,15 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequire
 
     const brushBottom = offset.bottom;
 
-    offset.bottom += brushHeight;
+    // Handle multiple brushes
+    const brushes = Object.values(brushState.brushes);
+    brushes.forEach(brushSettings => {
+      if (brushSettings.layout === 'vertical') {
+        offset.right += (brushSettings.width || 0) + VERTICAL_BRUSH_GAP;
+      } else {
+        offset.bottom += brushSettings.height;
+      }
+    });
 
     offset = appendOffsetOfLegend(offset, legendSettings, legendSize);
 
@@ -80,7 +96,6 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequire
     return {
       brushBottom,
       ...offset,
-      // never return negative values for height and width
       width: Math.max(offsetWidth, 0),
       height: Math.max(offsetHeight, 0),
     };
