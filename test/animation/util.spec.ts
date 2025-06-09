@@ -69,7 +69,7 @@ describe('mapObject', () => {
   });
   it('should allow mapping keys to undefined', () => {
     const obj = { a: 1 };
-    const result = mapObject(() => undefined, obj);
+    const result = mapObject((): void => undefined, obj);
     expect(result).toEqual({ a: undefined });
   });
 });
