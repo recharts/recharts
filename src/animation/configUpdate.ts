@@ -158,7 +158,7 @@ export default (
 
   // return start animation method
   return () => {
-    requestAnimationFrameDi(update);
+    cafId = requestAnimationFrameDi(update);
 
     // return stop animation method
     return () => {
