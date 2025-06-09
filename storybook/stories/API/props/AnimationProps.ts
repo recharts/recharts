@@ -6,7 +6,7 @@ import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
 export const animateNewValues: StorybookArg = { table: { category: 'Animation' } };
 export const animationBegin: StorybookArg = {
-  description: 'Specifies when the animation should begin, the unit of this option is ms.',
+  description: 'Delays the start of the animation by the specified number of milliseconds.',
   type: { name: 'number' },
   defaultValue: 0,
   table: {

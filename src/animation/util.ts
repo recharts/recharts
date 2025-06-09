@@ -24,11 +24,14 @@ export const getIntersectionKeys = (preObj: Record<string, unknown>, nextObj: Re
  * @param {object} obj object to map
  * @returns mapped object
  */
-export const mapObject = (fn: (key: string, value: unknown) => void, obj: Record<string, unknown>) =>
+export const mapObject = <T extends Record<string, any>, R>(
+  fn: (key: keyof T, value: T[keyof T]) => R,
+  obj: T,
+): { [K in keyof T]: R } =>
   Object.keys(obj).reduce(
     (res, key) => ({
       ...res,
-      [key]: fn(key, obj[key]),
+      [key]: fn(key as keyof T, obj[key as keyof T]),
     }),
-    {},
+    {} as { [K in keyof T]: R },
   );
