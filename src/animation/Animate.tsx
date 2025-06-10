@@ -4,15 +4,7 @@ import isEqual from 'es-toolkit/compat/isEqual';
 import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
-import { getTransitionVal, identity } from './util';
-
-type AnimateStep = {
-  duration: number;
-  style: Record<string, any>;
-  easing?: 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear' | ((...args: any[]) => any);
-  properties?: ReadonlyArray<string>;
-  onAnimationEnd?: () => void;
-};
+import { getTransitionVal } from './util';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -21,7 +13,6 @@ export interface AnimateProps {
   duration?: number;
   begin?: number;
   easing?: EasingInput;
-  steps?: ReadonlyArray<AnimateStep>;
   children?: React.ReactNode | ((style: Record<string, any> | string) => React.ReactNode);
   isActive?: boolean;
   canBegin?: boolean;
@@ -45,7 +36,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     easing: 'ease',
     isActive: true,
     canBegin: true,
-    steps: [],
     onAnimationEnd: () => {},
     onAnimationStart: () => {},
   };
@@ -61,7 +51,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
   constructor(props: AnimateProps, context: any) {
     super(props, context);
 
-    const { isActive, attributeName, from, to, steps, children, duration } = this.props;
+    const { isActive, attributeName, from, to, children, duration } = this.props;
 
     this.handleStyleChange = this.handleStyleChange.bind(this);
     this.changeStyle = this.changeStyle.bind(this);
@@ -77,9 +67,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       return;
     }
 
-    if (steps && steps.length) {
-      this.state = { style: steps[0].style };
-    } else if (from) {
+    if (from) {
       if (typeof children === 'function') {
         this.state = {
           style: from,
@@ -204,86 +192,16 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     this.manager.start([onAnimationStart, begin, finalStartAnimation, duration, onAnimationEnd]);
   }
 
-  runStepAnimation(props: AnimateProps) {
-    const { steps, begin, onAnimationStart } = props;
-    const { style: initialStyle, duration: initialTime = 0 } = steps[0];
-
-    const addStyle = (
-      sequence: any,
-      nextItem: {
-        duration: any;
-        easing?: 'ease';
-        style: any;
-        properties: any;
-        onAnimationEnd: any;
-      },
-      index: number,
-    ) => {
-      if (index === 0) {
-        return sequence;
-      }
-
-      const { duration, easing = 'ease', style, properties: nextProperties, onAnimationEnd } = nextItem;
-
-      const preItem = index > 0 ? steps[index - 1] : nextItem;
-      const properties = nextProperties || Object.keys(style);
-
-      // @ts-expect-error TODO - fix the type error
-      if (typeof easing === 'function' || easing === 'spring') {
-        return [
-          ...sequence,
-          this.runJSAnimation.bind(this, {
-            from: preItem.style,
-            to: style,
-            duration,
-            easing,
-          }),
-          duration,
-        ];
-      }
-
-      const transition = getTransitionVal(properties, duration, easing);
-      const newStyle = {
-        ...preItem.style,
-        ...style,
-        transition,
-      };
-
-      return [...sequence, newStyle, duration, onAnimationEnd].filter(identity);
-    };
-
-    return this.manager.start([
-      onAnimationStart,
-      ...steps.reduce(addStyle, [initialStyle, Math.max(initialTime, begin)]),
-      props.onAnimationEnd,
-    ]);
-  }
-
   runAnimation(props: AnimateProps) {
     if (!this.manager) {
       this.manager = createAnimateManager();
     }
-    const {
-      begin,
-      duration,
-      attributeName,
-      to: propsTo,
-      easing,
-      onAnimationStart,
-      onAnimationEnd,
-      steps,
-      children,
-    } = props;
+    const { begin, duration, attributeName, to: propsTo, easing, onAnimationStart, onAnimationEnd, children } = props;
 
     this.unSubscribe = this.manager.subscribe(this.handleStyleChange);
 
     if (typeof easing === 'function' || typeof children === 'function' || easing === 'spring') {
       this.runJSAnimation(props);
-      return;
-    }
-
-    if (steps.length > 1) {
-      this.runStepAnimation(props);
       return;
     }
 
@@ -301,7 +219,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       attributeName,
       easing,
       isActive,
-      steps,
       from,
       to,
       canBegin,
