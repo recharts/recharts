@@ -169,7 +169,7 @@ describe('<YAxis /> Label', () => {
       ]);
     });
 
-    it('should render nonsense if <Label /> itself has element children', () => {
+    it('should render child content if <Label /> itself has string children - and ignore the value prop', () => {
       const { container } = render(
         <AreaChart width={500} height={500} data={PageData}>
           <Area dataKey="uv" />
