@@ -7,8 +7,6 @@ export const getDashCase = (name: string) => name.replace(/([A-Z])/g, v => `-${v
 export const getTransitionVal = (props: ReadonlyArray<string>, duration: string | number, easing: string): string =>
   props.map(prop => `${getDashCase(prop)} ${duration}ms ${easing}`).join(',');
 
-export const identity = <T>(param: T): T => param;
-
 /**
  * Finds the intersection of keys between two objects
  * @param {object} preObj previous object

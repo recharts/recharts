@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getDashCase, getIntersectionKeys, getTransitionVal, identity, mapObject } from '../../src/animation/util';
+import { getDashCase, getIntersectionKeys, getTransitionVal, mapObject } from '../../src/animation/util';
 
 describe('getDashCase', () => {
   it('should convert camelCase to dash-case', () => {
@@ -24,20 +24,6 @@ describe('getTransitionVal', () => {
   it('should handle numeric and string duration', () => {
     expect(getTransitionVal(['foo'], '500', 'ease')).toBe('foo 500ms ease');
     expect(getTransitionVal(['foo'], 500, 'ease')).toBe('foo 500ms ease');
-  });
-});
-
-describe('identity', () => {
-  it('should return the same value for primitives', () => {
-    expect(identity(1)).toBe(1);
-    expect(identity('test')).toBe('test');
-    expect(identity(true)).toBe(true);
-    expect(identity(null)).toBe(null);
-    expect(identity(undefined)).toBe(undefined);
-  });
-  it('should return the same object reference', () => {
-    const obj = { a: 1 };
-    expect(identity(obj)).toBe(obj);
   });
 });
 
