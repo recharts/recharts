@@ -17,17 +17,17 @@ import {
   XAxis,
   ComposedChart,
   YAxisProps,
-} from '../../src';
-import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../src/util/types';
-import { pageData, rangeData } from '../../storybook/stories/data';
-import { useAppSelector } from '../../src/state/hooks';
-import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../src/state/selectors/axisSelectors';
-import { YAxisSettings } from '../../src/state/cartesianAxisSlice';
-import { expectYAxisTicks } from '../helper/expectAxisTicks';
-import { IfOverflow } from '../../src/util/IfOverflow';
-import { useIsPanorama } from '../../src/context/PanoramaContext';
-import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { getCalculatedYAxisWidth } from '../../src/util/YAxisUtils';
+} from '../../../src';
+import { AxisDomain, CategoricalDomain, NumberDomain, StackOffsetType } from '../../../src/util/types';
+import { pageData, rangeData } from '../../../storybook/stories/data';
+import { useAppSelector } from '../../../src/state/hooks';
+import { implicitYAxis, selectAxisDomain, selectAxisSettings } from '../../../src/state/selectors/axisSelectors';
+import { YAxisSettings } from '../../../src/state/cartesianAxisSlice';
+import { expectYAxisTicks } from '../../helper/expectAxisTicks';
+import { IfOverflow } from '../../../src/util/IfOverflow';
+import { useIsPanorama } from '../../../src/context/PanoramaContext';
+import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { getCalculatedYAxisWidth } from '../../../src/util/YAxisUtils';
 
 describe('<YAxis />', () => {
   const data = [

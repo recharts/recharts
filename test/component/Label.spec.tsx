@@ -22,7 +22,7 @@ describe('<Label />', () => {
     startAngle: 0,
     endAngle: 90,
   };
-  it('Render polar labels (postion="center")', () => {
+  it('Render polar labels (position="center")', () => {
     const { container } = render(
       <Surface height={0} width={0}>
         <Label viewBox={polarViewBox} value="text" position="center" />
@@ -86,7 +86,7 @@ describe('<Label />', () => {
     height: 200,
   };
 
-  it('Render cartesian labels (postion="center")', () => {
+  it('Render cartesian labels (position="center")', () => {
     const { container } = render(
       <Surface height={0} width={0}>
         <Label viewBox={cartesianViewBox} value="text" position="center" />
