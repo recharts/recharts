@@ -4,6 +4,7 @@ import { ActiveShape } from './types';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { BarProps } from '../cartesian/Bar';
 import { Shape } from './ActiveShapeUtils';
+import { isNullish, isNumber } from './DataUtils';
 
 // Rectangle props is expecting x, y, height, width as numbers, name as a string, and radius as a custom type
 // When props are being spread in from a user defined component in Bar,
@@ -50,7 +51,7 @@ export function BarRectangle(props: BarRectangleProps) {
   );
 }
 
-export type MinPointSize = number | ((value: number, index: number) => number);
+export type MinPointSize = number | ((value: number | undefined | null, index: number) => number);
 
 /**
  * Safely gets minPointSize from from the minPointSize prop if it is a function
@@ -62,14 +63,14 @@ export const minPointSizeCallback =
   (minPointSize: MinPointSize, defaultValue = 0) =>
   (value: unknown, index: number): number => {
     if (typeof minPointSize === 'number') return minPointSize;
-    const isValueNumber = typeof value === 'number';
-    if (isValueNumber) {
-      return minPointSize(value, index);
+    const isValueNumberOrNil = isNumber(value) || isNullish(value);
+    if (isValueNumberOrNil) {
+      return minPointSize(value as number | undefined | null, index);
     }
 
     invariant(
-      isValueNumber,
-      `minPointSize callback function received a value with type of ${typeof value}. Currently only numbers are supported.`,
+      isValueNumberOrNil,
+      `minPointSize callback function received a value with type of ${typeof value}. Currently only numbers or null/undefined are supported.`,
     );
     return defaultValue;
   };

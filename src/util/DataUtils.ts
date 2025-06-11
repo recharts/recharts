@@ -2,6 +2,7 @@ import isString from 'lodash/isString';
 import isNan from 'lodash/isNaN';
 import get from 'lodash/get';
 import lodashIsNumber from 'lodash/isNumber';
+import isNil from 'lodash/isNil';
 
 export const mathSign = (value: number) => {
   if (value === 0) {
@@ -18,6 +19,8 @@ export const isPercent = (value: string | number): value is `${number}%` =>
   isString(value) && value.indexOf('%') === value.length - 1;
 
 export const isNumber = (value: unknown): value is number => lodashIsNumber(value) && !isNan(value);
+
+export const isNullish = (value: unknown): value is null | undefined => isNil(value);
 
 export const isNumOrStr = (value: unknown): value is number | string => isNumber(value as number) || isString(value);
 
