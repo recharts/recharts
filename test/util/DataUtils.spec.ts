@@ -10,6 +10,7 @@ import {
   getLinearRegression,
   findEntryInArray,
   uniqueId,
+  isNullish,
 } from '../../src/util/DataUtils';
 
 /**
@@ -80,6 +81,32 @@ describe('is functions', () => {
       const invalid: number[] = arr;
       const result: number[] = arr.filter(isNumber);
       expect(result).toEqual([1]);
+    });
+  });
+
+  describe('isNullish', () => {
+    const tests: IsFunctionTestDefinition<typeof isNullish>[] = [
+      { should: 'return true with input null', value: null, result: true },
+      { should: 'return true with input undefined', value: undefined, result: true },
+      { should: 'return false with input 0', value: 0, result: false },
+      { should: 'return false with input empty string', value: '', result: false },
+      { should: 'return false with input object', value: {}, result: false },
+      { should: 'return false with input array', value: [], result: false },
+    ];
+
+    tests.forEach(({ should, value, result }) => {
+      it(should, () => {
+        expect(isNullish(value)).toBe(result);
+      });
+    });
+
+    it('should allow type refinement', () => {
+      const arr: unknown[] = ['', 0, false, NaN, null, undefined];
+      // @ts-expect-error typescript should highlight this - invalid assignment
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const invalid: (null | undefined)[] = arr;
+      const result: (null | undefined)[] = arr.filter(isNullish);
+      expect(result).toEqual([null, undefined]);
     });
   });
 
