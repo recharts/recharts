@@ -5,6 +5,7 @@ import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal } from './util';
+import { RequestAnimationFrameTimeoutController } from './timeoutController';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -183,7 +184,14 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
 
   runJSAnimation(props: AnimateProps) {
     const { from, to, duration, easing, begin, onAnimationEnd, onAnimationStart } = props;
-    const startAnimation = configUpdate(from, to, configEasing(easing), duration, this.changeStyle);
+    const startAnimation = configUpdate(
+      from,
+      to,
+      configEasing(easing),
+      duration,
+      this.changeStyle,
+      new RequestAnimationFrameTimeoutController(),
+    );
 
     const finalStartAnimation = () => {
       this.stopJSAnimation = startAnimation();
@@ -194,7 +202,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
 
   runAnimation(props: AnimateProps) {
     if (!this.manager) {
-      this.manager = createAnimateManager();
+      this.manager = createAnimateManager(new RequestAnimationFrameTimeoutController());
     }
     const { begin, duration, attributeName, to: propsTo, easing, onAnimationStart, onAnimationEnd, children } = props;
 

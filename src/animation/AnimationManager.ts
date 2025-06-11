@@ -1,4 +1,4 @@
-import { setRafTimeout } from './setRafTimeout';
+import { TimeoutController } from './timeoutController';
 
 type ReactSmoothStyle = object;
 
@@ -21,9 +21,7 @@ export type AnimationManager = {
   subscribe: (handleChange: (style: ReactSmoothStyle) => void) => () => void;
 };
 
-export type SetTimeoutFn = (callback: () => void, timeout?: number) => void;
-
-export function createAnimateManager(setTimeoutDi: SetTimeoutFn = setRafTimeout): AnimationManager {
+export function createAnimateManager(timeoutController: TimeoutController): AnimationManager {
   let currStyle: ReactSmoothQueueItem | ReactSmoothQueue = {};
   let handleChange: HandleChangeFn = () => null;
   let shouldStop = false;
@@ -42,13 +40,13 @@ export function createAnimateManager(setTimeoutDi: SetTimeoutFn = setRafTimeout)
       const [curr, ...restStyles] = styles;
 
       if (typeof curr === 'number') {
-        setTimeoutDi(setStyle.bind(null, restStyles), curr);
+        timeoutController.setTimeout(setStyle.bind(null, restStyles), curr);
 
         return;
       }
 
       setStyle(curr);
-      setTimeoutDi(setStyle.bind(null, restStyles));
+      timeoutController.setTimeout(setStyle.bind(null, restStyles));
       return;
     }
 

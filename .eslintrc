@@ -58,7 +58,10 @@
     // We have typescript, we don't need prop-types
     "react/prop-types": "off",
     "react/no-unused-prop-types": "off",
-    "class-methods-use-this": "error",
+    // TODO enable class-methods-use-this with ignoreClassesWithImplements once we bump to eslint 9.24+
+    // https://eslint.org/blog/2025/04/eslint-v9.24.0-released/
+    // "class-methods-use-this": ["warn", { "ignoreClassesWithImplements": "public-fields" }],
+    "class-methods-use-this": "warn",
     "import/no-extraneous-dependencies": [
       "error",
       {
