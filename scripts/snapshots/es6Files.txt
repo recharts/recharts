@@ -4,7 +4,7 @@
   "es6/animation/AnimationManager.js",
   "es6/animation/configUpdate.js",
   "es6/animation/easing.js",
-  "es6/animation/setRafTimeout.js",
+  "es6/animation/timeoutController.js",
   "es6/animation/util.js",
   "es6/cartesian",
   "es6/cartesian/Area.js",
