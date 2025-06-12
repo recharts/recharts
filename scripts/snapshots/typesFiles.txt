@@ -4,7 +4,7 @@
   "types/animation/AnimationManager.d.ts",
   "types/animation/configUpdate.d.ts",
   "types/animation/easing.d.ts",
-  "types/animation/setRafTimeout.d.ts",
+  "types/animation/timeoutController.d.ts",
   "types/animation/util.d.ts",
   "types/cartesian",
   "types/cartesian/Area.d.ts",

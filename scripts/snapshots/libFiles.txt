@@ -4,7 +4,7 @@
   "lib/animation/AnimationManager.js",
   "lib/animation/configUpdate.js",
   "lib/animation/easing.js",
-  "lib/animation/setRafTimeout.js",
+  "lib/animation/timeoutController.js",
   "lib/animation/util.js",
   "lib/cartesian",
   "lib/cartesian/Area.js",

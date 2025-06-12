@@ -15,7 +15,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/animation/configUpdate.ts'],
+  mutate: ['src/animation/timeoutController.ts'],
 };
 // eslint-disable-next-line import/no-default-export
 export default config;

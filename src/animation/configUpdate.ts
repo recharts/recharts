@@ -1,5 +1,6 @@
 import { getIntersectionKeys, mapObject } from './util';
 import { BezierEasingFunction, EasingFunction, SpringEasingFunction } from './easing';
+import { TimeoutController } from './timeoutController';
 
 export const alpha = (begin: number, end: number, k: number) => begin + (end - begin) * k;
 const needContinue = ({ from, to }: Val) => from !== to;
@@ -63,8 +64,7 @@ function createStepperUpdate<T extends Record<string, unknown>>(
   easing: SpringEasingFunction,
   interKeys: ReadonlyArray<string>,
   render: (currentStyle: T) => void,
-  requestAnimationFrameDi: RequestAnimationFrameDi = requestAnimationFrame,
-  cancelAnimationFrameDi: CancelAnimationFrameDi = cancelAnimationFrame,
+  timeoutController: TimeoutController,
 ) {
   let preTime: number;
   let stepperStyle = interKeys.reduce(
@@ -80,7 +80,8 @@ function createStepperUpdate<T extends Record<string, unknown>>(
   );
   const getCurrStyle = () => mapObject((key, val: Val) => val.from, stepperStyle);
   const shouldStopAnimation = () => !Object.values(stepperStyle).filter(needContinue).length;
-  let cafId = -1;
+
+  let stopAnimation: CancelAnimationFunction | null = null;
 
   const stepperUpdate = (now: number) => {
     if (!preTime) {
@@ -100,17 +101,17 @@ function createStepperUpdate<T extends Record<string, unknown>>(
     preTime = now;
 
     if (!shouldStopAnimation()) {
-      cafId = requestAnimationFrameDi(stepperUpdate);
+      stopAnimation = timeoutController.setTimeout(stepperUpdate);
     }
   };
 
   // return start animation method
   return () => {
-    cafId = requestAnimationFrameDi(stepperUpdate);
+    stopAnimation = timeoutController.setTimeout(stepperUpdate);
 
     // return stop animation method
     return () => {
-      cancelAnimationFrameDi(cafId);
+      stopAnimation();
     };
   };
 }
@@ -124,10 +125,9 @@ function createTimingUpdate<T extends Record<string, unknown>>(
   duration: number,
   interKeys: ReadonlyArray<string>,
   render: (currentStyle: T) => void,
-  requestAnimationFrameDi: RequestAnimationFrameDi = requestAnimationFrame,
-  cancelAnimationFrameDi: CancelAnimationFrameDi = cancelAnimationFrame,
+  timeoutController: TimeoutController,
 ) {
-  let cafId = -1;
+  let stopAnimation: CancelAnimationFunction | null = null;
 
   const timingStyle: TimingStyle = interKeys.reduce(
     (res, key): TimingStyle => ({
@@ -155,7 +155,7 @@ function createTimingUpdate<T extends Record<string, unknown>>(
     });
 
     if (t < 1) {
-      cafId = requestAnimationFrameDi(timingUpdate);
+      stopAnimation = timeoutController.setTimeout(timingUpdate);
     } else {
       const finalStyle = mapObject((key, val) => alpha(...val, easing(1)), timingStyle);
 
@@ -169,11 +169,11 @@ function createTimingUpdate<T extends Record<string, unknown>>(
 
   // return start animation method
   return () => {
-    cafId = requestAnimationFrameDi(timingUpdate);
+    stopAnimation = timeoutController.setTimeout(timingUpdate);
 
     // return stop animation method
     return () => {
-      cancelAnimationFrameDi(cafId);
+      stopAnimation();
     };
   };
 }
@@ -186,21 +186,11 @@ export default <T extends Record<string, unknown>>(
   easing: EasingFunction,
   duration: number,
   render: (currentStyle: T) => void,
-  requestAnimationFrameDi: RequestAnimationFrameDi = requestAnimationFrame,
-  cancelAnimationFrameDi: CancelAnimationFrameDi = cancelAnimationFrame,
+  timeoutController: TimeoutController,
 ): StartAnimationFunction => {
   const interKeys: ReadonlyArray<string> = getIntersectionKeys(from, to);
 
   return easing.isStepper === true
-    ? createStepperUpdate(from, to, easing, interKeys, render, requestAnimationFrameDi, cancelAnimationFrameDi)
-    : createTimingUpdate(
-        from,
-        to,
-        easing,
-        duration,
-        interKeys,
-        render,
-        requestAnimationFrameDi,
-        cancelAnimationFrameDi,
-      );
+    ? createStepperUpdate(from, to, easing, interKeys, render, timeoutController)
+    : createTimingUpdate(from, to, easing, duration, interKeys, render, timeoutController);
 };

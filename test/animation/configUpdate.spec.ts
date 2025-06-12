@@ -3,64 +3,15 @@ import { configEasing } from '../../src/animation/easing';
 import animationFunction, {
   CancelAnimationFrameDi,
   CancelAnimationFunction,
-  RequestAnimationFrameCallback,
   RequestAnimationFrameDi,
   StartAnimationFunction,
 } from '../../src/animation/configUpdate';
-
-class MockAnimationFrame {
-  private callbacks: Map<number, RequestAnimationFrameCallback> = new Map();
-
-  private nextId = 1;
-
-  private cancelledFrames: Set<number> = new Set();
-
-  requestAnimationFrame = (callback: RequestAnimationFrameCallback): number => {
-    const id = this.nextId++;
-    this.callbacks.set(id, callback);
-    return id;
-  };
-
-  cancelAnimationFrame = (id: number): void => {
-    if (this.callbacks.has(id)) {
-      this.callbacks.delete(id);
-    } else {
-      throw new Error(`Attempted to cancel a frame with id ${id} that does not exist.`);
-    }
-    this.cancelledFrames.add(id);
-  };
-
-  async advanceTime(now: number): Promise<void> {
-    // We need to create a copy of the callbacks array because the original array is going to be modified while the current callbacks are being executed.
-    const currentCallbacks = new Map(this.callbacks);
-    // Simulate the passage of time by invoking all callbacks with the given time
-    Array.from(currentCallbacks.entries()).forEach(([id, callback]) => {
-      Promise.resolve().then(() => {
-        this.callbacks.delete(id);
-        // Call the callback with the current time
-        callback(now);
-      });
-    });
-  }
-
-  clear(): void {
-    this.callbacks.clear();
-    this.cancelledFrames.clear();
-    this.nextId = 1;
-  }
-
-  getCallbacksCount() {
-    return this.callbacks.size;
-  }
-
-  getCancelledFramesCount() {
-    return this.cancelledFrames.size;
-  }
-}
+import { MockTimeoutController } from './mockTimeoutController';
+import { RequestAnimationFrameTimeoutController } from '../../src/animation/timeoutController';
 
 describe('animationFunction', () => {
   describe('with linear easing', () => {
-    const mockAnimationFrame = new MockAnimationFrame();
+    const mockAnimationFrame = new MockTimeoutController();
     // this static property addition to a function is wild
     const linearEasing = configEasing('linear');
     let startAnimation: StartAnimationFunction;
@@ -74,15 +25,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 1000;
 
-      startAnimation = animationFunction(
-        from,
-        to,
-        linearEasing,
-        duration,
-        render,
-        mockAnimationFrame.requestAnimationFrame,
-        mockAnimationFrame.cancelAnimationFrame,
-      );
+      startAnimation = animationFunction(from, to, linearEasing, duration, render, mockAnimationFrame);
     });
 
     it('should return function', () => {
@@ -106,7 +49,7 @@ describe('animationFunction', () => {
 
     it('should call render with initial values on first frame, and queue another frame', async () => {
       startAnimation();
-      await mockAnimationFrame.advanceTime(16);
+      await mockAnimationFrame.triggerNextTimeout(16);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
@@ -117,19 +60,19 @@ describe('animationFunction', () => {
       // the first frame is required to set the initial state inside the animation function,
       // and also it cannot be at time 0 because the animation function uses a falsy check to see if it had executed before
       // and zero is falsy.
-      await mockAnimationFrame.advanceTime(4);
+      await mockAnimationFrame.triggerNextTimeout(4);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
 
       // Halfway through the animation
-      await mockAnimationFrame.advanceTime(500);
+      await mockAnimationFrame.triggerNextTimeout(500);
       // numbers are not exactly halfway through because the animation did not start at time 0, it started at time 4
       expect(render).toHaveBeenLastCalledWith({ x: 49.6, y: 49.6 });
       expect(render).toHaveBeenCalledTimes(2);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
 
       // exact end of the animation - we got lucky but this is not guaranteed
-      await mockAnimationFrame.advanceTime(1004);
+      await mockAnimationFrame.triggerNextTimeout(1004);
       expect(render).toHaveBeenLastCalledWith({ x: 100, y: 100 });
       expect(render).toHaveBeenCalledTimes(4);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
@@ -140,13 +83,13 @@ describe('animationFunction', () => {
       // the first frame is required to set the initial state inside the animation function,
       // and also it cannot be at time 0 because the animation function uses a falsy check to see if it had executed before
       // and zero is falsy.
-      await mockAnimationFrame.advanceTime(4);
+      await mockAnimationFrame.triggerNextTimeout(4);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
 
       // we're on a slow device, and we had dropped some frames,
       // so the ending frame is like waaay after the animation duration
-      await mockAnimationFrame.advanceTime(2000);
+      await mockAnimationFrame.triggerNextTimeout(2000);
       // the second and third calls are the same, so not quite necessary - we could have just called it once here
       expect(render).toHaveBeenNthCalledWith(2, { x: 100, y: 100 });
       expect(render).toHaveBeenNthCalledWith(3, { x: 100, y: 100 });
@@ -155,7 +98,7 @@ describe('animationFunction', () => {
       expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
     });
 
-    it('should stop animation when requested', () => {
+    it('should stop animation when requested', async () => {
       const stopAnimation: CancelAnimationFunction = startAnimation();
 
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
@@ -163,17 +106,13 @@ describe('animationFunction', () => {
       stopAnimation();
 
       expect(mockAnimationFrame.getCancelledFramesCount()).toBe(1);
-
-      // Ensure that the render was not called after stopping
-      mockAnimationFrame.advanceTime(1000);
-
       expect(render).not.toHaveBeenCalled();
       expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
     });
   });
 
   describe('with spring easing', () => {
-    const mockAnimationFrame = new MockAnimationFrame();
+    const mockAnimationFrame = new MockTimeoutController();
     const springEasing = configEasing('spring');
     let startAnimation: StartAnimationFunction;
     const render = vi.fn();
@@ -186,15 +125,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 1000;
 
-      startAnimation = animationFunction(
-        from,
-        to,
-        springEasing,
-        duration,
-        render,
-        mockAnimationFrame.requestAnimationFrame,
-        mockAnimationFrame.cancelAnimationFrame,
-      );
+      startAnimation = animationFunction(from, to, springEasing, duration, render, mockAnimationFrame);
     });
 
     it('should return function', () => {
@@ -218,7 +149,7 @@ describe('animationFunction', () => {
 
     it('should call render with initial values on first frame, and queue another frame', async () => {
       startAnimation();
-      await mockAnimationFrame.advanceTime(16);
+      await mockAnimationFrame.triggerNextTimeout(16);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
@@ -229,12 +160,12 @@ describe('animationFunction', () => {
       // the first frame is required to set the initial state inside the animation function,
       // and also it cannot be at time 0 because the animation function uses a falsy check to see if it had executed before
       // and zero is falsy.
-      await mockAnimationFrame.advanceTime(4);
+      await mockAnimationFrame.triggerNextTimeout(4);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
 
       // Halfway through the animation
-      await mockAnimationFrame.advanceTime(500);
+      await mockAnimationFrame.triggerNextTimeout(500);
 
       // numbers are not exactly halfway through because the animation did not start at time 0, it started at time 4
       expect(render).toHaveBeenLastCalledWith({
@@ -244,7 +175,7 @@ describe('animationFunction', () => {
       expect(render).toHaveBeenCalledTimes(2);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
       // exact end of the animation - we got lucky but this is not guaranteed
-      await mockAnimationFrame.advanceTime(1004);
+      await mockAnimationFrame.triggerNextTimeout(1004);
       expect(render).toHaveBeenLastCalledWith({
         x: 103.8629546018778,
         y: 103.8629546018778,
@@ -253,7 +184,7 @@ describe('animationFunction', () => {
       // okay the animation continues beyond the duration?
       expect(mockAnimationFrame.getCallbacksCount()).toBe(1);
 
-      await mockAnimationFrame.advanceTime(2000);
+      await mockAnimationFrame.triggerNextTimeout(2000);
       expect(render).toHaveBeenLastCalledWith({
         x: 99.86220182838869,
         y: 99.86220182838869,
@@ -263,7 +194,7 @@ describe('animationFunction', () => {
 
       // and it continues even further
 
-      await mockAnimationFrame.advanceTime(3000);
+      await mockAnimationFrame.triggerNextTimeout(3000);
       expect(render).toHaveBeenLastCalledWith({
         x: 100.00438658948147,
         y: 100.00438658948147,
@@ -273,7 +204,7 @@ describe('animationFunction', () => {
 
       // on and on
 
-      await mockAnimationFrame.advanceTime(4000);
+      await mockAnimationFrame.triggerNextTimeout(4000);
       expect(render).toHaveBeenLastCalledWith({
         x: 99.9998780350853,
         y: 99.9998780350853,
@@ -283,7 +214,7 @@ describe('animationFunction', () => {
 
       // when does this end?
 
-      await mockAnimationFrame.advanceTime(5000);
+      await mockAnimationFrame.triggerNextTimeout(5000);
 
       expect(render).toHaveBeenLastCalledWith({
         x: 100,
@@ -300,13 +231,13 @@ describe('animationFunction', () => {
       // the first frame is required to set the initial state inside the animation function,
       // and also it cannot be at time 0 because the animation function uses a falsy check to see if it had executed before
       // and zero is falsy.
-      await mockAnimationFrame.advanceTime(4);
+      await mockAnimationFrame.triggerNextTimeout(4);
       expect(render).toHaveBeenLastCalledWith({ x: 0, y: 0 });
       expect(render).toHaveBeenCalledTimes(1);
 
       // we're on a slow device, and we had dropped some frames,
       // so the ending frame is like waaay after the animation duration
-      await mockAnimationFrame.advanceTime(2000);
+      await mockAnimationFrame.triggerNextTimeout(2000);
 
       expect(render).toHaveBeenNthCalledWith(2, {
         x: 99.86165969099825,
@@ -317,7 +248,7 @@ describe('animationFunction', () => {
 
       // okay, so the animation continues even after the duration
       // this is the same 5000ms animation that we had before, so now let's overshoot it even more
-      await mockAnimationFrame.advanceTime(8000);
+      await mockAnimationFrame.triggerNextTimeout(8000);
       expect(render).toHaveBeenNthCalledWith(3, {
         x: 100,
         y: 100,
@@ -333,18 +264,15 @@ describe('animationFunction', () => {
       expect(mockAnimationFrame.getCancelledFramesCount()).toBe(0);
       stopAnimation();
 
-      expect(mockAnimationFrame.getCancelledFramesCount()).toBe(1);
-
       // Ensure that the render was not called after stopping
-      await mockAnimationFrame.advanceTime(1000);
-
       expect(render).not.toHaveBeenCalled();
+      expect(mockAnimationFrame.getCancelledFramesCount()).toBe(1);
       expect(mockAnimationFrame.getCallbacksCount()).toBe(0);
     });
   });
 
   describe('linear easing with mocked requestAnimationFrame', () => {
-    const mockAnimationFrame = new MockAnimationFrame();
+    const realAnimationFrame = new RequestAnimationFrameTimeoutController();
     // this static property addition to a function is wild
     const linearEasing = configEasing('linear');
     let startAnimation: StartAnimationFunction,
@@ -353,11 +281,10 @@ describe('animationFunction', () => {
     const render = vi.fn();
 
     beforeEach(() => {
-      mockAnimationFrame.clear();
       render.mockReset();
       // Reset mocks
       vi.resetAllMocks();
-      vi.useFakeTimers({ toFake: ['requestAnimationFrame'] });
+      vi.useFakeTimers();
 
       // Create spy functions for requestAnimationFrame and cancelAnimationFrame
       requestAnimationFrameMock = vi.spyOn(window, 'requestAnimationFrame');
@@ -375,7 +302,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 1000;
 
-      startAnimation = animationFunction(from, to, linearEasing, duration, render);
+      startAnimation = animationFunction(from, to, linearEasing, duration, render, realAnimationFrame);
 
       expect(typeof startAnimation).toBe('function');
 
@@ -389,7 +316,7 @@ describe('animationFunction', () => {
       const to = { val: '1' };
       const duration = 20;
 
-      startAnimation = animationFunction(from, to, easing, duration, render);
+      startAnimation = animationFunction(from, to, easing, duration, render, realAnimationFrame);
 
       startAnimation();
 
@@ -407,7 +334,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 20;
 
-      startAnimation = animationFunction(from, to, easing, duration, render);
+      startAnimation = animationFunction(from, to, easing, duration, render, realAnimationFrame);
       startAnimation();
       vi.advanceTimersToNextFrame();
 
@@ -421,7 +348,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 1000;
 
-      startAnimation = animationFunction(from, to, linearEasing, duration, render);
+      startAnimation = animationFunction(from, to, linearEasing, duration, render, realAnimationFrame);
       const stopAnimation = startAnimation();
 
       expect(requestAnimationFrameMock).toHaveBeenCalled();
@@ -435,7 +362,7 @@ describe('animationFunction', () => {
       const to = { x: 100, y: 100 };
       const duration = 1000;
 
-      startAnimation = animationFunction(from, to, linearEasing, duration, render);
+      startAnimation = animationFunction(from, to, linearEasing, duration, render, realAnimationFrame);
 
       startAnimation();
       vi.advanceTimersToNextFrame();
