@@ -5,7 +5,7 @@ import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal } from './util';
-import { RequestAnimationFrameTimeoutController, TimeoutController } from './timeoutController';
+import { RequestAnimationFrameTimeoutController } from './timeoutController';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -25,12 +25,16 @@ export interface AnimateProps {
    * Controls the timeout for the animation. Defaults to production-ready controller,
    * useful to override for testing or custom timing needs.
    */
-  timeoutController?: TimeoutController;
+  animationManager?: AnimationManager;
 }
 
 type AnimateState = {
   style: Record<string, any>;
 };
+
+function createDefaultAnimationManager(): AnimationManager {
+  return createAnimateManager(new RequestAnimationFrameTimeoutController());
+}
 
 export class Animate extends PureComponent<AnimateProps, AnimateState> {
   static displayName = 'Animate';
@@ -44,7 +48,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     canBegin: true,
     onAnimationEnd: () => {},
     onAnimationStart: () => {},
-    timeoutController: new RequestAnimationFrameTimeoutController(),
   };
 
   private mounted: boolean = false;
@@ -58,7 +61,9 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
   constructor(props: AnimateProps, context: any) {
     super(props, context);
 
-    const { isActive, attributeName, from, to, children, duration } = this.props;
+    const { isActive, attributeName, from, to, children, duration, animationManager } = this.props;
+
+    this.manager = animationManager ?? createDefaultAnimationManager();
 
     this.handleStyleChange = this.handleStyleChange.bind(this);
     this.changeStyle = this.changeStyle.bind(this);
@@ -128,9 +133,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
 
     const isTriggered = !prevProps.canBegin || !prevProps.isActive;
 
-    if (this.manager) {
-      this.manager.stop();
-    }
+    this.manager.stop();
 
     if (this.stopJSAnimation) {
       this.stopJSAnimation();
@@ -162,10 +165,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       this.unSubscribe();
     }
 
-    if (this.manager) {
-      this.manager.stop();
-      this.manager = null;
-    }
+    this.manager.stop();
 
     if (this.stopJSAnimation) {
       this.stopJSAnimation();
@@ -189,8 +189,15 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
   }
 
   runJSAnimation(props: AnimateProps) {
-    const { from, to, duration, easing, begin, onAnimationEnd, onAnimationStart, timeoutController } = props;
-    const startAnimation = configUpdate(from, to, configEasing(easing), duration, this.changeStyle, timeoutController);
+    const { from, to, duration, easing, begin, onAnimationEnd, onAnimationStart } = props;
+    const startAnimation = configUpdate(
+      from,
+      to,
+      configEasing(easing),
+      duration,
+      this.changeStyle,
+      this.manager.getTimeoutController(),
+    );
 
     const finalStartAnimation = () => {
       this.stopJSAnimation = startAnimation();
@@ -200,9 +207,6 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
   }
 
   runAnimation(props: AnimateProps) {
-    if (!this.manager) {
-      this.manager = createAnimateManager(props.timeoutController);
-    }
     const { begin, duration, attributeName, to: propsTo, easing, onAnimationStart, onAnimationEnd, children } = props;
 
     this.unSubscribe = this.manager.subscribe(this.handleStyleChange);
@@ -232,7 +236,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       onAnimationEnd,
       shouldReAnimate,
       onAnimationReStart,
-      timeoutController,
+      animationManager,
       ...others
     } = this.props;
     const count = Children.count(children);

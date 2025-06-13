@@ -1,6 +1,6 @@
 import { TimeoutController } from './timeoutController';
 
-type ReactSmoothStyle = object;
+export type ReactSmoothStyle = object;
 
 /**
  * Represents a single item in the ReactSmoothQueue.
@@ -19,6 +19,7 @@ export type AnimationManager = {
   stop: () => void;
   start: (style: ReactSmoothQueue) => void;
   subscribe: (handleChange: (style: ReactSmoothStyle) => void) => () => void;
+  getTimeoutController(): TimeoutController;
 };
 
 export function createAnimateManager(timeoutController: TimeoutController): AnimationManager {
@@ -75,5 +76,6 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
         handleChange = () => null;
       };
     },
+    getTimeoutController: () => timeoutController,
   } satisfies AnimationManager;
 }
