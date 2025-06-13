@@ -5,7 +5,7 @@ import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
 import configUpdate from './configUpdate';
 import { getTransitionVal } from './util';
-import { RequestAnimationFrameTimeoutController } from './timeoutController';
+import { RequestAnimationFrameTimeoutController, TimeoutController } from './timeoutController';
 
 export interface AnimateProps {
   from?: Record<string, any>;
@@ -21,6 +21,11 @@ export interface AnimateProps {
   shouldReAnimate?: boolean;
   onAnimationStart?: () => void;
   onAnimationReStart?: () => void;
+  /**
+   * Controls the timeout for the animation. Defaults to production-ready controller,
+   * useful to override for testing or custom timing needs.
+   */
+  timeoutController?: TimeoutController;
 }
 
 type AnimateState = {
@@ -39,6 +44,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     canBegin: true,
     onAnimationEnd: () => {},
     onAnimationStart: () => {},
+    timeoutController: new RequestAnimationFrameTimeoutController(),
   };
 
   private mounted: boolean = false;
@@ -183,15 +189,8 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
   }
 
   runJSAnimation(props: AnimateProps) {
-    const { from, to, duration, easing, begin, onAnimationEnd, onAnimationStart } = props;
-    const startAnimation = configUpdate(
-      from,
-      to,
-      configEasing(easing),
-      duration,
-      this.changeStyle,
-      new RequestAnimationFrameTimeoutController(),
-    );
+    const { from, to, duration, easing, begin, onAnimationEnd, onAnimationStart, timeoutController } = props;
+    const startAnimation = configUpdate(from, to, configEasing(easing), duration, this.changeStyle, timeoutController);
 
     const finalStartAnimation = () => {
       this.stopJSAnimation = startAnimation();
@@ -202,7 +201,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
 
   runAnimation(props: AnimateProps) {
     if (!this.manager) {
-      this.manager = createAnimateManager(new RequestAnimationFrameTimeoutController());
+      this.manager = createAnimateManager(props.timeoutController);
     }
     const { begin, duration, attributeName, to: propsTo, easing, onAnimationStart, onAnimationEnd, children } = props;
 
@@ -233,6 +232,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
       onAnimationEnd,
       shouldReAnimate,
       onAnimationReStart,
+      timeoutController,
       ...others
     } = this.props;
     const count = Children.count(children);
