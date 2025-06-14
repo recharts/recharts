@@ -170,6 +170,56 @@ describe('createAnimateManager', () => {
       expect(mockSetTimeout.getCallbacksCount()).toBe(1);
       expect(mockSetTimeout.getTimeouts()).toEqual([undefined]);
     });
+
+    it('should allow to stop and then start again, and it should forget all state from before the stop', async () => {
+      const queue1: ReactSmoothQueue = [{ color: 'red' }, 100, { color: 'blue' }];
+      const queue2: ReactSmoothQueue = [{ color: 'green' }, 200, { color: 'yellow' }];
+
+      manager.start(queue1);
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([undefined]);
+      expect(handleChange).toHaveBeenCalledWith({ color: 'red' });
+
+      // Simulate the first timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      // now we are waiting for the second timeout
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([100]);
+
+      // Stop the animation
+      manager.stop();
+
+      // Now we can start again
+      manager.start(queue2);
+
+      // The functions from the first queue should not be called anymore
+      expect(handleChange).toHaveBeenCalledWith({ color: 'red' });
+      expect(handleChange).not.toHaveBeenCalledWith({ color: 'blue' });
+      // The first item from the second queue should be called immediately
+      expect(handleChange).toHaveBeenCalledWith({ color: 'green' });
+
+      // Simulate the second timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      expect(handleChange).toHaveBeenCalledTimes(2);
+      expect(handleChange).toHaveBeenLastCalledWith({ color: 'green' });
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([200]);
+
+      // Simulate the third timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      expect(handleChange).toHaveBeenCalledTimes(3);
+      expect(handleChange).toHaveBeenLastCalledWith({ color: 'yellow' });
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([undefined]);
+
+      // and again the last useless timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      expect(mockSetTimeout.getCallbacksCount()).toBe(0);
+    });
   });
 
   describe('when given functions', () => {
@@ -236,6 +286,68 @@ describe('createAnimateManager', () => {
       expect(fn2).toHaveBeenCalledWith();
       expect(fn3).toHaveBeenCalledTimes(1);
       expect(fn3).toHaveBeenCalledWith();
+    });
+
+    it('should allow to stop and then start again, and it should forget all state from before the stop', async () => {
+      const fn1 = vi.fn();
+      const fn2 = vi.fn();
+      const fn3 = vi.fn();
+      const fn4 = vi.fn();
+
+      manager.start([fn1, 100, fn2]);
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([undefined]);
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).not.toHaveBeenCalled();
+      expect(fn3).not.toHaveBeenCalled();
+
+      // Simulate the first timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      // now the waiting for the second timeout
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([100]);
+
+      // Stop the animation
+      manager.stop();
+
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).not.toHaveBeenCalled();
+
+      // Now we can start again
+      manager.start([fn3, 200, fn4]);
+
+      // The functions from the first queue should not be called anymore
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).not.toHaveBeenCalled();
+      // fn3 should be called immediately from the second start
+      expect(fn3).toHaveBeenCalledTimes(1);
+      expect(fn4).not.toHaveBeenCalled();
+
+      // Simulate the second timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      // The functions from the first queue should not be called anymore
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).not.toHaveBeenCalled();
+      expect(fn3).toHaveBeenCalledTimes(1);
+      expect(fn4).not.toHaveBeenCalled();
+
+      // Simulate the third timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+
+      // The functions from the first queue should not be called anymore
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(fn2).not.toHaveBeenCalled();
+      expect(fn3).toHaveBeenCalledTimes(1);
+      expect(fn4).toHaveBeenCalledTimes(1);
+
+      expect(mockSetTimeout.getCallbacksCount()).toBe(1);
+      expect(mockSetTimeout.getTimeouts()).toEqual([undefined]);
+
+      // and again the last useless timeout
+      await mockSetTimeout.triggerNextTimeout(1);
+      expect(mockSetTimeout.getCallbacksCount()).toBe(0);
     });
   });
 });

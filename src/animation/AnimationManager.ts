@@ -1,4 +1,5 @@
-import { TimeoutController } from './timeoutController';
+import { CancelableTimeout, TimeoutController } from './timeoutController';
+import { StartAnimationFunction } from './configUpdate';
 
 export type ReactSmoothStyle = object;
 
@@ -7,9 +8,11 @@ export type ReactSmoothStyle = object;
  * The item can be:
  * - A number representing a delay in milliseconds.
  * - An object representing a style change
- * - A function to be executed
+ * - A StartAnimationFunction that starts eased transition and calls different render
+ *      because of course in Recharts we have to have three ways to do everything
+ * - An arbitrary function to be executed
  */
-type ReactSmoothQueueItem = number | ReactSmoothStyle | (() => void);
+export type ReactSmoothQueueItem = number | ReactSmoothStyle | StartAnimationFunction | (() => void);
 
 export type ReactSmoothQueue = ReadonlyArray<ReactSmoothQueueItem>;
 
@@ -26,6 +29,7 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
   let currStyle: ReactSmoothQueueItem | ReactSmoothQueue = {};
   let handleChange: HandleChangeFn = () => null;
   let shouldStop = false;
+  let cancelTimeout: CancelableTimeout | null = null;
 
   const setStyle = (_style: ReactSmoothQueueItem | ReactSmoothQueue) => {
     if (shouldStop) {
@@ -41,13 +45,13 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
       const [curr, ...restStyles] = styles;
 
       if (typeof curr === 'number') {
-        timeoutController.setTimeout(setStyle.bind(null, restStyles), curr);
+        cancelTimeout = timeoutController.setTimeout(setStyle.bind(null, restStyles), curr);
 
         return;
       }
 
       setStyle(curr);
-      timeoutController.setTimeout(setStyle.bind(null, restStyles));
+      cancelTimeout = timeoutController.setTimeout(setStyle.bind(null, restStyles));
       return;
     }
 
@@ -67,6 +71,10 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
     },
     start: (style: ReactSmoothQueue) => {
       shouldStop = false;
+      if (cancelTimeout) {
+        cancelTimeout();
+        cancelTimeout = null;
+      }
       setStyle(style);
     },
     subscribe: (_handleChange: HandleChangeFn) => {
