@@ -1,4 +1,4 @@
-import { TimeoutController } from './timeoutController';
+import { CancelableTimeout, TimeoutController } from './timeoutController';
 
 export type ReactSmoothStyle = object;
 
@@ -26,6 +26,7 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
   let currStyle: ReactSmoothQueueItem | ReactSmoothQueue = {};
   let handleChange: HandleChangeFn = () => null;
   let shouldStop = false;
+  let cancelTimeout: CancelableTimeout | null = null;
 
   const setStyle = (_style: ReactSmoothQueueItem | ReactSmoothQueue) => {
     if (shouldStop) {
@@ -41,13 +42,13 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
       const [curr, ...restStyles] = styles;
 
       if (typeof curr === 'number') {
-        timeoutController.setTimeout(setStyle.bind(null, restStyles), curr);
+        cancelTimeout = timeoutController.setTimeout(setStyle.bind(null, restStyles), curr);
 
         return;
       }
 
       setStyle(curr);
-      timeoutController.setTimeout(setStyle.bind(null, restStyles));
+      cancelTimeout = timeoutController.setTimeout(setStyle.bind(null, restStyles));
       return;
     }
 
@@ -67,6 +68,10 @@ export function createAnimateManager(timeoutController: TimeoutController): Anim
     },
     start: (style: ReactSmoothQueue) => {
       shouldStop = false;
+      if (cancelTimeout) {
+        cancelTimeout();
+        cancelTimeout = null;
+      }
       setStyle(style);
     },
     subscribe: (_handleChange: HandleChangeFn) => {

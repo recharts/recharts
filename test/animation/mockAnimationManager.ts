@@ -15,22 +15,20 @@ export class MockAnimationManager implements AnimationManager {
 
   private listener: HandleChangeFn | null = null;
 
-  private isStoppedPrivate: boolean = false;
+  private isRunningPrivate: boolean = false;
 
   start(queue: ReactSmoothQueue): void {
-    if (this.isStoppedPrivate) {
-      throw new Error('AnimationManager is stopped, cannot start again');
-    }
+    this.isRunningPrivate = true;
     this.queue = queue;
   }
 
   stop(): void {
-    this.isStoppedPrivate = true;
+    this.isRunningPrivate = false;
     this.queue = null;
   }
 
-  isStopped() {
-    return this.isStoppedPrivate;
+  isRunning(): boolean {
+    return this.isRunningPrivate;
   }
 
   subscribe(handleChange: HandleChangeFn): () => void {
@@ -44,11 +42,11 @@ export class MockAnimationManager implements AnimationManager {
     return this.timeoutController;
   }
 
-  getQueue(): ReactSmoothQueue | null {
-    return this.queue;
-  }
-
-  assertQueue(expectedQueue: SerializableQueue): void {
+  assertQueue(expectedQueue: SerializableQueue | null): void {
+    if (expectedQueue === null) {
+      expect(this.queue).toBeNull();
+      return;
+    }
     const serializedQueue: SerializableQueue = this.queue.map(item => {
       if (typeof item === 'function') {
         const name = 'getMockName' in item && typeof item.getMockName === 'function' ? item.getMockName() : item.name;
