@@ -488,5 +488,97 @@ describe('Animate', () => {
       expect(child).toHaveBeenCalledTimes(3);
       animationManager.assertQueue([0, '[function finalStartAnimation]', 500, '[function onAnimationEnd]']);
     });
+
+    it('should rerender with the "to" state when isActive is false', () => {
+      const animationManager = new MockAnimationManager();
+      const child = vi.fn();
+
+      const { rerender } = render(
+        <Animate
+          from={{ opacity: 1 }}
+          to={{ opacity: 0 }}
+          duration={500}
+          isActive={false}
+          onAnimationStart={handleAnimationStart}
+          onAnimationEnd={handleAnimationEnd}
+          animationManager={animationManager}
+        >
+          {child}
+        </Animate>,
+      );
+
+      animationManager.assertQueue(null);
+
+      expect(handleAnimationStart).not.toHaveBeenCalled();
+      expect(handleAnimationEnd).not.toHaveBeenCalled();
+      expect(child).toHaveBeenLastCalledWith({ opacity: 0 });
+      expect(child).toHaveBeenCalledTimes(1);
+
+      rerender(
+        <Animate
+          from={{ opacity: 0.7 }}
+          to={{ opacity: 0.3 }}
+          duration={500}
+          isActive={false}
+          onAnimationStart={handleAnimationStart}
+          onAnimationEnd={handleAnimationEnd}
+          animationManager={animationManager}
+        >
+          {child}
+        </Animate>,
+      );
+
+      // this second render does not look like it's necessary but also doesn't hurt
+      expect(child).toHaveBeenNthCalledWith(2, { opacity: 0 });
+      expect(child).toHaveBeenLastCalledWith({ opacity: 0.3 });
+      expect(child).toHaveBeenCalledTimes(3);
+      animationManager.assertQueue(null);
+      expect(handleAnimationStart).not.toHaveBeenCalled();
+      expect(handleAnimationEnd).not.toHaveBeenCalled();
+    });
+
+    it('should not start animation on rerender if canBegin is false', () => {
+      const animationManager = new MockAnimationManager();
+      const child = vi.fn();
+
+      const { rerender } = render(
+        <Animate
+          from={{ opacity: 1 }}
+          to={{ opacity: 0 }}
+          duration={500}
+          canBegin={false}
+          onAnimationStart={handleAnimationStart}
+          animationManager={animationManager}
+        >
+          {child}
+        </Animate>,
+      );
+
+      animationManager.assertQueue(null);
+
+      expect(handleAnimationStart).not.toHaveBeenCalled();
+      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenCalledTimes(1);
+
+      rerender(
+        <Animate
+          from={{ opacity: 0.7 }}
+          to={{ opacity: 0.3 }}
+          duration={500}
+          canBegin={false}
+          onAnimationStart={handleAnimationStart}
+          animationManager={animationManager}
+        >
+          {child}
+        </Animate>,
+      );
+
+      // rerendering should not start the animation, this appears correct
+      animationManager.assertQueue(null);
+
+      // however, the child should be rerendered with the fresh "from" state so this looks like a bug
+      expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+      expect(child).toHaveBeenCalledTimes(2);
+    });
   });
 });
