@@ -1,4 +1,5 @@
 import { CancelableTimeout, TimeoutController } from './timeoutController';
+import { StartAnimationFunction } from './configUpdate';
 
 export type ReactSmoothStyle = object;
 
@@ -7,9 +8,11 @@ export type ReactSmoothStyle = object;
  * The item can be:
  * - A number representing a delay in milliseconds.
  * - An object representing a style change
- * - A function to be executed
+ * - A StartAnimationFunction that starts eased transition and calls different render
+ *      because of course in Recharts we have to have three ways to do everything
+ * - An arbitrary function to be executed
  */
-type ReactSmoothQueueItem = number | ReactSmoothStyle | (() => void);
+export type ReactSmoothQueueItem = number | ReactSmoothStyle | StartAnimationFunction | (() => void);
 
 export type ReactSmoothQueue = ReadonlyArray<ReactSmoothQueueItem>;
 

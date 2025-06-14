@@ -4,13 +4,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { Animate } from '../../src/animation/Animate';
 import { MockTimeoutController } from './mockTimeoutController';
 import { createAnimateManager } from '../../src/animation/AnimationManager';
-import { MockAnimationManager } from './mockAnimationManager';
+import { MockTickingAnimationManager } from './MockTickingAnimationManager';
 
 function getNamedSpy(name: string): () => void {
   return vi.fn().mockName(name);
 }
 
-describe('Animate', () => {
+describe('Animate timing', () => {
   const handleAnimationStart = getNamedSpy('handleAnimationStart');
   const handleAnimationEnd = getNamedSpy('handleAnimationEnd');
 
@@ -159,7 +159,7 @@ describe('Animate', () => {
 
   describe('queue when the child is an element', () => {
     it('should add items to the animation queue on start, and call stop on unmount', () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
 
       const { rerender } = render(
         <Animate
@@ -191,7 +191,7 @@ describe('Animate', () => {
     });
 
     it('should restart animation when isActive changes to true', async () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
 
       const { rerender } = render(
         <Animate
@@ -244,7 +244,7 @@ describe('Animate', () => {
 
   describe('queue when the child is a function', () => {
     it('should add items to the animation queue on start, and call the render function', async () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       render(
@@ -324,7 +324,7 @@ describe('Animate', () => {
     });
 
     it('should not start animation if canBegin is false, and render with "from" state', () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       render(
@@ -348,7 +348,7 @@ describe('Animate', () => {
     });
 
     it('should go straight to "to" state when isActive is false', () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       render(
@@ -372,7 +372,7 @@ describe('Animate', () => {
     });
 
     it('should restart animation when isActive changes to true', async () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       const { rerender } = render(
@@ -430,7 +430,7 @@ describe('Animate', () => {
     });
 
     it('should restart animation when isActive changes to true via button click', async () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
       const MyTestComponent = () => {
         const [isActive, setIsActive] = useState(false);
@@ -490,7 +490,7 @@ describe('Animate', () => {
     });
 
     it('should rerender with the "to" state when isActive is false', () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       const { rerender } = render(
@@ -538,7 +538,7 @@ describe('Animate', () => {
     });
 
     it('should not start animation on rerender if canBegin is false', () => {
-      const animationManager = new MockAnimationManager();
+      const animationManager = new MockTickingAnimationManager();
       const child = vi.fn();
 
       const { rerender } = render(
