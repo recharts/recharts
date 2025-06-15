@@ -18,7 +18,7 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
    * you will need to stop the animation and start it again from the beginning.
    *
    * Also, there is no checking for the end state of the animation,
-   * so if you call this function with number larger than 1, you mind find yourself beyond 100% progress.
+   * so if you call this function with number larger than 1, you may find yourself beyond 100% progress.
    *
    * This will not progress beyond the end of the animation, meaning that even if you call this with a percentage larger than 1,
    * it still won't call onAnimationEnd or anything after the easing function has finished.

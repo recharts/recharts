@@ -134,6 +134,13 @@ describe('Line animation', () => {
       await animationManager.setAnimationProgress(1);
       // after travelling 100% of the path, the stroke-dasharray should be 100px visible and 0px hidden
       expect(line).toHaveAttribute('stroke-dasharray', '100px 0px');
+
+      await animationManager.completeAnimation();
+      /*
+       * After the animation is completed, the stroke-dasharray should remain 100px visible and 0px hidden.
+       * It would also be acceptable to remove the stroke-dasharray attribute altogether. But no harm if it remains.
+       */
+      expect(line).toHaveAttribute('stroke-dasharray', '100px 0px');
     });
 
     it('should set the stroke-dasharray to 100, 0 when the animation is completed', async () => {
