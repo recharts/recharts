@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PureComponent, cloneElement, Children } from 'react';
+import { PureComponent, cloneElement, Children, createContext, useContext } from 'react';
 import isEqual from 'es-toolkit/compat/isEqual';
 import { AnimationManager, createAnimateManager } from './AnimationManager';
 import { configEasing, EasingInput } from './easing';
@@ -36,7 +36,7 @@ function createDefaultAnimationManager(): AnimationManager {
   return createAnimateManager(new RequestAnimationFrameTimeoutController());
 }
 
-export class Animate extends PureComponent<AnimateProps, AnimateState> {
+class AnimateImpl extends PureComponent<AnimateProps, AnimateState> {
   static displayName = 'Animate';
 
   static defaultProps: Partial<AnimateProps> = {
@@ -63,7 +63,7 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
 
     const { isActive, attributeName, from, to, children, duration, animationManager } = this.props;
 
-    this.manager = animationManager ?? createDefaultAnimationManager();
+    this.manager = animationManager;
 
     this.handleStyleChange = this.handleStyleChange.bind(this);
     this.changeStyle = this.changeStyle.bind(this);
@@ -272,4 +272,17 @@ export class Animate extends PureComponent<AnimateProps, AnimateState> {
     // @ts-expect-error TODO - fix the type error
     return <div>{Children.map(children, child => cloneContainer(child))}</div>;
   }
+}
+
+export const AnimationManagerContext = createContext<AnimationManager | null>(null);
+
+export function Animate(props: AnimateProps) {
+  const contextAnimationManager = useContext(AnimationManagerContext);
+
+  return (
+    <AnimateImpl
+      {...props}
+      animationManager={props.animationManager ?? contextAnimationManager ?? createDefaultAnimationManager()}
+    />
+  );
 }

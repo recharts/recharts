@@ -26,11 +26,11 @@ describe('Animate progress', () => {
         expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
         expect(child).toHaveBeenCalledTimes(1);
 
-        await animationManager.advanceAnimation(0.3);
+        await animationManager.setAnimationProgress(0.3);
 
         expect(child).toHaveBeenCalledWith({ opacity: 0.7 });
 
-        await animationManager.advanceAnimation(0.7);
+        await animationManager.setAnimationProgress(0.7);
 
         expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.3, 5) });
         expect(child).toHaveBeenCalledTimes(4);
@@ -60,7 +60,7 @@ describe('Animate progress', () => {
         expect(child).toHaveBeenLastCalledWith(1);
         expect(child).toHaveBeenCalledTimes(1);
 
-        await animationManager.advanceAnimation(0.5);
+        await animationManager.setAnimationProgress(0.5);
 
         // This appears to be a bug - when given numbers + function child, the tick object is empty
         expect(child).toHaveBeenLastCalledWith({});
@@ -91,7 +91,7 @@ describe('Animate progress', () => {
         expect(child).toHaveBeenLastCalledWith('1');
         expect(child).toHaveBeenCalledTimes(1);
 
-        await animationManager.advanceAnimation(0.5);
+        await animationManager.setAnimationProgress(0.5);
 
         /*
          * This appears to be a bug - when given strings + function child,
@@ -129,7 +129,7 @@ describe('Animate progress', () => {
         });
         expect(child).toHaveBeenCalledTimes(1);
 
-        await animationManager.advanceAnimation(0.3);
+        await animationManager.setAnimationProgress(0.3);
 
         // More bugs. NaN instead of interpolated value.
         expect(child).toHaveBeenLastCalledWith({
@@ -137,7 +137,7 @@ describe('Animate progress', () => {
           transformOrigin: '100px 50pxNaN',
         });
 
-        await animationManager.advanceAnimation(0.7);
+        await animationManager.setAnimationProgress(0.7);
 
         // More bugs. NaN instead of interpolated value.
         expect(child).toHaveBeenLastCalledWith({
@@ -190,7 +190,7 @@ describe('Animate progress', () => {
         expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
         expect(child).toHaveBeenCalledTimes(1);
 
-        await animationManager.advanceAnimation(0.3);
+        await animationManager.setAnimationProgress(0.3);
 
         expect(child).toHaveBeenLastCalledWith({ opacity: 0.79 });
 
@@ -211,12 +211,12 @@ describe('Animate progress', () => {
         expect(child).toHaveBeenLastCalledWith({ opacity: 0.3 });
         expect(child).toHaveBeenCalledTimes(5);
 
-        await animationManager.advanceAnimation(0.7);
+        await animationManager.setAnimationProgress(0.7);
 
         expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.44, 2) });
         expect(child).toHaveBeenCalledTimes(7);
 
-        await animationManager.advanceAnimation(1);
+        await animationManager.setAnimationProgress(1);
 
         expect(child).toHaveBeenLastCalledWith({ opacity: 0.5 });
         expect(child).toHaveBeenCalledTimes(8);
