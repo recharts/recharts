@@ -7,24 +7,28 @@ import { AnimationManager, ReactSmoothQueue } from '../../src/animation/Animatio
  */
 export class MockProgressAnimationManager extends MockAbstractAnimationManager implements AnimationManager {
   /**
-   * Advances the eased animation by a specified percentage.
+   * Sets the eased animation progress to a specific percentage.
    * It will step through all previous timeouts, objects, and functions in the queue and execute them as normal,
    * and then it will get <percent> of the way through the easing function.
-   * The percentage is additive, meaning that if you call this function multiple times,
-   * it will continue to advance the animation by the specified percentage each time.
-   * So if you call it with 0.5 twice, you will advance the animation by 100% (0.5 + 0.5).
+   * The percentage is absolute, meaning that if you call this function multiple times,
+   * it will use the last percentage only and ignore the previous ones.
+   * So if you call it with 0.5 twice, you will advance the animation by 50%.
    *
    * There is no way to rewind the animation, so if you want to go back,
    * you will need to stop the animation and start it again from the beginning.
    *
-   * Also there is no checking for the current state of the animation,
-   * so if you call this function multiple times, you mind find yourself beyond 100% progress.
+   * Also, there is no checking for the end state of the animation,
+   * so if you call this function with number larger than 1, you may find yourself beyond 100% progress.
+   *
+   * This will not progress beyond the end of the animation, meaning that even if you call this with a percentage larger than 1,
+   * it still won't call onAnimationEnd or anything after the easing function has finished.
+   * To do that, call `completeAnimation` instead, which will finish everything in the queue immediately.
    *
    * @param percent The percentage to advance the animation by, between 0 and 1.
    * @throws Error Will throw an error if the queue is empty or if the percentage is not between 0 and 1.
    * @returns Promise<void>
    */
-  async advanceAnimation(percent: number): Promise<void> {
+  async setAnimationProgress(percent: number): Promise<void> {
     if (this.queue === null || this.queue.length === 0) {
       throw new Error('Queue is empty');
     }
@@ -41,6 +45,23 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
     const timeToAdvance = animationDuration * percent + this.firstTick;
 
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
+  }
+
+  /**
+   * Completes the animation immediately, finishing all items in the queue.
+   * This will not call onAnimationEnd or anything like that,
+   * it will just finish everything in the queue immediately.
+   * If you want to call onAnimationEnd, you need to do that manually.
+   *
+   * @throws Error Will throw an error if the queue is empty.
+   * @returns Promise<void>
+   */
+  async completeAnimation(): Promise<void> {
+    if (this.queue === null || this.queue.length === 0) {
+      throw new Error('Queue is empty');
+    }
+
+    return this.poll(this.queue.length);
   }
 
   start(queue: ReactSmoothQueue) {

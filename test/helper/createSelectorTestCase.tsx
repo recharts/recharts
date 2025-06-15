@@ -4,6 +4,8 @@ import { Mock, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
+import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
+import { AnimationManagerContext } from '../../src/animation/Animate';
 
 const emptySelector: Selector<RechartsRootState, undefined, never> = () => {};
 
@@ -13,8 +15,10 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     spy: Mock<(selectorResult: T) => void>;
     debug: () => void;
     rerender: (ui: ReactNode) => void;
+    animationManager: MockProgressAnimationManager;
   } {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
+    const animationManager = new MockProgressAnimationManager();
 
     const Comp = (): null => {
       spy(useAppSelectorWithStableTest(selector));
@@ -22,11 +26,13 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     };
 
     const { container, debug, rerender } = render(
-      <Component>
-        <Comp />
-      </Component>,
+      <AnimationManagerContext.Provider value={animationManager}>
+        <Component>
+          <Comp />
+        </Component>
+      </AnimationManagerContext.Provider>,
     );
-    return { container, spy, debug, rerender };
+    return { container, spy, debug, rerender, animationManager };
   };
 }
 

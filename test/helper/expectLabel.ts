@@ -1,6 +1,6 @@
 import { assertNotNull } from './assertNotNull';
 
-type ExpectedLabel = {
+export type ExpectedLabel = {
   textContent: string;
   x: string;
   y: string;
