@@ -1,5 +1,5 @@
 import { MockAbstractAnimationManager } from './MockAbstractAnimationManager';
-import { AnimationManager } from '../../src/animation/AnimationManager';
+import { AnimationManager, ReactSmoothQueue } from '../../src/animation/AnimationManager';
 
 /**
  * A higher level mock animation manager that allows for less granular control
@@ -41,6 +41,16 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
     const timeToAdvance = animationDuration * percent + this.firstTick;
 
     await this.timeoutController.triggerNextTimeout(timeToAdvance);
+  }
+
+  start(queue: ReactSmoothQueue) {
+    super.start(queue);
+    this.isPrimed = false; // Reset the primed state when starting a new queue
+  }
+
+  stop() {
+    super.stop();
+    this.isPrimed = false; // Reset the primed state when stopping the queue
   }
 
   private isPrimed: boolean = false;

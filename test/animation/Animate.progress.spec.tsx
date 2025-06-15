@@ -146,17 +146,16 @@ describe('Animate progress', () => {
         });
         expect(child).toHaveBeenCalledTimes(4);
       });
-    });
-  });
 
-  describe('when child is a react element', () => {
-    describe('with from, to as objects', () => {
-      it.fails('should clone the child with the current style', async () => {
+      it('should clone the child with the current style (but it does not)', async () => {
         const animationManager = new MockProgressAnimationManager();
+        const transformOrigin = `100px 50px`;
+
         const { container } = render(
           <Animate
-            from={{ opacity: 1 }}
-            to={{ opacity: 0 }}
+            from={{ transform: 'scaleY(0)', transformOrigin }}
+            to={{ transform: 'scaleY(1)', transformOrigin }}
+            attributeName="transform"
             easing="linear"
             duration={500}
             animationManager={animationManager}
@@ -166,16 +165,61 @@ describe('Animate progress', () => {
         );
 
         const clonedChild = container.querySelector('.test-child');
-        expect(clonedChild).toHaveStyle({ opacity: '1' });
+        // this looks like another bug
+        expect(clonedChild).toHaveStyle({ transform: '[object Object]' });
+      });
+    });
 
-        // TODO this pathway doesn't animate, it sets a CSS transition so this animation manager doesn't work, we need a new one. Tomorrow.
+    describe('when "to" changes in the middle of the animation', () => {
+      it('should update the child with the new style and unfortunately it jumps in the middle', async () => {
+        const animationManager = new MockProgressAnimationManager();
+        const child = vi.fn();
+
+        const { rerender } = render(
+          <Animate
+            from={{ opacity: 1 }}
+            to={{ opacity: 0.3 }}
+            easing="linear"
+            duration={500}
+            animationManager={animationManager}
+          >
+            {child}
+          </Animate>,
+        );
+
+        expect(child).toHaveBeenLastCalledWith({ opacity: 1 });
+        expect(child).toHaveBeenCalledTimes(1);
+
         await animationManager.advanceAnimation(0.3);
 
-        expect(clonedChild).toHaveStyle({ opacity: '0.7' });
+        expect(child).toHaveBeenLastCalledWith({ opacity: 0.79 });
+
+        // Change "to" in the middle of the animation
+        rerender(
+          <Animate
+            from={{ opacity: 1 }}
+            to={{ opacity: 0.5 }}
+            easing="linear"
+            duration={500}
+            animationManager={animationManager}
+          >
+            {child}
+          </Animate>,
+        );
+
+        // the animation now suddenly jumps to the old "to" value, this is not great, we can do better
+        expect(child).toHaveBeenLastCalledWith({ opacity: 0.3 });
+        expect(child).toHaveBeenCalledTimes(5);
 
         await animationManager.advanceAnimation(0.7);
 
-        expect(clonedChild).toHaveStyle({ opacity: expect.closeTo(0.3, 5) });
+        expect(child).toHaveBeenLastCalledWith({ opacity: expect.closeTo(0.44, 2) });
+        expect(child).toHaveBeenCalledTimes(7);
+
+        await animationManager.advanceAnimation(1);
+
+        expect(child).toHaveBeenLastCalledWith({ opacity: 0.5 });
+        expect(child).toHaveBeenCalledTimes(8);
       });
     });
   });
