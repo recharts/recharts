@@ -19,7 +19,7 @@ describe('Animate timing', () => {
   });
 
   describe('with animation steps as strings', () => {
-    it('Should change the style of children via element cloning', () => {
+    it('should change the style of children via element cloning and vi fake timers', () => {
       vi.useFakeTimers();
       expect.assertions(2);
       const { container } = render(
@@ -31,6 +31,7 @@ describe('Animate timing', () => {
       const element = container.getElementsByClassName('test-wrapper')[0];
       expect(element).toHaveStyle({
         opacity: 1,
+        transition: null,
       });
 
       act(() => {
@@ -39,6 +40,63 @@ describe('Animate timing', () => {
 
       expect(element).toHaveStyle({
         opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+    });
+
+    it('should change the style of a single child via element cloning', async () => {
+      const animationManager = new MockTickingAnimationManager();
+      const { container } = render(
+        // @ts-expect-error TODO - fix the type error
+        <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+      const element = container.getElementsByClassName('test-wrapper')[0];
+      expect(element).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+
+      await animationManager.poll(3);
+
+      expect(element).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+    });
+
+    it('should change style of multiple children via element cloning', async () => {
+      const animationManager = new MockTickingAnimationManager();
+      const { container } = render(
+        // @ts-expect-error TODO - fix the type error
+        <Animate from="1" to="0" attributeName="opacity" duration={500} animationManager={animationManager}>
+          <div className="test-wrapper-1" />
+          <div className="test-wrapper-2" />
+        </Animate>,
+      );
+
+      const element1 = container.getElementsByClassName('test-wrapper-1')[0];
+      const element2 = container.getElementsByClassName('test-wrapper-2')[0];
+
+      expect(element1).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+      expect(element2).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+
+      await animationManager.poll(3);
+
+      expect(element1).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+      expect(element2).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
       });
     });
 
@@ -63,7 +121,7 @@ describe('Animate timing', () => {
     });
   });
 
-  describe('with animation steps as objects', () => {
+  describe('with animation steps as objects with a simple numeric values', () => {
     it('should call onAnimationStart and onAnimationEnd', async () => {
       const timeoutController = new MockTimeoutController();
       const animationManager = createAnimateManager(timeoutController);
@@ -154,6 +212,190 @@ describe('Animate timing', () => {
 
       expect(childFunction).toHaveBeenCalledTimes(3);
       expect(childFunction).toHaveBeenCalledWith({ opacity: 0 });
+    });
+
+    it('should change the style of a single child via element cloning', async () => {
+      const animationManager = new MockTickingAnimationManager();
+      const { container } = render(
+        <Animate from={{ opacity: 1 }} to={{ opacity: 0 }} duration={500} animationManager={animationManager}>
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+      const element = container.getElementsByClassName('test-wrapper')[0];
+      expect(element).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+
+      await animationManager.poll(3);
+
+      expect(element).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+    });
+
+    it('should change style of multiple children via element cloning', async () => {
+      const animationManager = new MockTickingAnimationManager();
+      const { container } = render(
+        <Animate from={{ opacity: 1 }} to={{ opacity: 0 }} duration={500} animationManager={animationManager}>
+          <div className="test-wrapper-1" />
+          <div className="test-wrapper-2" />
+        </Animate>,
+      );
+
+      const element1 = container.getElementsByClassName('test-wrapper-1')[0];
+      const element2 = container.getElementsByClassName('test-wrapper-2')[0];
+
+      expect(element1).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+      expect(element2).toHaveStyle({
+        opacity: 1,
+        transition: null,
+      });
+
+      await animationManager.poll(3);
+
+      expect(element1).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+      expect(element2).toHaveStyle({
+        opacity: 0,
+        transition: 'opacity 500ms ease',
+      });
+    });
+  });
+
+  describe('with animation steps as objects with a string CSS values', () => {
+    it('should call onAnimationStart and onAnimationEnd', async () => {
+      const timeoutController = new MockTimeoutController();
+      const animationManager = createAnimateManager(timeoutController);
+
+      const transformOrigin = `100px 50px`;
+
+      render(
+        <Animate
+          from={{ transform: 'scaleY(0)', transformOrigin }}
+          to={{ transform: 'scaleY(1)', transformOrigin }}
+          duration={500}
+          onAnimationStart={handleAnimationStart}
+          onAnimationEnd={handleAnimationEnd}
+          animationManager={animationManager}
+        >
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+
+      expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+      expect(handleAnimationEnd).not.toHaveBeenCalled();
+
+      await timeoutController.flushAllTimeouts();
+
+      expect(handleAnimationStart).toHaveBeenCalledTimes(1);
+      expect(handleAnimationEnd).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not start animation if canBegin is false', async () => {
+      const timeoutController = new MockTimeoutController();
+      const animationManager = createAnimateManager(timeoutController);
+
+      render(
+        <Animate
+          from={{ transform: 'scaleY(0)' }}
+          to={{ transform: 'scaleY(1)' }}
+          duration={500}
+          canBegin={false}
+          onAnimationStart={handleAnimationStart}
+          animationManager={animationManager}
+        >
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+
+      await timeoutController.flushAllTimeouts();
+
+      expect(handleAnimationStart).not.toHaveBeenCalled();
+    });
+
+    it('should not start animation if isActive is false', async () => {
+      const timeoutController = new MockTimeoutController();
+      const animationManager = createAnimateManager(timeoutController);
+
+      render(
+        <Animate
+          from={{ transform: 'scaleY(0)' }}
+          to={{ transform: 'scaleY(1)' }}
+          duration={500}
+          isActive={false}
+          onAnimationStart={handleAnimationStart}
+          animationManager={animationManager}
+        >
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+
+      await timeoutController.flushAllTimeouts();
+
+      expect(handleAnimationStart).not.toHaveBeenCalled();
+    });
+
+    it('should call children function with current style (but it does not)', async () => {
+      const timeoutController = new MockTimeoutController();
+      const animationManager = createAnimateManager(timeoutController);
+      const childFunction = vi.fn();
+
+      render(
+        <Animate
+          from={{ transform: 'scaleY(0)' }}
+          to={{ transform: 'scaleY(1)' }}
+          duration={500}
+          animationManager={animationManager}
+        >
+          {childFunction}
+        </Animate>,
+      );
+
+      expect(childFunction).toHaveBeenCalledWith({ transform: 'scaleY(0)' });
+      expect(childFunction).toHaveBeenCalledTimes(1);
+
+      await timeoutController.flushAllTimeouts();
+
+      expect(childFunction).toHaveBeenCalledTimes(3);
+      // More bugs. NaN instead of interpolated value.
+      expect(childFunction).toHaveBeenCalledWith({ transform: 'scaleY(0)NaN' });
+    });
+
+    it('should change the style of a single child via element cloning', async () => {
+      const animationManager = new MockTickingAnimationManager();
+      const transformOrigin = `100px 50px`;
+
+      const { container } = render(
+        <Animate
+          from={{ transform: 'scaleY(0)', transformOrigin }}
+          to={{ transform: 'scaleY(1)', transformOrigin }}
+          duration={500}
+          animationManager={animationManager}
+        >
+          <div className="test-wrapper" />
+        </Animate>,
+      );
+      const element = container.getElementsByClassName('test-wrapper')[0];
+      expect(element).toHaveStyle({
+        transform: 'scaleY(0)',
+        transition: null,
+        transformOrigin,
+      });
+
+      await animationManager.poll(3);
+
+      expect(element).toHaveStyle({
+        transform: 'scaleY(1)',
+        transition: 'transform 500ms ease,transform-origin 500ms ease',
+        transformOrigin,
+      });
     });
   });
 
