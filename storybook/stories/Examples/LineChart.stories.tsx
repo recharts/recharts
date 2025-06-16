@@ -20,6 +20,7 @@ import { DataKey } from '../../../src/util/types';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
 
 export default {
   component: LineChart,
@@ -1111,7 +1112,7 @@ export const ChangingDataKey = {
     const [visible, setVisible] = useState(true);
 
     return (
-      <>
+      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
         <button
           type="button"
           onClick={() => {
@@ -1156,7 +1157,7 @@ export const ChangingDataKey = {
             label={{ fill: 'red', dy: -25 }}
           />
         </LineChart>
-      </>
+      </ManualAnimations>
     );
   },
   args: {

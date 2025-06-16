@@ -35,7 +35,7 @@ export class MockTimeoutController implements TimeoutController {
       throw new Error('No timeouts to trigger');
     }
 
-    const { callback } = this.timeouts.shift()!;
+    const { callback } = this.timeouts.shift();
     await Promise.resolve(); // Simulate async behavior
     // Remove the timeout before executing the callback, because the callback may queue itself again
     this.removeTimeout(callback);
@@ -60,6 +60,7 @@ export class MockTimeoutController implements TimeoutController {
 
   clear() {
     this.timeouts = [];
+    this.cancelledFramesCount = 0;
   }
 
   private removeTimeout(callback: CallbackType) {

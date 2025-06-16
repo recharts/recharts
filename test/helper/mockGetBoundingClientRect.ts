@@ -39,3 +39,27 @@ export function mockGetBoundingClientRect(rect: Partial<DOMRect>, mockClientHeig
     mockHTMLElementProperty('offsetWidth', rect.width);
   }
 }
+
+/**
+ * Mock a sequence of getBoundingClientRect calls with different values.
+ * This is useful for testing behaviour of Legend and other components that rely on the size of the DOM elements
+ * and change their layout based on the size of the elements as the rendering progresses.
+ * @param rects an array of partial DOMRect objects that will be returned by getBoundingClientRect in sequence. The last rect will be returned as the final value repeatedly.
+ * @param mockClientHeightWidth if true, will also mock offsetHeight and offsetWidth properties of the HTMLElement
+ * @return void
+ */
+export function mockSequenceOfGetBoundingClientRect(
+  rects: Array<Partial<DOMRect>>,
+  mockClientHeightWidth = true,
+): void {
+  const mockDomRects = rects.map(getMockDomRect);
+  for (let i = 0; i < mockDomRects.length - 1; i++) {
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValueOnce(mockDomRects[i]);
+  }
+  vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue(mockDomRects[mockDomRects.length - 1]);
+
+  if (mockClientHeightWidth) {
+    mockHTMLElementProperty('offsetHeight', rects[0].height);
+    mockHTMLElementProperty('offsetWidth', rects[0].width);
+  }
+}
