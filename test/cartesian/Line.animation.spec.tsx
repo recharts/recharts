@@ -7,6 +7,7 @@ import { PageData } from '../_data';
 import { mockGetTotalLength } from '../helper/mockGetTotalLength';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
+import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 
 function getLine(container: HTMLElement) {
   return container.querySelector('.recharts-line-curve');
@@ -426,22 +427,9 @@ describe('Line animation', () => {
 
     const renderTestCase = createSelectorTestCase(MyTestCase);
 
-    it('should start a new animation when the dataKey prop changes', async () => {
-      const { container, animationManager } = renderTestCase();
-
+    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      // The test begins initially with the UV dataKey, so we need to run the animation to completion.
       await animationManager.completeAnimation();
-
-      const line1 = getLine(container);
-      expect(line1).toBeInTheDocument();
-      // the path is fully rendered
-      const initialPath = line1.getAttribute('d');
-      expect(initialPath).toBe('M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
-      expect(line1.getAttribute('d')).toBe(initialPath);
-      // the stroke-dasharray is 100px visible and 0px hidden because the animation is completed
-      const fullyVisibleLine = '100px 0px';
-      expect(line1).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
-      // all labels are visible because the animation is completed
-      expectLabels(container, expectedUvLabels);
 
       // change the dataKey prop
       const button = container.querySelector('button');
@@ -450,13 +438,42 @@ describe('Line animation', () => {
         button.click();
       });
 
+      // now the chart is ready for assertions
+    }
+
+    it('should keep the whole line visible during the animation', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+      const fullyVisibleLine = '100px 0px';
+
       /*
-       * Immediately after clicking the button, line should receive new dataKey immediately, but path should be the same
-       * and then animate to the new path slowly.
+       * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
+       * but unfortunately the path ref has not been updated yet, so this will hide the whole line for a single tick.
+       * Looks like a bug, but it's invisible in the browser because the animation is so quick.
        */
-      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+
+      await animationManager.setAnimationProgress(0.1);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
+
+      await animationManager.setAnimationProgress(1);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
+
+      await animationManager.completeAnimation();
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
+    });
+
+    it('should hide labels during the animation', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await prime(container, animationManager);
+
       /*
-       * All labels now appear again because the animation is not started yet, but they swap to PV label values immediately.
+       * The labels should still be hidden! But all labels now appear again.
+       * Why? Because the animation is not started yet, but they swap to PV label values immediately.
        * Unfortunately the labels still show at the UV position so we have a flash of new labels at the old position.
        * This looks like a bug, but in the browser the labels disappear so quickly that I can't see it.
        */
@@ -510,41 +527,50 @@ describe('Line animation', () => {
           y: '52.475',
         },
       ]);
-      /*
-       * stroke-dasharray should still be 100px visible and 0px hidden because the animation works by changing the path, not the dasharray
-       * but unfortunately the path ref has not been updated yet, so this will hide the whole line for a single tick.
-       * Looks like a bug, but it's invisible in the browser because the animation is so quick.
-       */
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
-
       await animationManager.setAnimationProgress(0.2);
-
-      // the labels should all disappear because new animation is in progress
+      // the labels should be hidden by now because the animation is in progress
       expectLabels(container, []);
-      // path changes a little bit, but not much
-      expect(getLine(container).getAttribute('d')).toBe('M5,18.68L23,32.779L41,38.484L59,41.36L77,37.926L95,52.34');
-      expect(getLine(container).getAttribute('d')).not.toBe(initialPath);
-      /*
-       * The line should remain fully visible. DataKey change does not affect the visibility of the line,
-       * the animation is meant to be different.
-       */
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
 
       await animationManager.setAnimationProgress(0.5);
-      expect(getLine(container).getAttribute('d')).toBe('M5,39.2L23,40.699L41,54.959L59,28.4L77,46.139L95,52.138');
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
+      // the labels should still be hidden
+      expectLabels(container, []);
 
       await animationManager.setAnimationProgress(1);
-      expect(getLine(container).getAttribute('d')).toBe('M5,73.4L23,53.897L41,82.418L59,6.8L77,59.828L95,51.8');
-      expect(getLine(container)).toHaveAttribute('stroke-dasharray', fullyVisibleLine);
-
-      // the labels should still be hidden because onAnimationEnd is not called yet
+      // the labels should still be hidden
       expectLabels(container, []);
 
       await animationManager.completeAnimation();
 
       // after the animation is completed, the labels should appear again
       expectLabels(container, expectedPvLabels);
+    });
+
+    it('should start a new animation when the dataKey prop changes', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await prime(container, animationManager);
+
+      const initialPath = 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475';
+      /*
+       * Immediately after clicking the button, line should receive new dataKey immediately, but path should be the same
+       * and then animate to the new path slowly.
+       */
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+
+      // path changes little by little as the animation progresses
+      await animationManager.setAnimationProgress(0.2);
+      expect(getLine(container).getAttribute('d')).toBe('M5,18.68L23,32.779L41,38.484L59,41.36L77,37.926L95,52.34');
+      expect(getLine(container).getAttribute('d')).not.toBe(initialPath);
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getLine(container).getAttribute('d')).toBe('M5,39.2L23,40.699L41,54.959L59,28.4L77,46.139L95,52.138');
+
+      await animationManager.setAnimationProgress(1);
+      expect(getLine(container).getAttribute('d')).toBe('M5,73.4L23,53.897L41,82.418L59,6.8L77,59.828L95,51.8');
+
+      // path should not change after the animation is completed
+      await animationManager.completeAnimation();
+      expect(getLine(container).getAttribute('d')).toBe('M5,73.4L23,53.897L41,82.418L59,6.8L77,59.828L95,51.8');
     });
   });
 
