@@ -229,9 +229,91 @@ describe('Line animation', () => {
       await animationManager.completeAnimation();
       expectLabels(container, expectedLabels);
     });
+
+    it.todo('should not move the path itself during the animation');
   });
 
-  describe.todo('with stroke-dasharray prop');
+  describe('with stroke-dasharray prop', () => {
+    describe('with isAnimationActive={false}', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart data={PageData} width={100} height={100}>
+          <Line dataKey="uv" strokeDasharray="5 5" isAnimationActive={false} />
+          {children}
+        </LineChart>
+      ));
+
+      it('should render the line with stroke-dasharray', () => {
+        const { container } = renderTestCase();
+
+        const line = getLine(container);
+        expect(line).toBeInTheDocument();
+        // the path is fully rendered
+        expect(line).toHaveAttribute('d', 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
+        // the line has stroke-dasharray set to 5 5
+        expect(line).toHaveAttribute('stroke-dasharray', '5 5');
+      });
+    });
+
+    describe('with isAnimationActive={true}', () => {
+      const renderTestCase = createSelectorTestCase(({ children }) => (
+        <LineChart data={PageData} width={100} height={100}>
+          <Line dataKey="uv" animationEasing="linear" strokeDasharray="7 3" />
+          {children}
+        </LineChart>
+      ));
+
+      it('should start the line with fully generated path but 0 stroke-dasharray', () => {
+        const { container } = renderTestCase();
+
+        const line = getLine(container);
+        expect(line).toBeInTheDocument();
+        // the path is fully rendered
+        expect(line).toHaveAttribute('d', 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
+        // but the strokeDasharray is 0 so the line is not visible
+        expect(line).toHaveAttribute('stroke-dasharray', '0px, 0px');
+      });
+
+      it('should animate line left-to-right by continually extending the stroke-dasharray', async () => {
+        const { container, animationManager } = renderTestCase();
+
+        await animationManager.setAnimationProgress(0.1);
+
+        const line = getLine(container);
+        // after travelling 10% of the path, the stroke-dasharray should be 10px visible and 90px hidden
+        // but as the line grows, it leaves behind the 7,3 dashed stroke as instructed by the prop
+        expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 1.7763568394002505e-15px, 90px');
+
+        await animationManager.setAnimationProgress(0.2);
+
+        // after travelling 20% of the path, the stroke-dasharray should be 20px visible and 80px hidden
+        expect(line).toHaveAttribute('stroke-dasharray', '7px, 3px, 7px, 3px, 0px, 80px');
+
+        await animationManager.setAnimationProgress(1);
+        // after travelling 100% of the path, the stroke-dasharray should be 100px visible and 0px hidden
+        expect(line).toHaveAttribute(
+          'stroke-dasharray',
+          '7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 0px, 0px',
+        );
+
+        await animationManager.completeAnimation();
+        /*
+         * After the animation is completed, the stroke-dasharray should remain 100px visible and 0px hidden.
+         * This could be shortened to just '7,3' but no harm if it remains as is.
+         */
+        expect(line).toHaveAttribute(
+          'stroke-dasharray',
+          '7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 7px, 3px, 0px, 0px',
+        );
+      });
+    });
+  });
+
+  describe.todo(
+    'tests with Legend that show the line does not move up and down during the animation because the Legend height is read from the DOM',
+  );
+  describe.todo(
+    'tests with YAxis with auto width that show the line does not move up and down during the animation because the YAxis width is read from the DOM',
+  );
   describe.todo('tests that change dataKey');
   describe.todo('tests that change data array');
   describe.todo('tests that interrupt the animation in the middle');
