@@ -36,6 +36,14 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
       throw new Error('Percent must be greater than or equal to 0');
     }
 
+    if (this.animationProgress >= 1) {
+      throw new Error(
+        'Animation is already complete. Call completeAnimation to finish the queue. MockProgressAnimationManager does not support rewinding.',
+      );
+    }
+
+    this.animationProgress = percent;
+
     const animationDuration = await this.peekAnimationDuration();
 
     /*
@@ -61,17 +69,24 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
       throw new Error('Queue is empty');
     }
 
+    if (this.animationProgress < 1) {
+      // Finish the animation by setting the progress to 100%. This will also prime the animation manager if it hasn't been primed yet.
+      await this.setAnimationProgress(1);
+    }
+
     return this.poll(this.queue.length);
   }
 
   start(queue: ReactSmoothQueue) {
     super.start(queue);
     this.isPrimed = false; // Reset the primed state when starting a new queue
+    this.animationProgress = 0; // Reset the animation progress when starting a new queue
   }
 
   stop() {
     super.stop();
     this.isPrimed = false; // Reset the primed state when stopping the queue
+    this.animationProgress = 0; // Reset the animation progress when stopping a queue
   }
 
   private isPrimed: boolean = false;
@@ -83,6 +98,8 @@ export class MockProgressAnimationManager extends MockAbstractAnimationManager i
    * @private
    */
   private firstTick: number = 16;
+
+  private animationProgress: number = 0;
 
   /**
    * Priming the animation manager is a necessary step before starting the animation.

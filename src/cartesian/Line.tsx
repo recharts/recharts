@@ -621,7 +621,7 @@ function LineImpl(props: Props) {
   const points: ReadonlyArray<LinePointItem> | undefined = useAppSelector(state =>
     selectLinePoints(state, xAxisId, yAxisId, isPanorama, lineSettings),
   );
-  if ((layout !== 'horizontal' && layout !== 'vertical') || points == null) {
+  if (layout !== 'horizontal' && layout !== 'vertical') {
     // Cannot render Line in an unsupported layout
     return null;
   }
