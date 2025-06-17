@@ -15,7 +15,7 @@ const config = {
     prioritizePerformanceOverAccuracy: true,
   },
   ignoreStatic: true,
-  mutate: ['src/animation/Animate.tsx'],
+  mutate: ['src/cartesian/Line.tsx'],
 };
 // eslint-disable-next-line import/no-default-export
 export default config;
