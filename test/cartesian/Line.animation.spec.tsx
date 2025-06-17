@@ -9,6 +9,7 @@ import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { expectDots } from '../helper/expectDots';
+import { expectLines } from '../helper/expectLine';
 
 function getLine(container: HTMLElement) {
   return container.querySelector('.recharts-line-curve');
@@ -990,6 +991,78 @@ describe('Line animation', () => {
     });
   });
 
+  describe('when the Line has a key prop to force re-animation', () => {
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [dataKey, setDataKey] = useState('uv');
+      const changeDataKey = () => {
+        setDataKey(prev => (prev === 'uv' ? 'pv' : 'uv'));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeDataKey}>
+            Change dataKey
+          </button>
+          <LineChart data={PageData} width={100} height={100}>
+            {/* Thanks to the key prop, React will force re-render.
+             * This effectively makes it so that the Line always does the initial animation
+             * even if it has already been rendered before.
+             */}
+            <Line dataKey={dataKey} animationEasing="linear" label key={dataKey} />
+            {children}
+          </LineChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      // The test begins initially with the UV dataKey, so we need to run the animation to completion.
+      await animationManager.completeAnimation();
+
+      // change the dataKey prop
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
+      act(() => {
+        button.click();
+      });
+
+      // now the chart is ready for assertions
+    }
+
+    it('should animate the line length from 0 to full length', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+
+      const initialPath = 'M5,73.4L23,53.897L41,82.418L59,6.8L77,59.828L95,51.8';
+      /*
+       * Immediately after clicking the button, line should receive new dataKey, but thanks to the key prop,
+       * this renders the "appear" animation from 0 to full length.
+       */
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      // stroke-dasharray should be 0px, 0px because the animation is not started yet
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+
+      // path changes little by little as the animation progresses
+      await animationManager.setAnimationProgress(0.2);
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '20px 80px');
+
+      await animationManager.setAnimationProgress(0.5);
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '50px 50px');
+
+      await animationManager.setAnimationProgress(1);
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '100px 0px');
+
+      // path should not change after the animation is completed
+      await animationManager.completeAnimation();
+      expect(getLine(container).getAttribute('d')).toBe(initialPath);
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '100px 0px');
+    });
+  });
+
   describe('tests that change data array', () => {
     type DataType = Array<{
       name: string;
@@ -1628,6 +1701,75 @@ describe('Line animation', () => {
     });
   });
 
-  describe.todo('tests that hide and show the line element itself during the animation');
-  describe.todo('tests that force the animation to restart by changing the key prop');
+  describe('when the line element hides during the animation', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      const [isVisible, setIsVisible] = useState(true);
+      const toggleVisibility = () => {
+        setIsVisible(prev => !prev);
+      };
+      return (
+        <div>
+          <button type="button" onClick={toggleVisibility}>
+            Toggle visibility
+          </button>
+          <LineChart data={PageData} width={100} height={100}>
+            <Line dataKey="uv" animationEasing="linear" label hide={!isVisible} />
+            {children}
+          </LineChart>
+        </div>
+      );
+    });
+
+    it('should not crash when the line hides during the animation', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      // start the initial animation but do not complete it
+      await animationManager.setAnimationProgress(0.3);
+
+      // hide the line element
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
+      act(() => {
+        button.click();
+      });
+
+      // the chart should not crash and should not throw any errors
+      expectLines(container, []);
+    });
+
+    it('should restart the animation from the beginning when the line element appears again', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      // start the initial animation but do not complete it
+      await animationManager.setAnimationProgress(0.3);
+
+      // hide the line element
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
+      act(() => {
+        button.click();
+      });
+
+      expectLines(container, []);
+
+      // show the line element again
+      act(() => {
+        button.click();
+      });
+
+      // the animation should restart from the beginning
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '0px 0px');
+      expect(getLine(container).getAttribute('d')).toBe('M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
+
+      await animationManager.setAnimationProgress(0.3);
+      // the line should be partially visible again
+      expect(getLine(container)).toHaveAttribute('stroke-dasharray', '30px 70px');
+
+      // complete the animation
+      await animationManager.completeAnimation();
+
+      // now the chart should show the full line
+      expectLines(container, [{ d: 'M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475' }]);
+    });
+  });
 });
