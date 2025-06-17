@@ -1098,7 +1098,6 @@ export const ChangingDataKey = {
     const data2 = [
       { y: { value: 3 }, name: 'y1' },
       { y: { value: 2 }, name: 'y2' },
-      { y: { value: 1 }, name: 'y3' },
     ];
 
     const dataKey1 = (d: any) => {

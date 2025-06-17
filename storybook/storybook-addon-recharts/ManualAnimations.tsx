@@ -14,20 +14,20 @@ const animationManager = new ManualAnimationManager();
 export function ManualAnimations({ isEnabled, children }: Props) {
   const [progress, setProgress] = useState(0);
 
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProgressChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
-    setProgress(value);
     /*
      * If we actually set the value to 1 then the animationManager automatically jumps to the next callback
      * and we can't rewind anymore so let's stop at 0.999
      */
-    animationManager.setAnimationProgress(Math.min(0.999, value));
+    await animationManager.setAnimationProgress(Math.min(0.999, value));
+    setProgress(value);
   };
 
-  const completeAnimation = (e: React.MouseEvent) => {
+  const completeAnimation = async (e: React.MouseEvent) => {
     e.preventDefault();
+    await animationManager.setAnimationProgress(1);
     setProgress(1);
-    animationManager.setAnimationProgress(1);
   };
 
   if (!isEnabled) {
