@@ -21,7 +21,7 @@ Documentation at [recharts.org](https://recharts.org) and our [storybook](https:
 
 Also see [the wiki](https://github.com/recharts/recharts/wiki).
 
-All development is done on the `master` branch. The current latest release and storybook documentation reflects what is on the `release` branch.
+All development is done on the `main` branch. The current latest release and storybook documentation reflects what is on the `release` branch.
 
 ## Examples
 
