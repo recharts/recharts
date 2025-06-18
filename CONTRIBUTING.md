@@ -58,7 +58,7 @@ _Before_ submitting a pull request, please make sure the following is done…
 
 - Search [GitHub](https://github.com/recharts/recharts/pulls) for an open or closed Pull Request that relates to your submission. You don't want to duplicate effort.
 
-- Fork the repo and create your branch from `master`.
+- Fork the repo and create your branch from `main`.
 - If you have added functionality or changed existing functionality, be sure to add a test. Ideally a unit test for helper function, or a test that includes rendering with RTL.
 - If you've changed APIs, make sure that the stories in Storybook are working as expected.
 - Ensure the test suite passes (`npm run test`).
