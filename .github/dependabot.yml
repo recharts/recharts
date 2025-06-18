@@ -17,9 +17,6 @@ updates:
       - 'dependencies'
     # max of 10 PRs at a time from dependabot
     open-pull-requests-limit: 10
-    # request maintainers to review
-    reviewers:
-      - 'recharts/maintainers'
     groups:
       storybook:
         patterns:
