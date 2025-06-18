@@ -9,11 +9,10 @@ permissions:
 on:
   pull_request:
     branches:
-      - 3.x
+      - main
   push:
     branches:
-      - master
-      - 3.x
+      - main
 
 env:
   NODE_VERSION: 20.x
