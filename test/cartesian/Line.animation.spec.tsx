@@ -458,15 +458,14 @@ describe('Line animation', () => {
       </LineChart>
     ));
 
-    // this test should fail because I can see this bug in the storybook
-    it.fails('should not move the path during the animation', async () => {
+    it('should not move the path during the animation', async () => {
       const { container, animationManager } = renderTestCase();
 
       const line = getLine(container);
       expect(line).toBeInTheDocument();
       // the path is fully rendered
       const initialPath = line.getAttribute('d');
-      expect(initialPath).toBe('M5,5L23,27.5L41,27.5L59,50L77,32.45L95,52.475');
+      expect(initialPath).toBe('M5,5L23,15L41,15L59,25L77,17.2L95,26.1');
       expect(line.getAttribute('d')).toBe(initialPath);
 
       // the path should not move during the animation but unfortunately it does
