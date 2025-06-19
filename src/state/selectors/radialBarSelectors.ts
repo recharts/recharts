@@ -409,7 +409,8 @@ export const selectRadialBarSectors: (
       chartData == null ||
       bandSize == null ||
       pos == null ||
-      (layout !== 'centric' && layout !== 'radial')
+      (layout !== 'centric' && layout !== 'radial') ||
+      radiusAxisTicks == null
     ) {
       return [];
     }
