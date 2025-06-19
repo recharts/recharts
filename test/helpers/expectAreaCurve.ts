@@ -9,6 +9,6 @@ export function expectAreaCurve(container: Element, expectedAreas: ReadonlyArray
   assertNotNull(container);
   const areaCurves = container.querySelectorAll('.recharts-area-curve');
   assertNotNull(areaCurves);
-  const actualAreas = Array.from(areaCurves).map(area => ({ d: area.getAttribute('d') }));
+  const actualAreas = Array.from(areaCurves).map(area => ({ d: area.getAttribute('d') ?? '' }));
   expect(actualAreas).toEqual(expectedAreas);
 }
