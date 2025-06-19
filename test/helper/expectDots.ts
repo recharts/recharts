@@ -3,7 +3,7 @@ export type ExpectedDot = {
   cy: string;
 };
 
-export function expectDots(container: HTMLElement, expectedDots: ExpectedDot[]) {
+export function expectDots(container: Element, expectedDots: ReadonlyArray<ExpectedDot>) {
   const dots = container.querySelectorAll<SVGCircleElement>('circle.recharts-dot');
 
   const actualDots = Array.from(dots).map(dot => ({

@@ -35,8 +35,8 @@ export function ManualAnimations({ isEnabled, children }: Props) {
   }
   return (
     <AnimationManagerContext.Provider value={animationManager}>
-      {/* div to force vertical stacking */}
-      <div>
+      {/* div to force vertical stacking. Comes with some basic styling so that it allows ResponsiveContainer to render */}
+      <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
         {children}
         <form>
           <h3>Manual Animations</h3>

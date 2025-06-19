@@ -1,7 +1,7 @@
 import { expect } from 'vitest';
 import { assertNotNull } from '../helper/assertNotNull';
 
-type ExpectedArea = {
+export type ExpectedArea = {
   d: string;
 };
 
