@@ -140,7 +140,10 @@ interface InternalPieProps extends PieDef {
 interface PieProps extends PieDef {
   id?: string;
   className?: string;
-  dataKey: DataKey<any>;
+  /**
+   * Defaults to 'value' if not specified.
+   */
+  dataKey?: DataKey<any>;
   nameKey?: DataKey<any>;
   /** The minimum angle for no-zero element */
   minAngle?: number;
@@ -254,7 +257,7 @@ type PieSectorsProps = {
   sectors: Readonly<PieSectorDataItem[]>;
   activeShape: ActiveShape<Readonly<PieSectorDataItem>>;
   inactiveShape: ActiveShape<Readonly<PieSectorDataItem>>;
-  allOtherPieProps: Props;
+  allOtherPieProps: InternalProps;
   showLabels: boolean;
 };
 
@@ -715,71 +718,71 @@ function PieWithTouchMove(props: InternalProps) {
 }
 
 const defaultPieProps = {
-  stroke: '#fff',
-  fill: '#808080',
-  legendType: 'rect',
-  cx: '50%',
-  cy: '50%',
-  startAngle: 0,
-  endAngle: 360,
-  innerRadius: 0,
-  outerRadius: '80%',
-  paddingAngle: 0,
-  labelLine: true,
-  hide: false,
-  minAngle: 0,
-  isAnimationActive: !Global.isSsr,
   animationBegin: 400,
   animationDuration: 1500,
   animationEasing: 'ease',
+  cx: '50%',
+  cy: '50%',
+  dataKey: 'value',
+  endAngle: 360,
+  fill: '#808080',
+  hide: false,
+  innerRadius: 0,
+  isAnimationActive: !Global.isSsr,
+  labelLine: true,
+  legendType: 'rect',
+  minAngle: 0,
   nameKey: 'name',
+  outerRadius: '80%',
+  paddingAngle: 0,
   rootTabIndex: 0,
+  startAngle: 0,
+  stroke: '#fff',
 } as const satisfies Partial<Props>;
 
 function PieImpl(props: Props) {
-  const { animationBegin, animationDuration, animationEasing, hide, isAnimationActive, legendType, ...everythingElse } =
-    resolveDefaultProps(props, defaultPieProps);
+  const propsWithDefaults: InternalProps = resolveDefaultProps(props, defaultPieProps);
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const presentationProps = filterProps(props, false);
+  const presentationProps = filterProps(propsWithDefaults, false);
 
   const pieSettings: ResolvedPieSettings = useMemo(
     () => ({
-      name: props.name,
-      nameKey: props.nameKey,
-      tooltipType: props.tooltipType,
-      data: props.data,
-      dataKey: props.dataKey,
-      cx: props.cx,
-      cy: props.cy,
-      startAngle: props.startAngle,
-      endAngle: props.endAngle,
-      minAngle: props.minAngle,
-      paddingAngle: props.paddingAngle,
-      innerRadius: props.innerRadius,
-      outerRadius: props.outerRadius,
-      cornerRadius: props.cornerRadius,
-      legendType: props.legendType,
-      fill: props.fill,
+      name: propsWithDefaults.name,
+      nameKey: propsWithDefaults.nameKey,
+      tooltipType: propsWithDefaults.tooltipType,
+      data: propsWithDefaults.data,
+      dataKey: propsWithDefaults.dataKey,
+      cx: propsWithDefaults.cx,
+      cy: propsWithDefaults.cy,
+      startAngle: propsWithDefaults.startAngle,
+      endAngle: propsWithDefaults.endAngle,
+      minAngle: propsWithDefaults.minAngle,
+      paddingAngle: propsWithDefaults.paddingAngle,
+      innerRadius: propsWithDefaults.innerRadius,
+      outerRadius: propsWithDefaults.outerRadius,
+      cornerRadius: propsWithDefaults.cornerRadius,
+      legendType: propsWithDefaults.legendType,
+      fill: propsWithDefaults.fill,
       presentationProps,
     }),
     [
-      props.cornerRadius,
-      props.cx,
-      props.cy,
-      props.data,
-      props.dataKey,
-      props.endAngle,
-      props.innerRadius,
-      props.minAngle,
-      props.name,
-      props.nameKey,
-      props.outerRadius,
-      props.paddingAngle,
-      props.startAngle,
-      props.tooltipType,
-      props.legendType,
-      props.fill,
+      propsWithDefaults.cornerRadius,
+      propsWithDefaults.cx,
+      propsWithDefaults.cy,
+      propsWithDefaults.data,
+      propsWithDefaults.dataKey,
+      propsWithDefaults.endAngle,
+      propsWithDefaults.innerRadius,
+      propsWithDefaults.minAngle,
+      propsWithDefaults.name,
+      propsWithDefaults.nameKey,
+      propsWithDefaults.outerRadius,
+      propsWithDefaults.paddingAngle,
+      propsWithDefaults.startAngle,
+      propsWithDefaults.tooltipType,
+      propsWithDefaults.legendType,
+      propsWithDefaults.fill,
       presentationProps,
     ],
   );
@@ -788,17 +791,8 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, sectors }} />
-      <PieWithTouchMove
-        {...everythingElse}
-        legendType={legendType}
-        hide={hide}
-        isAnimationActive={isAnimationActive}
-        animationBegin={animationBegin}
-        animationDuration={animationDuration}
-        animationEasing={animationEasing}
-        sectors={sectors}
-      />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
+      <PieWithTouchMove {...propsWithDefaults} sectors={sectors} />
     </>
   );
 }

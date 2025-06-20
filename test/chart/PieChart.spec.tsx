@@ -6,6 +6,7 @@ import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../..
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
   const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
@@ -20,6 +21,10 @@ function assertActiveShapeInteractions(container: HTMLElement, selectors: string
 
   fireEvent.mouseOut(sector2);
   expect(container.querySelectorAll(selectors)).toHaveLength(0);
+}
+
+function selectPieSectors(container: HTMLElement) {
+  return container.querySelectorAll('.recharts-pie-sector');
 }
 
 describe('<PieChart />', () => {
@@ -68,7 +73,7 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
+    expect(selectPieSectors(container)).toHaveLength(data.length);
   });
 
   test('Renders 6 sectors circles in simple PieChart with animation', () => {
@@ -473,6 +478,29 @@ describe('<PieChart />', () => {
 
       const elementB = container.querySelector('path[name="Group B"]');
       assertSectorRadius(elementB, 30);
+    });
+  });
+
+  describe('without dataKey', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={100} height={100}>
+        <Pie
+          data={[
+            { name: 'A', value: 100 },
+            { name: 'B', value: 200 },
+          ]}
+          cx={50}
+          cy={50}
+          outerRadius={40}
+          isAnimationActive={false}
+        />
+        {children}
+      </PieChart>
+    ));
+
+    it('should default to dataKey = value', () => {
+      const { container } = renderTestCase();
+      expect(selectPieSectors(container)).toHaveLength(2);
     });
   });
 });
