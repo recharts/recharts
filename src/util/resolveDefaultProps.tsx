@@ -81,18 +81,18 @@ export type OptionalKeys<T> = {
 export type DisallowExtraKeys<T, D> = { [K in keyof D]: K extends keyof T ? D[K] : never };
 
 /**
- * This type will take a source type `T` and a default type `D` and will return a new type
- * where all properties that are optional in `T` but required in `D` are made required in the result.
- * Properties that are required in `T` and optional in `D` will remain required.
- * Properties that are optional in both `T` and `D` will remain optional.
+ * This type will take a source type `Props` and a default type `Defaults` and will return a new type
+ * where all properties that are optional in `Props` but required in `Defaults` are made required in the result.
+ * Properties that are required in `Props` and optional in `Defaults` will remain required.
+ * Properties that are optional in both `Props` and `Defaults` will remain optional.
  *
  * This is useful for creating a type that represents the resolved props of a component with default props.
  */
-export type RequiresDefaultProps<T, D extends Partial<T>> =
+export type RequiresDefaultProps<Props, Defaults extends Partial<Props>> =
   // Section 1: Properties that were already required in T.
   // We use Pick<T, RequiredKeys<T>> to select only the keys that were originally
   // required in T. Pick preserves their required status and original types.
-  Pick<T, RequiredKeys<T>> &
+  Pick<Props, RequiredKeys<Props>> &
     // Section 2: Properties that were optional in T BUT have a default specified in D.
     // These properties should become required in the resulting type.
     // - OptionalKeys<T>: Gets the union of keys that are optional in T.
@@ -100,9 +100,9 @@ export type RequiresDefaultProps<T, D extends Partial<T>> =
     // - Extract<..., ...>: Finds the intersection of these two sets – the keys that are optional in T AND required in D.
     // - Pick<T, Extract<...>>: Selects these specific properties from T. At this stage, they still retain their original optional ('?') status from T.
     // - Required<...>: Wraps the picked properties, removing the '?' modifier and making them required. Their underlying type (e.g., `string | undefined`) remains unchanged.
-    Required<Pick<T, Extract<OptionalKeys<T>, RequiredKeys<D>>>> &
+    Required<Pick<Props, Extract<OptionalKeys<Props>, RequiredKeys<Defaults>>>> &
     // Section 3: Properties that were optional in T AND do NOT have a default in D.
     // These properties should remain optional.
     // - Exclude<OptionalKeys<T>, keyof D>: Finds the keys that are optional in T but are NOT present in D.
     // - Pick<T, Exclude<...>>: Selects these properties from T. Pick preserves their original optional status and types.
-    Pick<T, Exclude<OptionalKeys<T>, keyof D>>;
+    Pick<Props, Exclude<OptionalKeys<Props>, keyof Defaults>>;

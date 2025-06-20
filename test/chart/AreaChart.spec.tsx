@@ -12,7 +12,7 @@ import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/cha
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
-import { expectAreaCurve } from '../helpers/expectAreaCurve';
+import { expectAreaCurve } from '../helper/expectAreaCurve';
 
 describe('AreaChart', () => {
   beforeEach(() => {
