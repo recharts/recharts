@@ -1,7 +1,7 @@
 import { expect } from 'vitest';
 import { assertNotNull } from './assertNotNull';
 
-type ExpectedPoint = {
+export type ExpectedPoint = {
   cx: string;
   cy: string;
   transform: string;
@@ -10,10 +10,14 @@ type ExpectedPoint = {
   height: string;
 };
 
+export function getAllScatterPoints(container: Element): ReadonlyArray<SVGPathElement> {
+  return Array.from(container.querySelectorAll('.recharts-scatter-symbol .recharts-symbols'));
+}
+
 export function expectScatterPoints(container: Element, expectedPoints: ReadonlyArray<ExpectedPoint>) {
   assertNotNull(container);
-  const allPoints = container.querySelectorAll('.recharts-scatter-symbol .recharts-symbols');
-  const actualPoints = Array.from(allPoints).map(point => {
+  const allPoints = getAllScatterPoints(container);
+  const actualPoints = allPoints.map(point => {
     return {
       cx: point.getAttribute('cx'),
       cy: point.getAttribute('cy'),

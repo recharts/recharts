@@ -1,10 +1,9 @@
 import React, { ReactNode, useState } from 'react';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Area, AreaChart, Legend, YAxis } from '../../src';
 import { PageData } from '../_data';
-import { mockGetTotalLength } from '../helper/mockGetTotalLength';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { expectAreaCurve, ExpectedArea } from '../helper/expectAreaCurve';
@@ -252,10 +251,6 @@ describe('Area animation', () => {
       { width: 0, height: 0, left: 0, top: 50 },
       { width: 50, height: 50, left: 0, top: 50 },
     ]);
-  });
-
-  beforeAll(() => {
-    mockGetTotalLength(100);
   });
 
   describe('with isAnimationActive={false}', () => {

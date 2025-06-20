@@ -19,6 +19,7 @@ import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
+import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
 
 export default {
   component: ScatterChart,
@@ -665,28 +666,29 @@ export const ChangingDataKey = {
         >
           Hide
         </button>
-        <ScatterChart {...args} data={useData2 ? data2 : data1}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-          <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
-          <ZAxis range={[200, 200]} />
-          <Tooltip />
-          <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
-          <Scatter
-            name="Animated Scatter"
-            lineType="joint"
-            line
-            hide={!visible}
-            dataKey={useData2 ? dataKey2 : dataKey1}
-            stroke="#8884d8"
-            fill="#8884d8"
-            strokeWidth={3}
-            strokeDasharray="2 2"
-            label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
-            animationDuration={3000}
-          />
-        </ScatterChart>
+        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+          <ScatterChart {...args} data={useData2 ? data2 : data1}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
+            <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
+            <ZAxis range={[200, 200]} />
+            <Tooltip />
+            <Legend />
+            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <Scatter
+              name="Animated Scatter"
+              lineType="joint"
+              line
+              hide={!visible}
+              dataKey={useData2 ? dataKey2 : dataKey1}
+              stroke="#8884d8"
+              fill="#8884d8"
+              strokeWidth={3}
+              strokeDasharray="2 2"
+              label={{ fill: 'red', dy: -25, dataKey: useData2 ? dataKey2 : dataKey1 }}
+            />
+          </ScatterChart>
+        </ManualAnimations>
       </>
     );
   },
