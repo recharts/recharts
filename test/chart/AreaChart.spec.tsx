@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import React, { ComponentProps, FC } from 'react';
-import { describe, test, it, expect, vi, MockInstance, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, MockInstance, test, vi } from 'vitest';
 import { Area, AreaChart, Brush, CartesianAxis, Customized, Tooltip, XAxis, YAxis } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
@@ -12,18 +12,7 @@ import { useChartHeight, useChartWidth, useViewBox } from '../../src/context/cha
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
-
-type ExpectedArea = {
-  d: string;
-};
-
-function expectAreaCurve(container: Element, expectedAreas: ReadonlyArray<ExpectedArea>) {
-  assertNotNull(container);
-  const areaCurves = container.querySelectorAll('.recharts-area-curve');
-  assertNotNull(areaCurves);
-  const actualAreas = Array.from(areaCurves).map(area => ({ d: area.getAttribute('d') }));
-  expect(actualAreas).toEqual(expectedAreas);
-}
+import { expectAreaCurve } from '../helpers/expectAreaCurve';
 
 describe('AreaChart', () => {
   beforeEach(() => {

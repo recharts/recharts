@@ -51,6 +51,10 @@ export abstract class MockAbstractAnimationManager implements AnimationManager {
     await this.timeoutController.triggerNextTimeout(now);
   }
 
+  public isAnimating(): boolean {
+    return this.queue !== null && this.queue.length > 0;
+  }
+
   protected queue: ReactSmoothQueue | null = null;
 
   protected readonly timeoutController: MockTimeoutController = new MockTimeoutController();

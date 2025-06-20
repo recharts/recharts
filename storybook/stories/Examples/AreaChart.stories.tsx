@@ -17,6 +17,7 @@ import {
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
 
 export default {
   component: AreaChart,
@@ -607,16 +608,18 @@ export const WithChangingDataKeyAndAnimations = {
             Hidden
           </label>
         </form>
-        <ResponsiveContainer width="100%">
-          <ComposedChart {...args}>
-            <Legend />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
-            <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
-          </ComposedChart>
-        </ResponsiveContainer>
+        <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+          <ResponsiveContainer width="100%">
+            <ComposedChart {...args}>
+              <Legend />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
+              <Tooltip />
+              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </ManualAnimations>
       </>
     );
   },
