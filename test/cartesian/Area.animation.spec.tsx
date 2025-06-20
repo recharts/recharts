@@ -7,7 +7,7 @@ import { PageData } from '../_data';
 import { mockGetTotalLength } from '../helper/mockGetTotalLength';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
-import { expectAreaCurve, ExpectedArea } from '../helpers/expectAreaCurve';
+import { expectAreaCurve, ExpectedArea } from '../helper/expectAreaCurve';
 import { assertNotNull } from '../helper/assertNotNull';
 import { ExpectedLabel, expectLabels } from '../helper/expectLabel';
 
