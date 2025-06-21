@@ -583,9 +583,15 @@ function ScatterImpl(props: Props) {
   const points = useAppSelector(state => {
     return selectScatterPoints(state, xAxisId, yAxisId, zAxisId, scatterSettings, cells, isPanorama);
   });
-  if (points == null || !points.length || needClip == null) {
+  if (needClip == null) {
     return null;
   }
+  /*
+   * Do not check if points is null here!
+   * It is important that the animation component receives `null` as points
+   * so that it can reset its internal state and start animating to new positions.
+   */
+  // if (points == null)
   return (
     <>
       <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...props, points }} />

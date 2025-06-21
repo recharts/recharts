@@ -306,12 +306,15 @@ describe('Scatter Animation', () => {
       expect(animationManager.isAnimating()).toBe(true);
     });
 
-    it.fails('should animate dots positions after dataKey change', async () => {
-      // The test fails because the animation is triggered when the dataKey changes, but the dots do not animate to their new positions. There is a jump instead.
+    it('should animate dots positions after dataKey change', async () => {
       const { container, animationManager } = renderTestCase();
       await prime(container, animationManager);
       expect(await dotsAnimate(container, animationManager)).toEqual([
-        /* TODO this should be the expected positions */
+        { cx: '12.5', cy: '5' },
+        { cx: '12.5', cy: '11.840000000000002' },
+        { cx: '12.5', cy: '39.2' },
+        { cx: '12.5', cy: '66.55999999999997' },
+        { cx: '12.5', cy: '73.4' },
       ]);
     });
   });
