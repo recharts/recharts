@@ -306,12 +306,15 @@ describe('Scatter Animation', () => {
       expect(animationManager.isAnimating()).toBe(true);
     });
 
-    it.fails('should animate dots positions after dataKey change', async () => {
-      // The test fails because the animation is triggered when the dataKey changes, but the dots do not animate to their new positions. There is a jump instead.
+    it('should animate dots positions after dataKey change', async () => {
       const { container, animationManager } = renderTestCase();
       await prime(container, animationManager);
       expect(await dotsAnimate(container, animationManager)).toEqual([
-        /* TODO this should be the expected positions */
+        { cx: '12.5', cy: '5' },
+        { cx: '12.5', cy: '11.840000000000002' },
+        { cx: '12.5', cy: '39.2' },
+        { cx: '12.5', cy: '66.55999999999997' },
+        { cx: '12.5', cy: '73.4' },
       ]);
     });
   });
@@ -453,16 +456,15 @@ describe('Scatter Animation', () => {
       </ScatterChart>
     ));
 
-    it.fails('should not move dots during the animation', async () => {
-      // The test fails because when Legend is present, the dots move slightly up during the animation.
+    it('should not move dots during the animation', async () => {
       const { container, animationManager } = renderTestCase();
       expect(await dotsDoNotMove(container, animationManager)).toEqual([
         { cx: '12.5', cy: '5' },
-        { cx: '27.5', cy: '27.5' },
-        { cx: '42.5', cy: '27.5' },
-        { cx: '57.5', cy: '50' },
-        { cx: '72.5', cy: '32.45' },
-        { cx: '87.5', cy: '52.475' },
+        { cx: '27.5', cy: '15' },
+        { cx: '42.5', cy: '15' },
+        { cx: '57.5', cy: '25' },
+        { cx: '72.5', cy: '17.200000000000003' },
+        { cx: '87.5', cy: '26.100000000000005' },
       ]);
     });
 
@@ -487,34 +489,15 @@ describe('Scatter Animation', () => {
       </ScatterChart>
     ));
 
-    it.fails('should not move dots during the animation', async () => {
-      // The test fails because when YAxis is present, the dots move slightly left during the animation.
+    it('should not move dots during the animation', async () => {
       const { container, animationManager } = renderTestCase();
       expect(await dotsDoNotMove(container, animationManager)).toEqual([
-        {
-          cx: '67.31666666666666',
-          cy: '5',
-        },
-        {
-          cx: '72.35',
-          cy: '27.5',
-        },
-        {
-          cx: '77.38333333333334',
-          cy: '27.5',
-        },
-        {
-          cx: '82.41666666666667',
-          cy: '50',
-        },
-        {
-          cx: '87.45',
-          cy: '32.45',
-        },
-        {
-          cx: '92.48333333333333',
-          cy: '52.475',
-        },
+        { cx: '65.66666666666667', cy: '5' },
+        { cx: '71', cy: '27.5' },
+        { cx: '76.33333333333334', cy: '27.5' },
+        { cx: '81.66666666666667', cy: '50' },
+        { cx: '87', cy: '32.45' },
+        { cx: '92.33333333333333', cy: '52.475' },
       ]);
     });
 
