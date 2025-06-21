@@ -670,7 +670,7 @@ export const ChangingDataKey = {
           <ScatterChart {...args} data={useData2 ? data2 : data1}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" padding={{ left: 30, right: 30 }} />
-            <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
+            <YAxis dataKey={useData2 ? dataKey2 : dataKey1} width="auto" />
             <ZAxis range={[200, 200]} />
             <Tooltip />
             <Legend />

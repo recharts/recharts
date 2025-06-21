@@ -323,8 +323,10 @@ function SymbolsWithAnimation({
                 return { ...entry, size: interpolator(t) };
               });
 
-        // eslint-disable-next-line no-param-reassign
-        previousPointsRef.current = stepData;
+        if (t > 0) {
+          // eslint-disable-next-line no-param-reassign
+          previousPointsRef.current = stepData;
+        }
         return (
           <Layer>
             <ScatterSymbols points={stepData} allOtherScatterProps={props} showLabels={!isAnimating} />
