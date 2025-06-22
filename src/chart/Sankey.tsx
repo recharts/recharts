@@ -905,7 +905,7 @@ export class Sankey extends PureComponent<Props, State> {
 
     return (
       <RechartsStoreProvider preloadedState={{ options }} reduxStoreName={className ?? 'Sankey'}>
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />;
+        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <SetComputedData computedData={{ links: modifiedLinks, nodes: modifiedNodes }} />
         <ReportChartSize width={width} height={height} />
         <ReportChartMargin margin={defaultSankeyMargin} />
