@@ -6,6 +6,7 @@ import { findAllByType, filterProps } from '../util/ReactUtils';
 import { isNumOrStr, isNumber, isPercent, getPercentValue, uniqueId, mathSign, isNullish } from '../util/DataUtils';
 import { polarToCartesian } from '../util/PolarUtils';
 import { ViewBox, PolarViewBox, CartesianViewBox, DataKey } from '../util/types';
+import { useViewBox } from '../context/chartLayoutContext';
 
 export type ContentType = ReactElement | ((props: Props) => ReactNode);
 
@@ -177,9 +178,9 @@ const getAttrsOfPolarLabel = (props: Props) => {
   };
 };
 
-const getAttrsOfCartesianLabel = (props: Props) => {
-  const { viewBox, parentViewBox, offset, position } = props;
-  const { x, y, width, height } = viewBox as CartesianViewBox;
+const getAttrsOfCartesianLabel = (props: Props, viewBox: CartesianViewBox) => {
+  const { parentViewBox, offset, position } = props;
+  const { x, y, width, height } = viewBox;
 
   // Define vertical offsets and position inverts based on the value being positive or negative
   const verticalSign = height >= 0 ? 1 : -1;
@@ -385,7 +386,20 @@ const isPolar = (viewBox: CartesianViewBox | PolarViewBox): viewBox is PolarView
 
 export function Label({ offset = 5, ...restProps }: Props) {
   const props = { offset, ...restProps };
-  const { viewBox, position, value, children, content, className = '', textBreakAll, labelRef } = props;
+  const {
+    viewBox: viewBoxFromProps,
+    position,
+    value,
+    children,
+    content,
+    className = '',
+    textBreakAll,
+    labelRef,
+  } = props;
+
+  const viewBoxFromContext = useViewBox();
+
+  const viewBox = viewBoxFromProps || viewBoxFromContext;
 
   if (
     !viewBox ||
@@ -416,7 +430,8 @@ export function Label({ offset = 5, ...restProps }: Props) {
     return renderRadialLabel(props, label, attrs);
   }
 
-  const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props);
+  // TODO handle the polar viewBox case - Pie chart works with cartesian viewBox, what about the other charts?
+  const positionAttrs = isPolarLabel ? getAttrsOfPolarLabel(props) : getAttrsOfCartesianLabel(props, viewBox);
 
   return (
     <Text
@@ -487,7 +502,7 @@ const parseViewBox = (props: any): ViewBox => {
     return props.viewBox;
   }
 
-  return {};
+  return undefined;
 };
 
 const parseLabel = (label: unknown, viewBox: ViewBox, labelRef?: React.RefObject<Element>) => {
