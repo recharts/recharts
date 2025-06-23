@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StoryContext } from '@storybook/react';
-import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
@@ -48,7 +48,14 @@ export const Donut = {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <PieChart {...args}>
-          <Pie data={data} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80} />
+          <Pie data={data} dataKey="uv" nameKey="name" innerRadius={50} outerRadius={80}>
+            <Label position="center" fill="#000" fontSize={12} fontWeight="bold" dy={-7}>
+              Donut
+            </Label>
+            <Label position="center" fontSize={12} fontWeight="bold" dy={8}>
+              Chart
+            </Label>
+          </Pie>
           <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
         </PieChart>
       </ResponsiveContainer>

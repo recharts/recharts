@@ -2,7 +2,7 @@ import React from 'react';
 import { it, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LabelProps, Pie, PieChart, PieProps, Sector, SectorProps, Tooltip } from '../../src';
+import { Label, LabelProps, Pie, PieChart, PieProps, Sector, SectorProps, Tooltip } from '../../src';
 import { Point } from '../../src/shape/Curve';
 import { PieSectorDataItem } from '../../src/polar/Pie';
 import { generateMockData } from '../helper/generateMockData';
@@ -428,7 +428,7 @@ describe('<Pie />', () => {
 
   describe('label', () => {
     test('Render customized label when label is set to be a react element', () => {
-      const Label = (props: LabelProps) => {
+      const MyCustomLabel = (props: LabelProps) => {
         const { x, y } = props;
         return (
           <text x={x} y={y} className="customized-label">
@@ -442,7 +442,7 @@ describe('<Pie />', () => {
             isAnimationActive={false}
             cx={250}
             cy={250}
-            label={<Label />}
+            label={<MyCustomLabel />}
             innerRadius={0}
             outerRadius={200}
             data={sectorsData}
@@ -455,7 +455,7 @@ describe('<Pie />', () => {
     });
 
     test('Render customized label when label is set to be a function that returns the label text', () => {
-      const Label = (props: LabelProps) => {
+      const MyCustomLabel = (props: LabelProps) => {
         const { name, value } = props;
         return `${name}: ${value}`;
       };
@@ -465,7 +465,7 @@ describe('<Pie />', () => {
             isAnimationActive={false}
             cx={250}
             cy={250}
-            label={Label}
+            label={MyCustomLabel}
             innerRadius={0}
             outerRadius={200}
             data={sectorsData}
@@ -559,6 +559,37 @@ describe('<Pie />', () => {
       );
 
       expect(container.querySelectorAll('.customized-label-line')).toHaveLength(sectorsData.length);
+    });
+
+    it('should render label with position=center', () => {
+      // https://github.com/recharts/recharts/issues/5985
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie isAnimationActive={false} innerRadius={100} outerRadius={200} data={sectorsData} dataKey="cy">
+            <Label position="center" value="My test label" />
+          </Pie>
+        </PieChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute('x', '250');
+      expect(label).toHaveAttribute('y', '250');
+    });
+
+    it('should shift the label left and right with dx and dy', () => {
+      const { container } = render(
+        <PieChart width={500} height={500}>
+          <Pie isAnimationActive={false} innerRadius={100} outerRadius={200} data={sectorsData} dataKey="cy">
+            <Label position="center" value="My test label" dx={50} dy={-20} />
+          </Pie>
+        </PieChart>,
+      );
+
+      const label = container.querySelector('.recharts-label');
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute('x', '300');
+      expect(label).toHaveAttribute('y', '230');
     });
   });
 
