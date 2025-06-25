@@ -431,8 +431,16 @@ function PieSectors(props: PieSectorsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherPieProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -457,11 +465,12 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
 
-        // Conditionally attach event handlers based on tooltip trigger
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.tooltipPayload as any,
@@ -469,7 +478,12 @@ function PieSectors(props: PieSectorsProps) {
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.tooltipPayload as any,
@@ -477,8 +491,30 @@ function PieSectors(props: PieSectorsProps) {
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // For hover mode, only call the external handler if present, otherwise call the internal handler
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) {
+              externalOnMouseEnter(entry, i, e);
+            } else {
+              onMouseEnterFromContext(triggerInfo, i)(e);
+            }
+          };
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) {
+              externalOnMouseLeave(entry, i, e);
+            } else {
+              onMouseLeaveFromContext(triggerInfo, i)(e);
+            }
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
         return (
@@ -762,46 +798,54 @@ const defaultPieProps = {
 function PieImpl(props: Props) {
   const propsWithDefaults: InternalProps = resolveDefaultProps(props, defaultPieProps);
 
+  // Merge event handlers into propsWithDefaults
+  const mergedProps: InternalProps = {
+    ...propsWithDefaults,
+    onClick: props.onClick,
+    onMouseEnter: props.onMouseEnter,
+    onMouseLeave: props.onMouseLeave,
+  };
+
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const presentationProps = filterProps(propsWithDefaults, false);
+  const presentationProps = filterProps(mergedProps, false);
 
   const pieSettings: ResolvedPieSettings = useMemo(
     () => ({
-      name: propsWithDefaults.name,
-      nameKey: propsWithDefaults.nameKey,
-      tooltipType: propsWithDefaults.tooltipType,
-      data: propsWithDefaults.data,
-      dataKey: propsWithDefaults.dataKey,
-      cx: propsWithDefaults.cx,
-      cy: propsWithDefaults.cy,
-      startAngle: propsWithDefaults.startAngle,
-      endAngle: propsWithDefaults.endAngle,
-      minAngle: propsWithDefaults.minAngle,
-      paddingAngle: propsWithDefaults.paddingAngle,
-      innerRadius: propsWithDefaults.innerRadius,
-      outerRadius: propsWithDefaults.outerRadius,
-      cornerRadius: propsWithDefaults.cornerRadius,
-      legendType: propsWithDefaults.legendType,
-      fill: propsWithDefaults.fill,
+      name: mergedProps.name,
+      nameKey: mergedProps.nameKey,
+      tooltipType: mergedProps.tooltipType,
+      data: mergedProps.data,
+      dataKey: mergedProps.dataKey,
+      cx: mergedProps.cx,
+      cy: mergedProps.cy,
+      startAngle: mergedProps.startAngle,
+      endAngle: mergedProps.endAngle,
+      minAngle: mergedProps.minAngle,
+      paddingAngle: mergedProps.paddingAngle,
+      innerRadius: mergedProps.innerRadius,
+      outerRadius: mergedProps.outerRadius,
+      cornerRadius: mergedProps.cornerRadius,
+      legendType: mergedProps.legendType,
+      fill: mergedProps.fill,
       presentationProps,
     }),
     [
-      propsWithDefaults.cornerRadius,
-      propsWithDefaults.cx,
-      propsWithDefaults.cy,
-      propsWithDefaults.data,
-      propsWithDefaults.dataKey,
-      propsWithDefaults.endAngle,
-      propsWithDefaults.innerRadius,
-      propsWithDefaults.minAngle,
-      propsWithDefaults.name,
-      propsWithDefaults.nameKey,
-      propsWithDefaults.outerRadius,
-      propsWithDefaults.paddingAngle,
-      propsWithDefaults.startAngle,
-      propsWithDefaults.tooltipType,
-      propsWithDefaults.legendType,
-      propsWithDefaults.fill,
+      mergedProps.cornerRadius,
+      mergedProps.cx,
+      mergedProps.cy,
+      mergedProps.data,
+      mergedProps.dataKey,
+      mergedProps.endAngle,
+      mergedProps.innerRadius,
+      mergedProps.minAngle,
+      mergedProps.name,
+      mergedProps.nameKey,
+      mergedProps.outerRadius,
+      mergedProps.paddingAngle,
+      mergedProps.startAngle,
+      mergedProps.tooltipType,
+      mergedProps.legendType,
+      mergedProps.fill,
       presentationProps,
     ],
   );
@@ -810,8 +854,8 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
-      <PieWithTouchMove {...propsWithDefaults} sectors={sectors} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...mergedProps, sectors }} />
+      <PieWithTouchMove {...mergedProps} sectors={sectors} />
     </>
   );
 }

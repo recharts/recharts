@@ -80,8 +80,16 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherRadialBarProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherRadialBarProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -96,11 +104,12 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
       {sectors.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
 
-        // Conditionally attach event handlers based on tooltip trigger
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.payload as any,
@@ -108,7 +117,12 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.payload as any,
@@ -116,8 +130,30 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // For hover mode, only call the external handler if present, otherwise call the internal handler
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) {
+              externalOnMouseEnter(entry, i, e);
+            } else {
+              onMouseEnterFromContext(triggerInfo, i)(e);
+            }
+          };
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) {
+              externalOnMouseLeave(entry, i, e);
+            } else {
+              onMouseLeaveFromContext(triggerInfo, i)(e);
+            }
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
         const radialBarSectorProps: RadialBarSectorProps = {

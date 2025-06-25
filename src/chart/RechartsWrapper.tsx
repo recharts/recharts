@@ -226,9 +226,7 @@ export const RechartsWrapper = forwardRef(
             onTouchStart={myOnTouchStart}
             ref={innerRef}
           >
-            {React.cloneElement(children as React.ReactElement, {
-              onRequestTooltipClose: handleRequestTooltipClose,
-            })}
+            {React.isValidElement(children) ? React.cloneElement(children) : children}
           </div>
         </LegendPortalContext.Provider>
       </TooltipPortalContext.Provider>

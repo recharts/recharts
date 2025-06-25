@@ -214,8 +214,16 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherScatterProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -239,8 +247,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
         };
 
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = { ...adaptEventsOfChild(restOfAllOtherProps, entry, i) };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.tooltipPayload as any,
@@ -248,7 +258,12 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.tooltipPayload as any,
@@ -256,8 +271,30 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
             cx: entry.cx,
             cy: entry.cy,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // For hover mode, only call the external handler if present, otherwise call the internal handler
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) {
+              externalOnMouseEnter(entry, i, e);
+            } else {
+              onMouseEnterFromContext(triggerInfo, i)(e);
+            }
+          };
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) {
+              externalOnMouseLeave(entry, i, e);
+            } else {
+              onMouseLeaveFromContext(triggerInfo, i)(e);
+            }
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
         return (

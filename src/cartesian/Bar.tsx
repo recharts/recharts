@@ -227,8 +227,16 @@ function BarBackground(props: BarBackgroundProps) {
     onMouseEnter: onMouseEnterFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     onClick: onItemClickFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherBarProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -248,11 +256,12 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        // Conditionally attach event handlers based on tooltip trigger
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.payload,
@@ -260,7 +269,12 @@ function BarBackground(props: BarBackgroundProps) {
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.payload,
@@ -268,10 +282,33 @@ function BarBackground(props: BarBackgroundProps) {
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // For hover mode, only call the external handler if present, otherwise call the internal handler
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) {
+              externalOnMouseEnter(entry, i, e);
+            } else {
+              onMouseEnterFromContext(triggerInfo, i)(e);
+            }
+          };
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) {
+              externalOnMouseLeave(entry, i, e);
+            } else {
+              onMouseLeaveFromContext(triggerInfo, i)(e);
+            }
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
+        const noop = () => {}; // function to prevent errors when event handlers are undefined
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: String(i) === activeIndex,
@@ -283,6 +320,9 @@ function BarBackground(props: BarBackgroundProps) {
           dataKey,
           index: i,
           className: 'recharts-bar-background-rectangle',
+          onClick: eventHandlers.onClick || noop,
+          onMouseEnter: eventHandlers.onMouseEnter || noop,
+          onMouseLeave: eventHandlers.onMouseLeave || noop,
         };
 
         return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;
@@ -315,8 +355,16 @@ function BarRectangles({
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = props;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -349,11 +397,12 @@ function BarRectangles({
           dataKey,
         };
 
-        // Conditionally attach event handlers based on tooltip trigger
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.payload,
@@ -361,7 +410,12 @@ function BarRectangles({
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.payload,
@@ -369,8 +423,30 @@ function BarRectangles({
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // For hover mode, only call the external handler if present, otherwise call the internal handler
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) {
+              externalOnMouseEnter(entry, i, e);
+            } else {
+              onMouseEnterFromContext(triggerInfo, i)(e);
+            }
+          };
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) {
+              externalOnMouseLeave(entry, i, e);
+            } else {
+              onMouseLeaveFromContext(triggerInfo, i)(e);
+            }
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
         return (

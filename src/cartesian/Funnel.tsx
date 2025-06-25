@@ -169,11 +169,12 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           stroke: entry.stroke,
         };
 
-        // Conditionally attach event handlers based on tooltip trigger
+        // Always attach external event handlers (passed as props)
         const eventHandlers: any = {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
+        // Conditionally attach internal tooltip handlers based on tooltip trigger
         if (tooltipTrigger === 'click') {
           const triggerInfo = {
             tooltipPayload: entry.payload as any,
@@ -181,7 +182,12 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+          // Combine external onClick with internal tooltip onClick
+          const externalOnClick = eventHandlers.onClick;
+          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnClick) externalOnClick(entry, i, e);
+            onClickFromContext(triggerInfo, i)(e);
+          };
         } else {
           const triggerInfo = {
             tooltipPayload: entry.payload as any,
@@ -189,8 +195,24 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
             cx: entry.x,
             cy: entry.y,
           };
-          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+          // Combine external handlers with internal tooltip handlers
+          const externalOnMouseEnter = eventHandlers.onMouseEnter;
+          const externalOnMouseLeave = eventHandlers.onMouseLeave;
+          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseEnter) externalOnMouseEnter(entry, i, e);
+            onMouseEnterFromContext(triggerInfo, i)(e);
+          };
+          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+            if (externalOnMouseLeave) externalOnMouseLeave(entry, i, e);
+            onMouseLeaveFromContext(triggerInfo, i)(e);
+          };
+          // For hover mode, also ensure external onClick is called if provided
+          const externalOnClick = eventHandlers.onClick;
+          if (externalOnClick) {
+            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+              externalOnClick(entry, i, e);
+            };
+          }
         }
 
         return (
