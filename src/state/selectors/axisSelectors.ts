@@ -526,8 +526,10 @@ export function getErrorDomainByDataKey(
   );
 }
 
+export type StackDataPoint = [number, number];
+
 export type StackGroup = {
-  readonly stackedData: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>>;
+  readonly stackedData: ReadonlyArray<Series<StackDataPoint, DataKey<any>>>;
   readonly graphicalItems: ReadonlyArray<MaybeStackedGraphicalItem>;
 };
 
