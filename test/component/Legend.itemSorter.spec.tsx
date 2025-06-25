@@ -1,6 +1,6 @@
 import { describe, it, expect, test, vi, beforeEach } from 'vitest';
 import { act, render } from '@testing-library/react';
-import React, { ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 import { Area, AreaChart, DefaultLegendContentProps, Legend, LegendPayload, Line, LineChart } from '../../src';
 import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
@@ -223,12 +223,12 @@ describe('Legend.itemSorter', () => {
     function MyLegendHidingComponent({ children }: { children: ReactNode }) {
       const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
 
-      const handleClick = ({ dataKey }: LegendPayload) => {
+      const handleClick = React.useCallback(({ dataKey }: LegendPayload) => {
         if (typeof dataKey !== 'string') {
           return;
         }
         setHiddenItems(prev => (prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey]));
-      };
+      }, []);
 
       return (
         <LineChart width={500} height={500} data={numericalData}>
@@ -242,7 +242,7 @@ describe('Legend.itemSorter', () => {
           <Line
             dataKey="value"
             name="A"
-            stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
+            stroke={hiddenItems.includes('value') ? 'silver' : 'blue'}
             hide={hiddenItems.includes('value')}
           />
           {children}
@@ -322,30 +322,29 @@ describe('Legend.itemSorter', () => {
       spy.mockClear();
     });
 
+    const LegendClickContext = createContext<(entry: LegendPayload) => void>(() => {});
+
     function useItemHiding() {
       const [hiddenItems, setHiddenItems] = useState<ReadonlyArray<string>>([]);
 
-      const handleClick = ({ dataKey }: LegendPayload) => {
+      const handleClick = useCallback(({ dataKey }: LegendPayload) => {
         if (typeof dataKey !== 'string') {
           return;
         }
-        setHiddenItems(prev => {
-          return prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey];
-        });
-      };
+        setHiddenItems(prev => (prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey]));
+      }, []);
 
       return { hiddenItems, handleClick };
     }
 
-    const MyCustomLegendContent = (
-      props: DefaultLegendContentProps & { handleClick: (entry: LegendPayload) => void },
-    ) => {
+    const MyCustomLegendContent = (props: DefaultLegendContentProps) => {
+      const handleClick = useContext(LegendClickContext);
       spy(props);
       return (
         <ul>
           {props.payload.map(entry => (
             <li key={entry.value} style={{ color: entry.color }}>
-              <button type="button" onClick={() => props.handleClick(entry)}>
+              <button type="button" onClick={() => handleClick(entry)}>
                 {entry.value}
               </button>
             </li>
@@ -357,34 +356,30 @@ describe('Legend.itemSorter', () => {
 
     describe('in LineChart', () => {
       /*
-       * I thought this will reproduce the Legend jumping bug, but it does not! Interesting.
-       * Perhaps it only applies to stacked charts?
        * https://github.com/recharts/recharts/issues/5992
        */
       function MyLegendHidingLineChartTestCase({ children }: { children: ReactNode }) {
         const { hiddenItems, handleClick } = useItemHiding();
 
         return (
-          <LineChart width={500} height={500} data={numericalData}>
-            <Legend
-              itemSorter="dataKey"
-              // eslint-disable-next-line react/no-unstable-nested-components
-              content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
-            />
-            <Line
-              dataKey="percent"
-              name="B"
-              stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
-              hide={hiddenItems.includes('percent')}
-            />
-            <Line
-              dataKey="value"
-              name="A"
-              stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
-              hide={hiddenItems.includes('value')}
-            />
-            {children}
-          </LineChart>
+          <LegendClickContext.Provider value={handleClick}>
+            <LineChart width={500} height={500} data={numericalData}>
+              <Legend itemSorter="dataKey" content={MyCustomLegendContent} />
+              <Line
+                dataKey="percent"
+                name="B"
+                stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
+                hide={hiddenItems.includes('percent')}
+              />
+              <Line
+                dataKey="value"
+                name="A"
+                stroke={hiddenItems.includes('value') ? 'silver' : 'blue'}
+                hide={hiddenItems.includes('value')}
+              />
+              {children}
+            </LineChart>
+          </LegendClickContext.Provider>
         );
       }
 
@@ -416,7 +411,7 @@ describe('Legend.itemSorter', () => {
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
-                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
               ],
             }),
           );
@@ -440,30 +435,27 @@ describe('Legend.itemSorter', () => {
       function MyLegendHidingAreaChartTestCase({ children }: { children: ReactNode }) {
         const { hiddenItems, handleClick } = useItemHiding();
 
-        console.log('MyLegendHidingAreaChartTestCase', hiddenItems);
-
         return (
-          <AreaChart width={500} height={500} data={numericalData}>
-            <Legend
-              itemSorter="dataKey"
-              content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
-            />
-            <Area
-              dataKey="percent"
-              name="B"
-              stackId="1"
-              stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
-              hide={hiddenItems.includes('percent')}
-            />
-            <Area
-              dataKey="value"
-              name="A"
-              stackId="1"
-              stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
-              hide={hiddenItems.includes('value')}
-            />
-            {children}
-          </AreaChart>
+          <LegendClickContext.Provider value={handleClick}>
+            <AreaChart width={500} height={500} data={numericalData}>
+              <Legend itemSorter="dataKey" content={MyCustomLegendContent} />
+              <Area
+                dataKey="percent"
+                name="B"
+                stackId="1"
+                stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
+                hide={hiddenItems.includes('percent')}
+              />
+              <Area
+                dataKey="value"
+                name="A"
+                stackId="1"
+                stroke={hiddenItems.includes('value') ? 'silver' : 'blue'}
+                hide={hiddenItems.includes('value')}
+              />
+              {children}
+            </AreaChart>
+          </LegendClickContext.Provider>
         );
       }
 
