@@ -2811,6 +2811,35 @@ describe('selectNiceTicks', () => {
     expect(yAxisSpy).toHaveBeenCalledTimes(1);
   });
 
+  // https://github.com/recharts/recharts/issues/6011
+  it('should return undefined if a domain is not formed correctly in vertical orientation with a single datapoint', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const errSpy = vi.fn();
+    vi.spyOn(console, 'error').mockImplementation(errSpy);
+
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'yAxis', defaultAxisId, isPanorama)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={[PageData[0]]} layout="vertical">
+        <Line isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" />
+        <YAxis type="category" dataKey="name" />
+        <Comp />
+      </LineChart>,
+    );
+    expect(errSpy).not.toHaveBeenCalledWith(new Error('[DecimalError] Invalid argument: undefined'));
+    expect(xAxisSpy).toHaveBeenLastCalledWith([0, 100, 200, 300, 400]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
+    // the first render was previously passing a malformed domain with a single datapoint in vertical orientation, 2nd render has always resolved correctly
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+  });
+
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
     { domain: undefined, expectedTicks: [0, 100, 200, 300, 400] },
     { domain: ['auto', 'auto'], expectedTicks: [180, 240, 300, 360, 420] },
