@@ -31,33 +31,10 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse } from '../../src/state/selectors/axisSelectors';
 import { selectLegendPayload, selectLegendSize } from '../../src/state/selectors/legendSelectors';
 import { LegendPortalContext } from '../../src/context/legendPortalContext';
-import { dataWithSpecialNameAndFillProperties } from '../_data';
+import { dataWithSpecialNameAndFillProperties, numericalData } from '../_data';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Size } from '../../src/util/types';
-
-function assertHasLegend(container: Element): ReadonlyArray<Element> {
-  expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(1);
-  return Array.from(container.querySelectorAll('.recharts-default-legend .recharts-legend-item'));
-}
-
-function expectLegendLabels(
-  container: Element,
-  expectedLabels: undefined | ReadonlyArray<{ textContent: string; fill: string }>,
-) {
-  assertNotNull(container);
-
-  if (expectedLabels == null) {
-    expect(container.querySelectorAll('.recharts-default-legend')).toHaveLength(0);
-    return;
-  }
-
-  const actualLabels = assertHasLegend(container).map(legend => ({
-    textContent: legend.textContent,
-    fill: legend.querySelector('.recharts-legend-icon')?.getAttribute('fill'),
-  }));
-
-  expect(actualLabels).toEqual(expectedLabels);
-}
+import { assertHasLegend, expectLegendLabels } from '../helper/expectLegendLabels';
 
 type LegendTypeTestCases = ReadonlyArray<{
   legendType: LegendType;
@@ -342,15 +319,6 @@ describe('<Legend />', () => {
     { value: 'Sony', color: '#667300' },
   ];
 
-  const numericalData = [
-    { value: 'Luck', percent: 10 },
-    { value: 'Skill', percent: 20 },
-    { value: 'Concentrated power of will', percent: 15 },
-    { value: 'Pleasure', percent: 50 },
-    { value: 'Pain', percent: 50 },
-    { value: 'Reason to remember the name', percent: 100 },
-  ];
-
   const numericalData2 = [
     { title: 'Luftbaloons', value: 99 },
     { title: 'Miles I would walk', value: 500 },
@@ -602,36 +570,6 @@ describe('<Legend />', () => {
       expectLegendLabels(container, [
         { textContent: 'My Line Data', fill: 'none' },
         { textContent: 'My Other Line Data', fill: 'none' },
-      ]);
-    });
-
-    test('sorts legend items by name by default', () => {
-      const { container } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend />
-          <Line dataKey="percent" name="B" />
-          <Line dataKey="value" name="A" />
-        </LineChart>,
-      );
-
-      expectLegendLabels(container, [
-        { textContent: 'A', fill: 'none' },
-        { textContent: 'B', fill: 'none' },
-      ]);
-    });
-
-    test('sorts legend items when itemSorter=dataKey', () => {
-      const { container } = render(
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend itemSorter="dataKey" />
-          <Line dataKey="percent" name="B" />
-          <Line dataKey="value" name="A" />
-        </LineChart>,
-      );
-
-      expectLegendLabels(container, [
-        { textContent: 'B', fill: 'none' },
-        { textContent: 'A', fill: 'none' },
       ]);
     });
 

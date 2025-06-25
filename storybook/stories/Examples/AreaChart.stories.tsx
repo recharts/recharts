@@ -13,6 +13,7 @@ import {
   Area,
   Legend,
   ComposedChart,
+  LegendPayload,
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
@@ -621,6 +622,94 @@ export const WithChangingDataKeyAndAnimations = {
           </ResponsiveContainer>
         </ManualAnimations>
       </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
+};
+
+export const StackedAreaWithCustomLegend = {
+  // Reproducing https://github.com/recharts/recharts/issues/5992
+  render: (args: Record<string, any>, context: StoryContext) => {
+    const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
+
+    const handleClick = ({ dataKey }: LegendPayload) => {
+      if (typeof dataKey !== 'string') {
+        return;
+      }
+      setHiddenItems(prev => (prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey]));
+    };
+
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart {...args}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Area
+            type="monotone"
+            dataKey="uv"
+            stackId="1"
+            stroke="#8884d8"
+            strokeWidth={3}
+            fill="rgba(136,132,216,0.47)"
+            hide={hiddenItems.includes('uv')}
+          />
+          <Area
+            type="monotone"
+            dataKey="pv"
+            stackId="1"
+            stroke="#82ca9d"
+            strokeWidth={3}
+            fill="rgba(130,202,157,0.47)"
+            hide={hiddenItems.includes('pv')}
+          />
+          <Area
+            type="monotone"
+            dataKey="amt"
+            stackId="1"
+            stroke="#ffc658"
+            strokeWidth={3}
+            fill="rgba(255,198,88,0.47)"
+            hide={hiddenItems.includes('amt')}
+          />
+          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <Legend
+            content={({ payload }) => (
+              <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>
+                {payload.map((entry, index) => (
+                  <li key={`item-${index}`} style={{ color: entry.color }}>
+                    <button
+                      type="button"
+                      onClick={() => handleClick(entry)}
+                      style={{
+                        background: 'none',
+                        border: entry.inactive ? '3px solid #ccc' : `3px solid ${entry.color}`,
+                        borderRadius: '20%',
+                        padding: '10px',
+                        cursor: 'pointer',
+                        opacity: typeof entry.dataKey === 'string' && hiddenItems.includes(entry.dataKey) ? 0.2 : 1,
+                      }}
+                    >
+                      {entry.value}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     );
   },
   args: {

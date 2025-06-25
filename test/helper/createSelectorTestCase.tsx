@@ -16,6 +16,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
     debug: () => void;
     rerender: (ui: ReactNode) => void;
     animationManager: MockProgressAnimationManager;
+    getByText: (text: string) => HTMLElement;
   } {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
     const animationManager = new MockProgressAnimationManager();
@@ -25,14 +26,14 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
       return null;
     };
 
-    const { container, debug, rerender } = render(
+    const { container, debug, rerender, getByText } = render(
       <AnimationManagerContext.Provider value={animationManager}>
         <Component>
           <Comp />
         </Component>
       </AnimationManagerContext.Provider>,
     );
-    return { container, spy, debug, rerender, animationManager };
+    return { container, spy, debug, rerender, animationManager, getByText };
   };
 }
 
