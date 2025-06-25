@@ -1,6 +1,6 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex } from './tooltipSlice';
+import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex, clearClickTooltip } from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
@@ -16,7 +16,16 @@ mouseClickMiddleware.startListening({
   actionCreator: mouseClickAction,
   effect: (action: PayloadAction<MousePointer>, listenerApi: ListenerEffectAPI<RechartsRootState, AppDispatch>) => {
     const mousePointer = action.payload;
-    const activeProps = selectActivePropsFromChartPointer(listenerApi.getState(), getChartPointer(mousePointer));
+    const state = listenerApi.getState();
+    const tooltipState = state.tooltip; // Get the current tooltip state
+
+    // 👇 This is our gate. If the tooltip was just closed, stop right here.
+    if (tooltipState.isClosing) {
+      return;
+    }
+
+    const activeProps = selectActivePropsFromChartPointer(state, getChartPointer(mousePointer));
+
     if (activeProps?.activeIndex != null) {
       listenerApi.dispatch(
         setMouseClickAxisIndex({
@@ -25,6 +34,24 @@ mouseClickMiddleware.startListening({
           activeCoordinate: activeProps.activeCoordinate,
         }),
       );
+    } else {
+      // Check if we have a click-triggered tooltip active
+      const hasClickTooltipActive =
+        state.tooltip.itemInteraction.click.active || state.tooltip.axisInteraction.click.active;
+
+      if (hasClickTooltipActive) {
+        // Only clear click tooltips when clicking on empty chart areas
+        // If there's an active item click tooltip and no axis interaction,
+        // it means the user clicked on an item, so don't clear the tooltip
+        const hasActiveItemClickTooltip = state.tooltip.itemInteraction.click.active;
+        const hasActiveAxisClickTooltip = state.tooltip.axisInteraction.click.active;
+
+        // Only clear if we have an axis click tooltip active (clicking on empty chart area)
+        // Don't clear if we have an item click tooltip active (clicking on an item)
+        if (hasActiveAxisClickTooltip && !hasActiveItemClickTooltip) {
+          listenerApi.dispatch(clearClickTooltip());
+        }
+      }
     }
   },
 });

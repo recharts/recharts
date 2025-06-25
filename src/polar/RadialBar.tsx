@@ -48,7 +48,7 @@ import {
   selectRadialBarSectors,
 } from '../state/selectors/radialBarSelectors';
 import { useAppSelector } from '../state/hooks';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipIndex, selectTooltipTrigger } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { useAnimationId } from '../util/useAnimationId';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -75,6 +75,7 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
   const baseProps = filterProps(others, false);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const tooltipTrigger = useAppSelector(selectTooltipTrigger);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -94,21 +95,36 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
     <>
       {sectors.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
-        // @ts-expect-error the types need a bit of attention
-        const onMouseEnter = onMouseEnterFromContext(entry, i);
-        // @ts-expect-error the types need a bit of attention
-        const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        // @ts-expect-error the types need a bit of attention
-        const onClick = onClickFromContext(entry, i);
+
+        // Conditionally attach event handlers based on tooltip trigger
+        const eventHandlers: any = {
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+        };
+
+        if (tooltipTrigger === 'click') {
+          const triggerInfo = {
+            tooltipPayload: entry.payload as any,
+            tooltipPosition: { x: entry.cx, y: entry.cy },
+            cx: entry.cx,
+            cy: entry.cy,
+          };
+          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        } else {
+          const triggerInfo = {
+            tooltipPayload: entry.payload as any,
+            tooltipPosition: { x: entry.cx, y: entry.cy },
+            cx: entry.cx,
+            cy: entry.cy,
+          };
+          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        }
 
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
           ...entry,
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-          onMouseEnter,
-          onMouseLeave,
-          onClick,
+          ...eventHandlers,
           key: `sector-${i}`,
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,

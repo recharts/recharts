@@ -6,6 +6,7 @@ import omit from 'es-toolkit/compat/omit';
 import { clsx } from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
+import { selectTooltipTrigger } from '../state/selectors/tooltipSelectors';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
@@ -142,6 +143,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
+  const tooltipTrigger = useAppSelector(selectTooltipTrigger);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -167,16 +169,34 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           stroke: entry.stroke,
         };
 
+        // Conditionally attach event handlers based on tooltip trigger
+        const eventHandlers: any = {
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+        };
+
+        if (tooltipTrigger === 'click') {
+          const triggerInfo = {
+            tooltipPayload: entry.payload as any,
+            tooltipPosition: { x: entry.x, y: entry.y },
+            cx: entry.x,
+            cy: entry.y,
+          };
+          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        } else {
+          const triggerInfo = {
+            tooltipPayload: entry.payload as any,
+            tooltipPosition: { x: entry.x, y: entry.y },
+            cx: entry.x,
+            cy: entry.y,
+          };
+          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        }
+
         return (
           <Layer
             className="recharts-funnel-trapezoid"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
           >
             <FunnelTrapezoid {...trapezoidProps} />

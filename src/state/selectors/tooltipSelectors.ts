@@ -349,7 +349,7 @@ const selectTooltipEventType: (state: RechartsRootState) => TooltipEventType | u
     combineTooltipEventType(settings.shared, defaultTooltipEventType, validateTooltipEventType),
 );
 
-const selectTooltipTrigger = (state: RechartsRootState) => state.tooltip.settings.trigger;
+export const selectTooltipTrigger = (state: RechartsRootState) => state.tooltip.settings.trigger;
 
 const selectDefaultIndex: (state: RechartsRootState) => TooltipIndex | undefined = state =>
   state.tooltip.settings.defaultIndex;

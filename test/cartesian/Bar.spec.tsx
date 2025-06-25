@@ -1561,6 +1561,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             },
           },
         ],
+        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedStateBeforeHover);
 
@@ -1630,6 +1631,7 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
             },
           },
         ],
+        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedStateAfterHover);
     });

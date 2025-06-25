@@ -47,7 +47,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipIndex, selectTooltipTrigger } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
@@ -426,6 +426,7 @@ function PieSectors(props: PieSectorsProps) {
   const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, showLabels } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
+  const tooltipTrigger = useAppSelector(selectTooltipTrigger);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -456,17 +457,35 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
 
+        // Conditionally attach event handlers based on tooltip trigger
+        const eventHandlers: any = {
+          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
+        };
+
+        if (tooltipTrigger === 'click') {
+          const triggerInfo = {
+            tooltipPayload: entry.tooltipPayload as any,
+            tooltipPosition: entry.tooltipPosition,
+            cx: entry.cx,
+            cy: entry.cy,
+          };
+          eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        } else {
+          const triggerInfo = {
+            tooltipPayload: entry.tooltipPayload as any,
+            tooltipPosition: entry.tooltipPosition,
+            cx: entry.cx,
+            cy: entry.cy,
+          };
+          eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+          eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        }
+
         return (
           <Layer
             tabIndex={-1}
             className="recharts-pie-sector"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             // eslint-disable-next-line react/no-array-index-key
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
           >
