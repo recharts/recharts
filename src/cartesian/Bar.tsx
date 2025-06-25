@@ -617,7 +617,6 @@ export function computeBarRectangles({
   xAxisTicks,
   yAxisTicks,
   stackedData,
-  dataStartIndex,
   displayedData,
   offset,
   cells,
@@ -631,7 +630,6 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
-  dataStartIndex: number;
   offset: ChartOffset;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
@@ -645,7 +643,8 @@ export function computeBarRectangles({
     let value, x, y, width, height, background;
 
     if (stackedData) {
-      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
+      value = truncateByDomain(stackedData[index], stackedDomain);
     } else {
       value = getValueByDataKey(entry, dataKey);
 

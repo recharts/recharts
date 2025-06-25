@@ -9,6 +9,7 @@ import {
   selectStackGroups,
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
+  StackDataPoint,
   StackGroup,
 } from './axisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
@@ -442,7 +443,7 @@ export const selectBarPosition: (
 export const combineStackedData = (
   stackGroups: Record<StackId, StackGroup> | undefined,
   barSettings: MaybeStackedGraphicalItem | undefined,
-): Series<Record<number, number>, DataKey<any>> | undefined => {
+): Series<StackDataPoint, DataKey<any>> | undefined => {
   if (!stackGroups || barSettings?.dataKey == null) {
     return undefined;
   }
@@ -458,8 +459,7 @@ export const combineStackedData = (
   if (!stackedData) {
     return undefined;
   }
-  // @ts-expect-error bar assumes numeric stacks, d3 returns string, unknown
-  const stack: Series<Record<number, number>, DataKey<any>> = stackedData.find(sd => sd.key === barSettings.dataKey);
+  const stack: Series<StackDataPoint, DataKey<any>> = stackedData.find(sd => sd.key === barSettings.dataKey);
   return stack;
 };
 
@@ -570,7 +570,6 @@ export const selectBarRectangles: (
       xAxisTicks,
       yAxisTicks,
       stackedData,
-      dataStartIndex,
       displayedData,
       offset,
       cells,

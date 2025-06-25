@@ -9,7 +9,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts'],
+    setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
     globalSetup: './test/vitest.global-setup.ts',
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
     coverage: {

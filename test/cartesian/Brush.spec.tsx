@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Brush, LineChart, Line, BarChart, ComposedChart, ReferenceLine, Customized, BrushProps } from '../../src';
+import { BarChart, Brush, BrushProps, ComposedChart, Customized, Line, LineChart, ReferenceLine } from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { useAppSelector } from '../../src/state/hooks';
 import { selectAxisRangeWithReverse, selectDisplayedData } from '../../src/state/selectors/axisSelectors';
@@ -11,26 +11,7 @@ import { useViewBox } from '../../src/context/chartLayoutContext';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
-
-type ExpectedBrush = {
-  x: string;
-  y: string;
-  width: string;
-  height: string;
-};
-
-function expectBrush(container: Element, expected: ExpectedBrush) {
-  assertNotNull(container);
-  const brush = container.querySelector('.recharts-brush rect');
-  assertNotNull(brush);
-  const actual = {
-    x: brush.getAttribute('x'),
-    y: brush.getAttribute('y'),
-    width: brush.getAttribute('width'),
-    height: brush.getAttribute('height'),
-  };
-  expect(actual).toEqual(expected);
-}
+import { expectBrush } from '../helper/expectBrush';
 
 describe('<Brush />', () => {
   const data = [
