@@ -2,11 +2,13 @@ import { createSlice, current, PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
 import { LayoutType, Size } from '../util/types';
 import { HorizontalAlignmentType, LegendPayload, VerticalAlignmentType } from '../component/DefaultLegendContent';
+import type { LegendItemSorter } from '../component/Legend';
 
 export type LegendSettings = {
   layout: LayoutType;
   align: HorizontalAlignmentType;
   verticalAlign: VerticalAlignmentType;
+  itemSorter: LegendItemSorter;
 };
 
 /**
@@ -31,6 +33,7 @@ const initialState: LegendState = {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
+    itemSorter: 'value',
   },
   size: {
     width: 0,
@@ -51,6 +54,7 @@ const legendSlice = createSlice({
       state.settings.align = action.payload.align;
       state.settings.layout = action.payload.layout;
       state.settings.verticalAlign = action.payload.verticalAlign;
+      state.settings.itemSorter = action.payload.itemSorter;
     },
     addLegendPayload(state, action: PayloadAction<ReadonlyArray<LegendPayload>>) {
       state.payload.push(castDraft(action.payload));

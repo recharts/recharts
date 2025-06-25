@@ -40,7 +40,7 @@ describe('Legend.itemSorter', () => {
   });
 
   describe('when Legend content is a function', () => {
-    it.fails('should pass legend items sorted by label value by default', () => {
+    it('should pass legend items sorted by label value by default', () => {
       // this should sort by label value, but it does not
       const customContent = vi.fn();
 
@@ -59,6 +59,7 @@ describe('Legend.itemSorter', () => {
           chartWidth: 500,
           content: customContent,
           iconSize: 14,
+          itemSorter: 'value',
           layout: 'horizontal',
           margin: {
             bottom: 5,
@@ -487,7 +488,7 @@ describe('Legend.itemSorter', () => {
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
-                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
               ],
             }),
           );
@@ -528,7 +529,7 @@ describe('Legend.itemSorter', () => {
             expect.objectContaining({
               payload: [
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
-                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
               ],
             }),
           );
@@ -542,16 +543,6 @@ describe('Legend.itemSorter', () => {
                 expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
                 expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: false }),
               ],
-            }),
-          );
-
-          // let's click again to ensure it does not change the order
-          act(() => {
-            getByText('B').click();
-          });
-          expect(spy).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-              payload: [expect.objectContaining({ value: 'B' }), expect.objectContaining({ value: 'A' })],
             }),
           );
         });

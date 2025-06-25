@@ -436,6 +436,7 @@ describe('<Legend />', () => {
         chartWidth: 600,
         content: customContent,
         iconSize: 14,
+        itemSorter: 'value',
         layout: 'horizontal',
         margin: {
           bottom: 5,
@@ -778,6 +779,7 @@ describe('<Legend />', () => {
         chartWidth: 600,
         content: expect.any(Function),
         iconSize: 14,
+        itemSorter: 'value',
         layout: 'horizontal',
         margin: {
           bottom: 5,

@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 
 import { LegendSettings } from '../../../src/state/legendSlice';
-import { BarChart, Customized, Legend, LegendPayload } from '../../../src';
+import { BarChart, Legend, LegendPayload } from '../../../src';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 import {
   shouldReturnFromInitialState,
@@ -23,6 +23,7 @@ describe('selectLegendSettings', () => {
     layout: 'horizontal',
     align: 'center',
     verticalAlign: 'middle',
+    itemSorter: 'value',
   });
 
   it('should return Legend settings', () => {
@@ -36,13 +37,14 @@ describe('selectLegendSettings', () => {
     render(
       <BarChart width={100} height={100}>
         <Legend align="left" layout="vertical" verticalAlign="top" />
-        <Customized component={<Comp />} />
+        <Comp />
       </BarChart>,
     );
     const expected: LegendSettings = {
       align: 'left',
       layout: 'vertical',
       verticalAlign: 'top',
+      itemSorter: 'value',
     };
     expect(legendSettingsSpy).toHaveBeenLastCalledWith(expected);
     expect(legendSettingsSpy).toHaveBeenCalledTimes(3);
@@ -67,7 +69,7 @@ describe('selectLegendSize', () => {
     render(
       <BarChart width={100} height={100}>
         <Legend align="left" layout="vertical" verticalAlign="top" />
-        <Customized component={<Comp />} />
+        <Comp />
       </BarChart>,
     );
     const expected: Size = { width: 17, height: 71 };
@@ -81,21 +83,21 @@ describe('selectLegendPayload', () => {
   shouldReturnFromInitialState(selectLegendPayload, []);
 
   it('should return Legend payload', () => {
-    const legendSettingsSpy = vi.fn();
+    const legendPayloadSpy = vi.fn();
     const Comp = (): null => {
       const legend = useAppSelectorWithStableTest(selectLegendPayload);
-      legendSettingsSpy(legend);
+      legendPayloadSpy(legend);
       return null;
     };
     mockGetBoundingClientRect({ width: 17, height: 71 });
     render(
       <BarChart width={100} height={100}>
         <Legend align="left" layout="vertical" verticalAlign="top" />
-        <Customized component={<Comp />} />
+        <Comp />
       </BarChart>,
     );
     const expected: ReadonlyArray<LegendPayload> = [];
-    expect(legendSettingsSpy).toHaveBeenLastCalledWith(expected);
-    expect(legendSettingsSpy).toHaveBeenCalledTimes(1);
+    expect(legendPayloadSpy).toHaveBeenLastCalledWith(expected);
+    expect(legendPayloadSpy).toHaveBeenCalledTimes(3);
   });
 });

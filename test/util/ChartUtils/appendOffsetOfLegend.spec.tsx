@@ -23,6 +23,7 @@ describe('appendOffsetOfLegend', () => {
       verticalAlign: 'bottom',
       layout: 'vertical',
       align: 'left',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -40,6 +41,7 @@ describe('appendOffsetOfLegend', () => {
       layout: 'horizontal',
       verticalAlign: 'middle',
       align: 'left',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -58,6 +60,7 @@ describe('appendOffsetOfLegend', () => {
       layout: 'horizontal',
       verticalAlign: 'middle',
       align: 'left',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -73,6 +76,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'left',
       layout: 'horizontal',
       verticalAlign: 'bottom',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -87,6 +91,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'center',
       layout: 'vertical',
       verticalAlign: 'bottom',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -101,6 +106,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'center',
       layout: 'vertical',
       verticalAlign: 'middle',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
@@ -115,6 +121,7 @@ describe('appendOffsetOfLegend', () => {
       align: 'left',
       layout: 'horizontal',
       verticalAlign: 'middle',
+      itemSorter: 'value',
     };
     const size: Size = {
       width: 100,
