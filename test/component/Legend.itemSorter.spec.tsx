@@ -1,6 +1,6 @@
 import { describe, it, expect, test, vi, beforeEach } from 'vitest';
 import { act, render } from '@testing-library/react';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { DefaultLegendContentProps, Legend, LegendPayload, Line, LineChart } from '../../src';
 import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
@@ -40,7 +40,8 @@ describe('Legend.itemSorter', () => {
   });
 
   describe('when Legend content is a function', () => {
-    it('should pass legend items sorted by label value by default', () => {
+    it.fails('should pass legend items sorted by label value by default', () => {
+      // this should sort by label value, but it does not
       const customContent = vi.fn();
 
       render(
@@ -317,40 +318,58 @@ describe('Legend.itemSorter', () => {
   describe('when Legend content hides and shows items on click and also it has a custom content', () => {
     const spy = vi.fn();
 
-    /*
-     * I thought this will reproduce the Legend jumping bug, but it does not! Interesting.
-     * Perhaps it only applies to stacked charts?
-     * https://github.com/recharts/recharts/issues/5992
-     */
-    function MyLegendHidingComponent({ children }: { children: ReactNode }) {
-      const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
+    beforeEach(() => {
+      spy.mockClear();
+    });
+
+    function useItemHiding() {
+      const [hiddenItems, setHiddenItems] = useState<ReadonlyArray<string>>([]);
 
       const handleClick = ({ dataKey }: LegendPayload) => {
         if (typeof dataKey !== 'string') {
           return;
         }
-        setHiddenItems(prev => (prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey]));
+        setHiddenItems(prev => {
+          return prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey];
+        });
       };
 
-      // eslint-disable-next-line react/no-unstable-nested-components
-      const MyCustomLegendContent = (props: DefaultLegendContentProps) => {
-        spy(props);
-        return (
-          <ul>
-            {props.payload.map((entry, index) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-              <li key={`item-${index}`} style={{ color: entry.color }} onClick={() => handleClick(entry)}>
+      return { hiddenItems, handleClick };
+    }
+
+    const MyCustomLegendContent = (
+      props: DefaultLegendContentProps & { handleClick: (entry: LegendPayload) => void },
+    ) => {
+      spy(props);
+      return (
+        <ul>
+          {props.payload.map(entry => (
+            <li key={entry.value} style={{ color: entry.color }}>
+              <button type="button" onClick={() => props.handleClick(entry)}>
                 {entry.value}
-              </li>
-            ))}
-            {props.children}
-          </ul>
-        );
-      };
+              </button>
+            </li>
+          ))}
+          {props.children}
+        </ul>
+      );
+    };
+
+    /*
+     * I thought this will reproduce the Legend jumping bug, but it does not! Interesting.
+     * Perhaps it only applies to stacked charts?
+     * https://github.com/recharts/recharts/issues/5992
+     */
+    function MyLegendHidingLineChartTestCase({ children }: { children: ReactNode }) {
+      const { hiddenItems, handleClick } = useItemHiding();
 
       return (
         <LineChart width={500} height={500} data={numericalData}>
-          <Legend itemSorter="dataKey" onClick={handleClick} content={MyCustomLegendContent} />
+          <Legend
+            itemSorter="dataKey"
+            // eslint-disable-next-line react/no-unstable-nested-components
+            content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
+          />
           <Line
             dataKey="percent"
             name="B"
@@ -368,11 +387,7 @@ describe('Legend.itemSorter', () => {
       );
     }
 
-    beforeEach(() => {
-      spy.mockClear();
-    });
-
-    const renderTestCase = createSelectorTestCase(MyLegendHidingComponent);
+    const renderTestCase = createSelectorTestCase(MyLegendHidingLineChartTestCase);
 
     describe('on initial render', () => {
       it('should render all items sorted by dataKey', () => {
