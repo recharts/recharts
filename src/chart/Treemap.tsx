@@ -382,6 +382,10 @@ type ContentItemProps = {
   onClick?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  externalOnClick?: (node: TreemapNode, e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  externalOnMouseEnter?: (node: TreemapNode, e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  externalOnMouseLeave?: (node: TreemapNode, e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
+  internalOnClick?: (node: TreemapNode) => void;
 };
 
 function ContentItem({
@@ -433,14 +437,11 @@ function ContentItem({
 
   const colors = colorPanel || COLOR_PANEL;
   return (
-    <g>
+    <g onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
       <Rectangle
         fill={nodeProps.depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)'}
         stroke="#fff"
         {...omit(nodeProps, ['children'])}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onClick={onClick}
         data-recharts-item-index={nodeProps.tooltipIndex}
       />
       {arrow}
@@ -458,7 +459,13 @@ function ContentItemWithEvents(props: ContentItemProps) {
       }
     : null;
 
-  const onMouseEnter = () => {
+  const onMouseEnter = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+    // Call external handler if provided
+    if (props.externalOnMouseEnter) {
+      props.externalOnMouseEnter(props.nodeProps, e);
+    }
+
+    // Call internal tooltip handler
     dispatch(
       setActiveMouseOverItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
@@ -467,11 +474,29 @@ function ContentItemWithEvents(props: ContentItemProps) {
       }),
     );
   };
-  const onMouseLeave = () => {
+
+  const onMouseLeave = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+    // Call external handler if provided
+    if (props.externalOnMouseLeave) {
+      props.externalOnMouseLeave(props.nodeProps, e);
+    }
+
     // clearing state on mouseLeaveItem causes re-rendering issues
     // we don't actually want to do this for TreeMap - we clear state when we leave the entire chart instead
   };
-  const onClick = () => {
+
+  const onClick = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+    // Call external handler if provided
+    if (props.externalOnClick) {
+      props.externalOnClick(props.nodeProps, e);
+    }
+
+    // Call internal navigation handler if provided
+    if (props.internalOnClick) {
+      props.internalOnClick(props.nodeProps);
+    }
+
+    // Call internal tooltip handler
     dispatch(
       setActiveClickItemIndex({
         activeIndex: props.nodeProps.tooltipIndex,
@@ -480,6 +505,7 @@ function ContentItemWithEvents(props: ContentItemProps) {
       }),
     );
   };
+
   return <ContentItem {...props} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick} />;
 }
 
@@ -665,7 +691,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     });
   }
 
-  renderItem(content: any, nodeProps: TreemapNode, isLeaf: boolean): React.ReactElement {
+  renderItem(content: any, nodeProps: TreemapNode): React.ReactElement {
     const {
       isAnimationActive,
       animationBegin,
@@ -676,22 +702,17 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
       animationId,
       colorPanel,
       dataKey,
+      onClick: externalOnClick,
+      onMouseEnter: externalOnMouseEnter,
+      onMouseLeave: externalOnMouseLeave,
     } = this.props;
     const { isAnimationFinished } = this.state;
     const { width, height, x, y, depth } = nodeProps;
     const translateX = parseInt(`${(Math.random() * 2 - 1) * width}`, 10);
-    let event = {} as any;
-    if (isLeaf || type === 'nest') {
-      event = {
-        onMouseEnter: this.handleMouseEnter.bind(this, nodeProps),
-        onMouseLeave: this.handleMouseLeave.bind(this, nodeProps),
-        onClick: this.handleClick.bind(this, nodeProps),
-      };
-    }
 
     if (!isAnimationActive) {
       return (
-        <Layer {...event}>
+        <Layer>
           <ContentItemWithEvents
             content={content}
             dataKey={dataKey}
@@ -706,6 +727,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
             }}
             type={type}
             colorPanel={colorPanel}
+            externalOnClick={externalOnClick}
+            externalOnMouseEnter={externalOnMouseEnter}
+            externalOnMouseLeave={externalOnMouseLeave}
+            internalOnClick={node => this.handleClick(node)}
           />
         </Layer>
       );
@@ -735,7 +760,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
             isActive={isAnimationActive}
             duration={animationDuration}
           >
-            <Layer {...event}>
+            <Layer>
               {/* when animation is in progress , only render depth=1 nodes */}
               {/* Why is his condition here, after Smooth and Smooth render? Why not return earlier, before Smooth is rendered? */}
               {depth > 2 && !isAnimationFinished ? null : (
@@ -753,6 +778,10 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
                   }}
                   type={type}
                   colorPanel={colorPanel}
+                  externalOnClick={externalOnClick}
+                  externalOnMouseEnter={externalOnMouseEnter}
+                  externalOnMouseLeave={externalOnMouseLeave}
+                  internalOnClick={node => this.handleClick(node)}
                 />
               )}
             </Layer>
@@ -765,7 +794,6 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
   renderNode(root: TreemapNode, node: TreemapNode): React.ReactElement {
     const { content, type } = this.props;
     const nodeProps = { ...filterProps(this.props, false), ...node, root };
-    const isLeaf = !node.children || !node.children.length;
 
     const { currentRoot } = this.state;
     const isCurrentRootChild = (currentRoot.children || []).filter(
@@ -781,7 +809,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
         key={`recharts-treemap-node-${nodeProps.x}-${nodeProps.y}-${nodeProps.name}`}
         className={`recharts-treemap-depth-${node.depth}`}
       >
-        {this.renderItem(content, nodeProps, isLeaf)}
+        {this.renderItem(content, nodeProps)}
         {node.children && node.children.length
           ? node.children.map((child: TreemapNode) => this.renderNode(node, child))
           : null}

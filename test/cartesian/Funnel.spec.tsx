@@ -1,6 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { Cell, Funnel, FunnelChart, FunnelProps, LabelList } from '../../src';
+import { render, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
+import { Cell, Funnel, FunnelChart, FunnelProps, LabelList, Tooltip } from '../../src';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { funnelChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
@@ -153,5 +154,42 @@ describe('<Funnel />', () => {
     const firstTrapezoidReversed = container.getElementsByClassName('recharts-trapezoid')[0];
     expect(firstTrapezoidReversed.getAttribute('x')).toEqual('73');
     expect(firstTrapezoidReversed.getAttribute('y')).toEqual('229');
+  });
+
+  describe('external event handler forwarding', () => {
+    it('should call external onClick handler when provided in hover mode', () => {
+      const externalOnClick = vi.fn();
+      const { container } = render(
+        <FunnelChart width={500} height={500}>
+          <Funnel dataKey="value" data={data} isAnimationActive={false} onClick={externalOnClick} />
+        </FunnelChart>,
+      );
+
+      const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+      const firstTrapezoid = trapezoids[0];
+
+      // Use fireEvent for proper React event handling
+      fireEvent.click(firstTrapezoid);
+
+      expect(externalOnClick).toHaveBeenCalled();
+    });
+
+    it('should call external onClick handler when provided in click mode', () => {
+      const externalOnClick = vi.fn();
+      const { container } = render(
+        <FunnelChart width={500} height={500}>
+          <Tooltip trigger="click" />
+          <Funnel dataKey="value" data={data} isAnimationActive={false} onClick={externalOnClick} />
+        </FunnelChart>,
+      );
+
+      const trapezoids = container.querySelectorAll('.recharts-funnel-trapezoid');
+      const firstTrapezoid = trapezoids[0];
+
+      // Use fireEvent for proper React event handling
+      fireEvent.click(firstTrapezoid);
+
+      expect(externalOnClick).toHaveBeenCalled();
+    });
   });
 });

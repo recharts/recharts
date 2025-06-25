@@ -1,6 +1,6 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCartesianChartsExcept,
@@ -1667,5 +1667,149 @@ describe('mouse interactions in stacked bar: https://github.com/recharts/rechart
       expectBarIsActive(bars[0]);
       expectBarIsNotActive(bars[1]);
     });
+  });
+});
+
+describe('external event handler forwarding', () => {
+  const simpleData = [
+    { name: 'A', value: 100 },
+    { name: 'B', value: 200 },
+    { name: 'C', value: 300 },
+  ];
+
+  it('should call external onMouseEnter handler when provided in hover mode with correct signature', () => {
+    const externalOnMouseEnter = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar isAnimationActive={false} dataKey="value" onMouseEnter={externalOnMouseEnter} />
+      </BarChart>,
+    );
+
+    const barLayers = container.querySelectorAll('.recharts-bar-rectangle');
+    const firstBarShape = barLayers[0]?.querySelector('.recharts-rectangle');
+    expect(firstBarShape).toBeTruthy();
+    fireEvent.mouseEnter(firstBarShape!);
+    expect(externalOnMouseEnter).toHaveBeenCalled();
+  });
+
+  it('should call external onClick handler when provided in hover mode', () => {
+    const externalOnClick = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar isAnimationActive={false} dataKey="value" onClick={externalOnClick} />
+      </BarChart>,
+    );
+
+    const barLayers = container.querySelectorAll('.recharts-bar-rectangle');
+    const firstBarShape = barLayers[0]?.querySelector('.recharts-rectangle');
+    expect(firstBarShape).toBeTruthy();
+    fireEvent.click(firstBarShape!);
+    expect(externalOnClick).toHaveBeenCalled();
+  });
+
+  it('should call external onMouseLeave handler when provided in hover mode', () => {
+    const externalOnMouseLeave = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar isAnimationActive={false} dataKey="value" onMouseLeave={externalOnMouseLeave} />
+      </BarChart>,
+    );
+
+    const barLayers = container.querySelectorAll('.recharts-bar-rectangle');
+    const firstBarShape = barLayers[0]?.querySelector('.recharts-rectangle');
+    expect(firstBarShape).toBeTruthy();
+    fireEvent.mouseLeave(firstBarShape!);
+    expect(externalOnMouseLeave).toHaveBeenCalled();
+  });
+
+  it('should call external onClick handler when provided in click mode', () => {
+    const externalOnClick = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip trigger="click" />
+        <Bar isAnimationActive={false} dataKey="value" onClick={externalOnClick} />
+      </BarChart>,
+    );
+
+    const barLayers = container.querySelectorAll('.recharts-bar-rectangle');
+    const firstBarShape = barLayers[0]?.querySelector('.recharts-rectangle');
+    expect(firstBarShape).toBeTruthy();
+    fireEvent.click(firstBarShape!);
+    expect(externalOnClick).toHaveBeenCalled();
+  });
+
+  it('should call external onClick handler on background rectangles when provided', () => {
+    const externalOnClick = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar isAnimationActive={false} dataKey="value" background={{ fill: '#eee' }} onClick={externalOnClick} />
+      </BarChart>,
+    );
+
+    const backgroundRectangles = container.querySelectorAll('.recharts-bar-background-rectangle');
+    const firstBackgroundShape = backgroundRectangles[0];
+    expect(firstBackgroundShape).toBeTruthy();
+    fireEvent.click(firstBackgroundShape!);
+    expect(externalOnClick).toHaveBeenCalled();
+  });
+
+  it('should call external onMouseEnter handler on background rectangles when provided with correct signature', () => {
+    const externalOnMouseEnter = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar
+          isAnimationActive={false}
+          dataKey="value"
+          background={{ fill: '#eee' }}
+          onMouseEnter={externalOnMouseEnter}
+        />
+      </BarChart>,
+    );
+
+    const backgroundRectangles = container.querySelectorAll('.recharts-bar-background-rectangle');
+    const firstBackgroundShape = backgroundRectangles[0];
+    expect(firstBackgroundShape).toBeTruthy();
+    fireEvent.mouseEnter(firstBackgroundShape!);
+    expect(externalOnMouseEnter).toHaveBeenCalled();
+  });
+
+  it('should call external onMouseLeave handler on background rectangles when provided', () => {
+    const externalOnMouseLeave = vi.fn();
+    const { container } = render(
+      <BarChart width={500} height={300} layout="horizontal" data={simpleData}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar
+          isAnimationActive={false}
+          dataKey="value"
+          background={{ fill: '#eee' }}
+          onMouseLeave={externalOnMouseLeave}
+        />
+      </BarChart>,
+    );
+
+    const backgroundRectangles = container.querySelectorAll('.recharts-bar-background-rectangle');
+    const firstBackgroundShape = backgroundRectangles[0];
+    expect(firstBackgroundShape).toBeTruthy();
+    fireEvent.mouseLeave(firstBackgroundShape!);
+    expect(externalOnMouseLeave).toHaveBeenCalled();
   });
 });
