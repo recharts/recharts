@@ -86,6 +86,7 @@ import {
   selectLegendSize,
 } from '../../../src/state/selectors/legendSelectors';
 import { mockTouchingElement } from '../../helper/mockTouchingElement';
+import { LegendSettings } from '../../../src/state/legendSlice';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running
@@ -740,11 +741,13 @@ describe('Tooltip visibility', () => {
 
     it('should select legend settings', () => {
       const { spy } = renderTestCase(selectLegendSettings);
-      expect(spy).toHaveBeenLastCalledWith({
+      const expected: LegendSettings = {
         align: 'center',
+        itemSorter: 'value',
         layout: 'horizontal',
         verticalAlign: 'bottom',
-      });
+      };
+      expect(spy).toHaveBeenLastCalledWith(expected);
     });
 
     it('should select legend size', () => {

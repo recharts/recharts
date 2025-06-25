@@ -351,3 +351,12 @@ export const dataWithSpecialNameAndFillProperties = [
   { name: 'name3', fill: 'fill3', value: 56 },
   { name: 'name4', fill: 'fill4', value: 78 },
 ];
+
+export const numericalData = [
+  { value: 'Luck', percent: 10 },
+  { value: 'Skill', percent: 20 },
+  { value: 'Concentrated power of will', percent: 15 },
+  { value: 'Pleasure', percent: 50 },
+  { value: 'Pain', percent: 50 },
+  { value: 'Reason to remember the name', percent: 100 },
+];
