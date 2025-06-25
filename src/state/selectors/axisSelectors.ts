@@ -1034,7 +1034,12 @@ export const combineNiceTicks = (
     return getNiceTickValues(axisDomain, axisSettings.tickCount, axisSettings.allowDecimals);
   }
 
-  if (axisSettings != null && axisSettings.tickCount && axisSettings.type === 'number' && axisDomain != null) {
+  if (
+    axisSettings != null &&
+    axisSettings.tickCount &&
+    axisSettings.type === 'number' &&
+    isWellFormedNumberDomain(axisDomain)
+  ) {
     return getTickValuesFixedDomain(axisDomain as NumberDomain, axisSettings.tickCount, axisSettings.allowDecimals);
   }
 
