@@ -1,7 +1,7 @@
 import { describe, it, expect, test, vi, beforeEach } from 'vitest';
 import { act, render } from '@testing-library/react';
 import React, { ReactNode, useState } from 'react';
-import { DefaultLegendContentProps, Legend, LegendPayload, Line, LineChart } from '../../src';
+import { Area, AreaChart, DefaultLegendContentProps, Legend, LegendPayload, Line, LineChart } from '../../src';
 import { numericalData } from '../_data';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
@@ -355,82 +355,214 @@ describe('Legend.itemSorter', () => {
       );
     };
 
-    /*
-     * I thought this will reproduce the Legend jumping bug, but it does not! Interesting.
-     * Perhaps it only applies to stacked charts?
-     * https://github.com/recharts/recharts/issues/5992
-     */
-    function MyLegendHidingLineChartTestCase({ children }: { children: ReactNode }) {
-      const { hiddenItems, handleClick } = useItemHiding();
+    describe('in LineChart', () => {
+      /*
+       * I thought this will reproduce the Legend jumping bug, but it does not! Interesting.
+       * Perhaps it only applies to stacked charts?
+       * https://github.com/recharts/recharts/issues/5992
+       */
+      function MyLegendHidingLineChartTestCase({ children }: { children: ReactNode }) {
+        const { hiddenItems, handleClick } = useItemHiding();
 
-      return (
-        <LineChart width={500} height={500} data={numericalData}>
-          <Legend
-            itemSorter="dataKey"
-            // eslint-disable-next-line react/no-unstable-nested-components
-            content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
-          />
-          <Line
-            dataKey="percent"
-            name="B"
-            stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
-            hide={hiddenItems.includes('percent')}
-          />
-          <Line
-            dataKey="value"
-            name="A"
-            stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
-            hide={hiddenItems.includes('value')}
-          />
-          {children}
-        </LineChart>
-      );
-    }
-
-    const renderTestCase = createSelectorTestCase(MyLegendHidingLineChartTestCase);
-
-    describe('on initial render', () => {
-      it('should render all items sorted by dataKey', () => {
-        renderTestCase();
-
-        expect(spy).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            payload: [
-              expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
-              expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: false }),
-            ],
-          }),
+        return (
+          <LineChart width={500} height={500} data={numericalData}>
+            <Legend
+              itemSorter="dataKey"
+              // eslint-disable-next-line react/no-unstable-nested-components
+              content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
+            />
+            <Line
+              dataKey="percent"
+              name="B"
+              stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
+              hide={hiddenItems.includes('percent')}
+            />
+            <Line
+              dataKey="value"
+              name="A"
+              stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
+              hide={hiddenItems.includes('value')}
+            />
+            {children}
+          </LineChart>
         );
+      }
+
+      const renderTestCase = createSelectorTestCase(MyLegendHidingLineChartTestCase);
+
+      describe('on initial render', () => {
+        it('should render all items sorted by dataKey', () => {
+          renderTestCase();
+
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: false }),
+              ],
+            }),
+          );
+        });
+      });
+
+      describe('after clicking on legend items', () => {
+        it('should hide the clicked item and keep the order', () => {
+          const { getByText } = renderTestCase();
+
+          act(() => {
+            getByText('A').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+              ],
+            }),
+          );
+
+          act(() => {
+            getByText('B').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
+              ],
+            }),
+          );
+        });
       });
     });
 
-    describe('after clicking on legend items', () => {
-      it('should hide the clicked item and keep the order', () => {
-        const { getByText } = renderTestCase();
+    describe('in stacked AreaChart', () => {
+      function MyLegendHidingAreaChartTestCase({ children }: { children: ReactNode }) {
+        const { hiddenItems, handleClick } = useItemHiding();
 
-        act(() => {
-          getByText('A').click();
-        });
-        expect(spy).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            payload: [
-              expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
-              expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
-            ],
-          }),
-        );
+        console.log('MyLegendHidingAreaChartTestCase', hiddenItems);
 
-        act(() => {
-          getByText('B').click();
-        });
-        expect(spy).toHaveBeenLastCalledWith(
-          expect.objectContaining({
-            payload: [
-              expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
-              expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
-            ],
-          }),
+        return (
+          <AreaChart width={500} height={500} data={numericalData}>
+            <Legend
+              itemSorter="dataKey"
+              content={props => <MyCustomLegendContent {...props} handleClick={handleClick} />}
+            />
+            <Area
+              dataKey="percent"
+              name="B"
+              stackId="1"
+              stroke={hiddenItems.includes('percent') ? 'gold' : 'red'}
+              hide={hiddenItems.includes('percent')}
+            />
+            <Area
+              dataKey="value"
+              name="A"
+              stackId="1"
+              stroke={hiddenItems.includes('percent') ? 'silver' : 'blue'}
+              hide={hiddenItems.includes('value')}
+            />
+            {children}
+          </AreaChart>
         );
+      }
+
+      const renderTestCase = createSelectorTestCase(MyLegendHidingAreaChartTestCase);
+
+      describe('on initial render', () => {
+        it('should render all items sorted by dataKey', () => {
+          renderTestCase();
+
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: false }),
+              ],
+            }),
+          );
+        });
+      });
+
+      describe('after clicking on legend items', () => {
+        it('should hide the clicked item and keep the order', () => {
+          const { getByText } = renderTestCase();
+
+          act(() => {
+            getByText('A').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+              ],
+            }),
+          );
+
+          act(() => {
+            getByText('B').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
+              ],
+            }),
+          );
+        });
+
+        it('should show the clicked item again and keep the order', () => {
+          const { getByText } = renderTestCase();
+
+          act(() => {
+            getByText('A').click();
+            getByText('B').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'gold', inactive: true }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'silver', inactive: true }),
+              ],
+            }),
+          );
+
+          act(() => {
+            getByText('B').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: true }),
+              ],
+            }),
+          );
+
+          act(() => {
+            getByText('A').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [
+                expect.objectContaining({ value: 'B', dataKey: 'percent', color: 'red', inactive: false }),
+                expect.objectContaining({ value: 'A', dataKey: 'value', color: 'blue', inactive: false }),
+              ],
+            }),
+          );
+
+          // let's click again to ensure it does not change the order
+          act(() => {
+            getByText('B').click();
+          });
+          expect(spy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+              payload: [expect.objectContaining({ value: 'B' }), expect.objectContaining({ value: 'A' })],
+            }),
+          );
+        });
       });
     });
   });
