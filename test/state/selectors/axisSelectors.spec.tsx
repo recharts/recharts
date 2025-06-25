@@ -2812,7 +2812,7 @@ describe('selectNiceTicks', () => {
   });
 
   // https://github.com/recharts/recharts/issues/6011
-  it('should return undefined if a domain is not formed correctly in vertical orientation with a single datapoint', () => {
+  it('should return undefined followed by a well-formed domain in vertical orientation with a single datapoint', () => {
     const xAxisSpy = vi.fn();
     const yAxisSpy = vi.fn();
     const errSpy = vi.fn();
@@ -2832,10 +2832,13 @@ describe('selectNiceTicks', () => {
         <Comp />
       </LineChart>,
     );
+
     expect(errSpy).not.toHaveBeenCalledWith(new Error('[DecimalError] Invalid argument: undefined'));
+    // the first render was previously passing a malformed domain with a single datapoint in vertical orientation, 2nd render has always resolved correctly
+    expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
     expect(xAxisSpy).toHaveBeenLastCalledWith([0, 100, 200, 300, 400]);
     expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
-    // the first render was previously passing a malformed domain with a single datapoint in vertical orientation, 2nd render has always resolved correctly
+
     expect(xAxisSpy).toHaveBeenCalledTimes(2);
     expect(yAxisSpy).toHaveBeenCalledTimes(2);
   });
