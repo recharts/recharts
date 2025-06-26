@@ -219,6 +219,11 @@ export type TooltipState = {
    * we have to change this to an array - and update all the places reading this state too.
    */
   settings: TooltipSettingsState;
+  /**
+   * This is a flag that is set when the tooltip is closing.
+   * This is used to prevent the tooltip from being closed again.
+   */
+  isClosing: boolean;
 };
 
 export const initialState: TooltipState = {
@@ -246,6 +251,7 @@ export const initialState: TooltipState = {
     active: false,
     defaultIndex: undefined,
   },
+  isClosing: false,
 };
 
 export type TooltipActionPayload = {
@@ -299,6 +305,7 @@ const tooltipSlice = createSlice({
       state.itemInteraction.click.index = action.payload.activeIndex;
       state.itemInteraction.click.dataKey = action.payload.activeDataKey;
       state.itemInteraction.click.coordinate = action.payload.activeCoordinate;
+      state.isClosing = false;
     },
     setMouseOverAxisIndex(state, action: PayloadAction<TooltipActionPayload>) {
       state.syncInteraction.active = false;
@@ -315,6 +322,7 @@ const tooltipSlice = createSlice({
       state.axisInteraction.click.index = action.payload.activeIndex;
       state.axisInteraction.click.dataKey = action.payload.activeDataKey;
       state.axisInteraction.click.coordinate = action.payload.activeCoordinate;
+      state.isClosing = false;
     },
     setSyncInteraction(state, action: PayloadAction<TooltipSyncState>) {
       state.syncInteraction = action.payload;
@@ -324,6 +332,32 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.index = action.payload.activeIndex;
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
       state.keyboardInteraction.dataKey = action.payload.activeDataKey;
+    },
+    tooltipCloseStart: state => {
+      /*
+       * Start the tooltip closing process.
+       * This action sets the isClosing flag to true and immediately hides click-triggered tooltips.
+       * Used to prevent race conditions during tooltip closing.
+       */
+      state.isClosing = true;
+      state.itemInteraction.click.active = false;
+      state.axisInteraction.click.active = false;
+    },
+    tooltipCloseEnd: state => {
+      /*
+       * End the tooltip closing process.
+       * This action resets the isClosing flag to false, allowing new tooltip interactions.
+       * Should be called after a short delay to prevent race conditions.
+       */
+      state.isClosing = false;
+    },
+    clearClickTooltip(state) {
+      /*
+       * Clear click-triggered tooltip state.
+       * This allows closing tooltips that were opened with trigger="click".
+       */
+      state.itemInteraction.click.active = false;
+      state.axisInteraction.click.active = false;
     },
   },
 });
@@ -340,6 +374,9 @@ export const {
   setMouseClickAxisIndex,
   setSyncInteraction,
   setKeyboardInteraction,
+  tooltipCloseStart,
+  tooltipCloseEnd,
+  clearClickTooltip,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;

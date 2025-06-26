@@ -1899,6 +1899,7 @@ describe('Tooltip integration', () => {
             },
           },
         ],
+        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expected);
     });

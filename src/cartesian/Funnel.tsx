@@ -155,6 +155,13 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
 
+  const restOfAllOtherPropsWithEvents = {
+    ...restOfAllOtherProps,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
+
   return (
     <>
       {trapezoids.map((entry, i) => {
@@ -167,16 +174,27 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           stroke: entry.stroke,
         };
 
+        // Always attach external event handlers (passed as props)
+        const eventHandlers: any = {
+          ...adaptEventsOfChild(restOfAllOtherPropsWithEvents, entry, i),
+        };
+
+        // Use context hooks which already handle both internal and external handlers
+        const triggerInfo = {
+          tooltipPayload: entry.payload as any,
+          tooltipPosition: { x: entry.x, y: entry.y },
+          cx: entry.x,
+          cy: entry.y,
+        };
+
+        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+
         return (
           <Layer
             className="recharts-funnel-trapezoid"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
           >
             <FunnelTrapezoid {...trapezoidProps} />

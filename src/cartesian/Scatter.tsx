@@ -213,15 +213,25 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherScatterProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
+
   if (points == null) {
     return null;
   }
+
   return (
     <>
       <ScatterLine points={points} props={allOtherScatterProps} />
@@ -236,16 +246,25 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
         };
 
+        // Always attach external event handlers (passed as props)
+        const eventHandlers: any = { ...adaptEventsOfChild(restOfAllOtherProps, entry, i) };
+
+        // Use context hooks which already handle both internal and external handlers
+        const triggerInfo = {
+          tooltipPayload: entry.tooltipPayload as any,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.cx,
+          cy: entry.cy,
+        };
+
+        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+
         return (
           <Layer
             className="recharts-scatter-symbol"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           >

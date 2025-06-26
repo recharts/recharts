@@ -1,7 +1,14 @@
 import React from 'react';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import { LineChart, Tooltip } from '../../../src';
-import { TooltipSettingsState } from '../../../src/state/tooltipSlice';
+import {
+  TooltipSettingsState,
+  tooltipReducer,
+  initialState,
+  tooltipCloseStart,
+  tooltipCloseEnd,
+  clearClickTooltip,
+} from '../../../src/state/tooltipSlice';
 
 describe('Tooltip state integration', () => {
   describe('with explicit settings', () => {
@@ -64,5 +71,49 @@ describe('Tooltip state integration', () => {
       };
       expect(spy).toHaveBeenLastCalledWith(expected);
     });
+  });
+});
+
+describe('tooltipSlice reducers', () => {
+  it('should set isClosing to true and deactivate click tooltips on tooltipCloseStart', () => {
+    const prevState = {
+      ...initialState,
+      itemInteraction: {
+        ...initialState.itemInteraction,
+        click: { ...initialState.itemInteraction.click, active: true },
+      },
+      axisInteraction: {
+        ...initialState.axisInteraction,
+        click: { ...initialState.axisInteraction.click, active: true },
+      },
+      isClosing: false,
+    };
+    const nextState = tooltipReducer(prevState, tooltipCloseStart());
+    expect(nextState.isClosing).toBe(true);
+    expect(nextState.itemInteraction.click.active).toBe(false);
+    expect(nextState.axisInteraction.click.active).toBe(false);
+  });
+
+  it('should set isClosing to false on tooltipCloseEnd', () => {
+    const prevState = { ...initialState, isClosing: true };
+    const nextState = tooltipReducer(prevState, tooltipCloseEnd());
+    expect(nextState.isClosing).toBe(false);
+  });
+
+  it('should clear click-triggered tooltip state on clearClickTooltip', () => {
+    const prevState = {
+      ...initialState,
+      itemInteraction: {
+        ...initialState.itemInteraction,
+        click: { ...initialState.itemInteraction.click, active: true },
+      },
+      axisInteraction: {
+        ...initialState.axisInteraction,
+        click: { ...initialState.axisInteraction.click, active: true },
+      },
+    };
+    const nextState = tooltipReducer(prevState, clearClickTooltip());
+    expect(nextState.itemInteraction.click.active).toBe(false);
+    expect(nextState.axisInteraction.click.active).toBe(false);
   });
 });

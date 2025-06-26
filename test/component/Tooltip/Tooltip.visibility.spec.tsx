@@ -227,7 +227,7 @@ const FunnelChartTestCase: TooltipVisibilityTestCase = {
     </FunnelChart>
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(355px, 55px);',
+  expectedTransform: 'transform: translate(40px, 15px);',
   tooltipIndex: '0',
 };
 
@@ -1117,6 +1117,7 @@ describe('Tooltip visibility', () => {
             },
           },
         ],
+        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedBeforeHover);
 
@@ -1203,6 +1204,7 @@ describe('Tooltip visibility', () => {
             },
           },
         ],
+        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedAfterHover);
     });
