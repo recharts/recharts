@@ -1216,4 +1216,89 @@ describe('<PolarRadiusAxis />', () => {
       expect(realScaleTypeSpy).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('with custom tick formatter and category values', () => {
+    // https://github.com/recharts/recharts/issues/6010
+    const formatter = vi.fn(value => `Formatted: ${value}`);
+
+    beforeEach(() => {
+      formatter.mockClear();
+    });
+
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <RadarChart width={500} height={500} data={exampleRadarData}>
+        <PolarRadiusAxis dataKey="name" type="category" tickFormatter={formatter} />
+        <Radar dataKey="value" />
+        {children}
+      </RadarChart>
+    ));
+
+    it('should render labels with custom formatter', () => {
+      const { container } = renderTestCase();
+
+      expectRadiusAxisTicks(container, [
+        {
+          textContent: 'Formatted: iPhone 3GS',
+          transform: 'rotate(90, 262.25, 250)',
+          x: '262.25',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 4',
+          transform: 'rotate(90, 286.75, 250)',
+          x: '286.75',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 4s',
+          transform: 'rotate(90, 311.25, 250)',
+          x: '311.25',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 5',
+          transform: 'rotate(90, 335.75, 250)',
+          x: '335.75',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 5s',
+          transform: 'rotate(90, 360.25, 250)',
+          x: '360.25',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 6',
+          transform: 'rotate(90, 384.75, 250)',
+          x: '384.75',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 6s',
+          transform: 'rotate(90, 409.25, 250)',
+          x: '409.25',
+          y: '250',
+        },
+        {
+          textContent: 'Formatted: iPhone 5se',
+          transform: 'rotate(90, 433.75, 250)',
+          x: '433.75',
+          y: '250',
+        },
+      ]);
+    });
+
+    it('should call the custom tick formatter function with the tick value, and index', () => {
+      renderTestCase();
+      expect(formatter).toHaveBeenCalledTimes(exampleRadarData.length);
+      expect(formatter).toHaveBeenNthCalledWith(1, 'iPhone 3GS', 0);
+      expect(formatter).toHaveBeenNthCalledWith(2, 'iPhone 4', 1);
+      expect(formatter).toHaveBeenNthCalledWith(3, 'iPhone 4s', 2);
+      expect(formatter).toHaveBeenNthCalledWith(4, 'iPhone 5', 3);
+      expect(formatter).toHaveBeenNthCalledWith(5, 'iPhone 5s', 4);
+      expect(formatter).toHaveBeenNthCalledWith(6, 'iPhone 6', 5);
+      expect(formatter).toHaveBeenNthCalledWith(7, 'iPhone 6s', 6);
+      expect(formatter).toHaveBeenNthCalledWith(8, 'iPhone 5se', 7);
+    });
+  });
 });
