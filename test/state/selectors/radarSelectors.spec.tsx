@@ -163,7 +163,7 @@ describe('selectRadarPoints', () => {
         },
       ],
     });
-    expect(radarPointsSpy).toHaveBeenCalledTimes(3);
+    expect(radarPointsSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should return new data after interaction', () => {

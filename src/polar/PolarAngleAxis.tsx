@@ -80,7 +80,7 @@ function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
     return () => {
       dispatch(removeAngleAxis(settings));
     };
-  });
+  }, [dispatch, settings]);
 
   if (settingsAreSynchronized) {
     return props.children;
