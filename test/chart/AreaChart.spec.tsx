@@ -453,14 +453,14 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       spies.forEach(el => expect(el.mock.calls.length).toBe(1));
-      expect(axisSpy).toHaveBeenCalledTimes(4);
+      expect(axisSpy).toHaveBeenCalledTimes(3);
 
       fireEvent.mouseEnter(container, { clientX: 30, clientY: 200 });
       fireEvent.mouseMove(container, { clientX: 200, clientY: 200 });
       fireEvent.mouseLeave(container);
 
       spies.forEach(el => expect(el.mock.calls.length).toBe(1));
-      expect(axisSpy).toHaveBeenCalledTimes(4);
+      expect(axisSpy).toHaveBeenCalledTimes(3);
     });
 
     // protect against the future where someone might mess up our clean rendering
@@ -468,7 +468,7 @@ describe('AreaChart', () => {
       const { container } = render(chart);
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-      expect(axisSpy).toHaveBeenCalledTimes(4);
+      expect(axisSpy).toHaveBeenCalledTimes(3);
 
       const brushSlide = container.querySelector('.recharts-brush-slide');
       assertNotNull(brushSlide);
@@ -477,7 +477,7 @@ describe('AreaChart', () => {
       fireEvent.mouseUp(window);
 
       spies.forEach(el => expect(el).toHaveBeenCalledTimes(1));
-      expect(axisSpy).toHaveBeenCalledTimes(4);
+      expect(axisSpy).toHaveBeenCalledTimes(3);
     });
 
     test('should only show the last data when the brush travelers all moved to the right', () => {
