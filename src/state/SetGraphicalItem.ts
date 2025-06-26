@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from './hooks';
 import {
   addCartesianGraphicalItem,
@@ -7,7 +7,6 @@ import {
   PolarGraphicalItemSettings,
   removeCartesianGraphicalItem,
   removePolarGraphicalItem,
-  replaceCartesianGraphicalItem,
 } from './graphicalItemsSlice';
 import { getNormalizedStackId, StackId } from '../util/ChartUtils';
 
@@ -17,30 +16,16 @@ type SetCartesianGraphicalItemProps = Omit<CartesianGraphicalItemSettings, 'stac
 
 export function SetCartesianGraphicalItem(props: SetCartesianGraphicalItemProps): null {
   const dispatch = useAppDispatch();
-  const prevPropsRef = useRef<CartesianGraphicalItemSettings | null>(null);
-
   useEffect(() => {
     const settings: CartesianGraphicalItemSettings = {
       ...props,
       stackId: getNormalizedStackId(props.stackId),
     };
-
-    if (prevPropsRef.current === null) {
-      dispatch(addCartesianGraphicalItem(settings));
-    } else if (prevPropsRef.current !== settings) {
-      dispatch(replaceCartesianGraphicalItem({ prev: prevPropsRef.current, next: settings }));
-    }
-    prevPropsRef.current = settings;
-  }, [dispatch, props]);
-
-  useEffect(() => {
+    dispatch(addCartesianGraphicalItem(settings));
     return () => {
-      if (prevPropsRef.current) {
-        dispatch(removeCartesianGraphicalItem(prevPropsRef.current));
-      }
+      dispatch(removeCartesianGraphicalItem(settings));
     };
-  }, [dispatch]);
-
+  }, [dispatch, props]);
   return null;
 }
 
