@@ -110,11 +110,6 @@ const initialState: GraphicalItemsState = {
   polarItems: [],
 };
 
-type ReplacePayload<T> = {
-  prev: T;
-  next: T;
-};
-
 const graphicalItemsSlice = createSlice({
   name: 'graphicalItems',
   initialState,
@@ -127,13 +122,6 @@ const graphicalItemsSlice = createSlice({
     },
     addCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
       state.cartesianItems.push(castDraft(action.payload));
-    },
-    replaceCartesianGraphicalItem(state, action: PayloadAction<ReplacePayload<CartesianGraphicalItemSettings>>) {
-      const { prev, next } = action.payload;
-      const index = current(state).cartesianItems.indexOf(castDraft(prev));
-      if (index > -1) {
-        state.cartesianItems[index] = castDraft(next);
-      }
     },
     removeCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
       const index = current(state).cartesianItems.indexOf(castDraft(action.payload));
@@ -157,7 +145,6 @@ export const {
   addBar,
   removeBar,
   addCartesianGraphicalItem,
-  replaceCartesianGraphicalItem,
   removeCartesianGraphicalItem,
   addPolarGraphicalItem,
   removePolarGraphicalItem,
