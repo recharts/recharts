@@ -47,7 +47,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayload, TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { selectActiveTooltipIndex, selectTooltipTrigger } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { SetPolarLegendPayload } from '../state/SetLegendPayload';
 import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from '../util/Constants';
 import { useAnimationId } from '../util/useAnimationId';
@@ -426,7 +426,6 @@ function PieSectors(props: PieSectorsProps) {
   const { sectors, activeShape, inactiveShape: inactiveShapeProp, allOtherPieProps, showLabels } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
-  const tooltipTrigger = useAppSelector(selectTooltipTrigger);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -470,52 +469,17 @@ function PieSectors(props: PieSectorsProps) {
           ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
         };
 
-        // Conditionally attach internal tooltip handlers based on tooltip trigger
-        if (tooltipTrigger === 'click') {
-          const triggerInfo = {
-            tooltipPayload: entry.tooltipPayload as any,
-            tooltipPosition: entry.tooltipPosition,
-            cx: entry.cx,
-            cy: entry.cy,
-          };
-          // Combine external onClick with internal tooltip onClick
-          const externalOnClick = eventHandlers.onClick;
-          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnClick) externalOnClick(entry, i, e);
-            onClickFromContext(triggerInfo, i)(e);
-          };
-        } else {
-          const triggerInfo = {
-            tooltipPayload: entry.tooltipPayload as any,
-            tooltipPosition: entry.tooltipPosition,
-            cx: entry.cx,
-            cy: entry.cy,
-          };
-          // For hover mode, only call the external handler if present, otherwise call the internal handler
-          const externalOnMouseEnter = eventHandlers.onMouseEnter;
-          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnMouseEnter) {
-              externalOnMouseEnter(entry, i, e);
-            } else {
-              onMouseEnterFromContext(triggerInfo, i)(e);
-            }
-          };
-          const externalOnMouseLeave = eventHandlers.onMouseLeave;
-          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnMouseLeave) {
-              externalOnMouseLeave(entry, i, e);
-            } else {
-              onMouseLeaveFromContext(triggerInfo, i)(e);
-            }
-          };
-          // For hover mode, also ensure external onClick is called if provided
-          const externalOnClick = eventHandlers.onClick;
-          if (externalOnClick) {
-            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-              externalOnClick(entry, i, e);
-            };
-          }
-        }
+        // Use context hooks which already handle both internal and external handlers
+        const triggerInfo = {
+          tooltipPayload: entry.tooltipPayload as any,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.cx,
+          cy: entry.cy,
+        };
+
+        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
 
         return (
           <Layer

@@ -6,7 +6,6 @@ import omit from 'es-toolkit/compat/omit';
 import { clsx } from 'clsx';
 import { selectActiveIndex } from '../state/selectors/selectors';
 import { useAppSelector } from '../state/hooks';
-import { selectTooltipTrigger } from '../state/selectors/tooltipSelectors';
 import { Layer } from '../container/Layer';
 import { Props as TrapezoidProps } from '../shape/Trapezoid';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
@@ -143,7 +142,6 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const activeItemIndex = useAppSelector(state =>
     selectActiveIndex(state, 'item', state.tooltip.settings.trigger, undefined),
   );
-  const tooltipTrigger = useAppSelector(selectTooltipTrigger);
   const {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
@@ -181,52 +179,17 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           ...adaptEventsOfChild(restOfAllOtherPropsWithEvents, entry, i),
         };
 
-        // Conditionally attach internal tooltip handlers based on tooltip trigger
-        if (tooltipTrigger === 'click') {
-          const triggerInfo = {
-            tooltipPayload: entry.payload as any,
-            tooltipPosition: { x: entry.x, y: entry.y },
-            cx: entry.x,
-            cy: entry.y,
-          };
-          // Combine external onClick with internal tooltip onClick
-          const externalOnClick = eventHandlers.onClick;
-          eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnClick) externalOnClick(entry, i, e);
-            onClickFromContext(triggerInfo, i)(e);
-          };
-        } else {
-          const triggerInfo = {
-            tooltipPayload: entry.payload as any,
-            tooltipPosition: { x: entry.x, y: entry.y },
-            cx: entry.x,
-            cy: entry.y,
-          };
-          // For hover mode, only call the external handler if present, otherwise call the internal handler
-          const externalOnMouseEnter = eventHandlers.onMouseEnter;
-          eventHandlers.onMouseEnter = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnMouseEnter) {
-              externalOnMouseEnter(entry, i, e);
-            } else {
-              onMouseEnterFromContext(triggerInfo, i)(e);
-            }
-          };
-          const externalOnMouseLeave = eventHandlers.onMouseLeave;
-          eventHandlers.onMouseLeave = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-            if (externalOnMouseLeave) {
-              externalOnMouseLeave(entry, i, e);
-            } else {
-              onMouseLeaveFromContext(triggerInfo, i)(e);
-            }
-          };
-          // Always attach external onClick if provided
-          const externalOnClick = eventHandlers.onClick;
-          if (externalOnClick) {
-            eventHandlers.onClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-              externalOnClick(entry, i, e);
-            };
-          }
-        }
+        // Use context hooks which already handle both internal and external handlers
+        const triggerInfo = {
+          tooltipPayload: entry.payload as any,
+          tooltipPosition: { x: entry.x, y: entry.y },
+          cx: entry.x,
+          cy: entry.y,
+        };
+
+        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
+        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
+        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
 
         return (
           <Layer
