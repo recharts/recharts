@@ -34,12 +34,13 @@ describe('XAxis with custom tickFormatter', () => {
     // https://github.com/recharts/recharts/issues/6010
     renderTestCase();
 
-    // expect(tickFormatterSpy).toHaveBeenCalledTimes(6);
-    expect(tickFormatterSpy.mock.calls[0]).toEqual(['Page A', 0]);
-    expect(tickFormatterSpy.mock.calls[1]).toEqual(['Page B', 1]);
-    expect(tickFormatterSpy.mock.calls[2]).toEqual(['Page C', 2]);
-    expect(tickFormatterSpy.mock.calls[3]).toEqual(['Page D', 3]);
-    expect(tickFormatterSpy.mock.calls[4]).toEqual(['Page E', 4]);
-    expect(tickFormatterSpy.mock.calls[5]).toEqual(['Page F', 5]);
+    expect(tickFormatterSpy).toHaveBeenCalledTimes(2 * PageData.length);
+    // interesting that they are called upside down but ... that doesn't really matter
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(1, 'Page F', 5);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(2, 'Page E', 4);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(3, 'Page D', 3);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(4, 'Page C', 2);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(5, 'Page B', 1);
+    expect(tickFormatterSpy).toHaveBeenNthCalledWith(6, 'Page A', 0);
   });
 });

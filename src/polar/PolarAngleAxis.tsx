@@ -65,7 +65,7 @@ export type Props = AxisSvgProps & PolarAngleAxisProps;
 
 const AXIS_TYPE = 'angleAxis';
 
-type AngleAxisSettingsReporter = AngleAxisSettings & { children: React.ReactNode };
+type AngleAxisSettingsReporter = AngleAxisSettings & { children: ReactNode };
 
 function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
   const dispatch = useAppDispatch();

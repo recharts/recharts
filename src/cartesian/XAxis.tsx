@@ -2,7 +2,7 @@
  * @fileOverview X Axis
  */
 import * as React from 'react';
-import { Component, useEffect } from 'react';
+import { Component, ReactNode, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
 import { CartesianAxis } from './CartesianAxis';
 import { AxisInterval, AxisTick, BaseAxisProps, PresentationAttributesAdaptChildEvent } from '../util/types';
@@ -13,6 +13,7 @@ import {
   selectAxisScale,
   selectTicksOfAxis,
   selectXAxisPosition,
+  selectXAxisSettings,
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
 import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
@@ -41,14 +42,27 @@ interface XAxisProps extends BaseAxisProps {
 
 export type Props = Omit<PresentationAttributesAdaptChildEvent<any, SVGElement>, 'scale' | 'ref'> & XAxisProps;
 
-function SetXAxisSettings(settings: XAxisSettings): null {
+type SetXAxisSettingsProps = XAxisSettings & { children: ReactNode };
+
+function SetXAxisSettings(props: SetXAxisSettingsProps): ReactNode {
   const dispatch = useAppDispatch();
+  const settings = useMemo(() => {
+    const { children, ...rest } = props;
+    return rest;
+  }, [props]);
+  const synchronizedSettings = useAppSelector(state => selectXAxisSettings(state, settings.id));
+  const settingsAreSynchronized = settings === synchronizedSettings;
+
   useEffect(() => {
     dispatch(addXAxis(settings));
     return () => {
       dispatch(removeXAxis(settings));
     };
   }, [settings, dispatch]);
+
+  if (settingsAreSynchronized) {
+    return props.children;
+  }
   return null;
 }
 
@@ -85,35 +99,34 @@ const XAxisImpl = (props: Props) => {
 
 const XAxisSettingsDispatcher = (props: Props) => {
   return (
-    <>
-      <SetXAxisSettings
-        interval={props.interval ?? 'preserveEnd'}
-        id={props.xAxisId}
-        scale={props.scale}
-        type={props.type}
-        padding={props.padding}
-        allowDataOverflow={props.allowDataOverflow}
-        domain={props.domain}
-        dataKey={props.dataKey}
-        allowDuplicatedCategory={props.allowDuplicatedCategory}
-        allowDecimals={props.allowDecimals}
-        tickCount={props.tickCount}
-        includeHidden={props.includeHidden ?? false}
-        reversed={props.reversed}
-        ticks={props.ticks}
-        height={props.height}
-        orientation={props.orientation}
-        mirror={props.mirror}
-        hide={props.hide}
-        unit={props.unit}
-        name={props.name}
-        angle={props.angle ?? 0}
-        minTickGap={props.minTickGap ?? 5}
-        tick={props.tick ?? true}
-        tickFormatter={props.tickFormatter}
-      />
+    <SetXAxisSettings
+      interval={props.interval ?? 'preserveEnd'}
+      id={props.xAxisId}
+      scale={props.scale}
+      type={props.type}
+      padding={props.padding}
+      allowDataOverflow={props.allowDataOverflow}
+      domain={props.domain}
+      dataKey={props.dataKey}
+      allowDuplicatedCategory={props.allowDuplicatedCategory}
+      allowDecimals={props.allowDecimals}
+      tickCount={props.tickCount}
+      includeHidden={props.includeHidden ?? false}
+      reversed={props.reversed}
+      ticks={props.ticks}
+      height={props.height}
+      orientation={props.orientation}
+      mirror={props.mirror}
+      hide={props.hide}
+      unit={props.unit}
+      name={props.name}
+      angle={props.angle ?? 0}
+      minTickGap={props.minTickGap ?? 5}
+      tick={props.tick ?? true}
+      tickFormatter={props.tickFormatter}
+    >
       <XAxisImpl {...props} />
-    </>
+    </SetXAxisSettings>
   );
 };
 
