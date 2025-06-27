@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { Args } from '@storybook/react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
@@ -13,11 +13,13 @@ export default {
 export const Simple = {
   render: (args: Record<string, any>) => {
     return (
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart {...args}>
-          <Bar dataKey="uv" />
-        </BarChart>
-      </ResponsiveContainer>
+      <StrictMode>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart {...args}>
+            <Bar dataKey="uv" />
+          </BarChart>
+        </ResponsiveContainer>
+      </StrictMode>
     );
   },
   args: {
