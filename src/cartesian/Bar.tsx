@@ -71,6 +71,7 @@ export interface BarRectangleItem extends RectangleProps {
     height?: number;
   };
   tooltipPosition: Coordinate;
+  readonly payload?: any;
 }
 
 export interface BarProps {
@@ -698,7 +699,7 @@ export function computeBarRectangles({
       }
     }
 
-    return {
+    const barRectangleItem = {
       ...entry,
       x,
       y,
@@ -709,7 +710,9 @@ export function computeBarRectangles({
       background,
       tooltipPosition: { x: x + width / 2, y: y + height / 2 },
       ...(cells && cells[index] && cells[index].props),
-    };
+    } satisfies BarRectangleItem;
+
+    return barRectangleItem;
   });
 }
 
