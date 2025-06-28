@@ -3,7 +3,7 @@ import React from 'react';
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 import { timeDay, timeHour, timeMinute, timeMonth, timeSecond, timeWeek, timeYear } from 'd3-time';
-import { timeData } from '../data';
+import { generateTimeData, timeData } from '../data';
 import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
 
@@ -128,4 +128,67 @@ export const WithD3Scale = {
     );
   },
   parameters: { controls: { include: ['data'] } },
+};
+
+type TickSnappingArgs = {
+  numPoints: number;
+  intervalSeconds: number;
+};
+
+export const TickSnapping = {
+  ...StoryTemplate,
+  render: (args: TickSnappingArgs) => {
+    const timeData100Points = generateTimeData(args.numPoints, args.intervalSeconds);
+    return (
+      <ResponsiveContainer width="100%" height={400}>
+        <ComposedChart
+          data={timeData100Points}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          <XAxis
+            dataKey="x"
+            type="number"
+            scale="time"
+            id="foo"
+            domain={['dataMin', 'dataMax']}
+            tickCount={10}
+            tickFormatter={timeFormat('%b %d %I:%M %p')}
+          />
+          <Line dataKey="y" xAxisId="foo" />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  },
+  args: {
+    numPoints: 100,
+    intervalSeconds: 60,
+  },
+  argTypes: {
+    numPoints: {
+      control: { type: 'number' },
+      name: 'Number of points',
+    },
+    intervalSeconds: {
+      control: {
+        type: 'select',
+        labels: {
+          60: '1 minute',
+          [2 * 60]: '2 minutes',
+          [5 * 60]: '5 minutes',
+          [15 * 60]: '15 minutes',
+          [60 * 60]: '1 hour',
+          [6 * 60 * 60]: '6 hours',
+          [24 * 60 * 60]: '1 day',
+        },
+      },
+      options: [60, 2 * 60, 5 * 60, 15 * 60, 60 * 60, 6 * 60 * 60, 24 * 60 * 60],
+      name: 'Interval between points',
+    },
+  },
+  parameters: { controls: { include: ['Number of points', 'Interval between points'] } },
 };
