@@ -58,7 +58,7 @@ export const Simple = {
 };
 
 export const StackedAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -69,7 +69,10 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip active defaultIndex={2} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Legend />
         </AreaChart>
       </ResponsiveContainer>

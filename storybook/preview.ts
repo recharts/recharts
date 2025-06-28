@@ -10,7 +10,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    layout: 'padded',
+    layout: 'fullscreen',
     docs: {
       container: DocsContainer,
       page: DocsPage,

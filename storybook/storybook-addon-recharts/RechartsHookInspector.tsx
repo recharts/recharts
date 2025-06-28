@@ -1,28 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
 import { useChartLayout } from '../../src/context/chartLayoutContext';
 import { PolarChartInspector } from './PolarChartInspector';
 import { CartesianChartInspector } from './CartesianChartInspector';
+import { Position } from './constants';
+import { HookInspectorLayoutSwitcher } from './HookInspectorLayoutSwitcher';
 
-export function RechartsHookInspector({ rechartsInspectorEnabled }: { rechartsInspectorEnabled: boolean }) {
+export function RechartsHookInspector({
+  position,
+  setPosition,
+}: {
+  position: Position;
+  setPosition: (newPosition: Position) => void;
+}) {
   const layout = useChartLayout();
-  const [counter, setCounter] = useState(0);
 
-  if (!rechartsInspectorEnabled) {
-    return null;
-  }
-
-  const renderedChart = document.querySelector('.recharts-wrapper');
-  if (!renderedChart) {
-    // Let's try again in 100ms and see if the chart is rendered. Also limit this so that we don't continue looping for eternity.
-    if (counter < 10) {
-      setTimeout(() => setCounter(counter + 1), 100);
-    }
-    /*
-     * Wait until after the chart has rendered. Otherwise, the inspector renders first and chart second.
-     * Which is not a big problem per se but when you enable it using the tool icon,
-     * the inspector renders second. So let's keep things consistent.
-     */
+  if (position === 'hidden' || position == null) {
     return null;
   }
 
@@ -37,5 +30,11 @@ export function RechartsHookInspector({ rechartsInspectorEnabled }: { rechartsIn
       Component = CartesianChartInspector;
   }
 
-  return createPortal(<Component />, document.querySelector('#storybook-root'));
+  return createPortal(
+    <>
+      <HookInspectorLayoutSwitcher position={position} setPosition={setPosition} />
+      <Component />
+    </>,
+    document.querySelector('#recharts-hook-inspector-portal'),
+  );
 }
