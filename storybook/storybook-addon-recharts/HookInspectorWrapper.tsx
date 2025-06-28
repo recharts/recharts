@@ -28,7 +28,7 @@ function getStyles(position: Position): CSSProperties {
 export function HookInspectorLayout({ children, position }: { children: ReactNode; position: Position }) {
   return (
     <div className="recharts-storybook-addon-recharts" style={{ ...sharedStyles, ...getStyles(position) }}>
-      <div id="recharts-hook-inspector-portal" />
+      <div id="recharts-hook-inspector-portal" style={{ flexGrow: 1, flexShrink: 4, alignSelf: 'stretch' }} />
       {children}
     </div>
   );

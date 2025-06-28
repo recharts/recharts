@@ -29,7 +29,6 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
 
   return (
     <HookInspectorLayout position={position}>
-      <div id="recharts-hook-inspector-portal" />
       <Story {...context} />
     </HookInspectorLayout>
   );
