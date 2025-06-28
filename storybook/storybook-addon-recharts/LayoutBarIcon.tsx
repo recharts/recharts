@@ -9,7 +9,7 @@ const directionToRotation: Record<Direction, number> = {
   WEST: 270,
 };
 
-export function LayoutBarIcon({ direction = 'EAST' }: { direction?: Direction }) {
+export const LayoutBarIcon = ({ direction }: { direction: Direction }) => {
   const rotation = directionToRotation[direction];
   return (
     <svg
@@ -24,4 +24,4 @@ export function LayoutBarIcon({ direction = 'EAST' }: { direction?: Direction })
       <rect x="4" y="9" width="16" height="12" rx="2" fill="#ddd" />
     </svg>
   );
-}
+};

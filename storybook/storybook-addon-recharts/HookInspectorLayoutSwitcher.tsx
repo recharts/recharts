@@ -2,8 +2,8 @@ import React from 'react';
 import { CloseIcon } from '@storybook/icons';
 import { Position } from './constants';
 import { LayoutBarIcon } from './LayoutBarIcon';
+import { RechartsHookInspectorButton } from './RechartsHookInspectorButton';
 
-/* eslint-disable jsx-a11y/label-has-associated-control */
 export function HookInspectorLayoutSwitcher({
   position,
   setPosition,
@@ -12,64 +12,42 @@ export function HookInspectorLayoutSwitcher({
   setPosition: (newPosition: Position) => void;
 }) {
   return (
-    <form
-      style={{
-        zIndex: 1100,
-        padding: '6px 12px',
-        borderRadius: '6px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-      }}
-    >
-      <label title="Move to north">
-        <input
-          type="radio"
-          name="layout"
-          value="NORTH"
-          checked={position === 'NORTH'}
-          onChange={() => setPosition('NORTH')}
-        />
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '4px', padding: '4px' }}>
+      <RechartsHookInspectorButton
+        isActive={position === 'NORTH'}
+        onClick={() => setPosition('NORTH')}
+        title="Move to north"
+      >
         <LayoutBarIcon direction="NORTH" />
-      </label>
-      <label title="Move to south">
-        <input
-          type="radio"
-          name="layout"
-          value="SOUTH"
-          checked={position === 'SOUTH'}
-          onChange={() => setPosition('SOUTH')}
-        />
+      </RechartsHookInspectorButton>
+      <RechartsHookInspectorButton
+        isActive={position === 'SOUTH'}
+        onClick={() => setPosition('SOUTH')}
+        title="Move to south"
+      >
         <LayoutBarIcon direction="SOUTH" />
-      </label>
-      <label title="Move to west">
-        <input
-          type="radio"
-          name="layout"
-          value="WEST"
-          checked={position === 'WEST'}
-          onChange={() => setPosition('WEST')}
-        />
+      </RechartsHookInspectorButton>
+      <RechartsHookInspectorButton
+        isActive={position === 'WEST'}
+        onClick={() => setPosition('WEST')}
+        title="Move to west"
+      >
         <LayoutBarIcon direction="WEST" />
-      </label>
-      <label title="Move to east">
-        <input
-          type="radio"
-          name="layout"
-          value="EAST"
-          checked={position === 'EAST'}
-          onChange={() => setPosition('EAST')}
-        />
+      </RechartsHookInspectorButton>
+      <RechartsHookInspectorButton
+        isActive={position === 'EAST'}
+        onClick={() => setPosition('EAST')}
+        title="Move to east"
+      >
         <LayoutBarIcon direction="EAST" />
-      </label>
-      <label title="Hide Hook Inspector">
-        <input
-          type="radio"
-          name="layout"
-          value="hidden"
-          checked={position === 'hidden'}
-          onChange={() => setPosition('hidden')}
-        />
+      </RechartsHookInspectorButton>
+      <RechartsHookInspectorButton
+        isActive={position === 'hidden'}
+        onClick={() => setPosition('hidden')}
+        title="Hide inspector"
+      >
         <CloseIcon />
-      </label>
-    </form>
+      </RechartsHookInspectorButton>
+    </div>
   );
 }
