@@ -46,7 +46,11 @@
     "test-build-output": "vitest run --config scripts/vitest-build.config.ts",
     "test-storybook": "test-storybook --config-dir storybook",
     "test-storybook:url": "test-storybook --url http://127.0.0.1:9009 --config-dir storybook",
-    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
+    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\"",
+    "test-vr:prepare": "docker-compose up -d --build",
+    "test-vr": "docker-compose run --rm test-vr playwright-test",
+    "test-vr:update": "docker-compose run --rm test-vr playwright-test --update-snapshots",
+    "test-vr:ui": "docker-compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -92,6 +96,7 @@
     "@babel/runtime": "^7.26.10",
     "@chromatic-com/storybook": "^3.2.6",
     "@codecov/bundle-analyzer": "^1.9.1",
+    "@playwright/experimental-ct-react": "^1.53.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@storybook/addon-a11y": "^8.6.13",
     "@storybook/addon-docs": "^8.6.13",
