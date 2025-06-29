@@ -45,7 +45,11 @@
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
     "chromatic": "npx chromatic",
     "test-build-output": "vitest run --config scripts/vitest-build.config.ts",
-    "test-storybook": "vitest --config vitest.config.mts --project storybook"
+    "test-storybook": "vitest --config vitest.config.mts --project storybook",
+    "test-vr:prepare": "docker-compose up -d --build",
+    "test-vr": "docker-compose run --rm test-vr playwright-test",
+    "test-vr:update": "docker-compose run --rm test-vr playwright-test --update-snapshots",
+    "test-vr:ui": "docker-compose run -p 8080:8080 --rm test-vr playwright-test --ui --ui-host=0.0.0.0 --ui-port=8080"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -91,6 +95,7 @@
     "@babel/runtime": "^7.26.10",
     "@chromatic-com/storybook": "^4.0.1",
     "@codecov/bundle-analyzer": "^1.9.1",
+    "@playwright/experimental-ct-react": "^1.53.1",
     "@reduxjs/toolkit": "^1.9.7",
     "@stackblitz/sdk": "^1.11.0",
     "@storybook/addon-a11y": "^9.0.17",
