@@ -1,4 +1,4 @@
-import React, { ComponentType, CSSProperties, useEffect, useState } from 'react';
+import React, { ComponentType, CSSProperties, useEffect } from 'react';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
 import { LayoutTypeInspector } from './LayoutTypeInspector';
@@ -10,6 +10,7 @@ import { TooltipAxisTicksInspector } from './TooltipAxisTicksInspector';
 import { TooltipStateInspector } from './TooltipStateInspector';
 import { ChartDimensionInspector } from './ChartDimensionInspector';
 import { ChartInspectorProps } from './types';
+import { useLocalStorageState } from '../useLocalStorageState';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -49,7 +50,7 @@ const tableStyle: CSSProperties = {
 };
 
 export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
-  const [selected, setSelected] = useState<ReadonlyArray<string>>([]);
+  const [selected, setSelected] = useLocalStorageState<ReadonlyArray<string>>('CartesianChartInspector', []);
 
   function handleCheckboxChange(key: string) {
     setSelected(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
