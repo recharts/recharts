@@ -1,4 +1,4 @@
-import { Meta, StoryContext, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import {
   ScatterChart,
@@ -20,6 +20,7 @@ import { StorybookArgs } from '../../StorybookArgs';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: ScatterChart,
@@ -493,7 +494,7 @@ export const WithCells = {
 };
 
 export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <ScatterChart {...args}>
         <CartesianGrid vertical={false} yAxisId="axis-babies" />
@@ -559,7 +560,10 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
           shape="circle"
         />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} shared={false} />
-        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </ScatterChart>
     );
   },
@@ -616,7 +620,7 @@ export const WithDuplicatedCategory: StoryObj<StorybookArgs> = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -674,7 +678,10 @@ export const ChangingDataKey = {
             <ZAxis range={[200, 200]} />
             <Tooltip />
             <Legend />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
             <Scatter
               name="Animated Scatter"
               lineType="joint"

@@ -1,11 +1,11 @@
 import type { Renderer, ProjectAnnotations } from '@storybook/types';
-import { withRechartsHookInspector } from './withRechartsHookInspector';
-import { PARAM_ENABLED_KEY } from './constants';
+import { RechartsInspectorDecorator } from './RechartsInspectorDecorator';
+import { PARAM_POSITION_KEY } from './constants';
 
 const preview: ProjectAnnotations<Renderer> = {
-  decorators: [withRechartsHookInspector],
+  decorators: [RechartsInspectorDecorator],
   initialGlobals: {
-    [PARAM_ENABLED_KEY]: false,
+    [PARAM_POSITION_KEY]: 'hidden',
   },
 };
 

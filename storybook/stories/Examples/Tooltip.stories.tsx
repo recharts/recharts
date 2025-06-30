@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { StoryContext } from '@storybook/react';
 import { pageData } from '../data';
 import {
   Area,
@@ -22,6 +21,7 @@ import { generateMockData } from '../../../test/helper/generateMockData';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { TooltipProps } from '../API/props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: TooltipProps,
@@ -450,7 +450,7 @@ const d1 = [
 ];
 
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -466,7 +466,10 @@ export const RechartsAlphaTooltipBug5516Repro = {
             <LineChart data={d1} style={{ border: '1px solid black' }}>
               <Tooltip {...tooltipProps} />
               <Line dataKey="Triggers" />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -479,7 +482,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
 };
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -495,7 +498,10 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
               <Tooltip {...tooltipProps} />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -509,7 +515,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
 };
 
 export const RechartsTooltipBug5542Repro = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <div
         style={{
@@ -535,7 +541,10 @@ export const RechartsTooltipBug5542Repro = {
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </BarChart>
         </div>
       </div>

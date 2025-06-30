@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StoryContext, Args } from '@storybook/react';
+import { Args } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -19,7 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: BarChartProps,
@@ -950,7 +950,7 @@ export const CustomCursorBarChart = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -1006,7 +1006,10 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar"
             hide={!visible}
@@ -1035,7 +1038,7 @@ export const ChangingDataKey = {
 };
 
 export const ChangingDataKeyAndStacked = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [useData2, setUseData2] = useState(false);
     const [visible, setVisible] = useState(true);
 
@@ -1073,7 +1076,10 @@ export const ChangingDataKeyAndStacked = {
           <YAxis dataKey="uv" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar 1"
             hide={!visible}
@@ -1112,7 +1118,7 @@ export const ChangingDataKeyAndStacked = {
 };
 
 export const ChangingData = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     type MyDataShape = Array<{ number: number }>;
 
     const [data, setData] = useState<MyDataShape>([{ number: 10 }]);
@@ -1138,7 +1144,10 @@ export const ChangingData = {
         <BarChart {...args} data={data}>
           <YAxis hide domain={[0, 100]} />
           <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
 
         <button type="button" onClick={changeSynchronously}>
@@ -1176,7 +1185,7 @@ type TimelineDataType = {
  * https://github.com/recharts/recharts/issues/6034
  */
 export const Timeline = {
-  render: (args: Args) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const getBarColor = (type: string | undefined, subtype: string | undefined) => {
       switch (type) {
         case 'OP':
@@ -1225,6 +1234,10 @@ export const Timeline = {
             <Cell key={`cell-${entry.name}`} fill={getBarColor(entry.type, entry.subtype)} />
           ))}
         </Bar>
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </BarChart>
     );
   },
