@@ -16,7 +16,11 @@ function shouldExpandByDefault(value: unknown) {
   return true;
 }
 
-export function ValueInspector({ value }: { value: unknown }) {
+function PrimitiveInspector({ value }: { value: unknown }) {
+  return <code>{JSON.stringify(value)}</code>;
+}
+
+function NotPrimitiveInspector({ value }: { value: unknown }) {
   const [expand, setExpand] = useState(shouldExpandByDefault(value));
   function copyToClipboard() {
     navigator.clipboard.writeText(JSON.stringify(value, null, 2));
@@ -45,6 +49,13 @@ export function ValueInspector({ value }: { value: unknown }) {
       )}
     </>
   );
+}
+
+export function ValueInspector({ value }: { value: unknown }) {
+  if (value == null || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return <PrimitiveInspector value={value} />;
+  }
+  return <NotPrimitiveInspector value={value} />;
 }
 
 export function ObjectInspector({ obj }: { obj: Record<string, any> | undefined }) {
