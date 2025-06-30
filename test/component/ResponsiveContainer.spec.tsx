@@ -83,6 +83,20 @@ describe('<ResponsiveContainer />', () => {
     expect(screen.getByTestId('inside')).toBeTruthy();
   });
 
+  it('Renders omponent when part of the children are falsy inside', () => {
+    const condition = false;
+
+    render(
+      <ResponsiveContainer minWidth={200} minHeight={100}>
+        {condition && <div />}
+        {condition ? <div /> : null}
+        <div data-testid="inside" />
+      </ResponsiveContainer>,
+    );
+
+    expect(screen.getByTestId('inside')).toBeTruthy();
+  });
+
   it('Handles zero height correctly', () => {
     render(
       <ResponsiveContainer height={0} aspect={2} width={300}>

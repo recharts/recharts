@@ -162,19 +162,21 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
       );
 
       return React.Children.map(children, child => {
-        return cloneElement(child, {
-          width: calculatedWidth,
-          height: calculatedHeight,
-          // calculate the actual size and override it.
-          style: {
-            height: '100%',
-            width: '100%',
-            maxHeight: calculatedHeight,
-            maxWidth: calculatedWidth,
-            // keep components style
-            ...child.props.style,
-          },
-        });
+        if (React.isValidElement<any>(child)) {
+          return cloneElement(child, {
+            width: calculatedWidth,
+            height: calculatedHeight,
+            // calculate the actual size and override it.
+            style: {
+              height: '100%',
+              width: '100%',
+              maxHeight: calculatedHeight,
+              maxWidth: calculatedWidth,
+              // keep components style
+              ...child.props.style,
+            },
+          });
+        }
       });
     }, [aspect, children, height, maxHeight, minHeight, minWidth, sizes, width]);
 
