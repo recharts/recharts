@@ -4,5 +4,5 @@ export function ChartDimensionInspector() {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
 
-  return `width: ${chartWidth}, height: ${chartHeight}`;
+  return `useChartWidth: ${chartWidth}, useChartHeight: ${chartHeight}`;
 }
