@@ -560,7 +560,10 @@ export const SpurriousCorrelation: StoryObj<StorybookArgs> = {
           shape="circle"
         />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} shared={false} />
-        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </ScatterChart>
     );
   },
@@ -675,7 +678,10 @@ export const ChangingDataKey = {
             <ZAxis range={[200, 200]} />
             <Tooltip />
             <Legend />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
             <Scatter
               name="Animated Scatter"
               lineType="joint"

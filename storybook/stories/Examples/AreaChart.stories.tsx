@@ -1,6 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
+import { Args } from '@storybook/react';
 import { pageData, rangeData } from '../data';
 import {
   AreaChart,
@@ -16,9 +17,7 @@ import {
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
-import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector, ManualAnimations, RechartsStoryContext } from '../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
@@ -38,7 +37,10 @@ export const Simple = {
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -98,7 +100,10 @@ export const TinyAreaChart = {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -155,7 +160,10 @@ export const PercentAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip content={renderTooltipContent} defaultIndex={3} active />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -188,7 +196,10 @@ export const CardinalAreaChart = {
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
           <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -227,7 +238,10 @@ export const AreaChartConnectNulls = {
             <YAxis />
             <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -313,7 +327,10 @@ export const StackedAreaChartConnectNulls = {
             <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
             <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
             <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -387,7 +404,10 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
@@ -399,7 +419,10 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -452,7 +475,10 @@ export const AreaChartFillByValue = {
           </defs>
           <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -523,7 +549,10 @@ export const RangedAreaChart = {
           <YAxis />
           <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
           <Tooltip defaultIndex={4} active />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -574,7 +603,10 @@ export const RangedAreaChartWithGradient = {
           />
           <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -620,7 +652,10 @@ export const WithChangingDataKeyAndAnimations = {
               <YAxis />
               <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
               <Tooltip />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </ManualAnimations>
@@ -686,7 +721,10 @@ export const StackedAreaWithCustomLegend = {
             fill="rgba(255,198,88,0.47)"
             hide={hiddenItems.includes('amt')}
           />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Legend
             content={({ payload }) => (
               <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>

@@ -24,7 +24,10 @@ export const Simple = {
         <PieChart {...args}>
           <Pie data={data} dataKey="uv" activeShape={activeShape} />
           <Tooltip defaultIndex={3} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -56,7 +59,10 @@ export const Donut = {
               Chart
             </Label>
           </Pie>
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -127,7 +133,10 @@ export const ChangingDataKey = {
         <PieChart {...args} data={useData2 ? data2 : data1}>
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Pie
             data={useData2 ? data2 : data1}
             name="Animated line"

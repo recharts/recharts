@@ -2,9 +2,8 @@ import React from 'react';
 import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
 import { ChartSizeDimensions } from '../../ChartSizeDimensions';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 function ShowScale() {
   const width = useChartWidth();
@@ -66,7 +65,10 @@ export const WithAbsolutePositionAndFlexboxParents = {
             <ComposedChart {...args}>
               <ChartSizeDimensions />
               <ShowScale />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </ComposedChart>
           </div>
         </div>

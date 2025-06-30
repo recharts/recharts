@@ -21,7 +21,10 @@ export const Simple: StoryObj = {
       <RadialBarChart {...args}>
         <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} />
         <Tooltip defaultIndex={3} />
-        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </RadialBarChart>
     );
   },

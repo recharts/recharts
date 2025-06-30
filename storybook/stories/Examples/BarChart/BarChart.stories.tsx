@@ -18,8 +18,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: BarChartProps,
@@ -1006,7 +1005,10 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar"
             hide={!visible}
@@ -1073,7 +1075,10 @@ export const ChangingDataKeyAndStacked = {
           <YAxis dataKey="uv" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar 1"
             hide={!visible}
@@ -1138,7 +1143,10 @@ export const ChangingData = {
         <BarChart {...args} data={data}>
           <YAxis hide domain={[0, 100]} />
           <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
 
         <button type="button" onClick={changeSynchronously}>

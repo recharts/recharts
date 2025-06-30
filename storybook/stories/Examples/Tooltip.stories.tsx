@@ -466,7 +466,10 @@ export const RechartsAlphaTooltipBug5516Repro = {
             <LineChart data={d1} style={{ border: '1px solid black' }}>
               <Tooltip {...tooltipProps} />
               <Line dataKey="Triggers" />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -495,7 +498,10 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
               <Tooltip {...tooltipProps} />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -535,7 +541,10 @@ export const RechartsTooltipBug5542Repro = {
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </BarChart>
         </div>
       </div>

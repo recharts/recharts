@@ -3,7 +3,7 @@ import { StoryFn } from '@storybook/react';
 import { useGlobals } from '@storybook/preview-api';
 import { PARAM_POSITION_KEY, Position } from './constants';
 import { HookInspectorLayout } from './HookInspectorWrapper';
-import { RechartsStoryContext } from '../RechartsStoryContext';
+import { RechartsContextProperties } from './RechartsStoryContext';
 
 export const RechartsInspectorDecorator = (Story: StoryFn) => {
   const [globals, setGlobals] = useGlobals();
@@ -21,7 +21,8 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
     [position, setGlobals],
   );
 
-  const context: RechartsStoryContext = {
+  const context: RechartsContextProperties = {
+    rechartsInspectorEnabled: position !== 'hidden',
     rechartsInspectorPosition: position,
     rechartsSetInspectorPosition: setPosition,
   };
