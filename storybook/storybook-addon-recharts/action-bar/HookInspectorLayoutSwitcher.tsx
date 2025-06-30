@@ -3,16 +3,20 @@ import { CloseIcon } from '@storybook/icons';
 import { Position } from '../constants';
 import { LayoutBarIcon } from './LayoutBarIcon';
 import { RechartsHookInspectorButton } from './RechartsHookInspectorButton';
+import './actionbar.css';
 
-export function HookInspectorLayoutSwitcher({
-  position,
-  setPosition,
-}: {
+export type LayoutSwitcherProps = {
   position: Position;
   setPosition: (newPosition: Position) => void;
-}) {
+};
+
+function Separator() {
+  return <span className="recharts-action-bar-separator" />;
+}
+
+export function HookInspectorLayoutSwitcher({ position, setPosition }: LayoutSwitcherProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: '4px', padding: '4px' }}>
+    <>
       <RechartsHookInspectorButton
         isActive={position === 'NORTH'}
         onClick={() => setPosition('NORTH')}
@@ -41,6 +45,7 @@ export function HookInspectorLayoutSwitcher({
       >
         <LayoutBarIcon direction="EAST" />
       </RechartsHookInspectorButton>
+      <Separator />
       <RechartsHookInspectorButton
         isActive={position === 'hidden'}
         onClick={() => setPosition('hidden')}
@@ -48,6 +53,6 @@ export function HookInspectorLayoutSwitcher({
       >
         <CloseIcon />
       </RechartsHookInspectorButton>
-    </div>
+    </>
   );
 }

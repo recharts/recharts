@@ -4,7 +4,7 @@ import { useChartLayout } from '../../src/context/chartLayoutContext';
 import { PolarChartInspector } from './inspectors/PolarChartInspector';
 import { CartesianChartInspector } from './inspectors/CartesianChartInspector';
 import { Position } from './constants';
-import { HookInspectorLayoutSwitcher } from './action-bar/HookInspectorLayoutSwitcher';
+import { RechartsStorybookAddonActionBar } from './action-bar/RechartsStorybookAddonActionBar';
 
 export function RechartsHookInspector({
   position,
@@ -32,7 +32,7 @@ export function RechartsHookInspector({
 
   return createPortal(
     <>
-      <HookInspectorLayoutSwitcher position={position} setPosition={setPosition} />
+      <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
       <Component />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
