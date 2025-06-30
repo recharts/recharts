@@ -8,3 +8,9 @@ types
 umd
 .idea
 .stryker-tmp
+.git
+.vscode
+.DS_Store
+npm-debug.log
+storybook/public
+storybook-static
