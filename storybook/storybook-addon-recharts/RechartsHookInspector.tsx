@@ -1,10 +1,10 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useChartLayout } from '../../src/context/chartLayoutContext';
-import { PolarChartInspector } from './PolarChartInspector';
-import { CartesianChartInspector } from './CartesianChartInspector';
+import { PolarChartInspector } from './inspectors/PolarChartInspector';
+import { CartesianChartInspector } from './inspectors/CartesianChartInspector';
 import { Position } from './constants';
-import { HookInspectorLayoutSwitcher } from './HookInspectorLayoutSwitcher';
+import { HookInspectorLayoutSwitcher } from './action-bar/HookInspectorLayoutSwitcher';
 
 export function RechartsHookInspector({
   position,

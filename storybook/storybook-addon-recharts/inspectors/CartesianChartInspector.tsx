@@ -1,17 +1,17 @@
 import React, { CSSProperties, useState } from 'react';
-import { useAppSelector } from '../../src/state/hooks';
-import { useChartLayout } from '../../src/context/chartLayoutContext';
-import { ScaleInspector } from './ScaleInspector';
-import { ArrayInspector } from './ArrayInspector';
+import { useAppSelector } from '../../../src/state/hooks';
+import { useChartLayout } from '../../../src/context/chartLayoutContext';
+import { ScaleInspector } from './generic/ScaleInspector';
+import { ArrayInspector } from './generic/ArrayInspector';
 import {
   selectTooltipAxisRealScaleType,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
   selectTooltipAxisType,
-} from '../../src/state/selectors/tooltipSelectors';
-import { ObjectInspector } from './ObjectInspector';
-import { selectAxisScale, selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
+} from '../../../src/state/selectors/tooltipSelectors';
+import { ObjectInspector } from './generic/ObjectInspector';
+import { selectAxisScale, selectRealScaleType } from '../../../src/state/selectors/axisSelectors';
+import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
 
 // TODO come up with better styling solution, perhaps reuse a component library
 const tableStyle: CSSProperties = { border: '1px solid black', borderCollapse: 'collapse' };

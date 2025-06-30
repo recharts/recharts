@@ -1,5 +1,5 @@
 import React from 'react';
-import { RechartsScale } from '../../src/util/ChartUtils';
+import { RechartsScale } from '../../../../src/util/ChartUtils';
 import { ArrayInspector } from './ArrayInspector';
 
 export function ScaleInspector({ scale, realScaleType }: { scale: RechartsScale | undefined; realScaleType: string }) {

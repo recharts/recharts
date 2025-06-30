@@ -1,6 +1,6 @@
 import React from 'react';
 import { CloseIcon } from '@storybook/icons';
-import { Position } from './constants';
+import { Position } from '../constants';
 import { LayoutBarIcon } from './LayoutBarIcon';
 import { RechartsHookInspectorButton } from './RechartsHookInspectorButton';
 
