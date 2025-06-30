@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StoryContext } from '@storybook/react';
+import { StoryContext, Args } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -1159,5 +1159,160 @@ export const ChangingData = {
     ...getStoryArgsFromArgsTypesObject(BarChartProps),
     width: 100,
     height: 100,
+  },
+};
+
+type TimelineDataType = {
+  name: string;
+  type: string;
+  subtype: string;
+  duration: number;
+  startFirstCycle: number;
+  startSecondCycle: number;
+  finishSecondCycle: number;
+};
+
+/*
+ * https://github.com/recharts/recharts/issues/6034
+ */
+export const Timeline = {
+  render: (args: Args) => {
+    const getBarColor = (type: string | undefined, subtype: string | undefined) => {
+      switch (type) {
+        case 'OP':
+          switch (subtype) {
+            default:
+              return 'green';
+          }
+        case 'MT':
+          switch (subtype) {
+            default:
+              return 'blue';
+          }
+        case 'TR':
+          switch (subtype) {
+            default:
+              return 'gold';
+          }
+        default:
+          return 'green';
+      }
+    };
+
+    // @ts-expect-error our args are not typed
+    const { data }: { data: TimelineDataType[] } = args;
+    return (
+      <BarChart {...args}>
+        <CartesianGrid strokeDasharray="2 2" />
+        <Tooltip />
+        <XAxis
+          type="number"
+          label={{ value: 'Time (s)', position: 'insideBottomRight', offset: -10 }}
+          domain={([, dataMax]) => {
+            return [0, Math.ceil(dataMax / 10) * 10];
+          }}
+        />
+        <YAxis type="category" dataKey="name" width="auto" tick={{ fontSize: 9 }} />
+        <Bar dataKey="startFirstCycle" stackId="a" fill="transparent" />
+        <Bar dataKey="duration" stackId="a" radius={5}>
+          {data?.map(entry => (
+            <Cell key={`cell-${entry.name}`} fill={getBarColor(entry.type, entry.subtype)} />
+          ))}
+        </Bar>
+        <Bar dataKey="startSecondCycle" stackId="a" fill="transparent" />
+        <Bar dataKey={p => p.duration} stackId="a" radius={5}>
+          {data?.map(entry => (
+            <Cell key={`cell-${entry.name}`} fill={getBarColor(entry.type, entry.subtype)} />
+          ))}
+        </Bar>
+      </BarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    layout: 'vertical',
+    width: 500,
+    height: 300,
+    data: [
+      {
+        name: 'TEST 1',
+        type: 'TR',
+        subtype: '1',
+        duration: 5,
+        duration2: 5,
+        startFirstCycle: 0,
+        startSecondCycle: 4.11,
+        finishSecondCycle: 14.11,
+      },
+      {
+        name: 'TEST 2',
+        type: 'MT',
+        subtype: '1',
+        duration: 1.5,
+        startFirstCycle: 0,
+        startSecondCycle: 9.11,
+        finishSecondCycle: 12.11,
+      },
+      {
+        name: 'TEST 3',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 5,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 14.48,
+      },
+      {
+        name: 'TEST 4',
+        type: 'MT',
+        subtype: '1',
+        duration: 2.5,
+        startFirstCycle: 5.37,
+        startSecondCycle: 6.61,
+        finishSecondCycle: 16.98,
+      },
+      {
+        name: 'TEST 5',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 7.87,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 17.35,
+      },
+      {
+        name: 'TEST 6',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.5,
+        startFirstCycle: 8.24,
+        startSecondCycle: 8.61,
+        finishSecondCycle: 17.85,
+      },
+      {
+        name: 'TEST 7',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 8.74,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 18.22,
+      },
+      {
+        name: 'TEST 8',
+        type: 'MT',
+        subtype: '1',
+        duration: 1.5,
+        startFirstCycle: 9.11,
+        startSecondCycle: 7.61,
+        finishSecondCycle: 19.72,
+      },
+    ],
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 25,
+    },
   },
 };
