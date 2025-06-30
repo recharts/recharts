@@ -12,6 +12,8 @@ import { ChartDimensionInspector } from './ChartDimensionInspector';
 import { ChartInspectorProps } from './types';
 import { useLocalStorageState } from '../useLocalStorageState';
 import { OffsetInspector } from './OffsetInspector';
+import { SelectChartViewBoxInspector } from './SelectChartViewBoxInspector';
+import { UseViewBoxInspector } from './UseViewBoxInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -28,6 +30,8 @@ const externalInspectors: Record<string, ComponentType> = {
 const internalInspectors: Record<string, ComponentType> = {
   useChartLayout: LayoutTypeInspector,
   useOffset: OffsetInspector,
+  selectChartViewBox: SelectChartViewBoxInspector,
+  useViewBox: UseViewBoxInspector,
   'XAxis Scale': XAxisScaleInspector,
   'YAxis Scale': YAxisScaleInspector,
   'Tooltip Axis Scale': TooltipAxisScaleInspector,
