@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StoryContext } from '@storybook/react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -17,7 +17,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const { data, activeShape } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -43,7 +43,7 @@ export const Simple = {
 };
 
 export const Donut = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -68,7 +68,7 @@ export const Donut = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1', fill: 'blue' },
       { x: { value: 2 }, name: 'x2', fill: 'red' },

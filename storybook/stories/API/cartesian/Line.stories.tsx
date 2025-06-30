@@ -1,5 +1,4 @@
 import React from 'react';
-import { StoryContext } from '@storybook/react';
 import { Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
@@ -10,6 +9,7 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { data, General as GeneralProps } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
 import { ManualAnimations } from '../../../storybook-addon-recharts/ManualAnimations';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {
@@ -28,7 +28,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>

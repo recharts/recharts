@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { StoryContext } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -20,6 +19,7 @@ import {
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: BarChartProps,
@@ -950,7 +950,7 @@ export const CustomCursorBarChart = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -1035,7 +1035,7 @@ export const ChangingDataKey = {
 };
 
 export const ChangingDataKeyAndStacked = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const [useData2, setUseData2] = useState(false);
     const [visible, setVisible] = useState(true);
 
@@ -1112,7 +1112,7 @@ export const ChangingDataKeyAndStacked = {
 };
 
 export const ChangingData = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     type MyDataShape = Array<{ number: number }>;
 
     const [data, setData] = useState<MyDataShape>([{ number: 10 }]);

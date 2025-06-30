@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { StoryContext } from '@storybook/react';
 import { pageData } from '../data';
 import {
   Area,
@@ -22,6 +21,7 @@ import { generateMockData } from '../../../test/helper/generateMockData';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { TooltipProps } from '../API/props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: TooltipProps,
@@ -450,7 +450,7 @@ const d1 = [
 ];
 
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -479,7 +479,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
 };
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -509,7 +509,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
 };
 
 export const RechartsTooltipBug5542Repro = {
-  render: (tooltipProps: Record<string, any>, context: StoryContext) => {
+  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <div
         style={{

@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { expect, userEvent, within } from '@storybook/test';
-import { StoryContext, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import React, { PureComponent, useState } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../data';
 import {
@@ -21,6 +21,7 @@ import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHo
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: LineChart,
@@ -31,7 +32,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -61,7 +62,7 @@ export const Simple = {
 };
 
 export const Tiny = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -79,7 +80,7 @@ export const Tiny = {
 };
 
 export const Dashed = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
@@ -156,7 +157,7 @@ export const LogarithmicYAxis = {
 };
 
 export const Vertical = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -187,7 +188,7 @@ export const Vertical = {
 };
 
 export const BiAxial = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -217,7 +218,7 @@ export const BiAxial = {
   },
 };
 export const VerticalWithSpecifiedDomain = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -247,7 +248,7 @@ export const VerticalWithSpecifiedDomain = {
   },
 };
 export const ConnectNulls = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <>
         <ResponsiveContainer width="100%" height={200}>
@@ -295,7 +296,7 @@ export const ConnectNulls = {
   },
 };
 export const WithXAxisPadding = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -318,7 +319,7 @@ export const WithXAxisPadding = {
   },
 };
 export const WithReferenceLines = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -349,7 +350,7 @@ export const WithReferenceLines = {
   },
 };
 export const WithCustomizedDot = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const CustomizedDot = (props: any) => {
       const { cx, cy, value } = props;
 
@@ -424,7 +425,7 @@ export const WithCustomizedDot = {
 };
 
 export const ClipDot: StoryObj = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
@@ -467,7 +468,7 @@ export const ClipDot: StoryObj = {
 };
 
 export const WithCustomizedLabel = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     class CustomizedLabel extends PureComponent {
       render() {
         const { x, y, stroke, value } = this.props as any;
@@ -524,7 +525,7 @@ export const WithCustomizedLabel = {
 };
 
 export const HighlightAndZoom = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const initialState = {
       data: impressionsData,
       left: 'dataMin',
@@ -652,7 +653,7 @@ export const HighlightAndZoom = {
 };
 
 export const LineChartHasMultiSeries = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -722,7 +723,7 @@ export const LineChartAxisInterval = {
 };
 
 export const NegativeValuesWithReferenceLines = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data = [
       {
         x: -50,
@@ -838,7 +839,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
     await userEvent.click(canvas.getByTestId('toggle'));
     expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
   },
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data = [
       {
         name: 'Page A',
@@ -963,7 +964,7 @@ export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
 };
 
 export const WithBrush: StoryObj = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer>
         <LineChart {...args}>
@@ -987,7 +988,7 @@ export const WithBrush: StoryObj = {
 };
 
 export const HideOnLegendClick: StoryObj = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const [activeSeries, setActiveSeries] = React.useState<Array<string>>([]);
 
     const handleLegendClick = (dataKey?: DataKey<any>) => {
@@ -1024,7 +1025,7 @@ export const HideOnLegendClick: StoryObj = {
 };
 
 export const LineTrailingIcon: StoryObj = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const lastDotKey = 'lastDot';
 
     return (
@@ -1058,7 +1059,7 @@ export const LineTrailingIcon: StoryObj = {
 };
 
 export const ReversedXAxis = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart {...args}>
@@ -1089,7 +1090,7 @@ export const ReversedXAxis = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },

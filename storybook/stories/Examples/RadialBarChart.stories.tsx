@@ -1,5 +1,5 @@
 import React from 'react';
-import { Meta, StoryContext, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import {
   Customized,
   Legend,
@@ -16,6 +16,7 @@ import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
 import { StorybookArgs } from '../../StorybookArgs';
 import { RadarChartProps } from '../API/props/RadarChartProps';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -24,7 +25,7 @@ export default {
 } satisfies Meta<typeof RadialBarChart>;
 
 export const SimpleRadialBarChart = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
@@ -43,7 +44,7 @@ export const SimpleRadialBarChart = {
 };
 
 export const RadialBarWithColors = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
@@ -62,7 +63,7 @@ export const RadialBarWithColors = {
 };
 
 export const RadialBarWithAxesAndGrid: StoryObj = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
@@ -84,7 +85,7 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
 };
 
 export const StackedRadialBar = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" stackId="stack1" fill="gold" />
@@ -141,7 +142,7 @@ const ringsData = [
 ];
 
 export const RingsWithImplicitAxes = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -161,7 +162,7 @@ export const RingsWithImplicitAxes = {
 };
 
 export const RingsWithDefaultAxes = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -183,7 +184,7 @@ export const RingsWithDefaultAxes = {
 };
 
 export const RingsWithDataKeys = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -205,7 +206,7 @@ export const RingsWithDataKeys = {
 };
 
 export const RingsWithTypes = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -227,7 +228,7 @@ export const RingsWithTypes = {
 };
 
 export const RingsWithDataKeysAndTypes = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -249,7 +250,7 @@ export const RingsWithDataKeysAndTypes = {
 };
 
 export const RingsWithCustomDomain = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
     return (
       <RadialBarChart {...args}>
@@ -272,7 +273,7 @@ export const RingsWithCustomDomain = {
 };
 
 export const RingsWithRadiusAxisVertically = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
     return (
       <RadialBarChart {...args}>
@@ -297,7 +298,7 @@ export const RingsWithRadiusAxisVertically = {
 };
 
 export const ReversedAngleAxis = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>Angle axis clockwise, starts on East</p>
       <RadialBarChart {...args}>
@@ -320,7 +321,7 @@ export const ReversedAngleAxis = {
 };
 
 export const ReversedRadiusAxis = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>Counter-clockwise, starts East, bars come in reversed order</p>
       <RadialBarChart {...args}>
@@ -343,7 +344,7 @@ export const ReversedRadiusAxis = {
 };
 
 export const ReversedBothAxes = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>Counter-clockwise, starts East, bars come in reversed order</p>
       <RadialBarChart {...args}>
@@ -366,7 +367,7 @@ export const ReversedBothAxes = {
 };
 
 export const Angled = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>Both angles are positive, chart starts at East + startAngle, CCW</p>
       <RadialBarChart {...args}>
@@ -391,7 +392,7 @@ export const Angled = {
 };
 
 export const ChartReversedByAngles = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>If startAngle &gt; endAngle, the angle axis gets reversed too</p>
       <RadialBarChart {...args}>
@@ -416,7 +417,7 @@ export const ChartReversedByAngles = {
 };
 
 export const ChartReversedByBothAnglesAndReverseAxis = {
-  render: (args: StorybookArgs, context: StoryContext) => (
+  render: (args: StorybookArgs, context: RechartsStoryContext) => (
     <>
       <p>
         If the angle axis is reversed by making startAngle &gt; endAngle,

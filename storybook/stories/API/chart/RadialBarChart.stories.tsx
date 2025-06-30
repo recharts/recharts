@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { StoryContext, StoryObj } from '@storybook/react';
+import { StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
 import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend } from '../../../../src';
@@ -8,6 +8,7 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
 import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
 import { StorybookArgs } from '../../../StorybookArgs';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -15,7 +16,7 @@ export default {
 };
 
 export const Simple: StoryObj = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} />
