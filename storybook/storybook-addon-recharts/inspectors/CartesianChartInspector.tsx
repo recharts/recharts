@@ -1,4 +1,4 @@
-import React, { ComponentType, CSSProperties, useState } from 'react';
+import React, { ComponentType, CSSProperties, useEffect, useState } from 'react';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
 import { LayoutTypeInspector } from './LayoutTypeInspector';
@@ -8,11 +8,15 @@ import { BrushIndexInspector } from './BrushIndexInspector';
 import { TooltipAxisScaleInspector } from './TooltipAxisScaleInspector';
 import { TooltipAxisTicksInspector } from './TooltipAxisTicksInspector';
 import { TooltipStateInspector } from './TooltipStateInspector';
+import { ChartDimensionInspector } from './ChartDimensionInspector';
+import { ChartInspectorProps } from './types';
 
 /**
  * These are available publicly, are part of the external Recharts API.
  */
-const externalInspectors: Record<string, ComponentType> = {};
+const externalInspectors: Record<string, ComponentType> = {
+  'useChartWidth, useChartHeight': ChartDimensionInspector,
+};
 
 /**
  * These are internal inspectors, not part of the external Recharts API.
@@ -44,12 +48,17 @@ const tableStyle: CSSProperties = {
   padding: '1ex',
 };
 
-export function CartesianChartInspector() {
+export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
   const [selected, setSelected] = useState<ReadonlyArray<string>>([]);
 
   function handleCheckboxChange(key: string) {
     setSelected(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
   }
+
+  useEffect(() => {
+    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight'].includes(k));
+    setEnabledOverlays(enabledOverlays);
+  }, [selected, setEnabledOverlays]);
 
   const enabledInspectors: ReadonlyArray<[string, ComponentType]> = Object.entries(allInspectors).filter(([name]) =>
     selected.includes(name),
