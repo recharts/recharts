@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import {
   ComposedChart,
   Legend,
@@ -9,7 +10,7 @@ import {
   useChartHeight,
   useChartWidth,
 } from '../../../../src';
-import { SvgDimensionShower } from '../../../ChartSizeDimensions';
+import { ChartSizeDimensions } from '../../../ChartSizeDimensions';
 import { pageData } from '../../data';
 
 export default {
@@ -28,13 +29,7 @@ export default {
 };
 
 export const WithAxesAndLegendAndResponsive = {
-  render: (args: Record<string, any>) => {
-    const ChartSizeDimensions = () => {
-      const width = useChartWidth();
-      const height = useChartHeight();
-      return <SvgDimensionShower width={width} height={height} />;
-    };
-
+  render: (args: Args) => {
     return (
       <ResponsiveContainer {...args}>
         <ComposedChart data={pageData}>
@@ -54,13 +49,7 @@ export const WithAxesAndLegendAndResponsive = {
 };
 
 export const WithResponsiveContainer = {
-  render: (args: Record<string, any>) => {
-    const ChartSizeDimensions = () => {
-      const width = useChartWidth();
-      const height = useChartHeight();
-      return <SvgDimensionShower width={width} height={height} />;
-    };
-
+  render: (args: Args) => {
     return (
       <ResponsiveContainer {...args}>
         <ComposedChart>
@@ -76,13 +65,7 @@ export const WithResponsiveContainer = {
 };
 
 export const WithStaticDimensions = {
-  render: (args: Record<string, any>) => {
-    const ChartSizeDimensions = () => {
-      const width = useChartWidth();
-      const height = useChartHeight();
-      return <SvgDimensionShower width={width} height={height} />;
-    };
-
+  render: (args: Args) => {
     return (
       <ComposedChart {...args}>
         <ChartSizeDimensions />

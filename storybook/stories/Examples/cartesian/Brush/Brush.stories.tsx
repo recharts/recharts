@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Args } from '@storybook/react';
 import {
   ComposedChart,
   ResponsiveContainer,
@@ -13,6 +14,7 @@ import {
   YAxis,
 } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   component: Brush,
@@ -63,7 +65,7 @@ export const ControlledBrush = {
 };
 
 export const PanoramicBrush = {
-  render: () => {
+  render: (_args: Args, context: RechartsStoryContext) => {
     return (
       <ComposedChart width={600} height={300} data={pageData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
         <XAxis dataKey="name" />
@@ -82,6 +84,10 @@ export const PanoramicBrush = {
           </LineChart>
         </Brush>
         <Tooltip />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </ComposedChart>
     );
   },

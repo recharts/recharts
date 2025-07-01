@@ -14,6 +14,8 @@ import { useLocalStorageState } from '../useLocalStorageState';
 import { OffsetInspector } from './OffsetInspector';
 import { SelectChartViewBoxInspector } from './SelectChartViewBoxInspector';
 import { UseViewBoxInspector } from './UseViewBoxInspector';
+import { BrushSettingsInspector } from './BrushSettingsInspector';
+import { SelectBrushDimensionsInspector } from './SelectBrushDimensionsInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -38,6 +40,8 @@ const internalInspectors: Record<string, ComponentType> = {
   selectTooltipAxisTicks: TooltipAxisTicksInspector,
   selectTooltipState: TooltipStateInspector,
   'Brush Indices': BrushIndexInspector,
+  selectBrushSettings: BrushSettingsInspector,
+  selectBrushDimensions: SelectBrushDimensionsInspector,
   selectTooltipAxisType: () => useAppSelector(selectTooltipAxisType),
 };
 
@@ -63,7 +67,7 @@ export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorPr
   }
 
   useEffect(() => {
-    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight'].includes(k));
+    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight', 'useOffset'].includes(k));
     setEnabledOverlays(enabledOverlays);
   }, [selected, setEnabledOverlays]);
 

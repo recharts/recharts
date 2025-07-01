@@ -37,7 +37,7 @@ function HorizontalLineWithArrows({
 }
 
 function Background({ width, height, label }: { width: number; height: number; label: string }) {
-  const patternId = `pattern+${label}`;
+  const patternId = `pattern+${label.replace(/\s+/g, '-')}`;
   return (
     <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
       <defs>
@@ -83,17 +83,52 @@ function VerticalLineWithArrows({
       <line x1={x} y1={y1} x2={x + arrowSize} y2={y1 + arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
       <line x1={x} y1={y2} x2={x - arrowSize} y2={y2 - arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
       <line x1={x} y1={y2} x2={x + arrowSize} y2={y2 - arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
-      <text x={x + 8} y={height * 0.8} textAnchor="start" dominantBaseline="middle" stroke="blue">
+      <text x={x + 8} y={height * 0.7} textAnchor="start" dominantBaseline="middle" stroke="blue">
         {label}
       </text>
     </>
   );
 }
 
-export function SvgDimensionShower({ width, height }: { width: number; height: number }) {
+type Labels = {
+  background: string;
+  horizontal?: string;
+  vertical?: string;
+};
+
+/**
+ * Creates a label for the horizontal line.
+ * It will trim information to save space if the width is too small.
+ * @param width number of pixels to display
+ * @param label description of the width
+ * @return the label to display
+ */
+function makeHorizontalLabel(width: number, label: string): string {
+  if (width < 50) {
+    return String(width);
+  }
+  if (width < 100) {
+    return `${width}px`;
+  }
+  return `${label}: ${width}px`;
+}
+
+export function SvgDimensionShower({
+  x = 0,
+  y = 0,
+  width,
+  height,
+  labels,
+}: {
+  x?: number;
+  y?: number;
+  width: number;
+  height: number;
+  labels: Labels;
+}) {
   return (
-    <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
-      <Background width={width} height={height} label="Chart" />
+    <svg width={width} height={height} x={x} y={y}>
+      <Background width={width} height={height} label={labels.background} />
       <rect
         x={0}
         y={0}
@@ -104,8 +139,24 @@ export function SvgDimensionShower({ width, height }: { width: number; height: n
         strokeWidth={5}
         strokeDasharray="3 3"
       />
-      <HorizontalLineWithArrows x1={0} y={height * 0.15} x2={width} stroke="red" label={`useChartWidth: ${width}px`} />
-      <VerticalLineWithArrows x={width * 0.1} y1={0} y2={height} stroke="blue" label={`useChartHeight: ${height}px`} />
+      {labels.horizontal && (
+        <HorizontalLineWithArrows
+          x1={0}
+          y={height * 0.15}
+          x2={width}
+          stroke="red"
+          label={makeHorizontalLabel(width, labels.horizontal)}
+        />
+      )}
+      {labels.vertical && (
+        <VerticalLineWithArrows
+          x={width * 0.1}
+          y1={0}
+          y2={height}
+          stroke="blue"
+          label={`${labels.vertical}: ${height}px`}
+        />
+      )}
     </svg>
   );
 }
@@ -113,5 +164,15 @@ export function SvgDimensionShower({ width, height }: { width: number; height: n
 export const ChartSizeDimensions = () => {
   const width = useChartWidth();
   const height = useChartHeight();
-  return <SvgDimensionShower width={width} height={height} />;
+  return (
+    <SvgDimensionShower
+      width={width}
+      height={height}
+      labels={{
+        background: 'Chart',
+        horizontal: 'useChartWidth',
+        vertical: 'useChartHeight',
+      }}
+    />
+  );
 };

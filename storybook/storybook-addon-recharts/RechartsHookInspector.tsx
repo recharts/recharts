@@ -7,6 +7,8 @@ import { Position } from './constants';
 import { RechartsStorybookAddonActionBar } from './action-bar/RechartsStorybookAddonActionBar';
 import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
+import { OffsetShower } from './inspectors/OffsetShower';
+import { GraphicalAreaShower } from './inspectors/GraphicalAreaShower';
 
 function Controls({
   position,
@@ -25,6 +27,23 @@ function Controls({
       <Component setEnabledOverlays={setEnabledOverlays} />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
+  );
+}
+
+/**
+ * Blanket component is an svg component that darkens the background a little bit.
+ * @constructor
+ */
+function Blanket() {
+  return (
+    <rect
+      x={0}
+      y={0}
+      width="100%"
+      height="100%"
+      fill="rgba(190, 190, 190, 0.4)"
+      style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000 }}
+    />
   );
 }
 
@@ -61,7 +80,14 @@ export function RechartsHookInspector({
         Component={Component}
         setEnabledOverlays={setEnabledOverlays}
       />
+      {enabledOverlays.length >= 1 && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
+      {enabledOverlays.includes('useOffset') && (
+        <>
+          <OffsetShower />
+          <GraphicalAreaShower />
+        </>
+      )}
     </>
   );
 }
