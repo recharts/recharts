@@ -1117,7 +1117,6 @@ describe('Tooltip visibility', () => {
             },
           },
         ],
-        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedBeforeHover);
 
@@ -1204,7 +1203,6 @@ describe('Tooltip visibility', () => {
             },
           },
         ],
-        isClosing: false,
       };
       expect(spy).toHaveBeenLastCalledWith(expectedAfterHover);
     });
