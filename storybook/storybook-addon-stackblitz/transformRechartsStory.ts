@@ -1,35 +1,39 @@
+import { removeInspectorFromSource } from '../storybook-addon-recharts/removeInspectorFromSource';
+
 export function transformRechartsStory(code: string): string {
+  const cleanedCode = removeInspectorFromSource(code);
+
   // Find the position of 'render:'
-  const renderIndex = code.indexOf('render:');
-  if (renderIndex === -1) return code;
+  const renderIndex = cleanedCode.indexOf('render:');
+  if (renderIndex === -1) return cleanedCode;
 
   // Find the start of the function (should be '(' after 'render:')
-  const fnStart = code.indexOf('(', renderIndex);
-  if (fnStart === -1) return code;
+  const fnStart = cleanedCode.indexOf('(', renderIndex);
+  if (fnStart === -1) return cleanedCode;
 
   // Find the arrow '=>'
-  const arrowIndex = code.indexOf('=>', fnStart);
-  if (arrowIndex === -1) return code;
+  const arrowIndex = cleanedCode.indexOf('=>', fnStart);
+  if (arrowIndex === -1) return cleanedCode;
 
   // Find the opening brace '{' after the arrow
-  const bodyStart = code.indexOf('{', arrowIndex);
-  if (bodyStart === -1) return code;
+  const bodyStart = cleanedCode.indexOf('{', arrowIndex);
+  if (bodyStart === -1) return cleanedCode;
 
   // Now, find the matching closing brace for the function body
   let braceCount = 1;
   let i = bodyStart + 1;
-  while (i < code.length && braceCount > 0) {
-    if (code[i] === '{') braceCount++;
-    else if (code[i] === '}') braceCount--;
+  while (i < cleanedCode.length && braceCount > 0) {
+    if (cleanedCode[i] === '{') braceCount++;
+    else if (cleanedCode[i] === '}') braceCount--;
     i++;
   }
-  if (braceCount !== 0) return code;
+  if (braceCount !== 0) return cleanedCode;
 
   // Extract the function string
-  let fnString = code.slice(fnStart, i).trim();
+  let result = cleanedCode.slice(fnStart, i).trim();
 
   // Strip all arguments from the default function: (args: Record<string, any>) => { ... } -> () => { ... }
-  fnString = fnString.replace(/^\(.*?\)\s*=>/, '() =>');
+  result = result.replace(/^\(.*?\)\s*=>/, '() =>');
 
-  return `export default ${fnString}`;
+  return `export default ${result}`;
 }
