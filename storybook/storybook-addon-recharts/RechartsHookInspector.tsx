@@ -8,6 +8,7 @@ import { RechartsStorybookAddonActionBar } from './action-bar/RechartsStorybookA
 import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
 import { OffsetShower } from './inspectors/OffsetShower';
+import { GraphicalAreaShower } from './inspectors/GraphicalAreaShower';
 
 function Controls({
   position,
@@ -83,7 +84,12 @@ export function RechartsHookInspector({
       />
       {enabledOverlays.length >= 1 && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
-      {enabledOverlays.includes('useOffset') && <OffsetShower />}
+      {enabledOverlays.includes('useOffset') && (
+        <>
+          <OffsetShower />
+          <GraphicalAreaShower />
+        </>
+      )}
     </>
   );
 }

@@ -37,7 +37,7 @@ function HorizontalLineWithArrows({
 }
 
 function Background({ width, height, label }: { width: number; height: number; label: string }) {
-  const patternId = `pattern+${label}`;
+  const patternId = `pattern+${label.replace(/\s+/g, '-')}`;
   return (
     <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
       <defs>
@@ -83,7 +83,7 @@ function VerticalLineWithArrows({
       <line x1={x} y1={y1} x2={x + arrowSize} y2={y1 + arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
       <line x1={x} y1={y2} x2={x - arrowSize} y2={y2 - arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
       <line x1={x} y1={y2} x2={x + arrowSize} y2={y2 - arrowSize} stroke={stroke} strokeWidth={strokeWidth} />
-      <text x={x + 8} y={height * 0.8} textAnchor="start" dominantBaseline="middle" stroke="blue">
+      <text x={x + 8} y={height * 0.7} textAnchor="start" dominantBaseline="middle" stroke="blue">
         {label}
       </text>
     </>
@@ -130,8 +130,8 @@ export function SvgDimensionShower({
     <svg width={width} height={height} x={x} y={y}>
       <Background width={width} height={height} label={labels.background} />
       <rect
-        x={x}
-        y={y - height}
+        x={0}
+        y={0}
         width={width}
         height={height}
         fill="none"
