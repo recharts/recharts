@@ -7,6 +7,7 @@ import { Position } from './constants';
 import { RechartsStorybookAddonActionBar } from './action-bar/RechartsStorybookAddonActionBar';
 import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
+import { OffsetShower } from './inspectors/OffsetShower';
 
 function Controls({
   position,
@@ -70,6 +71,8 @@ export function RechartsHookInspector({
       Component = CartesianChartInspector;
   }
 
+  console.log({ enabledOverlays });
+
   return (
     <>
       <Controls
@@ -80,6 +83,7 @@ export function RechartsHookInspector({
       />
       {enabledOverlays.length >= 1 && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
+      {enabledOverlays.includes('useOffset') && <OffsetShower />}
     </>
   );
 }

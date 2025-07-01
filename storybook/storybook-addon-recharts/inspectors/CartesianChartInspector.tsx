@@ -67,7 +67,7 @@ export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorPr
   }
 
   useEffect(() => {
-    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight'].includes(k));
+    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight', 'useOffset'].includes(k));
     setEnabledOverlays(enabledOverlays);
   }, [selected, setEnabledOverlays]);
 
