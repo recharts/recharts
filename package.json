@@ -93,6 +93,7 @@
     "@chromatic-com/storybook": "^3.2.6",
     "@codecov/bundle-analyzer": "^1.9.1",
     "@reduxjs/toolkit": "^1.9.7",
+    "@stackblitz/sdk": "^1.11.0",
     "@storybook/addon-a11y": "^8.6.13",
     "@storybook/addon-docs": "^8.6.13",
     "@storybook/addon-essentials": "^8.6.13",

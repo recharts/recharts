@@ -15,6 +15,7 @@ const preview: Preview = {
       container: DocsContainer,
       page: DocsPage,
       codePanel: true,
+      type: 'dynamic',
     },
     backgrounds: {
       default: 'light',

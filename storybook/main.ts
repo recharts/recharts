@@ -17,6 +17,7 @@ module.exports = {
     '@storybook/addon-webpack5-compiler-swc',
     '@chromatic-com/storybook',
     './storybook-addon-recharts',
+    './storybook-addon-stackblitz',
   ],
   framework: {
     name: '@storybook/react-webpack5',
@@ -25,5 +26,4 @@ module.exports = {
   features: {
     interactionsDebugger: true,
   },
-  docs: {},
 };
