@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CSSProperties, forwardRef, ReactNode, Ref, useState, useCallback, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { mouseLeaveChart, tooltipCloseStart } from '../state/tooltipSlice';
+import { clearClickTooltip, mouseLeaveChart } from '../state/tooltipSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
@@ -57,10 +57,6 @@ export const RechartsWrapper = forwardRef(
 
     const setScaleRef = useReportScale();
 
-    const handleRequestTooltipClose = useCallback(() => {
-      dispatch(tooltipCloseStart());
-    }, [dispatch]);
-
     // Check if we have a click-triggered tooltip active
     const hasClickTooltipActive = useAppSelector(
       state => state.tooltip.itemInteraction.click.active || state.tooltip.axisInteraction.click.active,
@@ -74,7 +70,7 @@ export const RechartsWrapper = forwardRef(
 
       const handleDocumentClick = (event: MouseEvent) => {
         if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
-          handleRequestTooltipClose();
+          dispatch(clearClickTooltip());
         }
       };
 
@@ -82,7 +78,7 @@ export const RechartsWrapper = forwardRef(
       return () => {
         document.removeEventListener('mousedown', handleDocumentClick, true);
       };
-    }, [hasClickTooltipActive, handleRequestTooltipClose]);
+    }, [dispatch, hasClickTooltipActive]);
 
     const innerRef = useCallback(
       (node: HTMLDivElement | null) => {

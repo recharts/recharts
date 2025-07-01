@@ -46,7 +46,6 @@ export type TooltipContentProps<TValue extends ValueType, TName extends NameType
   coordinate: ChartCoordinate;
   active: boolean;
   accessibilityLayer: boolean;
-  onRequestTooltipClose?: () => void;
 };
 
 function renderContent<TValue extends ValueType, TName extends NameType>(
@@ -118,11 +117,6 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * Tooltip will use the default axis for the layout, unless you specify an axisId.
    */
   axisId?: AxisId;
-  /**
-   * Callback function to request tooltip close. This is passed down from the chart wrapper
-   * and can be used by custom tooltip content to provide close functionality.
-   */
-  onRequestTooltipClose?: () => void;
 };
 
 const emptyPayload: TooltipPayload = [];
@@ -169,7 +163,6 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
     defaultIndex,
     portal: portalFromProps,
     axisId,
-    onRequestTooltipClose,
   } = props;
   const dispatch = useAppDispatch();
   const defaultIndexAsString: string | null | undefined =
@@ -266,7 +259,6 @@ export function Tooltip<TValue extends ValueType, TName extends NameType>(outsid
         active: finalIsActive,
         coordinate,
         accessibilityLayer,
-        onRequestTooltipClose,
       })}
     </TooltipBoundingBox>
   );
