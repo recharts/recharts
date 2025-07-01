@@ -14,6 +14,7 @@ import { useLocalStorageState } from '../useLocalStorageState';
 import { OffsetInspector } from './OffsetInspector';
 import { SelectChartViewBoxInspector } from './SelectChartViewBoxInspector';
 import { UseViewBoxInspector } from './UseViewBoxInspector';
+import { BrushSettingsInspector } from './BrushSettingsInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -38,6 +39,7 @@ const internalInspectors: Record<string, ComponentType> = {
   selectTooltipAxisTicks: TooltipAxisTicksInspector,
   selectTooltipState: TooltipStateInspector,
   'Brush Indices': BrushIndexInspector,
+  selectBrushSettings: BrushSettingsInspector,
   selectTooltipAxisType: () => useAppSelector(selectTooltipAxisType),
 };
 
