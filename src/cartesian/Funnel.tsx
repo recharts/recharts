@@ -14,7 +14,6 @@ import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
@@ -34,7 +33,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { useOffset } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
@@ -174,22 +173,19 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           stroke: entry.stroke,
         };
 
-        // Always attach external event handlers (passed as props)
-        const eventHandlers: any = {
-          ...adaptEventsOfChild(restOfAllOtherPropsWithEvents, entry, i),
-        };
-
-        // Use context hooks which already handle both internal and external handlers
+        // Use the new utility function
         const triggerInfo = {
-          tooltipPayload: entry.payload as any,
+          tooltipPayload: entry.payload,
           tooltipPosition: { x: entry.x, y: entry.y },
           cx: entry.x,
           cy: entry.y,
         };
 
-        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
-        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        const eventHandlers = createEventHandlers(restOfAllOtherPropsWithEvents, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         return (
           <Layer

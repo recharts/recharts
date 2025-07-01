@@ -13,7 +13,7 @@ import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirec
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolateNumber, isNan, isNullish, mathSign, uniqueId } from '../util/DataUtils';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   BarPositionPosition,
@@ -27,7 +27,6 @@ import {
 } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
@@ -252,12 +251,7 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        // Always attach external event handlers (passed as props)
-        const eventHandlers: any = {
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-        };
-
-        // Use context hooks which already handle both internal and external handlers
+        // Use the new utility function
         const triggerInfo = {
           tooltipPayload: entry.payload,
           tooltipPosition: entry.tooltipPosition,
@@ -265,9 +259,11 @@ function BarBackground(props: BarBackgroundProps) {
           cy: entry.y,
         };
 
-        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
-        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
@@ -356,12 +352,7 @@ function BarRectangles({
           dataKey,
         };
 
-        // Always attach external event handlers (passed as props)
-        const eventHandlers: any = {
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-        };
-
-        // Use context hooks which already handle both internal and external handlers
+        // Use the new utility function
         const triggerInfo = {
           tooltipPayload: entry.payload,
           tooltipPosition: entry.tooltipPosition,
@@ -369,9 +360,11 @@ function BarRectangles({
           cy: entry.y,
         };
 
-        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
-        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         return (
           <Layer

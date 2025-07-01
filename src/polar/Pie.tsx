@@ -21,14 +21,13 @@ import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolateNumber, isNumber, mathSign, uniqueId } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffset,
@@ -464,22 +463,19 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
 
-        // Always attach external event handlers (passed as props)
-        const eventHandlers: any = {
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-        };
-
-        // Use context hooks which already handle both internal and external handlers
+        // Use the new utility function
         const triggerInfo = {
-          tooltipPayload: entry.tooltipPayload as any,
+          tooltipPayload: entry.tooltipPayload,
           tooltipPosition: entry.tooltipPosition,
           cx: entry.cx,
           cy: entry.cy,
         };
 
-        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
-        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         return (
           <Layer

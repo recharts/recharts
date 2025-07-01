@@ -3,8 +3,19 @@ import get from 'es-toolkit/compat/get';
 import * as React from 'react';
 import { Children, Component, FunctionComponent, isValidElement, ReactNode } from 'react';
 import { isFragment } from 'react-is';
+
+import {
+  FilteredSvgElementType,
+  FilteredElementKeyMap,
+  SVGElementPropKeys,
+  EventKeys,
+  ActiveDotType,
+  adaptEventsOfChild,
+  Entry,
+  TriggerInfo,
+  ContextHandlers,
+} from './types';
 import { isNullish } from './DataUtils';
-import { FilteredSvgElementType, FilteredElementKeyMap, SVGElementPropKeys, EventKeys, ActiveDotType } from './types';
 
 export const SCALE_TYPES = [
   'auto',
@@ -175,4 +186,35 @@ export const filterProps = (
   });
 
   return out;
+};
+
+/**
+ * Creates event handlers for chart components by combining external and internal event handlers.
+ * This extracts the common pattern used across multiple chart components.
+ *
+ * @param restOfAllOtherProps - Props containing external event handlers
+ * @param entry - The data entry for the current item
+ * @param itemIndex - The index of the current item
+ * @param triggerInfo - Object containing tooltip payload, position, and coordinates
+ * @param contextHandlers - Object containing internal event handlers from context hooks
+ * @returns Object with combined event handlers
+ */
+export const createEventHandlers = (
+  restOfAllOtherProps: any,
+  entry: Entry,
+  itemIndex: number,
+  triggerInfo: TriggerInfo,
+  contextHandlers: ContextHandlers,
+): any => {
+  // Always attach external event handlers (passed as props)
+  const eventHandlers: any = {
+    ...adaptEventsOfChild(restOfAllOtherProps, entry, itemIndex),
+  };
+
+  // Use context hooks which already handle both internal and external handlers
+  eventHandlers.onClick = contextHandlers.onClickFromContext(triggerInfo, itemIndex);
+  eventHandlers.onMouseEnter = contextHandlers.onMouseEnterFromContext(triggerInfo, itemIndex);
+  eventHandlers.onMouseLeave = contextHandlers.onMouseLeaveFromContext(triggerInfo, itemIndex);
+
+  return eventHandlers;
 };

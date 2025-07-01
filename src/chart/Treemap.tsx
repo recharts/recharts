@@ -480,7 +480,6 @@ function ContentItemWithEvents(props: ContentItemProps) {
     if (props.externalOnMouseLeave) {
       props.externalOnMouseLeave(props.nodeProps, e);
     }
-
     // clearing state on mouseLeaveItem causes re-rendering issues
     // we don't actually want to do this for TreeMap - we clear state when we leave the entire chart instead
   };

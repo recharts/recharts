@@ -22,8 +22,13 @@ import {
   UIEvent,
   WheelEvent,
 } from 'react';
+import { PieSectorDataItem } from '../polar/Pie';
+import { FunnelTrapezoidItem } from '../cartesian/Funnel';
+import { BarRectangleItem } from '../cartesian/Bar';
+import { ScatterPointItem } from '../cartesian/Scatter';
+import { RadialBarDataItem } from '../polar/RadialBar';
 import type { Props as DotProps } from '../shape/Dot';
-import { TooltipPayloadSearcher } from '../state/tooltipSlice';
+import { TooltipPayload, TooltipPayloadSearcher } from '../state/tooltipSlice';
 import { RechartsScale } from './ChartUtils';
 import { AxisRange } from '../state/selectors/axisSelectors';
 import { ExternalMouseEvents } from '../chart/types';
@@ -1516,3 +1521,42 @@ export interface PolarChartProps extends Partial<ExternalMouseEvents> {
   title?: string;
   width?: number;
 }
+
+/**
+ * Type for trigger information passed to event handlers
+ */
+export type TriggerInfo = {
+  tooltipPayload: readonly TooltipPayload[] | TooltipPayload;
+  tooltipPosition: Coordinate;
+  cx: number;
+  cy: number;
+};
+
+/**
+ * Type for a single context handler function
+ */
+export type ContextHandler = (info: TriggerInfo, index: number) => (event: MouseEvent<SVGElement>) => void;
+
+/**
+ * Type for context handlers that manage internal event handling
+ */
+export type ContextHandlers = {
+  onClickFromContext: ContextHandler;
+  onMouseEnterFromContext: ContextHandler;
+  onMouseLeaveFromContext: ContextHandler;
+};
+
+/**
+ * Type for the event handlers object returned by createEventHandlers
+ */
+export type EventHandlers = {
+  onClick?: (e: MouseEvent<SVGElement>) => void;
+  onMouseEnter?: (e: MouseEvent<SVGElement>) => void;
+  onMouseLeave?: (e: MouseEvent<SVGElement>) => void;
+  [key: string]: unknown;
+};
+
+/**
+ * Type for the data entry for the current item
+ */
+export type Entry = PieSectorDataItem | FunnelTrapezoidItem | BarRectangleItem | ScatterPointItem | RadialBarDataItem;

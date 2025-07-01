@@ -4,7 +4,7 @@ import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -14,7 +14,6 @@ import { getLinearRegression, interpolateNumber, isNullish, uniqueId } from '../
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   Coordinate,
@@ -246,20 +245,19 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
         };
 
-        // Always attach external event handlers (passed as props)
-        const eventHandlers: any = { ...adaptEventsOfChild(restOfAllOtherProps, entry, i) };
-
-        // Use context hooks which already handle both internal and external handlers
+        // Use the new utility function
         const triggerInfo = {
-          tooltipPayload: entry.tooltipPayload as any,
+          tooltipPayload: entry.tooltipPayload,
           tooltipPosition: entry.tooltipPosition,
           cx: entry.cx,
           cy: entry.cy,
         };
 
-        eventHandlers.onClick = onClickFromContext(triggerInfo, i);
-        eventHandlers.onMouseEnter = onMouseEnterFromContext(triggerInfo, i);
-        eventHandlers.onMouseLeave = onMouseLeaveFromContext(triggerInfo, i);
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         return (
           <Layer
