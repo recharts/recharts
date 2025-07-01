@@ -1,0 +1,8 @@
+.recharts-action-bar-separator {
+  min-width: 1px;
+  min-height: 1px;
+  flex-grow: 0;
+  background-color: #d0d0d0;
+  margin: 0 8px;
+  align-self: stretch;
+}

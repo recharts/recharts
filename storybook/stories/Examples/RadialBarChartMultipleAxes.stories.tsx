@@ -1,11 +1,12 @@
 import React from 'react';
-import { Meta, StoryContext, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { RadialBarChartProps } from '../API/props/RadialBarChartProps';
 import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../../src';
 import { StorybookArgs } from '../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { pageDataWithFillColor } from '../data';
 import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -14,7 +15,7 @@ export default {
 } satisfies Meta<typeof RadialBarChart>;
 
 export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
-  render: (args: StorybookArgs, context: StoryContext) => {
+  render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar angleAxisId="axis-pv" radiusAxisId="axis-name" dataKey="pv" fillOpacity={0.3} fill="purple" />
@@ -42,7 +43,10 @@ export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
         <PolarRadiusAxis radiusAxisId="axis-amt" dataKey="amt" type="number" angle={180} stroke="black" />
         <PolarGrid stroke="red" strokeOpacity={0.5} angleAxisId="axis-pv" radiusAxisId="axis-name" />
         <PolarGrid stroke="blue" strokeOpacity={0.5} angleAxisId="axis-uv" radiusAxisId="axis-amt" />
-        <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </RadialBarChart>
     );
   },

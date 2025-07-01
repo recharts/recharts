@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FunctionComponent, PureComponent, ReactElement, SVGProps, useEffect } from 'react';
+import { FunctionComponent, PureComponent, ReactElement, ReactNode, SVGProps, useEffect, useMemo } from 'react';
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { Dot } from '../shape/Dot';
@@ -19,7 +19,7 @@ import { RechartsScale } from '../util/ChartUtils';
 import { addAngleAxis, AngleAxisSettings, removeAngleAxis } from '../state/polarAxisSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { selectPolarAxisScale, selectPolarAxisTicks } from '../state/selectors/polarScaleSelectors';
-import { selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
+import { selectAngleAxis, selectPolarViewBox } from '../state/selectors/polarAxisSelectors';
 import { defaultPolarAngleAxisProps } from './defaultPolarAngleAxisProps';
 import { useIsPanorama } from '../context/PanoramaContext';
 
@@ -65,14 +65,26 @@ export type Props = AxisSvgProps & PolarAngleAxisProps;
 
 const AXIS_TYPE = 'angleAxis';
 
-function SetAngleAxisSettings(settings: AngleAxisSettings): null {
+type AngleAxisSettingsReporter = AngleAxisSettings & { children: ReactNode };
+
+function SetAngleAxisSettings(props: AngleAxisSettingsReporter): ReactNode {
   const dispatch = useAppDispatch();
+  const settings = useMemo(() => {
+    const { children, ...rest } = props;
+    return rest;
+  }, [props]);
+  const synchronizedSettings = useAppSelector(state => selectAngleAxis(state, settings.id));
+  const settingsAreSynchronized = settings === synchronizedSettings;
   useEffect(() => {
     dispatch(addAngleAxis(settings));
     return () => {
       dispatch(removeAngleAxis(settings));
     };
-  });
+  }, [dispatch, settings]);
+
+  if (settingsAreSynchronized) {
+    return props.children;
+  }
   return null;
 }
 
@@ -250,27 +262,26 @@ export class PolarAngleAxis extends PureComponent<Props> {
     if (this.props.radius <= 0) return null;
 
     return (
-      <>
-        <SetAngleAxisSettings
-          id={this.props.angleAxisId}
-          scale={this.props.scale}
-          type={this.props.type}
-          dataKey={this.props.dataKey}
-          unit={undefined}
-          name={this.props.name}
-          allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
-          allowDataOverflow={false}
-          reversed={this.props.reversed}
-          includeHidden={false}
-          allowDecimals={this.props.allowDecimals}
-          tickCount={this.props.tickCount}
-          // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
-          ticks={this.props.ticks}
-          tick={this.props.tick}
-          domain={this.props.domain}
-        />
+      <SetAngleAxisSettings
+        id={this.props.angleAxisId}
+        scale={this.props.scale}
+        type={this.props.type}
+        dataKey={this.props.dataKey}
+        unit={undefined}
+        name={this.props.name}
+        allowDuplicatedCategory={false} // Ignoring the prop on purpose because axis calculation behaves as if it was false and Tooltip requires it to be true.
+        allowDataOverflow={false}
+        reversed={this.props.reversed}
+        includeHidden={false}
+        allowDecimals={this.props.allowDecimals}
+        tickCount={this.props.tickCount}
+        // @ts-expect-error the type does not match. Is RadiusAxis really expecting what it says?
+        ticks={this.props.ticks}
+        tick={this.props.tick}
+        domain={this.props.domain}
+      >
         <PolarAngleAxisWrapper {...this.props} />
-      </>
+      </SetAngleAxisSettings>
     );
   }
 }

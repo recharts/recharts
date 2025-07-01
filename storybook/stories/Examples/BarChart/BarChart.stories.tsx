@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StoryContext } from '@storybook/react';
+import { Args } from '@storybook/react';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -19,7 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: BarChartProps,
@@ -950,7 +950,7 @@ export const CustomCursorBarChart = {
 };
 
 export const ChangingDataKey = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const data1 = [
       { x: { value: 1 }, name: 'x1' },
       { x: { value: 2 }, name: 'x2' },
@@ -1006,7 +1006,10 @@ export const ChangingDataKey = {
           <YAxis dataKey={useData2 ? dataKey2 : dataKey1} />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar"
             hide={!visible}
@@ -1035,7 +1038,7 @@ export const ChangingDataKey = {
 };
 
 export const ChangingDataKeyAndStacked = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [useData2, setUseData2] = useState(false);
     const [visible, setVisible] = useState(true);
 
@@ -1073,7 +1076,10 @@ export const ChangingDataKeyAndStacked = {
           <YAxis dataKey="uv" />
           <Tooltip />
           <Legend />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Bar
             name="Animated Bar 1"
             hide={!visible}
@@ -1112,7 +1118,7 @@ export const ChangingDataKeyAndStacked = {
 };
 
 export const ChangingData = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     type MyDataShape = Array<{ number: number }>;
 
     const [data, setData] = useState<MyDataShape>([{ number: 10 }]);
@@ -1138,7 +1144,10 @@ export const ChangingData = {
         <BarChart {...args} data={data}>
           <YAxis hide domain={[0, 100]} />
           <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
 
         <button type="button" onClick={changeSynchronously}>
@@ -1159,5 +1168,164 @@ export const ChangingData = {
     ...getStoryArgsFromArgsTypesObject(BarChartProps),
     width: 100,
     height: 100,
+  },
+};
+
+type TimelineDataType = {
+  name: string;
+  type: string;
+  subtype: string;
+  duration: number;
+  startFirstCycle: number;
+  startSecondCycle: number;
+  finishSecondCycle: number;
+};
+
+/*
+ * https://github.com/recharts/recharts/issues/6034
+ */
+export const Timeline = {
+  render: (args: Args, context: RechartsStoryContext) => {
+    const getBarColor = (type: string | undefined, subtype: string | undefined) => {
+      switch (type) {
+        case 'OP':
+          switch (subtype) {
+            default:
+              return 'green';
+          }
+        case 'MT':
+          switch (subtype) {
+            default:
+              return 'blue';
+          }
+        case 'TR':
+          switch (subtype) {
+            default:
+              return 'gold';
+          }
+        default:
+          return 'green';
+      }
+    };
+
+    // @ts-expect-error our args are not typed
+    const { data }: { data: TimelineDataType[] } = args;
+    return (
+      <BarChart {...args}>
+        <CartesianGrid strokeDasharray="2 2" />
+        <Tooltip />
+        <XAxis
+          type="number"
+          label={{ value: 'Time (s)', position: 'insideBottomRight', offset: -10 }}
+          domain={([, dataMax]) => {
+            return [0, Math.ceil(dataMax / 10) * 10];
+          }}
+        />
+        <YAxis type="category" dataKey="name" width="auto" tick={{ fontSize: 9 }} />
+        <Bar dataKey="startFirstCycle" stackId="a" fill="transparent" />
+        <Bar dataKey="duration" stackId="a" radius={5}>
+          {data?.map(entry => (
+            <Cell key={`cell-${entry.name}`} fill={getBarColor(entry.type, entry.subtype)} />
+          ))}
+        </Bar>
+        <Bar dataKey="startSecondCycle" stackId="a" fill="transparent" />
+        <Bar dataKey={p => p.duration} stackId="a" radius={5}>
+          {data?.map(entry => (
+            <Cell key={`cell-${entry.name}`} fill={getBarColor(entry.type, entry.subtype)} />
+          ))}
+        </Bar>
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
+      </BarChart>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(BarChartProps),
+    layout: 'vertical',
+    width: 500,
+    height: 300,
+    data: [
+      {
+        name: 'TEST 1',
+        type: 'TR',
+        subtype: '1',
+        duration: 5,
+        duration2: 5,
+        startFirstCycle: 0,
+        startSecondCycle: 4.11,
+        finishSecondCycle: 14.11,
+      },
+      {
+        name: 'TEST 2',
+        type: 'MT',
+        subtype: '1',
+        duration: 1.5,
+        startFirstCycle: 0,
+        startSecondCycle: 9.11,
+        finishSecondCycle: 12.11,
+      },
+      {
+        name: 'TEST 3',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 5,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 14.48,
+      },
+      {
+        name: 'TEST 4',
+        type: 'MT',
+        subtype: '1',
+        duration: 2.5,
+        startFirstCycle: 5.37,
+        startSecondCycle: 6.61,
+        finishSecondCycle: 16.98,
+      },
+      {
+        name: 'TEST 5',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 7.87,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 17.35,
+      },
+      {
+        name: 'TEST 6',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.5,
+        startFirstCycle: 8.24,
+        startSecondCycle: 8.61,
+        finishSecondCycle: 17.85,
+      },
+      {
+        name: 'TEST 7',
+        type: 'MT',
+        subtype: '1',
+        duration: 0.37,
+        startFirstCycle: 8.74,
+        startSecondCycle: 8.74,
+        finishSecondCycle: 18.22,
+      },
+      {
+        name: 'TEST 8',
+        type: 'MT',
+        subtype: '1',
+        duration: 1.5,
+        startFirstCycle: 9.11,
+        startSecondCycle: 7.61,
+        finishSecondCycle: 19.72,
+      },
+    ],
+    margin: {
+      top: 20,
+      right: 30,
+      left: 20,
+      bottom: 25,
+    },
   },
 };

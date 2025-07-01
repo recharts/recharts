@@ -12,7 +12,6 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     '@storybook/addon-a11y',
-    '@storybook/addon-storysource',
     '@storybook/addon-docs',
     '@storybook/addon-mdx-gfm',
     '@storybook/addon-webpack5-compiler-swc',

@@ -122,7 +122,12 @@
      * which ESLint doesn't.
      * See: https://typescript-eslint.io/rules/no-redeclare/
      */
-    "no-redeclare": "off"
+    "no-redeclare": "off",
+    // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/label-has-associated-control.md
+    "jsx-a11y/label-has-associated-control": [
+      "error",
+      { "assert": "either", "depth": 2 }
+    ]
   },
   "overrides": [
     {

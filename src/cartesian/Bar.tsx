@@ -71,7 +71,7 @@ export interface BarRectangleItem extends RectangleProps {
     height?: number;
   };
   tooltipPosition: Coordinate;
-  payload?: any;
+  readonly payload?: any;
 }
 
 export interface BarProps {
@@ -648,7 +648,6 @@ export function computeBarRectangles({
   xAxisTicks,
   yAxisTicks,
   stackedData,
-  dataStartIndex,
   displayedData,
   offset,
   cells,
@@ -662,7 +661,6 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
-  dataStartIndex: number;
   offset: ChartOffset;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
@@ -676,7 +674,8 @@ export function computeBarRectangles({
     let value, x, y, width, height, background;
 
     if (stackedData) {
-      value = truncateByDomain(stackedData[dataStartIndex + index], stackedDomain);
+      // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
+      value = truncateByDomain(stackedData[index], stackedDomain);
     } else {
       value = getValueByDataKey(entry, dataKey);
 
@@ -730,7 +729,7 @@ export function computeBarRectangles({
       }
     }
 
-    return {
+    const barRectangleItem = {
       ...entry,
       x,
       y,
@@ -741,7 +740,9 @@ export function computeBarRectangles({
       background,
       tooltipPosition: { x: x + width / 2, y: y + height / 2 },
       ...(cells && cells[index] && cells[index].props),
-    };
+    } satisfies BarRectangleItem;
+
+    return barRectangleItem;
   });
 }
 

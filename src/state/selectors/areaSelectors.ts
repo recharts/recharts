@@ -7,6 +7,7 @@ import {
   selectStackGroups,
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
+  StackDataPoint,
   StackGroup,
 } from './axisSelectors';
 import { RechartsRootState } from '../store';
@@ -81,7 +82,7 @@ const selectGraphicalItemStackedData = (
   if (stackId == null) {
     return undefined;
   }
-  const groups: ReadonlyArray<Series<Record<string, unknown>, DataKey<any>>> = stackGroups[stackId]?.stackedData;
+  const groups: ReadonlyArray<Series<StackDataPoint, DataKey<any>>> = stackGroups[stackId]?.stackedData;
   return groups?.find(v => v.key === dataKey);
 };
 

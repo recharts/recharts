@@ -409,7 +409,8 @@ export function Label({ offset = 5, ...restProps }: Props) {
   }
 
   if (isValidElement(content)) {
-    return cloneElement(content, props);
+    const { labelRef: _, ...propsWithoutLabelRef } = props;
+    return cloneElement(content, propsWithoutLabelRef);
   }
 
   let label: ReactNode;

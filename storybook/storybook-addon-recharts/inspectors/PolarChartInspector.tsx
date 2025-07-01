@@ -1,18 +1,18 @@
 import React, { CSSProperties } from 'react';
-import { useAppSelector } from '../../src/state/hooks';
-import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
-import { useChartLayout } from '../../src/context/chartLayoutContext';
-import { selectPolarAxisScale, selectPolarAxisTicks } from '../../src/state/selectors/polarScaleSelectors';
-import { ScaleInspector } from './ScaleInspector';
-import { selectPolarAppliedValues, selectPolarDisplayedData } from '../../src/state/selectors/polarSelectors';
-import { ArrayInspector } from './ArrayInspector';
+import { useAppSelector } from '../../../src/state/hooks';
+import { selectRealScaleType } from '../../../src/state/selectors/axisSelectors';
+import { useChartLayout } from '../../../src/context/chartLayoutContext';
+import { selectPolarAxisScale, selectPolarAxisTicks } from '../../../src/state/selectors/polarScaleSelectors';
+import { ScaleInspector } from './generic/ScaleInspector';
+import { selectPolarAppliedValues, selectPolarDisplayedData } from '../../../src/state/selectors/polarSelectors';
+import { ArrayInspector } from './generic/ArrayInspector';
 import {
   selectTooltipAxisRealScaleType,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
   selectTooltipAxisType,
-} from '../../src/state/selectors/tooltipSelectors';
-import { ObjectInspector } from './ObjectInspector';
+} from '../../../src/state/selectors/tooltipSelectors';
+import { ObjectInspector } from './generic/ObjectInspector';
 
 // TODO come up with better styling solution, perhaps reuse a component library
 const tableStyle: CSSProperties = { border: '1px solid black', borderCollapse: 'collapse' };

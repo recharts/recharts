@@ -1,0 +1,22 @@
+.recharts-hook-inspector-button {
+  width: 36px;
+  height: 32px;
+  border-radius: 10%;
+  background-color: #f0f0f0;
+  border: 2px solid #d0d0d0;
+}
+
+.recharts-hook-inspector-button.active {
+  background-color: #89b8ff;
+  border: 2px solid #749ad3;
+}
+
+.recharts-hook-inspector-button:hover {
+  background-color: #e0e0e0;
+  border: 2px solid #c0c0c0;
+}
+
+.recharts-hook-inspector-button.active:hover {
+  background-color: #7aa0e6;
+  border: 2px solid #5f7fb3;
+}

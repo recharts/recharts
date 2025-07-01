@@ -1,6 +1,7 @@
 import React from 'react';
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
+import { renderWithStrictMode } from '../helper/renderWithStrictMode';
 import { Bar, BarChart, BarProps, Customized, Legend, LegendType, Tooltip, XAxis, YAxis } from '../../src';
 import {
   allCartesianChartsExcept,
@@ -47,7 +48,7 @@ const data = [
 
 describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it(`should render rectangles in horizontal Bar`, () => {
-    const { container } = render(
+    const { container } = renderWithStrictMode(
       <ChartElement layout="horizontal" data={data}>
         <Bar isAnimationActive={false} dataKey="value" />
       </ChartElement>,
@@ -99,7 +100,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
   it(`should render rectangles when wrapped in custom Component`, () => {
     const MyBar = (props: BarProps) => <Bar {...props} />;
-    const { container } = render(
+    const { container } = renderWithStrictMode(
       <ChartElement layout="horizontal" data={data}>
         <MyBar isAnimationActive={false} dataKey="value" />
       </ChartElement>,
@@ -150,7 +151,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
   });
 
   it(`should render rectangles in vertical Bar`, () => {
-    const { container } = render(
+    const { container } = renderWithStrictMode(
       <ChartElement layout="vertical" data={data}>
         <YAxis type="category" />
         <XAxis type="number" />
@@ -203,7 +204,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
   });
 
   it("Don't render any rectangle when data is empty", () => {
-    const { container } = render(
+    const { container } = renderWithStrictMode(
       <ChartElement data={[]}>
         <Bar dataKey="value" />
       </ChartElement>,
@@ -215,7 +216,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
   describe('barSize', () => {
     it('should make bars wider in horizontal chart', () => {
       const barSize = 79;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="horizontal" data={data}>
           <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
         </ChartElement>,
@@ -267,7 +268,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should make bars narrower in horizontal chart', () => {
       const barSize = 77;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="horizontal" data={data}>
           <Bar isAnimationActive={false} dataKey="value" barSize={barSize} />
         </ChartElement>,
@@ -319,7 +320,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should make bars taller in vertical chart', () => {
       const barSize = 74;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="vertical" data={data}>
           <YAxis type="category" />
           <XAxis type="number" />
@@ -373,7 +374,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should make bars shorter in vertical chart', () => {
       const barSize = 72;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="vertical" data={data}>
           <YAxis type="category" />
           <XAxis type="number" />
@@ -428,7 +429,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
   describe('maxBarSize', () => {
     it('should do nothing if bars are already smaller than the maxBarSize', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="horizontal" data={data}>
           <Bar isAnimationActive={false} dataKey="value" maxBarSize={79} />
         </ChartElement>,
@@ -480,7 +481,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should change all bars width when bars are larger than the maxBarSize', () => {
       const maxBarSize = 77;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="horizontal" data={data}>
           <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} />
         </ChartElement>,
@@ -532,7 +533,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should do nothing if barSize is set', () => {
       const maxBarSize = 77;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="horizontal" data={data}>
           <Bar isAnimationActive={false} dataKey="value" maxBarSize={maxBarSize} barSize={maxBarSize + 5} />
         </ChartElement>,
@@ -583,7 +584,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should do nothing in vertical chart if all bars are smaller than the maxBarSize', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="vertical" data={data}>
           <YAxis type="category" />
           <XAxis type="number" />
@@ -637,7 +638,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should change all bars height in vertical chart if all bars are larger than the maxBarSize', () => {
       const maxBarSize = 72;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="vertical" data={data}>
           <YAxis type="category" />
           <XAxis type="number" />
@@ -691,7 +692,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should do nothing if barSize is set in vertical chart', () => {
       const maxBarSize = 72;
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement layout="vertical" data={data}>
           <YAxis type="category" />
           <XAxis type="number" />
@@ -767,7 +768,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     ];
 
     it('Will create a background Rectangle with the passed in props', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={composedDataWithBackground}>
           <Bar background={{ fill: '#000' }} dataKey="value" />
         </ChartElement>,
@@ -785,7 +786,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       const backgroundComponent = () => {
         return <div className={className} />;
       };
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={composedDataWithBackground}>
           <Bar background={backgroundComponent} dataKey="value" />
         </ChartElement>,
@@ -827,7 +828,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         expect.soft(props).toEqual(expectedProps);
         return <></>;
       };
-      render(
+      renderWithStrictMode(
         <ChartElement data={composedDataWithBackground}>
           <Bar background={backgroundComponent} dataKey="value" />
         </ChartElement>,
@@ -838,7 +839,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
   describe('label', () => {
     describe('as boolean', () => {
       it('should draw default labels when label = true', () => {
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive={false} label dataKey="value" />
           </ChartElement>,
@@ -857,7 +858,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       });
 
       it('should not draw labels while animating', () => {
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive label dataKey="value" />
           </ChartElement>,
@@ -867,7 +868,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       });
 
       it('should not draw labels when label = false', () => {
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive={false} label={false} dataKey="value" />
           </ChartElement>,
@@ -879,7 +880,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     describe('as svg properties object', () => {
       it('should draw labels and add extra props from the object', () => {
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar
               isAnimationActive={false}
@@ -936,7 +937,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       });
 
       it('should overwrite the recharts-label className but keep recharts-text className', () => {
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar
               isAnimationActive={false}
@@ -960,12 +961,12 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     describe('as function', () => {
       it('should pass props to the label function', () => {
         const spy = vi.fn().mockReturnValue(null);
-        render(
+        renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive={false} label={spy} dataKey="value" />
           </ChartElement>,
         );
-        expect(spy).toHaveBeenCalledTimes(data.length);
+        expect(spy).toHaveBeenCalledTimes(data.length * 2);
         expect(spy).toBeCalledWith(
           {
             content: spy,
@@ -991,7 +992,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
       it('should render what the label function returned', () => {
         const labelFn = () => <g className="my-mock-class" />;
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive={false} label={labelFn} dataKey="value" />
           </ChartElement>,
@@ -1014,7 +1015,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       it(`should render what the function returned, and then inject extra sneaky props in it
                 - but not all of them, and not the same as in the other ways of rendering labels`, () => {
         const MyLabel = <g className="my-mock-class" />;
-        const { container } = render(
+        const { container } = renderWithStrictMode(
           <ChartElement data={data}>
             <Bar isAnimationActive={false} label={MyLabel} dataKey="value" />
           </ChartElement>,
@@ -1079,7 +1080,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
     it('should pass props to the minPointSize function', () => {
       const spy = vi.fn().mockImplementation(() => 5);
-      render(
+      renderWithStrictMode(
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <YAxis />
@@ -1093,7 +1094,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should ignore 0 value bars when minPointSize is undefined, and render the small bars really really small', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <Bar isAnimationActive={false} dataKey="value" />
@@ -1121,7 +1122,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should assign minimum height to low value bars if minPointSize is a number', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <YAxis />
@@ -1158,7 +1159,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should assign minimum width, in a vertical chart', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={highLowData} layout="vertical">
           <XAxis dataKey="value" type="number" />
           <YAxis dataKey="name" type="category" />
@@ -1195,7 +1196,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should render with varying minPointSize as per function results', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={highLowData}>
           <XAxis dataKey="name" />
           <YAxis />
@@ -1237,7 +1238,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         return null;
       };
 
-      const { rerender } = render(
+      const { rerender } = renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" xAxisId={7} yAxisId={9} stackId="q" hide />
           <Customized component={<Comp />} />
@@ -1276,7 +1277,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
         return null;
       };
 
-      render(
+      renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" />
           <Customized component={<Comp />} />
@@ -1321,7 +1322,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     ];
 
     test.each(allLegendTypesExceptNone)('should render legendType %s', legendType => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" legendType={legendType} />
           <Legend />
@@ -1332,7 +1333,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     });
 
     it('should not render any legend if legendType = none', () => {
-      const { container } = render(
+      const { container } = renderWithStrictMode(
         <ChartElement data={data}>
           <Bar dataKey="value" legendType="none" />
           <Legend />
@@ -1346,7 +1347,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
 
 describe.each(chartsThatDoNotSupportBar)('<Bar /> as a child of $testName', ({ ChartElement }) => {
   it('should not render anything', () => {
-    const { container } = render(
+    const { container } = renderWithStrictMode(
       <ChartElement data={data}>
         <Bar isAnimationActive={false} dataKey="value" data-testid="customized-bar" />
       </ChartElement>,

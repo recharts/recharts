@@ -1,6 +1,6 @@
 {
   "name": "recharts",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "React charts",
   "main": "lib/index.js",
   "module": "es6/index.js",
@@ -99,7 +99,6 @@
     "@storybook/addon-interactions": "^8.6.13",
     "@storybook/addon-links": "^8.6.13",
     "@storybook/addon-mdx-gfm": "^8.6.13",
-    "@storybook/addon-storysource": "^8.6.13",
     "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
     "@storybook/components": "^8.6.13",
     "@storybook/icons": "^1.2.12",

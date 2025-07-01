@@ -159,52 +159,6 @@ describe('<XAxis />', () => {
     expect(onClickFn).toHaveBeenCalledWith(eventData, eventIndex, eventExpect);
   });
 
-  it('Render ticks with tickFormatter', () => {
-    const spy = vi.fn();
-    const { container } = render(
-      <LineChart width={400} height={400} data={lineData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-        <XAxis dataKey="name" tickFormatter={(_, i) => `${i}`} />
-        <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-        <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
-      </LineChart>,
-    );
-
-    expect(container.querySelectorAll('.xAxis .recharts-cartesian-axis-tick')[0]).toHaveTextContent('0');
-    expectXAxisTicks(container, [
-      {
-        textContent: '0',
-        x: '20',
-        y: '358',
-      },
-      {
-        textContent: '1',
-        x: '92',
-        y: '358',
-      },
-      {
-        textContent: '2',
-        x: '164',
-        y: '358',
-      },
-      {
-        textContent: '3',
-        x: '236',
-        y: '358',
-      },
-      {
-        textContent: '4',
-        x: '308',
-        y: '358',
-      },
-      {
-        textContent: '5',
-        x: '380',
-        y: '358',
-      },
-    ]);
-    expect(spy).toHaveBeenLastCalledWith(['Page A', 'Page B', 'Page C', 'Page D', 'Page E', 'Page F']);
-  });
-
   it('should render array indexes when dataKey is not specified', () => {
     const axisDomainSpy = vi.fn();
     const { container } = render(
@@ -5016,5 +4970,4 @@ describe('<XAxis />', () => {
   });
 
   describe.todo('in vertical stacked BarChart');
-  describe.todo('with custom tickFormatter');
 });

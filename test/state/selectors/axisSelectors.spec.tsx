@@ -25,7 +25,6 @@ import {
   selectHasBar,
   selectNiceTicks,
   selectSmallestDistanceBetweenValues,
-  selectStackGroups,
   selectXAxisSettings,
 } from '../../../src/state/selectors/axisSelectors';
 import { createRechartsStore, RechartsRootState } from '../../../src/state/store';
@@ -2811,6 +2810,38 @@ describe('selectNiceTicks', () => {
     expect(yAxisSpy).toHaveBeenCalledTimes(1);
   });
 
+  // https://github.com/recharts/recharts/issues/6011
+  it('should return undefined followed by a well-formed domain in vertical orientation with a single datapoint', () => {
+    const xAxisSpy = vi.fn();
+    const yAxisSpy = vi.fn();
+    const errSpy = vi.fn();
+    vi.spyOn(console, 'error').mockImplementation(errSpy);
+
+    const Comp = (): null => {
+      const isPanorama = useIsPanorama();
+      xAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'xAxis', defaultAxisId, isPanorama)));
+      yAxisSpy(useAppSelectorWithStableTest(state => selectNiceTicks(state, 'yAxis', defaultAxisId, isPanorama)));
+      return null;
+    };
+    render(
+      <LineChart width={100} height={100} data={[PageData[0]]} layout="vertical">
+        <Line isAnimationActive={false} />
+        <XAxis type="number" dataKey="uv" />
+        <YAxis type="category" dataKey="name" />
+        <Comp />
+      </LineChart>,
+    );
+
+    expect(errSpy).not.toHaveBeenCalledWith(new Error('[DecimalError] Invalid argument: undefined'));
+    // the first render was previously passing a malformed domain with a single datapoint in vertical orientation, 2nd render has always resolved correctly
+    expect(xAxisSpy).toHaveBeenNthCalledWith(1, undefined);
+    expect(xAxisSpy).toHaveBeenLastCalledWith([0, 100, 200, 300, 400]);
+    expect(yAxisSpy).toHaveBeenLastCalledWith(undefined);
+
+    expect(xAxisSpy).toHaveBeenCalledTimes(2);
+    expect(yAxisSpy).toHaveBeenCalledTimes(2);
+  });
+
   const casesThatProduceNiceTicks: ReadonlyArray<{ domain: AxisDomain; expectedTicks: ReadonlyArray<number> }> = [
     { domain: undefined, expectedTicks: [0, 100, 200, 300, 400] },
     { domain: ['auto', 'auto'], expectedTicks: [180, 240, 300, 360, 420] },
@@ -2857,162 +2888,6 @@ describe('mergeDomains', () => {
   it('should ignore domains that are undefined', () => {
     expect(mergeDomains([100, 200], [150, 250])).toEqual([100, 250]);
     expect(mergeDomains([100, 200], [150, 250], undefined, [0, 50])).toEqual([0, 250]);
-  });
-});
-
-describe('selectStackGroups', () => {
-  const selector = (state: RechartsRootState) => selectStackGroups(state, 'xAxis', 0, false);
-
-  shouldReturnUndefinedOutOfContext(selector);
-  shouldReturnFromInitialState(selector, {});
-
-  it('should return empty object in an empty BarChart', () => {
-    const stackGroupsSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
-      return null;
-    };
-    render(
-      <BarChart width={100} height={100}>
-        <Comp />
-      </BarChart>,
-    );
-    expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('should return object keyed by stack IDs, with bar settings and stacked data', () => {
-    const stackGroupsSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
-      return null;
-    };
-    render(
-      <BarChart width={100} height={100} data={PageData}>
-        <Bar dataKey="uv" stackId="a" />
-        <Bar dataKey="pv" stackId="a" />
-        <Bar dataKey="uv" stackId="b" />
-        <Bar dataKey="amt" stackId="b" />
-        <Comp />
-      </BarChart>,
-    );
-    // This fails because d3 likes to put extra properties in the stack array that vitest doesn't serialize.
-    // expect(stackGroupsSpy).toHaveBeenLastCalledWith({
-    //   a: {
-    //     graphicalItems: [
-    //       {
-    //         data: null,
-    //         dataKey: 'uv',
-    //         errorBars: [],
-    //         hide: false,
-    //         stackId: 'a',
-    //         type: 'bar',
-    //         xAxisId: 0,
-    //         yAxisId: 0,
-    //         zAxisId: 0,
-    //       },
-    //       {
-    //         data: null,
-    //         dataKey: 'pv',
-    //         errorBars: [],
-    //         hide: false,
-    //         stackId: 'a',
-    //         type: 'bar',
-    //         xAxisId: 0,
-    //         yAxisId: 0,
-    //         zAxisId: 0,
-    //       },
-    //     ],
-    //     stackedData: [
-    //       [
-    //         [0, 590],
-    //         [0, 590],
-    //         [0, 868],
-    //         [0, 1397],
-    //         [0, 1480],
-    //         [0, 1520],
-    //         [0, 1400],
-    //       ],
-    //       [
-    //         [590, 1390],
-    //         [590, 1390],
-    //         [868, 1835],
-    //         [1397, 2495],
-    //         [1480, 2680],
-    //         [1520, 2628],
-    //         [1400, 2080],
-    //       ],
-    //     ],
-    //   },
-    //   b: {
-    //     graphicalItems: [
-    //       {
-    //         data: null,
-    //         dataKey: 'uv',
-    //         errorBars: [],
-    //         hide: false,
-    //         stackId: 'b',
-    //         type: 'bar',
-    //         xAxisId: 0,
-    //         yAxisId: 0,
-    //         zAxisId: 0,
-    //       },
-    //       {
-    //         data: null,
-    //         dataKey: 'amt',
-    //         errorBars: [],
-    //         hide: false,
-    //         stackId: 'b',
-    //         type: 'bar',
-    //         xAxisId: 0,
-    //         yAxisId: 0,
-    //         zAxisId: 0,
-    //       },
-    //     ],
-    //     stackedData: [
-    //       [
-    //         [0, 590],
-    //         [0, 590],
-    //         [0, 868],
-    //         [0, 1397],
-    //         [0, 1480],
-    //         [0, 1520],
-    //         [0, 1400],
-    //       ],
-    //       [
-    //         [590, 1990],
-    //         [590, 1990],
-    //         [868, 2374],
-    //         [1397, 2386],
-    //         [1480, 2708],
-    //         [1520, 2620],
-    //         [1400, 3100],
-    //       ],
-    //     ],
-    //   },
-    // });
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
-  });
-
-  it('should return empty object for Bars without stackId', () => {
-    const stackGroupsSpy = vi.fn();
-    const Comp = (): null => {
-      const isPanorama = useIsPanorama();
-      stackGroupsSpy(useAppSelectorWithStableTest(state => selectStackGroups(state, 'xAxis', 0, isPanorama)));
-      return null;
-    };
-    render(
-      <BarChart width={100} height={100} data={PageData}>
-        <Bar dataKey="uv" />
-        <Bar dataKey="pv" />
-        <Bar dataKey="amt" />
-        <Comp />
-      </BarChart>,
-    );
-    expect(stackGroupsSpy).toHaveBeenLastCalledWith({});
-    expect(stackGroupsSpy).toHaveBeenCalledTimes(2);
   });
 });
 

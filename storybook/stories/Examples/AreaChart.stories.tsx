@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
-import { StoryContext } from '@storybook/react';
+import { Args } from '@storybook/react';
 import { pageData, rangeData } from '../data';
 import {
   AreaChart,
@@ -13,11 +13,11 @@ import {
   Area,
   Legend,
   ComposedChart,
+  LegendPayload,
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
-import { ManualAnimations } from '../../storybook-addon-recharts/ManualAnimations';
+import { RechartsHookInspector, ManualAnimations, RechartsStoryContext } from '../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
@@ -28,7 +28,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -37,7 +37,10 @@ export const Simple = {
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -57,7 +60,7 @@ export const Simple = {
 };
 
 export const StackedAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -68,7 +71,10 @@ export const StackedAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip active defaultIndex={2} />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
           <Legend />
         </AreaChart>
       </ResponsiveContainer>
@@ -89,12 +95,15 @@ export const StackedAreaChart = {
 };
 
 export const TinyAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -114,7 +123,7 @@ export const TinyAreaChart = {
 };
 
 export const PercentAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
 
     const getPercent = (value: number, total: number = 0) => {
@@ -151,7 +160,10 @@ export const PercentAreaChart = {
           <Area type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
           <Area type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
           <Tooltip content={renderTooltipContent} defaultIndex={3} active />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -172,7 +184,7 @@ export const PercentAreaChart = {
 };
 
 export const CardinalAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const cardinal = curveCardinal.tension(0.2);
 
     return (
@@ -184,7 +196,10 @@ export const CardinalAreaChart = {
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
           <Area type={cardinal} dataKey="uv" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.3} />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -204,7 +219,7 @@ export const CardinalAreaChart = {
 };
 
 export const AreaChartConnectNulls = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -223,7 +238,10 @@ export const AreaChartConnectNulls = {
             <YAxis />
             <Area connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -286,7 +304,7 @@ export const AreaChartConnectNulls = {
 };
 
 export const StackedAreaChartConnectNulls = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -309,7 +327,10 @@ export const StackedAreaChartConnectNulls = {
             <Area connectNulls type="monotone" dataKey="uv" stackId="1" stroke="#8884d8" fill="#8884d8" />
             <Area connectNulls type="monotone" dataKey="pv" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
             <Area connectNulls type="monotone" dataKey="amt" stackId="1" stroke="#ffc658" fill="#ffc658" />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -372,7 +393,7 @@ export const StackedAreaChartConnectNulls = {
 };
 
 export const SynchronisedAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <h4>A demo of synchronized AreaCharts</h4>
@@ -383,7 +404,10 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
@@ -395,7 +419,10 @@ export const SynchronisedAreaChart = {
             <YAxis />
             <Area type="monotone" dataKey="pv" stroke="#82ca9d" fill="#82ca9d" />
             <Tooltip />
-            <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -417,7 +444,7 @@ export const SynchronisedAreaChart = {
 };
 
 export const AreaChartFillByValue = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const gradientOffset = () => {
       const dataMax = Math.max(...args.data.map((i: any) => i.uv));
       const dataMin = Math.min(...args.data.map((i: any) => i.uv));
@@ -448,7 +475,10 @@ export const AreaChartFillByValue = {
           </defs>
           <Area type="monotone" dataKey="uv" stroke="#000" fill="url(#splitColor)" />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -511,7 +541,7 @@ export const AreaChartFillByValue = {
 };
 
 export const RangedAreaChart = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -519,7 +549,10 @@ export const RangedAreaChart = {
           <YAxis />
           <Area dataKey="temperature" stroke="#d82428" fill="#8884d8" />
           <Tooltip defaultIndex={4} active />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -547,7 +580,7 @@ const rangeData2 = [
 ];
 
 export const RangedAreaChartWithGradient = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={rangeData2} width={1000} height={600} margin={{ top: 20, right: 200, bottom: 20, left: 20 }}>
@@ -570,7 +603,10 @@ export const RangedAreaChartWithGradient = {
           />
           <YAxis unit="%" ticks={[-5, 0, 5, 10, 15]} domain={[-5, 15]} />
           <Tooltip />
-          <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -581,7 +617,7 @@ export const RangedAreaChartWithGradient = {
 };
 
 export const WithChangingDataKeyAndAnimations = {
-  render: (args: Record<string, any>, context: StoryContext) => {
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
     const [dataKey, setDataKey] = React.useState('uv');
     return (
       <>
@@ -616,11 +652,105 @@ export const WithChangingDataKeyAndAnimations = {
               <YAxis />
               <Area dataKey={dataKey} label={{ fill: 'green' }} dot />
               <Tooltip />
-              <RechartsHookInspector rechartsInspectorEnabled={context.rechartsInspectorEnabled} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </ManualAnimations>
       </>
+    );
+  },
+  args: {
+    ...getStoryArgsFromArgsTypesObject(CategoricalChartProps),
+    width: 500,
+    height: 400,
+    data: pageData,
+    margin: {
+      top: 10,
+      right: 30,
+      left: 0,
+      bottom: 0,
+    },
+  },
+};
+
+export const StackedAreaWithCustomLegend = {
+  // Reproducing https://github.com/recharts/recharts/issues/5992
+  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+    const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
+
+    const handleClick = ({ dataKey }: LegendPayload) => {
+      if (typeof dataKey !== 'string') {
+        return;
+      }
+      setHiddenItems(prev => (prev.includes(dataKey) ? prev.filter(key => key !== dataKey) : [...prev, dataKey]));
+    };
+
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart {...args} stackOffset="silhouette">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Area
+            type="monotone"
+            dataKey="uv"
+            stackId="1"
+            stroke="#8884d8"
+            strokeWidth={3}
+            fill="rgba(136,132,216,0.47)"
+            hide={hiddenItems.includes('uv')}
+          />
+          <Area
+            type="monotone"
+            dataKey="pv"
+            stackId="1"
+            stroke="#82ca9d"
+            strokeWidth={3}
+            fill="rgba(130,202,157,0.47)"
+            hide={hiddenItems.includes('pv')}
+          />
+          <Area
+            type="monotone"
+            dataKey="amt"
+            stackId="1"
+            stroke="#ffc658"
+            strokeWidth={3}
+            fill="rgba(255,198,88,0.47)"
+            hide={hiddenItems.includes('amt')}
+          />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+          <Legend
+            content={({ payload }) => (
+              <ul style={{ display: 'flex', flexDirection: 'row', listStyleType: 'none', padding: 0 }}>
+                {payload.map((entry, index) => (
+                  <li key={`item-${index}`} style={{ color: entry.color }}>
+                    <button
+                      type="button"
+                      onClick={() => handleClick(entry)}
+                      style={{
+                        background: 'none',
+                        border: entry.inactive ? '3px solid #ccc' : `3px solid ${entry.color}`,
+                        borderRadius: '20%',
+                        padding: '10px',
+                        cursor: 'pointer',
+                        opacity: typeof entry.dataKey === 'string' && hiddenItems.includes(entry.dataKey) ? 0.2 : 1,
+                      }}
+                    >
+                      {entry.value}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     );
   },
   args: {

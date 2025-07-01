@@ -85,6 +85,8 @@ function getDefaultPosition(
   return { ...hPos, ...vPos };
 }
 
+export type LegendItemSorter = 'value' | 'dataKey' | ((item: LegendPayload) => number | string);
+
 export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
   wrapperStyle?: CSSProperties;
   width?: number;
@@ -98,6 +100,7 @@ export type Props = Omit<DefaultProps, 'payload' | 'ref'> & {
    * If this is undefined then Legend renders inside the recharts-wrapper element.
    */
   portal?: HTMLElement | null;
+  itemSorter?: LegendItemSorter;
 };
 
 interface State {
@@ -156,7 +159,12 @@ function LegendWrapper(props: Props) {
 
   const legendElement = (
     <div className="recharts-legend-wrapper" style={outerStyle} ref={updateBoundingBox}>
-      <LegendSettingsDispatcher layout={props.layout} align={props.align} verticalAlign={props.verticalAlign} />
+      <LegendSettingsDispatcher
+        layout={props.layout}
+        align={props.align}
+        verticalAlign={props.verticalAlign}
+        itemSorter={props.itemSorter}
+      />
       <LegendSizeDispatcher width={lastBoundingBox.width} height={lastBoundingBox.height} />
       <LegendContent
         {...props}
@@ -178,6 +186,7 @@ export class Legend extends PureComponent<Props, State> {
   static defaultProps = {
     align: 'center',
     iconSize: 14,
+    itemSorter: 'value',
     layout: 'horizontal',
     verticalAlign: 'bottom',
   };
