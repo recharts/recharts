@@ -75,8 +75,10 @@ export const RechartsWrapper = forwardRef(
       };
 
       document.addEventListener('mousedown', handleDocumentClick, true);
+      document.addEventListener('pointerdown', handleDocumentClick, true);
       return () => {
         document.removeEventListener('mousedown', handleDocumentClick, true);
+        document.removeEventListener('pointerdown', handleDocumentClick, true);
       };
     }, [dispatch, hasClickTooltipActive]);
 
