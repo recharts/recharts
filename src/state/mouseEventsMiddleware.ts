@@ -1,6 +1,12 @@
 import { createAction, createListenerMiddleware, ListenerEffectAPI, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch, RechartsRootState } from './store';
-import { mouseLeaveChart, setMouseClickAxisIndex, setMouseOverAxisIndex, clearClickTooltip } from './tooltipSlice';
+import {
+  mouseLeaveChart,
+  setMouseClickAxisIndex,
+  setMouseOverAxisIndex,
+  clearClickTooltip,
+  tooltipCloseEnd,
+} from './tooltipSlice';
 import { selectActivePropsFromChartPointer } from './selectors/selectActivePropsFromChartPointer';
 import { selectTooltipEventType } from './selectors/selectTooltipEventType';
 
@@ -19,8 +25,12 @@ mouseClickMiddleware.startListening({
     const state = listenerApi.getState();
     const tooltipState = state.tooltip; // Get the current tooltip state
 
-    // 👇 This is our gate. If the tooltip was just closed, stop right here.
+    // If the tooltip was just closed, stop right here.
     if (tooltipState.isClosing) {
+      // The gate is active. This mouse event is the one causing the race condition.
+      // We will consume the gate by dispatching tooltipCloseEnd,
+      // and then we will stop processing this event.
+      listenerApi.dispatch(tooltipCloseEnd());
       return;
     }
 

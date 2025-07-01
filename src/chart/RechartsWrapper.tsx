@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CSSProperties, forwardRef, ReactNode, Ref, useState, useCallback, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { mouseLeaveChart, tooltipCloseStart, tooltipCloseEnd } from '../state/tooltipSlice';
+import { mouseLeaveChart, tooltipCloseStart } from '../state/tooltipSlice';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
@@ -59,9 +59,6 @@ export const RechartsWrapper = forwardRef(
 
     const handleRequestTooltipClose = useCallback(() => {
       dispatch(tooltipCloseStart());
-      setTimeout(() => {
-        dispatch(tooltipCloseEnd());
-      }, 100);
     }, [dispatch]);
 
     // Check if we have a click-triggered tooltip active
