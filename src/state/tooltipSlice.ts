@@ -221,7 +221,9 @@ export type TooltipState = {
   settings: TooltipSettingsState;
   /**
    * This is a flag that is set when the tooltip is closing.
-   * This is used to prevent the tooltip from being closed again.
+   * This prevents race conditions by blocking new tooltip activations
+   * during the brief window when a tooltip is being closed but the
+   * middleware hasn't finished processing the close event.
    */
   isClosing: boolean;
 };
