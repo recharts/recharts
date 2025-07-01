@@ -72,8 +72,6 @@ export function RechartsHookInspector({
       Component = CartesianChartInspector;
   }
 
-  console.log({ enabledOverlays });
-
   return (
     <>
       <Controls
