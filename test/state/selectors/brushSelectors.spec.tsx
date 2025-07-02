@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useAppSelector } from '../../../src/state/hooks';
 import { BarChart, Brush, Customized } from '../../../src';
-import { selectBrushHeight } from '../../../src/state/selectors/selectChartOffset';
+import { selectBrushHeight } from '../../../src/state/selectors/selectChartOffsetInternal';
 import { shouldReturnFromInitialState, shouldReturnUndefinedOutOfContext } from '../../helper/selectorTestHelpers';
 
 describe('selectBrushHeight', () => {

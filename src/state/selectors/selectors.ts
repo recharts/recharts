@@ -40,7 +40,7 @@ import { selectTooltipAxis, selectTooltipAxisTicks, selectTooltipDisplayedData }
 import { AxisRange } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { combineActiveLabel } from './combiners/combineActiveLabel';
 import { combineTooltipInteractionState } from './combiners/combineTooltipInteractionState';
@@ -149,7 +149,7 @@ export const selectCoordinateForDefaultIndex: (
     selectChartWidth,
     selectChartHeight,
     selectChartLayout,
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectTooltipAxisTicks,
     pickDefaultIndex,
     selectTooltipPayloadConfigurations,

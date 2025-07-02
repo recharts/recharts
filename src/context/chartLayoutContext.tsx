@@ -3,7 +3,7 @@ import { CartesianViewBoxRequired, ChartOffsetInternal, LayoutType, Margin, Size
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setMargin } from '../state/layoutSlice';
-import { selectChartOffset, selectChartViewBox } from '../state/selectors/selectChartOffset';
+import { selectChartOffsetInternal, selectChartViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { selectChartHeight, selectChartWidth } from '../state/selectors/containerSelectors';
 import { useIsPanorama } from './PanoramaContext';
 import { selectBrushDimensions, selectBrushSettings } from '../state/selectors/brushSelectors';
@@ -41,7 +41,7 @@ const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetInternal = {
  * @returns {ChartOffsetInternal} The offset of the chart in pixels, or a default value if not in a chart context.
  */
 export const useOffsetInternal = (): ChartOffsetInternal => {
-  return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
+  return useAppSelector(selectChartOffsetInternal) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
 /**

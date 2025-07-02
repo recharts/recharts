@@ -3,7 +3,7 @@ import { RechartsRootState } from '../store';
 import { ActiveTooltipProps } from '../tooltipSlice';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { selectTooltipAxisRangeWithReverse, selectTooltipAxisTicks, selectTooltipAxisType } from './tooltipSelectors';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineActiveProps, selectOrderedTooltipTicks } from './selectors';
 import { selectPolarViewBox } from './polarAxisSelectors';
 import { ChartPointer } from '../../util/types';
@@ -22,7 +22,7 @@ export const selectActivePropsFromChartPointer: (
     selectTooltipAxisRangeWithReverse,
     selectTooltipAxisTicks,
     selectOrderedTooltipTicks,
-    selectChartOffset,
+    selectChartOffsetInternal,
   ],
   combineActiveProps,
 );

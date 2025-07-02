@@ -62,7 +62,7 @@ import {
 } from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
@@ -1138,7 +1138,7 @@ const selectCalculatedPadding: (
   selectSmallestDistanceBetweenValues,
   selectChartLayout,
   selectBarCategoryGap,
-  selectChartOffset,
+  selectChartOffsetInternal,
   (_1, _2, _3, padding) => padding,
   (
     smallestDistanceInPercent: number | undefined,
@@ -1226,7 +1226,7 @@ export const combineXAxisRange: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectXAxisPadding,
     selectBrushDimensions,
     selectBrushSettings,
@@ -1254,7 +1254,7 @@ export const combineYAxisRange: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectChartLayout,
     selectYAxisPadding,
     selectBrushDimensions,
@@ -1395,7 +1395,7 @@ const getYAxisSize = (offset: ChartOffsetInternal, axisSettings: YAxisSettings):
 };
 
 export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Size = createSelector(
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectXAxisSettings,
   getXAxisSize,
 );
@@ -1438,7 +1438,7 @@ export const selectAllXAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartHeight,
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectAllXAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
@@ -1464,7 +1464,7 @@ export const selectAllYAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartWidth,
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectAllYAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
@@ -1485,7 +1485,7 @@ export const selectAllYAxesOffsetSteps: (
 );
 
 export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetInternal(state);
   const axisSettings = selectXAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1499,7 +1499,7 @@ export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetInternal(state);
   const axisSettings: YAxisSettings = selectYAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1513,7 +1513,7 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size = createSelector(
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectYAxisSettings,
   (offset: ChartOffsetInternal, axisSettings: YAxisSettings): Size => {
     const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;

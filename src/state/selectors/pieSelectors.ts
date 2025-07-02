@@ -7,7 +7,7 @@ import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
 import { ChartOffsetInternal, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import type { LegendPayload } from '../../component/DefaultLegendContent';
 import { getTooltipNameProp, getValueByDataKey } from '../../util/ChartUtils';
 import { selectUnfilteredPolarItems } from './polarSelectors';
@@ -137,7 +137,7 @@ export const selectPieSectors: (
   pieSettings: ResolvedPieSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => Readonly<PieSectorDataItem[]> | undefined = createSelector(
-  [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffset],
+  [selectDisplayedData, selectSynchronisedPieSettings, pickCells, selectChartOffsetInternal],
   (
     displayedData: ChartData | undefined,
     pieSettings: ResolvedPieSettings,

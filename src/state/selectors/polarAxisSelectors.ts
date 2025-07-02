@@ -4,7 +4,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { PolarChartOptions } from '../polarOptionsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { getMaxRadius } from '../../util/PolarUtils';
 import { getPercentValue } from '../../util/DataUtils';
 import { LayoutType, PolarViewBoxRequired } from '../../util/types';
@@ -109,7 +109,7 @@ export const selectRadiusAxis = (state: RechartsRootState, radiusAxisId: AxisId)
 export const selectPolarOptions = (state: RechartsRootState): PolarChartOptions | null => state.polarOptions;
 
 export const selectMaxRadius: (state: RechartsRootState) => number = createSelector(
-  [selectChartWidth, selectChartHeight, selectChartOffset],
+  [selectChartWidth, selectChartHeight, selectChartOffsetInternal],
   getMaxRadius,
 );
 

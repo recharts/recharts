@@ -20,7 +20,7 @@ import {
   selectYAxisPosition,
   selectYAxisSize,
 } from '../state/selectors/axisSelectors';
-import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
+import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { getCalculatedYAxisWidth } from '../util/YAxisUtils';
 import { isLabelContentAFunction } from '../component/Label';

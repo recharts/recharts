@@ -20,7 +20,13 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
-export const selectChartOffset: (state: RechartsRootState) => ChartOffsetInternal = createSelector(
+/**
+ * For internal use only.
+ *
+ * @param root state
+ * @return ChartOffsetInternal
+ */
+export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffsetInternal = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -90,7 +96,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetInterna
 );
 
 export const selectChartViewBox = createSelector(
-  selectChartOffset,
+  selectChartOffsetInternal,
   (offset: ChartOffsetInternal): CartesianViewBoxRequired => ({
     x: offset.left,
     y: offset.top,

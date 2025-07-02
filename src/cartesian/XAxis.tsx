@@ -16,7 +16,7 @@ import {
   selectXAxisSettings,
   selectXAxisSize,
 } from '../state/selectors/axisSelectors';
-import { selectAxisViewBox } from '../state/selectors/selectChartOffset';
+import { selectAxisViewBox } from '../state/selectors/selectChartOffsetInternal';
 import { useIsPanorama } from '../context/PanoramaContext';
 
 interface XAxisProps extends BaseAxisProps {

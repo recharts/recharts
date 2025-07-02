@@ -22,7 +22,7 @@ import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { MinPointSize } from '../../util/BarUtils';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
@@ -508,7 +508,7 @@ export const selectBarRectangles: (
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ReadonlyArray<BarRectangleItem> | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectXAxisWithScale,
     selectYAxisWithScale,
     selectXAxisTicks,
