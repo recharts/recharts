@@ -29,7 +29,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   LegendType,
@@ -61,15 +61,17 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 
+type Rectangle = {
+  x: number | null;
+  y: number | null;
+  width: number;
+  height: number;
+};
+
 export interface BarRectangleItem extends RectangleProps {
   value?: number | [number, number];
   /** the coordinate of background rectangle */
-  background?: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  };
+  background?: Rectangle;
   tooltipPosition: Coordinate;
   readonly payload?: any;
 }
@@ -631,7 +633,7 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
-  offset: ChartOffset;
+  offset: ChartOffsetRequired;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<BarRectangleItem> | undefined {
@@ -641,7 +643,7 @@ export function computeBarRectangles({
   const baseValue = getBaseValueOfBar({ numericAxis });
 
   return displayedData.map((entry, index): BarRectangleItem => {
-    let value, x, y, width, height, background;
+    let value, x, y, width, height, background: Rectangle;
 
     if (stackedData) {
       // we don't need to use dataStartIndex here, because stackedData is already sliced from the selector
@@ -699,7 +701,7 @@ export function computeBarRectangles({
       }
     }
 
-    const barRectangleItem = {
+    const barRectangleItem: BarRectangleItem = {
       ...entry,
       x,
       y,

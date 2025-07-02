@@ -16,7 +16,7 @@ import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
 import { BarPositionPosition, getBandSizeOfAxis, NormalizedStackId, StackId } from '../../util/ChartUtils';
-import { ChartOffset, DataKey, LayoutType, TickItem } from '../../util/types';
+import { ChartOffsetRequired, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
@@ -522,7 +522,7 @@ export const selectBarRectangles: (
     pickCells,
   ],
   (
-    offset: ChartOffset,
+    offset: ChartOffsetRequired,
     xAxis: BaseAxisWithScale,
     yAxis: BaseAxisWithScale,
     xAxisTicks,
