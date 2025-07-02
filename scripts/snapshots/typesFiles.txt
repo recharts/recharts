@@ -151,7 +151,7 @@
   "types/state/selectors/scatterSelectors.d.ts",
   "types/state/selectors/selectActivePropsFromChartPointer.d.ts",
   "types/state/selectors/selectAllAxes.d.ts",
-  "types/state/selectors/selectChartOffset.d.ts",
+  "types/state/selectors/selectChartOffsetInternal.d.ts",
   "types/state/selectors/selectTooltipEventType.d.ts",
   "types/state/selectors/selectTooltipPayloadSearcher.d.ts",
   "types/state/selectors/selectTooltipSettings.d.ts",
