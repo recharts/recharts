@@ -31,7 +31,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   GeometrySector,
@@ -311,7 +311,7 @@ const parseCoordinateOfPie = (
     outerRadius?: number | string | ((dataPoint: any) => number);
     maxRadius?: number;
   },
-  offset: ChartOffset,
+  offset: ChartOffsetRequired,
   dataPoint: any,
 ): PieCoordinate => {
   const { top, left, width, height } = offset;
@@ -503,7 +503,7 @@ export function computePieSectors({
     cornerRadius?: number | string;
     presentationProps?: Record<string, string>;
   };
-  offset: ChartOffset;
+  offset: ChartOffsetRequired;
 }): ReadonlyArray<PieSectorDataItem> {
   const { cornerRadius, startAngle, endAngle, dataKey, nameKey, tooltipType } = pieSettings;
   const minAngle = Math.abs(pieSettings.minAngle);
