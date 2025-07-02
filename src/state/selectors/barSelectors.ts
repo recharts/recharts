@@ -16,13 +16,13 @@ import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
 import { CartesianGraphicalItemSettings } from '../graphicalItemsSlice';
 import { BarPositionPosition, getBandSizeOfAxis, NormalizedStackId, StackId } from '../../util/ChartUtils';
-import { ChartOffset, DataKey, LayoutType, TickItem } from '../../util/types';
+import { ChartOffsetInternal, DataKey, LayoutType, TickItem } from '../../util/types';
 import { BarRectangleItem, computeBarRectangles } from '../../cartesian/Bar';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import { ChartData } from '../chartDataSlice';
 import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { MinPointSize } from '../../util/BarUtils';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
@@ -508,7 +508,7 @@ export const selectBarRectangles: (
   cells: ReadonlyArray<ReactElement> | undefined,
 ) => ReadonlyArray<BarRectangleItem> | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectXAxisWithScale,
     selectYAxisWithScale,
     selectXAxisTicks,
@@ -522,7 +522,7 @@ export const selectBarRectangles: (
     pickCells,
   ],
   (
-    offset: ChartOffset,
+    offset: ChartOffsetInternal,
     xAxis: BaseAxisWithScale,
     yAxis: BaseAxisWithScale,
     xAxisTicks,

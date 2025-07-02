@@ -45,7 +45,7 @@ import {
   selectBarCartesianAxisSize,
   selectBarSizeList,
 } from '../../src/state/selectors/barSelectors';
-import { selectChartOffset } from '../../src/state/selectors/selectChartOffset';
+import { selectChartOffsetInternal } from '../../src/state/selectors/selectChartOffsetInternal';
 import { selectChartDataWithIndexes } from '../../src/state/selectors/dataSelectors';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
 
@@ -483,7 +483,7 @@ describe('<XAxis />', () => {
       yAxisRangeSpy(useAppSelector(state => selectAxisRangeWithReverse(state, 'yAxis', 0, false)));
       barTicksSpy(useAppSelector(state => selectTicksOfGraphicalItem(state, 'xAxis', 0, false)));
       barBandSizeSpy(useAppSelector(state => selectBarBandSize(state, 0, 0, false, barSettings)));
-      offsetSpy(useAppSelector(selectChartOffset));
+      offsetSpy(useAppSelector(selectChartOffsetInternal));
       return null;
     };
 

@@ -90,12 +90,15 @@ export interface NullableCoordinate {
   y: number | null;
 }
 
+/**
+ * @deprecated do not use: too many properties, mixing too many concepts, cartesian and polar together, everything optional.
+ */
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
   yAxis?: any;
   width?: any;
   height?: any;
-  offset?: ChartOffset;
+  offset?: ChartOffsetInternal;
   angle?: number;
   radius?: number;
   cx?: number;
@@ -1071,18 +1074,20 @@ export type OffsetHorizontal = {
   right: number;
 };
 
-/** the offset of a chart, which define the blank space all around */
-export interface ChartOffset {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-  width?: number;
-  height?: number;
-  brushBottom?: number;
-}
-
-export type ChartOffsetRequired = Required<ChartOffset>;
+/**
+ * This object defines the offset of the chart area and width and height and brush and ... it's a bit too much information all in one.
+ * We use it internally but let's not expose it to the outside world.
+ * If you are looking for this information, instead import `ChartOffset` or `PlotArea` from `recharts`.
+ */
+export type ChartOffsetInternal = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+  width: number;
+  height: number;
+  brushBottom: number;
+};
 
 export interface Padding {
   top: number;

@@ -4,7 +4,7 @@ import get from 'es-toolkit/compat/get';
 import { selectLegendSettings, selectLegendSize } from './legendSelectors';
 import {
   CartesianViewBoxRequired,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   Margin,
   OffsetHorizontal,
   OffsetVertical,
@@ -20,7 +20,13 @@ import { RechartsRootState } from '../store';
 
 export const selectBrushHeight = (state: RechartsRootState) => state.brush.height;
 
-export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequired = createSelector(
+/**
+ * For internal use only.
+ *
+ * @param root state
+ * @return ChartOffsetInternal
+ */
+export const selectChartOffsetInternal: (state: RechartsRootState) => ChartOffsetInternal = createSelector(
   [
     selectChartWidth,
     selectChartHeight,
@@ -40,7 +46,7 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequire
     yAxes: YAxisSettings[],
     legendSettings: LegendSettings,
     legendSize: Size,
-  ): ChartOffsetRequired => {
+  ): ChartOffsetInternal => {
     const offsetH: OffsetHorizontal = yAxes.reduce(
       (result: OffsetHorizontal, entry: YAxisSettings): OffsetHorizontal => {
         const { orientation } = entry;
@@ -90,8 +96,8 @@ export const selectChartOffset: (state: RechartsRootState) => ChartOffsetRequire
 );
 
 export const selectChartViewBox = createSelector(
-  selectChartOffset,
-  (offset: ChartOffsetRequired): CartesianViewBoxRequired => ({
+  selectChartOffsetInternal,
+  (offset: ChartOffsetInternal): CartesianViewBoxRequired => ({
     x: offset.left,
     y: offset.top,
     width: offset.width,

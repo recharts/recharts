@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 
 import { RADIAN } from '../../../src/util/PolarUtils';
 import { getCursorPoints } from '../../../src/util/cursor/getCursorPoints';
-import { ChartCoordinate, ChartOffsetRequired, Coordinate } from '../../../src/util/types';
+import { ChartCoordinate, ChartOffsetInternal, Coordinate } from '../../../src/util/types';
 import { getRadialCursorPoints } from '../../../src/util/cursor/getRadialCursorPoints';
 import { emptyOffset, makeChartOffset } from '../../helper/offsetHelpers';
 
@@ -17,7 +17,7 @@ describe('getCursorPoints', () => {
         x: 18,
         y: 0,
       };
-      const offset: ChartOffsetRequired = makeChartOffset({
+      const offset: ChartOffsetInternal = makeChartOffset({
         top: 12,
         height: 10,
       });
@@ -42,7 +42,7 @@ describe('getCursorPoints', () => {
         x: 18,
         y: 99,
       };
-      const offset: ChartOffsetRequired = makeChartOffset({
+      const offset: ChartOffsetInternal = makeChartOffset({
         left: 42,
         width: 60,
       });
@@ -66,7 +66,7 @@ describe('getCursorPoints', () => {
         x: 1,
         y: 1,
       };
-      const offset: ChartOffsetRequired = makeChartOffset({});
+      const offset: ChartOffsetInternal = makeChartOffset({});
       const result = getCursorPoints('centric', activeCoordinate, offset);
       const expected: object[] = [
         {
@@ -113,7 +113,7 @@ describe('getCursorPoints', () => {
         x: 0,
         y: 0,
       };
-      const fullOffset: ChartOffsetRequired = {
+      const fullOffset: ChartOffsetInternal = {
         bottom: 87,
         brushBottom: 23,
         height: 35,
@@ -157,7 +157,7 @@ describe('getCursorPoints', () => {
         x: 0,
         y: 0,
       };
-      const offset: ChartOffsetRequired = makeChartOffset({
+      const offset: ChartOffsetInternal = makeChartOffset({
         left: 42,
         width: 60,
       });

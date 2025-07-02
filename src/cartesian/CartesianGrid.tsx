@@ -6,13 +6,13 @@ import { ReactElement, SVGProps } from 'react';
 
 import { warn } from '../util/LogUtils';
 import { isNumber } from '../util/DataUtils';
-import { ChartOffset } from '../util/types';
+import { ChartOffsetInternal } from '../util/types';
 
 import { filterProps } from '../util/ReactUtils';
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffsetInternal } from '../context/chartLayoutContext';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
@@ -26,7 +26,7 @@ export type GridLineTypeFunctionProps = Omit<LineItemProps, 'key'> & {
   // React does not pass the key through when calling cloneElement - so it might be undefined when cloning
   key: LineItemProps['key'] | undefined;
   // offset is not present in LineItemProps, but it is read from context and then passed to the GridLineType function and element
-  offset: ChartOffset;
+  offset: ChartOffsetInternal;
 };
 
 export type AxisPropsForCartesianGridTicksGeneration = AxisPropsNeededForTicksGenerator &
@@ -43,7 +43,7 @@ export type HorizontalCoordinatesGenerator = (
     yAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
-    offset: ChartOffset;
+    offset: ChartOffsetInternal;
   },
   syncWithTicks: boolean,
 ) => number[];
@@ -53,7 +53,7 @@ export type VerticalCoordinatesGenerator = (
     xAxis: AxisPropsForCartesianGridTicksGeneration;
     width: number;
     height: number;
-    offset: ChartOffset;
+    offset: ChartOffsetInternal;
   },
   syncWithTicks: boolean,
 ) => number[];
@@ -163,7 +163,7 @@ const Background = (props: Pick<AcceptedSvgProps, 'fill' | 'fillOpacity' | 'x' |
 };
 
 type LineItemProps = Props & {
-  offset: ChartOffset;
+  offset: ChartOffsetInternal;
   xAxis: null | AxisPropsForCartesianGridTicksGeneration;
   yAxis: null | AxisPropsForCartesianGridTicksGeneration;
   x1: number;
@@ -378,7 +378,7 @@ const defaultProps = {
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   const propsIncludingDefaults = {
     ...resolveDefaultProps(props, defaultProps),
     x: isNumber(props.x) ? props.x : offset.left,

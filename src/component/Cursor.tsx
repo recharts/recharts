@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
 import { clsx } from 'clsx';
-import { ChartCoordinate, ChartOffsetRequired, LayoutType, TooltipEventType } from '../util/types';
+import { ChartCoordinate, ChartOffsetInternal, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -10,7 +10,7 @@ import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
-import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipPayload } from '../state/tooltipSlice';
@@ -33,7 +33,7 @@ export type CursorProps = {
 export type CursorConnectedProps = CursorProps & {
   tooltipAxisBandSize: number;
   layout: LayoutType;
-  offset: ChartOffsetRequired;
+  offset: ChartOffsetInternal;
   coordinate: ChartCoordinate;
   payload: TooltipPayload;
   index: string;
@@ -103,7 +103,7 @@ export function CursorInternal(props: CursorConnectedProps) {
  */
 export function Cursor(props: CursorProps) {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   const layout = useChartLayout();
   const chartName = useChartName();
   return (

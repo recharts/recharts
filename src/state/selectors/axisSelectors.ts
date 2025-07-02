@@ -18,7 +18,7 @@ import {
   AxisType,
   CartesianTickItem,
   CategoricalDomain,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   Coordinate,
   DataKey,
   LayoutType,
@@ -62,7 +62,7 @@ import {
 } from '../referenceElementsSlice';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
 import { selectAllXAxes, selectAllYAxes } from './selectAllAxes';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { AxisPropsForCartesianGridTicksGeneration } from '../../cartesian/CartesianGrid';
 import { BrushDimensions, selectBrushDimensions, selectBrushSettings } from './brushSelectors';
 import { selectBarCategoryGap, selectChartName, selectStackOffsetType } from './rootPropsSelectors';
@@ -1138,13 +1138,13 @@ const selectCalculatedPadding: (
   selectSmallestDistanceBetweenValues,
   selectChartLayout,
   selectBarCategoryGap,
-  selectChartOffset,
+  selectChartOffsetInternal,
   (_1, _2, _3, padding) => padding,
   (
     smallestDistanceInPercent: number | undefined,
     layout: LayoutType,
     barCategoryGap: number | string,
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     padding: string,
   ) => {
     if (!isWellBehavedNumber(smallestDistanceInPercent)) {
@@ -1226,14 +1226,14 @@ export const combineXAxisRange: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectXAxisPadding,
     selectBrushDimensions,
     selectBrushSettings,
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     padding,
     brushDimensions: BrushDimensions,
     { padding: brushPadding },
@@ -1254,7 +1254,7 @@ export const combineYAxisRange: (
   isPanorama: boolean,
 ) => AxisRange | undefined = createSelector(
   [
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectChartLayout,
     selectYAxisPadding,
     selectBrushDimensions,
@@ -1262,7 +1262,7 @@ export const combineYAxisRange: (
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     layout: LayoutType,
     padding: { top: number; bottom: number },
     brushDimensions: BrushDimensions,
@@ -1379,14 +1379,14 @@ const selectAllYAxesWithOffsetType: (
       .sort(compareIds),
 );
 
-const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings): Size => {
+const getXAxisSize = (offset: ChartOffsetInternal, axisSettings: XAxisSettings): Size => {
   return {
     width: offset.width,
     height: axisSettings.height,
   };
 };
 
-const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+const getYAxisSize = (offset: ChartOffsetInternal, axisSettings: YAxisSettings): Size => {
   const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
   return {
     width,
@@ -1395,7 +1395,7 @@ const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings):
 };
 
 export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Size = createSelector(
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectXAxisSettings,
   getXAxisSize,
 );
@@ -1403,7 +1403,7 @@ export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Siz
 type AxisOffsetSteps = Record<AxisId, number>;
 
 const combineXAxisPositionStartingPoint = (
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
   orientation: XAxisOrientation,
   chartHeight: number,
 ) => {
@@ -1418,7 +1418,7 @@ const combineXAxisPositionStartingPoint = (
 };
 
 const combineYAxisPositionStartingPoint = (
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
   orientation: YAxisOrientation,
   chartWidth: number,
 ) => {
@@ -1438,7 +1438,7 @@ export const selectAllXAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartHeight,
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectAllXAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
@@ -1464,11 +1464,11 @@ export const selectAllYAxesOffsetSteps: (
   mirror: boolean,
 ) => AxisOffsetSteps = createSelector(
   selectChartWidth,
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectAllYAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
-  (chartWidth, offset: ChartOffsetRequired, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
+  (chartWidth, offset: ChartOffsetInternal, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
     const steps: AxisOffsetSteps = {};
     let position: number;
     allAxesWithSameOffsetType.forEach(axis => {
@@ -1485,7 +1485,7 @@ export const selectAllYAxesOffsetSteps: (
 );
 
 export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetInternal(state);
   const axisSettings = selectXAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1499,7 +1499,7 @@ export const selectXAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): Coordinate | undefined => {
-  const offset = selectChartOffset(state);
+  const offset = selectChartOffsetInternal(state);
   const axisSettings: YAxisSettings = selectYAxisSettings(state, axisId);
   if (axisSettings == null) {
     return undefined;
@@ -1513,9 +1513,9 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 };
 
 export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size = createSelector(
-  selectChartOffset,
+  selectChartOffsetInternal,
   selectYAxisSettings,
-  (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+  (offset: ChartOffsetInternal, axisSettings: YAxisSettings): Size => {
     const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
 
     return {

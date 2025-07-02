@@ -79,7 +79,7 @@ import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectChartLayout } from '../../../src/context/chartLayoutContext';
 import { TooltipIndex, TooltipState } from '../../../src/state/tooltipSlice';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
-import { selectChartOffset } from '../../../src/state/selectors/selectChartOffset';
+import { selectChartOffsetInternal } from '../../../src/state/selectors/selectChartOffsetInternal';
 import {
   selectLegendPayload,
   selectLegendSettings,
@@ -727,7 +727,7 @@ describe('Tooltip visibility', () => {
     });
 
     it('should select chart offset', () => {
-      const { spy } = renderTestCase(selectChartOffset);
+      const { spy } = renderTestCase(selectChartOffsetInternal);
       expect(spy).toHaveBeenLastCalledWith({
         bottom: 135,
         brushBottom: 35,

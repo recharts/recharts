@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import { useChartHeight, useChartWidth, useOffset, useViewBox } from '../../src/context/chartLayoutContext';
-import { CartesianViewBox, ChartOffset } from '../../src/util/types';
+import { useChartHeight, useChartWidth, useOffsetInternal, useViewBox } from '../../src/context/chartLayoutContext';
+import { CartesianViewBox, ChartOffsetInternal } from '../../src/util/types';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 
@@ -10,7 +10,7 @@ type AllContextPropertiesMixed = {
   viewBox: CartesianViewBox | undefined;
   width: number;
   height: number;
-  offset: ChartOffset | null;
+  offset: ChartOffsetInternal | null;
 };
 
 export function testChartLayoutContext(
@@ -38,7 +38,7 @@ export function testChartLayoutContext(
       const viewBox = useViewBox();
       const width = useChartWidth();
       const height = useChartHeight();
-      const offset = useOffset();
+      const offset = useOffsetInternal();
       const context: AllContextPropertiesMixed = { clipPathId, viewBox, width, height, offset };
       assertions(context);
       return <></>;

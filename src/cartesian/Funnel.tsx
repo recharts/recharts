@@ -17,7 +17,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
+  ChartOffsetInternal,
   Coordinate,
   DataKey,
   LegendType,
@@ -32,7 +32,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { useOffset } from '../context/chartLayoutContext';
+import { useOffsetInternal } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
@@ -323,7 +323,7 @@ function RenderTrapezoids(props: InternalProps) {
   return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={props} showLabels />;
 }
 
-const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, offset: ChartOffset) => {
+const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetInternal) => {
   const { width, height, left, right, top, bottom } = offset;
   const realHeight = height;
   let realWidth = width;
@@ -370,7 +370,7 @@ const defaultFunnelProps = {
 } as const satisfies Partial<Props>;
 
 function FunnelImpl(props: Props) {
-  const { height, width } = useOffset();
+  const { height, width } = useOffsetInternal();
 
   const {
     stroke,
@@ -453,15 +453,15 @@ export function computeFunnelTrapezoids({
 }: {
   dataKey: Props['dataKey'];
   nameKey: Props['nameKey'];
-  offset: ChartOffset;
+  offset: ChartOffsetInternal;
   displayedData: RealFunnelData[];
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];
   reversed?: boolean;
-  customWidth?: number | string;
+  customWidth: number | string | undefined;
 }): FunnelComposedData {
   const { left, top } = offset;
-  const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight({ customWidth }, offset);
+  const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(customWidth, offset);
   const maxValue = Math.max.apply(
     null,
     displayedData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),

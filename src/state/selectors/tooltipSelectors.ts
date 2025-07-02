@@ -72,7 +72,7 @@ import { combineTooltipInteractionState } from './combiners/combineTooltipIntera
 import { combineActiveTooltipIndex } from './combiners/combineActiveTooltipIndex';
 import { combineCoordinateForDefaultIndex } from './combiners/combineCoordinateForDefaultIndex';
 import { selectChartHeight, selectChartWidth } from './containerSelectors';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
@@ -390,7 +390,7 @@ const selectTooltipCoordinateForDefaultIndex: (state: RechartsRootState) => Coor
     selectChartWidth,
     selectChartHeight,
     selectChartLayout,
-    selectChartOffset,
+    selectChartOffsetInternal,
     selectTooltipAxisTicks,
     selectDefaultIndex,
     selectTooltipPayloadConfigurations,

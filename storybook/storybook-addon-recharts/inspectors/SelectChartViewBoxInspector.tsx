@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../../../src/state/hooks';
-import { selectChartViewBox } from '../../../src/state/selectors/selectChartOffset';
+import { selectChartViewBox } from '../../../src/state/selectors/selectChartOffsetInternal';
 import { ObjectInspector } from './generic/ObjectInspector';
 
 export function SelectChartViewBoxInspector() {

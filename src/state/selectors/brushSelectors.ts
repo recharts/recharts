@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
-import { selectChartOffset } from './selectChartOffset';
+import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectMargin } from './containerSelectors';
 import { isNumber } from '../../util/DataUtils';
 import { BrushSettings } from '../brushSlice';
@@ -15,7 +15,7 @@ export type BrushDimensions = {
 };
 
 export const selectBrushDimensions: (state: RechartsRootState) => BrushDimensions = createSelector(
-  [selectBrushSettings, selectChartOffset, selectMargin],
+  [selectBrushSettings, selectChartOffsetInternal, selectMargin],
   (brushSettings, offset, margin): BrushDimensions => ({
     height: brushSettings.height,
     x: isNumber(brushSettings.x) ? brushSettings.x : offset.left,

@@ -1,9 +1,9 @@
 import React from 'react';
-import { useChartHeight, useChartWidth, useOffset } from '../../../src/context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffsetInternal } from '../../../src/context/chartLayoutContext';
 import { SvgDimensionShower } from '../../ChartSizeDimensions';
 
 export function OffsetShower() {
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   const height = useChartHeight();
   const width = useChartWidth();
   return (
