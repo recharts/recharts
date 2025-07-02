@@ -17,7 +17,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffset,
+  ChartOffsetRequired,
   Coordinate,
   DataKey,
   LegendType,
@@ -323,7 +323,7 @@ function RenderTrapezoids(props: InternalProps) {
   return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={props} showLabels />;
 }
 
-const getRealWidthHeight = ({ customWidth }: { customWidth: number | string }, offset: ChartOffset) => {
+const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetRequired) => {
   const { width, height, left, right, top, bottom } = offset;
   const realHeight = height;
   let realWidth = width;
@@ -453,15 +453,15 @@ export function computeFunnelTrapezoids({
 }: {
   dataKey: Props['dataKey'];
   nameKey: Props['nameKey'];
-  offset: ChartOffset;
+  offset: ChartOffsetRequired;
   displayedData: RealFunnelData[];
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];
   reversed?: boolean;
-  customWidth?: number | string;
+  customWidth: number | string | undefined;
 }): FunnelComposedData {
   const { left, top } = offset;
-  const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight({ customWidth }, offset);
+  const { realHeight, realWidth, offsetX, offsetY } = getRealWidthHeight(customWidth, offset);
   const maxValue = Math.max.apply(
     null,
     displayedData.map((entry: any) => getValueByDataKey(entry, dataKey, 0)),
