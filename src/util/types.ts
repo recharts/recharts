@@ -90,12 +90,15 @@ export interface NullableCoordinate {
   y: number | null;
 }
 
+/**
+ * @deprecated do not use: too many properties, mixing too many concepts, cartesian and polar together, everything optional.
+ */
 export interface ChartCoordinate extends Coordinate {
   xAxis?: any;
   yAxis?: any;
   width?: any;
   height?: any;
-  offset?: ChartOffset;
+  offset?: ChartOffsetRequired;
   angle?: number;
   radius?: number;
   cx?: number;
