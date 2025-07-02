@@ -5,7 +5,7 @@ import { computePieSectors, PieSectorDataItem } from '../../polar/Pie';
 import { RechartsRootState } from '../store';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
 import { ChartData, ChartDataState } from '../chartDataSlice';
-import { ChartOffsetRequired, DataKey } from '../../util/types';
+import { ChartOffsetInternal, DataKey } from '../../util/types';
 import { TooltipType } from '../../component/DefaultTooltipContent';
 import { selectChartOffset } from './selectChartOffset';
 import type { LegendPayload } from '../../component/DefaultLegendContent';
@@ -142,7 +142,7 @@ export const selectPieSectors: (
     displayedData: ChartData | undefined,
     pieSettings: ResolvedPieSettings,
     cells,
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
   ): Readonly<PieSectorDataItem[]> | undefined => {
     if (pieSettings == null || displayedData == null) {
       return undefined;

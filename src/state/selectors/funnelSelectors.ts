@@ -5,7 +5,7 @@ import { ChartData } from '../chartDataSlice';
 import { RechartsRootState } from '../store';
 import { selectChartOffset } from './selectChartOffset';
 import { selectChartDataAndAlwaysIgnoreIndexes } from './dataSelectors';
-import { ChartOffsetRequired, DataKey, TooltipType } from '../../util/types';
+import { ChartOffsetInternal, DataKey, TooltipType } from '../../util/types';
 import { CellProps } from '../..';
 
 type FunnelComposedData = {
@@ -45,7 +45,7 @@ export const selectFunnelTrapezoids: (
 ) => FunnelComposedData = createSelector(
   [selectChartOffset, pickFunnelSettings, selectChartDataAndAlwaysIgnoreIndexes],
   (
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     { data, dataKey, nameKey, tooltipType, lastShapeType, reversed, customWidth, cells, presentationProps },
     { chartData },
   ): FunnelComposedData => {

@@ -20,7 +20,7 @@ import {
   AxisType,
   BaseAxisProps,
   ChartCoordinate,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   DataKey,
   LayoutType,
   NumberDomain,
@@ -738,7 +738,7 @@ export function inRange(
   y: number,
   layout: LayoutType,
   polarViewBox: PolarViewBoxRequired | undefined,
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
 ): RangeObj | null {
   if (layout === 'horizontal' || layout === 'vertical') {
     const isInRange =

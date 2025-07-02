@@ -17,7 +17,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   Coordinate,
   DataKey,
   LegendType,
@@ -323,7 +323,7 @@ function RenderTrapezoids(props: InternalProps) {
   return <FunnelTrapezoids trapezoids={trapezoids} allOtherFunnelProps={props} showLabels />;
 }
 
-const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetRequired) => {
+const getRealWidthHeight = (customWidth: number | string | undefined, offset: ChartOffsetInternal) => {
   const { width, height, left, right, top, bottom } = offset;
   const realHeight = height;
   let realWidth = width;
@@ -453,7 +453,7 @@ export function computeFunnelTrapezoids({
 }: {
   dataKey: Props['dataKey'];
   nameKey: Props['nameKey'];
-  offset: ChartOffsetRequired;
+  offset: ChartOffsetInternal;
   displayedData: RealFunnelData[];
   tooltipType?: TooltipType;
   lastShapeType?: Props['lastShapeType'];

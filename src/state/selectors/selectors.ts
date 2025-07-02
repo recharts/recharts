@@ -24,7 +24,7 @@ import { ChartDataState } from '../chartDataSlice';
 import {
   AxisType,
   BaseAxisProps,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   ChartPointer,
   Coordinate,
   DataKey,
@@ -313,7 +313,7 @@ export const combineActiveProps = (
   tooltipAxisRange: AxisRange | undefined,
   tooltipTicks: ReadonlyArray<TickItem> | undefined,
   orderedTooltipTicks: ReadonlyArray<TickItem> | undefined,
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
 ): ActiveTooltipProps | undefined => {
   if (!chartEvent || !layout || !tooltipAxisType || !tooltipAxisRange || !tooltipTicks) {
     return undefined;

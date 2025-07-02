@@ -45,6 +45,8 @@ describe('getMaxRadius', () => {
   });
 
   it('should include offset', () => {
-    expect(getMaxRadius(10, 8, { top: 2, right: 2, bottom: 2, left: 2 })).toEqual(2);
+    expect(getMaxRadius(10, 8, { top: 2, right: 2, bottom: 2, left: 2, width: 0, height: 0, brushBottom: 0 })).toEqual(
+      2,
+    );
   });
 });

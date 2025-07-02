@@ -29,7 +29,7 @@ import {
   adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   Coordinate,
   DataKey,
   LegendType,
@@ -633,7 +633,7 @@ export function computeBarRectangles({
   xAxisTicks: TickItem[];
   yAxisTicks: TickItem[];
   stackedData: Series<Record<number, number>, DataKey<any>> | undefined;
-  offset: ChartOffsetRequired;
+  offset: ChartOffsetInternal;
   displayedData: any[];
   cells: ReadonlyArray<ReactElement> | undefined;
 }): ReadonlyArray<BarRectangleItem> | undefined {

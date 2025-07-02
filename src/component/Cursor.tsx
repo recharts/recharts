@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactElement, cloneElement, createElement, isValidElement, SVGProps } from 'react';
 import { clsx } from 'clsx';
-import { ChartCoordinate, ChartOffsetRequired, LayoutType, TooltipEventType } from '../util/types';
+import { ChartCoordinate, ChartOffsetInternal, LayoutType, TooltipEventType } from '../util/types';
 import { Curve } from '../shape/Curve';
 import { Cross } from '../shape/Cross';
 import { getCursorRectangle } from '../util/cursor/getCursorRectangle';
@@ -33,7 +33,7 @@ export type CursorProps = {
 export type CursorConnectedProps = CursorProps & {
   tooltipAxisBandSize: number;
   layout: LayoutType;
-  offset: ChartOffsetRequired;
+  offset: ChartOffsetInternal;
   coordinate: ChartCoordinate;
   payload: TooltipPayload;
   index: string;

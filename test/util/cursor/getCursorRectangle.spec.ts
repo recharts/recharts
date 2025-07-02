@@ -1,12 +1,12 @@
 import { CursorRectangle, getCursorRectangle } from '../../../src/util/cursor/getCursorRectangle';
-import { ChartCoordinate, ChartOffsetRequired, LayoutType } from '../../../src/util/types';
+import { ChartCoordinate, ChartOffsetInternal, LayoutType } from '../../../src/util/types';
 import { makeChartOffset } from '../../helper/offsetHelpers';
 
 const activeCoordinate: ChartCoordinate = {
   x: 100,
   y: 170,
 };
-const offset: ChartOffsetRequired = makeChartOffset({
+const offset: ChartOffsetInternal = makeChartOffset({
   left: 10,
   top: 80,
   width: 13,

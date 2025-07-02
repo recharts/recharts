@@ -18,7 +18,7 @@ import {
   AxisType,
   CartesianTickItem,
   CategoricalDomain,
-  ChartOffsetRequired,
+  ChartOffsetInternal,
   Coordinate,
   DataKey,
   LayoutType,
@@ -1144,7 +1144,7 @@ const selectCalculatedPadding: (
     smallestDistanceInPercent: number | undefined,
     layout: LayoutType,
     barCategoryGap: number | string,
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     padding: string,
   ) => {
     if (!isWellBehavedNumber(smallestDistanceInPercent)) {
@@ -1233,7 +1233,7 @@ export const combineXAxisRange: (
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     padding,
     brushDimensions: BrushDimensions,
     { padding: brushPadding },
@@ -1262,7 +1262,7 @@ export const combineYAxisRange: (
     (_state: RechartsRootState, _axisId: AxisId, isPanorama) => isPanorama,
   ],
   (
-    offset: ChartOffsetRequired,
+    offset: ChartOffsetInternal,
     layout: LayoutType,
     padding: { top: number; bottom: number },
     brushDimensions: BrushDimensions,
@@ -1379,14 +1379,14 @@ const selectAllYAxesWithOffsetType: (
       .sort(compareIds),
 );
 
-const getXAxisSize = (offset: ChartOffsetRequired, axisSettings: XAxisSettings): Size => {
+const getXAxisSize = (offset: ChartOffsetInternal, axisSettings: XAxisSettings): Size => {
   return {
     width: offset.width,
     height: axisSettings.height,
   };
 };
 
-const getYAxisSize = (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+const getYAxisSize = (offset: ChartOffsetInternal, axisSettings: YAxisSettings): Size => {
   const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
   return {
     width,
@@ -1403,7 +1403,7 @@ export const selectXAxisSize: (state: RechartsRootState, xAxisId: AxisId) => Siz
 type AxisOffsetSteps = Record<AxisId, number>;
 
 const combineXAxisPositionStartingPoint = (
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
   orientation: XAxisOrientation,
   chartHeight: number,
 ) => {
@@ -1418,7 +1418,7 @@ const combineXAxisPositionStartingPoint = (
 };
 
 const combineYAxisPositionStartingPoint = (
-  offset: ChartOffsetRequired,
+  offset: ChartOffsetInternal,
   orientation: YAxisOrientation,
   chartWidth: number,
 ) => {
@@ -1468,7 +1468,7 @@ export const selectAllYAxesOffsetSteps: (
   selectAllYAxesWithOffsetType,
   pickAxisOrientation,
   pickMirror,
-  (chartWidth, offset: ChartOffsetRequired, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
+  (chartWidth, offset: ChartOffsetInternal, allAxesWithSameOffsetType, orientation: YAxisOrientation, mirror) => {
     const steps: AxisOffsetSteps = {};
     let position: number;
     allAxesWithSameOffsetType.forEach(axis => {
@@ -1515,7 +1515,7 @@ export const selectYAxisPosition = (state: RechartsRootState, axisId: AxisId): C
 export const selectYAxisSize: (state: RechartsRootState, yAxisId: AxisId) => Size = createSelector(
   selectChartOffset,
   selectYAxisSettings,
-  (offset: ChartOffsetRequired, axisSettings: YAxisSettings): Size => {
+  (offset: ChartOffsetInternal, axisSettings: YAxisSettings): Size => {
     const width = typeof axisSettings.width === 'number' ? axisSettings.width : DEFAULT_Y_AXIS_WIDTH;
 
     return {

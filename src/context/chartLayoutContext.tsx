@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CartesianViewBoxRequired, ChartOffsetRequired, LayoutType, Margin, Size } from '../util/types';
+import { CartesianViewBoxRequired, ChartOffsetInternal, LayoutType, Margin, Size } from '../util/types';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { RechartsRootState } from '../state/store';
 import { setChartSize, setMargin } from '../state/layoutSlice';
@@ -24,7 +24,7 @@ export const useViewBox = (): CartesianViewBoxRequired | undefined => {
   };
 };
 
-const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetRequired = {
+const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetInternal = {
   top: 0,
   bottom: 0,
   left: 0,
@@ -33,7 +33,7 @@ const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetRequired = {
   height: 0,
   brushBottom: 0,
 };
-export const useOffset = (): ChartOffsetRequired => {
+export const useOffset = (): ChartOffsetInternal => {
   return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 
