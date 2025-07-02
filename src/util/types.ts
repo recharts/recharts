@@ -1074,21 +1074,15 @@ export type OffsetHorizontal = {
   right: number;
 };
 
-/**
- * the offset of a chart, which define the blank space all around
- * @deprecated, has all properties optional. instead use `ChartOffsetRequired`
- * */
-export interface ChartOffset {
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-  width?: number;
-  height?: number;
-  brushBottom?: number;
-}
-
-export type ChartOffsetRequired = Required<ChartOffset>;
+export type ChartOffsetRequired = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+  width: number;
+  height: number;
+  brushBottom: number;
+};
 
 export interface Padding {
   top: number;
