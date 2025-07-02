@@ -1,5 +1,5 @@
 import { ReactElement, SVGProps, isValidElement } from 'react';
-import { Coordinate, ChartOffset, RangeObj, PolarViewBoxRequired } from './types';
+import { Coordinate, RangeObj, PolarViewBoxRequired, ChartOffsetRequired } from './types';
 
 export const RADIAN = Math.PI / 180;
 
@@ -15,11 +15,14 @@ export const polarToCartesian = (cx: number, cy: number, radius: number, angle: 
 export const getMaxRadius = (
   width: number,
   height: number,
-  offset: ChartOffset = {
+  offset: ChartOffsetRequired = {
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
+    width: 0,
+    height: 0,
+    brushBottom: 0,
   },
 ) =>
   Math.min(
