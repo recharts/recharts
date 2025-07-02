@@ -33,7 +33,14 @@ const manyComponentsThrowErrorsIfOffsetIsUndefined: ChartOffsetInternal = {
   height: 0,
   brushBottom: 0,
 };
-export const useOffset = (): ChartOffsetInternal => {
+/**
+ * For internal use only. If you want this information, `import { useOffset } from 'recharts'` instead.
+ *
+ * Returns the offset of the chart in pixels.
+ *
+ * @returns {ChartOffsetInternal} The offset of the chart in pixels, or a default value if not in a chart context.
+ */
+export const useOffsetInternal = (): ChartOffsetInternal => {
   return useAppSelector(selectChartOffset) ?? manyComponentsThrowErrorsIfOffsetIsUndefined;
 };
 

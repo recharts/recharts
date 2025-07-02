@@ -32,7 +32,7 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { useOffset } from '../context/chartLayoutContext';
+import { useOffsetInternal } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
@@ -370,7 +370,7 @@ const defaultFunnelProps = {
 } as const satisfies Partial<Props>;
 
 function FunnelImpl(props: Props) {
-  const { height, width } = useOffset();
+  const { height, width } = useOffsetInternal();
 
   const {
     stroke,

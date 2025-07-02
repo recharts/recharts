@@ -12,7 +12,7 @@ import { filterProps } from '../util/ReactUtils';
 import { AxisPropsNeededForTicksGenerator, getCoordinatesOfGrid, getTicksOfAxis } from '../util/ChartUtils';
 import { getTicks, GetTicksInput } from './getTicks';
 import { CartesianAxis } from './CartesianAxis';
-import { useChartHeight, useChartWidth, useOffset } from '../context/chartLayoutContext';
+import { useChartHeight, useChartWidth, useOffsetInternal } from '../context/chartLayoutContext';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { selectAxisPropsNeededForCartesianGridTicksGenerator } from '../state/selectors/axisSelectors';
 import { useAppSelector } from '../state/hooks';
@@ -378,7 +378,7 @@ const defaultProps = {
 export function CartesianGrid(props: Props) {
   const chartWidth = useChartWidth();
   const chartHeight = useChartHeight();
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   const propsIncludingDefaults = {
     ...resolveDefaultProps(props, defaultProps),
     x: isNumber(props.x) ? props.x : offset.left,

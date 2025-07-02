@@ -1,9 +1,9 @@
 import React from 'react';
-import { useOffset } from '../../../src/context/chartLayoutContext';
+import { useOffsetInternal } from '../../../src/context/chartLayoutContext';
 import { SvgDimensionShower } from '../../ChartSizeDimensions';
 
 export function GraphicalAreaShower() {
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   return (
     <SvgDimensionShower
       x={offset.left}

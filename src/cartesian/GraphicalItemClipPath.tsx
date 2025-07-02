@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { useOffset } from '../context/chartLayoutContext';
+import { useOffsetInternal } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import {
   implicitXAxis,
@@ -27,7 +27,7 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
 }
 
 export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: GraphicalItemClipPathProps) {
-  const offset = useOffset();
+  const offset = useOffsetInternal();
 
   const { needClipX, needClipY, needClip } = useNeedsClip(xAxisId, yAxisId);
 

@@ -1,7 +1,7 @@
 import React, { ComponentType } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { useOffset } from '../../src/context/chartLayoutContext';
+import { useOffsetInternal } from '../../src/context/chartLayoutContext';
 import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { emptyOffset } from '../helper/offsetHelpers';
@@ -37,7 +37,7 @@ describe('useOffset', () => {
   it('should return offset with all zeroes when used outside of chart', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const offset = useOffset();
+      const offset = useOffsetInternal();
       expect(offset).toEqual(emptyOffset);
       return null;
     };
@@ -47,7 +47,7 @@ describe('useOffset', () => {
   it('should return default offset in an empty chart', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      const offset = useOffset();
+      const offset = useOffsetInternal();
       offsetSpy(offset);
       return null;
     };
@@ -72,7 +72,7 @@ describe('useOffset', () => {
   it('should add chart margin', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      const offset = useOffset();
+      const offset = useOffsetInternal();
       offsetSpy(offset);
       return null;
     };
@@ -97,7 +97,7 @@ describe('useOffset', () => {
   it('should include default Brush height (40) in bottom property', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -121,7 +121,7 @@ describe('useOffset', () => {
   it('should include explicit brush height in bottom property', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -145,7 +145,7 @@ describe('useOffset', () => {
   it('should include default width of YAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -170,7 +170,7 @@ describe('useOffset', () => {
   it('should include explicit width of YAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -195,7 +195,7 @@ describe('useOffset', () => {
   it('should exclude hidden YAxis dimensions', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -220,7 +220,7 @@ describe('useOffset', () => {
   it('should include default height of XAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -244,7 +244,7 @@ describe('useOffset', () => {
   it('should include explicit height of XAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -268,7 +268,7 @@ describe('useOffset', () => {
   it('should exclude hidden XAxis height', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     render(
@@ -297,7 +297,7 @@ describe('useOffset', () => {
   it('should include computed width and height on Legend - see appendOffsetOfLegend for detailed behaviour', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffset());
+      offsetSpy(useOffsetInternal());
       return null;
     };
     mockGetBoundingClientRect({ height: 29, width: 43 });

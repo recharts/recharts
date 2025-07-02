@@ -10,7 +10,7 @@ import { getRadialCursorPoints } from '../util/cursor/getRadialCursorPoints';
 import { Sector } from '../shape/Sector';
 import { getCursorPoints } from '../util/cursor/getCursorPoints';
 import { filterProps } from '../util/ReactUtils';
-import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { useTooltipAxisBandSize } from '../context/useTooltipAxis';
 import { useChartName } from '../state/selectors/selectors';
 import { TooltipPayload } from '../state/tooltipSlice';
@@ -103,7 +103,7 @@ export function CursorInternal(props: CursorConnectedProps) {
  */
 export function Cursor(props: CursorProps) {
   const tooltipAxisBandSize = useTooltipAxisBandSize();
-  const offset = useOffset();
+  const offset = useOffsetInternal();
   const layout = useChartLayout();
   const chartName = useChartName();
   return (

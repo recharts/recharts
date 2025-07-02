@@ -28,7 +28,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import { useChartLayout, useOffset } from '../context/chartLayoutContext';
+import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedLineSettings, selectLinePoints } from '../state/selectors/lineSelectors';
@@ -623,7 +623,7 @@ function LineImpl(props: Props) {
   } = resolveDefaultProps(props, defaultLineProps);
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
-  const { height, width, left, top } = useOffset();
+  const { height, width, left, top } = useOffsetInternal();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
   const lineSettings: ResolvedLineSettings = useMemo(

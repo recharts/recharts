@@ -2,7 +2,7 @@ import React from 'react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { Line, LineChart, useChartWidth, useChartHeight, Brush } from '../../src';
 import { PageData } from '../_data';
-import { useOffset } from '../../src/context/chartLayoutContext';
+import { useOffsetInternal } from '../../src/context/chartLayoutContext';
 import { selectBrushDimensions } from '../../src/state/selectors/brushSelectors';
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { useIsPanorama } from '../../src/context/PanoramaContext';
@@ -40,7 +40,7 @@ describe('Chart dimensions', () => {
     });
 
     it('should return chart offset', () => {
-      const { spy } = renderTestCase(useOffset);
+      const { spy } = renderTestCase(useOffsetInternal);
       expect(spy).toHaveBeenLastCalledWith({
         bottom: 13,
         brushBottom: 13,
@@ -165,7 +165,7 @@ describe('Chart dimensions', () => {
       });
 
       it('should return chart offset', () => {
-        const { spy } = renderTestCase(useOffset);
+        const { spy } = renderTestCase(useOffsetInternal);
         expect(spy).toHaveBeenLastCalledWith({
           bottom: 53,
           brushBottom: 13,
@@ -284,7 +284,7 @@ describe('Chart dimensions', () => {
       });
 
       it('should return chart offset from the main chart', () => {
-        const { spy } = renderTestCase(useOffset);
+        const { spy } = renderTestCase(useOffsetInternal);
         expect(spy).toHaveBeenLastCalledWith({
           bottom: 53,
           brushBottom: 13,
