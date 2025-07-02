@@ -23,7 +23,7 @@ import {
   HorizontalCoordinatesGenerator,
   VerticalCoordinatesGenerator,
 } from '../../src/cartesian/CartesianGrid';
-import { ChartOffset, Margin } from '../../src/util/types';
+import { ChartOffsetRequired, Margin } from '../../src/util/types';
 import { assertNotNull } from '../helper/assertNotNull';
 import { pageData } from '../../storybook/stories/data';
 import { selectAxisScale } from '../../src/state/selectors/axisSelectors';
@@ -320,7 +320,7 @@ describe.each(allChartsThatSupportCartesianGrid)('<CartesianGrid /> when child o
       top: 14,
     };
 
-    const expectedOffset: ChartOffset = {
+    const expectedOffset: ChartOffsetRequired = {
       bottom: 11,
       brushBottom: 11,
       height: 175,

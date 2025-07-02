@@ -1,4 +1,4 @@
-import { ChartOffset, ChartOffsetRequired } from '../../src/util/types';
+import { ChartOffsetRequired } from '../../src/util/types';
 
 export const emptyOffset: ChartOffsetRequired = {
   top: 0,
@@ -10,7 +10,7 @@ export const emptyOffset: ChartOffsetRequired = {
   brushBottom: 0,
 };
 
-export function makeChartOffset(partialOffset: ChartOffset): ChartOffsetRequired {
+export function makeChartOffset(partialOffset: Partial<ChartOffsetRequired>): ChartOffsetRequired {
   return {
     ...emptyOffset,
     ...partialOffset,
