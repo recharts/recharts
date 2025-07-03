@@ -114,3 +114,5 @@ export { getNiceTickValues } from './util/scale/getNiceTickValues';
 export { useActiveTooltipLabel } from './hooks';
 
 export { useChartHeight, useChartWidth } from './context/chartLayoutContext';
+
+export type { ChartOffset, PlotArea } from './types';
