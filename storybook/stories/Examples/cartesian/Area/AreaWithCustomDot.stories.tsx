@@ -1,6 +1,8 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Area/Customised Dot',
@@ -19,7 +21,7 @@ const renderDot = (props: { cx: number; cy: number }) => {
 
 export const CustomizedDot = {
   id: 'test',
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -34,6 +36,10 @@ export const CustomizedDot = {
           data={coordinateWithValueData}
         >
           <Area dataKey="y" isAnimationActive={false} dot={renderDot} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

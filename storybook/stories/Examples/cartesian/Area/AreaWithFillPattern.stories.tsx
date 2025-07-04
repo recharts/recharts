@@ -1,6 +1,8 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Area/With Fill Pattern',
@@ -9,7 +11,7 @@ export default {
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 export const FillPattern = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -33,6 +35,10 @@ export const FillPattern = {
           </defs>
           <Area type="monotone" dataKey="x" stroke="#8884d8" fillOpacity={1} fill="url(#left)" />
           <Area type="monotone" dataKey="y" stroke="#82ca9d" fillOpacity={1} fill="url(#right)" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
