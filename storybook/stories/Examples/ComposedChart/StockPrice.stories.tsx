@@ -1,5 +1,6 @@
 /* eslint-disable no-shadow */
 import React from 'react';
+import { Args } from '@storybook/react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -12,6 +13,7 @@ import {
   Tooltip,
 } from '../../../../src';
 import { stockData } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: ComposedChart,
@@ -106,7 +108,7 @@ const CustomTooltip = ({ active, payload }: { active: boolean; payload: Record<s
 };
 
 export const StockPriceChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const { data } = args;
 
     const minValue = data.reduce((minValue: number, { low, openClose: [open, close] }: any) => {
@@ -131,6 +133,10 @@ export const StockPriceChart = {
               <Cell key={`cell-${date}`} />
             ))}
           </Bar>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );

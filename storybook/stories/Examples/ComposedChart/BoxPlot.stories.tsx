@@ -1,5 +1,6 @@
 /* eslint-disable no-shadow */
 import React from 'react';
+import { Args } from '@storybook/react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -13,6 +14,7 @@ import {
 } from '../../../../src';
 import { BoxPlot, BoxPlotData } from '../../data/DataProps';
 import { boxPlots } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: ComposedChart,
@@ -69,7 +71,7 @@ const useBoxPlot = (boxPlots: BoxPlot[]): BoxPlotData[] => {
 };
 
 export const BoxPlotChart = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const data = useBoxPlot(boxPlots);
     return (
       <ResponsiveContainer minHeight={600}>
@@ -88,6 +90,10 @@ export const BoxPlotChart = {
           <Scatter dataKey="average" fill="red" stroke="#FFF" />
           <XAxis />
           <YAxis />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
