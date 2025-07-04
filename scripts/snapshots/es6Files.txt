@@ -166,6 +166,7 @@
   "es6/synchronisation/syncSelectors.js",
   "es6/synchronisation/types.js",
   "es6/synchronisation/useChartSynchronisation.js",
+  "es6/types.js",
   "es6/util",
   "es6/util/ActiveShapeUtils.js",
   "es6/util/BarUtils.js",
