@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 
 import { addons, types, useGlobals, useStorybookApi } from '@storybook/manager-api';
 import { IconButton } from '@storybook/components';
-import { EyeIcon } from '@storybook/icons';
+import hookIcon from './hookIcon.svg';
 import { DEFAULT_POSITION, PARAM_POSITION_KEY } from './constants';
 
 const ADDON_ID = 'storybook/storybook-addon-recharts/tool';
@@ -11,7 +11,7 @@ function HookInspectorToolToggle() {
   const api = useStorybookApi();
   const [globals, updateGlobals] = useGlobals();
 
-  const isActive = globals[PARAM_POSITION_KEY] !== 'hidden';
+  const isActive = globals[PARAM_POSITION_KEY] !== 'hidden' && globals[PARAM_POSITION_KEY] != null;
 
   const toggleHookInspector = useCallback(() => {
     updateGlobals({
@@ -31,7 +31,7 @@ function HookInspectorToolToggle() {
 
   return (
     <IconButton key={ADDON_ID} active={isActive} title="Enable Recharts hook inspector" onClick={toggleHookInspector}>
-      <EyeIcon />
+      <img src={hookIcon} alt="Recharts Hook Inspector" />
     </IconButton>
   );
 }

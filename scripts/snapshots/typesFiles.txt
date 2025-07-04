@@ -166,6 +166,7 @@
   "types/synchronisation/syncSelectors.d.ts",
   "types/synchronisation/types.d.ts",
   "types/synchronisation/useChartSynchronisation.d.ts",
+  "types/types.d.ts",
   "types/util",
   "types/util/ActiveShapeUtils.d.ts",
   "types/util/BarUtils.d.ts",

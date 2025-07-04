@@ -111,6 +111,8 @@ export type { LegendType } from './util/types';
 /** export getNiceTickValues so this can be used as a replacement for what is in recharts-scale */
 export { getNiceTickValues } from './util/scale/getNiceTickValues';
 
-export { useActiveTooltipLabel } from './hooks';
+export { useActiveTooltipLabel, useOffset, usePlotArea } from './hooks';
 
 export { useChartHeight, useChartWidth } from './context/chartLayoutContext';
+
+export type { ChartOffset, PlotArea } from './types';

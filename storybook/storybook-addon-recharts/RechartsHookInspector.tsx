@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useChartLayout } from '../../src/context/chartLayoutContext';
 import { PolarChartInspector } from './inspectors/PolarChartInspector';
@@ -8,14 +8,16 @@ import { RechartsStorybookAddonActionBar } from './action-bar/RechartsStorybookA
 import { ChartSizeDimensions } from '../ChartSizeDimensions';
 import { ChartInspectorProps } from './inspectors/types';
 import { OffsetShower } from './inspectors/OffsetShower';
-import { GraphicalAreaShower } from './inspectors/GraphicalAreaShower';
+import { PlotAreaShower } from './inspectors/PlotAreaShower';
 
 function Controls({
+  defaultOpened,
   position,
   setPosition,
   setEnabledOverlays,
   Component,
 }: {
+  defaultOpened?: string;
   position: Position;
   setPosition: (newPosition: Position) => void;
   setEnabledOverlays: (overlays: ReadonlyArray<string>) => void;
@@ -24,7 +26,7 @@ function Controls({
   return createPortal(
     <>
       <RechartsStorybookAddonActionBar position={position} setPosition={setPosition} />
-      <Component setEnabledOverlays={setEnabledOverlays} />
+      <Component setEnabledOverlays={setEnabledOverlays} defaultOpened={defaultOpened} />
     </>,
     document.querySelector('#recharts-hook-inspector-portal'),
   );
@@ -48,20 +50,30 @@ function Blanket() {
 }
 
 export function RechartsHookInspector({
+  defaultOpened,
   position,
   setPosition,
 }: {
-  position: Position;
+  defaultOpened?: string;
+  position: Position | undefined;
   setPosition: (newPosition: Position) => void;
 }) {
   const layout = useChartLayout();
-  const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>([]);
+  const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>(defaultOpened ? [defaultOpened] : []);
+  const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
+
+  useEffect(() => {
+    if (position == null && defaultOpened !== undefined && process.env.CI !== 'true') {
+      setOpenedFromStart(false);
+      setPosition('NORTH');
+    }
+  }, [defaultOpened, openedFromStart, position, setPosition]);
 
   if (position === 'hidden' || position == null) {
     return null;
   }
 
-  let Component;
+  let Component: React.ComponentType<ChartInspectorProps>;
 
   switch (layout) {
     case 'centric':
@@ -75,6 +87,7 @@ export function RechartsHookInspector({
   return (
     <>
       <Controls
+        defaultOpened={defaultOpened}
         position={position}
         setPosition={setPosition}
         Component={Component}
@@ -82,12 +95,8 @@ export function RechartsHookInspector({
       />
       {enabledOverlays.length >= 1 && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
-      {enabledOverlays.includes('useOffset') && (
-        <>
-          <OffsetShower />
-          <GraphicalAreaShower />
-        </>
-      )}
+      {enabledOverlays.includes('useOffset') && <OffsetShower />}
+      {enabledOverlays.includes('usePlotArea') && <PlotAreaShower />}
     </>
   );
 }

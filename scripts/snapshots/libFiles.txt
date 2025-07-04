@@ -166,6 +166,7 @@
   "lib/synchronisation/syncSelectors.js",
   "lib/synchronisation/types.js",
   "lib/synchronisation/useChartSynchronisation.js",
+  "lib/types.js",
   "lib/util",
   "lib/util/ActiveShapeUtils.js",
   "lib/util/BarUtils.js",
