@@ -10,12 +10,15 @@ import { TooltipStateInspector } from './TooltipStateInspector';
 import { ChartInspectorProps } from './types';
 import { ChartInspector } from './ChartInspector';
 import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
+import { PlotAreaInspector } from './PlotAreaInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
  */
 const externalInspectors: Record<string, ComponentType> = {
   'useChartWidth, useChartHeight': ChartDimensionInspector,
+  useOffset: OffsetInspector,
+  usePlotArea: PlotAreaInspector,
 };
 
 /**
@@ -25,7 +28,6 @@ const externalInspectors: Record<string, ComponentType> = {
  */
 const internalInspectors: Record<string, ComponentType> = {
   useChartLayout: LayoutTypeInspector,
-  useOffset: OffsetInspector,
   selectChartViewBox: SelectChartViewBoxInspector,
   useViewBox: UseViewBoxInspector,
   'Tooltip Axis Scale': TooltipAxisScaleInspector,
