@@ -1,0 +1,42 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as ComponentStories from './useOffset.stories.tsx';
+
+<Meta of={ComponentStories} />
+
+# `useOffset`
+
+The `useOffset` hook returns the offset of the chart in pixels.
+
+The offset is the distance from the edges of the chart to the edges of the plot area.
+
+Plot area is the area where the data is rendered, and shows the actual data points, bars, lines, etc.
+
+The space between the plot area and the edges of the chart is used for axes, legends, and other supporting elements.
+
+The offset includes:
+- Margins
+- Width and height of the axes
+- Width and height of the legend
+- Brush height
+
+The offset is independent of charts position on the page, meaning it does not change as the chart is scrolled or resized.
+
+<Canvas>
+  <Story name="useOffset" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+This hook can be used within any chart:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
+- `<Sankey/>`
+- `<ScatterChart/>`
+- `<SunburstChart/>`
+- `<Treemap/>`
