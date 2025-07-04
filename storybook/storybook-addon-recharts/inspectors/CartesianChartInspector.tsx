@@ -1,6 +1,4 @@
 import React, { ComponentType } from 'react';
-import { useAppSelector } from '../../../src/state/hooks';
-import { selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
 import { LayoutTypeInspector } from './LayoutTypeInspector';
 import { XAxisScaleInspector } from './XAxisScaleInspector';
 import { YAxisScaleInspector } from './YAxisScaleInspector';
@@ -17,6 +15,7 @@ import { BrushSettingsInspector } from './BrushSettingsInspector';
 import { SelectBrushDimensionsInspector } from './SelectBrushDimensionsInspector';
 import { ChartInspector } from './ChartInspector';
 import { PlotAreaInspector } from './PlotAreaInspector';
+import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -44,7 +43,7 @@ const internalInspectors: Record<string, ComponentType> = {
   'Brush Indices': BrushIndexInspector,
   selectBrushSettings: BrushSettingsInspector,
   selectBrushDimensions: SelectBrushDimensionsInspector,
-  selectTooltipAxisType: () => useAppSelector(selectTooltipAxisType),
+  selectTooltipAxisType: TooltipAxisTypeInspector,
 };
 
 const isLocalhost = window.location.hostname === 'localhost';

@@ -1,6 +1,4 @@
 import React, { ComponentType } from 'react';
-import { useAppSelector } from '../../../src/state/hooks';
-import { selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
 import { ChartDimensionInspector } from './ChartDimensionInspector';
 import { LayoutTypeInspector } from './LayoutTypeInspector';
 import { OffsetInspector } from './OffsetInspector';
@@ -11,6 +9,7 @@ import { TooltipAxisTicksInspector } from './TooltipAxisTicksInspector';
 import { TooltipStateInspector } from './TooltipStateInspector';
 import { ChartInspectorProps } from './types';
 import { ChartInspector } from './ChartInspector';
+import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -32,7 +31,7 @@ const internalInspectors: Record<string, ComponentType> = {
   'Tooltip Axis Scale': TooltipAxisScaleInspector,
   selectTooltipAxisTicks: TooltipAxisTicksInspector,
   selectTooltipState: TooltipStateInspector,
-  selectTooltipAxisType: () => useAppSelector(selectTooltipAxisType),
+  selectTooltipAxisType: TooltipAxisTypeInspector,
 };
 
 const isLocalhost = window.location.hostname === 'localhost';
