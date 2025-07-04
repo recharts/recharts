@@ -59,7 +59,7 @@ export function RechartsHookInspector({
   setPosition: (newPosition: Position) => void;
 }) {
   const layout = useChartLayout();
-  const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>([defaultOpened]);
+  const [enabledOverlays, setEnabledOverlays] = useState<ReadonlyArray<string>>(defaultOpened ? [defaultOpened] : []);
   const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
 
   useEffect(() => {
