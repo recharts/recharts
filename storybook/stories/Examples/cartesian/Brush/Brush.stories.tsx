@@ -21,7 +21,7 @@ export default {
 };
 
 export const ControlledBrush = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [startIndex, setStartIndex] = useState<number | undefined>(2);
     const [endIndex, setEndIndex] = useState<number | undefined>(5);
 
@@ -39,6 +39,10 @@ export const ControlledBrush = {
                 setStartIndex(e.startIndex);
               }}
               alwaysShowText
+            />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
             />
           </ComposedChart>
         </ResponsiveContainer>
