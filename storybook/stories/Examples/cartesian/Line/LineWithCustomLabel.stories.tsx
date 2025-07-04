@@ -1,8 +1,9 @@
 import React from 'react';
-import { StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react';
 import { within, expect } from '@storybook/test';
 import { pageData } from '../../../data';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Line/Customised Label',
@@ -19,7 +20,7 @@ const renderLabel = (props: { index: number; x: number; y: number }) => {
 };
 
 export const CustomizedLabel: StoryObj = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
 
     return (
@@ -36,6 +37,10 @@ export const CustomizedLabel: StoryObj = {
           data={pageData}
         >
           <Area dataKey="uv" isAnimationActive={false} label={renderLabel} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
