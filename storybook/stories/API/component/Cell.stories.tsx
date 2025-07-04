@@ -1,9 +1,11 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
 import { EventHandlers } from '../props/EventHandlers';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageData } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -18,7 +20,7 @@ export default {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', 'red', 'pink', 'url(#pattern-checkers)'];
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const surfaceDimension = 400;
     return (
       <ResponsiveContainer width="100%" height={surfaceDimension}>
@@ -34,6 +36,10 @@ export const API = {
               <Cell key={`cell-pie-${entry.pv}-${entry.uv}`} fill={COLORS[index]} {...args} />
             ))}
           </Pie>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );
