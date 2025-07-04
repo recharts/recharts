@@ -1,0 +1,47 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as ComponentStories from './usePlotArea.stories.tsx';
+
+<Meta of={ComponentStories} />
+
+# `usePlotArea`
+
+```jsx
+import { usePlotArea } from 'recharts';
+
+function MyChart() {
+  const plotArea = usePlotArea();
+  return // ...
+}
+```
+
+The `usePlotArea` hook returns the dimensions of the plot area in pixels.
+
+The plot area is the area where the data is rendered, and shows the actual data points, bars, lines, etc.
+
+Plot area `width` and `height` are the dimensions in pixels;
+`x` and `y` are the coordinates of the top-left corner of the plot area relative to the chart container.
+
+All of these values are independent of the chart's position on the page, meaning they do not change as the chart is scrolled or resized.
+
+They are also independent of the scale and zoom, meaning that as the user zooms in and out,
+the plot area dimensions will not change as the chart gets visually larger or smaller.
+
+<Canvas>
+  <Story name="usePlotArea" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+This hook can be used within any chart:
+- `<AreaChart/>`
+- `<BarChart/>`
+- `<ComposedChart/>`
+- `<FunnelChart/>`
+- `<LineChart/>`
+- `<PieChart/>`
+- `<RadarChart/>`
+- `<RadialBarChart/>`
+- `<Sankey/>`
+- `<ScatterChart/>`
+- `<SunburstChart/>`
+- `<Treemap/>`

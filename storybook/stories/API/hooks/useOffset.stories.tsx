@@ -15,11 +15,6 @@ export default {
       },
     },
   },
-  argTypes: {
-    width: { control: 'text' },
-    height: { control: 'number' },
-    margin: { control: 'object' },
-  },
 };
 
 export const UseOffset = {
