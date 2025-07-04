@@ -820,7 +820,7 @@ class TreemapWithState extends PureComponent<InternalTreemapProps, State> {
     const { formatRoot } = this.state;
 
     if (!formatRoot) {
-      return <g />;
+      return null;
     }
 
     return this.renderNode(formatRoot, formatRoot);
