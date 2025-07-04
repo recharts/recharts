@@ -22,7 +22,7 @@ export const RechartsInspectorDecorator = (Story: StoryFn) => {
   );
 
   const context: RechartsContextProperties = {
-    rechartsInspectorEnabled: position !== 'hidden',
+    rechartsInspectorEnabled: position !== 'hidden' && position != null,
     rechartsInspectorPosition: position,
     rechartsSetInspectorPosition: setPosition,
   };
