@@ -39,7 +39,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </AreaChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('chart with accessibilityLayer', async () => {
@@ -50,7 +50,7 @@ describe('Static scanning for accessibility markup issues', () => {
     );
 
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('chart with accessibilityLayer=false', async () => {
@@ -61,7 +61,7 @@ describe('Static scanning for accessibility markup issues', () => {
     );
 
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).not.toHaveAttribute('role');
   });
 
   test('Chart with tooltip, legend, axes, brush, grid, margins', async () => {
@@ -77,7 +77,6 @@ describe('Static scanning for accessibility markup issues', () => {
       </AreaChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
   test('Bar chart', async () => {
@@ -87,7 +86,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </BarChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Funnel chart', async () => {
@@ -98,7 +97,7 @@ describe('Static scanning for accessibility markup issues', () => {
     );
 
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Line chart', async () => {
@@ -108,7 +107,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </LineChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Pie chart', async () => {
@@ -118,7 +117,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </PieChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Radar chart', async () => {
@@ -128,7 +127,7 @@ describe('Static scanning for accessibility markup issues', () => {
       </RadarChart>,
     );
     expect((await axe(container)).violations).toEqual([]);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Radial bar chart', async () => {
@@ -147,13 +146,12 @@ describe('Static scanning for accessibility markup issues', () => {
       </RadialBarChart>,
     );
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Sankey chart', async () => {
     const { container } = render(<Sankey width={1000} height={500} data={exampleSankeyData} />);
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
   test('Scatter chart', async () => {
@@ -216,14 +214,13 @@ describe('Static scanning for accessibility markup issues', () => {
       },
     ]);
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
+    expect(document.querySelector('svg')).toHaveAttribute('role', 'application');
   });
 
   test('Sunburst', async () => {
     const { container } = render(<SunburstChart data={exampleSunburstData} />);
 
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 
   test('Treemap', async () => {
@@ -239,6 +236,5 @@ describe('Static scanning for accessibility markup issues', () => {
     );
 
     expect((await axe(container)).violations).toHaveLength(0);
-    expect(document.querySelector('.recharts-wrapper')).toHaveAttribute('role', 'application');
   });
 });

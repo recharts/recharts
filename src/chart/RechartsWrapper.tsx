@@ -173,12 +173,11 @@ export const RechartsWrapper = forwardRef(
     return (
       <TooltipPortalContext.Provider value={tooltipPortal}>
         <LegendPortalContext.Provider value={legendPortal}>
-          {/* TODO fix these two a11y violations - we should probably add AccessibilityManager in here ? */}
-          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+          {/* TODO fix this a11y violation - we should probably add AccessibilityManager in here ? */}
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
           <div
             className={clsx('recharts-wrapper', className)}
             style={{ position: 'relative', cursor: 'default', width, height, ...style }}
-            role="application"
             onClick={myOnClick}
             onContextMenu={myOnContextMenu}
             onDoubleClick={myOnDoubleClick}
