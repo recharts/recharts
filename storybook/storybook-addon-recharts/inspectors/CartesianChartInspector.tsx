@@ -1,4 +1,4 @@
-import React, { ComponentType, CSSProperties, useEffect } from 'react';
+import React, { ComponentType } from 'react';
 import { useAppSelector } from '../../../src/state/hooks';
 import { selectTooltipAxisType } from '../../../src/state/selectors/tooltipSelectors';
 import { LayoutTypeInspector } from './LayoutTypeInspector';
@@ -10,12 +10,12 @@ import { TooltipAxisTicksInspector } from './TooltipAxisTicksInspector';
 import { TooltipStateInspector } from './TooltipStateInspector';
 import { ChartDimensionInspector } from './ChartDimensionInspector';
 import { ChartInspectorProps } from './types';
-import { useLocalStorageState } from '../useLocalStorageState';
 import { OffsetInspector } from './OffsetInspector';
 import { SelectChartViewBoxInspector } from './SelectChartViewBoxInspector';
 import { UseViewBoxInspector } from './UseViewBoxInspector';
 import { BrushSettingsInspector } from './BrushSettingsInspector';
 import { SelectBrushDimensionsInspector } from './SelectBrushDimensionsInspector';
+import { ChartInspector } from './ChartInspector';
 import { PlotAreaInspector } from './PlotAreaInspector';
 
 /**
@@ -34,7 +34,6 @@ const externalInspectors: Record<string, ComponentType> = {
  */
 const internalInspectors: Record<string, ComponentType> = {
   useChartLayout: LayoutTypeInspector,
-  useOffset: OffsetInspector,
   selectChartViewBox: SelectChartViewBoxInspector,
   useViewBox: UseViewBoxInspector,
   'XAxis Scale': XAxisScaleInspector,
@@ -55,50 +54,6 @@ const allInspectors: Record<string, ComponentType> = {
   ...(isLocalhost ? internalInspectors : {}),
 };
 
-// TODO come up with better styling solution, perhaps reuse a component library
-const tableStyle: CSSProperties = {
-  border: '1px solid black',
-  borderCollapse: 'collapse',
-  padding: '1ex',
-};
-
-export function CartesianChartInspector({ setEnabledOverlays, defaultOpened }: ChartInspectorProps) {
-  const [selected, setSelected] = useLocalStorageState('CartesianChartInspector', [defaultOpened]);
-
-  function handleCheckboxChange(key: string) {
-    setSelected(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
-  }
-
-  useEffect(() => {
-    setEnabledOverlays(selected);
-  }, [selected, setEnabledOverlays]);
-
-  const enabledInspectors: ReadonlyArray<[string, ComponentType]> = Object.entries(allInspectors).filter(([name]) =>
-    selected.includes(name),
-  );
-
-  return (
-    <div>
-      <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap' }}>
-        {Object.keys(allInspectors).map(name => (
-          <label key={name} style={{ marginRight: 12, whiteSpace: 'nowrap' }}>
-            <input type="checkbox" checked={selected.includes(name)} onChange={() => handleCheckboxChange(name)} />
-            {name}
-          </label>
-        ))}
-      </div>
-      <table style={tableStyle}>
-        <tbody>
-          {enabledInspectors.map(([name, Component]) => (
-            <tr style={tableStyle} key={name}>
-              <th style={tableStyle}>{name}</th>
-              <td style={tableStyle}>
-                <Component />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
+  return <ChartInspector allInspectors={allInspectors} setEnabledOverlays={setEnabledOverlays} />;
 }
