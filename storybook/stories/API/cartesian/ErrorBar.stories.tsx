@@ -3,6 +3,7 @@ import { Args } from '@storybook/react';
 import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Scatter } from '../../../../src';
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   dataKey: {
@@ -68,7 +69,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ScatterChart
@@ -87,6 +88,10 @@ export const API = {
           <Scatter data={errorData} fill="#ff7300">
             <ErrorBar dataKey="errorY" {...args} />
           </Scatter>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ScatterChart>
       </ResponsiveContainer>
     );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Line, ResponsiveContainer, ComposedChart, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { EventHandlers } from '../props/EventHandlers';
@@ -8,8 +9,7 @@ import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { data, General as GeneralProps } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
-import { ManualAnimations } from '../../../storybook-addon-recharts/ManualAnimations';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
+import { ManualAnimations, RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -28,7 +28,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
@@ -51,6 +51,10 @@ export const API = {
             {/* The target component */}
             <Line dataKey="uv" {...args} />
             <Tooltip />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </ManualAnimations>
