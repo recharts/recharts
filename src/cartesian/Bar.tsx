@@ -6,7 +6,6 @@ import * as React from 'react';
 import { Key, MutableRefObject, PureComponent, ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Series } from 'victory-vendor/d3-shape';
-import { noop } from 'es-toolkit';
 import { Props as RectangleProps } from '../shape/Rectangle';
 import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
@@ -276,9 +275,6 @@ function BarBackground(props: BarBackgroundProps) {
           dataKey,
           index: i,
           className: 'recharts-bar-background-rectangle',
-          onClick: eventHandlers.onClick || noop,
-          onMouseEnter: eventHandlers.onMouseEnter || noop,
-          onMouseLeave: eventHandlers.onMouseLeave || noop,
         };
 
         return <BarRectangle key={`background-bar-${i}`} {...barRectangleProps} />;

@@ -17,6 +17,8 @@ import {
 } from './types';
 import { isNullish } from './DataUtils';
 
+const noop = () => {};
+
 export const SCALE_TYPES = [
   'auto',
   'linear',
@@ -212,9 +214,9 @@ export const createEventHandlers = (
   };
 
   // Use context hooks which already handle both internal and external handlers
-  eventHandlers.onClick = contextHandlers.onClickFromContext(triggerInfo, itemIndex);
-  eventHandlers.onMouseEnter = contextHandlers.onMouseEnterFromContext(triggerInfo, itemIndex);
-  eventHandlers.onMouseLeave = contextHandlers.onMouseLeaveFromContext(triggerInfo, itemIndex);
+  eventHandlers.onClick = contextHandlers.onClickFromContext?.(triggerInfo, itemIndex) ?? noop;
+  eventHandlers.onMouseEnter = contextHandlers.onMouseEnterFromContext?.(triggerInfo, itemIndex) ?? noop;
+  eventHandlers.onMouseLeave = contextHandlers.onMouseLeaveFromContext?.(triggerInfo, itemIndex) ?? noop;
 
   return eventHandlers;
 };
