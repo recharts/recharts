@@ -1,24 +1,26 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import {
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
   Area,
   AreaChart,
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from '../../../../src';
 import { pageData } from '../../data';
 import './style.css';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: AreaChart,
 };
 
 export const MultiChartFlexbox = {
-  render: (_args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <>
         <p>Resize the window to test ResponsiveContainer</p>
@@ -38,6 +40,10 @@ export const MultiChartFlexbox = {
               <YAxis />
               <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
               <Tooltip />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </AreaChart>
           </ResponsiveContainer>
           <ResponsiveContainer className="flex-child">
@@ -65,7 +71,7 @@ export const MultiChartFlexbox = {
 };
 
 export const ResponsiveContainerWithFlexbox = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const data = [
       { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
       { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
@@ -87,6 +93,10 @@ export const ResponsiveContainerWithFlexbox = {
                 <CartesianGrid strokeDasharray="3 3" />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
                 <Tooltip />
+                <RechartsHookInspector
+                  position={context.rechartsInspectorPosition}
+                  setPosition={context.rechartsSetInspectorPosition}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
