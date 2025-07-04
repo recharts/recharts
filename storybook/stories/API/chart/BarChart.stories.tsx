@@ -4,6 +4,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { BarChartProps } from '../props/BarChartProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: BarChartProps,
@@ -11,12 +12,16 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <StrictMode>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart {...args}>
             <Bar dataKey="uv" />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </BarChart>
         </ResponsiveContainer>
       </StrictMode>
@@ -35,7 +40,7 @@ export const Simple = {
 };
 
 export const BarInBar = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart {...args}>
@@ -44,6 +49,10 @@ export const BarInBar = {
           {/* The smaller bar must be rendered in front of the larger one to be visible. */}
           <Bar dataKey="pv" fill="red" xAxisId="two" barSize={30} />
           <XAxis xAxisId="two" hide />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -61,7 +70,7 @@ export const BarInBar = {
 };
 
 export const Stacked = {
-  render: (args: Args) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart {...args}>
@@ -72,6 +81,10 @@ export const Stacked = {
           <Tooltip />
           <Bar dataKey="uv" stackId="a" fill="green" barSize={50} name="UV Bar" />
           <Bar dataKey="pv" stackId="a" fill="red" barSize={30} name="PV Bar" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -91,7 +104,7 @@ export const Stacked = {
 };
 
 export const VerticalWithMultipleAxes = {
-  render(args: Args) {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <BarChart {...args}>
         <Bar dataKey="uv" xAxisId={2} fill="blue" barSize={40} />
@@ -99,6 +112,10 @@ export const VerticalWithMultipleAxes = {
         <XAxis xAxisId={1} type="number" />
         <XAxis xAxisId={2} type="number" orientation="top" />
         <YAxis type="category" />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </BarChart>
     );
   },

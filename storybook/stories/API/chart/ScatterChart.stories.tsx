@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { coordinateData } from '../../data';
 import { ResponsiveContainer, Scatter, ScatterChart, XAxis, YAxis } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: CategoricalChartProps,
@@ -10,7 +12,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const { data, ...rest } = args;
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -18,6 +20,10 @@ export const Simple = {
           <XAxis dataKey="x" />
           <YAxis dataKey="y" />
           <Scatter data={data} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ScatterChart>
       </ResponsiveContainer>
     );

@@ -1,10 +1,11 @@
 import React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react';
 import { Funnel, FunnelChart, FunnelProps, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageDataWithFillColor } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -14,8 +15,8 @@ export default {
   component: FunnelChart,
 };
 
-export const Simple: Meta<FunnelProps> = {
-  render: (args: Record<string, any>) => {
+export const Simple: StoryObj<FunnelProps> = {
+  render: (args: FunnelProps, context: RechartsStoryContext<FunnelProps>) => {
     const { data } = args;
     return (
       <ResponsiveContainer width="100%" height={200}>
@@ -32,6 +33,10 @@ export const Simple: Meta<FunnelProps> = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
           </Funnel>
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </FunnelChart>
       </ResponsiveContainer>
     );
@@ -80,7 +85,7 @@ export const Simple: Meta<FunnelProps> = {
 };
 
 export const WithChangingDataKey: StoryObj = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [dataKey, setDataKey] = React.useState('amt');
     return (
       <>
@@ -119,6 +124,10 @@ export const WithChangingDataKey: StoryObj = {
             label={{ dataKey: 'name', stroke: 'none', fill: 'black', strokeDasharray: '0 0' }}
           />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </FunnelChart>
       </>
     );

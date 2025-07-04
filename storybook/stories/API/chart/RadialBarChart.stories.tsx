@@ -1,14 +1,13 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
-import { Tooltip, RadialBar, RadialBarChart, ResponsiveContainer, Cell, Legend } from '../../../../src';
+import { Cell, Legend, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 import { StorybookArgs } from '../../../StorybookArgs';
-import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -37,7 +36,7 @@ export const Simple: StoryObj = {
 };
 
 export const WithCustomizedClickLegendEvent = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const { data } = args;
     const [selectedRadialBar, setSelectedRadialBar] = useState('35-39');
 
@@ -73,6 +72,10 @@ export const WithCustomizedClickLegendEvent = {
                 })}
               </ul>
             )}
+          />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
           />
         </RadialBarChart>
       </ResponsiveContainer>
