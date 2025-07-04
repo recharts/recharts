@@ -1,12 +1,14 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Bar, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Bar/Stacked And Unstacked',
 };
 export const StackedAndUnstacked = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -24,6 +26,10 @@ export const StackedAndUnstacked = {
           <Bar stackId="pv-uv" dataKey="uv" stroke="red" fill="red" />
           <Bar stackId="pv-uv" dataKey="pv" stroke="green" fill="green" />
           <Bar dataKey="amt" stroke="green" fill="green" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

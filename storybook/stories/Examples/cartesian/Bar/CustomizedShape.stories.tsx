@@ -1,13 +1,15 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Bar, ResponsiveContainer, Cell, BarProps } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Bar/Customised Shape',
 };
 
 export const CustomizedShape = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const getPath = (x: number, y: number, width: number, height: number) => {
       return `M${x},${y + height}C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3}
   ${x + width / 2}, ${y}
@@ -52,6 +54,10 @@ export const CustomizedShape = {
               <Cell key={`cell-${name}`} fill={colors[index % 20]} />
             ))}
           </Bar>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -59,7 +65,7 @@ export const CustomizedShape = {
 };
 
 export const FillGradient = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
 
     return (
@@ -87,6 +93,10 @@ export const FillGradient = {
           </defs>
           <Bar dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
           <Bar dataKey="pv" stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -94,7 +104,7 @@ export const FillGradient = {
 };
 
 export const FillPattern = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
 
     return (
@@ -120,6 +130,10 @@ export const FillPattern = {
           </defs>
           <Bar dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#star)" />
           <Bar dataKey="pv" stroke="#82ca9d" fillOpacity={1} fill="url(#stripe)" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
