@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';
@@ -38,7 +39,7 @@ export default {
  * https://github.com/recharts/recharts/issues/5477
  */
 export const WithAbsolutePositionAndFlexboxParents = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <div style={{ display: 'flex', height: '100vh' }}>
         <div
