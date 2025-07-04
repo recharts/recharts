@@ -30,10 +30,14 @@ export default {
 };
 
 export const Tiny = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <BarChart {...args}>
         <Bar dataKey="uv" fill="#8884d8" />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </BarChart>
     );
   },
@@ -46,7 +50,7 @@ export const Tiny = {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -57,6 +61,10 @@ export const Simple = {
           <Tooltip defaultIndex={3} />
           <Bar dataKey="pv" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
           <Bar dataKey="uv" fill="#82ca9d" activeBar={<Rectangle fill="gold" stroke="purple" />} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -76,7 +84,7 @@ export const Simple = {
 };
 
 export const StackedAndDynamic = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
     const [locked, setLocked] = useState<boolean>(false);
 
@@ -128,6 +136,10 @@ export const StackedAndDynamic = {
             activeBar={{ fill: 'silver' }}
           />
           <Tooltip shared={false} defaultIndex={1} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -149,7 +161,7 @@ export const StackedAndDynamic = {
 const pvErrorData = pageData.map(d => ({ ...d, pvError: [100, 200] }));
 
 export const StackedWithErrorBar = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -162,6 +174,10 @@ export const StackedWithErrorBar = {
           <Bar dataKey="uv" stackId="a" fill="#82ca9d">
             <ErrorBar dataKey="pvError" width={5} stroke="red" direction="x" />
           </Bar>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -182,7 +198,7 @@ export const StackedWithErrorBar = {
 };
 
 export const Mix = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [focusedDataKey, setFocusedDataKey] = useState<string | null>(null);
     const [locked, setLocked] = useState<boolean>(false);
 
@@ -227,6 +243,10 @@ export const Mix = {
             fill={focusedDataKey == null || focusedDataKey === 'amt' ? '#82ca9d' : '#eee'}
           />
           <Bar dataKey="uv" fill={focusedDataKey == null || focusedDataKey === 'uv' ? '#ffc658' : '#eee'} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -246,7 +266,7 @@ export const Mix = {
 };
 
 export const CustomShape = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const getPath = (x: number, y: number, width: number, height: number) => {
       return `M${x},${y + height}C${x + width / 3},${y + height} ${x + width / 2},${y + height / 3}
   ${x + width / 2}, ${y}
@@ -273,6 +293,10 @@ export const CustomShape = {
             <Cell key={`cell-${name}`} fill={colors[index % 20]} />
           ))}
         </Bar>
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </BarChart>
     );
   },
@@ -335,7 +359,7 @@ const positiveAndNegativeData = [
   },
 ];
 export const PositiveAndNegative = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -347,6 +371,10 @@ export const PositiveAndNegative = {
           <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -407,7 +435,7 @@ const dataForBrush = [
   { name: '40', uv: -50, pv: 186 },
 ];
 export const WithBrush = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -420,6 +448,10 @@ export const WithBrush = {
           <Brush dataKey="name" height={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -439,7 +471,7 @@ export const WithBrush = {
 };
 
 export const XAxisTickMarginWithBrushDy = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -452,6 +484,10 @@ export const XAxisTickMarginWithBrushDy = {
           <Brush dataKey="name" height={30} dy={30} stroke="#8884d8" />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -471,7 +507,7 @@ export const XAxisTickMarginWithBrushDy = {
 };
 
 export const WithCustomizedEvent = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [activeIndex, setActiveIndex] = useState(1);
 
     return (
@@ -482,6 +518,10 @@ export const WithCustomizedEvent = {
               <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${name}`} />
             ))}
           </Bar>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -501,7 +541,7 @@ export const WithCustomizedEvent = {
 };
 
 export const StackedBySign = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -513,6 +553,10 @@ export const StackedBySign = {
           <ReferenceLine y={0} stroke="#000" />
           <Bar dataKey="pv" fill="#8884d8" stackId="stack" />
           <Bar dataKey="uv" fill="#82ca9d" stackId="stack" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -533,7 +577,7 @@ export const StackedBySign = {
 };
 
 export const Biaxial = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -545,6 +589,10 @@ export const Biaxial = {
           <Tooltip />
           <Bar yAxisId="left" dataKey="pv" fill="#8884d8" />
           <Bar yAxisId="right" dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -564,7 +612,7 @@ export const Biaxial = {
 };
 
 export const HasBackground = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -575,6 +623,10 @@ export const HasBackground = {
           <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -594,7 +646,7 @@ export const HasBackground = {
 };
 
 export const HasLabelBasedOnSeparateDataKey = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const dataWithLabel = pageData.map(({ name, uv, pv }) => ({
       name,
       uv,
@@ -611,6 +663,10 @@ export const HasLabelBasedOnSeparateDataKey = {
           <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" label={{ dataKey: 'label', position: 'top', fill: '#111' }} />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -704,7 +760,7 @@ const dataWithMultiXAxis = [
   },
 ];
 export const WithMultiXAxis = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const monthTickFormatter = (tick: any) => {
       const date = new Date(tick);
 
@@ -753,6 +809,10 @@ export const WithMultiXAxis = {
           <Tooltip />
           <Bar dataKey="pv" fill="#8884d8" />
           <Bar dataKey="uv" fill="#82ca9d" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -772,7 +832,7 @@ export const WithMultiXAxis = {
 };
 
 export const NoPadding = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -782,6 +842,10 @@ export const NoPadding = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="pv" fill="#8884d8" background={{ fill: '#eee' }} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -825,7 +889,7 @@ const dataWithSmallValuesAndZero = [
 ];
 
 export const WithMinPointSize = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -836,6 +900,10 @@ export const WithMinPointSize = {
           <Bar dataKey="pv" fill="purple" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="green" minPointSize={value => (value === 0 ? 0 : 2)} stackId="a" />
           <Bar dataKey="uv" fill="blue" minPointSize={value => (value === 0 ? 0 : 2)} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -855,7 +923,7 @@ export const WithMinPointSize = {
 };
 
 export const OneDataPointPercentSize = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -864,6 +932,10 @@ export const OneDataPointPercentSize = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey={v => v[1]} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -885,7 +957,7 @@ export const OneDataPointPercentSize = {
 };
 
 export const RangedBarChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -894,6 +966,10 @@ export const RangedBarChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip />
           <Bar dataKey="temperature" fill="violet" stroke="indigo" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -920,7 +996,7 @@ const MyCustomCursor = (props: any) => {
 };
 
 export const CustomCursorBarChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart {...args}>
@@ -929,6 +1005,10 @@ export const CustomCursorBarChart = {
           <CartesianGrid strokeDasharray="3 3" />
           <Bar dataKey="uv" fill="violet" stroke="indigo" />
           <Tooltip cursor={<MyCustomCursor />} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
