@@ -17,7 +17,7 @@ Screenshots or videos are welcome.
 
 ## Please provide a demo of the problem in a sandbox
 
-Here is now: https://github.com/recharts/recharts/wiki/How-to-share-a-demo
+Here is how: https://github.com/recharts/recharts/wiki/How-to-share-a-demo
 
 Please try to keep the demo as small as possible while still showing the problem.
 
