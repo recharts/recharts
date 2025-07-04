@@ -11,7 +11,7 @@ function HookInspectorToolToggle() {
   const api = useStorybookApi();
   const [globals, updateGlobals] = useGlobals();
 
-  const isActive = globals[PARAM_POSITION_KEY] !== 'hidden';
+  const isActive = globals[PARAM_POSITION_KEY] !== 'hidden' && globals[PARAM_POSITION_KEY] != null;
 
   const toggleHookInspector = useCallback(() => {
     updateGlobals({

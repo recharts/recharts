@@ -6,10 +6,21 @@ import { useState, useEffect, Dispatch, SetStateAction } from 'react';
  * @param initialValue - The initial value of the state. If the key already exists in localStorage, this value will be ignored.
  * @return A tuple containing the current state and a function to update it.
  */
-export function useLocalStorageState<T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>] {
-  const [state, setState] = useState<T>(() => {
+export function useLocalStorageState(
+  key: string,
+  initialValue: ReadonlyArray<string>,
+): [ReadonlyArray<string>, Dispatch<SetStateAction<ReadonlyArray<string>>>] {
+  const [state, setState] = useState<ReadonlyArray<string>>(() => {
     const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : initialValue;
+    if (storedValue === null) {
+      return initialValue;
+    }
+    const parsedValue: ReadonlyArray<unknown> | unknown = JSON.parse(storedValue);
+    if (!Array.isArray(parsedValue)) {
+      return initialValue;
+    }
+    const arrayOfStrings = parsedValue.filter((item): item is string => typeof item === 'string');
+    return initialValue.concat(arrayOfStrings);
   });
 
   useEffect(() => {

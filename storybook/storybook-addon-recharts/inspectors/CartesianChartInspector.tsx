@@ -16,12 +16,15 @@ import { SelectChartViewBoxInspector } from './SelectChartViewBoxInspector';
 import { UseViewBoxInspector } from './UseViewBoxInspector';
 import { BrushSettingsInspector } from './BrushSettingsInspector';
 import { SelectBrushDimensionsInspector } from './SelectBrushDimensionsInspector';
+import { PlotAreaInspector } from './PlotAreaInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
  */
 const externalInspectors: Record<string, ComponentType> = {
   'useChartWidth, useChartHeight': ChartDimensionInspector,
+  useOffset: OffsetInspector,
+  usePlotArea: PlotAreaInspector,
 };
 
 /**
@@ -59,16 +62,15 @@ const tableStyle: CSSProperties = {
   padding: '1ex',
 };
 
-export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
-  const [selected, setSelected] = useLocalStorageState<ReadonlyArray<string>>('CartesianChartInspector', []);
+export function CartesianChartInspector({ setEnabledOverlays, defaultOpened }: ChartInspectorProps) {
+  const [selected, setSelected] = useLocalStorageState('CartesianChartInspector', [defaultOpened]);
 
   function handleCheckboxChange(key: string) {
     setSelected(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
   }
 
   useEffect(() => {
-    const enabledOverlays = selected.filter(k => ['useChartWidth, useChartHeight', 'useOffset'].includes(k));
-    setEnabledOverlays(enabledOverlays);
+    setEnabledOverlays(selected);
   }, [selected, setEnabledOverlays]);
 
   const enabledInspectors: ReadonlyArray<[string, ComponentType]> = Object.entries(allInspectors).filter(([name]) =>
@@ -88,7 +90,7 @@ export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorPr
       <table style={tableStyle}>
         <tbody>
           {enabledInspectors.map(([name, Component]) => (
-            <tr style={tableStyle}>
+            <tr style={tableStyle} key={name}>
               <th style={tableStyle}>{name}</th>
               <td style={tableStyle}>
                 <Component />
