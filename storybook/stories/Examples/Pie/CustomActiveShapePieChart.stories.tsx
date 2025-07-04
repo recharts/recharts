@@ -17,7 +17,7 @@ const data = [
 
 const NoContent = (): null => null;
 
-export const CustomActiveShapePie = {
+export const CustomActiveShapePieChart = {
   render: (args: Args, context: RechartsStoryContext) => {
     const renderActiveShape = (props: PieSectorDataItem) => {
       const RADIAN = Math.PI / 180;
