@@ -1,6 +1,8 @@
 /* eslint-disable no-shadow */
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: Pie,
@@ -59,7 +61,7 @@ const Needle = ({
 };
 
 export const PieWithNeedle = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
@@ -82,6 +84,10 @@ export const PieWithNeedle = {
             activeShape={Needle}
           />
           <Tooltip defaultIndex={1} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -101,7 +107,7 @@ export const PieWithNeedle = {
 };
 
 export const PieWithPatterns = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart>
@@ -121,6 +127,10 @@ export const PieWithPatterns = {
               <Cell key={`cell-${entry.name}`} fill={`url(#pattern-${entry.name})`} />
             ))}
           </Pie>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );

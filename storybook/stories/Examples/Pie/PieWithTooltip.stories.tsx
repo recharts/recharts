@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Args } from '@storybook/react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from '../../../../src';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const data = [
   { name: 'Group A', value: 400 },
@@ -46,7 +47,7 @@ export default {
 };
 
 export const PieWithTooltip = {
-  render: (args: Args) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [ttPos, setTtPos] = useState(undefined);
     const [active, setActive] = useState(false);
     const [randomData, setRandomData] = useState(data);
@@ -97,6 +98,10 @@ export const PieWithTooltip = {
           </Pie>
           <Tooltip content={CustomContent} position={ttPos} active={active} />
           <Legend />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </>
     );

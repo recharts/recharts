@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Args } from '@storybook/react';
 import { Pie, PieChart } from '../../../../src';
 import { getChartPointer } from '../../../../src/util/getChartPointer';
 
 import { ChartPointer } from '../../../../src/util/types';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: Pie,
@@ -47,7 +49,7 @@ function DraggablePoint({ cx, cy, angle, radius }: { cx: number; cy: number; ang
 }
 
 export const DraggablePie = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [isDragging, setIsDragging] = useState<string | null>(null);
     const [email, setEmail] = useState(90);
     const [socialMedia, setSocialMedia] = useState(90);
@@ -82,6 +84,10 @@ export const DraggablePie = {
       >
         <Pie dataKey="value" data={data} outerRadius={200} label isAnimationActive={false} />
         <DraggablePoint angle={email} radius={200} cx={cx} cy={cy} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </PieChart>
     );
   },
