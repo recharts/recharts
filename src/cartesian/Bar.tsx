@@ -250,7 +250,6 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        // Use the new utility function
         const triggerInfo = {
           tooltipPayload: entry.payload,
           tooltipPosition: entry.tooltipPosition,
