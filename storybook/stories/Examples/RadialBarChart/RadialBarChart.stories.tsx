@@ -1,7 +1,6 @@
 import React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { Args, Meta, StoryObj } from '@storybook/react';
 import {
-  Customized,
   Legend,
   PolarAngleAxis,
   PolarGrid,
@@ -9,14 +8,13 @@ import {
   RadialBar,
   RadialBarChart,
   Tooltip,
-} from '../../../src';
-import { pageData, pageDataWithFillColor } from '../data';
-import { RadialBarChartProps } from '../API/props/RadialBarChartProps';
-import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
-import { StorybookArgs } from '../../StorybookArgs';
-import { RadarChartProps } from '../API/props/RadarChartProps';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+} from '../../../../src';
+import { pageData, pageDataWithFillColor } from '../../data';
+import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
+import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { StorybookArgs } from '../../../StorybookArgs';
+import { RadarChartProps } from '../../API/props/RadarChartProps';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -25,19 +23,15 @@ export default {
 } satisfies Meta<typeof RadialBarChart>;
 
 export const SimpleRadialBarChart = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
         <Legend />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -51,19 +45,15 @@ export const SimpleRadialBarChart = {
 };
 
 export const RadialBarWithColors = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
         <Legend />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -77,7 +67,7 @@ export const RadialBarWithColors = {
 };
 
 export const RadialBarWithAxesAndGrid: StoryObj = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" />
@@ -86,13 +76,9 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
         <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" stroke="red" />
         <PolarRadiusAxis dataKey="name" orientation="middle" type="category" angle={90} stroke="black" />
         <Tooltip cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -106,7 +92,7 @@ export const RadialBarWithAxesAndGrid: StoryObj = {
 };
 
 export const StackedRadialBar = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="pv" stackId="stack1" fill="gold" />
@@ -115,13 +101,9 @@ export const StackedRadialBar = {
         <PolarGrid gridType="circle" />
         <PolarAngleAxis dataKey="pv" type="number" axisLineType="circle" />
         <Tooltip defaultIndex={3} cursor={{ strokeWidth: 3, stroke: 'black', strokeDasharray: '4 4' }} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -170,20 +152,16 @@ const ringsData = [
 ];
 
 export const RingsWithImplicitAxes = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
         <Legend />
         <PolarGrid gridType="circle" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -197,7 +175,7 @@ export const RingsWithImplicitAxes = {
 };
 
 export const RingsWithDefaultAxes = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -206,13 +184,9 @@ export const RingsWithDefaultAxes = {
         <PolarAngleAxis />
         <PolarRadiusAxis />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -226,7 +200,7 @@ export const RingsWithDefaultAxes = {
 };
 
 export const RingsWithDataKeys = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -235,13 +209,9 @@ export const RingsWithDataKeys = {
         <PolarAngleAxis dataKey="rings" />
         <PolarRadiusAxis dataKey="name" stroke="black" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -255,7 +225,7 @@ export const RingsWithDataKeys = {
 };
 
 export const RingsWithTypes = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -264,13 +234,9 @@ export const RingsWithTypes = {
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -284,7 +250,7 @@ export const RingsWithTypes = {
 };
 
 export const RingsWithDataKeysAndTypes = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar dataKey="rings" />
@@ -293,13 +259,9 @@ export const RingsWithDataKeysAndTypes = {
         <PolarAngleAxis dataKey="rings" type="number" />
         <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -313,7 +275,7 @@ export const RingsWithDataKeysAndTypes = {
 };
 
 export const RingsWithCustomDomain = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
     return (
       <RadialBarChart {...args}>
@@ -323,13 +285,9 @@ export const RingsWithCustomDomain = {
         <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
         <PolarRadiusAxis dataKey="name" type="category" stroke="black" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -343,7 +301,7 @@ export const RingsWithCustomDomain = {
 };
 
 export const RingsWithRadiusAxisVertically = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const totalCountOfRings = ringsData.reduce((acc, entry) => acc + entry.rings, 0);
     return (
       <RadialBarChart {...args}>
@@ -353,13 +311,9 @@ export const RingsWithRadiusAxisVertically = {
         <PolarAngleAxis dataKey="rings" type="number" domain={[0, totalCountOfRings]} />
         <PolarRadiusAxis dataKey="name" type="category" orientation="left" angle={90} stroke="black" />
         <Tooltip defaultIndex={0} />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     );
@@ -385,13 +339,9 @@ export const ReversedAngleAxis = {
         <PolarAngleAxis type="number" reversed />
         <PolarRadiusAxis type="category" stroke="black" />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -415,13 +365,9 @@ export const ReversedRadiusAxis = {
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" reversed />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -445,13 +391,9 @@ export const ReversedBothAxes = {
         <PolarAngleAxis type="number" reversed />
         <PolarRadiusAxis type="category" stroke="black" reversed />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -475,13 +417,9 @@ export const Angled = {
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -507,13 +445,9 @@ export const ChartReversedByAngles = {
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -542,13 +476,9 @@ export const ChartReversedByBothAnglesAndReverseAxis = {
         <PolarAngleAxis type="number" />
         <PolarRadiusAxis type="category" stroke="black" />
         <Tooltip />
-        <Customized
-          component={
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
-          }
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
         />
       </RadialBarChart>
     </>
@@ -564,7 +494,7 @@ export const ChartReversedByBothAnglesAndReverseAxis = {
 };
 
 export const RadialBarChartWithChangingDataKey: StoryObj = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [dataKey, setDataKey] = React.useState('amt');
     return (
       <>
@@ -597,6 +527,10 @@ export const RadialBarChartWithChangingDataKey: StoryObj = {
           <PolarRadiusAxis type="category" dataKey="name" />
           <RadialBar dataKey={dataKey} fill="orange" fillOpacity={0.5} stroke="blue" strokeDasharray="3 3" label />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </RadialBarChart>
       </>
     );

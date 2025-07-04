@@ -1,12 +1,19 @@
 import React from 'react';
-import { Meta, StoryObj } from '@storybook/react';
-import { RadialBarChartProps } from '../API/props/RadialBarChartProps';
-import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart, Tooltip } from '../../../src';
-import { StorybookArgs } from '../../StorybookArgs';
-import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { pageDataWithFillColor } from '../data';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
+import { Args, Meta, StoryObj } from '@storybook/react';
+import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
+import {
+  Legend,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+  Tooltip,
+} from '../../../../src';
+import { StorybookArgs } from '../../../StorybookArgs';
+import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
+import { pageDataWithFillColor } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: RadialBarChartProps,
@@ -15,7 +22,7 @@ export default {
 } satisfies Meta<typeof RadialBarChart>;
 
 export const RadialBarChartWithMultipleAxes: StoryObj<StorybookArgs> = {
-  render: (args: StorybookArgs, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
         <RadialBar angleAxisId="axis-pv" radiusAxisId="axis-name" dataKey="pv" fillOpacity={0.3} fill="purple" />
