@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Label, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
@@ -95,12 +95,6 @@ export const ChangingDataKey = {
 
     const [useData2, setUseData2] = useState(false);
     const [visible, setVisible] = useState(true);
-    useEffect(() => {
-      console.log('ChangingDataKey mounted');
-      return () => {
-        console.log('ChangingDataKey unmounted');
-      };
-    }, []);
 
     return (
       <>
