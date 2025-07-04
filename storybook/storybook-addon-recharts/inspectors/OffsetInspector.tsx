@@ -1,8 +1,8 @@
 import React from 'react';
-import { useOffsetInternal } from '../../../src/context/chartLayoutContext';
 import { ObjectInspector } from './generic/ObjectInspector';
+import { useOffset } from '../../../src';
 
 export function OffsetInspector() {
-  const offset = useOffsetInternal();
+  const offset = useOffset();
   return <ObjectInspector obj={offset} />;
 }
