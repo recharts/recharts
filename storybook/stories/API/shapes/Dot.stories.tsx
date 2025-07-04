@@ -1,5 +1,6 @@
 import React from 'react';
-import { Customized, ComposedChart, ResponsiveContainer, Dot } from '../../../../src';
+import { Args } from '@storybook/react';
+import { ComposedChart, ResponsiveContainer, Dot } from '../../../../src';
 import { DotProps } from '../props/DotProps';
 import { GeneralStyle } from '../props/Styles';
 import {
@@ -162,6 +163,7 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: Dot,
@@ -336,7 +338,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -349,7 +351,11 @@ export const API = {
             bottom: 5,
           }}
         >
-          <Customized component={<Dot {...args} />} />
+          <Dot {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

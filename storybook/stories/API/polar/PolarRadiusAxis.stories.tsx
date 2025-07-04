@@ -1,9 +1,11 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Label, PolarRadiusAxis, RadarChart, ResponsiveContainer } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { pageData } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: StorybookArgs = {
   angle: {
@@ -98,7 +100,7 @@ export default {
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <RadarChart width={surfaceWidth} height={surfaceHeight} data={pageData}>
@@ -107,6 +109,10 @@ export const API = {
               PolarRadiusAxis
             </Label>
           </PolarRadiusAxis>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </RadarChart>
       </ResponsiveContainer>
     );

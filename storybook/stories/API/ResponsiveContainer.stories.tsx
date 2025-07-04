@@ -1,7 +1,9 @@
 import React from 'react';
-import type { StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { pageData } from '../data/Page';
+import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { Props } from '../../../src/component/ResponsiveContainer';
 
 export default {
   component: ResponsiveContainer,
@@ -10,12 +12,8 @@ export default {
   },
 };
 
-export const API: StoryObj<typeof ResponsiveContainer> = {
-  args: {
-    width: '100%',
-    height: 400,
-  },
-  render: (args: Record<string, any>) => {
+export const API: StoryObj<Props> = {
+  render: (args: Args, context: RechartsStoryContext<Props>) => {
     return (
       <ResponsiveContainer {...args}>
         <AreaChart
@@ -34,8 +32,16 @@ export const API: StoryObj<typeof ResponsiveContainer> = {
           <YAxis />
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
+  },
+  args: {
+    width: '100%',
+    height: 400,
   },
 };

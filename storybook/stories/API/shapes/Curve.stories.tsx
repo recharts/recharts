@@ -1,5 +1,6 @@
 import React from 'react';
-import { Curve, Customized, ComposedChart, ResponsiveContainer } from '../../../../src';
+import { Args } from '@storybook/react';
+import { Curve, ComposedChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle, LineStyle } from '../props/Styles';
 import { coordinateData } from '../../data';
 import {
@@ -164,6 +165,7 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: Curve,
@@ -347,7 +349,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -360,7 +362,11 @@ export const API = {
             bottom: 5,
           }}
         >
-          <Customized component={<Curve {...args} />} />
+          <Curve {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
