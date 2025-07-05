@@ -4,8 +4,8 @@ import { useAppSelector } from './state/hooks';
 import { useIsPanorama } from './context/PanoramaContext';
 import { selectActiveLabel } from './state/selectors/tooltipSelectors';
 import { ChartOffset, PlotArea } from './types';
-import { useChartHeight, useChartWidth } from './context/chartLayoutContext';
-import { selectChartOffsetInternal } from './state/selectors/selectChartOffsetInternal';
+import { selectChartOffset } from './state/selectors/selectChartOffset';
+import { selectPlotArea } from './state/selectors/selectPlotArea';
 
 export const useXAxis = (xAxisId: AxisId): BaseAxisWithScale | undefined => {
   const isPanorama = useIsPanorama();
@@ -37,16 +37,7 @@ export const useActiveTooltipLabel = (): string | undefined => {
  * @returns Offset of the chart in pixels, or undefined if used outside a chart context.
  */
 export const useOffset = (): ChartOffset | undefined => {
-  const offsetInternal = useAppSelector(selectChartOffsetInternal);
-  if (!offsetInternal) {
-    return undefined;
-  }
-  return {
-    top: offsetInternal.top,
-    bottom: offsetInternal.bottom,
-    left: offsetInternal.left,
-    right: offsetInternal.right,
-  };
+  return useAppSelector(selectChartOffset);
 };
 
 /**
@@ -58,17 +49,5 @@ export const useOffset = (): ChartOffset | undefined => {
  * @returns Plot area of the chart in pixels, or undefined if used outside a chart context.
  */
 export const usePlotArea = (): PlotArea | undefined => {
-  const offset = useOffset();
-  const chartWidth = useChartWidth();
-  const chartHeight = useChartHeight();
-  if (!offset || chartWidth == null || chartHeight == null) {
-    return undefined;
-  }
-
-  return {
-    width: chartWidth - offset.left - offset.right,
-    height: chartHeight - offset.top - offset.bottom,
-    x: offset.left,
-    y: offset.top,
-  };
+  return useAppSelector(selectPlotArea);
 };

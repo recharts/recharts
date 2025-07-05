@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { AxisId } from '../state/cartesianAxisSlice';
-import { useOffsetInternal } from '../context/chartLayoutContext';
 import { useAppSelector } from '../state/hooks';
 import {
   implicitXAxis,
@@ -8,6 +7,7 @@ import {
   selectXAxisSettings,
   selectYAxisSettings,
 } from '../state/selectors/axisSelectors';
+import { usePlotArea } from '../hooks';
 
 type GraphicalItemClipPathProps = {
   xAxisId: AxisId;
@@ -27,7 +27,7 @@ export function useNeedsClip(xAxisId: AxisId, yAxisId: AxisId) {
 }
 
 export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: GraphicalItemClipPathProps) {
-  const offset = useOffsetInternal();
+  const plotArea = usePlotArea();
 
   const { needClipX, needClipY, needClip } = useNeedsClip(xAxisId, yAxisId);
 
@@ -35,13 +35,13 @@ export function GraphicalItemClipPath({ xAxisId, yAxisId, clipPathId }: Graphica
     return null;
   }
 
-  const { left, top, width, height } = offset;
+  const { x, y, width, height } = plotArea;
 
   return (
     <clipPath id={`clipPath-${clipPathId}`}>
       <rect
-        x={needClipX ? left : left - width / 2}
-        y={needClipY ? top : top - height / 2}
+        x={needClipX ? x : x - width / 2}
+        y={needClipY ? y : y - height / 2}
         width={needClipX ? width : width * 2}
         height={needClipY ? height : height * 2}
       />

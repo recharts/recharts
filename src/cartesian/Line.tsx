@@ -28,7 +28,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
-import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
+import { useChartLayout } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
 import { ResolvedLineSettings, selectLinePoints } from '../state/selectors/lineSelectors';
@@ -39,6 +39,7 @@ import { AreaPointItem } from '../state/selectors/areaSelectors';
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
+import { usePlotArea } from '../hooks';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -623,7 +624,7 @@ function LineImpl(props: Props) {
   } = resolveDefaultProps(props, defaultLineProps);
 
   const { needClip } = useNeedsClip(xAxisId, yAxisId);
-  const { height, width, left, top } = useOffsetInternal();
+  const { height, width, x: left, y: top } = usePlotArea();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
   const lineSettings: ResolvedLineSettings = useMemo(
