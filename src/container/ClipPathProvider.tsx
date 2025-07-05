@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, ReactNode, useContext, useState } from 'react';
-import { useOffsetInternal } from '../context/chartLayoutContext';
 import { uniqueId } from '../util/DataUtils';
+import { usePlotArea } from '../hooks';
 
 const ClipPathIdContext = createContext<string | undefined>(undefined);
 
@@ -18,18 +18,18 @@ const ClipPathIdContext = createContext<string | undefined>(undefined);
 export const ClipPathProvider = ({ children }: { children: ReactNode }) => {
   const [clipPathId] = useState<string>(`${uniqueId('recharts')}-clip`);
 
-  const offset = useOffsetInternal();
+  const plotArea = usePlotArea();
 
-  if (offset == null) {
+  if (plotArea == null) {
     return null;
   }
-  const { left, top, height, width } = offset;
+  const { x, y, width, height } = plotArea;
 
   return (
     <ClipPathIdContext.Provider value={clipPathId}>
       <defs>
         <clipPath id={clipPathId}>
-          <rect x={left} y={top} height={height} width={width} />
+          <rect x={x} y={y} height={height} width={width} />
         </clipPath>
       </defs>
       {children}

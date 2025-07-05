@@ -30,7 +30,7 @@ import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
 import { AreaPointItem, AreaSettings, ComputedArea, selectArea } from '../state/selectors/areaSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { useChartLayout, useOffsetInternal } from '../context/chartLayoutContext';
+import { useChartLayout } from '../context/chartLayoutContext';
 import { useChartName } from '../state/selectors/selectors';
 import { SetLegendPayload } from '../state/SetLegendPayload';
 import { useAppSelector } from '../state/hooks';
@@ -38,6 +38,7 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Animate } from '../animation/Animate';
+import { usePlotArea } from '../hooks';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -719,7 +720,7 @@ function AreaImpl(props: Props) {
   );
   const { points, isRange, baseLine } =
     useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
-  const { height, width, left, top } = useOffsetInternal();
+  const { height, width, x: left, y: top } = usePlotArea();
 
   if (layout !== 'horizontal' && layout !== 'vertical') {
     // Can't render Area in an unsupported layout

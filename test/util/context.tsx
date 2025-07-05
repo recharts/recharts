@@ -13,6 +13,12 @@ type AllContextPropertiesMixed = {
   offset: ChartOffsetInternal | null;
 };
 
+/**
+ * @deprecated instead use `import { createSelectorTestCase } from '../helper/createSelectorTestCase';`
+ * @param ChartParentComponent Parent component that provides the chart context.
+ * @param assertions Callback that receives the context properties and should contain assertions to test them.
+ * @returns A function that can be used in a test case to render the component and run assertions on the context.
+ */
 export function testChartLayoutContext(
   /**
    * The children prop is a context spy - it's a dummy component that only exists

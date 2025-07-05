@@ -2,10 +2,29 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-import { Bar, BarChart, BarProps, Brush, ComposedChart, Customized, Rectangle, Tooltip, XAxis, YAxis } from '../../src';
+import {
+  Bar,
+  BarChart,
+  BarProps,
+  Brush,
+  ComposedChart,
+  Customized,
+  Rectangle,
+  Tooltip,
+  useOffset,
+  usePlotArea,
+  XAxis,
+  YAxis,
+} from '../../src';
 import { assertNotNull } from '../helper/assertNotNull';
 import { expectTooltipPayload } from '../component/Tooltip/tooltipTestHelpers';
-import { useChartHeight, useChartWidth, useMargin, useViewBox } from '../../src/context/chartLayoutContext';
+import {
+  useChartHeight,
+  useChartWidth,
+  useMargin,
+  useOffsetInternal,
+  useViewBox,
+} from '../../src/context/chartLayoutContext';
 import { useAppSelector } from '../../src/state/hooks';
 import { expectBars } from '../helper/expectBars';
 import {
@@ -3044,12 +3063,12 @@ describe('<BarChart />', () => {
     });
   });
 
-  // guard against negative values in clipPath - ref https://github.com/recharts/recharts/issues/2009
-  test('Renders a (Bar) chart with less width than left, right margin and less height than top, bottom margin', () => {
-    const { container } = render(
+  describe('with margin bigger than width and height', () => {
+    // guard against negative values in clipPath - ref https://github.com/recharts/recharts/issues/2009
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <BarChart
         width={50}
-        height={80}
+        height={50}
         data={data}
         margin={{
           top: 50,
@@ -3057,26 +3076,63 @@ describe('<BarChart />', () => {
           left: 100,
           bottom: 50,
         }}
-        layout="vertical"
       >
         <XAxis type="number" />
         <YAxis dataKey="name" type="category" />
-        <Bar dataKey="pv" fill="#8884d8" isAnimationActive={false} />
-      </BarChart>,
-    );
+        <Bar dataKey="uv" isAnimationActive={false} />
+        {children}
+      </BarChart>
+    ));
 
-    // expect nothing to render because height and width are 0
-    expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
+    it('should return offset', () => {
+      const { spy } = renderTestCase(useOffset);
+      expect(spy).toHaveBeenLastCalledWith({
+        bottom: 80,
+        left: 160,
+        right: 100,
+        top: 50,
+      });
+    });
 
-    const clipPath = container.querySelector('defs clipPath');
-    assertNotNull(clipPath);
-    expect(clipPath.children[0]).not.toBeNull();
+    it('should return plot area', () => {
+      const { spy } = renderTestCase(usePlotArea);
+      expect(spy).toHaveBeenLastCalledWith({
+        height: 0,
+        width: 0,
+        x: 160,
+        y: 50,
+      });
+    });
 
-    // expect clipPath rect to have a width and height of 0
-    expect(clipPath.children[0]).toHaveAttribute('width', '0');
-    expect(clipPath.children[0]).toHaveAttribute('height', '0');
+    it('should return internal offset', () => {
+      const { spy } = renderTestCase(useOffsetInternal);
+      expect(spy).toHaveBeenLastCalledWith({
+        bottom: 80,
+        brushBottom: 80,
+        height: 0,
+        left: 160,
+        right: 100,
+        top: 50,
+        width: 0,
+      });
+    });
 
-    expectBars(container, []);
+    test('Renders a chart with less width than left, right margin and less height than top, bottom margin', () => {
+      const { container } = renderTestCase();
+
+      // expect nothing to render because height and width are 0
+      expect(container.querySelectorAll('.recharts-rectangle')).toHaveLength(0);
+
+      const clipPath = container.querySelector('defs clipPath');
+      assertNotNull(clipPath);
+      expect(clipPath.children[0]).not.toBeNull();
+
+      // expect clipPath rect to have a width and height of 0
+      expect(clipPath.children[0]).toHaveAttribute('width', '0');
+      expect(clipPath.children[0]).toHaveAttribute('height', '0');
+
+      expectBars(container, []);
+    });
   });
 
   test('renders chart when wrapped in a custom component', () => {
