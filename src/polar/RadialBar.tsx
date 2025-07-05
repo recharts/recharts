@@ -7,7 +7,7 @@ import { Series } from 'victory-vendor/d3-shape';
 import { parseCornerRadius, RadialBarSector, RadialBarSectorProps } from '../util/RadialBarUtils';
 import { Props as SectorProps } from '../shape/Sector';
 import { Layer } from '../container/Layer';
-import { findAllByType, filterProps } from '../util/ReactUtils';
+import { findAllByType, filterProps, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
 import { Cell } from '../component/Cell';
@@ -79,8 +79,16 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherRadialBarProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherRadialBarProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -94,21 +102,26 @@ function RadialBarSectors({ sectors, allOtherRadialBarProps, showLabels }: Radia
     <>
       {sectors.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
-        // @ts-expect-error the types need a bit of attention
-        const onMouseEnter = onMouseEnterFromContext(entry, i);
-        // @ts-expect-error the types need a bit of attention
-        const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        // @ts-expect-error the types need a bit of attention
-        const onClick = onClickFromContext(entry, i);
+
+        // Use the new utility function
+        const triggerInfo = {
+          tooltipPayload: entry.payload as any,
+          tooltipPosition: { x: entry.cx, y: entry.cy },
+          cx: entry.cx,
+          cy: entry.cy,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         const radialBarSectorProps: RadialBarSectorProps = {
           ...baseProps,
           cornerRadius: parseCornerRadius(cornerRadius),
           ...entry,
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-          onMouseEnter,
-          onMouseLeave,
-          onClick,
+          ...eventHandlers,
           key: `sector-${i}`,
           className: `recharts-radial-bar-sector ${entry.className}`,
           forceCornerRadius: others.forceCornerRadius,

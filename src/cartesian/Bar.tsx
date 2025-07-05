@@ -12,7 +12,7 @@ import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirec
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
 import { interpolateNumber, isNan, isNullish, mathSign, uniqueId } from '../util/DataUtils';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
   BarPositionPosition,
@@ -26,7 +26,6 @@ import {
 } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffsetInternal,
@@ -224,8 +223,16 @@ function BarBackground(props: BarBackgroundProps) {
     onMouseEnter: onMouseEnterFromProps,
     onMouseLeave: onMouseLeaveFromProps,
     onClick: onItemClickFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherBarProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -245,25 +252,27 @@ function BarBackground(props: BarBackgroundProps) {
           return null;
         }
 
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-        const onMouseEnter = onMouseEnterFromContext(entry, i);
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-        const onMouseLeave = onMouseLeaveFromContext(entry, i);
-        // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-        const onClick = onClickFromContext(entry, i);
+        const triggerInfo = {
+          tooltipPayload: entry.payload,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.x,
+          cy: entry.y,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
 
         const barRectangleProps: BarRectangleProps = {
           option: backgroundFromProps,
           isActive: String(i) === activeIndex,
           ...rest,
-          // @ts-expect-error BarRectangle props do not accept `fill` property.
           fill: '#eee',
           ...backgroundFromDataEntry,
           ...backgroundProps,
-          ...adaptEventsOfChild(restOfAllOtherProps, entry, i),
-          onMouseEnter,
-          onMouseLeave,
-          onClick,
+          ...eventHandlers,
           dataKey,
           index: i,
           className: 'recharts-bar-background-rectangle',
@@ -298,8 +307,16 @@ function BarRectangles({
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = props;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -332,16 +349,24 @@ function BarRectangles({
           dataKey,
         };
 
+        // Use the new utility function
+        const triggerInfo = {
+          tooltipPayload: entry.payload,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.x,
+          cy: entry.y,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
+
         return (
           <Layer
             className="recharts-bar-rectangle"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error BarRectangleItem type definition says it's missing properties, but I can see them present in debugger!
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             // https://github.com/recharts/recharts/issues/5415
             // eslint-disable-next-line react/no-array-index-key
             key={`rectangle-${entry?.x}-${entry?.y}-${entry?.value}-${i}`}

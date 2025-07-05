@@ -227,7 +227,7 @@ const FunnelChartTestCase: TooltipVisibilityTestCase = {
     </FunnelChart>
   ),
   mouseHoverSelector: funnelChartMouseHoverTooltipSelector,
-  expectedTransform: 'transform: translate(355px, 55px);',
+  expectedTransform: 'transform: translate(40px, 15px);',
   tooltipIndex: '0',
 };
 

@@ -4,7 +4,7 @@ import { Component, MutableRefObject, ReactElement, useCallback, useMemo, useRef
 import { clsx } from 'clsx';
 import { Layer } from '../container/Layer';
 import { ImplicitLabelListType, LabelList } from '../component/LabelList';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
@@ -14,7 +14,6 @@ import { getLinearRegression, interpolateNumber, isNullish, uniqueId } from '../
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   Coordinate,
@@ -213,15 +212,25 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherScatterProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherScatterProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherScatterProps.dataKey);
+
   if (points == null) {
     return null;
   }
+
   return (
     <>
       <ScatterLine points={points} props={allOtherScatterProps} />
@@ -236,16 +245,24 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: String(dataKey),
         };
 
+        // Use the new utility function
+        const triggerInfo = {
+          tooltipPayload: entry.tooltipPayload,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.cx,
+          cy: entry.cy,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
+
         return (
           <Layer
             className="recharts-scatter-symbol"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             // eslint-disable-next-line react/no-array-index-key
             key={`symbol-${entry?.cx}-${entry?.cy}-${entry?.size}-${i}`}
           >

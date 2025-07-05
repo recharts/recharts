@@ -216,6 +216,31 @@ describe('tooltipEventType', () => {
 
         expect(tooltip).not.toBeVisible();
       });
+
+      it('should close tooltip when clicking outside the chart area', () => {
+        const { container } = render(<Component tooltipTrigger={tooltipTrigger} />);
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector('.recharts-wrapper');
+        assertNotNull(trigger);
+
+        // Click inside to open tooltip
+        fireEvent.click(trigger, { clientX: 200, clientY: 200 });
+        expect(tooltip).toBeVisible();
+
+        // Click outside to close tooltip
+        fireEvent.mouseDown(document.body, { clientX: 1000, clientY: 1000 });
+
+        // Add expectations for undefined variables to help debug
+        expect(trigger).toBeDefined();
+        expect(container).toBeDefined();
+        expect(document.body).toBeDefined();
+
+        // The tooltip should be closed after outside click
+        expect(tooltip).not.toBeVisible();
+      });
     });
   });
 
@@ -308,6 +333,32 @@ describe('tooltipEventType', () => {
         assertNotNull(trigger);
 
         fireEvent.mouseOver(trigger, { clientX: 20, clientY: 20 });
+        expect(tooltip).not.toBeVisible();
+      });
+
+      it('should close tooltip when clicking outside the chart area', () => {
+        const { container } = render(<Component tooltipTrigger={tooltipTrigger} />);
+
+        const tooltip = getTooltip(container);
+        expect(tooltip).not.toBeVisible();
+
+        const trigger = container.querySelector(itemSelector);
+        assertNotNull(trigger);
+
+        // Click on item to open tooltip
+        fireEvent.click(trigger, { clientX: 20, clientY: 20 });
+        expect(tooltip).toBeVisible();
+
+        // Click outside to close tooltip
+        fireEvent.mouseDown(document.body, { clientX: 1000, clientY: 1000 });
+
+        // Add expectations for undefined variables to help debug
+        expect(trigger).toBeDefined();
+        expect(container).toBeDefined();
+        expect(document.body).toBeDefined();
+        expect(itemSelector).toBeDefined();
+
+        // The tooltip should be closed after outside click
         expect(tooltip).not.toBeVisible();
       });
     });

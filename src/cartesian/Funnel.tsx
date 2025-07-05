@@ -14,7 +14,6 @@ import { interpolateNumber, isNumber } from '../util/DataUtils';
 import { getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffsetInternal,
@@ -34,7 +33,7 @@ import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
 import { useOffsetInternal } from '../context/chartLayoutContext';
 import { ResolvedFunnelSettings, selectFunnelTrapezoids } from '../state/selectors/funnelSelectors';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Cell } from '../component/Cell';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
@@ -155,6 +154,13 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
   const onClickFromContext = useMouseClickItemDispatch(onItemClickFromProps, allOtherFunnelProps.dataKey);
 
+  const restOfAllOtherPropsWithEvents = {
+    ...restOfAllOtherProps,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
+
   return (
     <>
       {trapezoids.map((entry, i) => {
@@ -167,16 +173,24 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
           stroke: entry.stroke,
         };
 
+        // Use the new utility function
+        const triggerInfo = {
+          tooltipPayload: entry.payload,
+          tooltipPosition: { x: entry.x, y: entry.y },
+          cx: entry.x,
+          cy: entry.y,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherPropsWithEvents, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
+
         return (
           <Layer
             className="recharts-funnel-trapezoid"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             key={`trapezoid-${entry?.x}-${entry?.y}-${entry?.name}-${entry?.value}`}
           >
             <FunnelTrapezoid {...trapezoidProps} />

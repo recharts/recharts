@@ -325,6 +325,15 @@ const tooltipSlice = createSlice({
       state.keyboardInteraction.coordinate = action.payload.activeCoordinate;
       state.keyboardInteraction.dataKey = action.payload.activeDataKey;
     },
+
+    clearClickTooltip(state) {
+      /*
+       * Clear click-triggered tooltip state.
+       * This allows closing tooltips that were opened with trigger="click".
+       */
+      state.itemInteraction.click.active = false;
+      state.axisInteraction.click.active = false;
+    },
   },
 });
 
@@ -340,6 +349,7 @@ export const {
   setMouseClickAxisIndex,
   setSyncInteraction,
   setKeyboardInteraction,
+  clearClickTooltip,
 } = tooltipSlice.actions;
 
 export const tooltipReducer = tooltipSlice.reducer;
