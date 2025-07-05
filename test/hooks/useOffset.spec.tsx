@@ -1,44 +1,15 @@
-import React, { ComponentType } from 'react';
+import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { useOffsetInternal } from '../../src/context/chartLayoutContext';
-import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis } from '../../src';
+import { Brush, ComposedChart, Customized, Legend, XAxis, YAxis, useOffset } from '../../src';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
-import { emptyOffset } from '../helper/offsetHelpers';
-import { useClipPathId } from '../../src/container/ClipPathProvider';
 
-describe('ClipPathIdContext', () => {
-  it('should generate unique clipPathId', () => {
-    expect.assertions(1);
-    const MockConsumer: ComponentType = () => {
-      const clipPathId = useClipPathId();
-      expect(clipPathId).toMatch(/^recharts\d+-clip$/);
-      return null;
-    };
-    render(
-      <ComposedChart width={100} height={200}>
-        <MockConsumer />
-      </ComposedChart>,
-    );
-  });
-
-  it('should return undefined when using the hook outside of chart', () => {
-    expect.assertions(1);
-    const MockComponent: ComponentType = () => {
-      const clipPathId = useClipPathId();
-      expect(clipPathId).toBe(undefined);
-      return null;
-    };
-    render(<MockComponent />);
-  });
-});
-
-describe('useOffsetInternal', () => {
-  it('should return offset with all zeroes when used outside of chart', () => {
+describe('useOffset', () => {
+  it('should return undefined when used outside of chart', () => {
     expect.assertions(1);
     const Comp = (): null => {
-      const offset = useOffsetInternal();
-      expect(offset).toEqual(emptyOffset);
+      const offset = useOffset();
+      expect(offset).toBe(undefined);
       return null;
     };
     render(<Comp />);
@@ -47,13 +18,13 @@ describe('useOffsetInternal', () => {
   it('should return default offset in an empty chart', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      const offset = useOffsetInternal();
+      const offset = useOffset();
       offsetSpy(offset);
       return null;
     };
     render(
       <ComposedChart width={100} height={200}>
-        <Customized component={Comp} />
+        <Comp />
       </ComposedChart>,
     );
 
@@ -63,16 +34,13 @@ describe('useOffsetInternal', () => {
       right: 5,
       bottom: 5,
       left: 5,
-      brushBottom: 5,
-      height: 190,
-      width: 90,
     });
   });
 
   it('should add chart margin', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      const offset = useOffsetInternal();
+      const offset = useOffset();
       offsetSpy(offset);
       return null;
     };
@@ -88,16 +56,13 @@ describe('useOffsetInternal', () => {
       right: 20,
       bottom: 30,
       left: 40,
-      brushBottom: 30,
-      height: 160,
-      width: 40,
     });
   });
 
   it('should include default Brush height (40) in bottom property', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -111,9 +76,6 @@ describe('useOffsetInternal', () => {
       right: 20,
       bottom: 70,
       left: 40,
-      brushBottom: 30,
-      height: 120,
-      width: 40,
     });
     expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
@@ -121,7 +83,7 @@ describe('useOffsetInternal', () => {
   it('should include explicit brush height in bottom property', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -135,9 +97,6 @@ describe('useOffsetInternal', () => {
       right: 20,
       bottom: 43,
       left: 40,
-      brushBottom: 30,
-      height: 147,
-      width: 240,
     });
     expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
@@ -145,7 +104,7 @@ describe('useOffsetInternal', () => {
   it('should include default width of YAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -157,12 +116,9 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
-      brushBottom: 30,
-      height: 160,
       left: 100,
       right: 80,
       top: 10,
-      width: 120,
     });
     expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
@@ -170,7 +126,7 @@ describe('useOffsetInternal', () => {
   it('should include explicit width of YAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -182,12 +138,9 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
-      brushBottom: 30,
-      height: 160,
       left: 63,
       right: 59,
       top: 10,
-      width: 178,
     });
     expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
@@ -195,7 +148,7 @@ describe('useOffsetInternal', () => {
   it('should exclude hidden YAxis dimensions', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -207,12 +160,9 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
-      brushBottom: 30,
-      height: 160,
       left: 40,
       right: 20,
       top: 10,
-      width: 240,
     });
     expect(offsetSpy).toHaveBeenCalledTimes(2);
   });
@@ -220,7 +170,7 @@ describe('useOffsetInternal', () => {
   it('should include default height of XAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -232,19 +182,16 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 60,
-      brushBottom: 60,
-      height: 100,
       left: 40,
       right: 20,
       top: 40,
-      width: 40,
     });
   });
 
   it('should include explicit height of XAxis', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -256,19 +203,16 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 69,
-      brushBottom: 69,
-      height: 98,
       left: 40,
       right: 20,
       top: 33,
-      width: 40,
     });
   });
 
   it('should exclude hidden XAxis height', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     render(
@@ -280,12 +224,9 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 30,
-      brushBottom: 30,
-      height: 160,
       left: 40,
       right: 20,
       top: 10,
-      width: 40,
     });
   });
 
@@ -297,7 +238,7 @@ describe('useOffsetInternal', () => {
   it('should include computed width and height on Legend - see appendOffsetOfLegend for detailed behaviour', () => {
     const offsetSpy = vi.fn();
     const Comp = (): null => {
-      offsetSpy(useOffsetInternal());
+      offsetSpy(useOffset());
       return null;
     };
     mockGetBoundingClientRect({ height: 29, width: 43 });
@@ -309,12 +250,9 @@ describe('useOffsetInternal', () => {
     );
     expect(offsetSpy).toHaveBeenLastCalledWith({
       bottom: 59,
-      brushBottom: 30,
-      height: 131,
       left: 40,
       right: 20,
       top: 10,
-      width: 40,
     });
   });
 });
