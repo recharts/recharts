@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { nameKey, activeShape, General } from '../props/CartesianComponentShared';
 import { legendType } from '../props/Legend';
 import { AnimationProps } from '../props/AnimationProps';
@@ -20,6 +21,7 @@ import {
 } from '../props/EventHandlers';
 import { ResponsiveProps } from '../props/Tooltip';
 import { GeneralStyle } from '../props/Styles';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -48,7 +50,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={200}>
         <FunnelChart layout="horizontal">
@@ -56,6 +58,10 @@ export const API = {
             <LabelList dataKey="name" fill="#000" position="right" stroke="none" />
             <Legend />
           </Funnel>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </FunnelChart>
       </ResponsiveContainer>
     );

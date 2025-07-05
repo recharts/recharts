@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Line, LineChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { TooltipProps } from '../props/TooltipProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: TooltipProps,
@@ -10,7 +12,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -28,6 +30,10 @@ export const API = {
           <Line dataKey="uv" />
           {/* The target component */}
           <Tooltip {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </LineChart>
       </ResponsiveContainer>
     );

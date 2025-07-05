@@ -1,6 +1,8 @@
 import React from 'react';
-import { Cross, Customized, ComposedChart, ResponsiveContainer } from '../../../../src';
+import { Args } from '@storybook/react';
+import { Cross, ComposedChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: Cross,
@@ -47,7 +49,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -60,7 +62,11 @@ export const API = {
             bottom: 5,
           }}
         >
-          <Customized component={<Cross {...args} />} />
+          <Cross {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

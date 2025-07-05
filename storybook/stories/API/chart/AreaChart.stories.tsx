@@ -5,6 +5,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } f
 import { pageData, subjectData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: CategoricalChartProps,
@@ -12,7 +13,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [myState, setMyState] = React.useState(0);
     return (
       <ResponsiveContainer width="100%" height={400}>
@@ -29,6 +30,10 @@ export const Simple = {
           <Area dataKey="pv" strokeWidth={3} stroke="#2451B7" fill="#5376C4" />
           <CartesianGrid opacity={0.1} vertical={false} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -49,11 +54,15 @@ export const Simple = {
 const stepAround = curveCardinal.tension(0.5);
 
 export const CustomType = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart {...args}>
           <Area type={stepAround} dataKey="pv" stroke="#ff7300" fill="#ff7300" fillOpacity={0.9} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );
@@ -72,13 +81,17 @@ export const CustomType = {
 };
 
 export const CategoricalAreaChart = {
-  render(args: Args) {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart {...args}>
           <Area dataKey="A" stroke="green" fill="green" fillOpacity={0.5} />
           <XAxis dataKey="subject" type="category" allowDuplicatedCategory={false} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </AreaChart>
       </ResponsiveContainer>
     );

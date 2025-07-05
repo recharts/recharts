@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { YAxis, XAxis, Line, ResponsiveContainer, LineChart, CartesianGrid, Tooltip, Legend } from '../../../../src';
 import { coordinateWithValueData } from '../../data';
 import { YAxisProps } from '../props/YAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   component: YAxis,
@@ -19,7 +21,7 @@ const getWidth = (width: string | number) => {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const width = getWidth(args.width);
 
     return (
@@ -31,6 +33,10 @@ export const API = {
           <Legend />
           <Line dataKey="y" />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </LineChart>
       </ResponsiveContainer>
     );

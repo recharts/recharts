@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { Args } from '@storybook/react';
 import { pageData } from '../data';
 import {
   Area,
@@ -6,6 +7,7 @@ import {
   BarChart,
   CartesianGrid,
   ComposedChart,
+  DefaultTooltipContent,
   Legend,
   Line,
   LineChart,
@@ -15,13 +17,11 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  DefaultTooltipContent,
 } from '../../../src';
 import { generateMockData } from '../../../test/helper/generateMockData';
-import { RechartsHookInspector } from '../../storybook-addon-recharts/RechartsHookInspector';
+import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
 import { TooltipProps } from '../API/props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: TooltipProps,
@@ -30,14 +30,18 @@ export default {
 
 // We do not export this story, but reuse the rendering across multiple examples with various args.
 const SimpleTooltipStory = {
-  render: (tooltipArgs: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip {...tooltipArgs} />
+          <Tooltip {...args} />
           <Line dataKey="uv" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -53,7 +57,7 @@ export const ActiveTooltip = {
 };
 
 export const SettingTooltipIndex = {
-  render: (tooltipArgs: Record<string, any>) => (
+  render: (args: Args, context: RechartsStoryContext) => (
     <LineChart
       width={500}
       height={300}
@@ -69,9 +73,13 @@ export const SettingTooltipIndex = {
       <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
       <XAxis dataKey="name" />
       <YAxis />
-      <Tooltip {...tooltipArgs} />
+      <Tooltip {...args} />
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+      <RechartsHookInspector
+        position={context.rechartsInspectorPosition}
+        setPosition={context.rechartsSetInspectorPosition}
+      />
     </LineChart>
   ),
   args: {
@@ -81,7 +89,7 @@ export const SettingTooltipIndex = {
 };
 
 export const LockedByClick = {
-  render: (tooltipArgs: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [isLocked, setIsLocked] = React.useState(false);
     // The TooltipData contains the payload, the label and the x position of the tooltip.
     // Their update is interrupted by the click event, so we need to store them in a state.
@@ -114,12 +122,16 @@ export const LockedByClick = {
           }}
         >
           <Tooltip
-            {...tooltipArgs}
+            {...args}
             position={{ y: 0, x: tooltipData.x }} // The y position fixes the Tooltip to the top of the chart.
             content={<CustomTooltip tooltipData={tooltipData} />}
           />
           <Line dataKey="uv" />
           <Bar dataKey="pv" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -132,7 +144,7 @@ export const LockedByClick = {
 };
 
 export const CssScaledParent = {
-  render: (tooltipArgs: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [scale, setScale] = useState(1.2);
     const handleZoomIn = useCallback(() => setScale(s => s + 0.1), []);
     const handleZoomOut = useCallback(() => setScale(s => s - 0.1), []);
@@ -166,7 +178,11 @@ export const CssScaledParent = {
               <XAxis dataKey="name" />
               <Line dataKey="uv" />
               <Bar dataKey="pv" />
-              <Tooltip {...tooltipArgs} />
+              <Tooltip {...args} />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -198,15 +214,19 @@ const lineData = [
 ];
 
 export const SeparateDataSetsForChart = {
-  render: (tooltipProps: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart data={areaData}>
           <XAxis dataKey="category" type="category" />
           <YAxis dataKey="value" />
-          <Tooltip {...tooltipProps} />
+          <Tooltip {...args} />
           <Area dataKey="value" />
           <Line dataKey="value" data={lineData} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -274,7 +294,7 @@ export const CustomContentExample = {
 };
 
 export const LargeDataArray = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -293,6 +313,10 @@ export const LargeDataArray = {
           <Line dataKey="x" />
           <Line dataKey="y" />
           <Line dataKey="z" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -303,7 +327,7 @@ export const LargeDataArray = {
 };
 
 export const IncludeHidden = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -321,6 +345,10 @@ export const IncludeHidden = {
           <Tooltip {...args} />
           <Line dataKey="uv" />
           <Line dataKey="pv" hide />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -332,13 +360,17 @@ export const IncludeHidden = {
 };
 
 export const SharedTooltipInBarChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={pageData}>
           <Bar dataKey="uv" fill="green" />
           <Bar dataKey="pv" fill="red" />
           <Tooltip {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </BarChart>
       </ResponsiveContainer>
     );
@@ -352,13 +384,17 @@ export const SharedTooltipInBarChart = {
 };
 
 export const SharedTooltipInRadialBarChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <RadialBarChart data={pageData}>
           <RadialBar dataKey="uv" fill="green" />
           <RadialBar dataKey="pv" fill="red" />
           <Tooltip {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </RadialBarChart>
       </ResponsiveContainer>
     );
@@ -378,7 +414,7 @@ export const SharedTooltipInRadialBarChart = {
  * It should instead overflow the chart.
  */
 export const TallTooltipInNarrowChart = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={50}>
         <LineChart data={pageData}>
@@ -386,6 +422,10 @@ export const TallTooltipInNarrowChart = {
           <Line dataKey="uv" fill="green" />
           <Line dataKey="pv" fill="red" />
           <Line dataKey="amt" fill="amt" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </LineChart>
       </ResponsiveContainer>
     );
@@ -398,16 +438,20 @@ export const TallTooltipInNarrowChart = {
 };
 
 export const TooltipWithPortal = {
-  render: (tooltipProps: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [portalRef, setPortalRef] = useState<HTMLElement | null>(null);
 
     return (
       <>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={pageData}>
-            {portalRef && <Tooltip {...tooltipProps} portal={portalRef} />}
+            {portalRef && <Tooltip {...args} portal={portalRef} />}
             <Line dataKey="uv" fill="green" />
             <Line dataKey="pv" fill="red" />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </LineChart>
         </ResponsiveContainer>
         <div
@@ -450,7 +494,7 @@ const d1 = [
 ];
 
 export const RechartsAlphaTooltipBug5516Repro = {
-  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -464,7 +508,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
           </button>
           <ResponsiveContainer>
             <LineChart data={d1} style={{ border: '1px solid black' }}>
-              <Tooltip {...tooltipProps} />
+              <Tooltip {...args} />
               <Line dataKey="Triggers" />
               <RechartsHookInspector
                 position={context.rechartsInspectorPosition}
@@ -482,7 +526,7 @@ export const RechartsAlphaTooltipBug5516Repro = {
 };
 
 export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
-  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [, setRandomUnusedState] = useState(true);
 
     return (
@@ -497,7 +541,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
           <ResponsiveContainer>
             <BarChart data={d1} style={{ border: '1px solid black' }}>
               <Bar dataKey="Triggers" />
-              <Tooltip {...tooltipProps} />
+              <Tooltip {...args} />
               <RechartsHookInspector
                 position={context.rechartsInspectorPosition}
                 setPosition={context.rechartsSetInspectorPosition}
@@ -515,7 +559,7 @@ export const RechartsAlphaTooltipBug5516ReproButWithItemBasedTooltip = {
 };
 
 export const RechartsTooltipBug5542Repro = {
-  render: (tooltipProps: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <div
         style={{
@@ -537,7 +581,7 @@ export const RechartsTooltipBug5542Repro = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip {...tooltipProps} />
+            <Tooltip {...args} />
             <Legend />
             <Bar dataKey="pv" fill="#8884d8" />
             <Bar dataKey="uv" fill="#82ca9d" />
@@ -557,14 +601,18 @@ export const RechartsTooltipBug5542Repro = {
 };
 
 export const TooltipWithNegativeOffset = {
-  render: (tooltipProps: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={pageData}>
           <XAxis dataKey="name" />
           <YAxis />
           <Line dataKey="uv" />
-          <Tooltip {...tooltipProps} />
+          <Tooltip {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -1,9 +1,11 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';
 import { data, margin } from '../props/ChartProps';
 import { dataKey } from '../props/CartesianComponentShared';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -23,11 +25,15 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Sankey data={nodeLinkData} {...args}>
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </Sankey>
       </ResponsiveContainer>
     );
@@ -38,10 +44,15 @@ export const Simple = {
 };
 
 export const Customized = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={nodeLinkData} {...args} />
+        <Sankey data={nodeLinkData} {...args}>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </Sankey>
       </ResponsiveContainer>
     );
   },
@@ -55,7 +66,7 @@ export const Customized = {
 };
 
 export const CustomNodeAndLink = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const colors = ['#3C898E', '#486DF0', '#6F50E5'];
 
     type CustomNodePayload = {
@@ -163,7 +174,12 @@ export const CustomNodeAndLink = {
 
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args} />
+        <Sankey data={complexNodeLinkData} node={CustomNode} link={CustomLink} {...args}>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </Sankey>
       </ResponsiveContainer>
     );
   },

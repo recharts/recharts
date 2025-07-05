@@ -1,13 +1,15 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Bar, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Bar/Fill with Gradient or Pattern',
 };
 
 export const Fill = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
 
     return (
@@ -38,6 +40,10 @@ export const Fill = {
           <Bar dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
           <Bar dataKey="pv" stroke="#82ca9d" fillOpacity={1} fill="url(#stripe)" />
           <Bar dataKey="amt" stroke="#8884d8" fillOpacity={1} fill="url(#star)" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -1,4 +1,4 @@
-import { StoryContext } from '@storybook/react';
+import { StoryContext, StrictArgs } from '@storybook/react';
 import { Position } from './constants';
 
 export type RechartsContextProperties = {
@@ -16,4 +16,4 @@ export type RechartsContextProperties = {
 /**
  * storybook-addon-recharts adds some more properties to the StoryContext.
  */
-export type RechartsStoryContext = StoryContext & RechartsContextProperties;
+export type RechartsStoryContext<T = StrictArgs> = StoryContext<T> & RechartsContextProperties;

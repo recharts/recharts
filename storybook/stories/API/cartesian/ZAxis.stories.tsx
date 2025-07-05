@@ -13,6 +13,7 @@ import {
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { SCALE_TYPES } from '../../../../src/util/ReactUtils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   zAxisId: {
@@ -50,7 +51,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ScatterChart width={400} height={400} margin={{ top: 20, right: 20, bottom: 0, left: 20 }}>
@@ -60,6 +61,10 @@ export const API = {
           <CartesianGrid />
           <Scatter name="pageData" data={pageData} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ScatterChart>
       </ResponsiveContainer>
     );

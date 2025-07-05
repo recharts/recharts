@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { pageData } from '../../data';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadarChartProps } from '../props/RadarChartProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: RadarChartProps,
@@ -10,7 +12,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadarChart {...args}>
         <PolarAngleAxis dataKey="name" />
@@ -18,6 +20,10 @@ export const Simple = {
         <PolarGrid />
         <Tooltip defaultIndex={1} />
         <Radar dataKey="uv" stroke="green" strokeOpacity={0.7} fill="green" fillOpacity={0.5} strokeWidth={3} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </RadarChart>
     );
   },

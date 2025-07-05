@@ -1,6 +1,8 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Brush, ResponsiveContainer, Bar, BarChart, XAxis, YAxis } from '../../../../../src';
 import { dateWithValueData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Bar/With Brush and onDragEnd',
@@ -12,7 +14,7 @@ interface BrushStartEndIndex {
 }
 
 export const WithBrushAndOnDragEnd = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [dragIndexes, setDragIndexes] = React.useState<BrushStartEndIndex>({
       startIndex: 0,
       endIndex: dateWithValueData.length - 1,
@@ -40,6 +42,10 @@ export const WithBrushAndOnDragEnd = {
               }}
             />
             <Bar dataKey="value" />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

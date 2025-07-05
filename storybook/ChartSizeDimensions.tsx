@@ -127,7 +127,7 @@ export function SvgDimensionShower({
   labels: Labels;
 }) {
   return (
-    <svg width={width} height={height} x={x} y={y}>
+    <svg width={width} height={height} x={x} y={y} style={{ pointerEvents: 'none' }}>
       <Background width={width} height={height} label={labels.background} />
       <rect
         x={0}

@@ -1,9 +1,11 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { PolarAngleAxis, RadialBarChart } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: StorybookArgs = {
   type: {
@@ -80,10 +82,14 @@ export default {
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <RadialBarChart width={surfaceWidth} height={surfaceHeight} data={pageData}>
         <PolarAngleAxis {...args} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </RadialBarChart>
     );
   },

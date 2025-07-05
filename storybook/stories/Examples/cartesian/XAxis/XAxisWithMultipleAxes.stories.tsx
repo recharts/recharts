@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { pageData } from '../../../data';
 import { Line, LineChart, Tooltip, XAxis } from '../../../../../src';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   component: XAxis,
@@ -10,7 +12,7 @@ export default {
 };
 
 export const XAxisWithMultipleAxes = {
-  render: (args: Record<string, any>) => (
+  render: (args: Args, context: RechartsStoryContext) => (
     <article style={{ display: 'flex', flexDirection: 'column' }}>
       <LineChart width={700} height={700} data={pageData}>
         <XAxis {...args} dataKey="name" xAxisId="a" orientation="top" height={40} />
@@ -22,6 +24,10 @@ export const XAxisWithMultipleAxes = {
         <Line dataKey="uv" xAxisId="b" />
         <Line dataKey="pv" xAxisId="c" />
         <Line dataKey="amt" xAxisId="d" />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </LineChart>
       <p>
         {`When an AxisId is specified on all provided axes of one type (XAxis, YAxis, ZAxis), recharts requires a

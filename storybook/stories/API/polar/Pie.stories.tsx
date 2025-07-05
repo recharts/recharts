@@ -5,6 +5,7 @@ import { Pie, PieChart } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { AnimationProps } from '../props/AnimationProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   cx: {
@@ -139,10 +140,14 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <PieChart width={300} height={300}>
         <Pie dataKey="uv" {...args} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </PieChart>
     );
   },

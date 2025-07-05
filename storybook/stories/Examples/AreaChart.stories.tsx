@@ -28,7 +28,7 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -95,7 +95,7 @@ export const StackedAreaChart = {
 };
 
 export const TinyAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -123,7 +123,7 @@ export const TinyAreaChart = {
 };
 
 export const PercentAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const toPercent = (decimal: number, fixed = 0) => `${(decimal * 100).toFixed(fixed)}%`;
 
     const getPercent = (value: number, total: number = 0) => {
@@ -184,7 +184,7 @@ export const PercentAreaChart = {
 };
 
 export const CardinalAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const cardinal = curveCardinal.tension(0.2);
 
     return (
@@ -219,7 +219,7 @@ export const CardinalAreaChart = {
 };
 
 export const AreaChartConnectNulls = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -304,7 +304,7 @@ export const AreaChartConnectNulls = {
 };
 
 export const StackedAreaChartConnectNulls = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <ResponsiveContainer width="100%" height={200}>
@@ -393,7 +393,7 @@ export const StackedAreaChartConnectNulls = {
 };
 
 export const SynchronisedAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <div style={{ width: '100%' }}>
         <h4>A demo of synchronized AreaCharts</h4>
@@ -444,7 +444,7 @@ export const SynchronisedAreaChart = {
 };
 
 export const AreaChartFillByValue = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const gradientOffset = () => {
       const dataMax = Math.max(...args.data.map((i: any) => i.uv));
       const dataMin = Math.min(...args.data.map((i: any) => i.uv));
@@ -541,7 +541,7 @@ export const AreaChartFillByValue = {
 };
 
 export const RangedAreaChart = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart {...args}>
@@ -580,7 +580,7 @@ const rangeData2 = [
 ];
 
 export const RangedAreaChartWithGradient = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={rangeData2} width={1000} height={600} margin={{ top: 20, right: 200, bottom: 20, left: 20 }}>
@@ -617,7 +617,7 @@ export const RangedAreaChartWithGradient = {
 };
 
 export const WithChangingDataKeyAndAnimations = {
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [dataKey, setDataKey] = React.useState('uv');
     return (
       <>
@@ -678,7 +678,7 @@ export const WithChangingDataKeyAndAnimations = {
 
 export const StackedAreaWithCustomLegend = {
   // Reproducing https://github.com/recharts/recharts/issues/5992
-  render: (args: Record<string, any>, context: RechartsStoryContext) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [hiddenItems, setHiddenItems] = React.useState<ReadonlyArray<string>>([]);
 
     const handleClick = ({ dataKey }: LegendPayload) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Args } from '@storybook/react';
 import { Legend, Pie, PieChart, ResponsiveContainer } from '../../../../src';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const data = [
   { value: 'Luck', percent: 10 },
@@ -16,12 +17,16 @@ export default {
 };
 
 export const PieWithLegend = {
-  render: (args: Args) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <PieChart width={400} height={400}>
           <Pie dataKey="percent" {...args} />
           <Legend />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </PieChart>
       </ResponsiveContainer>
     );

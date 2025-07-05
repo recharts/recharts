@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Line, Tooltip } from '../../../../../src';
 import { pageData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { YAxisProps } from '../../../API/props/YAxisProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   component: YAxis,
@@ -11,7 +13,7 @@ export default {
 };
 
 export const WithLeftAndRightAxes = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <article style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ width: '100%' }}>
@@ -29,6 +31,10 @@ export const WithLeftAndRightAxes = {
               <YAxis {...args} yAxisId="right-mirror" orientation="right" mirror tickCount={20} />
 
               <Tooltip />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

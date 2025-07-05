@@ -1,30 +1,39 @@
 import React from 'react';
-import { ComposedChart, XAxis, ResponsiveContainer } from '../../../../../src';
+import { Args } from '@storybook/react';
+import { ComposedChart, XAxis } from '../../../../../src';
 import { coordinateWithValueData, dateWithValueData, pageData, timeData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
+import { XAxisProps } from '../../../API/props/XAxisProps';
 
 export default {
+  component: XAxis,
+  argTypes: XAxisProps,
   title: 'Examples/cartesian/XAxis/WithDifferentDataTypes',
 };
 
 export const WithDifferentDataTypes = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
-      <ResponsiveContainer width="100%" height={500}>
-        <>
-          <ComposedChart width={600} height={50} data={pageData}>
-            <XAxis dataKey="name" />
-          </ComposedChart>
-          <ComposedChart width={600} height={50} data={coordinateWithValueData}>
-            <XAxis dataKey="x" domain={['auto', 'auto']} type="number" />
-          </ComposedChart>
-          <ComposedChart width={600} height={50} data={dateWithValueData}>
-            <XAxis dataKey="time" domain={['auto', 'auto']} type="number" scale="time" />
-          </ComposedChart>
-          <ComposedChart width={600} height={50} data={timeData}>
-            <XAxis dataKey="x" />
-          </ComposedChart>
-        </>
-      </ResponsiveContainer>
+      <div>
+        <ComposedChart width={600} height={50} data={pageData}>
+          <XAxis dataKey="name" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </ComposedChart>
+        <ComposedChart width={600} height={50} data={coordinateWithValueData}>
+          <XAxis {...args} dataKey="x" domain={['auto', 'auto']} type="number" />
+        </ComposedChart>
+        <ComposedChart width={600} height={50} data={dateWithValueData}>
+          <XAxis {...args} dataKey="time" domain={['auto', 'auto']} type="number" scale="time" />
+        </ComposedChart>
+        <ComposedChart width={600} height={50} data={timeData}>
+          <XAxis {...args} dataKey="x" />
+        </ComposedChart>
+      </div>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(XAxisProps),
 };

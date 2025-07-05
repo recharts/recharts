@@ -1,9 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { StorybookArgs } from '../../StorybookArgs';
 import { XAxisProps } from '../API/props/XAxisProps';
 import { CartesianChartProps } from '../API/props/CartesianChartProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
 
 const bespokeArgTypes = {
   layout: {
@@ -25,7 +26,7 @@ export default {
 };
 
 export const WithErrorBarsAndExtendedDomain = {
-  render: (args: StorybookArgs) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const data = [
       { x: 100, y: 200, errorY: 30, errorX: 30 },
       { x: 120, y: 100, errorY: [500, 30], errorX: [200, 30] },
@@ -45,13 +46,10 @@ export const WithErrorBarsAndExtendedDomain = {
           bottom: 20,
           left: 20,
         }}
-        // @ts-expect-error storybook args do not have types
         layout={args.layout}
       >
         <CartesianGrid />
-        {/* @ts-expect-error storybook args do not have types */}
         <XAxis type="number" dataKey="x" name="stature" unit="cm" allowDataOverflow={args.allowDataOverflow} />
-        {/* @ts-expect-error storybook args do not have types */}
         <YAxis type="number" dataKey="y" name="weight" unit="kg" allowDataOverflow={args.allowDataOverflow} />
         <Scatter name="A school" data={data} fill="blue">
           {/* This ErrorBar does render, but it does not extend the domain of XAxis unfortunately */}
@@ -60,6 +58,10 @@ export const WithErrorBarsAndExtendedDomain = {
           <ErrorBar dataKey="errorY" width={4} strokeWidth={2} stroke="red" direction="y" />
         </Scatter>
         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+        <RechartsHookInspector
+          position={context.rechartsInspectorPosition}
+          setPosition={context.rechartsSetInspectorPosition}
+        />
       </ScatterChart>
     );
   },

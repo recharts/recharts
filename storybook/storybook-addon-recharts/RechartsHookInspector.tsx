@@ -44,7 +44,7 @@ function Blanket() {
       width="100%"
       height="100%"
       fill="rgba(190, 190, 190, 0.4)"
-      style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000 }}
+      style={{ position: 'absolute', top: 0, left: 0, zIndex: 1000, pointerEvents: 'none' }}
     />
   );
 }

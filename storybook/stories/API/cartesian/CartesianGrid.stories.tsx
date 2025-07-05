@@ -1,17 +1,18 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args, ArgTypes } from '@storybook/react';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
-const GeneralProps: Args = {
+const GeneralProps: ArgTypes = {
   x: {
     description: 'The x-coordinate of grid.',
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 0,
       },
-      category: 'General',
+      defaultValue: { summary: '0' },
+      category: 'Position',
     },
   },
   y: {
@@ -19,9 +20,9 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 0,
       },
-      category: 'General',
+      defaultValue: { summary: '0' },
+      category: 'Position',
     },
   },
   width: {
@@ -29,9 +30,8 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 0,
       },
-      category: 'General',
+      category: 'Position',
     },
   },
   height: {
@@ -39,27 +39,36 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'Number',
-        defaultValue: 0,
       },
-      category: 'General',
+      category: 'Position',
     },
   },
   horizontal: {
     description: 'If set false, no horizontal grid lines will be drawn.',
+    control: {
+      type: 'boolean',
+    },
     table: {
       type: {
-        summary: 'Boolean',
-        defaultValue: true,
+        summary: 'boolean',
+      },
+      defaultValue: {
+        summary: 'true',
       },
       category: 'General',
     },
   },
   vertical: {
     description: 'If set false, no vertical grid lines will be drawn.',
+    control: {
+      type: 'boolean',
+    },
     table: {
       type: {
         summary: 'Boolean',
-        defaultValue: true,
+      },
+      defaultValue: {
+        summary: 'true',
       },
       category: 'General',
     },
@@ -69,7 +78,6 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'Array',
-        defaultValue: [],
       },
       category: 'General',
     },
@@ -79,7 +87,6 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'Array',
-        defaultValue: [],
       },
       category: 'General',
     },
@@ -89,7 +96,6 @@ const GeneralProps: Args = {
     table: {
       type: {
         summary: 'String',
-        defaultValue: null,
       },
       category: 'General',
     },
@@ -101,15 +107,23 @@ export default {
   argTypes: {
     ...GeneralProps,
   },
+  args: {
+    horizontal: true,
+    vertical: true,
+  },
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [500, 500];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart width={surfaceWidth} height={surfaceHeight}>
           <CartesianGrid {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -129,7 +143,7 @@ export const API = {
 };
 
 export const MultipleGrids = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart width={500} height={500} data={pageData}>
@@ -137,6 +151,10 @@ export const MultipleGrids = {
           <YAxis dataKey="pv" />
           {args.displayGridA && <CartesianGrid verticalFill={['#aaeeee', '#eeeeaa']} stroke="trasparent" />}
           {args.displayGridB && <CartesianGrid stroke="silver" strokeDasharray="3 3" strokeWidth={3} />}
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

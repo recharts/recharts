@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Scatter, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -169,6 +170,7 @@ import { animationBegin, animationDuration, animationEasing, isAnimationActive }
 import { hide } from '../props/Styles';
 import { legendType } from '../props/Legend';
 import { StorybookArgs } from '../../../StorybookArgs';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const EventHandlers = {
   onAbort,
@@ -480,7 +482,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -497,6 +499,10 @@ export const API = {
           <Scatter {...args} />
           <XAxis dataKey="pv" />
           <YAxis dataKey="uv" />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

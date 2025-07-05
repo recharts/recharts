@@ -5,6 +5,7 @@ import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   dataKey: {
@@ -58,7 +59,7 @@ export default {
 };
 
 export const General = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <RadarChart
@@ -77,6 +78,10 @@ export const General = {
           <PolarAngleAxis dataKey="subject" />
           <PolarRadiusAxis />
           <Radar {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </RadarChart>
       </ResponsiveContainer>
     );

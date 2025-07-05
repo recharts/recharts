@@ -1,5 +1,6 @@
 import React from 'react';
-import { Customized, ComposedChart, ResponsiveContainer, Polygon } from '../../../../src';
+import { Args } from '@storybook/react';
+import { ComposedChart, ResponsiveContainer, Polygon } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
 import {
   onAbort,
@@ -161,6 +162,7 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const pointDefault = [
   { x: 100, y: 100 },
@@ -173,8 +175,8 @@ export default {
   component: Polygon,
   argTypes: {
     points: {
-      description: `The coordinates of all the verteces of the polygon, like [{ x, y }].<br/> By default. 
-      lines will be drawn to connect all verteces, in order to create a connected shape. If you want to 
+      description: `The coordinates of all the verteces of the polygon, like [{ x, y }].<br/> By default.
+      lines will be drawn to connect all verteces, in order to create a connected shape. If you want to
       skip drawing a line between 2 verteces, add a null point.`,
       table: {
         type: { summary: 'Coordinate[]' },
@@ -371,7 +373,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -384,7 +386,11 @@ export const API = {
             bottom: 5,
           }}
         >
-          <Customized component={<Polygon {...args} />} />
+          <Polygon {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -397,7 +403,7 @@ export const API = {
 };
 
 export const UsingConnectNulls = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -410,7 +416,11 @@ export const UsingConnectNulls = {
             bottom: 5,
           }}
         >
-          <Customized component={<Polygon {...args} />} />
+          <Polygon {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
@@ -424,7 +434,7 @@ export const UsingConnectNulls = {
 };
 
 export const UsingBaselinePoints = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -437,7 +447,11 @@ export const UsingBaselinePoints = {
             bottom: 5,
           }}
         >
-          <Customized component={<Polygon {...args} />} />
+          <Polygon {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

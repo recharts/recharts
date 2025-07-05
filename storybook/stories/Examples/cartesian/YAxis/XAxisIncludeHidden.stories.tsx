@@ -1,13 +1,19 @@
 import React, { ComponentProps, useState } from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Legend } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
+import { YAxisProps } from '../../../API/props/YAxisProps';
 
 export default {
+  component: YAxis,
+  argTypes: YAxisProps,
   title: 'Examples/cartesian/YAxis/WithIncludeHidden',
 };
 
 export const WithIncludeHidden = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const allKeys = Object.keys(pageData[0]);
     const [activeKeys, setActiveKeys] = useState(allKeys);
 
@@ -32,9 +38,14 @@ export const WithIncludeHidden = {
             <Legend onClick={handleLegendClick} />
             <Bar dataKey="pv" fill="blue" hide={!activeKeys.includes('pv')} />
             <Bar dataKey="amt" fill="green" hide={!activeKeys.includes('amt')} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(YAxisProps),
 };

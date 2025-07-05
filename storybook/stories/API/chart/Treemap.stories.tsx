@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
@@ -7,6 +8,7 @@ import { isUpdateAnimationActive } from '../props/RectangleProps';
 import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
 import { dataKey } from '../props/CartesianComponentShared';
 import { GeneralStyle } from '../props/Styles';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -73,10 +75,15 @@ export default {
 };
 
 export const Simple = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
-        <Treemap {...args} />
+        <Treemap {...args}>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
+        </Treemap>
       </ResponsiveContainer>
     );
   },
@@ -89,11 +96,15 @@ export const Simple = {
 };
 
 export const WithTooltip = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap {...args}>
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </Treemap>
       </ResponsiveContainer>
     );
@@ -109,7 +120,7 @@ export const WithTooltip = {
 const colors = ['#8889DD', '#9597E4', '#8DC77B', '#A5D297', '#E2CF45', '#F8C12D'];
 
 export const WithCustomContent = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={400}>
         <Treemap
@@ -149,6 +160,10 @@ export const WithCustomContent = {
           }}
         >
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </Treemap>
       </ResponsiveContainer>
     );

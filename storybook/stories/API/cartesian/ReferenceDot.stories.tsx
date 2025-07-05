@@ -11,6 +11,7 @@ import {
   ReferenceComponentInternalArgs,
   ReferenceComponentStyle,
 } from '../props/ReferenceComponentShared';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const GeneralProps: Args = {
   ...ReferenceComponentGeneralArgs,
@@ -77,7 +78,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart
@@ -94,6 +95,10 @@ export const API = {
           <YAxis type="number" />
           <Bar type="monotone" dataKey="uv" />
           <ReferenceDot {...args} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

@@ -1,13 +1,19 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, XAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
+import { XAxisProps } from '../../../API/props/XAxisProps';
 
 export default {
+  component: XAxis,
+  argTypes: XAxisProps,
   title: 'Examples/cartesian/XAxis/WithCustomTicks',
 };
 
 export const WithCustomTicks = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const customizedAxisTick = (props: { x: number; y: number; payload: { value: string } }) => {
       const { x, y, payload } = props;
       return (
@@ -22,9 +28,14 @@ export const WithCustomTicks = {
     return (
       <ResponsiveContainer width="100%" height={500}>
         <ComposedChart width={600} height={50} data={pageData}>
-          <XAxis dataKey="name" tick={customizedAxisTick} />
+          <XAxis {...args} dataKey="name" tick={customizedAxisTick} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );
   },
+  args: getStoryArgsFromArgsTypesObject(XAxisProps),
 };

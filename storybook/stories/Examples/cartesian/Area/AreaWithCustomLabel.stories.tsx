@@ -1,6 +1,8 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Area/Customised Label',
@@ -18,7 +20,7 @@ const renderLabel = (props: { index: number; x: number; y: number }) => {
 };
 
 export const CustomizedLabel = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -33,6 +35,10 @@ export const CustomizedLabel = {
           data={coordinateWithValueData}
         >
           <Area dataKey="y" isAnimationActive={false} label={renderLabel} />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

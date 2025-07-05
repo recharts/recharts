@@ -1,4 +1,5 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { ComposedChart, Area, ResponsiveContainer, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { LineStyle } from '../props/Styles';
@@ -7,6 +8,7 @@ import { legendType } from '../props/Legend';
 import { General as GeneralProps, data } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 const AreaSpecificProps = {
   // These two props are not documented on the website. Further investigation is required to document them.
@@ -43,7 +45,7 @@ export default {
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
         <ComposedChart
@@ -65,6 +67,10 @@ export const API = {
           {/* The target component */}
           <Area dataKey="uv" {...args} />
           <Tooltip />
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

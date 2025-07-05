@@ -1,13 +1,15 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { Brush, ResponsiveContainer, ComposedChart } from '../../../../../src';
 import { dateData } from '../../../data';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
 
 export default {
   title: 'Examples/cartesian/Brush/In Surface',
 };
 
 export const InSurface = {
-  render: () => {
+  render: (args: Args, context: RechartsStoryContext) => {
     interface BrushStartEndIndex {
       startIndex?: number;
       endIndex?: number;
@@ -73,6 +75,10 @@ export const InSurface = {
               height={40}
               gap={5}
               onChange={handleGapChange}
+            />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
             />
           </ComposedChart>
         </div>

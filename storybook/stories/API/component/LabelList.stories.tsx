@@ -1,8 +1,10 @@
 import React from 'react';
+import { Args } from '@storybook/react';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { ResponsiveContainer, LabelList, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';
 import { LabelListProps } from '../props/LabelListProps';
+import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 
 export default {
   argTypes: {
@@ -12,7 +14,7 @@ export default {
 };
 
 export const API = {
-  render: (args: Record<string, any>) => {
+  render: (args: Args, context: RechartsStoryContext) => {
     const [surfaceWidth, surfaceHeight] = [600, 300];
     return (
       <ResponsiveContainer width="100%" height={surfaceHeight}>
@@ -31,6 +33,10 @@ export const API = {
           <Line dataKey="uv">
             <LabelList {...args} />
           </Line>
+          <RechartsHookInspector
+            position={context.rechartsInspectorPosition}
+            setPosition={context.rechartsSetInspectorPosition}
+          />
         </LineChart>
       </ResponsiveContainer>
     );
