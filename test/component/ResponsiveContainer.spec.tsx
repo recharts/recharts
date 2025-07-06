@@ -165,8 +165,10 @@ describe('<ResponsiveContainer />', () => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
-    expect(element.firstElementChild).toHaveAttribute('width', '100');
-    expect(element.firstElementChild).toHaveAttribute('height', '200');
+    const testDiv = screen.getByTestId('inside');
+
+    expect(testDiv).toHaveAttribute('width', '100');
+    expect(testDiv).toHaveAttribute('height', '200');
   });
 
   it('should resize when debounced', () => {
@@ -189,8 +191,10 @@ describe('<ResponsiveContainer />', () => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
       vi.advanceTimersByTime(200);
     });
-    expect(element.firstElementChild).toHaveAttribute('width', '100');
-    expect(element.firstElementChild).toHaveAttribute('height', '200');
+    const testDiv = screen.getByTestId('inside');
+
+    expect(testDiv).toHaveAttribute('width', '100');
+    expect(testDiv).toHaveAttribute('height', '200');
   });
 
   it('should call onResize when ResizeObserver notifies one or many changes', () => {
@@ -210,8 +214,10 @@ describe('<ResponsiveContainer />', () => {
       notifyResizeObserverChange([{ contentRect: { width: 100, height: 100 } }]);
     });
 
-    expect(element.firstElementChild).toHaveAttribute('width', '100');
-    expect(element.firstElementChild).toHaveAttribute('height', '200');
+    const testDiv = screen.getByTestId('inside');
+
+    expect(testDiv).toHaveAttribute('width', '100');
+    expect(testDiv).toHaveAttribute('height', '200');
 
     expect(onResize).toHaveBeenCalledTimes(1);
 
@@ -303,10 +309,8 @@ describe('<ResponsiveContainer />', () => {
 
     expect(elementsInside).toHaveLength(4);
     expect(elementsInside[0]).toHaveStyle({
-      width: '100%',
-      height: '100%',
-      'max-width': '400px',
-      'max-height': '200px',
+      width: '400px',
+      height: '200px',
       'background-color': 'rgb(0, 0, 255)',
     });
     expect(elementsInside[0]).toHaveAttribute('height', '200');
@@ -314,10 +318,8 @@ describe('<ResponsiveContainer />', () => {
 
     // all elements are cloned with the same style props besides their own style
     expect(elementsInside[1]).toHaveStyle({
-      width: '100%',
-      height: '100%',
-      'max-width': '400px',
-      'max-height': '200px',
+      width: '400px',
+      height: '200px',
       'background-color': 'rgba(0, 0, 0, 0)',
     });
     expect(elementsInside[1]).toHaveAttribute('height', '200');
