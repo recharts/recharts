@@ -167,10 +167,8 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
           height: calculatedHeight,
           // calculate the actual size and override it.
           style: {
-            height: '100%',
-            width: '100%',
-            maxHeight: calculatedHeight,
-            maxWidth: calculatedWidth,
+            width: calculatedWidth,
+            height: calculatedHeight,
             // keep components style
             ...child.props.style,
           },
@@ -185,7 +183,17 @@ export const ResponsiveContainer = forwardRef<HTMLDivElement, Props>(
         style={{ ...style, width, height, minWidth, minHeight, maxHeight }}
         ref={containerRef}
       >
-        {chartContent}
+        {/*
+         * This zero-size, overflow-visible is required to allow the chart to shrink.
+         * Without it, the chart itself will fill the ResponsiveContainer, and while it allows the chart to grow,
+         * it would always keep the container at the size of the chart,
+         * and ResizeObserver would never fire.
+         * With this zero-size element, the chart itself never actually fills the container,
+         * it just so happens that it is visible because it overflows.
+         * I learned this trick from the `react-virtualized` library: https://github.com/bvaughn/react-virtualized-auto-sizer/blob/master/src/AutoSizer.ts
+         * See https://github.com/recharts/recharts/issues/172 and also https://github.com/bvaughn/react-virtualized/issues/68
+         */}
+        <div style={{ width: 0, height: 0, overflow: 'visible' }}>{chartContent}</div>
       </div>
     );
   },

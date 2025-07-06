@@ -13,35 +13,48 @@ export default {
 };
 
 export const API: StoryObj<Props> = {
+  // https://github.com/recharts/recharts/issues/172
   render: (args: Args, context: RechartsStoryContext<Props>) => {
     return (
-      <ResponsiveContainer {...args}>
-        <AreaChart
-          width={500}
-          height={400}
-          data={pageData}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-          <Tooltip />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          flexGrow: 1,
+        }}
+      >
+        <h6>Flexbox sibling</h6>
+        <div style={{ flexGrow: 1 }}>
+          <ResponsiveContainer {...args}>
+            <AreaChart
+              width={500}
+              height={400}
+              data={pageData}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+              <Tooltip />
+              <RechartsHookInspector
+                position={context.rechartsInspectorPosition}
+                setPosition={context.rechartsSetInspectorPosition}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     );
   },
   args: {
-    width: '100%',
-    height: 400,
+    width: '80%',
+    height: '80%',
   },
 };
