@@ -28,11 +28,10 @@ export const getValidInterval = ([min, max]: [number, number]) => {
 /**
  * Calculate the step which is easy to understand between ticks, like 10, 20, 25
  *
- * @param  {Decimal} roughStep        The rough step calculated by dividing the
- * difference by the tickCount
- * @param  {Boolean} allowDecimals    Allow the ticks to be decimals or not
- * @param  {Integer} correctionFactor A correction factor
- * @return {Decimal} The step which is easy to understand between two ticks
+ * @param  roughStep        The rough step calculated by dividing the difference by the tickCount
+ * @param  allowDecimals    Allow the ticks to be decimals or not
+ * @param  correctionFactor A correction factor
+ * @return The step which is easy to understand between two ticks
  */
 export const getFormatStep = (roughStep: Decimal, allowDecimals: boolean, correctionFactor: number) => {
   if (roughStep.lte(0)) {
@@ -99,20 +98,24 @@ export const getTickOfSingleValue = (value: number, tickCount: number, allowDeci
 /**
  * Calculate the step
  *
- * @param  {Number}  min              The minimum value of an interval
- * @param  {Number}  max              The maximum value of an interval
- * @param  {Integer} tickCount        The count of ticks
- * @param  {Boolean} allowDecimals    Allow the ticks to be decimals or not
- * @param  {Number}  correctionFactor A correction factor
- * @return {Object}  The step, minimum value of ticks, maximum value of ticks
+ * @param  min              The minimum value of an interval
+ * @param  max              The maximum value of an interval
+ * @param  tickCount        The count of ticks
+ * @param  allowDecimals    Allow the ticks to be decimals or not
+ * @param  correctionFactor A correction factor
+ * @return The step, minimum value of ticks, maximum value of ticks
  */
 export const calculateStep = (
   min: number,
   max: number,
   tickCount: number,
   allowDecimals: boolean,
-  correctionFactor = 0,
-): any => {
+  correctionFactor: number = 0,
+): {
+  step: Decimal;
+  tickMin: Decimal;
+  tickMax: Decimal;
+} => {
   // dirty hack (for recharts' test)
   if (!Number.isFinite((max - min) / (tickCount - 1))) {
     return {
@@ -160,12 +163,13 @@ export const calculateStep = (
 };
 
 /**
- * Calculate the ticks of an interval, the count of ticks will be guaranteed
+ * Calculate the ticks of an interval. Ticks can appear outside the interval
+ * if it makes them more rounded and nice.
  *
- * @param  {Number}  min, max      min: The minimum value, max: The maximum value
- * @param  {Integer} tickCount     The count of ticks
- * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
- * @return {Array}   ticks
+ * @param tuple of [min,max] min: The minimum value, max: The maximum value
+ * @param tickCount     The count of ticks
+ * @param allowDecimals Allow the ticks to be decimals or not
+ * @return array of ticks
  */
 function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowDecimals = true): number[] {
   // More than two ticks should be return
@@ -194,13 +198,13 @@ function getNiceTickValuesFn([min, max]: [number, number], tickCount = 6, allowD
 }
 
 /**
- * Calculate the ticks of an interval, the count of ticks won't be guraranteed,
- * but the domain will be guaranteed
+ * Calculate the ticks of an interval.
+ * Ticks will be constrained to the interval [min, max] even if it makes them less rounded and nice.
  *
- * @param  {Number}  min, max      min: The minimum value, max: The maximum value
- * @param  {Integer} tickCount     The count of ticks
- * @param  {Boolean} allowDecimals Allow the ticks to be decimals or not
- * @return {Array}   ticks
+ * @param tuple of [min,max] min: The minimum value, max: The maximum value
+ * @param tickCount     The count of ticks. This function may return less than tickCount ticks if the interval is too small.
+ * @param allowDecimals Allow the ticks to be decimals or not
+ * @return array of ticks
  */
 function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickCount: number, allowDecimals = true) {
   // More than two ticks should be return
@@ -216,10 +220,17 @@ function getTickValuesFixedDomainFn([min, max]: readonly [number, number], tickC
 
   const count = Math.max(tickCount, 2);
   const step = getFormatStep(new Decimal(cormax).sub(cormin).div(count - 1), allowDecimals, 0);
-  const values = [
-    ...rangeStep(new Decimal(cormin), new Decimal(cormax).sub(new Decimal(0.99).mul(step)), step),
-    cormax,
-  ];
+  let values = [...rangeStep(new Decimal(cormin), new Decimal(cormax), step), cormax];
+
+  if (allowDecimals === false) {
+    /*
+     * allowDecimals is false means that we want to have integer ticks.
+     * The step is guaranteed to be an integer in the code above which is great start
+     * but when the first step is not an integer, it will start stepping from a decimal value anyway.
+     * So we need to round all the values to integers after the fact.
+     */
+    values = values.map(value => Math.round(value));
+  }
 
   return min > max ? reverse(values) : values;
 }

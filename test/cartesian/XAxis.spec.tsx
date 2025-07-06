@@ -748,16 +748,16 @@ describe('<XAxis />', () => {
   });
 
   describe.each(['gap', 'no-gap', { left: 3, right: 5 }] as const)('padding: %s', padding => {
-    /* I am not entirely certain what is the relationship between the tickCount prop, and the actual tick count */
+    /* The tickCount is only a suggestion; if the domain is too small, it will render fewer ticks than requested but will try to keep them nice */
     it.each([
       { providedTickCount: 3, expectedTickCount: 3 },
       { providedTickCount: 5, expectedTickCount: 5 },
-      { providedTickCount: 7, expectedTickCount: 6 },
+      { providedTickCount: 7, expectedTickCount: 7 },
       { providedTickCount: 11, expectedTickCount: 11 },
-      { providedTickCount: 13, expectedTickCount: 12 },
+      { providedTickCount: 13, expectedTickCount: 13 },
       { providedTickCount: 17, expectedTickCount: 17 },
       { providedTickCount: 19, expectedTickCount: 17 },
-      { providedTickCount: 29, expectedTickCount: 27 },
+      { providedTickCount: 29, expectedTickCount: 28 },
     ])(
       'renders $expectedTickCount ticks when tickCount=$providedTickCount',
       ({ providedTickCount, expectedTickCount }) => {
@@ -855,26 +855,11 @@ describe('<XAxis />', () => {
     ]);
     expect(axisDomainSpy).toHaveBeenLastCalledWith([90, 400]);
     expectXAxisTicks(container, [
-      {
-        textContent: '90',
-        x: '68.70967741935483',
-        y: '273',
-      },
-      {
-        textContent: '170',
-        x: '126.14984391259105',
-        y: '273',
-      },
-      {
-        textContent: '250',
-        x: '183.59001040582726',
-        y: '273',
-      },
-      {
-        textContent: '400',
-        x: '291.2903225806452',
-        y: '273',
-      },
+      { textContent: '90', x: '68.70967741935483', y: '273' },
+      { textContent: '170', x: '126.14984391259105', y: '273' },
+      { textContent: '250', x: '183.59001040582726', y: '273' },
+      { textContent: '330', x: '241.0301768990635', y: '273' },
+      { textContent: '400', x: '291.2903225806452', y: '273' },
     ]);
   });
 
@@ -2532,95 +2517,45 @@ describe('<XAxis />', () => {
         const { container, rerender } = render(
           <Component>
             <XAxis dataKey="x" type="number" domain={[-100, 100]} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <ExpectAxisDomain assert={spy} axisType="xAxis" />
           </Component>,
         );
         expectXAxisTicks(container, [
-          {
-            textContent: '-100',
-            x: '5',
-            y: '273',
-          },
-          {
-            textContent: '-30',
-            x: '80.18518518518519',
-            y: '273',
-          },
-          {
-            textContent: '40',
-            x: '155.37037037037038',
-            y: '273',
-          },
-          {
-            textContent: '170',
-            x: '295',
-            y: '273',
-          },
+          { textContent: '-100', x: '5', y: '273' },
+          { textContent: '-30', x: '80.18518518518519', y: '273' },
+          { textContent: '40', x: '155.37037037037038', y: '273' },
+          { textContent: '110', x: '230.55555555555557', y: '273' },
+          { textContent: '170', x: '295', y: '273' },
         ]);
         expect(spy).toHaveBeenLastCalledWith([-100, 170]);
 
         rerender(
           <Component>
             <XAxis dataKey="x" type="number" domain={[130, 175]} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <ExpectAxisDomain assert={spy} axisType="xAxis" />
           </Component>,
         );
         expectXAxisTicks(container, [
-          {
-            textContent: '90',
-            x: '5',
-            y: '273',
-          },
-          {
-            textContent: '115',
-            x: '90.29411764705883',
-            y: '273',
-          },
-          {
-            textContent: '140',
-            x: '175.58823529411765',
-            y: '273',
-          },
-          {
-            textContent: '175',
-            x: '295',
-            y: '273',
-          },
+          { textContent: '90', x: '5', y: '273' },
+          { textContent: '115', x: '90.29411764705883', y: '273' },
+          { textContent: '140', x: '175.58823529411765', y: '273' },
+          { textContent: '165', x: '260.88235294117646', y: '273' },
+          { textContent: '175', x: '295', y: '273' },
         ]);
         expect(spy).toHaveBeenLastCalledWith([90, 175]);
 
         rerender(
           <Component>
             <XAxis dataKey="x" type="number" domain={[130, 150]} />
-            <Customized component={<ExpectAxisDomain assert={spy} axisType="xAxis" />} />
+            <ExpectAxisDomain assert={spy} axisType="xAxis" />
           </Component>,
         );
         expectXAxisTicks(container, [
-          {
-            textContent: '90',
-            x: '5',
-            y: '273',
-          },
-          {
-            textContent: '110',
-            x: '77.5',
-            y: '273',
-          },
-          {
-            textContent: '130',
-            x: '150',
-            y: '273',
-          },
-          {
-            textContent: '150',
-            x: '222.5',
-            y: '273',
-          },
-          {
-            textContent: '170',
-            x: '295',
-            y: '273',
-          },
+          { textContent: '90', x: '5', y: '273' },
+          { textContent: '110', x: '77.5', y: '273' },
+          { textContent: '130', x: '150', y: '273' },
+          { textContent: '150', x: '222.5', y: '273' },
+          { textContent: '170', x: '295', y: '273' },
         ]);
         expect(spy).toHaveBeenLastCalledWith([90, 170]);
       });
@@ -3301,26 +3236,11 @@ describe('<XAxis />', () => {
         const allXAxes = container.querySelectorAll('.recharts-xAxis');
         expect(allXAxes).toHaveLength(2);
         expectXAxisTicks(allXAxes[0], [
-          {
-            textContent: '90',
-            x: '5',
-            y: '243',
-          },
-          {
-            textContent: '98',
-            x: '82.33333333333334',
-            y: '243',
-          },
-          {
-            textContent: '106',
-            x: '159.66666666666669',
-            y: '243',
-          },
-          {
-            textContent: '120',
-            x: '295',
-            y: '243',
-          },
+          { textContent: '90', x: '5', y: '243' },
+          { textContent: '98', x: '82.33333333333334', y: '243' },
+          { textContent: '106', x: '159.66666666666669', y: '243' },
+          { textContent: '114', x: '237', y: '243' },
+          { textContent: '120', x: '295', y: '243' },
         ]);
         expectXAxisTicks(allXAxes[1], [
           {
@@ -4910,26 +4830,11 @@ describe('<XAxis />', () => {
         </LineChart>,
       );
       expectXAxisTicks(container, [
-        {
-          textContent: '0',
-          x: '80',
-          y: '273',
-        },
-        {
-          textContent: '650',
-          x: '180.59523809523813',
-          y: '273',
-        },
-        {
-          textContent: '1300',
-          x: '281.1904761904762',
-          y: '273',
-        },
-        {
-          textContent: '2520',
-          x: '470',
-          y: '273',
-        },
+        { textContent: '0', x: '80', y: '273' },
+        { textContent: '650', x: '180.59523809523813', y: '273' },
+        { textContent: '1300', x: '281.1904761904762', y: '273' },
+        { textContent: '1950', x: '381.7857142857143', y: '273' },
+        { textContent: '2520', x: '470', y: '273' },
       ]);
       const expectedSettings: XAxisSettings = {
         angle: 0,
