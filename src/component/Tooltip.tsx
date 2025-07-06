@@ -75,7 +75,10 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    */
   active?: boolean;
   /**
-   * If true, then Tooltip will information about hidden series (defaults to false). Interacting with the hide property of Area, Bar, Line, Scatter.
+   * If true, then Tooltip will information about hidden series (defaults to false).
+   * Interacting with the hide property of Area, Bar, Line, Scatter.
+   *
+   * default: false
    */
   includeHidden?: boolean | undefined;
   allowEscapeViewBox?: AllowInDimension;
@@ -104,6 +107,13 @@ export type TooltipProps<TValue extends ValueType, TName extends NameType> = Omi
    * If undefined then defaults to true.
    */
   shared?: boolean;
+  /**
+   * If `hover` then the Tooltip shows on mouse enter and hides on mouse leave.
+   *
+   * If `click` then the Tooltip shows after clicking and stays active.
+   *
+   * Default `hover`
+   */
   trigger?: TooltipTrigger;
   useTranslate3d?: boolean;
   wrapperStyle?: CSSProperties;

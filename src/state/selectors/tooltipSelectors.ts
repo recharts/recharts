@@ -56,7 +56,7 @@ import { ReferenceAreaSettings, ReferenceDotSettings, ReferenceLineSettings } fr
 import { selectChartName, selectStackOffsetType } from './rootPropsSelectors';
 import { mathSign } from '../../util/DataUtils';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
-import { TooltipIndex, TooltipInteractionState, TooltipSettingsState } from '../tooltipSlice';
+import { TooltipIndex, TooltipInteractionState, TooltipPayload, TooltipSettingsState } from '../tooltipSlice';
 
 import {
   combineTooltipEventType,
@@ -76,6 +76,8 @@ import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipPayloadConfigurations';
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
+
+import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);
@@ -414,3 +416,24 @@ export const selectIsTooltipActive: (state: RechartsRootState) => boolean = crea
   [selectTooltipInteractionState],
   (tooltipInteractionState: TooltipInteractionState) => tooltipInteractionState.active,
 );
+
+export const selectActiveTooltipPayload: (state: RechartsRootState) => TooltipPayload | undefined = createSelector(
+  [
+    selectTooltipPayloadConfigurations,
+    selectActiveTooltipIndex,
+    selectChartDataWithIndexes,
+    selectTooltipAxis,
+    selectActiveLabel,
+    selectTooltipPayloadSearcher,
+    selectTooltipEventType,
+  ],
+  combineTooltipPayload,
+);
+
+export const selectActiveTooltipDataPoints = createSelector([selectActiveTooltipPayload], payload => {
+  if (payload == null) {
+    return undefined;
+  }
+  const dataPoints = payload.map(p => p.payload);
+  return Array.from(new Set(dataPoints));
+});
