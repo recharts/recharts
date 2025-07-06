@@ -132,6 +132,7 @@
   "types/state/selectors/combiners/combineAxisRangeWithReverse.d.ts",
   "types/state/selectors/combiners/combineCoordinateForDefaultIndex.d.ts",
   "types/state/selectors/combiners/combineTooltipInteractionState.d.ts",
+  "types/state/selectors/combiners/combineTooltipPayload.d.ts",
   "types/state/selectors/combiners/combineTooltipPayloadConfigurations.d.ts",
   "types/state/selectors/containerSelectors.d.ts",
   "types/state/selectors/dataSelectors.d.ts",

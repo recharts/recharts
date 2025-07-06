@@ -132,6 +132,7 @@
   "es6/state/selectors/combiners/combineAxisRangeWithReverse.js",
   "es6/state/selectors/combiners/combineCoordinateForDefaultIndex.js",
   "es6/state/selectors/combiners/combineTooltipInteractionState.js",
+  "es6/state/selectors/combiners/combineTooltipPayload.js",
   "es6/state/selectors/combiners/combineTooltipPayloadConfigurations.js",
   "es6/state/selectors/containerSelectors.js",
   "es6/state/selectors/dataSelectors.js",

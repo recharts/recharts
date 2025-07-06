@@ -19,6 +19,41 @@ export type MouseCoordinate = { clientX: number; clientY: number };
 
 const defaultCoordinates: MouseCoordinate = { clientX: 200, clientY: 200 };
 
+function showTooltipWithEvent(
+  container: Element,
+  selector: string | undefined,
+  maybeCoordinate: MouseCoordinate | undefined,
+  event: 'click' | 'touch' | 'hover',
+  debug?: () => void,
+) {
+  const tooltipTriggerElement = selector != null ? container.querySelector(selector) : container;
+  if (tooltipTriggerElement == null && debug != null) {
+    debug();
+  }
+  assertNotNull(tooltipTriggerElement);
+  expect(tooltipTriggerElement).toBeInTheDocument();
+  expect(tooltipTriggerElement).toBeVisible();
+  const coordinate = maybeCoordinate ?? defaultCoordinates;
+  switch (event) {
+    case 'click': {
+      fireEvent.click(tooltipTriggerElement, coordinate);
+      break;
+    }
+    case 'touch': {
+      fireEvent.touchMove(tooltipTriggerElement, { touches: [coordinate] });
+      break;
+    }
+    case 'hover': {
+      fireEvent.mouseOver(tooltipTriggerElement, coordinate);
+      break;
+    }
+    default: {
+      throw new Error('Unexpected event type');
+    }
+  }
+  return tooltipTriggerElement;
+}
+
 /**
  * Test helper that will simulate a mouse over event on a given element which should trigger the tooltip to show.
  *
@@ -39,15 +74,7 @@ export function showTooltipOnCoordinate(
   coordinates: MouseCoordinate | undefined,
   debug?: () => void,
 ): Element {
-  const tooltipTriggerElement = selector != null ? container.querySelector(selector) : container;
-  if (tooltipTriggerElement == null && debug != null) {
-    debug();
-  }
-  assertNotNull(tooltipTriggerElement);
-  expect(tooltipTriggerElement).toBeInTheDocument();
-  expect(tooltipTriggerElement).toBeVisible();
-  fireEvent.mouseOver(tooltipTriggerElement, coordinates ?? defaultCoordinates);
-  return tooltipTriggerElement;
+  return showTooltipWithEvent(container, selector, coordinates, 'hover', debug);
 }
 
 /**
@@ -66,15 +93,7 @@ export function showTooltipOnCoordinateTouch(
   coordinates: MouseCoordinate | undefined,
   debug?: () => void,
 ): Element {
-  const tooltipTriggerElement = selector != null ? container.querySelector(selector) : container;
-  if (tooltipTriggerElement == null && debug != null) {
-    debug();
-  }
-  assertNotNull(tooltipTriggerElement);
-  expect(tooltipTriggerElement).toBeInTheDocument();
-  expect(tooltipTriggerElement).toBeVisible();
-  fireEvent.touchMove(tooltipTriggerElement, { touches: [coordinates] });
-  return tooltipTriggerElement;
+  return showTooltipWithEvent(container, selector, coordinates, 'touch', debug);
 }
 
 /**
@@ -98,6 +117,10 @@ export function showTooltip(container: Element, selector?: string, debug?: () =>
 export function hideTooltip(container: Element, mouseHoverSelector: string): void {
   const element = container.querySelector(mouseHoverSelector);
   fireEvent.mouseLeave(element);
+}
+
+export function showTooltipClick(container: Element, selector?: string, debug?: () => void): Element {
+  return showTooltipWithEvent(container, selector, defaultCoordinates, 'click', debug);
 }
 
 export function expectTooltipNotVisible(container: Element) {

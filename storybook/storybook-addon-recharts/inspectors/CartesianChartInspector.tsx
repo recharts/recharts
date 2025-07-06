@@ -16,6 +16,7 @@ import { SelectBrushDimensionsInspector } from './SelectBrushDimensionsInspector
 import { ChartInspector } from './ChartInspector';
 import { PlotAreaInspector } from './PlotAreaInspector';
 import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
+import { UseActiveTooltipDataPointsInspector } from './UseActiveTooltipDataPointsInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -24,6 +25,7 @@ const externalInspectors: Record<string, ComponentType> = {
   'useChartWidth, useChartHeight': ChartDimensionInspector,
   useOffset: OffsetInspector,
   usePlotArea: PlotAreaInspector,
+  useActiveTooltipDataPoints: UseActiveTooltipDataPointsInspector,
 };
 
 /**
@@ -53,6 +55,12 @@ const allInspectors: Record<string, ComponentType> = {
   ...(isLocalhost ? internalInspectors : {}),
 };
 
-export function CartesianChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
-  return <ChartInspector allInspectors={allInspectors} setEnabledOverlays={setEnabledOverlays} />;
+export function CartesianChartInspector({ setEnabledOverlays, defaultOpened }: ChartInspectorProps) {
+  return (
+    <ChartInspector
+      allInspectors={allInspectors}
+      setEnabledOverlays={setEnabledOverlays}
+      defaultOpened={defaultOpened}
+    />
+  );
 }

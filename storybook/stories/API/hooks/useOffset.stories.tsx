@@ -18,6 +18,7 @@ export default {
 };
 
 export const UseOffset = {
+  name: 'useOffset',
   render: (args: Args) => {
     return (
       <ResponsiveContainer width={args.width} height={args.height}>

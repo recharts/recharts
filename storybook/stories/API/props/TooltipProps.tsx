@@ -12,6 +12,10 @@ export const TooltipProps: StorybookArgs = {
   },
   defaultIndex: {
     description: 'The index where the Tooltip should appear *before* the user has interacted with the chart.',
+    defaultValue: undefined,
+    control: {
+      type: 'text',
+    },
   },
   separator: {
     description: 'The separator between name and value.',

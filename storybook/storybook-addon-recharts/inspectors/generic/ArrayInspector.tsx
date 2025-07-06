@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PrimitiveInspector } from './PrimitiveInspector';
 
 function ArrayOfObjectsInspector({ arr, expand }: { arr: ReadonlyArray<unknown>; expand: boolean }) {
   if (!expand) {
@@ -18,13 +19,19 @@ function ArrayOfPrimitivesInspector({ arr, expand }: { arr: ReadonlyArray<unknow
   return <code>[{arr.map(i => JSON.stringify(i)).join(', ')}]</code>;
 }
 
-export function ArrayInspector({ arr }: { arr: ReadonlyArray<unknown> | undefined }) {
+export function ArrayInspector({
+  arr,
+  expandByDefault,
+}: {
+  arr: ReadonlyArray<unknown> | undefined;
+  expandByDefault?: boolean;
+}) {
   if (arr == null) {
-    return <code>null</code>;
+    return <PrimitiveInspector value={arr} />;
   }
   const length = arr.length ?? 0;
   const typeofArr = typeof arr[0];
-  const shouldExpandByDefault = length <= 1 || (typeofArr !== 'object' && typeofArr !== 'function');
+  const shouldExpandByDefault = expandByDefault || length <= 1 || (typeofArr !== 'object' && typeofArr !== 'function');
   const [expand, setExpand] = useState(shouldExpandByDefault);
   function copyToClipboard() {
     navigator.clipboard.writeText(JSON.stringify(arr, null, 2));

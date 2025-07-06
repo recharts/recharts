@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { PrimitiveInspector } from './PrimitiveInspector';
 
 /*
  * Values that are expanded by default:
@@ -14,10 +15,6 @@ function shouldExpandByDefault(value: unknown) {
     return Object.keys(value).length <= 2;
   }
   return true;
-}
-
-function PrimitiveInspector({ value }: { value: unknown }) {
-  return <code>{JSON.stringify(value)}</code>;
 }
 
 function NotPrimitiveInspector({ value }: { value: unknown }) {

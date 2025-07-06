@@ -11,6 +11,7 @@ import { ChartInspectorProps } from './types';
 import { ChartInspector } from './ChartInspector';
 import { TooltipAxisTypeInspector } from './TooltipAxisTypeInspector';
 import { PlotAreaInspector } from './PlotAreaInspector';
+import { UseActiveTooltipDataPointsInspector } from './UseActiveTooltipDataPointsInspector';
 
 /**
  * These are available publicly, are part of the external Recharts API.
@@ -19,6 +20,7 @@ const externalInspectors: Record<string, ComponentType> = {
   'useChartWidth, useChartHeight': ChartDimensionInspector,
   useOffset: OffsetInspector,
   usePlotArea: PlotAreaInspector,
+  useActiveTooltipDataPoints: UseActiveTooltipDataPointsInspector,
 };
 
 /**
@@ -43,6 +45,12 @@ const allInspectors: Record<string, ComponentType> = {
   ...(isLocalhost ? internalInspectors : {}),
 };
 
-export function PolarChartInspector({ setEnabledOverlays }: ChartInspectorProps) {
-  return <ChartInspector allInspectors={allInspectors} setEnabledOverlays={setEnabledOverlays} />;
+export function PolarChartInspector({ setEnabledOverlays, defaultOpened }: ChartInspectorProps) {
+  return (
+    <ChartInspector
+      allInspectors={allInspectors}
+      setEnabledOverlays={setEnabledOverlays}
+      defaultOpened={defaultOpened}
+    />
+  );
 }

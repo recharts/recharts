@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Store } from '@reduxjs/toolkit';
 import {
-  combineTooltipPayload,
   selectActiveCoordinate,
   selectActiveIndex,
   selectIsTooltipActive,
@@ -48,6 +47,7 @@ import {
 import { selectActivePropsFromChartPointer } from '../../../src/state/selectors/selectActivePropsFromChartPointer';
 import { useTooltipEventType } from '../../../src/state/selectors/selectTooltipEventType';
 import { selectTooltipState } from '../../../src/state/selectors/selectTooltipState';
+import { combineTooltipPayload } from '../../../src/state/selectors/combiners/combineTooltipPayload';
 
 const exampleTooltipPayloadConfiguration1: TooltipPayloadConfiguration = {
   settings: {
