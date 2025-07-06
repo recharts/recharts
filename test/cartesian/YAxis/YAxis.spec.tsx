@@ -127,8 +127,8 @@ describe('<YAxis />', () => {
   const casesThatShowTicks: [number, AxisDomain, string][] = [
     // [ticksLength, domain, textContentOfTickElement]
     [5, [0, 10000], '10000'],
-    [4, [0, 'dataMax'], '9800'],
-    [4, [0, 'dataMax - 100'], '9800'],
+    [5, [0, 'dataMax'], '9800'],
+    [5, [0, 'dataMax - 100'], '9800'],
   ];
 
   test.each(casesThatShowTicks)('Should render %s ticks when domain={%s}', (length, domain, textContent) => {
