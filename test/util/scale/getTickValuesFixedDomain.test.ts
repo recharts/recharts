@@ -57,6 +57,14 @@ test('of unequal values of float [-4.10389, 0.59414, 7]', () => {
   expect(scales.length).toBe(count);
 });
 
+test('when allowDecimals is false of unequal values of float [-0.10389, 0.59414, 7] should not produce duplicates in the output', () => {
+  const [min, max, count] = [-0.10389, 0.59414, 7];
+  const scales = getTickValuesFixedDomain([min, max], count, false);
+
+  expect(scales).toEqual([-0, 1]);
+  expect(scales.length).toBe(2); // one less than count because can't fit 7 ticks in the domain
+});
+
 test('of unequal values of float [-4.10389, 0.59414, 7] not allow decimals', () => {
   const [min, max, count] = [-4.10389, 0.59414, 7];
   const scales = getTickValuesFixedDomain([min, max], count, false);
