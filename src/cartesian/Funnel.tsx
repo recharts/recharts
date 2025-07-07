@@ -176,7 +176,7 @@ function FunnelTrapezoids(props: FunnelTrapezoidsProps) {
         // Use the new utility function
         const triggerInfo = {
           tooltipPayload: entry.payload,
-          tooltipPosition: { x: entry.x, y: entry.y },
+          tooltipPosition: entry.tooltipPosition,
           cx: entry.x,
           cy: entry.y,
         };
