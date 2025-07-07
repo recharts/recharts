@@ -761,9 +761,6 @@ function PieImpl(props: Props) {
   // Merge event handlers into propsWithDefaults
   const mergedProps: InternalProps = {
     ...propsWithDefaults,
-    onClick: props.onClick,
-    onMouseEnter: props.onMouseEnter,
-    onMouseLeave: props.onMouseLeave,
   };
 
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
