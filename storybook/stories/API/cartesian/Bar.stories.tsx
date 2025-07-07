@@ -589,11 +589,11 @@ export const WithMinHeight = {
           <XAxis dataKey="name" />
           <YAxis />
           <Legend />
+          <Tooltip />
           <Bar {...args}>
             <LabelList dataKey="name" content={renderCustomizedLabel} />
           </Bar>
           <Bar dataKey="uv" fill="#82ca9d" minPointSize={10} />
-          <Tooltip />
           <RechartsHookInspector
             position={context.rechartsInspectorPosition}
             setPosition={context.rechartsSetInspectorPosition}

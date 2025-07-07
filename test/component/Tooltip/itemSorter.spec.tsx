@@ -33,7 +33,7 @@ import {
   radarChartMouseHoverTooltipSelector,
   radialBarChartMouseHoverTooltipSelector,
 } from './tooltipMouseHoverSelectors';
-import { selectTooltipPayload } from '../../../src/state/selectors/selectors';
+import { selectTooltipPayload, selectTooltipPayloadConfigurations } from '../../../src/state/selectors/selectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
 
 describe('itemSorter in ComposedChart', () => {
@@ -48,10 +48,11 @@ describe('itemSorter in ComposedChart', () => {
     ) {
       return createSelectorTestCase(({ children }) => (
         <ComposedChart width={300} height={300} data={PageData}>
-          <Area dataKey="uv" />
-          <Bar dataKey="pv" />
-          <Line dataKey="amt" />
-          <Scatter dataKey="uv" />
+          <Area dataKey="uv" name="area" />
+          <Bar dataKey="pv" name="bar" />
+          <Line dataKey="amt" name="line" />
+          {/* name prop on Scatter doesn't do anything, not sure why */}
+          <Scatter dataKey="uv" name="scatter" />
           <YAxis dataKey="pv" />
           <XAxis dataKey="name" />
           <Tooltip itemSorter={itemSorter} />
@@ -65,11 +66,259 @@ describe('itemSorter in ComposedChart', () => {
         const { container } = renderTestCase(undefined);
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
-          'amt : 2400',
+          'area : 200',
+          'bar : 9800',
+          'line : 2400',
           'name : Page D',
           'pv : 9800',
-          'pv : 9800',
-          'uv : 200',
+        ]);
+      });
+
+      it('should select tooltipPayloadConfigurations', () => {
+        const { spy } = renderTestCase(undefined, state =>
+          selectTooltipPayloadConfigurations(state, 'axis', 'hover', '0'),
+        );
+        expect(spy).toHaveBeenLastCalledWith([
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: '#3182bd',
+              dataKey: 'uv',
+              fill: '#3182bd',
+              hide: false,
+              name: 'area',
+              nameKey: undefined,
+              stroke: '#3182bd',
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: undefined,
+              dataKey: 'pv',
+              fill: undefined,
+              hide: false,
+              name: 'bar',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+          {
+            dataDefinedOnItem: undefined,
+            positions: undefined,
+            settings: {
+              color: '#3182bd',
+              dataKey: 'amt',
+              fill: '#fff',
+              hide: false,
+              name: 'line',
+              nameKey: undefined,
+              stroke: '#3182bd',
+              strokeWidth: 1,
+              type: undefined,
+              unit: undefined,
+            },
+          },
+          {
+            dataDefinedOnItem: [
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page A',
+                    pv: 2400,
+                    uv: 400,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page A',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page A',
+                    pv: 2400,
+                    uv: 400,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 2400,
+                },
+              ],
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page B',
+                    pv: 4567,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page B',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page B',
+                    pv: 4567,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 4567,
+                },
+              ],
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page C',
+                    pv: 1398,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page C',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page C',
+                    pv: 1398,
+                    uv: 300,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 1398,
+                },
+              ],
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page D',
+                    pv: 9800,
+                    uv: 200,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page D',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page D',
+                    pv: 9800,
+                    uv: 200,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 9800,
+                },
+              ],
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page E',
+                    pv: 3908,
+                    uv: 278,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page E',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page E',
+                    pv: 3908,
+                    uv: 278,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 3908,
+                },
+              ],
+              [
+                {
+                  dataKey: 'name',
+                  name: 'name',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page F',
+                    pv: 4800,
+                    uv: 189,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 'Page F',
+                },
+                {
+                  dataKey: 'pv',
+                  name: 'pv',
+                  payload: {
+                    amt: 2400,
+                    name: 'Page F',
+                    pv: 4800,
+                    uv: 189,
+                  },
+                  type: undefined,
+                  unit: '',
+                  value: 4800,
+                },
+              ],
+            ],
+            positions: [
+              { x: 84.16666666666667, y: 202.6 },
+              { x: 122.50000000000001, y: 146.258 },
+              { x: 160.83333333333334, y: 228.65200000000002 },
+              { x: 199.16666666666666, y: 10.200000000000005 },
+              { x: 237.5, y: 163.392 },
+              { x: 275.83333333333337, y: 140.20000000000002 },
+            ],
+            settings: {
+              color: undefined,
+              dataKey: 'uv',
+              fill: undefined,
+              hide: false,
+              name: 'scatter',
+              nameKey: undefined,
+              stroke: undefined,
+              strokeWidth: undefined,
+              type: undefined,
+              unit: '',
+            },
+          },
         ]);
       });
 
@@ -81,7 +330,7 @@ describe('itemSorter in ComposedChart', () => {
             dataKey: 'uv',
             fill: '#3182bd',
             hide: false,
-            name: 'uv',
+            name: 'area',
             nameKey: undefined,
             payload: {
               amt: 2400,
@@ -100,7 +349,7 @@ describe('itemSorter in ComposedChart', () => {
             dataKey: 'pv',
             fill: undefined,
             hide: false,
-            name: 'pv',
+            name: 'bar',
             nameKey: undefined,
             payload: {
               amt: 2400,
@@ -119,7 +368,7 @@ describe('itemSorter in ComposedChart', () => {
             dataKey: 'amt',
             fill: '#fff',
             hide: false,
-            name: 'amt',
+            name: 'line',
             nameKey: undefined,
             payload: {
               amt: 2400,
@@ -181,11 +430,11 @@ describe('itemSorter in ComposedChart', () => {
         const { container } = renderTestCase('dataKey');
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
-          'amt : 2400',
+          'line : 2400',
           'name : Page D',
+          'bar : 9800',
           'pv : 9800',
-          'pv : 9800',
-          'uv : 200',
+          'area : 200',
         ]);
       });
     });
@@ -195,9 +444,9 @@ describe('itemSorter in ComposedChart', () => {
         const { container } = renderTestCase('value');
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
-          'uv : 200',
-          'amt : 2400',
-          'pv : 9800',
+          'area : 200',
+          'line : 2400',
+          'bar : 9800',
           'name : Page D',
           'pv : 9800',
         ]);
@@ -209,11 +458,11 @@ describe('itemSorter in ComposedChart', () => {
         const { container } = renderTestCase('name');
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
-          'amt : 2400',
+          'area : 200',
+          'bar : 9800',
+          'line : 2400',
           'name : Page D',
           'pv : 9800',
-          'pv : 9800',
-          'uv : 200',
         ]);
       });
     });
@@ -223,9 +472,9 @@ describe('itemSorter in ComposedChart', () => {
         const { container } = renderTestCase(item => item.value);
         showTooltip(container, composedChartMouseHoverTooltipSelector);
         expectTooltipPayload(container, 'Page D', [
-          'uv : 200',
-          'amt : 2400',
-          'pv : 9800',
+          'area : 200',
+          'line : 2400',
+          'bar : 9800',
           'name : Page D',
           'pv : 9800',
         ]);
@@ -242,7 +491,7 @@ describe('itemSorter in ComposedChart', () => {
           dataKey: 'uv',
           fill: '#3182bd',
           hide: false,
-          name: 'uv',
+          name: 'area',
           nameKey: undefined,
           payload: {
             amt: 2400,
@@ -261,7 +510,7 @@ describe('itemSorter in ComposedChart', () => {
           dataKey: 'pv',
           fill: undefined,
           hide: false,
-          name: 'pv',
+          name: 'bar',
           nameKey: undefined,
           payload: {
             amt: 2400,
@@ -280,7 +529,7 @@ describe('itemSorter in ComposedChart', () => {
           dataKey: 'amt',
           fill: '#fff',
           hide: false,
-          name: 'amt',
+          name: 'line',
           nameKey: undefined,
           payload: {
             amt: 2400,

@@ -49,6 +49,8 @@ function Blanket() {
   );
 }
 
+const overlaysThatNeedBlanket = ['useChartWidth, useChartHeight', 'useOffset', 'usePlotArea'];
+
 export function RechartsHookInspector({
   defaultOpened,
   position,
@@ -93,7 +95,7 @@ export function RechartsHookInspector({
         Component={Component}
         setEnabledOverlays={setEnabledOverlays}
       />
-      {enabledOverlays.length >= 1 && <Blanket />}
+      {overlaysThatNeedBlanket.some(overlay => enabledOverlays.includes(overlay)) && <Blanket />}
       {enabledOverlays.includes('useChartWidth, useChartHeight') && <ChartSizeDimensions />}
       {enabledOverlays.includes('useOffset') && <OffsetShower />}
       {enabledOverlays.includes('usePlotArea') && <PlotAreaShower />}

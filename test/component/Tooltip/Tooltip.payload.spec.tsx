@@ -1686,19 +1686,19 @@ describe('Tooltip payload', () => {
     const lineData1 = [
       { category: 'A', value: 0.2 },
       { category: 'B', value: 0.3 },
-      { category: 'B', value: 0.5 },
-      { category: 'C', value: 0.6 },
-      { category: 'C', value: 0.7 },
-      { category: 'D', value: 0.4 },
+      { category: 'C', value: 0.5 },
+      { category: 'D', value: 0.6 },
+      { category: 'E', value: 0.7 },
+      { category: 'F', value: 0.4 },
     ];
 
     const lineData2 = [
       { category: 'A', value: null },
       { category: 'B', value: null },
-      { category: 'B', value: null },
-      { category: 'C', value: 0.2 },
-      { category: 'C', value: 0.4 },
-      { category: 'D', value: 0.6 },
+      { category: 'C', value: null },
+      { category: 'D', value: 0.2 },
+      { category: 'E', value: 0.4 },
+      { category: 'F', value: 0.6 },
     ];
 
     const { container, debug } = render(
@@ -1716,7 +1716,7 @@ describe('Tooltip payload', () => {
 
     showTooltip(container, ComposedChartTestCase.mouseHoverSelector, debug);
 
-    expectTooltipPayload(container, 'C', ['value : 0.7', 'value : 0.4']);
+    expectTooltipPayload(container, 'E', ['value : 0.7', 'value : 0.4']);
   });
 
   describe('shared prop', () => {

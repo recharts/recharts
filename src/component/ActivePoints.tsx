@@ -4,10 +4,10 @@ import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../u
 import { filterProps } from '../util/ReactUtils';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { useTooltipAxis } from '../context/useTooltipAxis';
-import { findEntryInArray, isNullish } from '../util/DataUtils';
+import { isNullish } from '../util/DataUtils';
 import { useAppSelector } from '../state/hooks';
-import { selectActiveLabel, selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
+import { useActiveTooltipDataPoints } from '../hooks';
 
 export interface PointType {
   readonly x: number | null;
@@ -78,25 +78,13 @@ type ActivePointsProps = {
 };
 
 export function ActivePoints({ points, mainColor, activeDot, itemDataKey }: ActivePointsProps) {
-  const tooltipAxis = useTooltipAxis();
   const activeTooltipIndex = useAppSelector(selectActiveTooltipIndex);
-  const activeLabel = useAppSelector(selectActiveLabel);
-  if (!activeTooltipIndex) {
+  const activeDataPoints = useActiveTooltipDataPoints();
+  if (points == null || activeDataPoints == null) {
     return null;
   }
 
-  let activePoint: PointType | undefined;
-
-  const tooltipAxisDataKey = tooltipAxis.dataKey;
-  if (tooltipAxisDataKey && !tooltipAxis.allowDuplicatedCategory) {
-    const specifiedKey =
-      typeof tooltipAxisDataKey === 'function'
-        ? (point: PointType) => tooltipAxisDataKey(point.payload)
-        : `payload.${tooltipAxisDataKey}`;
-    activePoint = findEntryInArray(points, specifiedKey, activeLabel);
-  } else {
-    activePoint = points?.[Number(activeTooltipIndex)];
-  }
+  const activePoint: PointType | undefined = points.find(p => activeDataPoints.includes(p.payload));
 
   if (isNullish(activePoint)) {
     return null;

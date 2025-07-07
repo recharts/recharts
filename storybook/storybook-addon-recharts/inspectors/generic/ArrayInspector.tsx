@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PrimitiveInspector } from './PrimitiveInspector';
+import { PrimitiveInspector, serializePrimitive } from './PrimitiveInspector';
 
 function ArrayOfObjectsInspector({ arr, expand }: { arr: ReadonlyArray<unknown>; expand: boolean }) {
   if (!expand) {
@@ -7,16 +7,9 @@ function ArrayOfObjectsInspector({ arr, expand }: { arr: ReadonlyArray<unknown>;
   }
   return (
     <pre>
-      <code>[{arr.map(i => JSON.stringify(i, null, 2)).join(',\n')}]</code>
+      <code>[{arr.map(serializePrimitive).join(',\n')}]</code>
     </pre>
   );
-}
-
-function ArrayOfPrimitivesInspector({ arr, expand }: { arr: ReadonlyArray<unknown>; expand: boolean }) {
-  if (!expand) {
-    return <code>Array({arr.length})</code>;
-  }
-  return <code>[{arr.map(i => JSON.stringify(i)).join(', ')}]</code>;
 }
 
 export function ArrayInspector({
@@ -50,11 +43,7 @@ export function ArrayInspector({
       <button type="button" onClick={copyToClipboard}>
         Copy to clipboard
       </button>
-      {typeofArr === 'object' ? (
-        <ArrayOfObjectsInspector arr={arr} expand={expand} />
-      ) : (
-        <ArrayOfPrimitivesInspector arr={arr} expand={expand} />
-      )}
+      <ArrayOfObjectsInspector arr={arr} expand={expand} />
     </>
   );
 }
