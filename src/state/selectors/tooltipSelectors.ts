@@ -434,6 +434,6 @@ export const selectActiveTooltipDataPoints = createSelector([selectActiveTooltip
   if (payload == null) {
     return undefined;
   }
-  const dataPoints = payload.map(p => p.payload);
+  const dataPoints = payload.map(p => p.payload).filter(p => p != null);
   return Array.from(new Set(dataPoints));
 });
