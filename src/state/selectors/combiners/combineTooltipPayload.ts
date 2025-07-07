@@ -63,13 +63,24 @@ export const combineTooltipPayload = (
     let tooltipPayload: unknown;
     if (
       tooltipAxis?.dataKey &&
-      !tooltipAxis?.allowDuplicatedCategory &&
       Array.isArray(sliced) &&
+      /*
+       * findEntryInArray won't work for Scatter because Scatter provides an array of arrays
+       * as tooltip payloads and findEntryInArray is not prepared to handle that.
+       * Sad but also ScatterChart only allows 'item' tooltipEventType
+       * and also this is only a problem if there are multiple Scatters and each has its own data array
+       * so let's fix that some other time.
+       */
+      !Array.isArray(sliced[0]) &&
       /*
        * If the tooltipEventType is 'axis', we should search for the dataKey in the sliced data
        * because thanks to allowDuplicatedCategory=false, the order of elements in the array
        * no longer matches the order of elements in the original data
        * and so we need to search by the active dataKey + label rather than by index.
+       *
+       * The same happens if multiple graphical items are present in the chart
+       * and each of them has its own data array. Those arrays get concatenated
+       * and again the tooltip index no longer matches the original data.
        *
        * On the other hand the tooltipEventType 'item' should always search by index
        * because we get the index from interacting over the individual elements
@@ -79,6 +90,12 @@ export const combineTooltipPayload = (
     ) {
       tooltipPayload = findEntryInArray(sliced, tooltipAxis.dataKey, activeLabel);
     } else {
+      /*
+       * This is a problem because it assumes that the index is pointing to the displayed data
+       * which it isn't because the index is pointing to the tooltip ticks array.
+       * The above approach (with findEntryInArray) is the correct one, but it only works
+       * if the axis dataKey is defined explicitly, and if the data is an array of objects.
+       */
       tooltipPayload = tooltipPayloadSearcher(sliced, activeIndex, computedData, finalNameKey);
     }
 

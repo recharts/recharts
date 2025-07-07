@@ -1551,7 +1551,8 @@ describe('Tooltip integration', () => {
     ));
 
     it('should return tooltip payload', () => {
-      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'axis', 'hover', '0'));
+      // ScatterChart only allows item interaction
+      const { spy } = renderTestCase(state => selectTooltipPayload(state, 'item', 'hover', '0'));
       expect(spy).toHaveBeenLastCalledWith([
         {
           color: undefined,

@@ -292,10 +292,6 @@ export const ConnectNulls = {
             <YAxis />
             <Line connectNulls type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             <Tooltip />
-            <RechartsHookInspector
-              position={context.rechartsInspectorPosition}
-              setPosition={context.rechartsSetInspectorPosition}
-            />
           </LineChart>
         </ResponsiveContainer>
       </>
