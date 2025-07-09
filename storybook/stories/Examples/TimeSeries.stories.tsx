@@ -4,7 +4,7 @@ import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 import { timeDay, timeHour, timeMinute, timeMonth, timeSecond, timeWeek, timeYear } from 'd3-time';
 import { timeData } from '../data';
-import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
+import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip, Area } from '../../../src';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
 import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
 
@@ -30,7 +30,8 @@ const StoryTemplate = {
           }}
         >
           <XAxis dataKey="x" {...args} domain={['auto', 'auto']} />
-          <Line dataKey="y" />
+          <Area dataKey="y" stackId="a" fill="#8884d8" />
+          <Area dataKey="z" stackId="a" fill="#82ca9d" />
           <RechartsHookInspector
             position={context.rechartsInspectorPosition}
             setPosition={context.rechartsSetInspectorPosition}
