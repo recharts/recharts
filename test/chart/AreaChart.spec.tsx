@@ -370,6 +370,84 @@ describe('AreaChart', () => {
     ]);
   });
 
+  test('renders a stacked chart when categorical axis is of type number', () => {
+    const dataWithNumberAsKey = [
+      { xKey: 4000, uv: 400, pv: 2400, amt: 2400 },
+      { xKey: 6000, uv: 300, pv: 4567, amt: 2400 },
+      { xKey: 8000, uv: 300, pv: 1398, amt: 2400 },
+      { xKey: 10000, uv: 200, pv: 9800, amt: 2400 },
+      { xKey: 12000, uv: 278, pv: 3908, amt: 2400 },
+      { xKey: 14000, uv: 189, pv: 4800, amt: 2400 },
+    ];
+
+    const areaSpy = vi.fn();
+    const xAxisTicksSpy = vi.fn();
+    const Comp = (): null => {
+      const areaSettings: AreaSettings = {
+        baseValue: undefined,
+        stackId: '1',
+        dataKey: 'uv',
+        connectNulls: false,
+        data: undefined,
+      };
+      areaSpy(useAppSelector(state => selectArea(state, 0, 0, false, areaSettings)));
+      xAxisTicksSpy(useAppSelector(state => selectTicksOfAxis(state, 'xAxis', 0, false)));
+      return null;
+    };
+
+    const { container } = render(
+      <AreaChart width={500} height={400} data={dataWithNumberAsKey}>
+        <XAxis type="number" dataKey="xKey" domain={['dataMin', 'dataMax']} />
+        <Area dataKey="uv" stackId="1" />
+        <Area dataKey="pv" stackId="1" />
+        <Customized component={<Comp />} />
+      </AreaChart>,
+    );
+
+    expect(xAxisTicksSpy).toHaveBeenLastCalledWith([
+      {
+        coordinate: 5,
+        index: 0,
+        offset: 0,
+        value: 4000,
+      },
+      {
+        coordinate: 127.5,
+        index: 1,
+        offset: 0,
+        value: 6500,
+      },
+      {
+        coordinate: 250,
+        index: 2,
+        offset: 0,
+        value: 9000,
+      },
+      {
+        coordinate: 372.5,
+        index: 3,
+        offset: 0,
+        value: 11500,
+      },
+      {
+        coordinate: 495,
+        index: 4,
+        offset: 0,
+        value: 14000,
+      },
+    ]);
+    expect(xAxisTicksSpy).toHaveBeenCalledTimes(2);
+
+    expectAreaCurve(container, [
+      {
+        d: 'M5,350.6L103,354.2L201,354.2L299,357.8L397,354.992L495,358.196',
+      },
+      {
+        d: 'M5,264.2L103,189.788L201,303.872L299,5L397,214.304L495,185.396',
+      },
+    ]);
+  });
+
   test('renders a stacked chart when stackId is a number', () => {
     const areaSettings: AreaSettings = {
       baseValue: undefined,
