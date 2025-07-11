@@ -11,6 +11,7 @@ import { selectUnfilteredCartesianItems } from '../../src/state/selectors/axisSe
 
 describe('graphicalItemsSlice', () => {
   const item1: CartesianGraphicalItemSettings = {
+    id: 'my-bar',
     isPanorama: false,
     type: 'bar',
     stackId: undefined,
@@ -25,6 +26,7 @@ describe('graphicalItemsSlice', () => {
   };
 
   const item2: CartesianGraphicalItemSettings = {
+    id: 'my-line',
     isPanorama: false,
     type: 'line',
     stackId: undefined,
@@ -39,6 +41,7 @@ describe('graphicalItemsSlice', () => {
   };
 
   const item3: CartesianGraphicalItemSettings = {
+    id: 'my-area',
     isPanorama: false,
     type: 'area',
     stackId: undefined,

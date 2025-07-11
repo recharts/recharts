@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
-import { describe } from 'vitest';
+import { describe, expect } from 'vitest';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { BarChart, Bar, Brush } from '../../src';
 import { PageData } from '../_data';
@@ -35,6 +35,7 @@ describe('Brush in a stacked chart', () => {
         a: {
           graphicalItems: [
             {
+              id: expect.stringMatching('bar-'),
               barSize: undefined,
               data: null,
               dataKey: 'pv',
@@ -48,6 +49,7 @@ describe('Brush in a stacked chart', () => {
               zAxisId: 0,
             },
             {
+              id: expect.stringMatching('bar-'),
               barSize: undefined,
               data: null,
               dataKey: 'uv',
@@ -114,6 +116,7 @@ describe('Brush in a stacked chart', () => {
         a: {
           graphicalItems: [
             {
+              id: expect.stringMatching('bar-'),
               barSize: undefined,
               data: null,
               dataKey: 'pv',
@@ -127,6 +130,7 @@ describe('Brush in a stacked chart', () => {
               zAxisId: 0,
             },
             {
+              id: expect.stringMatching('bar-'),
               barSize: undefined,
               data: null,
               dataKey: 'uv',

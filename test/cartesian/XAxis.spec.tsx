@@ -471,6 +471,7 @@ describe('<XAxis />', () => {
     const offsetSpy = vi.fn();
 
     const barSettings: BarSettings = {
+      id: 'my-bar-id',
       barSize: undefined,
       data: undefined,
       dataKey: 'y',
@@ -1319,6 +1320,7 @@ describe('<XAxis />', () => {
     const totalAxisSizeSpy = vi.fn();
 
     const barSettings: BarSettings = {
+      id: 'my-bar-id',
       barSize: undefined,
       data: [],
       dataKey: 'y',

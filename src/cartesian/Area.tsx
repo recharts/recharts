@@ -915,6 +915,7 @@ export class Area extends PureComponent<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        id={this.props.id}
         type="area"
         data={this.props.data}
         dataKey={this.props.dataKey}

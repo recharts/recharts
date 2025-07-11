@@ -27,6 +27,7 @@ import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBar
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
 
 export type BarSettings = {
+  id: string;
   barSize: number | string | undefined;
   data: ChartData | undefined;
   dataKey: DataKey<any>;
@@ -145,6 +146,12 @@ export const selectBarCartesianAxisSize = (state: RechartsRootState, xAxisId: Ax
  * so all props here are optional too.
  */
 export interface MaybeStackedGraphicalItem {
+  /**
+   * Unique ID of the graphical item.
+   * This is used to identify the graphical item in the state and in the React tree.
+   * This is required for every graphical item - it's either provided by the user or generated automatically.
+   */
+  id: string;
   stackId: StackId | undefined;
   dataKey: DataKey<any> | undefined;
   barSize: number | string | undefined;
@@ -156,6 +163,12 @@ export interface MaybeStackedGraphicalItem {
  * because the user has provided the stackId and dataKey properties.
  */
 export interface DefinitelyStackedGraphicalItem {
+  /**
+   * Unique ID of the graphical item.
+   * This is used to identify the graphical item in the state and in the React tree.
+   * This is required for every graphical item - it's either provided by the user or generated automatically.
+   */
+  id: string;
   stackId: StackId;
   dataKey: DataKey<any>;
   barSize: number | string | undefined;

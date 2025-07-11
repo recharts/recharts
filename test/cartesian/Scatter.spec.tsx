@@ -201,6 +201,7 @@ describe('<Scatter />', () => {
       );
 
       const expected: CartesianGraphicalItemSettings = {
+        id: expect.stringMatching('scatter-'),
         isPanorama: false,
         type: 'scatter',
         data,

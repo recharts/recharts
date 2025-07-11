@@ -1245,6 +1245,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          id: expect.stringMatching('bar-'),
           isPanorama: false,
           type: 'bar',
           data: null,
@@ -1284,6 +1285,7 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          id: expect.stringMatching('bar-'),
           isPanorama: false,
           type: 'bar',
           data: null,

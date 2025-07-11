@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { describe, expect, it, test, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Area, Brush, Customized, Tooltip, XAxis, YAxis } from '../../src';
+import { Area, Brush, Tooltip, XAxis, YAxis } from '../../src';
 import { computeArea, getBaseValue, Props } from '../../src/cartesian/Area';
 import {
   allCartesianChartsExcept,
@@ -440,8 +440,8 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       const { rerender } = render(
         <ChartElement data={data}>
-          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} stackId="q" hide />
-          <Customized component={<Comp />} />
+          <Area dataKey="value" data={data2} xAxisId={7} yAxisId={9} stackId="q" hide id="my-custom-area-id" />
+          <Comp />
         </ChartElement>,
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
@@ -457,13 +457,14 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
           stackId: 'q',
           hide: true,
           barSize: undefined,
+          id: 'my-custom-area-id',
         },
       ];
       expect(spy).toHaveBeenLastCalledWith(expected);
 
       rerender(
         <ChartElement data={data}>
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
       expect(spy).toHaveBeenLastCalledWith([]);
@@ -481,11 +482,12 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       render(
         <ChartElement data={data}>
           <Area dataKey="value" data={data2} />
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
       const expected: ReadonlyArray<CartesianGraphicalItemSettings> = [
         {
+          id: expect.stringMatching('area-'),
           isPanorama: false,
           type: 'area',
           data: data2,
@@ -502,6 +504,40 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       expect(spy).toHaveBeenLastCalledWith(expected);
     });
 
+    it('should remember the auto-generated ID between renders', () => {
+      const spy = vi.fn();
+      const Comp = (): null => {
+        const cartesianItems = useAppSelector(state => state.graphicalItems.cartesianItems);
+        if (cartesianItems.length > 1) {
+          throw new Error('Expected only one item in cartesianItems');
+        }
+        if (cartesianItems.length === 1) {
+          spy(cartesianItems[0].id);
+        }
+        return null;
+      };
+
+      const { rerender } = render(
+        <ChartElement data={data}>
+          <Area dataKey="value" />
+          <Comp />
+        </ChartElement>,
+      );
+
+      const firstId = spy.mock.calls[0][0];
+      expect(firstId).toMatch('area-');
+
+      rerender(
+        <ChartElement data={data}>
+          <Area dataKey="value" name="updated prop" />
+          <Comp />
+        </ChartElement>,
+      );
+
+      const secondId = spy.mock.calls[1][0];
+      expect(secondId).toBe(firstId);
+    });
+
     it('should add a record to Legend payload, and remove it when the element is removed', () => {
       const legendSpy = vi.fn();
       const Comp = (): null => {
@@ -512,7 +548,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       const { rerender } = render(
         <ChartElement data={data}>
           <Area dataKey="value" />
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
 
@@ -545,7 +581,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       rerender(
         <ChartElement data={data}>
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
 
@@ -566,7 +602,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         <ChartElement data={data}>
           <Area dataKey="value" />
           <Tooltip />
-          <Customized component={<Comp />} />
+          <Comp />
         </ChartElement>,
       );
 
@@ -627,7 +663,7 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
 
       render(
         <ChartElement data={data} className="my-unique-classname">
-          <Customized component={<Comp />} />
+          <Comp />
           <Brush>
             <ChartElement>
               <Area dataKey="value" />

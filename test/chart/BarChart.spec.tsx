@@ -287,6 +287,7 @@ describe('<BarChart />', () => {
 
     test('renders simple BarChart', () => {
       const barSettings: BarSettings = {
+        id: 'my-bar-id',
         barSize: undefined,
         data: undefined,
         dataKey: 'uv',
@@ -309,6 +310,7 @@ describe('<BarChart />', () => {
       );
 
       const expectedBar: CartesianGraphicalItemSettings = {
+        id: expect.stringMatching('bar-'),
         isPanorama: false,
         barSize: undefined,
         data: null,
@@ -629,6 +631,7 @@ describe('<BarChart />', () => {
 
     describe('when stackId is a number', () => {
       const barSettings: BarSettings = {
+        id: 'my-bar-id',
         barSize: '',
         data,
         dataKey: 'pv',
@@ -889,6 +892,7 @@ describe('<BarChart />', () => {
             0,
             false,
             {
+              id: 'my-bar-id',
               barSize: '',
               data,
               dataKey: 'uv',
@@ -906,6 +910,7 @@ describe('<BarChart />', () => {
             0,
             false,
             {
+              id: 'my-bar-id',
               barSize: '',
               data,
               dataKey: 'pv',
@@ -1117,6 +1122,7 @@ describe('<BarChart />', () => {
       const totalAxisSizeSpy = vi.fn();
 
       const barSettings: BarSettings = {
+        id: 'my-bar-id',
         barSize: undefined,
         data: undefined,
         dataKey: 'uv',
@@ -1264,6 +1270,7 @@ describe('<BarChart />', () => {
 
         const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 50,
             data: null,
@@ -1277,6 +1284,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1295,6 +1303,7 @@ describe('<BarChart />', () => {
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 50,
             data: null,
@@ -1311,6 +1320,7 @@ describe('<BarChart />', () => {
         expect(axisOneBarsSpy).toHaveBeenCalledTimes(2);
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1405,6 +1415,7 @@ describe('<BarChart />', () => {
         const barPositionsRightSpy = vi.fn();
 
         const leftBarSettings: BarSettings = {
+          id: 'my-bar-id',
           barSize: undefined,
           data: undefined,
           dataKey: 'pv',
@@ -1414,6 +1425,7 @@ describe('<BarChart />', () => {
         };
 
         const rightBarSettings: BarSettings = {
+          id: 'my-bar-id',
           barSize: undefined,
           data: undefined,
           dataKey: 'uv',
@@ -1448,6 +1460,7 @@ describe('<BarChart />', () => {
 
         const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1461,6 +1474,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1479,6 +1493,7 @@ describe('<BarChart />', () => {
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1492,6 +1507,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1509,6 +1525,7 @@ describe('<BarChart />', () => {
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1522,6 +1539,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: undefined,
             data: null,
@@ -1703,6 +1721,7 @@ describe('<BarChart />', () => {
 
         const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 40,
             data: null,
@@ -1716,6 +1735,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1734,6 +1754,7 @@ describe('<BarChart />', () => {
 
         expect(axisOneBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 40,
             data: null,
@@ -1747,6 +1768,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1764,6 +1786,7 @@ describe('<BarChart />', () => {
 
         expect(axisTwoBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 40,
             data: null,
@@ -1777,6 +1800,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1871,6 +1895,7 @@ describe('<BarChart />', () => {
         const barPositionsRightSpy = vi.fn();
 
         const leftBarSettings: BarSettings = {
+          id: 'my-bar-id',
           barSize: undefined,
           data: undefined,
           dataKey: 'pv',
@@ -1880,6 +1905,7 @@ describe('<BarChart />', () => {
         };
 
         const rightBarSettings: BarSettings = {
+          id: 'my-bar-id',
           barSize: undefined,
           data: undefined,
           dataKey: 'uv',
@@ -1914,6 +1940,7 @@ describe('<BarChart />', () => {
 
         const expectedItems: ReadonlyArray<CartesianGraphicalItemSettings> = [
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1927,6 +1954,7 @@ describe('<BarChart />', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 20,
             data: null,
@@ -1945,6 +1973,7 @@ describe('<BarChart />', () => {
 
         expect(axisLeftBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 30,
             data: null,
@@ -1962,6 +1991,7 @@ describe('<BarChart />', () => {
 
         expect(axisRightBarsSpy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('bar-'),
             isPanorama: false,
             barSize: 20,
             data: null,
@@ -2092,6 +2122,7 @@ describe('<BarChart />', () => {
       const barPositionsSpy = vi.fn();
 
       const barSettings: BarSettings = {
+        id: 'my-bar-id',
         barSize: undefined,
         data: undefined,
         dataKey: 'uv',
@@ -2252,6 +2283,7 @@ describe('<BarChart />', () => {
     const barRectanglesSpy = vi.fn();
 
     const topWhiskerBarSettings: BarSettings = {
+      id: 'my-bar-id',
       barSize: undefined,
       data: undefined,
       dataKey: 'topWhisker',

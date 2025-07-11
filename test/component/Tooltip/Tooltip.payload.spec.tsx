@@ -490,6 +490,7 @@ describe('Tooltip payload', () => {
       const { spy } = renderTestCase(selectAllUnfilteredGraphicalItems);
       expect(spy).toHaveBeenLastCalledWith([
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
@@ -540,6 +541,7 @@ describe('Tooltip payload', () => {
           zAxisId: 0,
         },
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
@@ -590,6 +592,7 @@ describe('Tooltip payload', () => {
           zAxisId: 0,
         },
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
@@ -646,6 +649,7 @@ describe('Tooltip payload', () => {
       const { spy } = renderTestCase(selectAllGraphicalItemsSettings);
       expect(spy).toHaveBeenLastCalledWith([
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
@@ -696,6 +700,7 @@ describe('Tooltip payload', () => {
           zAxisId: 0,
         },
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
@@ -746,6 +751,7 @@ describe('Tooltip payload', () => {
           zAxisId: 0,
         },
         {
+          id: expect.stringMatching('line-'),
           barSize: undefined,
           data: [
             {
