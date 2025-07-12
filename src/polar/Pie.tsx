@@ -24,7 +24,7 @@ import { Cell } from '../component/Cell';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
-import { getPercentValue, interpolateNumber, isNumber, mathSign, uniqueId } from '../util/DataUtils';
+import { getPercentValue, interpolateNumber, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -802,12 +802,11 @@ export class Pie extends PureComponent<Props, State> {
 
   static defaultProps = defaultPieProps;
 
-  id = uniqueId('recharts-pie-');
-
   render() {
     return (
       <>
         <SetPolarGraphicalItem
+          id={this.props.id}
           data={this.props.data}
           dataKey={this.props.dataKey}
           hide={this.props.hide}
