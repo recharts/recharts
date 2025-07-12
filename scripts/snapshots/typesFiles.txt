@@ -215,4 +215,5 @@
   "types/util/useAnimationId.d.ts",
   "types/util/useElementOffset.d.ts",
   "types/util/useReportScale.d.ts",
+  "types/util/useUniqueId.d.ts",
 ]

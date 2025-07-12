@@ -215,4 +215,5 @@
   "lib/util/useAnimationId.js",
   "lib/util/useElementOffset.js",
   "lib/util/useReportScale.js",
+  "lib/util/useUniqueId.js",
 ]

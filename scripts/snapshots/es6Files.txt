@@ -215,4 +215,5 @@
   "es6/util/useAnimationId.js",
   "es6/util/useElementOffset.js",
   "es6/util/useReportScale.js",
+  "es6/util/useUniqueId.js",
 ]
