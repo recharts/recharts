@@ -5,7 +5,7 @@ import { uniqueId } from './DataUtils';
 // This implementation uses a ref to generate and store the ID only once.
 // Note: This is not safe for Server-Side Rendering (SSR) and can cause hydration mismatches.
 // React.useId was created to solve this exact problem.
-const useUniqueIdFallback = (prefix?: string): string => {
+export const useUniqueIdFallback = (prefix?: string): string => {
   const idRef = React.useRef<string>();
 
   if (idRef.current === undefined) {
