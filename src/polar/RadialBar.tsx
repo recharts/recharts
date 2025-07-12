@@ -38,7 +38,6 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { ReportBar } from '../state/ReportBar';
 import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { ChartData } from '../state/chartDataSlice';
@@ -505,7 +504,6 @@ export class RadialBar extends PureComponent<RadialBarProps> {
   render() {
     return (
       <>
-        <ReportBar />
         <PolarGraphicalItemContext
           id={this.props.id}
           // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it

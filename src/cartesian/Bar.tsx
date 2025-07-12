@@ -47,7 +47,6 @@ import {
 } from '../context/tooltipContext';
 import { TooltipPayloadConfiguration } from '../state/tooltipSlice';
 import { SetTooltipEntrySettings } from '../state/SetTooltipEntrySettings';
-import { ReportBar } from '../state/ReportBar';
 import { CartesianGraphicalItemContext, SetErrorBarContext } from '../context/CartesianGraphicalItemContext';
 import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
@@ -740,7 +739,6 @@ export class Bar extends PureComponent<Props> {
         hide={this.props.hide}
         barSize={this.props.barSize}
       >
-        <ReportBar />
         <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
         <BarImpl {...this.props} />

@@ -98,7 +98,6 @@
   "lib/state",
   "lib/state/RechartsReduxContext.js",
   "lib/state/RechartsStoreProvider.js",
-  "lib/state/ReportBar.js",
   "lib/state/ReportChartProps.js",
   "lib/state/ReportMainChartProps.js",
   "lib/state/ReportPolarOptions.js",
