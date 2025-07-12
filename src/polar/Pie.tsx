@@ -15,7 +15,6 @@ import get from 'es-toolkit/compat/get';
 import { clsx } from 'clsx';
 import { ResolvedPieSettings, selectPieLegend, selectPieSectors } from '../state/selectors/pieSelectors';
 import { useAppSelector } from '../state/hooks';
-import { SetPolarGraphicalItem } from '../state/SetGraphicalItem';
 import { Layer } from '../container/Layer';
 import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
@@ -53,6 +52,7 @@ import { DATA_ITEM_DATAKEY_ATTRIBUTE_NAME, DATA_ITEM_INDEX_ATTRIBUTE_NAME } from
 import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
+import { PolarGraphicalItemContext } from '../context/PolarGraphicalItemContext';
 
 interface PieDef {
   /** The abscissa of pole in polar coordinate  */
@@ -805,7 +805,7 @@ export class Pie extends PureComponent<Props, State> {
   render() {
     return (
       <>
-        <SetPolarGraphicalItem
+        <PolarGraphicalItemContext
           id={this.props.id}
           data={this.props.data}
           dataKey={this.props.dataKey}
