@@ -343,6 +343,7 @@ class RadialBarWithState extends PureComponent<RadialBarProps> {
 function RadialBarImpl(props: RadialBarProps) {
   const cells = findAllByType(props.children, Cell);
   const radialBarSettings: RadialBarSettings = {
+    id: props.id,
     dataKey: props.dataKey,
     minPointSize: props.minPointSize,
     stackId: props.stackId,
@@ -506,6 +507,7 @@ export class RadialBar extends PureComponent<RadialBarProps> {
       <>
         <ReportBar />
         <PolarGraphicalItemContext
+          id={this.props.id}
           // TODO: do we need this anymore and is the below comment true? Strict nulls complains about it
           data={undefined} // data prop is injected through generator and overwrites what user passes in
           dataKey={this.props.dataKey}

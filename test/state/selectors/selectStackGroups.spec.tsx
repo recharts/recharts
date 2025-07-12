@@ -56,6 +56,7 @@ describe('selectStackGroups', () => {
       a: {
         graphicalItems: [
           {
+            id: expect.stringMatching('bar-'),
             barSize: undefined,
             data: null,
             dataKey: 'uv',
@@ -69,6 +70,7 @@ describe('selectStackGroups', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             barSize: undefined,
             data: null,
             dataKey: 'pv',
@@ -104,6 +106,7 @@ describe('selectStackGroups', () => {
       b: {
         graphicalItems: [
           {
+            id: expect.stringMatching('bar-'),
             barSize: undefined,
             data: null,
             dataKey: 'uv',
@@ -117,6 +120,7 @@ describe('selectStackGroups', () => {
             zAxisId: 0,
           },
           {
+            id: expect.stringMatching('bar-'),
             barSize: undefined,
             data: null,
             dataKey: 'amt',
@@ -202,6 +206,7 @@ describe('selectStackGroups', () => {
           a: {
             graphicalItems: [
               {
+                id: expect.stringMatching('area-'),
                 barSize: undefined,
                 data: undefined,
                 dataKey: 'uv',
@@ -215,6 +220,7 @@ describe('selectStackGroups', () => {
                 zAxisId: 0,
               },
               {
+                id: expect.stringMatching('area-'),
                 barSize: undefined,
                 data: undefined,
                 dataKey: 'pv',

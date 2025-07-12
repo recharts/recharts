@@ -142,6 +142,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radar',
@@ -391,6 +392,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radar',
@@ -577,6 +579,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radar',
@@ -680,6 +683,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radar',
@@ -1767,6 +1771,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radialBar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radialBar',
@@ -1878,6 +1883,7 @@ describe('<PolarAngleAxis />', () => {
         const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
         expect(spy).toHaveBeenLastCalledWith([
           {
+            id: expect.stringMatching('radialBar-'),
             barSize: undefined,
             stackId: undefined,
             type: 'radialBar',
@@ -2220,6 +2226,7 @@ describe('<PolarAngleAxis />', () => {
 
     describe('RadialBarWithColors with default axis', () => {
       const radialBarSettings: RadialBarSettings = {
+        id: 'my-radial-bar-id',
         barSize: undefined,
         dataKey: 'uv',
         maxBarSize: undefined,
@@ -2395,6 +2402,7 @@ describe('<PolarAngleAxis />', () => {
 
     describe('RadialBarWithColors with implicit axis', () => {
       const radialBarSettings: RadialBarSettings = {
+        id: 'my-radial-bar-id',
         barSize: undefined,
         dataKey: 'pv',
         maxBarSize: undefined,

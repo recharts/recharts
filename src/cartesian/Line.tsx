@@ -716,6 +716,7 @@ export class Line extends PureComponent<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        id={this.props.id}
         type="line"
         data={this.props.data}
         xAxisId={this.props.xAxisId}

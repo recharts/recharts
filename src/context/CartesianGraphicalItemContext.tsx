@@ -8,6 +8,7 @@ import { DataKey } from '../util/types';
 import { StackId } from '../util/ChartUtils';
 import { ErrorBarDataPointFormatter } from '../cartesian/ErrorBar';
 import { useIsPanorama } from './PanoramaContext';
+import { useUniqueId } from '../util/useUniqueId';
 
 const noop = () => {};
 
@@ -47,6 +48,7 @@ export function SetErrorBarContext<T>(props: ErrorBarContextType<T> & { children
 export const useErrorBarContext = () => useContext(ErrorBarContext);
 
 type GraphicalItemContextProps = {
+  id: string | undefined;
   type: CartesianGraphicalItemType;
   data: ChartData;
   xAxisId: AxisId;
@@ -60,6 +62,7 @@ type GraphicalItemContextProps = {
 };
 
 export const CartesianGraphicalItemContext = ({
+  id,
   children,
   xAxisId,
   yAxisId,
@@ -86,9 +89,13 @@ export const CartesianGraphicalItemContext = ({
     [updateErrorBars],
   );
   const isPanorama = useIsPanorama();
+
+  const resolvedId = useUniqueId(type, id);
+
   return (
     <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
       <SetCartesianGraphicalItem
+        id={resolvedId}
         type={type}
         data={data}
         xAxisId={xAxisId}

@@ -556,6 +556,7 @@ function BarImpl(props: Props) {
 
   const barSettings: BarSettings = useMemo(
     (): BarSettings => ({
+      id: props.id,
       barSize: props.barSize,
       data: undefined,
       dataKey: props.dataKey,
@@ -563,7 +564,7 @@ function BarImpl(props: Props) {
       minPointSize,
       stackId: getNormalizedStackId(props.stackId),
     }),
-    [props.barSize, props.dataKey, props.maxBarSize, minPointSize, props.stackId],
+    [props.barSize, props.dataKey, props.maxBarSize, minPointSize, props.stackId, props.id],
   );
 
   const cells = findAllByType(props.children, Cell);
@@ -727,6 +728,7 @@ export class Bar extends PureComponent<Props> {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
       <CartesianGraphicalItemContext
+        id={this.props.id}
         type="bar"
         // Bar does not allow setting data directly on the graphical item (why?)
         data={null}

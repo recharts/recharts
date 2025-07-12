@@ -43,6 +43,7 @@ import { selectRealScaleType } from '../../src/state/selectors/axisSelectors';
 describe('<RadialBar />', () => {
   describe('with implicit axes', () => {
     const radialBarSettings: RadialBarSettings = {
+      id: 'radial-bar-uv',
       dataKey: 'pv',
       minPointSize: 0,
       stackId: undefined,
@@ -61,6 +62,7 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
       expect(spy).toHaveBeenLastCalledWith([
         {
+          id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
           barSize: undefined,
           data: undefined,
@@ -416,6 +418,7 @@ describe('<RadialBar />', () => {
 
   describe('with configured axes', () => {
     const radialBarSettings: RadialBarSettings = {
+      id: 'my-radial-bar',
       dataKey: 'pv',
       minPointSize: 0,
       stackId: undefined,
@@ -436,6 +439,7 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
       expect(spy).toHaveBeenLastCalledWith([
         {
+          id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
           barSize: undefined,
           data: undefined,
@@ -785,6 +789,7 @@ describe('<RadialBar />', () => {
 
   describe('RingsWithTypes', () => {
     const radialBarSettings: RadialBarSettings = {
+      id: 'my-radial-bar',
       dataKey: 'rings',
       minPointSize: 0,
       stackId: undefined,
@@ -806,6 +811,7 @@ describe('<RadialBar />', () => {
       const { spy } = renderTestCase(state => selectPolarItemsSettings(state, 'angleAxis', 0));
       expect(spy).toHaveBeenLastCalledWith([
         {
+          id: expect.stringMatching('radialBar-'),
           angleAxisId: 0,
           barSize: undefined,
           data: undefined,
@@ -1084,6 +1090,7 @@ describe('<RadialBar />', () => {
       );
 
       const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        id: expect.stringMatching('radialBar-'),
         barSize: undefined,
         stackId: undefined,
         type: 'radialBar',

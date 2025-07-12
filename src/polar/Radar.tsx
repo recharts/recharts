@@ -457,6 +457,7 @@ export class Radar extends PureComponent<Props> {
     return (
       <>
         <PolarGraphicalItemContext
+          id={this.props.id}
           data={undefined} // Radar does not have data prop, why?
           dataKey={this.props.dataKey}
           hide={this.props.hide}

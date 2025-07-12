@@ -147,6 +147,7 @@ describe('<Radar />', () => {
       );
 
       const expectedPolarItemsSettings: PolarGraphicalItemSettings = {
+        id: expect.stringMatching('radar-'),
         barSize: undefined,
         stackId: undefined,
         type: 'radar',
