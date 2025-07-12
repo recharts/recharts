@@ -1,48 +1,26 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useUniqueId, useUniqueIdFallback } from '../../src/util/useUniqueId';
+import { useUniqueId } from '../../src/util/useUniqueId';
+import { useIdFallback } from '../../src/util/useId';
 
-describe('useUniqueIdFallback', () => {
-  describe('without prefix', () => {
-    it('should generate a random ID without prefix', () => {
-      const { result } = renderHook(() => useUniqueIdFallback());
-      expect(result.current.length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('continues to return the same ID on rerender', () => {
-      const { result, rerender } = renderHook(() => useUniqueIdFallback());
-      const firstId = result.current;
-      rerender();
-      expect(result.current).toBe(firstId);
-    });
-
-    it('should return the same ID even when props change', () => {
-      const { result, rerender } = renderHook(() => useUniqueIdFallback());
-      const firstId = result.current;
-      rerender({ prefix: 'new-prefix' });
-      expect(result.current).toBe(firstId);
-    });
+describe('useIdFallback', () => {
+  it('should generate a random ID without prefix', () => {
+    const { result } = renderHook(() => useIdFallback());
+    expect(result.current.length).toBeGreaterThanOrEqual(1);
   });
 
-  describe('with prefix', () => {
-    it('should generate a random ID with prefix', () => {
-      const { result } = renderHook(() => useUniqueIdFallback('bar'));
-      expect(result.current).toMatch(/^bar-.+$/);
-    });
+  it('continues to return the same ID on rerender', () => {
+    const { result, rerender } = renderHook(() => useIdFallback());
+    const firstId = result.current;
+    rerender();
+    expect(result.current).toBe(firstId);
+  });
 
-    it('should return the same ID on rerender with prefix', () => {
-      const { result, rerender } = renderHook(() => useUniqueIdFallback('bar'));
-      const firstId = result.current;
-      rerender();
-      expect(result.current).toBe(firstId);
-    });
-
-    it('should return the same ID even when props change', () => {
-      const { result, rerender } = renderHook(() => useUniqueIdFallback('bar'));
-      const firstId = result.current;
-      rerender({ prefix: 'new-prefix' });
-      expect(result.current).toBe(firstId);
-    });
+  it('should return the same ID even when props change', () => {
+    const { result, rerender } = renderHook(() => useIdFallback());
+    const firstId = result.current;
+    rerender({ prefix: 'new-prefix' });
+    expect(result.current).toBe(firstId);
   });
 });
 

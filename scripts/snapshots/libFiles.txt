@@ -214,6 +214,7 @@
   "lib/util/types.js",
   "lib/util/useAnimationId.js",
   "lib/util/useElementOffset.js",
+  "lib/util/useId.js",
   "lib/util/useReportScale.js",
   "lib/util/useUniqueId.js",
 ]
