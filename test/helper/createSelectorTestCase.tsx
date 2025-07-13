@@ -6,18 +6,23 @@ import { useAppSelectorWithStableTest } from './selectorTestHelpers';
 import { RechartsRootState } from '../../src/state/store';
 import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { AnimationManagerContext } from '../../src/animation/Animate';
+import { assertUniqueHtmlIds } from '../util/assertUniqueHtmlIds';
 
 const emptySelector: Selector<RechartsRootState, undefined, never> = () => {};
 
+type TestCaseResult<T> = {
+  container: HTMLElement;
+  spy: Mock<(selectorResult: T) => void>;
+  debug: () => void;
+  rerender: (ui: ReactNode) => void;
+  animationManager: MockProgressAnimationManager;
+  getByText: (text: string) => HTMLElement;
+};
+
 export function createSelectorTestCase(Component: ComponentType<{ children: ReactNode }>) {
-  return function renderTestCase<T>(selector: Selector<RechartsRootState, T, never> = emptySelector): {
-    container: HTMLElement;
-    spy: Mock<(selectorResult: T) => void>;
-    debug: () => void;
-    rerender: (ui: ReactNode) => void;
-    animationManager: MockProgressAnimationManager;
-    getByText: (text: string) => HTMLElement;
-  } {
+  return function renderTestCase<T>(
+    selector: Selector<RechartsRootState, T, never> = emptySelector,
+  ): TestCaseResult<T> {
     const spy: Mock<(selectorResult: T) => void> = vi.fn();
     const animationManager = new MockProgressAnimationManager();
 
@@ -33,6 +38,7 @@ export function createSelectorTestCase(Component: ComponentType<{ children: Reac
         </Component>
       </AnimationManagerContext.Provider>,
     );
+    assertUniqueHtmlIds(container);
     return { container, spy, debug, rerender, animationManager, getByText };
   };
 }
@@ -85,6 +91,7 @@ export function createSynchronisedSelectorTestCase(
       </>,
     );
 
+    assertUniqueHtmlIds(container);
     const wrapperA = container.querySelector('#wrapperA')!;
     const wrapperB = container.querySelector('#wrapperB')!;
 
