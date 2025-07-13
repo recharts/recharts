@@ -14,9 +14,13 @@ export function getAllBars(container: Element) {
   return container.querySelectorAll('.recharts-bar .recharts-bar-rectangle');
 }
 
+export function getAllBarPaths(container: Element) {
+  return container.querySelectorAll('.recharts-bar .recharts-bar-rectangle path.recharts-rectangle');
+}
+
 export function expectBars(container: Element, expectedBars: ReadonlyArray<ExpectedBar>) {
   assertNotNull(container);
-  const allBarPaths = container.querySelectorAll('.recharts-bar .recharts-bar-rectangle path.recharts-rectangle');
+  const allBarPaths = getAllBarPaths(container);
   const actualBars = Array.from(allBarPaths).map(bar => ({
     x: bar.getAttribute('x'),
     y: bar.getAttribute('y'),
