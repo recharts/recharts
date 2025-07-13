@@ -101,7 +101,6 @@
     "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
     "@storybook/icons": "^1.2.12",
     "@storybook/react-webpack5": "^9.0.16",
-    "@storybook/source-loader": "^8.6.13",
     "@storybook/test-runner": "^0.23.0",
     "@stryker-mutator/typescript-checker": "^8.2.6",
     "@stryker-mutator/vitest-runner": "^8.2.6",
