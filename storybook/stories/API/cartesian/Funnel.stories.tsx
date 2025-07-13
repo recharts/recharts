@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { nameKey, activeShape, General } from '../props/CartesianComponentShared';
 import { legendType } from '../props/Legend';
 import { AnimationProps } from '../props/AnimationProps';

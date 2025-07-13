@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Line, Tooltip } from '../../../../../src';
 import { pageData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';

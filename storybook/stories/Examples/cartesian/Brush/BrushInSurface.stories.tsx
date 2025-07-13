@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Brush, ResponsiveContainer, ComposedChart } from '../../../../../src';
 import { dateData } from '../../../data';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';

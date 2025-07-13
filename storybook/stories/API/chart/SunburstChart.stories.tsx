@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
 import { SunburstData } from '../../../../src/chart/SunburstChart';
 import { CategoricalChartProps, ChartSizeProps, data, dataKey, margin } from '../props/ChartProps';

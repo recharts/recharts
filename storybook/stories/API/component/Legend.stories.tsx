@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ResponsiveContainer, LineChart, Line, Legend, AreaChart, Area, YAxis, Tooltip, XAxis } from '../../../../src';
 import { rechartsPackageDownloads, pageData } from '../../data';
 import { LegendProps } from '../props/Legend';

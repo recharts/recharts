@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Label, PolarRadiusAxis, RadarChart, ResponsiveContainer } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';

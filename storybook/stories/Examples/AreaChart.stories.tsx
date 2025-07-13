@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { pageData, rangeData } from '../data';
 import {
   AreaChart,

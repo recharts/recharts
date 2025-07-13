@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, Meta, StoryObj } from '@storybook/react';
+import { Args, Meta, StoryObj } from '@storybook/react-webpack5';
 import {
   Legend,
   PolarAngleAxis,

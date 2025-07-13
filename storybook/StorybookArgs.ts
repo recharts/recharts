@@ -1,4 +1,4 @@
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 
 /*
  * This is the type as defined here: https://storybook.js.org/docs/react/api/arg-types#argtypes
@@ -7,7 +7,7 @@ import { Args } from '@storybook/react';
  *
  * This has been reported before: https://github.com/storybookjs/storybook/issues/11916
  * If the official types get updated then we can remove this whole file
- * and import directly Args from '@storybook/react'
+ * and import directly Args from '@storybook/react-webpack5'
  */
 
 export type StorybookArg = {

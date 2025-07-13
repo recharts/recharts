@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ScatterChart, ErrorBar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Scatter } from '../../../../src';
 import { errorData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';

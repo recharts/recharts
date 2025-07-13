@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args, StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react-webpack5';
 import {
   ComposedChart,
   Area,

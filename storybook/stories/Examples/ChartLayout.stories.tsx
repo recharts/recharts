@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';

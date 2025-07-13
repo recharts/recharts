@@ -1,4 +1,4 @@
-import { addons, types } from '@storybook/manager-api';
+import { addons, types } from 'storybook/manager-api';
 import { StackBlitzButton } from './StackBlitzButton';
 
 const ADDON_ID = 'recharts-stackblitz-addon';

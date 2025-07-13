@@ -1,5 +1,5 @@
 import React, { StrictMode } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';

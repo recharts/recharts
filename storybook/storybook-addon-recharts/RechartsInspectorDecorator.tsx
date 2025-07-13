@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { StoryFn } from '@storybook/react';
-import { useGlobals } from '@storybook/preview-api';
+import { StoryFn } from '@storybook/react-webpack5';
+import { useGlobals } from 'storybook/preview-api';
 import { PARAM_POSITION_KEY, Position } from './constants';
 import { HookInspectorLayout } from './HookInspectorWrapper';
 import { RechartsContextProperties } from './RechartsStoryContext';

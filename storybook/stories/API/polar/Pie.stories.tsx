@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { pageData } from '../../data';
 import { Pie, PieChart } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
