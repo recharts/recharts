@@ -1,6 +1,5 @@
-import { Decorator, Preview } from '@storybook/react';
+import { Decorator, Preview } from '@storybook/react-webpack5';
 import './global.css';
-import { DocsPage, DocsContainer } from '@storybook/addon-docs';
 
 const preview: Preview = {
   parameters: {
@@ -12,8 +11,6 @@ const preview: Preview = {
     },
     layout: 'padded',
     docs: {
-      container: DocsContainer,
-      page: DocsPage,
       codePanel: true,
       type: 'dynamic',
     },

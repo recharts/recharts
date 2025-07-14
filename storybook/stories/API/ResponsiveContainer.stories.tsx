@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react-webpack5';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { pageData } from '../data/Page';
 import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { ResponsiveContainer, LabelList, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';

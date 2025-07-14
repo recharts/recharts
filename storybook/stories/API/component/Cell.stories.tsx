@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
 import { EventHandlers } from '../props/EventHandlers';

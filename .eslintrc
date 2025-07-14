@@ -141,6 +141,13 @@
       "rules": {
         "no-useless-constructor": "off",
         "import/no-default-export": "off",
+        /*
+         * eslint/import reports false positive errors after bumping to storybook 9
+         * https://github.com/storybookjs/storybook/issues/31863
+         * This is safe to disable because typescript is checking for imports too
+         * so we still get alerted in case of a typo or something.
+         */
+        "import/no-unresolved": "off",
         "react-hooks/rules-of-hooks": "off"
       }
     },

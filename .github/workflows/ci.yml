@@ -80,6 +80,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Storybook doctor
+        run: npm run storybook-doctor
+
       - name: Storybook Test
         run: npm run test-storybook:ci
 

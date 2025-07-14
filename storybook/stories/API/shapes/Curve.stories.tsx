@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Curve, ComposedChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle, LineStyle } from '../props/Styles';
 import { coordinateData } from '../../data';

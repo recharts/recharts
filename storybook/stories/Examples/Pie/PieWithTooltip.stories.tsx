@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { PieChart, Pie, Cell, Tooltip, Legend } from '../../../../src';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 

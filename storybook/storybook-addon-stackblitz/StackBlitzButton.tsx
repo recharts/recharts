@@ -1,6 +1,6 @@
 import React from 'react';
-import { useStorybookState, StoryEntry, HashEntry } from '@storybook/manager-api';
-import { IconButton } from '@storybook/components';
+import { useStorybookState, StoryEntry, HashEntry } from 'storybook/manager-api';
+import { IconButton } from 'storybook/internal/components';
 import { StackBlitzLink } from './StackBlitzLink';
 import stackBlitzIcon from './stackblitz.svg';
 import { generateImports } from './generateImports';

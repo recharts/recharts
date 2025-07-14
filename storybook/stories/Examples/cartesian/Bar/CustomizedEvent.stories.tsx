@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ComposedChart, Bar, ResponsiveContainer, Cell } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';

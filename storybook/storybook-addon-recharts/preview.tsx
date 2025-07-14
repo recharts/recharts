@@ -1,4 +1,4 @@
-import type { Renderer, ProjectAnnotations } from '@storybook/types';
+import type { Renderer, ProjectAnnotations } from 'storybook/internal/types';
 import { RechartsInspectorDecorator } from './RechartsInspectorDecorator';
 import { PARAM_POSITION_KEY } from './constants';
 

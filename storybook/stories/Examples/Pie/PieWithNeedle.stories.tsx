@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
 

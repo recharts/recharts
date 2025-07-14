@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { pageData } from '../data';
 import {
   Area,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import { ResponsiveContainer, Label, Surface } from '../../../../src';
 
 const LabelProps: Args = {

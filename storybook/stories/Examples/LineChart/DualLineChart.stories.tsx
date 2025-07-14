@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { scaleTime } from 'victory-vendor/d3-scale';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-webpack5';
 import {
   CartesianGrid,
   Legend,
