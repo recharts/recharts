@@ -9,7 +9,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    layout: 'padded',
+    layout: 'centered',
     docs: {
       codePanel: true,
       type: 'dynamic',

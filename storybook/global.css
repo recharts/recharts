@@ -1,7 +1,10 @@
-.sb-show-main {
-  width: 80%;
+#storybook-root:not([hidden="true"]) {
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  align-items: center;
-  height: calc(100vh - 2rem); /* 1rem is the padding of iframe body */
-  margin: auto;
+  flex-direction: column;
+}
+
+#storybook-root:not([hidden="true"]) > * {
+  flex-shrink: 0;
 }
