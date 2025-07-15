@@ -9,21 +9,24 @@ module.exports = {
   ],
   addons: [
     '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
     '@storybook/addon-a11y',
     '@storybook/addon-docs',
-    '@storybook/addon-mdx-gfm',
-    '@storybook/addon-webpack5-compiler-swc',
     '@chromatic-com/storybook',
     './storybook-addon-recharts',
     './storybook-addon-stackblitz',
   ],
   framework: {
-    name: '@storybook/react-webpack5',
-    options: {},
+    name: '@storybook/react-vite',
   },
   features: {
     interactionsDebugger: true,
+  },
+  typescript: {
+    // Enables the `react-docgen-typescript` parser.
+    // See https://storybook.js.org/docs/api/main-config/main-config-typescript for more information about this option.
+    reactDocgen: 'react-docgen-typescript',
+  },
+  core: {
+    builder: '@storybook/builder-vite',
   },
 };

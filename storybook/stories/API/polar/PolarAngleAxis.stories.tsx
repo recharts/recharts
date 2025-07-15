@@ -1,11 +1,12 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { PolarAngleAxis, RadialBarChart } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { StorybookArgs } from '../../../StorybookArgs';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: StorybookArgs = {
   type: {

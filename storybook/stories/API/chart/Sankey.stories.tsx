@@ -1,11 +1,12 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';
 import { data, margin } from '../props/ChartProps';
 import { dataKey } from '../props/CartesianComponentShared';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args, StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react-vite';
 import {
   ComposedChart,
   Area,
@@ -14,7 +14,8 @@ import {
 import { pageData } from '../../data';
 import { General } from '../../API/props/CartesianComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: ComposedChart,

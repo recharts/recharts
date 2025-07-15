@@ -1,6 +1,7 @@
 import React from 'react';
-import { Args } from '@storybook/react';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { Args } from '@storybook/react-vite';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { Cell, Pie, PieChart, ResponsiveContainer } from '../../../../src';
 
 export default {

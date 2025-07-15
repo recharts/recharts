@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Legend, Line, ResponsiveContainer, useOffset, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { OffsetShower } from '../../../storybook-addon-recharts/inspectors/OffsetShower';

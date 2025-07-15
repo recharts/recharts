@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { pageData, rangeData } from '../../data';
 import {
   ResponsiveContainer,
@@ -19,7 +19,8 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { ManualAnimations, RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: BarChartProps,

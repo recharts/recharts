@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, Meta, StoryObj } from '@storybook/react';
+import { Args, Meta, StoryObj } from '@storybook/react-vite';
 import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
 import {
   Legend,
@@ -13,7 +13,8 @@ import {
 import { StorybookArgs } from '../../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { pageDataWithFillColor } from '../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,

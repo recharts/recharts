@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, ResponsiveContainer, Polygon } from '../../../../src';
 import { GeneralStyle } from '../props/Styles';
 import {
@@ -162,7 +162,8 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const pointDefault = [
   { x: 100, y: 100 },

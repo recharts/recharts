@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { CartesianAxis, ResponsiveContainer, Surface } from '../../../../src';
 import { ticks } from '../../data';
 

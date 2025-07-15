@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { PieChart, Pie, Cell, Tooltip, Legend } from '../../../../src';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const data = [
   { name: 'Group A', value: 400 },

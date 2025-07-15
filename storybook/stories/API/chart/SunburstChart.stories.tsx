@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { ResponsiveContainer, SunburstChart, Tooltip } from '../../../../src';
 import { SunburstData } from '../../../../src/chart/SunburstChart';
 import { CategoricalChartProps, ChartSizeProps, data, dataKey, margin } from '../props/ChartProps';
 import { PolarChartProps } from '../props/PolarChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const { innerRadius, outerRadius, cx, cy, startAngle, endAngle } = PolarChartProps;
 

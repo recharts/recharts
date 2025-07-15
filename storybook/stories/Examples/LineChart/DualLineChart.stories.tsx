@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { scaleTime } from 'victory-vendor/d3-scale';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import {
   CartesianGrid,
   Legend,
@@ -16,7 +16,8 @@ import {
   YAxis,
   useActiveTooltipLabel,
 } from '../../../../src';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: LineChart,

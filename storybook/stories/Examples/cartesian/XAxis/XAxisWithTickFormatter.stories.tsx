@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Line, XAxis, ResponsiveContainer } from '../../../../../src';
 import { dateWithValueData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { XAxisProps } from '../../../API/props/XAxisProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,

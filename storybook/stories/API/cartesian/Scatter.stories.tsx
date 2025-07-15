@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Scatter, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -170,7 +170,8 @@ import { animationBegin, animationDuration, animationEasing, isAnimationActive }
 import { hide } from '../props/Styles';
 import { legendType } from '../props/Legend';
 import { StorybookArgs } from '../../../StorybookArgs';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const EventHandlers = {
   onAbort,

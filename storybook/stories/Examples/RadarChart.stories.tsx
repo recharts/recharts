@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react';
+import { Args, StoryObj } from '@storybook/react-vite';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, Tooltip, Legend } from '../../../src';
 import { RadarChartProps } from '../API/props/RadarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { rangeData } from '../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadarChartProps,

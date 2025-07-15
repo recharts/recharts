@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { sizeData, treemapData } from '../../data';
 import { ResponsiveContainer, Tooltip, Treemap } from '../../../../src';
 import { ChartSizeProps, data } from '../props/ChartProps';
@@ -8,7 +8,8 @@ import { isUpdateAnimationActive } from '../props/RectangleProps';
 import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
 import { dataKey } from '../props/CartesianComponentShared';
 import { GeneralStyle } from '../props/Styles';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

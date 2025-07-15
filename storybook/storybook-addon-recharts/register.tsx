@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { addons, types, useGlobals, useStorybookApi } from '@storybook/manager-api';
-import { IconButton } from '@storybook/components';
+import { addons, types, useGlobals, useStorybookApi } from 'storybook/manager-api';
+import { IconButton } from 'storybook/internal/components';
 import hookIcon from './hookIcon.svg';
 import { DEFAULT_POSITION, PARAM_POSITION_KEY } from './constants';
 

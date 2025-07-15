@@ -1,5 +1,5 @@
 // The Line props are shared between multiple components, such as the Line and the Area.
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { StorybookArg, StorybookArgs } from '../../../StorybookArgs';
 
 export const hide: StorybookArg = {

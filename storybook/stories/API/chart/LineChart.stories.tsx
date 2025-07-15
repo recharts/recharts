@@ -1,9 +1,10 @@
 import React from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: CategoricalChartProps,

@@ -1,4 +1,4 @@
-import { StoryContext, StrictArgs } from '@storybook/react';
+import { StoryContext, StrictArgs } from '@storybook/react-vite';
 import { Position } from './constants';
 
 export type RechartsContextProperties = {

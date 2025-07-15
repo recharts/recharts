@@ -1,10 +1,11 @@
 import React, { StrictMode } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData, pageDataWithNegativeNumbers } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { BarChartProps } from '../props/BarChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: BarChartProps,

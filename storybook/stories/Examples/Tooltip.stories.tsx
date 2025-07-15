@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Args } from '@storybook/react';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../data';
 import {
   Area,
@@ -19,7 +19,8 @@ import {
   YAxis,
 } from '../../../src';
 import { generateMockData } from '../../../test/helper/generateMockData';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { TooltipProps } from '../API/props/TooltipProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 
