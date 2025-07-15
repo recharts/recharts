@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect } from 'react';
-import { CartesianGraphicalItemType, ErrorBarsSettings } from '../state/graphicalItemsSlice';
+import { CartesianGraphicalItemType, ErrorBarsSettings, GraphicalItemId } from '../state/graphicalItemsSlice';
 import { SetCartesianGraphicalItem } from '../state/SetGraphicalItem';
 import { ChartData } from '../state/chartDataSlice';
 import { AxisId } from '../state/cartesianAxisSlice';
@@ -55,10 +55,14 @@ type GraphicalItemContextProps = {
   yAxisId: AxisId;
   zAxisId: AxisId;
   dataKey: DataKey<any>;
-  children: React.ReactNode;
   stackId: StackId | undefined;
   hide: boolean;
   barSize: string | number | undefined;
+  /**
+   * Children must be a function that receives the resolved ID of the graphical item.
+   * This ID will either be the one provided via props.id or generated automatically.
+   */
+  children: (id: GraphicalItemId) => React.ReactNode;
 };
 
 export const CartesianGraphicalItemContext = ({
@@ -90,7 +94,7 @@ export const CartesianGraphicalItemContext = ({
   );
   const isPanorama = useIsPanorama();
 
-  const resolvedId = useUniqueId(type, id);
+  const resolvedId = useUniqueId(`recharts-${type}`, id);
 
   return (
     <ErrorBarDirectionDispatchContext.Provider value={{ addErrorBar, removeErrorBar }}>
@@ -108,7 +112,7 @@ export const CartesianGraphicalItemContext = ({
         barSize={barSize}
         isPanorama={isPanorama}
       />
-      {children}
+      {children(resolvedId)}
     </ErrorBarDirectionDispatchContext.Provider>
   );
 };

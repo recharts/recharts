@@ -1011,6 +1011,8 @@ describe('computeArea', () => {
   it('should return empty points if displayedData is empty array', () => {
     const { points } = computeArea({
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: '',
@@ -1029,6 +1031,8 @@ describe('computeArea', () => {
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: 'v',
@@ -1073,6 +1077,8 @@ describe('computeArea', () => {
     const { points } = computeArea({
       displayedData: [{ v: 1 }, { v: 2 }, { v: 3 }],
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: 'v',
@@ -1126,6 +1132,8 @@ describe('computeArea', () => {
       ],
       dataStartIndex: 0,
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: 'v',
@@ -1179,6 +1187,8 @@ describe('computeArea', () => {
       ],
       dataStartIndex: 0,
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: 'v',
@@ -1232,6 +1242,8 @@ describe('computeArea', () => {
       ],
       dataStartIndex: 0,
       areaSettings: {
+        id: 'area-0',
+        barSize: undefined,
         connectNulls: false,
         baseValue: 0,
         dataKey: 'v',

@@ -9,7 +9,7 @@ import { Layer } from '../container/Layer';
 import { ImplicitLabelType } from '../component/Label';
 import { LabelList } from '../component/LabelList';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
-import { interpolateNumber, isNullish, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNullish } from '../util/DataUtils';
 import { filterProps, isClipDot } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
@@ -40,6 +40,7 @@ import { useAnimationId } from '../util/useAnimationId';
 import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
+import { WithIdRequired } from '../util/useUniqueId';
 
 export interface LinePointItem extends CurvePoint {
   readonly value?: number;
@@ -63,7 +64,7 @@ interface InternalLineProps {
   dot: ActiveDotType;
   height?: number;
   hide: boolean;
-  id?: string;
+  id: string;
   isAnimationActive: boolean;
   label: ImplicitLabelType;
   layout: 'horizontal' | 'vertical';
@@ -533,9 +534,8 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
   };
 };
 
+// eslint-disable-next-line react/prefer-stateless-function
 class LineWithState extends Component<InternalProps> {
-  id = uniqueId('recharts-line-');
-
   render() {
     const { hide, dot, points, className, xAxisId, yAxisId, top, left, width, height, id, needClip, layout } =
       this.props;
@@ -545,7 +545,7 @@ class LineWithState extends Component<InternalProps> {
     }
 
     const layerClass = clsx('recharts-line', className);
-    const clipPathId = isNullish(id) ? this.id : id;
+    const clipPathId = id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
@@ -611,7 +611,7 @@ const defaultLineProps = {
   yAxisId: 0,
 } as const satisfies Partial<Props>;
 
-function LineImpl(props: Props) {
+function LineImpl(props: WithIdRequired<Props>) {
   const {
     activeDot,
     animateNewValues,
@@ -721,23 +721,25 @@ export class Line extends PureComponent<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <CartesianGraphicalItemContext
-        id={this.props.id}
-        type="line"
-        data={this.props.data}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={0}
-        dataKey={this.props.dataKey}
-        // line doesn't stack
-        stackId={undefined}
-        hide={this.props.hide}
-        barSize={undefined}
-      >
+      <>
         <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <LineImpl {...this.props} />
-      </CartesianGraphicalItemContext>
+        <CartesianGraphicalItemContext
+          id={this.props.id}
+          type="line"
+          data={this.props.data}
+          xAxisId={this.props.xAxisId}
+          yAxisId={this.props.yAxisId}
+          zAxisId={0}
+          dataKey={this.props.dataKey}
+          // line doesn't stack
+          stackId={undefined}
+          hide={this.props.hide}
+          barSize={undefined}
+        >
+          {id => <LineImpl {...this.props} id={id} />}
+        </CartesianGraphicalItemContext>
+      </>
     );
   }
 }

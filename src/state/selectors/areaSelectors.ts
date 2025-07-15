@@ -17,6 +17,7 @@ import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
 import { NullablePoint } from '../../shape/Curve';
+import { MaybeStackedGraphicalItem } from './barSelectors';
 
 export interface AreaPointItem extends NullablePoint {
   x: number | null;
@@ -24,7 +25,7 @@ export interface AreaPointItem extends NullablePoint {
   value?: number | number[];
   payload?: any;
 }
-export type AreaSettings = {
+export type AreaSettings = MaybeStackedGraphicalItem & {
   connectNulls: boolean;
   baseValue: BaseValue | undefined;
   dataKey: DataKey<any>;

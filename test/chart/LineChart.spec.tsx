@@ -53,6 +53,7 @@ describe('<LineChart />', () => {
       'd',
       'fill',
       'height',
+      'id',
       'stroke',
       'stroke-dasharray',
       'stroke-width',
@@ -63,6 +64,7 @@ describe('<LineChart />', () => {
     expect(line).toHaveAttribute('fill', 'none');
     expect(line).toHaveAttribute('width', '360');
     expect(line).toHaveAttribute('height', '360');
+    expect(line).toHaveAttribute('id', expect.stringMatching('recharts-line-[:a-z0-9]+'));
     expect(line).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line).toHaveAttribute('stroke-dasharray', '0px 0px');
     expect(line).toHaveAttribute(
@@ -89,6 +91,7 @@ describe('<LineChart />', () => {
       'd',
       'fill',
       'height',
+      'id',
       'stroke',
       'stroke-dasharray',
       'stroke-width',
@@ -99,6 +102,7 @@ describe('<LineChart />', () => {
     expect(line).toHaveAttribute('fill', 'none');
     expect(line).toHaveAttribute('width', '300');
     expect(line).toHaveAttribute('height', '330');
+    expect(line).toHaveAttribute('id', expect.stringMatching('recharts-line-[:a-z0-9]+'));
     expect(line).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line).toHaveAttribute('stroke-dasharray', '0px 0px');
     expect(line).toHaveAttribute(
@@ -194,6 +198,7 @@ describe('<LineChart />', () => {
       'd',
       'fill',
       'height',
+      'id',
       'stroke',
       'stroke-dasharray',
       'stroke-width',
@@ -204,6 +209,7 @@ describe('<LineChart />', () => {
     expect(line1).toHaveAttribute('fill', 'none');
     expect(line1).toHaveAttribute('width', '330');
     expect(line1).toHaveAttribute('height', '160');
+    expect(line1).toHaveAttribute('id', expect.stringMatching('recharts-line-[:a-z0-9]+'));
     expect(line1).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line1).toHaveAttribute('stroke-dasharray', '0px 0px');
     expect(line1).toHaveAttribute('d', 'M80,58.333L135,58.333L190,36.067L245,18.6L300,5L355,17.267L410,74.333');
@@ -215,6 +221,7 @@ describe('<LineChart />', () => {
       'd',
       'fill',
       'height',
+      'id',
       'stroke',
       'stroke-dasharray',
       'stroke-width',
@@ -225,9 +232,12 @@ describe('<LineChart />', () => {
     expect(line2).toHaveAttribute('fill', 'none');
     expect(line2).toHaveAttribute('width', '330');
     expect(line2).toHaveAttribute('height', '160');
+    expect(line2).toHaveAttribute('id', expect.stringMatching('recharts-line-[:a-z0-9]+'));
     expect(line2).toHaveAttribute('class', 'recharts-curve recharts-line-curve');
     expect(line2).toHaveAttribute('stroke-dasharray', '0px 0px');
     expect(line2).toHaveAttribute('d', 'M80,106L135,106L190,78.2L245,25.3L300,17L355,13L410,25');
+
+    expect(line1.getAttribute('id')).not.toEqual(line2.getAttribute('id'));
   });
 
   test('Sets title and description correctly', () => {
@@ -1865,7 +1875,7 @@ describe('<LineChart /> with dataKey as a function', () => {
     fireEvent.click(screen.getByText('Use data2'));
 
     expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 9);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 11);
 
     expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
