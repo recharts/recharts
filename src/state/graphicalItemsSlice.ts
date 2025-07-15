@@ -79,14 +79,6 @@ export type PolarGraphicalItemSettings = GraphicalItemSettings & {
 
 export type GraphicalItemsState = {
   /**
-   * @deprecated - we can now read graphicalitems.type property instead of maintaining separate reducer. TODO replace
-   * Axis scale selector behaves differently if one of the child elements is a bar
-   * vs if it's not;
-   * So we need to track the number of bars present in the chart
-   * and then report if there is at least one.
-   */
-  countOfBars: number;
-  /**
    * This is an array of all cartesian graphical items and their settings.
    * Graphical item is a visual representation of data on the chart.
    * Some examples are: Line, Bar.
@@ -105,7 +97,6 @@ export type GraphicalItemsState = {
 };
 
 const initialState: GraphicalItemsState = {
-  countOfBars: 0,
   cartesianItems: [],
   polarItems: [],
 };
@@ -119,12 +110,6 @@ const graphicalItemsSlice = createSlice({
   name: 'graphicalItems',
   initialState,
   reducers: {
-    addBar(state) {
-      state.countOfBars += 1;
-    },
-    removeBar(state) {
-      state.countOfBars -= 1;
-    },
     addCartesianGraphicalItem(state, action: PayloadAction<CartesianGraphicalItemSettings>) {
       state.cartesianItems.push(castDraft(action.payload));
     },
@@ -154,8 +139,6 @@ const graphicalItemsSlice = createSlice({
 });
 
 export const {
-  addBar,
-  removeBar,
   addCartesianGraphicalItem,
   replaceCartesianGraphicalItem,
   removeCartesianGraphicalItem,
