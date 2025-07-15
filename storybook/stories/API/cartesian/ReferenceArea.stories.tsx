@@ -1,4 +1,4 @@
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import React from 'react';
 import { Line, ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';

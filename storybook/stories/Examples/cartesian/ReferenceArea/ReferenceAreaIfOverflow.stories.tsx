@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect, within } from 'storybook/test';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';

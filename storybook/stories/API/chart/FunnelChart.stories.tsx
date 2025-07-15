@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react-webpack5';
+import { Args, StoryObj } from '@storybook/react-vite';
 import { Funnel, FunnelChart, FunnelProps, LabelList, Legend, ResponsiveContainer, Tooltip } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';

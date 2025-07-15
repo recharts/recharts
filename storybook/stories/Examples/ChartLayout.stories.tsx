@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, useChartHeight, useChartWidth } from '../../../src';
 import { selectContainerScale } from '../../../src/state/selectors/containerSelectors';
 import { useAppSelector } from '../../../src/state/hooks';

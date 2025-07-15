@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { complexNodeLinkData, nodeLinkData } from '../../data';
 import { ResponsiveContainer, Sankey, Tooltip } from '../../../../src';
 import { NodeProps } from '../../../../src/chart/Sankey';

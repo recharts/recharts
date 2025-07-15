@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, within, expect } from 'storybook/test';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import {
   Brush,

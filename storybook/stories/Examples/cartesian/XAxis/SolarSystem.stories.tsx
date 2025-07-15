@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
 import { solarSystem } from '../../../data/solarSystem';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';

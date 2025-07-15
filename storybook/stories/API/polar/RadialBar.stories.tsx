@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageDataWithFillColor } from '../../data';
 import { Legend, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';

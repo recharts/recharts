@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, ArgTypes } from '@storybook/react-webpack5';
+import { Args, ArgTypes } from '@storybook/react-vite';
 import { CartesianGrid, ResponsiveContainer, ComposedChart, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';

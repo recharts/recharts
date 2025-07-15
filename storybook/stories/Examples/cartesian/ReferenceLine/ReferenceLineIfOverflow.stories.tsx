@@ -1,6 +1,6 @@
 import { expect, within } from 'storybook/test';
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import {
   ComposedChart,
   Line,

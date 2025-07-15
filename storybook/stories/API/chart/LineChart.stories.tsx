@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';

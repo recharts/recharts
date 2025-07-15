@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { Pie, PieChart } from '../../../../src';
 import { getChartPointer } from '../../../../src/util/getChartPointer';
 

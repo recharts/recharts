@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react-webpack5';
+import { Args, StoryObj } from '@storybook/react-vite';
 import { within, expect } from 'storybook/test';
 import { pageData } from '../../../data';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';

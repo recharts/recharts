@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { expect, userEvent, within } from 'storybook/test';
-import { Args, StoryObj } from '@storybook/react-webpack5';
+import { Args, StoryObj } from '@storybook/react-vite';
 import React, { PureComponent, useState } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
 import {

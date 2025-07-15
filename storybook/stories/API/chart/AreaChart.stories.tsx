@@ -1,6 +1,6 @@
 import React from 'react';
 import { curveCardinal } from 'victory-vendor/d3-shape';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from '../../../../src';
 import { pageData, subjectData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';

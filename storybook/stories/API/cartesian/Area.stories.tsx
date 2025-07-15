@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Area, ResponsiveContainer, Legend, Tooltip, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { LineStyle } from '../props/Styles';
@@ -8,7 +8,8 @@ import { legendType } from '../props/Legend';
 import { General as GeneralProps, data } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const AreaSpecificProps = {
   // These two props are not documented on the website. Further investigation is required to document them.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { PolarAngleAxis, RadialBarChart } from '../../../../src';
 import { EventHandlers } from '../props/EventHandlers';
 import { pageData } from '../../data';

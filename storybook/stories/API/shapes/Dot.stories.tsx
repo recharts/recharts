@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, ResponsiveContainer, Dot } from '../../../../src';
 import { DotProps } from '../props/DotProps';
 import { GeneralStyle } from '../props/Styles';
