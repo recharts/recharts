@@ -33,7 +33,7 @@
     "test": "vitest run --config vitest.config.mts --project unit",
     "test-coverage": "vitest run --config vitest.config.mts --coverage --project unit",
     "test-mutation": "stryker run",
-    "test-watch": "vitest --config vitest.config.mts",
+    "test-watch": "vitest --config vitest.config.mts --project unit",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "lint-test": "eslint \"./test/**/*.{ts,tsx}\"",
     "lint-storybook": "eslint \"./storybook/**/*.{ts,tsx}\"",
