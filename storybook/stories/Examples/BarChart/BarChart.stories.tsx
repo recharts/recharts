@@ -19,7 +19,7 @@ import {
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { BarChartProps } from '../../API/props/BarChartProps';
-import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
 import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
@@ -1221,28 +1221,30 @@ export const ChangingData = {
     };
 
     return (
-      <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
-        <BarChart {...args} data={data}>
-          <YAxis hide domain={[0, 100]} />
-          <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
-          <RechartsHookInspector
-            position={context.rechartsInspectorPosition}
-            setPosition={context.rechartsSetInspectorPosition}
-          />
-        </BarChart>
+      <ManualAnimations isEnabled={context.rechartsInspectorEnabled}>
+        <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
+          <BarChart {...args} data={data}>
+            <YAxis hide domain={[0, 100]} />
+            <Bar dataKey="number" fill="chocolate" background={{ fill: 'bisque' }} />
+            <RechartsHookInspector
+              position={context.rechartsInspectorPosition}
+              setPosition={context.rechartsSetInspectorPosition}
+            />
+          </BarChart>
 
-        <button type="button" onClick={changeSynchronously}>
-          Change data synchronously
-        </button>
+          <button type="button" onClick={changeSynchronously}>
+            Change data synchronously
+          </button>
 
-        <button type="button" onClick={changeAsynchronously}>
-          Change data with setTimeout
-        </button>
+          <button type="button" onClick={changeAsynchronously}>
+            Change data with setTimeout
+          </button>
 
-        <button type="button" onClick={reset}>
-          Reset
-        </button>
-      </div>
+          <button type="button" onClick={reset}>
+            Reset
+          </button>
+        </div>
+      </ManualAnimations>
     );
   },
   args: {
