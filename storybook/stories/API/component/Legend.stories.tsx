@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ResponsiveContainer, LineChart, Line, Legend, AreaChart, Area, YAxis, Tooltip, XAxis } from '../../../../src';
 import { rechartsPackageDownloads, pageData } from '../../data';
 import { LegendProps } from '../props/Legend';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: LegendProps,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { Curve, ComposedChart, ResponsiveContainer } from '../../../../src';
 import { GeneralStyle, LineStyle } from '../props/Styles';
 import { coordinateData } from '../../data';
@@ -165,7 +165,8 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Curve,

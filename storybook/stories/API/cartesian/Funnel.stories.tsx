@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { nameKey, activeShape, General } from '../props/CartesianComponentShared';
 import { legendType } from '../props/Legend';
 import { AnimationProps } from '../props/AnimationProps';
@@ -21,7 +21,8 @@ import {
 } from '../props/EventHandlers';
 import { ResponsiveProps } from '../props/Tooltip';
 import { GeneralStyle } from '../props/Styles';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { curveCardinal } from 'd3-shape';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData, rangeData } from '../data';
 import {
   AreaChart,
@@ -17,7 +17,8 @@ import {
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector, ManualAnimations, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector, ManualAnimations } from '../../storybook-addon-recharts';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: AreaChart,

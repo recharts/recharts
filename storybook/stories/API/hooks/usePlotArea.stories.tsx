@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Legend, Line, ResponsiveContainer, usePlotArea, XAxis, YAxis } from '../../../../src';
 import { pageData } from '../../data';
 import { PlotAreaShower } from '../../../storybook-addon-recharts/inspectors/PlotAreaShower';

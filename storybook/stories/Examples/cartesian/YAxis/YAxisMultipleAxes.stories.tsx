@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, XAxis, Bar, ResponsiveContainer, YAxis, Line, Tooltip } from '../../../../../src';
 import { pageData } from '../../../data';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { YAxisProps } from '../../../API/props/YAxisProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: YAxis,

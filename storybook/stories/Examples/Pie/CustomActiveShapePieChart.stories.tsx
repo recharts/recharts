@@ -1,8 +1,9 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from '../../../../src';
 import { PieSectorDataItem } from '../../../../src/polar/Pie';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Pie,

@@ -1,4 +1,4 @@
-import { Decorator, Preview } from '@storybook/react-webpack5';
+import { Decorator, Preview } from '@storybook/react-vite';
 import './global.css';
 
 const preview: Preview = {

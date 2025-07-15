@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Line, ReferenceLine, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
@@ -9,7 +9,8 @@ import {
   ReferenceComponentInternalArgs,
   ReferenceComponentStyle,
 } from '../props/ReferenceComponentShared';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: Args = {
   ...ReferenceComponentGeneralArgs,

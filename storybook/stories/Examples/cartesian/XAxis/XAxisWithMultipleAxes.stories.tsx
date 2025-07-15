@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../../data';
 import { Line, LineChart, Tooltip, XAxis } from '../../../../../src';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,

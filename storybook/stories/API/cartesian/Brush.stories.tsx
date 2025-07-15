@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, within, expect } from 'storybook/test';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import {
   Brush,
@@ -14,7 +14,8 @@ import {
   Tooltip,
 } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: Args = {
   ariaLabel: {

@@ -4,7 +4,8 @@ import { pageData } from '../../data';
 import { CategoricalChartProps } from '../props/ChartProps';
 import { ActiveShapeProps } from '../props/ActiveShapeProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData, timeData } from '../../data';
 import {
   Area,
@@ -19,7 +19,8 @@ import {
   YAxis,
 } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

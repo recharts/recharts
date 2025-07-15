@@ -1,10 +1,11 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar } from '../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { XAxisProps } from '../API/props/XAxisProps';
 import { CartesianChartProps } from '../API/props/CartesianChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 const bespokeArgTypes = {
   layout: {

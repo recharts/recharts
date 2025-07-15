@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { Args, StoryObj } from '@storybook/react-webpack5';
+import { Args, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 import { pageData, pageDataWithFillColor } from '../../data';
 import { Cell, Legend, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from '../../../../src';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { RadialBarChartProps } from '../props/RadialBarChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { StorybookArgs } from '../../../StorybookArgs';
 
 export default {

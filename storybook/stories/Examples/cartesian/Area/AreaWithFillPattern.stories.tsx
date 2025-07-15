@@ -1,8 +1,9 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { coordinateWithValueData } from '../../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Area/With Fill Pattern',

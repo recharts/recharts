@@ -1,8 +1,9 @@
 import React from 'react';
-import { Args, StoryObj } from '@storybook/react-webpack5';
+import { Args, StoryObj } from '@storybook/react-vite';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../src';
 import { pageData } from '../data/Page';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { Props } from '../../../src/component/ResponsiveContainer';
 
 export default {

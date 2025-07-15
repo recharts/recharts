@@ -6,7 +6,8 @@ import { timeDay, timeHour, timeMinute, timeMonth, timeSecond, timeWeek, timeYea
 import { timeData } from '../data';
 import { ComposedChart, Line, ResponsiveContainer, XAxis, Tooltip } from '../../../src';
 import { Props as XAxisProps } from '../../../src/cartesian/XAxis';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: XAxis,

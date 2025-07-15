@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../src';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: LineChart,

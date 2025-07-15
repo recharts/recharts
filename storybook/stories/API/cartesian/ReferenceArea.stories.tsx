@@ -1,4 +1,4 @@
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import React from 'react';
 import { Line, ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../src';
 import { pageData } from '../../data';
@@ -17,7 +17,8 @@ import { animationBegin, animationDuration, animationEasing, isAnimationActive }
 import { GeneralStyle } from '../props/Styles';
 import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const StyleProps: Args = {
   ...GeneralStyle,

@@ -1,4 +1,4 @@
-import { Args, Meta, StoryObj } from '@storybook/react-webpack5';
+import { Args, Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 import {
   CartesianGrid,
@@ -17,7 +17,8 @@ import { Props as ScatterProps } from '../../../src/cartesian/Scatter';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { StorybookArgs } from '../../StorybookArgs';
-import { ManualAnimations, RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { ManualAnimations, RechartsHookInspector } from '../../storybook-addon-recharts';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 import { babiesAndVideosCorrelation } from '../data/spurriousCorrelations';
 
 export default {

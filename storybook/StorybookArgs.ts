@@ -1,4 +1,4 @@
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 
 /*
  * This is the type as defined here: https://storybook.js.org/docs/react/api/arg-types#argtypes

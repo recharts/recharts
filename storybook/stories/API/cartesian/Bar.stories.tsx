@@ -1,5 +1,5 @@
 import React from 'react';
-import { Args } from '@storybook/react-webpack5';
+import { Args } from '@storybook/react-vite';
 import { General as GeneralProps } from '../props/CartesianComponentShared';
 import {
   ComposedChart,
@@ -186,7 +186,8 @@ import {
   AnimationProps,
   isAnimationActive,
 } from '../props/AnimationProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 
