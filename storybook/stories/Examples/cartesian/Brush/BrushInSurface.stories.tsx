@@ -2,7 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Brush, ResponsiveContainer, ComposedChart } from '../../../../../src';
 import { dateData } from '../../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Brush/In Surface',

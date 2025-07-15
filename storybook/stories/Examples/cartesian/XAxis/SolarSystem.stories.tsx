@@ -2,7 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from '../../../../../src';
 import { solarSystem } from '../../../data/solarSystem';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default { Component: XAxis };
 

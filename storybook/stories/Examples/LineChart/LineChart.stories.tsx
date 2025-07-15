@@ -17,7 +17,8 @@ import {
   ReferenceArea,
 } from '../../../../src';
 import { DataKey } from '../../../../src/util/types';
-import { RechartsHookInspector, RechartsStoryContext, ManualAnimations } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector, ManualAnimations } from '../../../storybook-addon-recharts';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { CategoricalChartProps } from '../../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 

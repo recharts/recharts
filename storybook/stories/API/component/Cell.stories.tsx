@@ -5,7 +5,8 @@ import { GeneralStyle } from '../props/Styles';
 import { EventHandlers } from '../props/EventHandlers';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { pageData } from '../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

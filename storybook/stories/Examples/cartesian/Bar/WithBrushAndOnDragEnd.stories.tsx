@@ -2,7 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { Brush, ResponsiveContainer, Bar, BarChart, XAxis, YAxis } from '../../../../../src';
 import { dateWithValueData } from '../../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Bar/With Brush and onDragEnd',

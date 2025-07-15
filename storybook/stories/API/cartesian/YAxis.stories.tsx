@@ -4,7 +4,8 @@ import { YAxis, XAxis, Line, ResponsiveContainer, LineChart, CartesianGrid, Tool
 import { coordinateWithValueData } from '../../data';
 import { YAxisProps } from '../props/YAxisProps';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: YAxis,

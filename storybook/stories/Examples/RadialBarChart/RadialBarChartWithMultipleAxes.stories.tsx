@@ -13,7 +13,8 @@ import {
 import { StorybookArgs } from '../../../StorybookArgs';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
 import { pageDataWithFillColor } from '../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: RadialBarChartProps,

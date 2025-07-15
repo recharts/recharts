@@ -2,7 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, Bar, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   title: 'Examples/cartesian/Bar/Stacked And Unstacked',

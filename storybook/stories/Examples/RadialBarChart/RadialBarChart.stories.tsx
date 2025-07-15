@@ -12,7 +12,8 @@ import {
 import { pageData, pageDataWithFillColor } from '../../data';
 import { RadialBarChartProps } from '../../API/props/RadialBarChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../../API/props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 import { StorybookArgs } from '../../../StorybookArgs';
 import { RadarChartProps } from '../../API/props/RadarChartProps';
 

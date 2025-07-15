@@ -4,7 +4,8 @@ import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { ResponsiveContainer, LabelList, LineChart, Line } from '../../../../src';
 import { pageData } from '../../data';
 import { LabelListProps } from '../props/LabelListProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

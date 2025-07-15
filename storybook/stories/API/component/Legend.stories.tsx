@@ -4,7 +4,8 @@ import { ResponsiveContainer, LineChart, Line, Legend, AreaChart, Area, YAxis, T
 import { rechartsPackageDownloads, pageData } from '../../data';
 import { LegendProps } from '../props/Legend';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: LegendProps,

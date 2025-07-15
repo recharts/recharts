@@ -13,7 +13,8 @@ import {
 } from '../../../../src';
 import { pageData } from '../../data';
 import './style.css';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: AreaChart,

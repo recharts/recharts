@@ -17,7 +17,8 @@ import { animationBegin, animationDuration, animationEasing, isAnimationActive }
 import { GeneralStyle } from '../props/Styles';
 import { ReferenceComponentGeneralArgs, ReferenceComponentStyle } from '../props/ReferenceComponentShared';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const StyleProps: Args = {
   ...GeneralStyle,

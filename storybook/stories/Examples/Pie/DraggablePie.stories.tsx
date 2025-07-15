@@ -4,7 +4,8 @@ import { Pie, PieChart } from '../../../../src';
 import { getChartPointer } from '../../../../src/util/getChartPointer';
 
 import { ChartPointer } from '../../../../src/util/types';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: Pie,

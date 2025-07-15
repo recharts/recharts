@@ -19,7 +19,8 @@ import {
   YAxis,
 } from '../../../../src';
 import { CategoricalChartProps } from '../props/ChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

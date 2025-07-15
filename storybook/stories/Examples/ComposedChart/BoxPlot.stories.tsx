@@ -14,7 +14,8 @@ import {
 } from '../../../../src';
 import { BoxPlot, BoxPlotData } from '../../data/DataProps';
 import { boxPlots } from '../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: ComposedChart,

@@ -8,7 +8,8 @@ import { isUpdateAnimationActive } from '../props/RectangleProps';
 import { onAnimationEnd, onAnimationStart, onClick, onMouseEnter, onMouseLeave } from '../props/EventHandlers';
 import { dataKey } from '../props/CartesianComponentShared';
 import { GeneralStyle } from '../props/Styles';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

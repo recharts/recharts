@@ -5,7 +5,8 @@ import { subjectData } from '../../data';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { AnimationProps } from '../props/AnimationProps';
 import { legendType } from '../props/Legend';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const GeneralProps: Args = {
   dataKey: {

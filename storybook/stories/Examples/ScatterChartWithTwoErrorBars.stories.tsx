@@ -4,7 +4,8 @@ import { ScatterChart, CartesianGrid, XAxis, YAxis, Tooltip, Scatter, ErrorBar }
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
 import { XAxisProps } from '../API/props/XAxisProps';
 import { CartesianChartProps } from '../API/props/CartesianChartProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 const bespokeArgTypes = {
   layout: {

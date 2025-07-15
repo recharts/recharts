@@ -186,7 +186,8 @@ import {
   AnimationProps,
   isAnimationActive,
 } from '../props/AnimationProps';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const [surfaceWidth, surfaceHeight] = [600, 300];
 

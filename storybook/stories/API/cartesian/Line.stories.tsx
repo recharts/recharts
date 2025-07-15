@@ -9,7 +9,8 @@ import { LineStyle } from '../props/Styles';
 import { getStoryArgsFromArgsTypesObject } from '../props/utils';
 import { data, General as GeneralProps } from '../props/CartesianComponentShared';
 import { ResponsiveProps } from '../props/Tooltip';
-import { ManualAnimations, RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { ManualAnimations, RechartsHookInspector } from '../../../storybook-addon-recharts';
+import { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   argTypes: {

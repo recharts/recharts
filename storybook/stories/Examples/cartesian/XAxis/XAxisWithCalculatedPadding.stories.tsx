@@ -1,7 +1,8 @@
 import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, XAxis } from '../../../../../src';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 
 export default {

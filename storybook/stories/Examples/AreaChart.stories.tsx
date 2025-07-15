@@ -17,7 +17,8 @@ import {
 } from '../../../src';
 import { CategoricalChartProps } from '../API/props/ChartProps';
 import { getStoryArgsFromArgsTypesObject } from '../API/props/utils';
-import { RechartsHookInspector, ManualAnimations, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector, ManualAnimations } from '../../storybook-addon-recharts';
+import { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 export default {
   component: AreaChart,

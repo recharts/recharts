@@ -162,7 +162,8 @@ import {
   onWheel,
   onWheelCapture,
 } from '../props/EventHandlers';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../storybook-addon-recharts/RechartsStoryContext';
 
 const pointDefault = [
   { x: 100, y: 100 },

@@ -2,7 +2,8 @@ import React from 'react';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, XAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../../../storybook-addon-recharts/RechartsStoryContext';
 import { getStoryArgsFromArgsTypesObject } from '../../../API/props/utils';
 import { XAxisProps } from '../../../API/props/XAxisProps';
 

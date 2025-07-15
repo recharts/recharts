@@ -24,7 +24,8 @@ import {
   YAxis,
 } from '../../../src';
 import { PageData } from '../../../test/_data';
-import { RechartsHookInspector, RechartsStoryContext } from '../../storybook-addon-recharts';
+import { RechartsHookInspector } from '../../storybook-addon-recharts';
+import type { RechartsStoryContext } from '../../storybook-addon-recharts/RechartsStoryContext';
 
 const SynchronisationProps = {
   syncId: { control: 'text' },
