@@ -49,7 +49,6 @@ export const WithAbsolutePositionAndFlexboxParents = {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#003459',
             position: 'relative',
           }}
           className="spacer-top"
@@ -60,7 +59,6 @@ export const WithAbsolutePositionAndFlexboxParents = {
               height: '100%',
               width: '100%',
               top: '100px',
-              background: '#00A7E1',
             }}
             className="spacer-left"
           >

@@ -122,9 +122,9 @@ export const Synchronised = {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
+            <Tooltip />
             <Bar dataKey="pv" stroke={purple} fill={purple} />
             <Brush />
-            <Tooltip />
           </BarChart>
         </ResponsiveContainer>
         <p>Maybe some other content</p>
