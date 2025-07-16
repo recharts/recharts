@@ -438,13 +438,18 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       </ChartElement>
     ));
 
-    it('should pass id prop to an element in the DOM', () => {
+    it('should pass id prop to the path element', () => {
       const { container } = renderTestCase();
 
       const area = container.querySelector('#my-custom-area-id');
       assertNotNull(area);
-      expect(area.tagName).toBe('g');
-      expect(area.classList.value).toBe('recharts-layer');
+      /*
+       * This behaviour is useful for setting a clipPath based on the area path:
+       * See https://github.com/recharts/recharts/issues/6098
+       * and https://github.com/recharts/recharts/pull/6111#issuecomment-3078857263
+       */
+      expect(area.tagName).toBe('path');
+      expect(area.classList.value).toBe('recharts-curve recharts-area-area');
     });
 
     it('should set the ID on the clipPath, if it needs clipping', () => {

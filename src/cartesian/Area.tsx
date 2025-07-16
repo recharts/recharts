@@ -263,9 +263,10 @@ function StaticArea({
   return (
     <>
       {points?.length > 1 && (
-        <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined} id={id}>
+        <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <Curve
             {...allOtherProps}
+            id={id}
             points={points}
             connectNulls={connectNulls}
             type={type}
