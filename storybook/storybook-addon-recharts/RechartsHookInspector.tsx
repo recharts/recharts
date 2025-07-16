@@ -65,7 +65,7 @@ export function RechartsHookInspector({
   const [openedFromStart, setOpenedFromStart] = useState<boolean>(defaultOpened !== undefined);
 
   useEffect(() => {
-    if (position == null && defaultOpened !== undefined) {
+    if (position == null && defaultOpened !== undefined && typeof setPosition === 'function') {
       setOpenedFromStart(false);
       setPosition('NORTH');
     }

@@ -14,6 +14,7 @@ module.exports = {
     '@chromatic-com/storybook',
     './storybook-addon-recharts',
     './storybook-addon-stackblitz',
+    '@storybook/addon-vitest',
   ],
   framework: {
     name: '@storybook/react-vite',
