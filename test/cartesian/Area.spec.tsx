@@ -17,6 +17,7 @@ import { mockXAxisWithScale, mockYAxisWithScale } from '../helper/mockAxes';
 import { useLegendPayload } from '../../src/context/legendPayloadContext';
 import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
 import { assertNotNull } from '../helper/assertNotNull';
+import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 type TestCase = CartesianChartTestCase;
 
@@ -428,18 +429,31 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
       });
     });
   });
-
-  it('should pass id prop to an element in the DOM', () => {
-    const { container } = render(
+  describe('with explicit ID prop', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <ChartElement data={data}>
         <Area dataKey="value" id="my-custom-area-id" />
-      </ChartElement>,
-    );
+        <XAxis allowDataOverflow />
+        {children}
+      </ChartElement>
+    ));
 
-    const area = container.querySelector('#my-custom-area-id');
-    assertNotNull(area);
-    expect(area.tagName).toBe('path');
-    expect(area.classList.value).toBe('recharts-curve recharts-area-area');
+    it('should pass id prop to an element in the DOM', () => {
+      const { container } = renderTestCase();
+
+      const area = container.querySelector('#my-custom-area-id');
+      assertNotNull(area);
+      expect(area.tagName).toBe('g');
+      expect(area.classList.value).toBe('recharts-layer');
+    });
+
+    it('should set the ID on the clipPath, if it needs clipping', () => {
+      const { container } = renderTestCase();
+
+      const clipPath = container.querySelector('#clipPath-my-custom-area-id');
+      assertNotNull(clipPath);
+      expect(clipPath.tagName).toBe('clipPath');
+    });
   });
 
   describe('state integration', () => {

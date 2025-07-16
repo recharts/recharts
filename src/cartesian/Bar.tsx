@@ -287,7 +287,7 @@ function BarRectangles({
   props: BarRectanglesProps;
   showLabels: boolean;
 }) {
-  const baseProps = filterProps(props, false);
+  const { id, ...baseProps } = filterProps(props, false);
   const { shape, dataKey, activeBar } = props;
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
@@ -503,7 +503,7 @@ class BarWithState extends PureComponent<InternalProps> {
     const clipPathId = isNullish(id) ? this.id : id;
 
     return (
-      <Layer className={layerClass}>
+      <Layer className={layerClass} id={id}>
         {needClip && (
           <defs>
             <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />

@@ -241,8 +241,14 @@ function Dots({
     return null;
   }
 
+  /*
+   * Exclude ID from the props passed to the Dots component
+   * because then the ID would be applied to multiple dots and it would no longer be unique.
+   */
+  const { id, ...propsWithoutId } = props;
+
   const clipDot = isClipDot(dot);
-  const lineProps = filterProps(props, false);
+  const lineProps = filterProps(propsWithoutId, false);
   const customDotProps = filterProps(dot, true);
 
   const dots = points.map((entry, i) => {

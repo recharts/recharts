@@ -213,17 +213,31 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     expectBars(container, []);
   });
 
-  it('should pass id prop to an element in the DOM', () => {
-    const { container } = renderWithStrictMode(
+  describe('with explicit ID prop', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <ChartElement layout="horizontal" data={data}>
         <Bar isAnimationActive={false} dataKey="value" id="test-bar-id" />
-      </ChartElement>,
-    );
+        <XAxis allowDataOverflow />
+        {children}
+      </ChartElement>
+    ));
 
-    const bar = container.querySelector('#test-bar-id');
-    assertNotNull(bar);
-    expect(bar.tagName).toBe('path');
-    expect(bar.classList.value).toBe('recharts-rectangle');
+    it('should pass id prop to an element in the DOM', () => {
+      const { container } = renderTestCase();
+
+      const bar = container.querySelector('#test-bar-id');
+      assertNotNull(bar);
+      expect(bar.tagName).toBe('g');
+      expect(bar.classList.value).toBe('recharts-layer recharts-bar');
+    });
+
+    it('should set the ID on the clipPath, if it needs clipping', () => {
+      const { container } = renderTestCase();
+
+      const clipPath = container.querySelector('#clipPath-test-bar-id');
+      assertNotNull(clipPath);
+      expect(clipPath.tagName).toBe('clipPath');
+    });
   });
 
   describe('barSize', () => {
