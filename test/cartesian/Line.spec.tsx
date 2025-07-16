@@ -114,17 +114,31 @@ describe('<Line />', () => {
     expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-line');
   });
 
-  it('should pass id prop to an element in the DOM', () => {
-    const { container } = render(
+  describe('with explicit ID prop', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
       <LineChart width={500} height={500}>
         <Line isAnimationActive={false} data={data} dataKey="y" id="test-line-id" />
-      </LineChart>,
-    );
+        <XAxis allowDataOverflow />
+        {children}
+      </LineChart>
+    ));
 
-    const line = container.querySelector('#test-line-id');
-    assertNotNull(line);
-    expect(line.tagName).toBe('path');
-    expect(line.classList.value).toBe('recharts-curve recharts-line-curve');
+    it('should pass id prop to an element in the DOM', () => {
+      const { container } = renderTestCase();
+
+      const line = container.querySelector('#test-line-id');
+      assertNotNull(line);
+      expect(line.tagName).toBe('path');
+      expect(line.classList.value).toBe('recharts-curve recharts-line-curve');
+    });
+
+    it('should set the ID on the clipPath, if it needs clipping', () => {
+      const { container } = renderTestCase();
+
+      const clipPath = container.querySelector('#clipPath-test-line-id');
+      assertNotNull(clipPath);
+      expect(clipPath.tagName).toBe('clipPath');
+    });
   });
 
   it("Don't render any path when data is empty", () => {

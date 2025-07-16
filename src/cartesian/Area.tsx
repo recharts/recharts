@@ -255,14 +255,18 @@ function StaticArea({
   props: InternalProps;
   showLabels: boolean;
 }) {
-  const { layout, type, stroke, connectNulls, isRange, ...others } = props;
+  const { layout, type, stroke, connectNulls, isRange } = props;
+
+  const { id, ...propsWithoutId } = props;
+  const allOtherProps = filterProps(propsWithoutId, false);
 
   return (
     <>
       {points?.length > 1 && (
         <Layer clipPath={needClip ? `url(#clipPath-${clipPathId})` : undefined}>
           <Curve
-            {...filterProps(others, true)}
+            {...allOtherProps}
+            id={id}
             points={points}
             connectNulls={connectNulls}
             type={type}
@@ -273,7 +277,7 @@ function StaticArea({
           />
           {stroke !== 'none' && (
             <Curve
-              {...filterProps(props, false)}
+              {...allOtherProps}
               className="recharts-area-curve"
               layout={layout}
               type={type}
@@ -284,7 +288,7 @@ function StaticArea({
           )}
           {stroke !== 'none' && isRange && (
             <Curve
-              {...filterProps(props, false)}
+              {...allOtherProps}
               className="recharts-area-curve"
               layout={layout}
               type={type}
@@ -295,8 +299,8 @@ function StaticArea({
           )}
         </Layer>
       )}
-      <Dots points={points} props={props} clipPathId={clipPathId} />
-      {showLabels && LabelList.renderCallByParent(props, points)}
+      <Dots points={points} props={propsWithoutId} clipPathId={clipPathId} />
+      {showLabels && LabelList.renderCallByParent(propsWithoutId, points)}
     </>
   );
 }

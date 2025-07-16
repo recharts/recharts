@@ -206,7 +206,6 @@ function ScatterLine({ points, props }: { points: ReadonlyArray<ScatterPointItem
 function ScatterSymbols(props: ScatterSymbolsProps) {
   const { points, showLabels, allOtherScatterProps } = props;
   const { shape, activeShape, dataKey } = allOtherScatterProps;
-  const baseProps = filterProps(allOtherScatterProps, false);
 
   const activeIndex = useAppSelector(selectActiveTooltipIndex);
   const {
@@ -222,6 +221,10 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
   if (points == null) {
     return null;
   }
+
+  const { id, ...allOtherPropsWithoutId } = allOtherScatterProps;
+  const baseProps = filterProps(allOtherPropsWithoutId, false);
+
   return (
     <>
       <ScatterLine points={points} props={allOtherScatterProps} />
@@ -510,7 +513,7 @@ function ScatterWithId(props: InternalProps) {
   const clipPathId = isNullish(id) ? idRef.current : id;
 
   return (
-    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null}>
+    <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null} id={id}>
       {needClip && (
         <defs>
           <GraphicalItemClipPath clipPathId={clipPathId} xAxisId={xAxisId} yAxisId={yAxisId} />

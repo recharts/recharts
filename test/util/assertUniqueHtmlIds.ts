@@ -9,15 +9,15 @@ type ReturnsContainer = () => { container: Element };
  * @throws {Error} If a duplicate ID is found.
  */
 export function assertUniqueHtmlIds(root: Element | ReturnsContainer) {
-  let el;
+  let container;
   if (typeof root === 'function') {
-    el = root().container;
+    container = root().container;
   } else {
-    el = root;
+    container = root;
   }
 
   const idMap = new Map<string, number>();
-  const elementsWithIds = el.querySelectorAll('[id]');
+  const elementsWithIds = container.querySelectorAll('[id]');
 
   elementsWithIds.forEach(element => {
     const { id } = element;
@@ -29,7 +29,10 @@ export function assertUniqueHtmlIds(root: Element | ReturnsContainer) {
 
   idMap.forEach((count, id) => {
     if (count > 1) {
-      throw new Error(`Duplicate HTML ID found: "${id}", with ${count} occurrences.`);
+      const duplicateElements = Array.from(container.querySelectorAll(`[id="${id}"]`));
+      const elementList = duplicateElements.map(el => `${el.tagName}.${el.classList.value}`).join(', ');
+      const errorMessage = `Duplicate HTML ID found: "${id}", with ${count} occurrences: ${elementList}.`;
+      throw new Error(errorMessage);
     }
   });
 }
