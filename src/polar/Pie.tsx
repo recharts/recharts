@@ -20,14 +20,13 @@ import { Props as SectorProps } from '../shape/Sector';
 import { Curve } from '../shape/Curve';
 import { Text } from '../component/Text';
 import { Cell } from '../component/Cell';
-import { filterProps, findAllByType } from '../util/ReactUtils';
+import { filterProps, findAllByType, createEventHandlers } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import { getMaxRadius, polarToCartesian } from '../util/PolarUtils';
 import { getPercentValue, interpolateNumber, isNumber, mathSign } from '../util/DataUtils';
 import { getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
-  adaptEventsOfChild,
   AnimationDuration,
   AnimationTiming,
   ChartOffsetInternal,
@@ -430,8 +429,16 @@ function PieSectors(props: PieSectorsProps) {
     onMouseEnter: onMouseEnterFromProps,
     onClick: onItemClickFromProps,
     onMouseLeave: onMouseLeaveFromProps,
-    ...restOfAllOtherProps
+    ...restOfAllOtherPropsRaw
   } = allOtherPieProps;
+
+  // Explicitly add event handlers to restOfAllOtherProps
+  const restOfAllOtherProps = {
+    ...restOfAllOtherPropsRaw,
+    onClick: onItemClickFromProps,
+    onMouseEnter: onMouseEnterFromProps,
+    onMouseLeave: onMouseLeaveFromProps,
+  };
 
   const onMouseEnterFromContext = useMouseEnterItemDispatch(onMouseEnterFromProps, allOtherPieProps.dataKey);
   const onMouseLeaveFromContext = useMouseLeaveItemDispatch(onMouseLeaveFromProps);
@@ -456,17 +463,25 @@ function PieSectors(props: PieSectorsProps) {
           [DATA_ITEM_DATAKEY_ATTRIBUTE_NAME]: allOtherPieProps.dataKey,
         };
 
+        // Use the new utility function
+        const triggerInfo = {
+          tooltipPayload: entry.tooltipPayload,
+          tooltipPosition: entry.tooltipPosition,
+          cx: entry.cx,
+          cy: entry.cy,
+        };
+
+        const eventHandlers = createEventHandlers(restOfAllOtherProps, entry, i, triggerInfo, {
+          onClickFromContext,
+          onMouseEnterFromContext,
+          onMouseLeaveFromContext,
+        });
+
         return (
           <Layer
             tabIndex={-1}
             className="recharts-pie-sector"
-            {...adaptEventsOfChild(restOfAllOtherProps, entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseEnter={onMouseEnterFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onMouseLeave={onMouseLeaveFromContext(entry, i)}
-            // @ts-expect-error the types need a bit of attention
-            onClick={onClickFromContext(entry, i)}
+            {...eventHandlers}
             // eslint-disable-next-line react/no-array-index-key
             key={`sector-${entry?.startAngle}-${entry?.endAngle}-${entry.midAngle}-${i}`}
           >
@@ -743,46 +758,51 @@ const defaultPieProps = {
 function PieImpl(props: Props) {
   const propsWithDefaults: InternalProps = resolveDefaultProps(props, defaultPieProps);
 
+  // Merge event handlers into propsWithDefaults
+  const mergedProps: InternalProps = {
+    ...propsWithDefaults,
+  };
+
   const cells = useMemo(() => findAllByType(props.children, Cell), [props.children]);
-  const presentationProps = filterProps(propsWithDefaults, false);
+  const presentationProps = filterProps(mergedProps, false);
 
   const pieSettings: ResolvedPieSettings = useMemo(
     () => ({
-      name: propsWithDefaults.name,
-      nameKey: propsWithDefaults.nameKey,
-      tooltipType: propsWithDefaults.tooltipType,
-      data: propsWithDefaults.data,
-      dataKey: propsWithDefaults.dataKey,
-      cx: propsWithDefaults.cx,
-      cy: propsWithDefaults.cy,
-      startAngle: propsWithDefaults.startAngle,
-      endAngle: propsWithDefaults.endAngle,
-      minAngle: propsWithDefaults.minAngle,
-      paddingAngle: propsWithDefaults.paddingAngle,
-      innerRadius: propsWithDefaults.innerRadius,
-      outerRadius: propsWithDefaults.outerRadius,
-      cornerRadius: propsWithDefaults.cornerRadius,
-      legendType: propsWithDefaults.legendType,
-      fill: propsWithDefaults.fill,
+      name: mergedProps.name,
+      nameKey: mergedProps.nameKey,
+      tooltipType: mergedProps.tooltipType,
+      data: mergedProps.data,
+      dataKey: mergedProps.dataKey,
+      cx: mergedProps.cx,
+      cy: mergedProps.cy,
+      startAngle: mergedProps.startAngle,
+      endAngle: mergedProps.endAngle,
+      minAngle: mergedProps.minAngle,
+      paddingAngle: mergedProps.paddingAngle,
+      innerRadius: mergedProps.innerRadius,
+      outerRadius: mergedProps.outerRadius,
+      cornerRadius: mergedProps.cornerRadius,
+      legendType: mergedProps.legendType,
+      fill: mergedProps.fill,
       presentationProps,
     }),
     [
-      propsWithDefaults.cornerRadius,
-      propsWithDefaults.cx,
-      propsWithDefaults.cy,
-      propsWithDefaults.data,
-      propsWithDefaults.dataKey,
-      propsWithDefaults.endAngle,
-      propsWithDefaults.innerRadius,
-      propsWithDefaults.minAngle,
-      propsWithDefaults.name,
-      propsWithDefaults.nameKey,
-      propsWithDefaults.outerRadius,
-      propsWithDefaults.paddingAngle,
-      propsWithDefaults.startAngle,
-      propsWithDefaults.tooltipType,
-      propsWithDefaults.legendType,
-      propsWithDefaults.fill,
+      mergedProps.cornerRadius,
+      mergedProps.cx,
+      mergedProps.cy,
+      mergedProps.data,
+      mergedProps.dataKey,
+      mergedProps.endAngle,
+      mergedProps.innerRadius,
+      mergedProps.minAngle,
+      mergedProps.name,
+      mergedProps.nameKey,
+      mergedProps.outerRadius,
+      mergedProps.paddingAngle,
+      mergedProps.startAngle,
+      mergedProps.tooltipType,
+      mergedProps.legendType,
+      mergedProps.fill,
       presentationProps,
     ],
   );
@@ -791,8 +811,8 @@ function PieImpl(props: Props) {
 
   return (
     <>
-      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...propsWithDefaults, sectors }} />
-      <PieWithTouchMove {...propsWithDefaults} sectors={sectors} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={{ ...mergedProps, sectors }} />
+      <PieWithTouchMove {...mergedProps} sectors={sectors} />
     </>
   );
 }

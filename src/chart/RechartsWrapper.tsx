@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { CSSProperties, forwardRef, ReactNode, Ref, useState, useCallback } from 'react';
+import { CSSProperties, forwardRef, ReactNode, Ref, useState, useCallback, useRef, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { mouseLeaveChart } from '../state/tooltipSlice';
-import { useAppDispatch } from '../state/hooks';
+import { clearClickTooltip, mouseLeaveChart } from '../state/tooltipSlice';
+import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { mouseClickAction, mouseMoveAction } from '../state/mouseEventsMiddleware';
 import { useSynchronisedEventsFromOtherCharts } from '../synchronisation/useChartSynchronisation';
 import { focusAction, keyDownAction } from '../state/keyboardEventsMiddleware';
@@ -51,10 +51,36 @@ export const RechartsWrapper = forwardRef(
     const dispatch = useAppDispatch();
     const [tooltipPortal, setTooltipPortal] = useState<HTMLElement | null>(null);
     const [legendPortal, setLegendPortal] = useState<HTMLElement | null>(null);
+    const chartRef = useRef<HTMLDivElement>(null);
 
     useSynchronisedEventsFromOtherCharts();
 
     const setScaleRef = useReportScale();
+
+    // Check if we have a click-triggered tooltip active
+    const hasClickTooltipActive = useAppSelector(
+      state => state.tooltip.itemInteraction.click.active || state.tooltip.axisInteraction.click.active,
+    );
+
+    // Handle outside clicks
+    useEffect(() => {
+      if (!hasClickTooltipActive || !chartRef.current) {
+        return undefined;
+      }
+
+      const handleDocumentClick = (event: MouseEvent) => {
+        if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
+          dispatch(clearClickTooltip());
+        }
+      };
+
+      document.addEventListener('mousedown', handleDocumentClick, true);
+      document.addEventListener('pointerdown', handleDocumentClick, true);
+      return () => {
+        document.removeEventListener('mousedown', handleDocumentClick, true);
+        document.removeEventListener('pointerdown', handleDocumentClick, true);
+      };
+    }, [dispatch, hasClickTooltipActive]);
 
     const innerRef = useCallback(
       (node: HTMLDivElement | null) => {
@@ -64,6 +90,7 @@ export const RechartsWrapper = forwardRef(
         }
         setTooltipPortal(node);
         setLegendPortal(node);
+        chartRef.current = node;
       },
       [setScaleRef, ref, setTooltipPortal, setLegendPortal],
     );

@@ -9,6 +9,21 @@ import { getTooltip, showTooltip } from '../component/Tooltip/tooltipTestHelpers
 import { treemapNodeChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 
 describe('<Treemap />', () => {
+  test('should render a simple Treemap without any children', () => {
+    const { container } = render(
+      <Treemap
+        width={500}
+        height={250}
+        data={exampleTreemapData}
+        isAnimationActive={false}
+        nameKey="name"
+        dataKey="value"
+      />,
+    );
+
+    expect(container.querySelector('.recharts-wrapper')).toBeInTheDocument();
+  });
+
   test('renders 20 rectangles in simple TreemapChart', () => {
     const { container } = render(
       <Treemap
@@ -282,6 +297,77 @@ describe('<Treemap />', () => {
           </Treemap>,
         ),
       ).not.toThrow();
+    });
+  });
+
+  describe('external event handler forwarding', () => {
+    it('should call external onClick handler when provided', () => {
+      const externalOnClick = vi.fn();
+      const { container } = render(
+        <Treemap
+          width={500}
+          height={250}
+          data={exampleTreemapData}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          onClick={externalOnClick}
+        />,
+      );
+
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      const firstRectangle = rectangles[0];
+
+      // Use fireEvent for proper React event handling
+      fireEvent.click(firstRectangle);
+
+      expect(externalOnClick).toHaveBeenCalled();
+    });
+
+    it('should call external onMouseEnter handler when provided', () => {
+      const externalOnMouseEnter = vi.fn();
+      const { container } = render(
+        <Treemap
+          width={500}
+          height={250}
+          data={exampleTreemapData}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          onMouseEnter={externalOnMouseEnter}
+        />,
+      );
+
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      const firstRectangle = rectangles[0];
+
+      // Use fireEvent for proper React event handling
+      fireEvent.mouseEnter(firstRectangle);
+
+      expect(externalOnMouseEnter).toHaveBeenCalled();
+    });
+
+    it('should call external onMouseLeave handler when provided', () => {
+      const externalOnMouseLeave = vi.fn();
+      const { container } = render(
+        <Treemap
+          width={500}
+          height={250}
+          data={exampleTreemapData}
+          isAnimationActive={false}
+          nameKey="name"
+          dataKey="value"
+          onMouseLeave={externalOnMouseLeave}
+        />,
+      );
+
+      const rectangles = container.querySelectorAll('.recharts-rectangle');
+      const firstRectangle = rectangles[0];
+
+      // Use fireEvent for proper React event handling
+      fireEvent.mouseLeave(firstRectangle);
+
+      expect(externalOnMouseLeave).toHaveBeenCalled();
     });
   });
 });
