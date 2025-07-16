@@ -84,7 +84,10 @@ jobs:
         run: npm run storybook-doctor
 
       - name: Storybook Test
-        run: npm run test-storybook:ci
+        run: npm run test-storybook
+
+      - name: Storybook Build
+        run: npm run build-storybook
 
       - name: Pack Library
         # Give this step an ID so we can reference its output

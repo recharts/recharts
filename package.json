@@ -45,9 +45,7 @@
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
     "chromatic": "npx chromatic",
     "test-build-output": "vitest run --config scripts/vitest-build.config.ts",
-    "test-storybook": "vitest --config vitest.config.mts --project storybook",
-    "test-storybook:url": "vitest --config vitest.config.mts --project storybook --url http://127.0.0.1:9009",
-    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"npm run build-storybook --quiet && npx http-server storybook/public --port 9009 --silent\" \"wait-on tcp:127.0.0.1:9009 && npm run test-storybook:url --maxWorkers=2\""
+    "test-storybook": "vitest --config vitest.config.mts --project storybook"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -125,7 +123,6 @@
     "babel-plugin-dev-expression": "^0.2.3",
     "browserslist": "^4.23.2",
     "chromatic": "^11.5.6",
-    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "d3-scale-chromatic": "^3.1.0",
     "d3-time": "^3.1.0",
@@ -159,7 +156,6 @@
     "update-browserslist-db": "^1.1.0",
     "vitest": "^3.2.3",
     "vitest-axe": "^0.1.0",
-    "wait-on": "^8.0.3",
     "webpack": "^5.93.0",
     "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.4",
