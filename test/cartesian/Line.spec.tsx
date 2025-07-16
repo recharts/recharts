@@ -12,6 +12,7 @@ import { ActiveDotProps, ActiveDotType } from '../../src/util/types';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { showTooltip } from '../component/Tooltip/tooltipTestHelpers';
 import { lineChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
+import { assertNotNull } from '../helper/assertNotNull';
 
 describe('<Line />', () => {
   beforeEach(() => {
@@ -111,6 +112,19 @@ describe('<Line />', () => {
     const dotsWrapper = container.querySelector('.recharts-line-dots');
     expect(dotsWrapper.hasAttribute('clip-path')).toBe(true);
     expect(dotsWrapper.getAttribute('clip-path')).toContain('url(#clipPath-recharts-line');
+  });
+
+  it('should pass id prop to an element in the DOM', () => {
+    const { container } = render(
+      <LineChart width={500} height={500}>
+        <Line isAnimationActive={false} data={data} dataKey="y" id="test-line-id" />
+      </LineChart>,
+    );
+
+    const line = container.querySelector('#test-line-id');
+    assertNotNull(line);
+    expect(line.tagName).toBe('path');
+    expect(line.classList.value).toBe('recharts-curve recharts-line-curve');
   });
 
   it("Don't render any path when data is empty", () => {

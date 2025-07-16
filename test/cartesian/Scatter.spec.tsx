@@ -186,6 +186,19 @@ describe('<Scatter />', () => {
     expect.soft(container.querySelector('[fill="fill4"]')).toBeInTheDocument();
   });
 
+  it('should pass id prop to an element in the DOM', () => {
+    const { container } = render(
+      <ScatterChart width={500} height={500}>
+        <Scatter isAnimationActive={false} data={data} dataKey="cx" id="test-scatter-id" />
+      </ScatterChart>,
+    );
+
+    const scatter = container.querySelector('#test-scatter-id');
+    assertNotNull(scatter);
+    expect(scatter.tagName).toBe('path');
+    expect(scatter.classList.value).toBe('recharts-symbols');
+  });
+
   describe('state integration', () => {
     it('should publish its configuration to redux store', () => {
       const settingsSpy = vi.fn();

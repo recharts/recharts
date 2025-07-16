@@ -16,6 +16,7 @@ import { BaseAxisWithScale, implicitYAxis } from '../../src/state/selectors/axis
 import { mockXAxisWithScale, mockYAxisWithScale } from '../helper/mockAxes';
 import { useLegendPayload } from '../../src/context/legendPayloadContext';
 import { selectTooltipPayloadConfigurations } from '../../src/state/selectors/selectors';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type TestCase = CartesianChartTestCase;
 
@@ -426,6 +427,19 @@ describe.each(chartsThatSupportArea)('<Area /> as a child of $testName', ({ Char
         expect.soft(curves[1]).toHaveAttribute('d', 'M5,5L127.5,5L250,5L372.5,5L495,5');
       });
     });
+  });
+
+  it('should pass id prop to an element in the DOM', () => {
+    const { container } = render(
+      <ChartElement data={data}>
+        <Area dataKey="value" id="my-custom-area-id" />
+      </ChartElement>,
+    );
+
+    const area = container.querySelector('#my-custom-area-id');
+    assertNotNull(area);
+    expect(area.tagName).toBe('path');
+    expect(area.classList.value).toBe('recharts-curve recharts-area-area');
   });
 
   describe('state integration', () => {

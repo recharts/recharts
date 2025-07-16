@@ -26,6 +26,7 @@ import { selectActiveTooltipIndex, selectTooltipAxisTicks } from '../../src/stat
 import { barChartMouseHoverTooltipSelector } from '../component/Tooltip/tooltipMouseHoverSelectors';
 import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { noInteraction, TooltipState } from '../../src/state/tooltipSlice';
+import { assertNotNull } from '../helper/assertNotNull';
 
 type TestCase = CartesianChartTestCase;
 
@@ -210,6 +211,19 @@ describe.each(chartsThatSupportBar)('<Bar /> as a child of $testName', ({ ChartE
     );
 
     expectBars(container, []);
+  });
+
+  it('should pass id prop to an element in the DOM', () => {
+    const { container } = renderWithStrictMode(
+      <ChartElement layout="horizontal" data={data}>
+        <Bar isAnimationActive={false} dataKey="value" id="test-bar-id" />
+      </ChartElement>,
+    );
+
+    const bar = container.querySelector('#test-bar-id');
+    assertNotNull(bar);
+    expect(bar.tagName).toBe('path');
+    expect(bar.classList.value).toBe('recharts-rectangle');
   });
 
   describe('barSize', () => {
