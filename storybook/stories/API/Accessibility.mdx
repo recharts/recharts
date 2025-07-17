@@ -1,0 +1,67 @@
+import { curveCardinal } from 'victory-vendor/d3-shape';
+import { CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, LineChart, Line, Brush } from '../../../src';
+import { pageData } from '../data';
+import { CategoricalChartProps } from './props/ChartProps';
+
+# Keyboard Accessibility
+
+Anything that a user can do with a mouse, a user should also be able to do using only the keyboard. This is a fundamental requirement for anyone looking to make their software accessibility, and is expanded on in the [W3C's WCAG 2.1.1 success criteria](https://www.w3.org/WAI/WCAG21/Understanding/keyboard.html).
+
+While keyboard-only access is not available out of the box, you can turn on support for keyboard interactions using the `accessibilityLayer` prop. The accessibility layer adds the chart to the tab order, and adds keyboard event handler to listen for arrow keys. This will quickly and easily support accessibility for keyboard-only users.
+
+To see how this works, try the following chart, where the accessibility layer has been applied. You can press the TAB key until you reach the chart. When you see a black border appear around the chart, the chart is "in focus". Once in focus, you can press the left or right arrow key to navigate between individual points. As you navigate, the tooltip will appear at each point, providing access to underlying data.
+
+<ResponsiveContainer width="100%" height={400}>
+    <LineChart
+        data={pageData}
+        title="Line chart showing UV values for pages"
+        accessibilityLayer
+    >
+        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Brush />
+    </LineChart>
+</ResponsiveContainer>
+
+This chart also contains a "brush", a range slider that lets you control what appears on the X-axis. You can tab to the "travellers" on the brush, and use the left/right arrow keys to adjust them.
+
+The code to generate this example is:
+```jsx
+<ResponsiveContainer width="100%" height={400}>
+    <LineChart
+        data={pageData}
+        title="Line chart showing UV values for pages"
+        accessibilityLayer
+    >
+        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+    </LineChart>
+</ResponsiveContainer>
+```
+
+The accessibility layer is not currently available for all charts. The accessibility layer can only be used under the following conditions:
+1. The chart must be categorical. This includes: AreaChart, BarChart, ComposedChart, and LineChart.
+2. The chart must include a tooltip.
+3. The chart must have a horizontal layout.
+
+## Screen reader support
+The accessibility layer works with the tooltip to provide feedback to screen reader users.
+
+If you are using a default tooltip, it will work with the `accessibilityLayer` to support screen reader users. The default tooltip will turn into a "live region", which means that screen readers will read the contents of the region as it updates. This will give blind users access to the underlying data in a chart, alongside sighted users.
+
+If you are building your own custom tooltip, you can turn it into a live region by using the attributes `role="status" aria-live="assertive"`. Keep in mind that the full content of the tooltip will be read for every data point that the user interacts with, so it's best practices to keep the content in the tooltip to a minimum.
+
+## Technical notes
+
+When you apply the `accessibilityLayer` to a chart, it will do a couple of things:
+1. By default, it will set the `role="application"`. This can be overwritten if you pass in your own `role` prop.
+2. By default, it will set the `tabIndex={0}`. This can be overwritten if you pass in your own `tabIndex` prop.
+
+The accessibility layer works by spoofing mouse movements. 
+The layer adds an `onKeyDown` handler to intercept `ArrowLeft` and `ArrowRight` keys. 
+These keystrokes will then be transformed into mouse movements. 
+This means that if you are using `onMouseMove` in addition to `accessibilityLayer`, the `onMouseMove` callback will be fired when the user presses the left and right arrow keys.

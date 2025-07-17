@@ -1,0 +1,23 @@
+import { ArgTypes, Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Cross.stories';
+
+# Cross
+
+The Cross is a shape that is valid in the context of any SVG as well as within the `<Customized />` component.
+This is a building block used internally to recharts to create cursor components, etc.
+
+```jsx
+<Customized component={<Cross {...crossProps} />} />
+```
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Properties
+
+The following table shows a complete list of all properties of the Cross.
+
+<Controls of={ComponentStories.API} />
