@@ -18,7 +18,7 @@ const dirname: string = typeof __dirname !== 'undefined' ? __dirname : path.dirn
 export default defineConfig({
   plugins: [react()],
   test: {
-    reporters: ['hanging-process'],
+    reporters: ['default', 'hanging-process'],
     environment: 'jsdom',
     globals: true,
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
