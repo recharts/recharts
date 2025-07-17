@@ -4,10 +4,10 @@ import { ActiveDotProps, ActiveDotType, adaptEventHandlers, DataKey } from '../u
 import { filterProps } from '../util/ReactUtils';
 import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
-import { isNullish } from '../util/DataUtils';
 import { useAppSelector } from '../state/hooks';
 import { selectActiveTooltipIndex } from '../state/selectors/tooltipSelectors';
 import { useActiveTooltipDataPoints } from '../hooks';
+import { isNullish } from '../util/DataUtils';
 
 export interface PointType {
   readonly x: number | null;
