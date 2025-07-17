@@ -47,6 +47,7 @@ export default defineConfig({
         test: {
           exclude: ['**/test/**'],
           name: 'storybook',
+          reporters: ['hanging-process'],
           browser: {
             enabled: true,
             headless: true,
