@@ -101,9 +101,6 @@ jobs:
         # if: ${{ failure() || cancelled() }} # Or use `always()` to connect even on success
         timeout-minutes: 20 # Keep the session open
 
-      - name: sleep
-        run: sleep 1200 # Sleep for 20 minutes to keep the tmate session open
-
 #      - name: Storybook Build
 #        run: npm run build-storybook
 #
