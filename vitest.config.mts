@@ -18,6 +18,7 @@ const dirname: string = typeof __dirname !== 'undefined' ? __dirname : path.dirn
 export default defineConfig({
   plugins: [react()],
   test: {
+    reporters: ['hanging-process'],
     environment: 'jsdom',
     globals: true,
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
@@ -47,7 +48,6 @@ export default defineConfig({
         test: {
           exclude: ['**/test/**'],
           name: 'storybook',
-          reporters: ['hanging-process'],
           browser: {
             enabled: true,
             headless: true,
