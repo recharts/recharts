@@ -91,15 +91,15 @@ jobs:
       - name: Storybook doctor
         run: npm run storybook-doctor
 
-#      - name: Storybook Test
-#        run: npm run test-storybook
-#        timeout-minutes: 10
+      - name: Storybook Test
+        run: npm run test-storybook
+        timeout-minutes: 10
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: always()
-        # if: ${{ failure() || cancelled() }} # Or use `always()` to connect even on success
-        timeout-minutes: 20 # Keep the session open
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+#        if: always()
+#        # if: ${{ failure() || cancelled() }} # Or use `always()` to connect even on success
+#        timeout-minutes: 20 # Keep the session open
 
 #      - name: Storybook Build
 #        run: npm run build-storybook
