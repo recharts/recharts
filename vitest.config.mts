@@ -19,6 +19,11 @@ export default defineConfig({
   plugins: [react()],
   test: {
     maxWorkers: 1,
+    poolOptions: {
+      threads: {
+        maxThreads: 1,
+      },
+    },
     reporters: ['default', 'hanging-process'],
     environment: 'jsdom',
     globals: true,
