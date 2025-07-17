@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './XAxis.stories';
+
+# XAxis
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+The XAxis can be used within `<AreaChart />`, `<BarChart />`, `<LineChart />`, `<ComposedChart />` or `<ScatterChart />`.
+
+## Child component
+
+The XAxis can be used with the following child components: `<Label />`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />

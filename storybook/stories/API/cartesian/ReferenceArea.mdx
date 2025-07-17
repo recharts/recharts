@@ -1,0 +1,24 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './ReferenceArea.stories';
+
+# ReferenceArea
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+The ReferenceArea can be used within the following parent components:
+
+`<AreaChart/>` `<BarChart/>` `<LineChart/>` `<ComposedChart/>` `<ScatterChart/>`
+
+## Child component
+The ReferenceArea can be used with the following child components: `<Label/>`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />

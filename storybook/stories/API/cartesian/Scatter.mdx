@@ -1,0 +1,30 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Scatter.stories';
+
+# Scatter
+The Scatter component is different to all other cartesian components in that it does not require a dataKey to be set.
+Without a dataKey, the xAxis and yAxis are used to determine the position of the scatter points, which both require a dataKey.
+
+If the dataKey is set, and no xAxis or yAxis is set, the Scatter will use the dataKey to determine the y-Axis value of the scatter points, and the index of each data point on the xAxis.
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+
+## Parent Component
+
+The Scatter can be used within a `<ScatterChart/>` or a `<ComposedChart/>`.
+
+## Child component
+
+The Scatter can be used with the following child components: `<Cell />`, `<LabelList/>` or a `<ErrorBar/>`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />
+
