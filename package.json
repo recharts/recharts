@@ -45,7 +45,7 @@
     "build-storybook": "npx storybook build -o storybook/public -c storybook",
     "chromatic": "npx chromatic",
     "test-build-output": "vitest run --config scripts/vitest-build.config.ts",
-    "test-storybook": "vitest --single-thread --config vitest.config.mts --project storybook"
+    "test-storybook": "vitest --config vitest.config.mts --project storybook"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

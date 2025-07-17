@@ -21,7 +21,7 @@ export default defineConfig({
     maxWorkers: 1,
     poolOptions: {
       threads: {
-        maxThreads: 1,
+        singleThread: true,
       },
     },
     reporters: ['default', 'hanging-process'],
