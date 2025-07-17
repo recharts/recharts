@@ -43,11 +43,6 @@ jobs:
   build_test_pack:
     name: Build, Test, Pack
     runs-on: ubuntu-latest
-    container:
-        # Use the Playwright container to run tests, as recommended in https://storybook.js.org/docs/writing-tests/in-ci
-      # Make sure to grab the latest version of the Playwright image
-      # https://playwright.dev/docs/docker#pull-the-image
-      image: mcr.microsoft.com/playwright:v1.54.0-noble
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     outputs:
@@ -72,6 +67,10 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      # https://playwright.dev/docs/ci#github-actions
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
 #      - name: Build
 #        run: npm run build
