@@ -50,6 +50,10 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.54.0-noble
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      # Workaround for Firefox issue in Playwright container
+      # https://github.com/microsoft/playwright/issues/27213
+      HOME: /root
+
     outputs:
       # Output the *name* of the generated tgz file (relative to RECHARTS_PATH)
       # The actual file will be passed via artifact
