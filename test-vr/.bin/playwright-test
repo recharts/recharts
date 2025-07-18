@@ -1,0 +1,3 @@
+#!/bin/bash
+
+npx playwright test --config=/recharts/test-vr/playwright-ct.config.ts "$@"

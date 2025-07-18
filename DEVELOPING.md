@@ -17,6 +17,12 @@ $ npm run test
 
 ## Running mutation tests
 
+Mutation tests may take several hours to complete.
+You may want to first open `./stryker.config.mjs` and set the `mutate` property to a specific file or directory
+that you want to test.
+
+Mutation tests do not run in CI.
+
 ```sh
 $ npm run test-mutation
 ```
@@ -32,13 +38,63 @@ $ npm run check-types
 
 ## Storybook
 
-We are in the process of unifying documentation and examples in storybook. To run it locally, execute
+To run the Storybook UI:
 
 ```sh
-$ npm run[-script] storybook
+$ npm run storybook
 ```
 
 and then browse to http://localhost:6006.
+
+While the storybook is running:
+
+```sh
+$ npm run test-storybook
+```
+
+## Run visual regression tests (using playwright)
+
+### Prerequisites
+
+Playwright tests are running inside Docker. You will need to have Docker installed and running.
+See https://docs.docker.com/get-started/get-docker/. You do not need Docker account or login.
+
+You only need to do this once.
+
+### Build the Docker image
+
+This takes two or three minutes to complete.
+You will need to re-build every time you make a change to dependencies in `package.json`.
+
+```sh
+$ npm run test-vr:prepare
+```
+
+### Run the tests
+
+Now, the usual loop. Write a new test, run it, fix it, repeat.
+
+```sh
+$ npm run test-vr
+```
+
+Alternatively, the UI playwright mode is available as well:
+
+```sh
+$ npm run test-vr:ui
+````
+
+If you want to record new snapshots or update the old ones, you can run:
+
+```sh
+$ npm run test-vr:update
+```
+
+You will see new files created in the `test-vr/__snapshots__` directory, please commit them to the repository!
+
+### See VR test results
+
+Open http://localhost:9323 in your browser to see the results of the tests.
 
 ## Releases
 
