@@ -1,0 +1,10 @@
+.flex-parent {
+  display: flex;
+  flex-direction: row;
+  height: 500px;
+  width: 100%;
+}
+
+.flex-child {
+  flex: 1;
+}
