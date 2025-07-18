@@ -60,7 +60,7 @@ export default defineConfig({
             provider: 'playwright',
             instances: [
               {
-                browser: 'chromium',
+                browser: 'firefox',
               },
             ],
           },
@@ -86,7 +86,7 @@ export default defineConfig({
             provider: 'playwright',
             instances: [
               {
-                browser: 'chromium',
+                browser: 'firefox',
               },
             ],
           },
