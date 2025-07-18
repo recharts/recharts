@@ -50,6 +50,8 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.54.0-noble
     env:
       ENCRYPTED_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      # /root home is required to allow Firefox to run in the container
+      HOME: /root
     outputs:
       # Output the *name* of the generated tgz file (relative to RECHARTS_PATH)
       # The actual file will be passed via artifact
@@ -90,6 +92,7 @@ jobs:
 
       - name: Storybook Test
         run: npm run test-storybook
+        timeout-minutes: 10
 
       - name: Storybook Build
         run: npm run build-storybook
