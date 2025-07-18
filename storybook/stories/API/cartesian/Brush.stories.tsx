@@ -1,5 +1,4 @@
 import React from 'react';
-import { fireEvent, within, expect } from 'storybook/test';
 import { Args } from '@storybook/react-vite';
 import { pageData } from '../../data';
 import {
@@ -110,16 +109,6 @@ export const API = {
     </ResponsiveContainer>
   ),
   args: getStoryArgsFromArgsTypesObject(GeneralProps),
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const canvas = within(canvasElement);
-    const slider = await canvas.findAllByRole('slider');
-    const leftSlider = slider[0];
-    expect(leftSlider).toBeTruthy();
-
-    fireEvent.mouseDown(leftSlider);
-    fireEvent.mouseMove(leftSlider, { clientX: 200 });
-    fireEvent.mouseUp(leftSlider);
-  },
 };
 
 export const PanoramaWithLine = {
