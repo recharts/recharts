@@ -91,12 +91,12 @@ jobs:
       - name: Storybook doctor
         run: npm run storybook-doctor
 
-      - name: Storybook Test API
-        run: npm run test-storybook-api
-        timeout-minutes: 5
-
       - name: Storybook Test Examples
         run: npm run test-storybook-examples
+        timeout-minutes: 5
+
+      - name: Storybook Test API
+        run: npm run test-storybook-api
         timeout-minutes: 5
 
 #      - name: Setup tmate session
