@@ -13,6 +13,7 @@ import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { expectAreaCurve } from '../helper/expectAreaCurve';
+import { rangeData } from '../../storybook/stories/data/Page';
 
 describe('AreaChart', () => {
   beforeEach(() => {
@@ -617,5 +618,29 @@ describe('AreaChart', () => {
       // Since areas are stacked, pv should go to same point as uv.
       expect([x, y]).toEqual(['50', '43']);
     });
+  });
+
+  test('Renders two active dots for ranged Area chart on hover', () => {
+    const { container } = render(
+      <AreaChart width={400} height={200} data={rangeData}>
+        <Area
+          type="monotone"
+          dataKey="temperature"
+          stroke="#8884d8"
+          fill="#8884d8"
+          activeDot={{ className: 'customized-active-dot', r: 8, stroke: 'red' }}
+        />
+        <Tooltip />
+        <XAxis dataKey="day" />
+        <YAxis />
+      </AreaChart>,
+    );
+    const chart = container.querySelector('.recharts-wrapper');
+    assertNotNull(chart);
+    fireEvent.mouseMove(chart, { clientX: 100, clientY: 100 });
+    const dots = container.querySelectorAll('.customized-active-dot');
+    const tooltip = container.querySelector('.recharts-tooltip-wrapper');
+    expect(dots.length).toBe(2);
+    expect(tooltip).not.toBeNull();
   });
 });

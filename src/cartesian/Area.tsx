@@ -896,11 +896,13 @@ export function computeArea({
         return {
           x: entry.x,
           y: x != null && entry.y != null ? yAxis.scale(x) : null,
+          payload: entry.payload,
         };
       }
       return {
         x: x != null ? xAxis.scale(x) : null,
         y: entry.y,
+        payload: entry.payload,
       };
     });
   } else {
