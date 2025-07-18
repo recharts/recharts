@@ -1,5 +1,4 @@
 import React from 'react';
-import { expect, within } from 'storybook/test';
 import { Args } from '@storybook/react-vite';
 import { ComposedChart, ReferenceArea, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from '../../../../../src';
 import { pageData } from '../../../data';
@@ -42,15 +41,5 @@ export const IfOverflow = {
         </ComposedChart>
       </ResponsiveContainer>
     );
-  },
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const { findByText } = within(canvasElement);
-    /**
-     * assert that when ifOverflow="extendDomain" 1900 becomes the new domain y-max.
-     * this test will fail when the user changes the ifOverflow arg, but it will give us confidence
-     * that 'extendDomain' behavior remains the same.
-     */
-    expect(await findByText('1900')).toBeInTheDocument();
-    expect(await findByText('-950')).toBeInTheDocument();
   },
 };

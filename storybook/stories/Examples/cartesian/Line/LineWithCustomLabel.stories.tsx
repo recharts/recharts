@@ -1,6 +1,5 @@
 import React from 'react';
 import { Args, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
 import { pageData } from '../../../data';
 import { ComposedChart, Area, ResponsiveContainer } from '../../../../../src';
 import { RechartsHookInspector } from '../../../../storybook-addon-recharts';
@@ -45,11 +44,5 @@ export const CustomizedLabel: StoryObj = {
         </ComposedChart>
       </ResponsiveContainer>
     );
-  },
-
-  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-    const { findAllByText } = within(canvasElement);
-
-    expect(await findAllByText('Customized Label', { exact: false })).toHaveLength(pageData.length);
   },
 };

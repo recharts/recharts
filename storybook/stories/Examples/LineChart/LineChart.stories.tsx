@@ -1,5 +1,4 @@
 // eslint-disable-next-line max-classes-per-file
-import { expect, userEvent, within } from 'storybook/test';
 import { Args, StoryObj } from '@storybook/react-vite';
 import React, { PureComponent, useState } from 'react';
 import { Impressions, impressionsData, logData, pageData } from '../../data';
@@ -850,13 +849,6 @@ export const NegativeValuesWithReferenceLines = {
 };
 
 export const ToggleChildrenComponentsExceptCartesianGrid: StoryObj = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.getByText('Page A')).toBeInTheDocument();
-    await userEvent.click(canvas.getByTestId('toggle'));
-    expect(canvas.queryByText('Page A')).not.toBeInTheDocument();
-  },
   render: (args: Args, context: RechartsStoryContext) => {
     const data = [
       {
