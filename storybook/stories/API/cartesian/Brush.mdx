@@ -1,0 +1,20 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as ComponentStories from './Brush.stories';
+
+# Brush
+
+<Meta of={ComponentStories} />
+
+<Canvas>
+  <Story name="API" of={ComponentStories} />
+</Canvas>
+
+## Parent Component
+
+The Brush can be used within a `<AreaChart />`, a `<BarChart />`, a `<LineChart />`, a `<ComposedChart />` or a `<ScatterChart />`
+
+## Properties
+
+Properties in the groups Other and Internal are not recommended to be used.
+
+<Controls of={ComponentStories.API} />
