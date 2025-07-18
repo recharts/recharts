@@ -11,7 +11,7 @@ import { Layer } from '../container/Layer';
 import { ErrorBarDataItem, ErrorBarDataPointFormatter, SetErrorBarPreferredDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
 import { LabelList } from '../component/LabelList';
-import { interpolateNumber, isNan, isNullish, mathSign, uniqueId } from '../util/DataUtils';
+import { interpolateNumber, isNan, mathSign } from '../util/DataUtils';
 import { filterProps, findAllByType } from '../util/ReactUtils';
 import { Global } from '../util/Global';
 import {
@@ -491,8 +491,6 @@ const errorBarDataPointFormatter: ErrorBarDataPointFormatter = (
 };
 
 class BarWithState extends PureComponent<InternalProps> {
-  id = uniqueId('recharts-bar-');
-
   render() {
     const { hide, data, dataKey, className, xAxisId, yAxisId, needClip, background, id, layout } = this.props;
     if (hide) {
@@ -500,7 +498,7 @@ class BarWithState extends PureComponent<InternalProps> {
     }
 
     const layerClass = clsx('recharts-bar', className);
-    const clipPathId = isNullish(id) ? this.id : id;
+    const clipPathId = id;
 
     return (
       <Layer className={layerClass} id={id}>
@@ -726,23 +724,25 @@ export class Bar extends PureComponent<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <CartesianGraphicalItemContext
-        id={this.props.id}
-        type="bar"
-        // Bar does not allow setting data directly on the graphical item (why?)
-        data={null}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={0}
-        dataKey={this.props.dataKey}
-        stackId={this.props.stackId}
-        hide={this.props.hide}
-        barSize={this.props.barSize}
-      >
+      <>
         <SetLegendPayload legendPayload={computeLegendPayloadFromBarData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <BarImpl {...this.props} />
-      </CartesianGraphicalItemContext>
+        <CartesianGraphicalItemContext
+          id={this.props.id}
+          type="bar"
+          // Bar does not allow setting data directly on the graphical item (why?)
+          data={null}
+          xAxisId={this.props.xAxisId}
+          yAxisId={this.props.yAxisId}
+          zAxisId={0}
+          dataKey={this.props.dataKey}
+          stackId={this.props.stackId}
+          hide={this.props.hide}
+          barSize={this.props.barSize}
+        >
+          {id => <BarImpl {...this.props} id={id} />}
+        </CartesianGraphicalItemContext>
+      </>
     );
   }
 }

@@ -13,6 +13,8 @@ import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 
 const areaSettings: AreaSettings = {
+  id: 'area-0',
+  barSize: undefined,
   connectNulls: true,
   baseValue: undefined,
   dataKey: 'uv',

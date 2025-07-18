@@ -29,6 +29,13 @@ export type ErrorBarsSettings = {
    */
 };
 
+/**
+ * Unique ID of the graphical item.
+ * This is used to identify the graphical item in the state and in the React tree.
+ * This is required for every graphical item - it's either provided by the user or generated automatically.
+ */
+export type GraphicalItemId = string;
+
 export type CartesianGraphicalItemType = 'area' | 'bar' | 'line' | 'scatter';
 export type PolarGraphicalItemType = 'pie' | 'radar' | 'radialBar';
 

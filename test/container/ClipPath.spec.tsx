@@ -78,7 +78,7 @@ describe('clip paths', () => {
       });
       const clipPath = line.querySelector('clipPath');
       const clipPathId = clipPath.getAttribute('id');
-      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-line-\d+/));
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-line-[:a-z]+/));
       const curve = container.querySelector('.recharts-line-curve');
       expect(curve.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
@@ -200,7 +200,7 @@ describe('clip paths', () => {
       });
       const clipPath = bar.querySelector('clipPath');
       const clipPathId = clipPath.getAttribute('id');
-      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-bar-\d+/));
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-bar-[:a-z]+/));
       const layer = bar.querySelector('.recharts-bar-rectangles');
       expect(layer.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
@@ -267,7 +267,7 @@ describe('clip paths', () => {
       });
       const clipPath = scatter.querySelector('clipPath');
       const clipPathId = clipPath.getAttribute('id');
-      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-scatter-\d+/));
+      expect(clipPathId).toEqual(expect.stringMatching(/clipPath-recharts-scatter-[:a-z]+/));
       expect(scatter.getAttribute('clip-path')).toEqual(`url(#${clipPathId})`);
     });
 

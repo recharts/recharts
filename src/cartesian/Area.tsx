@@ -7,7 +7,7 @@ import { Dot } from '../shape/Dot';
 import { Layer } from '../container/Layer';
 import { LabelList } from '../component/LabelList';
 import { Global } from '../util/Global';
-import { interpolate, isNan, isNullish, isNumber, uniqueId } from '../util/DataUtils';
+import { interpolate, isNan, isNullish, isNumber } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey, StackId } from '../util/ChartUtils';
 import {
   ActiveDotType,
@@ -39,6 +39,7 @@ import { resolveDefaultProps } from '../util/resolveDefaultProps';
 import { isWellBehavedNumber } from '../util/isWellBehavedNumber';
 import { Animate } from '../animation/Animate';
 import { usePlotArea } from '../hooks';
+import { WithIdRequired, WithoutId } from '../util/useUniqueId';
 
 export type BaseValue = number | 'dataMin' | 'dataMax';
 
@@ -61,7 +62,10 @@ interface InternalAreaProps {
   height?: number;
   hide: boolean;
 
-  id?: string;
+  /**
+   * ID is mandatory internally, but optional externally.
+   */
+  id: string;
   isAnimationActive: boolean;
   isRange?: boolean;
   label?: any;
@@ -201,7 +205,7 @@ function Dots({
 }: {
   clipPathId: string;
   points: ReadonlyArray<AreaPointItem>;
-  props: InternalProps;
+  props: WithoutId<InternalProps>;
 }) {
   const { needClip, dot, dataKey } = props;
 
@@ -617,8 +621,6 @@ function RenderArea({ needClip, clipPathId, props }: { needClip: boolean; clipPa
 }
 
 class AreaWithState extends PureComponent<InternalProps> {
-  id = uniqueId('recharts-area-');
-
   render() {
     const { hide, dot, points, className, top, left, needClip, xAxisId, yAxisId, width, height, id, baseLine } =
       this.props;
@@ -628,7 +630,7 @@ class AreaWithState extends PureComponent<InternalProps> {
     }
 
     const layerClass = clsx('recharts-area', className);
-    const clipPathId = isNullish(id) ? this.id : id;
+    const clipPathId = id;
     const { r = 3, strokeWidth = 2 } = filterProps(dot, false) ?? { r: 3, strokeWidth: 2 };
     const clipDot = isClipDot(dot);
     const dotSize = r * 2 + strokeWidth;
@@ -689,7 +691,7 @@ const defaultAreaProps = {
   yAxisId: 0,
 } as const satisfies Partial<Props>;
 
-function AreaImpl(props: Props) {
+function AreaImpl(props: WithIdRequired<Props>) {
   const {
     activeDot,
     animationBegin,
@@ -713,14 +715,16 @@ function AreaImpl(props: Props) {
   const isPanorama = useIsPanorama();
 
   const areaSettings: AreaSettings = useMemo(
-    () => ({
+    (): AreaSettings => ({
+      id: props.id,
       baseValue: props.baseValue,
       stackId: props.stackId,
       connectNulls,
       data: props.data,
       dataKey: props.dataKey,
+      barSize: undefined,
     }),
-    [props.baseValue, props.stackId, connectNulls, props.data, props.dataKey],
+    [props.id, props.baseValue, props.stackId, props.data, props.dataKey, connectNulls],
   );
   const { points, isRange, baseLine } =
     useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
@@ -918,22 +922,24 @@ export class Area extends PureComponent<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <CartesianGraphicalItemContext
-        id={this.props.id}
-        type="area"
-        data={this.props.data}
-        dataKey={this.props.dataKey}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={0}
-        stackId={this.props.stackId}
-        hide={this.props.hide}
-        barSize={undefined}
-      >
+      <>
         <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
         <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <AreaImpl {...this.props} />
-      </CartesianGraphicalItemContext>
+        <CartesianGraphicalItemContext
+          id={this.props.id}
+          type="area"
+          data={this.props.data}
+          dataKey={this.props.dataKey}
+          xAxisId={this.props.xAxisId}
+          yAxisId={this.props.yAxisId}
+          zAxisId={0}
+          stackId={this.props.stackId}
+          hide={this.props.hide}
+          barSize={undefined}
+        >
+          {id => <AreaImpl {...this.props} id={id} />}
+        </CartesianGraphicalItemContext>
+      </>
     );
   }
 }

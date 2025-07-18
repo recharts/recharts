@@ -10,7 +10,7 @@ import { ZAxis } from './ZAxis';
 import { Curve, CurveType, Props as CurveProps } from '../shape/Curve';
 import type { ErrorBarDataItem, ErrorBarDirection } from './ErrorBar';
 import { Cell } from '../component/Cell';
-import { getLinearRegression, interpolateNumber, isNullish, uniqueId } from '../util/DataUtils';
+import { getLinearRegression, interpolateNumber, isNullish } from '../util/DataUtils';
 import { getCateCoordinateOfLine, getTooltipNameProp, getValueByDataKey } from '../util/ChartUtils';
 import {
   ActiveShape,
@@ -227,7 +227,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
 
   return (
     <>
-      <ScatterLine points={points} props={allOtherScatterProps} />
+      <ScatterLine points={points} props={allOtherPropsWithoutId} />
       {points.map((entry, i) => {
         const isActive = activeShape && activeIndex === String(i);
         const option = isActive ? activeShape : shape;
@@ -256,7 +256,7 @@ function ScatterSymbols(props: ScatterSymbolsProps) {
           </Layer>
         );
       })}
-      {showLabels && LabelList.renderCallByParent(allOtherScatterProps, points)}
+      {showLabels && LabelList.renderCallByParent(allOtherPropsWithoutId, points)}
     </>
   );
 }
@@ -503,14 +503,12 @@ const errorBarDataPointFormatter = (
 };
 
 function ScatterWithId(props: InternalProps) {
-  const idRef = useRef(uniqueId('recharts-scatter-'));
-
   const { hide, points, className, needClip, xAxisId, yAxisId, id, children } = props;
   if (hide) {
     return null;
   }
   const layerClass = clsx('recharts-scatter', className);
-  const clipPathId = isNullish(id) ? idRef.current : id;
+  const clipPathId = id;
 
   return (
     <Layer className={layerClass} clipPath={needClip ? `url(#clipPath-${clipPathId})` : null} id={id}>
@@ -628,22 +626,24 @@ export class Scatter extends Component<Props> {
   render() {
     // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
     return (
-      <CartesianGraphicalItemContext
-        id={this.props.id}
-        type="scatter"
-        data={this.props.data}
-        xAxisId={this.props.xAxisId}
-        yAxisId={this.props.yAxisId}
-        zAxisId={this.props.zAxisId}
-        dataKey={this.props.dataKey}
-        // scatter doesn't stack
-        stackId={undefined}
-        hide={this.props.hide}
-        barSize={undefined}
-      >
+      <>
         <SetLegendPayload legendPayload={computeLegendPayloadFromScatterProps(this.props)} />
-        <ScatterImpl {...this.props} />
-      </CartesianGraphicalItemContext>
+        <CartesianGraphicalItemContext
+          id={this.props.id}
+          type="scatter"
+          data={this.props.data}
+          xAxisId={this.props.xAxisId}
+          yAxisId={this.props.yAxisId}
+          zAxisId={this.props.zAxisId}
+          dataKey={this.props.dataKey}
+          // scatter doesn't stack
+          stackId={undefined}
+          hide={this.props.hide}
+          barSize={undefined}
+        >
+          {id => <ScatterImpl {...this.props} id={id} />}
+        </CartesianGraphicalItemContext>
+      </>
     );
   }
 }

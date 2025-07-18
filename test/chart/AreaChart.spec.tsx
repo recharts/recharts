@@ -164,6 +164,8 @@ describe('AreaChart', () => {
     const xAxisTicksSpy = vi.fn();
     const Comp = (): null => {
       const areaSettings: AreaSettings = {
+        id: 'area-0',
+        barSize: undefined,
         baseValue: undefined,
         stackId: '1',
         dataKey: 'uv',
@@ -372,6 +374,8 @@ describe('AreaChart', () => {
 
   test('renders a stacked chart when stackId is a number', () => {
     const areaSettings: AreaSettings = {
+      id: 'area-0',
+      barSize: undefined,
       baseValue: undefined,
       stackId: 1,
       dataKey: 'uv',
