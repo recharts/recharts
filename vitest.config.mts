@@ -24,19 +24,18 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    reporters: ['default', 'hanging-process'],
-    environment: 'jsdom',
     globals: true,
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'scripts', '.stryker-tmp'],
-    coverage: {
-      provider: 'v8',
-      include: ['src', 'test'],
-    },
-    restoreMocks: true,
     projects: [
       {
         extends: true,
         test: {
+          environment: 'jsdom',
+          restoreMocks: true,
+          coverage: {
+            provider: 'v8',
+            include: ['src', 'test'],
+          },
           name: 'unit',
           setupFiles: ['test/vitest.setup.ts', 'test/helper/toBeRechartsScale.ts', 'test/helper/expectStackGroups.ts'],
           globalSetup: './test/vitest.global-setup.ts',
@@ -53,7 +52,34 @@ export default defineConfig({
         ],
         test: {
           exclude: ['**/test/**'],
-          name: 'storybook',
+          include: ['storybook/stories/API/*.stories.tsx'],
+          name: 'storybook-api',
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: 'playwright',
+            instances: [
+              {
+                browser: 'chromium',
+              },
+            ],
+          },
+          setupFiles: ['storybook/vitest.setup.ts'],
+        },
+      },
+      {
+        extends: true,
+        plugins: [
+          // The plugin will run tests for the stories defined in your Storybook config
+          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
+          storybookTest({
+            configDir: path.join(dirname, 'storybook'),
+          }),
+        ],
+        test: {
+          exclude: ['**/test/**'],
+          include: ['storybook/stories/examples/*.stories.tsx'],
+          name: 'storybook-examples',
           browser: {
             enabled: true,
             headless: true,
