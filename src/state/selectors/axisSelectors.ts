@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import range from 'es-toolkit/compat/range';
-import { Series } from 'victory-vendor/d3-shape';
 import * as d3Scales from 'victory-vendor/d3-scale';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
@@ -20,7 +19,6 @@ import {
   CategoricalDomain,
   ChartOffsetInternal,
   Coordinate,
-  DataKey,
   LayoutType,
   NumberDomain,
   Size,
@@ -73,6 +71,8 @@ import { pickAxisId } from './pickAxisId';
 import { MaybeStackedGraphicalItem } from './barSelectors';
 import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithReverse';
 import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
+import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
+import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -528,18 +528,11 @@ export function getErrorDomainByDataKey(
   );
 }
 
-export type StackDataPoint = [number, number];
-
-export type StackGroup = {
-  readonly stackedData: ReadonlyArray<Series<StackDataPoint, DataKey<any>>>;
-  readonly graphicalItems: ReadonlyArray<MaybeStackedGraphicalItem>;
-};
-
 export const combineStackGroups = (
   displayedData: ChartData,
   items: ReadonlyArray<MaybeStackedGraphicalItem>,
   stackOffsetType: StackOffsetType,
-): Record<StackId, StackGroup> => {
+): AllStackGroups => {
   const initialItemsGroups: Record<StackId, Array<MaybeStackedGraphicalItem>> = {};
   const itemsGroup: Record<StackId, ReadonlyArray<MaybeStackedGraphicalItem>> = items.reduce(
     (acc: Record<StackId, Array<MaybeStackedGraphicalItem>>, item: MaybeStackedGraphicalItem) => {
@@ -557,7 +550,7 @@ export const combineStackGroups = (
 
   return Object.fromEntries(
     Object.entries(itemsGroup).map(([stackId, graphicalItems]): [StackId, StackGroup] => {
-      const dataKeys = graphicalItems.map(i => i.dataKey);
+      const dataKeys = graphicalItems.map(getStackSeriesIdentifier);
       return [
         stackId,
         {
@@ -569,6 +562,7 @@ export const combineStackGroups = (
     }),
   );
 };
+
 /**
  * Stack groups are groups of graphical items that stack on each other.
  * Stack is a function of axis type (X, Y), axis ID, and stack ID.
@@ -579,13 +573,13 @@ export const selectStackGroups: (
   axisType: XorYorZType,
   axisId: AxisId,
   isPanorama: boolean,
-) => Record<StackId, StackGroup> | undefined = createSelector(
+) => AllStackGroups | undefined = createSelector(
   [selectDisplayedData, selectCartesianItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
 
 export const combineDomainOfStackGroups = (
-  stackGroups: Record<StackId, StackGroup> | undefined,
+  stackGroups: AllStackGroups | undefined,
   { dataStartIndex, dataEndIndex }: ChartDataState,
   axisType: XorYorZType,
 ): NumberDomain | undefined => {
