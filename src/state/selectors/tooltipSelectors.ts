@@ -28,7 +28,6 @@ import {
   itemAxisPredicate,
   mergeDomains,
   selectAxisRange,
-  selectAxisSettings,
   selectHasBar,
   selectReferenceAreas,
   selectReferenceDots,
@@ -36,7 +35,6 @@ import {
   XorYType,
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
-import { AxisId } from '../cartesianAxisSlice';
 import { isCategoricalAxis, RechartsScale, StackId } from '../../util/ChartUtils';
 import {
   AxisDomain,
@@ -78,32 +76,9 @@ import { selectTooltipState } from './selectTooltipState';
 
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
 import { StackGroup } from '../../util/stacks/stackTypes';
-
-export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
-  const layout = selectChartLayout(state);
-
-  if (layout === 'horizontal') {
-    return 'xAxis';
-  }
-
-  if (layout === 'vertical') {
-    return 'yAxis';
-  }
-
-  if (layout === 'centric') {
-    return 'angleAxis';
-  }
-
-  return 'radiusAxis';
-};
-
-export const selectTooltipAxisId = (state: RechartsRootState): AxisId => state.tooltip.settings.axisId;
-
-export const selectTooltipAxis = (state: RechartsRootState): AxisWithTicksSettings => {
-  const axisType = selectTooltipAxisType(state);
-  const axisId = selectTooltipAxisId(state);
-  return selectAxisSettings(state, axisType, axisId);
-};
+import { selectTooltipAxisId } from './selectTooltipAxisId';
+import { selectTooltipAxisType } from './selectTooltipAxisType';
+import { selectTooltipAxis } from './selectTooltipAxis';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
