@@ -178,3 +178,19 @@ jobs:
       - name: Run Test
         # Use the output from the 'pack_library' step
         run: ./run-test.sh ${{ matrix.test_dir }} "file:${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}"
+
+  vr_tests:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    needs: [build_test_pack]
+    steps:
+      - name: Checkout Recharts Repository
+        uses: actions/checkout@v4
+        with:
+          repository: recharts/recharts # Checkout the main repo again but this time all directories and files
+
+      - name: Build Docker Image
+        run: npm run test-vr:prepare
+
+      - name: Run Visual Regression Tests
+        run: npm run test-vr
