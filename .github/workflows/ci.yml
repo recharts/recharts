@@ -240,7 +240,7 @@ jobs:
           # Sanitize branch name for URL
           BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
           REPORT_URL=${{ steps.deployment.outputs.page_url }}vr-report/$BRANCH_NAME
-          ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.vr_test_step.outputs.artifact_id }}"
           COMMENT_BODY=$(cat <<EOF
           Visual Regression tests failed.
 
