@@ -233,7 +233,7 @@ jobs:
         if: steps.vr_test_step.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
           REPORT_URL=${{ steps.deployment.outputs.page_url }}/vr-report/$SANITIZED_BRANCH_NAME
-          ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/github-pages"
+          ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_vr_report.outputs.artifact_id }}"
           COMMENT_BODY=$(cat <<EOF
           Visual Regression tests failed.
 
