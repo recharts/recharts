@@ -187,6 +187,9 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
 #    needs: [build_test_pack]
+    env:
+      # GH_TOKEN is needed to use `gh` CLI to comment on the PR
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout Recharts Repository
         uses: actions/checkout@v4
