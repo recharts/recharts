@@ -169,7 +169,6 @@ jobs:
 #        uses: actions/download-artifact@v4
 #        with:
 #          # name is not the filename, it's the "artifact name". The actual filename is the original of what was uploaded.
-#          # In this workflow we keep them the same but GitHub treats them differently.
 #          name: ${{ env.PACKED_ARTIFACT_NAME }}
 #          # path is the directory where the artifact will be downloaded
 #          # so the full path to the artifact will be ${{ runner.temp }}/${{ env.PACKED_ARTIFACT_NAME }}
@@ -197,6 +196,13 @@ jobs:
         with:
           repository: recharts/recharts # Checkout the main repo again but this time all directories and files
 
+      - name: Sanitize branch name
+        run: |
+          BRANCH_NAME=${{ github.head_ref || github.ref_name }}
+          # Sanitize branch name for URL
+          SANITIZED_BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "SANITIZED_BRANCH_NAME=$SANITIZED_BRANCH_NAME" >> $GITHUB_ENV
+
       - name: Build Docker Image
         run: npm run test-vr:prepare
 
@@ -208,10 +214,7 @@ jobs:
       - name: Prepare VR report for publishing
         if: steps.vr_test_step.outcome == 'failure'
         run: |
-          BRANCH_NAME=${{ github.head_ref || github.ref_name }}
-          # Sanitize branch name for URL
-          BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
-          REPORT_DIR=vr-report/$BRANCH_NAME
+          REPORT_DIR=vr-report/$SANITIZED_BRANCH_NAME
           mkdir -p $REPORT_DIR
           sudo mv ./test-vr/playwright-report/* $REPORT_DIR/
 
@@ -229,10 +232,7 @@ jobs:
       - name: Add a comment with the VR report URL
         if: steps.vr_test_step.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
-          BRANCH_NAME=${{ github.head_ref || github.ref_name }}
-          # Sanitize branch name for URL
-          BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
-          REPORT_URL=${{ steps.deployment.outputs.page_url }}/vr-report/$BRANCH_NAME
+          REPORT_URL=${{ steps.deployment.outputs.page_url }}/vr-report/$SANITIZED_BRANCH_NAME
           ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/github-pages"
           COMMENT_BODY=$(cat <<EOF
           Visual Regression tests failed.
