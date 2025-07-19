@@ -209,9 +209,9 @@ jobs:
           BRANCH_NAME=${{ github.head_ref || github.ref_name }}
           # Sanitize branch name for URL
           BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
-          REPORT_DIR=vr-report/$BRANCH_NAME
+          REPORT_DIR=./vr-report/$BRANCH_NAME
           mkdir -p $REPORT_DIR
-          mv ./test-vr/playwright-report $REPORT_DIR/
+          sudo mv ./test-vr/playwright-report $REPORT_DIR/
 
       - name: Upload Visual Regression Report artifact
         if: ${{ !cancelled() }}
