@@ -200,6 +200,7 @@
   "lib/util/cursor/getRadialCursorPoints.js",
   "lib/util/getChartPointer.js",
   "lib/util/getEveryNthWithCondition.js",
+  "lib/util/getSliced.js",
   "lib/util/isDomainSpecifiedByUser.js",
   "lib/util/isWellBehavedNumber.js",
   "lib/util/payload",
