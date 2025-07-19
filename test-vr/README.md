@@ -25,6 +25,8 @@ which will allow us to avoid test flakes due to different fonts and box shadows 
 The basic commands are prepared in `package.json` but you can go beyond that too
 and use whatever dockers allows you to do.
 
+## Debugging VR tests
+
 All images and containers are available in Docker desktop, or via `docker ps -a` and other usual commands.
 
 You can run arbitrary commands inside the container using `docker compose run test-vr <command>`.
@@ -94,3 +96,21 @@ because the tests are run inside a Docker container and the paths will be consis
 
 You will not be able to run the tests outside of Docker because of this.
 Please do not modify the paths because they are hardcoded all over the place.
+
+## Error: browserType.launch: Executable doesn't exist
+
+Sometimes you may find an error that the `playwright` package no longer matches the `playwright` version in the Docker image:
+
+```
+    Error: browserType.launch: Executable doesn't exist at /ms-playwright/webkit-2191/pw_run.sh
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just updated to 1.54.1. ║
+    ║ Please update docker image as well.                                  ║
+    ║ -  current: mcr.microsoft.com/playwright:v1.44.0-jammy               ║
+    ║ - required: mcr.microsoft.com/playwright:v1.54.1-jammy               ║
+    ║                                                                      ║
+    ║ <3 Playwright Team                                                   ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+```
+
+In that case edit the `playwright-ct.config.ts` file and change the `FROM` field to the recommended version.
