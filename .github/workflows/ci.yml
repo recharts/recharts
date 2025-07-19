@@ -220,6 +220,7 @@ jobs:
 
       - name: Upload Visual Regression Report artifact for Pages
         if: steps.vr_test_step.outcome == 'failure'
+        id: upload_vr_report
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./gh-pages
@@ -232,16 +233,16 @@ jobs:
       - name: Add a comment with the VR report URL
         if: steps.vr_test_step.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
-          REPORT_URL=${{ steps.deployment.outputs.page_url }}/vr-report/$SANITIZED_BRANCH_NAME
+          REPORT_URL=${{ steps.deployment.outputs.page_url }}vr-report/$SANITIZED_BRANCH_NAME
           ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_vr_report.outputs.artifact_id }}"
           COMMENT_BODY=$(cat <<EOF
           Visual Regression tests failed.
 
           - **Live Report URL:** $REPORT_URL
-            *(Note: This URL is temporary and may be overwritten by other PRs.)*
+            *This URL is temporary and may be overwritten by other PRs. If that happens, download the artifact:*
 
           - **Artifact Download:** [Download report artifact]($ARTIFACT_URL)
-            *(This link provides a stable copy of the report for this specific run.)*
+            *This link provides a stable copy of the report for this specific run.*
           EOF
           )
           gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
