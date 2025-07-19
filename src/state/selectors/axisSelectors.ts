@@ -830,6 +830,8 @@ export const combineNumericalDomain = (
   domainOfStackGroups: NumberDomain | undefined,
   allDataWithErrorDomains: ReadonlyArray<AppliedChartDataWithErrorDomain>,
   referenceElementsDomain: NumberDomain | undefined,
+  layout: LayoutType,
+  axisType: XorYType,
 ): NumberDomain | undefined => {
   const domainFromUserPreference: NumberDomain | undefined = numericalDomainSpecifiedWithoutRequiringData(
     domainDefinition,
@@ -840,11 +842,14 @@ export const combineNumericalDomain = (
     return domainFromUserPreference;
   }
 
-  return parseNumericalUserDomain(
-    domainDefinition,
-    mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains)),
-    axisSettings.allowDataOverflow,
-  );
+  const isCategorical = isCategoricalAxis(layout, axisType);
+
+  // include stack groups domain only to non-categorical axis
+  const dataDomain = isCategorical
+    ? mergeDomains(referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains))
+    : mergeDomains(domainOfStackGroups, referenceElementsDomain, computeNumericalDomain(allDataWithErrorDomains));
+
+  return parseNumericalUserDomain(domainDefinition, dataDomain, axisSettings.allowDataOverflow);
 };
 
 const selectNumericalDomain: (
@@ -859,6 +864,8 @@ const selectNumericalDomain: (
     selectDomainOfStackGroups,
     selectAllAppliedNumericalValuesIncludingErrorValues,
     selectReferenceElementsDomain,
+    selectChartLayout,
+    pickAxisType,
   ],
   combineNumericalDomain,
 );

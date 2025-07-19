@@ -118,6 +118,8 @@ const selectPolarNumericalDomain: (
     unsupportedInPolarChart,
     selectAllPolarAppliedNumericalValues,
     unsupportedInPolarChart,
+    selectChartLayout,
+    pickAxisType,
   ],
   combineNumericalDomain,
 );
