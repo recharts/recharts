@@ -33,7 +33,6 @@ import {
   selectReferenceAreas,
   selectReferenceDots,
   selectReferenceLines,
-  StackGroup,
   XorYType,
 } from './axisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -78,6 +77,7 @@ import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
+import { StackGroup } from '../../util/stacks/stackTypes';
 
 export const selectTooltipAxisType = (state: RechartsRootState): XorYType => {
   const layout = selectChartLayout(state);

@@ -9,8 +9,6 @@ import {
   selectStackGroups,
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
-  StackDataPoint,
-  StackGroup,
 } from './axisSelectors';
 import { AxisId } from '../cartesianAxisSlice';
 import { getPercentValue, isNullish } from '../../util/DataUtils';
@@ -25,6 +23,14 @@ import { MinPointSize } from '../../util/BarUtils';
 import { selectChartOffsetInternal } from './selectChartOffsetInternal';
 import { selectBarCategoryGap, selectBarGap, selectRootBarSize, selectRootMaxBarSize } from './rootPropsSelectors';
 import { isWellBehavedNumber } from '../../util/isWellBehavedNumber';
+import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
+import {
+  AllStackGroups,
+  StackDataPoint,
+  StackGroup,
+  StackSeries,
+  StackSeriesIdentifier,
+} from '../../util/stacks/stackTypes';
 
 export type BarSettings = {
   id: string;
@@ -125,7 +131,7 @@ const selectBarStackGroups = (
   xAxisId: AxisId,
   yAxisId: AxisId,
   isPanorama: boolean,
-): Record<StackId, StackGroup> | undefined => {
+): AllStackGroups | undefined => {
   const layout = selectChartLayout(state);
   if (layout === 'horizontal') {
     return selectStackGroups(state, 'yAxis', yAxisId, isPanorama);
@@ -454,10 +460,11 @@ export const selectBarPosition: (
 );
 
 export const combineStackedData = (
-  stackGroups: Record<StackId, StackGroup> | undefined,
+  stackGroups: AllStackGroups | undefined,
   barSettings: MaybeStackedGraphicalItem | undefined,
-): Series<StackDataPoint, DataKey<any>> | undefined => {
-  if (!stackGroups || barSettings?.dataKey == null) {
+): StackSeries | undefined => {
+  const stackSeriesIdentifier = getStackSeriesIdentifier(barSettings);
+  if (!stackGroups || stackSeriesIdentifier == null) {
     return undefined;
   }
   const { stackId } = barSettings;
@@ -472,8 +479,7 @@ export const combineStackedData = (
   if (!stackedData) {
     return undefined;
   }
-  const stack: Series<StackDataPoint, DataKey<any>> = stackedData.find(sd => sd.key === barSettings.dataKey);
-  return stack;
+  return stackedData.find(sd => sd.key === stackSeriesIdentifier);
 };
 
 const selectSynchronisedBarSettings: (
@@ -507,7 +513,7 @@ const selectStackedDataOfItem: (
   yAxisId: AxisId,
   isPanorama: boolean,
   barSettings: BarSettings,
-) => Series<Record<number, number>, DataKey<any>> | undefined = createSelector(
+) => Series<StackDataPoint, StackSeriesIdentifier> | undefined = createSelector(
   [selectBarStackGroups, pickBarSettings],
   combineStackedData,
 );

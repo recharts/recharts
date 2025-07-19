@@ -8,7 +8,7 @@ import { ChartDataState } from '../chartDataSlice';
 import { AxisId } from '../cartesianAxisSlice';
 import { DataKey, LayoutType, LegendType, PolarViewBoxRequired, TickItem } from '../../util/types';
 import { selectPolarAxisScale, selectPolarAxisTicks, selectPolarGraphicalItemAxisTicks } from './polarScaleSelectors';
-import { BaseAxisWithScale, combineStackGroups, StackGroup } from './axisSelectors';
+import { BaseAxisWithScale, combineStackGroups } from './axisSelectors';
 import { selectAngleAxis, selectPolarViewBox, selectRadiusAxis } from './polarAxisSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
 import {
@@ -44,6 +44,8 @@ import {
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
+
+import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
   dataKey: DataKey<any> | undefined;
@@ -335,7 +337,7 @@ const selectStackGroups: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
-) => Record<StackId, StackGroup> | undefined = createSelector(
+) => AllStackGroups | undefined = createSelector(
   [selectPolarDisplayedData, selectPolarItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
@@ -346,7 +348,7 @@ const selectRadialBarStackGroups: (
   angleAxisId: AxisId,
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => Record<StackId, StackGroup> | undefined = (state, radiusAxisId, angleAxisId) => {
+) => AllStackGroups | undefined = (state, radiusAxisId, angleAxisId) => {
   const layout = selectChartLayout(state);
   if (layout === 'centric') {
     return selectStackGroups(state, 'radiusAxis', radiusAxisId);
@@ -360,7 +362,7 @@ const selectPolarStackedData: (
   angleAxisId: AxisId,
   radialBarSettings: RadialBarSettings,
   cells: ReadonlyArray<ReactElement> | undefined,
-) => Series<Record<number, number>, DataKey<any>> | undefined = createSelector(
+) => StackSeries | undefined = createSelector(
   [selectRadialBarStackGroups, selectSynchronisedRadialBarSettings],
   combineStackedData,
 );
@@ -400,7 +402,7 @@ export const selectRadialBarSectors: (
     polarViewBox: PolarViewBoxRequired,
     cells: ReadonlyArray<ReactElement> | undefined,
     pos: BarPositionPosition | undefined,
-    stackedData: Series<Record<number, number>, DataKey<any>> | undefined,
+    stackedData: Series<StackDataPoint, StackSeriesIdentifier> | undefined,
   ): ReadonlyArray<RadialBarDataItem> => {
     if (
       radialBarSettings == null ||

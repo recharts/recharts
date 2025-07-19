@@ -7,8 +7,6 @@ import {
   selectStackGroups,
   selectTicksOfGraphicalItem,
   selectUnfilteredCartesianItems,
-  StackDataPoint,
-  StackGroup,
 } from './axisSelectors';
 import { RechartsRootState } from '../store';
 import { AxisId } from '../cartesianAxisSlice';
@@ -17,7 +15,9 @@ import { selectChartDataWithIndexesIfNotInPanorama } from './dataSelectors';
 import { getBandSizeOfAxis, getNormalizedStackId, isCategoricalAxis, StackId } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
 import { NullablePoint } from '../../shape/Curve';
+import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { MaybeStackedGraphicalItem } from './barSelectors';
+import { StackDataPoint, StackGroup, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
 
 export interface AreaPointItem extends NullablePoint {
   x: number | null;
@@ -79,12 +79,13 @@ const selectGraphicalItemStackedData = (
   if (stackGroups == null) {
     return undefined;
   }
-  const { dataKey, stackId } = areaSettings;
-  if (stackId == null) {
+  const { stackId } = areaSettings;
+  const stackSeriesIdentifier: StackSeriesIdentifier | undefined = getStackSeriesIdentifier(areaSettings);
+  if (stackId == null || stackSeriesIdentifier == null) {
     return undefined;
   }
-  const groups: ReadonlyArray<Series<StackDataPoint, DataKey<any>>> = stackGroups[stackId]?.stackedData;
-  return groups?.find(v => v.key === dataKey);
+  const groups: ReadonlyArray<Series<StackDataPoint, StackSeriesIdentifier>> = stackGroups[stackId]?.stackedData;
+  return groups?.find(v => v.key === stackSeriesIdentifier);
 };
 
 const pickAreaSettings = (

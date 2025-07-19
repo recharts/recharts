@@ -1,5 +1,5 @@
 import { SeriesPoint } from 'victory-vendor/d3-shape';
-import { StackDataPoint, StackGroup } from '../../src/state/selectors/axisSelectors';
+import { StackDataPoint, StackGroup } from '../../src/util/stacks/stackTypes';
 
 /*
  * Almost the same type as StackData, but with the data

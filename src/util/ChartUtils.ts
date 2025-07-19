@@ -35,7 +35,8 @@ import {
 import { ValueType } from '../component/DefaultTooltipContent';
 import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendSettings } from '../state/legendSlice';
-import { AxisRange, BaseAxisWithScale, StackGroup } from '../state/selectors/axisSelectors';
+import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
+import { StackGroup } from './stacks/stackTypes';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
