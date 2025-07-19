@@ -214,7 +214,7 @@ jobs:
       - name: Prepare VR report for publishing
         if: steps.vr_test_step.outcome == 'failure'
         run: |
-          REPORT_DIR=vr-report/$SANITIZED_BRANCH_NAME
+          REPORT_DIR=./vr-report/$SANITIZED_BRANCH_NAME
           mkdir -p $REPORT_DIR
           sudo mv ./test-vr/playwright-report/* $REPORT_DIR/
 
