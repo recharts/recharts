@@ -195,9 +195,12 @@ jobs:
       - name: Run Visual Regression Tests
         run: npm run test-vr
 
-      - name: Upload Visual Regression Report
+      - name: Upload Visual Regression Report artifact
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: recharts-vr-report
           path: ./test-vr/playwright-report
+
+      - name: Upload VR report to GitHub Pages
+        if: ${{ !cancelled() }}
+        uses: actions/deploy-pages@v4
