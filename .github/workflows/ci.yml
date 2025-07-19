@@ -194,3 +194,10 @@ jobs:
 
       - name: Run Visual Regression Tests
         run: npm run test-vr
+
+      - name: Upload Visual Regression Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: recharts-vr-report
+          path: ./test-vr/playwright-report
