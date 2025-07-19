@@ -218,3 +218,10 @@ jobs:
       - name: Upload VR report to GitHub Pages
         if: ${{ !cancelled() }}
         uses: actions/deploy-pages@v4
+
+      - name: Add a comment with the VR report URL
+        if: ${{ !cancelled() }}
+        run: |
+          REPORT_URL=${{ steps.deployment.outputs.page_url }}
+          echo "Visual Regression Report URL: $REPORT_URL"
+          gh pr comment ${{ github.event.pull_request.number }} --body "Visual Regression Report: $REPORT_URL"
