@@ -201,35 +201,54 @@ jobs:
         run: npm run test-vr:prepare
 
       - name: Run Visual Regression Tests
+        id: vr_test_step
         run: npm run test-vr
+        continue-on-error: true
 
       - name: Prepare VR report for publishing
-        if: ${{ !cancelled() }}
+        if: steps.vr_test_step.outcome == 'failure'
         run: |
           BRANCH_NAME=${{ github.head_ref || github.ref_name }}
           # Sanitize branch name for URL
           BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
-          REPORT_DIR=./gh-pages/vr-report/$BRANCH_NAME
+          REPORT_DIR=vr-report/$BRANCH_NAME
           mkdir -p $REPORT_DIR
           sudo mv ./test-vr/playwright-report/* $REPORT_DIR/
 
-      - name: Upload Visual Regression Report artifact
-        if: ${{ !cancelled() }}
+      - name: Upload VR Report as Artifact
+        if: steps.vr_test_step.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vr-report-artifact-${{ github.run_id }}
+          path: ./vr-report/
+
+      - name: Upload Visual Regression Report artifact for Pages
+        if: steps.vr_test_step.outcome == 'failure'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./gh-pages
+          path: ./vr-report
 
       - name: Upload VR report to GitHub Pages
-        if: ${{ !cancelled() }}
+        if: steps.vr_test_step.outcome == 'failure'
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Add a comment with the VR report URL
-        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        if: steps.vr_test_step.outcome == 'failure' && github.event_name == 'pull_request'
         run: |
           BRANCH_NAME=${{ github.head_ref || github.ref_name }}
           # Sanitize branch name for URL
           BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
           REPORT_URL=${{ steps.deployment.outputs.page_url }}vr-report/$BRANCH_NAME
-          echo "Visual Regression Report URL: $REPORT_URL"
-          gh pr comment ${{ github.event.pull_request.number }} --body "Visual Regression Report: $REPORT_URL"
+          ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          COMMENT_BODY=$(cat <<EOF
+          Visual Regression tests failed.
+
+          - **Live Report URL:** $REPORT_URL
+            *(Note: This URL is temporary and may be overwritten by other PRs.)*
+
+          - **Artifact Download:** [Download report artifact]($ARTIFACT_URL)
+            *(This link provides a stable copy of the report for this specific run.)*
+          EOF
+          )
+          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
