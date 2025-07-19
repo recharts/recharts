@@ -463,7 +463,7 @@ export const combineStackedData = (
   stackGroups: AllStackGroups | undefined,
   barSettings: MaybeStackedGraphicalItem | undefined,
 ): StackSeries | undefined => {
-  const stackSeriesIdentifier: string | number | ((obj: any) => any) = getStackSeriesIdentifier(barSettings);
+  const stackSeriesIdentifier = getStackSeriesIdentifier(barSettings);
   if (!stackGroups || stackSeriesIdentifier == null) {
     return undefined;
   }
