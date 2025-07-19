@@ -185,6 +185,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
+      pull-requests: write
     runs-on: ubuntu-latest
 #    needs: [build_test_pack]
     env:
@@ -220,11 +221,15 @@ jobs:
 
       - name: Upload VR report to GitHub Pages
         if: ${{ !cancelled() }}
+        id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Add a comment with the VR report URL
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
         run: |
-          REPORT_URL=${{ steps.deployment.outputs.page_url }}
+          BRANCH_NAME=${{ github.head_ref || github.ref_name }}
+          # Sanitize branch name for URL
+          BRANCH_NAME=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]/-/g')
+          REPORT_URL=${{ steps.deployment.outputs.page_url }}/vr-report/$BRANCH_NAME/playwright-report/
           echo "Visual Regression Report URL: $REPORT_URL"
           gh pr comment ${{ github.event.pull_request.number }} --body "Visual Regression Report: $REPORT_URL"
