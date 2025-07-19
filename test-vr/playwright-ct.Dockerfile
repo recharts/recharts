@@ -1,5 +1,5 @@
 # Use the official Playwright image which includes browsers and dependencies
-FROM mcr.microsoft.com/playwright:v1.44.0-jammy
+FROM mcr.microsoft.com/playwright:v1.54.1-jammy
 
 # Set the working directory inside the container
 WORKDIR /recharts
