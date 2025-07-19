@@ -197,6 +197,9 @@ jobs:
           repository: recharts/recharts # Checkout the main repo again but this time all directories and files
 
       - name: Sanitize branch name
+        # The branch name is used in the URL for the report.
+        # It needs to be sanitized to remove characters that are not URL-friendly.
+        # This step creates a GITHUB_ENV variable so it can be reused in later steps.
         run: |
           BRANCH_NAME=${{ github.head_ref || github.ref_name }}
           # Sanitize branch name for URL
@@ -204,34 +207,52 @@ jobs:
           echo "SANITIZED_BRANCH_NAME=$SANITIZED_BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Build Docker Image
+        # The VR tests run inside a Docker container. This step builds the image.
         run: npm run test-vr:prepare
 
       - name: Run Visual Regression Tests
         id: vr_test_step
         run: npm run test-vr
+        # Continue even if this step fails. This allows us to upload the report
+        # and post a comment on the PR. The workflow will be failed in a later step.
         continue-on-error: true
 
       - name: Prepare VR report for publishing
+        # This step only runs if the VR tests have failed to prevent overwriting reports from other PRs.
         if: steps.vr_test_step.outcome == 'failure'
+        # The report is placed in a directory named after the sanitized branch name.
+        # This allows us to have separate reports for each branch on GitHub Pages.
+        # The test report is generated inside a Docker container by a root user.
+        # We need to use sudo to move the report files.
         run: |
           REPORT_DIR=./gh-pages/vr-report/$SANITIZED_BRANCH_NAME
           mkdir -p $REPORT_DIR
           sudo mv ./test-vr/playwright-report/* $REPORT_DIR/
 
       - name: Upload Visual Regression Report artifact for Pages
+        # This step only runs if the VR tests have failed to prevent overwriting reports from other PRs.
         if: steps.vr_test_step.outcome == 'failure'
         id: upload_vr_report
+        # This action uploads the report as an artifact that can be deployed to GitHub Pages.
         uses: actions/upload-pages-artifact@v3
         with:
+          # The root of the artifact will be the gh-pages directory so that the public URL can start with "vr-report".
+          # Note: This setup will overwrite reports from other PRs if they run in parallel,
+          # as we are not checking out the existing gh-pages branch content first.
           path: ./gh-pages
 
       - name: Deploy to GitHub Pages
+        # This step only runs if the VR tests have failed.
         if: steps.vr_test_step.outcome == 'failure'
         id: deployment
+        # This action deploys the artifact to GitHub Pages. This will erase all files from previous deployments, including other PRs.
         uses: actions/deploy-pages@v4
 
       - name: Add a comment with the VR report URL
+        # This step only runs if the VR tests have failed and the event is a pull request.
         if: steps.vr_test_step.outcome == 'failure' && github.event_name == 'pull_request'
+        # The artifact from `upload-pages-artifact` is named `github-pages` by default.
+        # We construct a URL to download it for manual inspection.
         run: |
           REPORT_URL=${{ steps.deployment.outputs.page_url }}vr-report/$SANITIZED_BRANCH_NAME
           ARTIFACT_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_vr_report.outputs.artifact_id }}"
@@ -248,5 +269,8 @@ jobs:
           gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
 
       - name: Fail workflow if tests failed
+        # This step ensures that the entire job fails if the VR tests have failed.
+        # This is necessary because of `continue-on-error: true` in the test step.
+        # A failing job will block the PR from being merged.
         if: steps.vr_test_step.outcome == 'failure'
         run: exit 1

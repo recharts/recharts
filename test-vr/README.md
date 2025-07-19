@@ -113,4 +113,4 @@ Sometimes you may find an error that the `playwright` package no longer matches 
     ╚══════════════════════════════════════════════════════════════════════╝
 ```
 
-In that case edit the `playwright-ct.config.ts` file and change the `FROM` field to the recommended version.
+In that case edit the `playwright-ct.Dockerfile` file and change the `FROM` field to the recommended version.
