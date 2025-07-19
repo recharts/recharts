@@ -245,3 +245,7 @@ jobs:
           EOF
           )
           gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
+
+      - name: Fail workflow if tests failed
+        if: steps.vr_test_step.outcome == 'failure'
+        run: exit 1
