@@ -23,7 +23,7 @@ import {
 } from '../../util/types';
 import { TooltipTrigger } from '../../chart/types';
 import { selectChartDataWithIndexes } from './dataSelectors';
-import { selectTooltipAxis, selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
+import { selectTooltipAxisTicks, selectTooltipDisplayedData } from './tooltipSelectors';
 import { AxisRange } from './axisSelectors';
 import { selectChartName } from './rootPropsSelectors';
 import { selectChartLayout } from '../../context/chartLayoutContext';
@@ -37,6 +37,7 @@ import { combineTooltipPayloadConfigurations } from './combiners/combineTooltipP
 import { selectTooltipPayloadSearcher } from './selectTooltipPayloadSearcher';
 import { selectTooltipState } from './selectTooltipState';
 import { combineTooltipPayload } from './combiners/combineTooltipPayload';
+import { selectTooltipAxis } from './selectTooltipAxis';
 
 export const useChartName = (): string | undefined => {
   return useAppSelector(selectChartName);

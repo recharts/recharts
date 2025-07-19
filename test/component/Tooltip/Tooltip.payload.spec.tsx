@@ -66,19 +66,19 @@ import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSel
 import {
   selectAllGraphicalItemsSettings,
   selectAllUnfilteredGraphicalItems,
-  selectTooltipAxis,
   selectTooltipAxisDomain,
   selectTooltipAxisDomainIncludingNiceTicks,
-  selectTooltipAxisId,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
-  selectTooltipAxisType,
   selectTooltipDisplayedData,
   selectTooltipGraphicalItemsData,
 } from '../../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../../helper/expectScale';
 import { selectAxisDomain } from '../../../src/state/selectors/axisSelectors';
 import { mockGetBoundingClientRect } from '../../helper/mockGetBoundingClientRect';
+import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
+import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
+import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 
 type TooltipPayloadTestCase = {
   // Identify which test is running

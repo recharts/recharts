@@ -6,26 +6,13 @@ import {
   TooltipPayloadEntry,
   TooltipPayloadSearcher,
 } from '../../tooltipSlice';
-import { ChartDataState } from '../../chartDataSlice';
+import { ChartData, ChartDataState } from '../../chartDataSlice';
 import { BaseAxisProps, DataKey, TooltipEventType } from '../../../util/types';
 import { findEntryInArray } from '../../../util/DataUtils';
 import { getTooltipEntry, getValueByDataKey } from '../../../util/ChartUtils';
+import { getSliced } from '../../../util/getSliced';
 
-function getSliced<T>(
-  arr: unknown | ReadonlyArray<T>,
-  startIndex: number,
-  endIndex: number,
-): ReadonlyArray<T> | unknown {
-  if (!Array.isArray(arr)) {
-    return arr;
-  }
-  if (arr && startIndex + endIndex !== 0) {
-    return arr.slice(startIndex, endIndex + 1);
-  }
-  return arr;
-}
-
-function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ReadonlyArray<unknown> | undefined) {
+function selectFinalData(dataDefinedOnItem: unknown, dataDefinedOnChart: ChartData | undefined): unknown {
   /*
    * If a payload has data specified directly from the graphical item, prefer that.
    * Otherwise, fill in data from the chart level, using the same index.
@@ -55,7 +42,7 @@ export const combineTooltipPayload = (
   return tooltipPayloadConfigurations.reduce((agg, { dataDefinedOnItem, settings }): Array<TooltipPayloadEntry> => {
     const finalData = selectFinalData(dataDefinedOnItem, chartData);
 
-    const sliced = getSliced(finalData, dataStartIndex, dataEndIndex);
+    const sliced = Array.isArray(finalData) ? getSliced(finalData, dataStartIndex, dataEndIndex) : finalData;
 
     const finalDataKey: DataKey<any> | undefined = settings?.dataKey ?? tooltipAxis?.dataKey;
     // BaseAxisProps does not support nameKey but it could!
