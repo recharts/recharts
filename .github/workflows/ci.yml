@@ -181,6 +181,10 @@ jobs:
 
   vr_tests:
     name: Visual Regression Tests
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
 #    needs: [build_test_pack]
     steps:
