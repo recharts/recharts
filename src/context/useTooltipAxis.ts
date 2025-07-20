@@ -1,7 +1,8 @@
 import { useAppSelector } from '../state/hooks';
 import { getBandSizeOfAxis } from '../util/ChartUtils';
 import { AxisWithTicksSettings } from '../state/selectors/axisSelectors';
-import { selectTooltipAxis, selectTooltipAxisScale, selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
+import { selectTooltipAxisScale, selectTooltipAxisTicks } from '../state/selectors/tooltipSelectors';
+import { selectTooltipAxis } from '../state/selectors/selectTooltipAxis';
 
 export const useTooltipAxis = (): AxisWithTicksSettings => useAppSelector(selectTooltipAxis);
 

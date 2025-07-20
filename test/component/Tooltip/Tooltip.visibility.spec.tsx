@@ -60,13 +60,10 @@ import {
 } from './tooltipMouseHoverSelectors';
 import { createSelectorTestCase } from '../../helper/createSelectorTestCase';
 import {
-  selectTooltipAxis,
-  selectTooltipAxisId,
   selectTooltipAxisRangeWithReverse,
   selectTooltipAxisRealScaleType,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
-  selectTooltipAxisType,
   selectTooltipCategoricalDomain,
 } from '../../../src/state/selectors/tooltipSelectors';
 import { selectChartDataWithIndexes } from '../../../src/state/selectors/dataSelectors';
@@ -87,6 +84,9 @@ import {
 } from '../../../src/state/selectors/legendSelectors';
 import { mockTouchingElement } from '../../helper/mockTouchingElement';
 import { LegendSettings } from '../../../src/state/legendSlice';
+import { selectTooltipAxisId } from '../../../src/state/selectors/selectTooltipAxisId';
+import { selectTooltipAxisType } from '../../../src/state/selectors/selectTooltipAxisType';
+import { selectTooltipAxis } from '../../../src/state/selectors/selectTooltipAxis';
 
 type TooltipVisibilityTestCase = {
   // For identifying which test is running

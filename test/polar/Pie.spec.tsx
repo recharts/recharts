@@ -22,13 +22,10 @@ import { mockGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import {
   selectAllGraphicalItemsSettings,
   selectAllUnfilteredGraphicalItems,
-  selectTooltipAxis,
   selectTooltipAxisDomain,
   selectTooltipAxisDomainIncludingNiceTicks,
-  selectTooltipAxisId,
   selectTooltipAxisScale,
   selectTooltipAxisTicks,
-  selectTooltipAxisType,
   selectTooltipDisplayedData,
 } from '../../src/state/selectors/tooltipSelectors';
 import { expectLastCalledWithScale } from '../helper/expectScale';
@@ -41,6 +38,9 @@ import {
   selectTooltipPayloadConfigurations,
 } from '../../src/state/selectors/selectors';
 import { useAppSelector } from '../../src/state/hooks';
+import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxisId';
+import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
+import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
 

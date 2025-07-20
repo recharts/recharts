@@ -37,6 +37,7 @@ import { inRangeOfSector, polarToCartesian } from './PolarUtils';
 import { LegendSettings } from '../state/legendSlice';
 import { AxisRange, BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { StackGroup } from './stacks/stackTypes';
+import { getSliced } from './getSliced';
 
 export function getValueByDataKey<T>(obj: T, dataKey: DataKey<T> | undefined, defaultValue?: any): unknown {
   if (isNullish(obj) || isNullish(dataKey)) {
@@ -621,7 +622,7 @@ export const getBaseValueOfBar = ({ numericAxis }: { numericAxis: BaseAxisWithSc
   return domain[0];
 };
 
-const getDomainOfSingle = (data: Array<Array<any>>): number[] => {
+const getDomainOfSingle = (data: ReadonlyArray<ReadonlyArray<unknown>>): number[] => {
   const flat = data.flat(2).filter(isNumber);
   return [Math.min(...flat), Math.max(...flat)];
 };
@@ -645,7 +646,8 @@ export const getDomainOfStackGroups = (
         const { stackedData } = group;
         const domain = stackedData.reduce(
           (res: [number, number], entry) => {
-            const s = getDomainOfSingle(entry.slice(startIndex, endIndex + 1));
+            const sliced = getSliced(entry, startIndex, endIndex);
+            const s = getDomainOfSingle(sliced);
 
             return [Math.min(res[0], s[0]), Math.max(res[1], s[1])];
           },
