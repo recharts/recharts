@@ -586,7 +586,7 @@ export const selectStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => AllStackGroups | undefined = createSelector(
-  // [selectDisplayedData, selectCartesianItemsSettings, selectStackOffsetType],
+  
   [selectDisplayedStackedData, selectCartesianItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
