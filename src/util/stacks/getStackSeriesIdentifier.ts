@@ -9,6 +9,5 @@ import { StackSeriesIdentifier } from './stackTypes';
 export function getStackSeriesIdentifier(
   graphicalItem: MaybeStackedGraphicalItem | undefined,
 ): StackSeriesIdentifier | undefined {
-  // return graphicalItem?.dataKey;
   return graphicalItem?.id;
 }
