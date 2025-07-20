@@ -146,7 +146,8 @@ describe('Brush in a stacked chart', () => {
           ],
           stackedData: expect.toBeRechartsStackedData([
             [
-              // 5 items only, because the brush has been moved
+              // 6 elements for each stack, because the index is applied later
+              [0, 2400],
               [0, 4567],
               [0, 1398],
               [0, 9800],
@@ -154,6 +155,7 @@ describe('Brush in a stacked chart', () => {
               [0, 4800],
             ],
             [
+              [2400, 2800],
               [4567, 4867],
               [1398, 1698],
               [9800, 10000],

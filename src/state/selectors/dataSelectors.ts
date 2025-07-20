@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { RechartsRootState } from '../store';
 import { ChartDataState } from '../chartDataSlice';
-import { AxisId } from '../cartesianAxisSlice';
 
 /**
  * This selector always returns the data with the indexes set by a Brush.
@@ -37,8 +36,8 @@ export const selectChartDataAndAlwaysIgnoreIndexes: (state: RechartsRootState) =
 
 export const selectChartDataWithIndexesIfNotInPanorama = (
   state: RechartsRootState,
-  _xAxisId: AxisId,
-  _yAxisId: AxisId,
+  _unused1: unknown,
+  _unused2: unknown,
   isPanorama: boolean,
 ): ChartDataState => {
   if (isPanorama) {

@@ -160,7 +160,15 @@ export interface MaybeStackedGraphicalItem {
   id: GraphicalItemId;
   stackId: StackId | undefined;
   dataKey: DataKey<any> | undefined;
+  /**
+   * Bars have a size but Area does not.
+   */
   barSize: number | string | undefined;
+  /**
+   * If the given graphical item has its own data array, it will appear here.
+   * If this is undefined, the data will be taken from the chart root prop.
+   */
+  data?: ChartData | undefined;
 }
 
 /**

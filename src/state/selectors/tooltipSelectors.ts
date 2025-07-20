@@ -79,6 +79,7 @@ import { StackGroup } from '../../util/stacks/stackTypes';
 import { selectTooltipAxisId } from './selectTooltipAxisId';
 import { selectTooltipAxisType } from './selectTooltipAxisType';
 import { selectTooltipAxis } from './selectTooltipAxis';
+import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 
 export const selectTooltipAxisRealScaleType: (state: RechartsRootState) => string | undefined = createSelector(
   [selectTooltipAxis, selectChartLayout, selectHasBar, selectChartName, selectTooltipAxisType],
@@ -117,6 +118,11 @@ export const selectTooltipDisplayedData: (state: RechartsRootState) => ChartData
   combineDisplayedData,
 );
 
+const selectTooltipStackedData: (state: RechartsRootState) => DisplayedStackedData = createSelector(
+  [selectAllGraphicalItemsSettings, selectChartDataWithIndexes, selectTooltipAxis],
+  combineDisplayedStackedData,
+);
+
 const selectAllTooltipAppliedValues: (state: RechartsRootState) => AppliedChartData = createSelector(
   [selectTooltipDisplayedData, selectTooltipAxis, selectAllGraphicalItemsSettings],
   combineAppliedValues,
@@ -128,7 +134,7 @@ const selectTooltipAxisDomainDefinition: (state: RechartsRootState) => AxisDomai
 );
 
 const selectTooltipStackGroups: (state: RechartsRootState) => Record<StackId, StackGroup> = createSelector(
-  [selectTooltipDisplayedData, selectAllGraphicalItemsSettings, selectStackOffsetType],
+  [selectTooltipStackedData, selectAllGraphicalItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
 

@@ -660,7 +660,7 @@ describe('<BarChart />', () => {
               x: 68.75,
               y: 5,
             },
-            height: 9.600000000000001,
+            height: 9.599999999999994,
             name: 'food',
             payload: {
               name: 'food',
@@ -670,13 +670,13 @@ describe('<BarChart />', () => {
             pv: 2400,
             tooltipPosition: {
               x: 68.75,
-              y: 38.599999999999994,
+              y: 40.2,
             },
             uv: 400,
-            value: [400, 2800],
+            value: 2400,
             width: 0,
             x: 68.75,
-            y: 33.8,
+            y: 35.400000000000006,
           },
           {
             background: {
@@ -695,13 +695,13 @@ describe('<BarChart />', () => {
             pv: 4567,
             tooltipPosition: {
               x: 76.25,
-              y: 34.666,
+              y: 35.866,
             },
             uv: 300,
-            value: [300, 4867],
+            value: 4567,
             width: 0,
             x: 76.25,
-            y: 25.531999999999996,
+            y: 26.732,
           },
           {
             background: {
@@ -710,7 +710,7 @@ describe('<BarChart />', () => {
               x: 83.75,
               y: 5,
             },
-            height: 5.591999999999999,
+            height: 5.592000000000006,
             name: 'storage',
             payload: {
               name: 'storage',
@@ -720,13 +720,13 @@ describe('<BarChart />', () => {
             pv: 1398,
             tooltipPosition: {
               x: 83.75,
-              y: 41.004,
+              y: 42.20399999999999,
             },
             uv: 300,
-            value: [300, 1698],
+            value: 1398,
             width: 0,
             x: 83.75,
-            y: 38.208,
+            y: 39.407999999999994,
           },
           {
             background: {
@@ -745,13 +745,13 @@ describe('<BarChart />', () => {
             pv: 9800,
             tooltipPosition: {
               x: 91.25,
-              y: 24.6,
+              y: 25.400000000000002,
             },
             uv: 200,
-            value: [200, 10000],
+            value: 9800,
             width: 0,
             x: 91.25,
-            y: 5,
+            y: 5.800000000000001,
           },
         ]);
       });
@@ -940,11 +940,10 @@ describe('<BarChart />', () => {
         </BarChart>,
       );
 
-      // stacked bars should have values which are arrays, if they are not then they are not stacked
       expect(seriesOneBarOneEntry).toBeDefined();
       expect(seriesTwoBarOneEntry).toBeDefined();
-      expect(seriesOneBarOneEntry.value).toEqual([0, 400]);
-      expect(seriesTwoBarOneEntry.value).toEqual([400, 2800]);
+      expect(seriesOneBarOneEntry.value).toEqual(400);
+      expect(seriesTwoBarOneEntry.value).toEqual(2400);
 
       expectBars(container, [
         {
@@ -2353,14 +2352,14 @@ describe('<BarChart />', () => {
         size: 150,
         tooltipPosition: {
           x: 120,
-          y: 55,
+          y: 145,
         },
         topBox: 200,
         topWhisker: 200,
-        value: [450, 650],
+        value: 200,
         width: 88,
         x: 76,
-        y: 35,
+        y: 125,
       },
       {
         average: 550,
@@ -2386,14 +2385,14 @@ describe('<BarChart />', () => {
         size: 250,
         tooltipPosition: {
           x: 230,
-          y: 15,
+          y: 155,
         },
         topBox: 100,
         topWhisker: 100,
-        value: [700, 800],
+        value: 100,
         width: 88,
         x: 186,
-        y: 5,
+        y: 145,
       },
       {
         average: 400,
@@ -2419,14 +2418,14 @@ describe('<BarChart />', () => {
         size: 350,
         tooltipPosition: {
           x: 340,
-          y: 25,
+          y: 145,
         },
         topBox: 200,
         topWhisker: 200,
-        value: [600, 800],
+        value: 200,
         width: 88,
         x: 296,
-        y: 5,
+        y: 125,
       },
     ]);
 

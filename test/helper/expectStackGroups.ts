@@ -1,24 +1,29 @@
-import { SeriesPoint } from 'victory-vendor/d3-shape';
-import { StackDataPoint, StackGroup } from '../../src/util/stacks/stackTypes';
+import { expect } from 'vitest';
+import { StackDataPoint, StackSeries } from '../../src/util/stacks/stackTypes';
+import { MaybeStackedGraphicalItem } from '../../src/state/selectors/barSelectors';
+
+export type ExpectedStackedDataSeries = ReadonlyArray<StackDataPoint>;
 
 /*
  * Almost the same type as StackData, but with the data
  * being just an array of arrays of objects instead of a d3-stack object.
  */
-type ExpectedStackedData = ReadonlyArray<ReadonlyArray<StackDataPoint>>;
+export type ExpectedStackedData = ReadonlyArray<ExpectedStackedDataSeries>;
 
-function seriesPointToTuple(seriesPoint: SeriesPoint<unknown>): StackDataPoint {
+function seriesPointToTuple(seriesPoint: ReadonlyArray<number>): StackDataPoint {
   return [seriesPoint[0], seriesPoint[1]];
 }
 
-function seriesToArray(series: StackGroup['stackedData']): ExpectedStackedData {
-  return series.map((s): ReadonlyArray<StackDataPoint> => {
-    const array: Array<StackDataPoint> = [];
-    s.forEach(item => {
-      array.push(seriesPointToTuple(item));
-    });
-    return array;
+const actualSeriesToExpectedSeries = (s: ReadonlyArray<StackDataPoint>): ExpectedStackedDataSeries => {
+  const array: Array<StackDataPoint> = [];
+  s.forEach(item => {
+    array.push(seriesPointToTuple(item));
   });
+  return array;
+};
+
+function seriesToArray(series: ReadonlyArray<ReadonlyArray<StackDataPoint>>): ExpectedStackedData {
+  return series.map(actualSeriesToExpectedSeries);
 }
 
 /**
@@ -43,6 +48,13 @@ export function expectStackedData(received: unknown, expected: ExpectedStackedDa
   expect(seriesToArray(received)).toEqual(expected);
 }
 
+export function expectStackedSeries(received: unknown, expected: ExpectedStackedDataSeries): void {
+  if (!Array.isArray(received)) {
+    throw new Error(`stackedSeries error: expected ${received} to be an array`);
+  }
+  expect(actualSeriesToExpectedSeries(received)).toEqual(expected);
+}
+
 function rechartsStackedDataMatcher(received: unknown, expected: ExpectedStackedData) {
   try {
     expectStackedData(received, expected);
@@ -60,8 +72,53 @@ function rechartsStackedDataMatcher(received: unknown, expected: ExpectedStacked
   }
 }
 
+function rechartsStackedSeriesMatcher(
+  received: unknown,
+  expected: ExpectedStackedDataSeries,
+): { pass: boolean; message: () => string } {
+  try {
+    expectStackedSeries(received, expected);
+    return {
+      pass: true,
+      message: () => 'Expected stack series to not match',
+    };
+  } catch (e) {
+    // Uncomment the `debugger` here to see the actual error message, or place a breakpoint in your IDE
+    // debugger;
+    return {
+      pass: false,
+      message: e.message,
+    };
+  }
+}
+
+function rechartsStackedSeriesPointMatcher(
+  received: unknown,
+  expected: StackDataPoint,
+): { pass: boolean; message: () => string } {
+  try {
+    if (!Array.isArray(received)) {
+      throw new Error(`stackedSeriesPoint error: expected ${received} to be an array`);
+    }
+    expect(seriesPointToTuple(received)).toEqual(expected);
+    return {
+      pass: true,
+      message: () => 'Expected stack series point to not match',
+    };
+  } catch (e) {
+    // Uncomment the `debugger` here to see the actual error message, or place a breakpoint in your IDE
+    // debugger;
+    return {
+      pass: false,
+      message: e.message,
+    };
+  }
+}
+
 expect.extend({
   toBeRechartsStackedData: rechartsStackedDataMatcher,
+  toBeRechartsStackedSeries: rechartsStackedSeriesMatcher,
+  toBeRechartsStackedSeriesPoint: rechartsStackedSeriesPointMatcher,
 });
 
 interface CustomMatchers {
@@ -74,11 +131,22 @@ interface CustomMatchers {
    *
    * @param expectedStackedData expected stacked data
    */
-  toBeRechartsStackedData: (expectedStackedData: ExpectedStackedData) => void;
+  toBeRechartsStackedData: (expectedStackedData: ExpectedStackedData) => ReadonlyArray<StackSeries>;
+  toBeRechartsStackedSeries: (expectedStackedSeries: ExpectedStackedDataSeries) => StackSeries;
+  toBeRechartsStackedSeriesPoint: (expectedStackedSeriesPoint: StackDataPoint) => StackDataPoint;
 }
 
 declare module 'vitest' {
   // this is what the documentation tells me to do https://vitest.dev/guide/extending-matchers
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface AsymmetricMatchersContaining extends CustomMatchers {}
+}
+
+/**
+ * Vitest helpers are typed to return `any` which disables type checking in the whole test if used.
+ * @param expected the expected settings for the graphical item
+ * @return the expected settings wrapped in an object containing matcher functions
+ */
+export function expectGraphicalItemSettings(expected: MaybeStackedGraphicalItem): MaybeStackedGraphicalItem {
+  return expect.objectContaining(expected);
 }

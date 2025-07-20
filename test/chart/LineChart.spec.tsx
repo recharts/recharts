@@ -1828,7 +1828,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(data1.length * 6);
+    expect(spy).toHaveBeenCalledTimes(data1.length * 9);
     expect(spy).toHaveBeenNthCalledWith(1, data1[0]);
     expect(spy).toHaveBeenNthCalledWith(2, data1[1]);
     expect(spy).toHaveBeenNthCalledWith(3, data1[2]);
@@ -1841,7 +1841,7 @@ describe('<LineChart /> with dataKey as a function', () => {
       </LineChart>,
     );
 
-    expect(spy).toHaveBeenCalledTimes(data2.length * 6);
+    expect(spy).toHaveBeenCalledTimes(data2.length * 9);
     expect(spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(spy).toHaveBeenNthCalledWith(2, data2[1]);
     expect(spy).toHaveBeenNthCalledWith(3, data2[2]);
@@ -1867,7 +1867,7 @@ describe('<LineChart /> with dataKey as a function', () => {
 
     const { container } = render(<Reproduction />);
     expectLines(container, [{ d: 'M5,198.333L150,101.667L295,5' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 7);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 10);
     expect(dataKey1Spy).toHaveBeenNthCalledWith(1, data1[0]);
     expect(dataKey1Spy).toHaveBeenLastCalledWith(data1[2]);
     expect(dataKey2Spy).toHaveBeenCalledTimes(0);
@@ -1875,9 +1875,9 @@ describe('<LineChart /> with dataKey as a function', () => {
     fireEvent.click(screen.getByText('Use data2'));
 
     expectLines(container, [{ d: 'M5,5L150,101.667L295,198.333' }]);
-    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 11);
+    expect(dataKey1Spy).toHaveBeenCalledTimes(data1.length * 14);
 
-    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 7);
+    expect(dataKey2Spy).toHaveBeenCalledTimes(data2.length * 10);
     expect(dataKey2Spy).toHaveBeenNthCalledWith(1, data2[0]);
     expect(dataKey2Spy).toHaveBeenLastCalledWith(data2[2]);
   });
