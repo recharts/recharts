@@ -19,7 +19,7 @@ export const Simple: StoryObj = {
   render: (args: StorybookArgs, context: RechartsStoryContext) => {
     return (
       <RadialBarChart {...args}>
-        <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} />
+        <RadialBar dataKey="uv" activeShape={{ fill: 'red' }} label={{ position: 'insideStart', fill: 'white' }} />
         <Tooltip defaultIndex={3} />
         <RechartsHookInspector
           position={context.rechartsInspectorPosition}
