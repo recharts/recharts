@@ -1,7 +1,7 @@
 import { Series } from 'victory-vendor/d3-shape';
-import { DataKey } from '../types';
 import { MaybeStackedGraphicalItem } from '../../state/selectors/barSelectors';
 import { StackId } from '../ChartUtils';
+import { GraphicalItemId } from '../../state/graphicalItemsSlice';
 
 /*
  * So chart stacks come in layers:
@@ -54,4 +54,4 @@ export type StackDataPoint = [number, number];
  * Identifier for a series in the stack.
  * Used to join the stack series with the graphical items in the stack.
  */
-export type StackSeriesIdentifier = DataKey<any>;
+export type StackSeriesIdentifier = GraphicalItemId;

@@ -61,7 +61,7 @@ const selectBandSize = createSelector(
   },
 );
 
-const selectGraphicalItemStackedData = (
+export const selectGraphicalItemStackedData = (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,

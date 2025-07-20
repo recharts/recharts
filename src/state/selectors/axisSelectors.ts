@@ -73,6 +73,8 @@ import { combineAxisRangeWithReverse } from './combiners/combineAxisRangeWithRev
 import { DEFAULT_Y_AXIS_WIDTH } from '../../util/Constants';
 import { getStackSeriesIdentifier } from '../../util/stacks/getStackSeriesIdentifier';
 import { AllStackGroups, StackGroup } from '../../util/stacks/stackTypes';
+import { selectTooltipAxis } from './selectTooltipAxis';
+import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
 
 const defaultNumericDomain: AxisDomain = [0, 'auto'];
 
@@ -528,8 +530,18 @@ export function getErrorDomainByDataKey(
   );
 }
 
+export const selectDisplayedStackedData: (
+  state: RechartsRootState,
+  axisType: XorYorZType,
+  axisId: AxisId,
+  isPanorama: boolean,
+) => DisplayedStackedData = createSelector(
+  [selectCartesianItemsSettings, selectChartDataWithIndexesIfNotInPanorama, selectTooltipAxis],
+  combineDisplayedStackedData,
+);
+
 export const combineStackGroups = (
-  displayedData: ChartData,
+  displayedData: DisplayedStackedData,
   items: ReadonlyArray<MaybeStackedGraphicalItem>,
   stackOffsetType: StackOffsetType,
 ): AllStackGroups => {
@@ -574,7 +586,7 @@ export const selectStackGroups: (
   axisId: AxisId,
   isPanorama: boolean,
 ) => AllStackGroups | undefined = createSelector(
-  [selectDisplayedData, selectCartesianItemsSettings, selectStackOffsetType],
+  [selectDisplayedStackedData, selectCartesianItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
 

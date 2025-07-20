@@ -35,17 +35,14 @@ import {
   selectStackOffsetType,
 } from './rootPropsSelectors';
 import { PolarGraphicalItemSettings } from '../graphicalItemsSlice';
-import {
-  PolarAxisType,
-  selectPolarDisplayedData,
-  selectPolarItemsSettings,
-  selectUnfilteredPolarItems,
-} from './polarSelectors';
+import { PolarAxisType, selectPolarItemsSettings, selectUnfilteredPolarItems } from './polarSelectors';
 import { AngleAxisSettings, RadiusAxisSettings } from '../polarAxisSlice';
 import { LegendPayload } from '../../component/DefaultLegendContent';
 import { isNullish } from '../../util/DataUtils';
 
 import { AllStackGroups, StackDataPoint, StackSeries, StackSeriesIdentifier } from '../../util/stacks/stackTypes';
+import { combineDisplayedStackedData, DisplayedStackedData } from './combiners/combineDisplayedStackedData';
+import { selectTooltipAxis } from './selectTooltipAxis';
 
 export interface RadialBarSettings extends MaybeStackedGraphicalItem {
   dataKey: DataKey<any> | undefined;
@@ -333,12 +330,21 @@ export const selectPolarBarPosition: (
   },
 );
 
+const selectPolarCombinedStackedData: (
+  state: RechartsRootState,
+  axisType: PolarAxisType,
+  polarAxisId: AxisId,
+) => DisplayedStackedData = createSelector(
+  [selectPolarItemsSettings, selectChartDataAndAlwaysIgnoreIndexes, selectTooltipAxis],
+  combineDisplayedStackedData,
+);
+
 const selectStackGroups: (
   state: RechartsRootState,
   axisType: PolarAxisType,
   polarAxisId: AxisId,
 ) => AllStackGroups | undefined = createSelector(
-  [selectPolarDisplayedData, selectPolarItemsSettings, selectStackOffsetType],
+  [selectPolarCombinedStackedData, selectPolarItemsSettings, selectStackOffsetType],
   combineStackGroups,
 );
 
