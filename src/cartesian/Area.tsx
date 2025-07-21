@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
 import { MutableRefObject, PureComponent, useCallback, useMemo, useRef, useState } from 'react';
 import { clsx } from 'clsx';
@@ -102,7 +101,7 @@ interface AreaProps {
   className?: string;
 
   connectNulls?: boolean;
-  data?: any[];
+  data?: ChartData;
   dataKey: DataKey<any>;
   dot?: ActiveDotType;
   hide?: boolean;
@@ -728,9 +727,9 @@ function AreaImpl(props: WithIdRequired<Props>) {
   );
   const { points, isRange, baseLine } =
     useAppSelector(state => selectArea(state, xAxisId, yAxisId, isPanorama, areaSettings)) ?? {};
-  const { height, width, x: left, y: top } = usePlotArea();
+  const plotArea = usePlotArea();
 
-  if (layout !== 'horizontal' && layout !== 'vertical') {
+  if ((layout !== 'horizontal' && layout !== 'vertical') || plotArea == null) {
     // Can't render Area in an unsupported layout
     return null;
   }
@@ -739,6 +738,8 @@ function AreaImpl(props: WithIdRequired<Props>) {
     // There is nothing stopping us from rendering Area in other charts, except for historical reasons. Do we want to allow that?
     return null;
   }
+
+  const { height, width, x: left, y: top } = plotArea;
 
   /*
    * It is important to NOT have this condition here,
@@ -916,32 +917,28 @@ export function computeArea({
   };
 }
 
-export class Area extends PureComponent<Props> {
-  static displayName = 'Area';
-
-  static defaultProps = defaultAreaProps;
-
-  render() {
-    // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
-    return (
-      <>
-        <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(this.props)} />
-        <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={this.props} />
-        <CartesianGraphicalItemContext
-          id={this.props.id}
-          type="area"
-          data={this.props.data}
-          dataKey={this.props.dataKey}
-          xAxisId={this.props.xAxisId}
-          yAxisId={this.props.yAxisId}
-          zAxisId={0}
-          stackId={this.props.stackId}
-          hide={this.props.hide}
-          barSize={undefined}
-        >
-          {id => <AreaImpl {...this.props} id={id} />}
-        </CartesianGraphicalItemContext>
-      </>
-    );
-  }
+export function Area(outsideProps: Props) {
+  const props = resolveDefaultProps(outsideProps, defaultAreaProps);
+  // Report all props to Redux store first, before calling any hooks, to avoid circular dependencies.
+  return (
+    <>
+      <SetLegendPayload legendPayload={computeLegendPayloadFromAreaData(props)} />
+      <SetTooltipEntrySettings fn={getTooltipEntrySettings} args={props} />
+      <CartesianGraphicalItemContext
+        id={props.id}
+        type="area"
+        data={props.data}
+        dataKey={props.dataKey}
+        xAxisId={props.xAxisId}
+        yAxisId={props.yAxisId}
+        zAxisId={0}
+        stackId={props.stackId}
+        hide={props.hide}
+        barSize={undefined}
+      >
+        {id => <AreaImpl {...props} id={id} />}
+      </CartesianGraphicalItemContext>
+    </>
+  );
 }
+Area.displayName = 'Area';
