@@ -396,7 +396,46 @@ describe('Pie animation', () => {
       });
     });
 
-    describe.todo('interaction in the middle of the initial animation');
+    describe('interaction in the middle of the initial animation', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        // The test begins initially with the 'amt' dataKey, so we let the animation run half way
+        await animationManager.setAnimationProgress(0.5);
+
+        // change the dataKey prop
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+
+        // now the chart is ready for assertions
+      }
+
+      it('should animate the pie sector angles from the intermediate state', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+        expect(angles).toEqual([
+          [
+            // The Pie is 337/360 rendered when the dataKey changes, and it continues from there
+            { startAngle: -0, endAngle: 101.06557642178599 },
+            { startAngle: 101.06557642178599, endAngle: 265.78488859057325 },
+            { startAngle: 265.78488859057325, endAngle: 337.41758858481177 },
+          ],
+          [
+            { startAngle: -0, endAngle: 102.87291302658812 },
+            { startAngle: 102.87291302658812, endAngle: 293.481545229013 },
+            { startAngle: 293.481545229013, endAngle: 355.78630384203933 },
+          ],
+          [
+            { startAngle: -0, endAngle: 103.28750747160791 },
+            { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+            { startAngle: 299.8350268977884, endAngle: 360 },
+          ],
+        ]);
+      });
+    });
   });
 
   describe('when the Pie has a key prop to force re-animation', () => {
@@ -528,7 +567,41 @@ describe('Pie animation', () => {
       });
     });
 
-    describe.todo('interaction in the middle of the initial animation');
+    describe('interaction in the middle of the initial animation', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        await animationManager.setAnimationProgress(0.5);
+
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should animate from 2 to 3 sectors from the intermediate state', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+        expect(angles).toEqual([
+          [
+            { startAngle: -0, endAngle: 127.75636393371754 },
+            { startAngle: 127.75636393371754, endAngle: 255.51272786743505 },
+            { startAngle: 255.51272786743505, endAngle: 337.4175885848118 },
+          ],
+          [
+            { startAngle: -0, endAngle: 121.4472750631613 },
+            { startAngle: 121.4472750631613, endAngle: 242.89455012632249 },
+            { startAngle: 242.89455012632249, endAngle: 355.7863038420393 },
+          ],
+          [
+            { startAngle: -0, endAngle: 120.00000000000001 },
+            { startAngle: 120.00000000000001, endAngle: 240 },
+            { startAngle: 240, endAngle: 360 },
+          ],
+        ]);
+      });
+    });
   });
 
   describe('when the pie element hides during the animation', () => {
