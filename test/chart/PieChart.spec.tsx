@@ -2,30 +2,13 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, Mock, vi } from 'vitest';
-import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip } from '../../src';
+import { Cell, Legend, Pie, PieChart, Sector, SectorProps, Tooltip, useChartHeight } from '../../src';
 import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext';
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-
-function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
-  const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
-  expect(sectorNodes.length).toBeGreaterThanOrEqual(2);
-  const [sector1, sector2] = Array.from(sectorNodes);
-
-  fireEvent.mouseOver(sector1, { pageX: 200, pageY: 200 });
-  expect(container.querySelectorAll(selectors)).toHaveLength(1);
-
-  fireEvent.mouseOver(sector2, { pageX: 200, pageY: 200 });
-  expect(container.querySelectorAll(selectors)).toHaveLength(1);
-
-  fireEvent.mouseOut(sector2);
-  expect(container.querySelectorAll(selectors)).toHaveLength(0);
-}
-
-function selectPieSectors(container: HTMLElement) {
-  return container.querySelectorAll('.recharts-pie-sector');
-}
+import { expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
+import { expectLegendLabels } from '../helper/expectLegendLabels';
 
 describe('<PieChart />', () => {
   const data = [
@@ -37,12 +20,12 @@ describe('<PieChart />', () => {
     { name: 'Group F', value: 189, v: 60 },
   ];
 
-  test('Renders 1 sector with animation, simple PieChart', () => {
+  test('Renders 1 sector in simple PieChart', () => {
     const { container } = render(
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
-          isAnimationActive
+          isAnimationActive={false}
           data={[data[0]]}
           cx={200}
           cy={200}
@@ -53,7 +36,7 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(1);
+    expectPieSectors(container, [{ d: 'M 285,205 A 80,80,0, 1,0, 284.9999999878153,205.00139626340152 L 205,205 Z' }]);
   });
 
   test('Renders 6 sectors circles in simple PieChart', () => {
@@ -61,48 +44,7 @@ describe('<PieChart />', () => {
       <PieChart width={800} height={400}>
         <Pie
           dataKey="value"
-          isAnimationActive
-          data={data}
-          animationDuration={0}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
-      </PieChart>,
-    );
-
-    expect(selectPieSectors(container)).toHaveLength(data.length);
-  });
-
-  test('Renders 6 sectors circles in simple PieChart with animation', () => {
-    const { container } = render(
-      <PieChart width={400} height={400}>
-        <Pie
-          dataKey="value"
-          startAngle={180}
-          endAngle={0}
-          data={data}
-          cx="50%"
-          cy="50%"
-          outerRadius={80}
-          fill="#8884d8"
-          label
-        />
-      </PieChart>,
-    );
-
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(data.length);
-  });
-
-  test('With Tooltip render customized active sector when activeShape is set to be an element', () => {
-    const { container } = render(
-      <PieChart width={800} height={400}>
-        <Pie
-          dataKey="value"
           isAnimationActive={false}
-          activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
           data={data}
           cx={200}
           cy={200}
@@ -110,77 +52,123 @@ describe('<PieChart />', () => {
           fill="#ff7300"
           label
         />
-        <Tooltip />
       </PieChart>,
     );
 
-    assertActiveShapeInteractions(container, '.recharts-active-shape');
-    assertActiveShapeInteractions(container, '.customized-active-shape');
+    expectPieSectors(container, [
+      { d: 'M 285,205 A 80,80,0, 0,0, 202.35408677088503,125.0437673274685 L 205,205 Z' },
+      { d: 'M 202.35408677088503,125.0437673274685 A 80,80,0, 0,0, 129.44215754650043,178.7128844531748 L 205,205 Z' },
+      { d: 'M 129.44215754650043,178.7128844531748 A 80,80,0, 0,0, 133.5708108622496,241.02597589411673 L 205,205 Z' },
+      { d: 'M 133.5708108622496,241.02597589411673 A 80,80,0, 0,0, 181.22625959949275,281.3859232278388 L 205,205 Z' },
+      { d: 'M 181.22625959949275,281.3859232278388 A 80,80,0, 0,0, 263.1062563242316,259.9878438928341 L 205,205 Z' },
+      { d: 'M 263.1062563242316,259.9878438928341 A 80,80,0, 0,0, 285,205.00000000000003 L 205,205 Z' },
+    ]);
   });
 
-  test('With Tooltip render customized active sector when activeShape is set to be a function', () => {
-    const { container } = render(
-      <PieChart width={800} height={400}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          activeShape={(props: SectorProps) => <Sector {...props} fill="#ff7300" className="customized-active-shape" />}
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
-        <Tooltip />
-      </PieChart>,
-    );
+  describe('active shape interactions', () => {
+    function assertActiveShapeInteractions(container: HTMLElement, selectors: string) {
+      const sectorNodes = container.querySelectorAll('.recharts-pie-sector');
+      expect(sectorNodes.length).toBeGreaterThanOrEqual(2);
+      const [sector1, sector2] = Array.from(sectorNodes);
 
-    assertActiveShapeInteractions(container, '.recharts-active-shape');
-    assertActiveShapeInteractions(container, '.customized-active-shape');
-  });
+      fireEvent.mouseOver(sector1, { pageX: 200, pageY: 200 });
+      expect(container.querySelectorAll(selectors)).toHaveLength(1);
 
-  test('With Tooltip render customized active sector when activeShape is set to be an object', () => {
-    const { container } = render(
-      <PieChart width={800} height={400}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          activeShape={{ fill: '#ff7300', className: 'customized-active-shape' }}
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
-        <Tooltip />
-      </PieChart>,
-    );
+      fireEvent.mouseOver(sector2, { pageX: 200, pageY: 200 });
+      expect(container.querySelectorAll(selectors)).toHaveLength(1);
 
-    assertActiveShapeInteractions(container, '.recharts-active-shape');
-    assertActiveShapeInteractions(container, '.customized-active-shape');
-  });
+      fireEvent.mouseOut(sector2);
+      expect(container.querySelectorAll(selectors)).toHaveLength(0);
+    }
 
-  test('With Tooltip render customized active sector when activeShape is set to be a truthy boolean', () => {
-    const { container } = render(
-      <PieChart width={800} height={400}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          activeShape
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
-        <Tooltip />
-      </PieChart>,
-    );
+    test('With Tooltip render customized active sector when activeShape is set to be an element', () => {
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            activeShape={<Sector fill="#ff7300" className="customized-active-shape" />}
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+            label
+          />
+          <Tooltip />
+        </PieChart>,
+      );
 
-    assertActiveShapeInteractions(container, '.recharts-active-shape');
+      assertActiveShapeInteractions(container, '.recharts-active-shape');
+      assertActiveShapeInteractions(container, '.customized-active-shape');
+    });
+
+    test('With Tooltip render customized active sector when activeShape is set to be a function', () => {
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            activeShape={(props: SectorProps) => (
+              <Sector {...props} fill="#ff7300" className="customized-active-shape" />
+            )}
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+            label
+          />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      assertActiveShapeInteractions(container, '.recharts-active-shape');
+      assertActiveShapeInteractions(container, '.customized-active-shape');
+    });
+
+    test('With Tooltip render customized active sector when activeShape is set to be an object', () => {
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            activeShape={{ fill: '#ff7300', className: 'customized-active-shape' }}
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+            label
+          />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      assertActiveShapeInteractions(container, '.recharts-active-shape');
+      assertActiveShapeInteractions(container, '.customized-active-shape');
+    });
+
+    test('With Tooltip render customized active sector when activeShape is set to be a truthy boolean', () => {
+      const { container } = render(
+        <PieChart width={800} height={400}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            activeShape
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+            label
+          />
+          <Tooltip />
+        </PieChart>,
+      );
+
+      assertActiveShapeInteractions(container, '.recharts-active-shape');
+    });
   });
 
   test('Renders 6 sectors circles when add Cell to specified props of each slice', () => {
@@ -194,7 +182,14 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(6);
+    expectPieSectors(container, [
+      { d: 'M 285,205 A 80,80,0, 0,0, 202.35408677088503,125.0437673274685 L 205,205 Z' },
+      { d: 'M 202.35408677088503,125.0437673274685 A 80,80,0, 0,0, 129.44215754650043,178.7128844531748 L 205,205 Z' },
+      { d: 'M 129.44215754650043,178.7128844531748 A 80,80,0, 0,0, 133.5708108622496,241.02597589411673 L 205,205 Z' },
+      { d: 'M 133.5708108622496,241.02597589411673 A 80,80,0, 0,0, 181.22625959949275,281.3859232278388 L 205,205 Z' },
+      { d: 'M 181.22625959949275,281.3859232278388 A 80,80,0, 0,0, 263.1062563242316,259.9878438928341 L 205,205 Z' },
+      { d: 'M 263.1062563242316,259.9878438928341 A 80,80,0, 0,0, 285,205.00000000000003 L 205,205 Z' },
+    ]);
   });
 
   test('Renders legend when all the values are 0', () => {
@@ -213,7 +208,14 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(emptyData.length);
+    expectLegendLabels(container, [
+      { fill: '#808080', stroke: undefined, textContent: 'Group A' },
+      { fill: '#808080', stroke: undefined, textContent: 'Group B' },
+      { fill: '#808080', stroke: undefined, textContent: 'Group C' },
+      { fill: '#808080', stroke: undefined, textContent: 'Group D' },
+      { fill: '#808080', stroke: undefined, textContent: 'Group E' },
+      { fill: '#808080', stroke: undefined, textContent: 'Group F' },
+    ]);
   });
 
   test("Don't renders any sectors when width or height is smaller than 0", () => {
@@ -232,7 +234,7 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
+    expectPieSectors(container, []);
   });
 
   test('Renders 6 legend item when add a Legend element', () => {
@@ -252,26 +254,15 @@ describe('<PieChart />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-legend-wrapper')).toHaveLength(1);
-    expect(container.querySelectorAll('.recharts-legend-item')).toHaveLength(6);
+    expectLegendLabels(container, [
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group A' },
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group B' },
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group C' },
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group D' },
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group E' },
+      { fill: '#ff7300', stroke: undefined, textContent: 'Group F' },
+    ]);
   });
-
-  const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
-    return (
-      <PieChart width={800} height={400} {...eventProps}>
-        <Pie
-          dataKey="value"
-          isAnimationActive={false}
-          data={data}
-          cx={200}
-          cy={200}
-          outerRadius={80}
-          fill="#ff7300"
-          label
-        />
-      </PieChart>
-    );
-  };
 
   test('Renders tooltip when add a Tooltip element', () => {
     const { container } = render(
@@ -294,105 +285,132 @@ describe('<PieChart />', () => {
     expect(container.querySelectorAll('.recharts-default-tooltip')).toHaveLength(1);
   });
 
-  test('click on Sector should invoke onClick callback', async () => {
-    const onClick = vi.fn();
+  describe('mouse events', () => {
+    const getPieChart = (eventProps: { onClick?: Mock; onMouseEnter?: Mock; onMouseLeave?: Mock }) => {
+      return (
+        <PieChart width={800} height={400} {...eventProps}>
+          <Pie
+            dataKey="value"
+            isAnimationActive={false}
+            data={data}
+            cx={200}
+            cy={200}
+            outerRadius={80}
+            fill="#ff7300"
+            label
+          />
+        </PieChart>
+      );
+    };
 
-    const { container } = render(getPieChart({ onClick }));
-    const sectors = container.querySelectorAll('.recharts-sector');
-    const sector = sectors[2];
+    test('click on Sector should invoke onClick callback', async () => {
+      const onClick = vi.fn();
 
-    await userEvent.click(sector);
-    expect(onClick).toBeCalled();
-  });
+      const { container } = render(getPieChart({ onClick }));
+      const sectors = container.querySelectorAll('.recharts-sector');
+      const sector = sectors[2];
 
-  test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
-    const onMouseEnter = vi.fn();
+      expect(onClick).toHaveBeenCalledTimes(0);
+      await userEvent.click(sector);
+      expect(onClick).toHaveBeenCalledTimes(1);
+      expect(onClick).toHaveBeenLastCalledWith(
+        {
+          activeCoordinate: {
+            x: 165.08751071020006,
+            y: 207.64446567223055,
+          },
+          activeDataKey: 'value',
+          activeIndex: '2',
+          activeLabel: 2,
+          activeTooltipIndex: '2',
+          isTooltipActive: true,
+        },
+        // second argument is the synthetic event from React
+        expect.any(Object),
+      );
+    });
 
-    const { container } = render(getPieChart({ onMouseEnter }));
-    const sectors = container.querySelectorAll('.recharts-sector');
-    const sector = sectors[2];
+    test('onMouseEnter Sector should invoke onMouseEnter callback', async () => {
+      const onMouseEnter = vi.fn();
 
-    await userEvent.hover(sector);
-    expect(onMouseEnter).toBeCalled();
-  });
+      const { container } = render(getPieChart({ onMouseEnter }));
+      const sectors = container.querySelectorAll('.recharts-sector');
+      const sector = sectors[2];
 
-  test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
-    const onMouseLeave = vi.fn();
+      expect(onMouseEnter).toHaveBeenCalledTimes(0);
+      await userEvent.hover(sector);
+      expect(onMouseEnter).toHaveBeenCalledTimes(1);
+      expect(onMouseEnter).toHaveBeenLastCalledWith(
+        {
+          activeCoordinate: undefined,
+          activeDataKey: undefined,
+          activeIndex: null,
+          activeLabel: undefined,
+          activeTooltipIndex: null,
+          isTooltipActive: false,
+        },
+        // second argument is the synthetic event from React
+        expect.any(Object),
+      );
+    });
 
-    const { container } = render(getPieChart({ onMouseLeave }));
-    const sectors = container.querySelectorAll('.recharts-sector');
-    const sector = sectors[2];
+    test('onMouseLeave Sector should invoke onMouseLeave callback', async () => {
+      const onMouseLeave = vi.fn();
 
-    await userEvent.unhover(sector);
-    expect(onMouseLeave).toBeCalled();
+      const { container } = render(getPieChart({ onMouseLeave }));
+      const sectors = container.querySelectorAll('.recharts-sector');
+      const sector = sectors[2];
+
+      expect(onMouseLeave).toHaveBeenCalledTimes(0);
+      await userEvent.unhover(sector);
+      expect(onMouseLeave).toHaveBeenCalledTimes(1);
+      expect(onMouseLeave).toHaveBeenLastCalledWith(
+        {
+          activeCoordinate: undefined,
+          activeDataKey: undefined,
+          activeIndex: null,
+          activeLabel: undefined,
+          activeTooltipIndex: null,
+          isTooltipActive: false,
+        },
+        // second argument is the synthetic event from React
+        expect.any(Object),
+      );
+    });
   });
 
   describe('PieChart layout context', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => (
+      <PieChart width={100} height={50} barSize={20}>
+        {children}
+      </PieChart>
+    ));
+
     it('should provide viewBox', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        spy(useViewBox());
-        return null;
-      };
+      const { spy } = renderTestCase(useViewBox);
 
-      render(
-        <PieChart width={100} height={50} barSize={20}>
-          <Comp />
-        </PieChart>,
-      );
-
-      expect(spy).toBeCalledWith({ height: 40, width: 90, x: 5, y: 5 });
+      expect(spy).toHaveBeenLastCalledWith({ height: 40, width: 90, x: 5, y: 5 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide clipPathId', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        spy(useClipPathId());
-        return null;
-      };
+      const { spy } = renderTestCase(useClipPathId);
 
-      render(
-        <PieChart width={100} height={50} barSize={20}>
-          <Comp />
-        </PieChart>,
-      );
-
+      expect(spy).toHaveBeenLastCalledWith(expect.stringMatching(/recharts\d+-clip/));
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith(expect.stringMatching(/recharts\d+-clip/));
     });
 
     it('should provide chart width', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        spy(useChartWidth());
-        return null;
-      };
+      const { spy } = renderTestCase(useChartWidth);
 
-      render(
-        <PieChart width={100} height={50} barSize={20}>
-          <Comp />
-        </PieChart>,
-      );
-
-      expect(spy).toBeCalledWith(100);
+      expect(spy).toHaveBeenLastCalledWith(100);
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should provide chart height', () => {
-      const spy = vi.fn();
-      const Comp = (): null => {
-        spy(useChartWidth());
-        return null;
-      };
+      const { spy } = renderTestCase(useChartHeight);
 
-      render(
-        <PieChart width={100} height={50} barSize={20}>
-          <Comp />
-        </PieChart>,
-      );
-
-      expect(spy).toBeCalledWith(100);
+      expect(spy).toHaveBeenLastCalledWith(50);
       expect(spy).toHaveBeenCalledTimes(1);
     });
   });
