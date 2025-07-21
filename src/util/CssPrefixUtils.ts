@@ -2,7 +2,7 @@ const PREFIX_LIST = ['Webkit', 'Moz', 'O', 'ms'];
 
 export const generatePrefixStyle = (name: string, value: string) => {
   if (!name) {
-    return null;
+    return undefined;
   }
 
   const camelName = name.replace(/(\w)/, v => v.toUpperCase());
