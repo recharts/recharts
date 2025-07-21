@@ -186,7 +186,7 @@ describe('Bar animation', () => {
       expect(onAnimationStart).toHaveBeenCalledWith();
 
       await animationManager.completeAnimation();
-      expect(onAnimationEnd).toHaveBeenCalledTimes(1);
+      expect(onAnimationStart).toHaveBeenCalledTimes(1);
     });
 
     it('should call onAnimationEnd callback when the animation ends', async () => {
