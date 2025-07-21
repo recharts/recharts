@@ -1,7 +1,7 @@
 import { trim } from './trim';
 
 export function selectPieSectors(container: Element) {
-  return container.querySelectorAll('.recharts-pie-sector path.recharts-sector');
+  return Array.from(container.querySelectorAll('.recharts-pie-sector path.recharts-sector'));
 }
 
 export type ExpectedSector = {
@@ -70,13 +70,8 @@ function calculateAnglesFromPath(
   return { startAngle, endAngle };
 }
 
-export function expectPieSectorAngles(
-  container: Element,
-  expectedAngles: ReadonlyArray<{ startAngle: number; endAngle: number }>,
-) {
-  const sectors = selectPieSectors(container);
-
-  const actualAngles = Array.from(sectors).map(sector => {
+export function getPieSectorAngles(sectors: ReadonlyArray<Element>) {
+  return Array.from(sectors).map(sector => {
     const d = sector.getAttribute('d');
     if (!d) {
       throw new Error('Sector path "d" attribute is missing');
@@ -85,6 +80,15 @@ export function expectPieSectorAngles(
     const cy = parseFloat(sector.getAttribute('cy') ?? '0');
     return calculateAnglesFromPath(cx, cy, d);
   });
+}
+
+export function expectPieSectorAngles(
+  container: Element,
+  expectedAngles: ReadonlyArray<{ startAngle: number; endAngle: number }>,
+) {
+  const sectors = selectPieSectors(container);
+
+  const actualAngles = getPieSectorAngles(sectors);
 
   expect(actualAngles).toEqual(expectedAngles);
 }

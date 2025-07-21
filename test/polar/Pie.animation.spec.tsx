@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { Pie, PieChart } from '../../src';
-import { expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
+import {
+  expectPieSectors,
+  selectPieSectors,
+  getPieSectorAngles,
+  expectPieSectorAngles,
+} from '../helper/expectPieSectors';
 import { MockProgressAnimationManager } from '../animation/MockProgressAnimationManager';
 import { assertNotNull } from '../helper/assertNotNull';
 import { trim } from '../helper/trim';
@@ -69,6 +74,73 @@ async function expectAnimatedPiePaths(
   return pathDsDuringAnimation;
 }
 
+async function expectAnimatedPieAngles(
+  container: Element,
+  animationManager: MockProgressAnimationManager,
+  steps: number = 5,
+): Promise<ReadonlyArray<ReadonlyArray<{ startAngle: number; endAngle: number }>>> {
+  assertNotNull(container);
+  /*
+   * Pie sectors at 0% progress do not render at all, so we
+   * start from 0.1 so that the sectors have rendered a little bit.
+   */
+  let animationProgress = 0.1;
+  await animationManager.setAnimationProgress(animationProgress);
+  const stepSize = (1 - animationProgress) / steps;
+  const initialPieSectors = selectPieSectors(container);
+  const initialAngles = getPieSectorAngles(initialPieSectors);
+
+  const anglesDuringAnimation: { startAngle: number; endAngle: number }[][] = [];
+  for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
+    // eslint-disable-next-line no-await-in-loop
+    await animationManager.setAnimationProgress(animationProgress);
+    const currentPieSectors = selectPieSectors(container);
+    const currentAngles = getPieSectorAngles(currentPieSectors);
+    anglesDuringAnimation.push(currentAngles);
+
+    // Assert that all angles change
+    initialAngles.forEach((initial, index) => {
+      const current = currentAngles[index];
+      if (index === 0) {
+        // Because the pie grows from the same position, the start angle should remain the same for the first sector
+        expect(current.startAngle).toBe(initial.startAngle);
+      } else {
+        // For all other sectors, the start angle should change
+        expect(current.startAngle).not.toBe(initial.startAngle);
+      }
+      expect(current.endAngle).not.toBe(initial.endAngle);
+    });
+  }
+
+  await animationManager.completeAnimation();
+  // Final check to ensure the animation completed
+  const finalPieSectors = selectPieSectors(container);
+  expect(finalPieSectors).toHaveLength(initialPieSectors.length);
+  const finalAngles = getPieSectorAngles(finalPieSectors);
+  finalAngles.forEach((final, index) => {
+    const initial = initialAngles[index];
+    if (index === 0) {
+      // Because the pie grows from the same position, the start angle should remain the same for the first sector
+      expect(final.startAngle).toBe(initial.startAngle);
+    } else {
+      // For all other sectors, the start angle should change
+      expect(final.startAngle).not.toBe(initial.startAngle);
+    }
+    expect(final.endAngle).not.toBe(initial.endAngle);
+  });
+
+  // Also, because the Pie is always a full circle, the end angle of the last sector should be 360 degrees
+  expect(finalAngles[finalAngles.length - 1].endAngle).toBe(360);
+
+  // collect the angles one last time, at the end of the animation
+  anglesDuringAnimation.push(finalAngles);
+
+  // Return the collected angles
+  expect(anglesDuringAnimation).toHaveLength(steps);
+
+  return anglesDuringAnimation;
+}
+
 describe('Pie animation', () => {
   const onAnimationStart = vi.fn();
   const onAnimationEnd = vi.fn();
@@ -96,6 +168,11 @@ describe('Pie animation', () => {
       const { container } = renderTestCase();
 
       expectPieSectors(container, finalSectorPaths);
+      expectPieSectorAngles(container, [
+        { startAngle: -0, endAngle: 120.00000000000001 },
+        { startAngle: 120.00000000000001, endAngle: 240 },
+        { startAngle: 240, endAngle: 360 },
+      ]);
     });
 
     it('should not call animation start or end callbacks', () => {
@@ -181,6 +258,35 @@ describe('Pie animation', () => {
           'M 86,50 A 36,36,0, 0,0, 32.00000000000001,18.823085463760208 L 50,50 Z',
           'M 32.00000000000001,18.823085463760208 A 36,36,0, 0,0, 31.999999999999986,81.17691453623979 L 50,50 Z',
           'M 31.999999999999986,81.17691453623979 A 36,36,0, 0,0, 86,50.00000000000001 L 50,50 Z',
+        ],
+      ]);
+    });
+
+    it('should render sectors with animated angles', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      const angles = await expectAnimatedPieAngles(container, animationManager, 4);
+
+      expect(angles).toEqual([
+        [
+          { startAngle: -0, endAngle: 67.29731279103035 },
+          { startAngle: 67.29731279103035, endAngle: 134.5946255820607 },
+          { startAngle: 134.5946255820607, endAngle: 201.89193837309108 },
+        ],
+        [
+          { startAngle: -0, endAngle: 101.7302266741997 },
+          { startAngle: 101.7302266741997, endAngle: 203.4604533483994 },
+          { startAngle: 203.4604533483994, endAngle: 305.19068002259905 },
+        ],
+        [
+          { startAngle: -0, endAngle: 116.2289291971026 },
+          { startAngle: 116.2289291971026, endAngle: 232.45785839420515 },
+          { startAngle: 232.45785839420515, endAngle: 348.6867875913077 },
+        ],
+        [
+          { startAngle: -0, endAngle: 120.00000000000001 },
+          { startAngle: 120.00000000000001, endAngle: 240 },
+          { startAngle: 240, endAngle: 360 },
         ],
       ]);
     });
