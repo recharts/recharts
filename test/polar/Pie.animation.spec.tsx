@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { PageData } from '../_data';
 import { Pie, PieChart } from '../../src';
@@ -40,6 +41,10 @@ async function expectAnimatedPiePaths(
   const initialPieSectors = selectPieSectors(container);
   const getD = (sector: Element) => trim(sector.getAttribute('d'));
   const initialPathDs = Array.from(initialPieSectors).map(getD);
+  const initialAttributes = Array.from(initialPieSectors).map(sector => ({
+    fill: sector.getAttribute('fill'),
+    stroke: sector.getAttribute('stroke'),
+  }));
 
   const pathDsDuringAnimation: string[][] = [];
   for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
@@ -52,7 +57,9 @@ async function expectAnimatedPiePaths(
     // Assert that all d attributes change
     initialPathDs.forEach((initial, index) => {
       const currentSector = currentPieSectors[index];
-      expect(currentSector.getAttribute('d')).not.toBe(initial);
+      expect(trim(currentSector.getAttribute('d'))).not.toBe(initial);
+      expect(currentSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
+      expect(currentSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
     });
   }
 
@@ -61,7 +68,9 @@ async function expectAnimatedPiePaths(
   const finalPieSectors = selectPieSectors(container);
   expect(finalPieSectors).toHaveLength(initialPieSectors.length);
   finalPieSectors.forEach((sector, index) => {
-    expect(sector.getAttribute('d')).not.toBe(initialPathDs[index]);
+    expect(trim(sector.getAttribute('d'))).not.toBe(initialPathDs[index]);
+    expect(sector.getAttribute('fill')).toBe(initialAttributes[index].fill);
+    expect(sector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
   });
 
   // collect the path.d-s one last time, at the end of the animation
@@ -89,6 +98,10 @@ async function expectAnimatedPieAngles(
   const stepSize = (1 - animationProgress) / steps;
   const initialPieSectors = selectPieSectors(container);
   const initialAngles = getPieSectorAngles(initialPieSectors);
+  const initialAttributes = Array.from(initialPieSectors).map(sector => ({
+    fill: sector.getAttribute('fill'),
+    stroke: sector.getAttribute('stroke'),
+  }));
 
   const anglesDuringAnimation: { startAngle: number; endAngle: number }[][] = [];
   for (animationProgress += stepSize; animationProgress < 1; animationProgress += stepSize) {
@@ -101,6 +114,9 @@ async function expectAnimatedPieAngles(
     // Assert that all angles change
     initialAngles.forEach((initial, index) => {
       const current = currentAngles[index];
+      const currentSector = currentPieSectors[index];
+      expect(currentSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
+      expect(currentSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
       if (index === 0) {
         // Because the pie grows from the same position, the start angle should remain the same for the first sector
         expect(current.startAngle).toBe(initial.startAngle);
@@ -108,7 +124,16 @@ async function expectAnimatedPieAngles(
         // For all other sectors, the start angle should change
         expect(current.startAngle).not.toBe(initial.startAngle);
       }
-      expect(current.endAngle).not.toBe(initial.endAngle);
+      if (index !== currentAngles.length - 1) {
+        /*
+         * This is true for all sectors except the last one because the Pie is always a full circle.
+         * During the initial animation the Pie "grows" from the center, so the end angle of the last sector
+         * will indeed be different from the initial end angle,
+         * but during the "rearrange angles" animation the end angle of the last sector
+         * will always be 360 degrees, same as the initial end angle.
+         */
+        expect(current.endAngle).not.toBe(initial.endAngle);
+      }
     });
   }
 
@@ -119,6 +144,9 @@ async function expectAnimatedPieAngles(
   const finalAngles = getPieSectorAngles(finalPieSectors);
   finalAngles.forEach((final, index) => {
     const initial = initialAngles[index];
+    const finalSector = finalPieSectors[index];
+    expect(finalSector.getAttribute('fill')).toBe(initialAttributes[index].fill);
+    expect(finalSector.getAttribute('stroke')).toBe(initialAttributes[index].stroke);
     if (index === 0) {
       // Because the pie grows from the same position, the start angle should remain the same for the first sector
       expect(final.startAngle).toBe(initial.startAngle);
@@ -126,7 +154,16 @@ async function expectAnimatedPieAngles(
       // For all other sectors, the start angle should change
       expect(final.startAngle).not.toBe(initial.startAngle);
     }
-    expect(final.endAngle).not.toBe(initial.endAngle);
+    if (index !== finalAngles.length - 1) {
+      /*
+       * This is true for all sectors except the last one because the Pie is always a full circle.
+       * During the initial animation the Pie "grows" from the center, so the end angle of the last sector
+       * will indeed be different from the initial end angle,
+       * but during the "rearrange angles" animation the end angle of the last sector
+       * will always be 360 degrees, same as the initial end angle.
+       */
+      expect(final.endAngle).not.toBe(initial.endAngle);
+    }
   });
 
   // Also, because the Pie is always a full circle, the end angle of the last sector should be 360 degrees
@@ -282,6 +319,281 @@ describe('Pie animation', () => {
           { startAngle: -0, endAngle: 116.2289291971026 },
           { startAngle: 116.2289291971026, endAngle: 232.45785839420515 },
           { startAngle: 232.45785839420515, endAngle: 348.6867875913077 },
+        ],
+        [
+          { startAngle: -0, endAngle: 120.00000000000001 },
+          { startAngle: 120.00000000000001, endAngle: 240 },
+          { startAngle: 240, endAngle: 360 },
+        ],
+      ]);
+    });
+  });
+
+  describe('when changing dataKey prop', () => {
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [dataKey, setDataKey] = useState('amt');
+      const changeDataKey = () => {
+        setDataKey(prev => (prev === 'amt' ? 'pv' : 'amt'));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeDataKey}>
+            Change dataKey
+          </button>
+          <PieChart width={100} height={100}>
+            <Pie
+              data={smallerData}
+              dataKey={dataKey}
+              isAnimationActive
+              onAnimationStart={onAnimationStart}
+              onAnimationEnd={onAnimationEnd}
+            />
+            {children}
+          </PieChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    describe('interaction after initial animation completes', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        // The test begins initially with the 'amt' dataKey, so we need to run the animation to completion.
+        await animationManager.completeAnimation();
+
+        // change the dataKey prop
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+
+        // now the chart is ready for assertions
+      }
+
+      it('should animate the pie sector angles', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+        expect(angles).toEqual([
+          [
+            { startAngle: -0, endAngle: 108.59304689351539 },
+            { startAngle: 108.59304689351539, endAngle: 280.8398295340321 },
+            { startAngle: 280.8398295340321, endAngle: 360 },
+          ],
+          [
+            { startAngle: -0, endAngle: 104.27747841257502 },
+            { startAngle: 104.27747841257502, endAngle: 296.2906760009867 },
+            { startAngle: 296.2906760009867, endAngle: 360 },
+          ],
+          [
+            { startAngle: -0, endAngle: 103.28750747160791 },
+            { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+            { startAngle: 299.8350268977884, endAngle: 360 },
+          ],
+        ]);
+      });
+    });
+
+    describe.todo('interaction in the middle of the initial animation');
+  });
+
+  describe('when the Pie has a key prop to force re-animation', () => {
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [dataKey, setDataKey] = useState('amt');
+      const changeDataKey = () => {
+        setDataKey(prev => (prev === 'amt' ? 'pv' : 'amt'));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeDataKey}>
+            Change dataKey
+          </button>
+          <PieChart width={100} height={100}>
+            <Pie
+              key={dataKey}
+              data={smallerData}
+              dataKey={dataKey}
+              isAnimationActive
+              onAnimationStart={onAnimationStart}
+              onAnimationEnd={onAnimationEnd}
+            />
+            {children}
+          </PieChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      // The test begins initially with the 'amt' dataKey, so we need to run the animation to completion.
+      await animationManager.completeAnimation();
+
+      // change the dataKey prop
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      // now the chart is ready for assertions
+    }
+
+    it('should re-run the initial animation from the beginning', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+
+      expectPieSectors(container, []);
+
+      const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+      expect(angles).toEqual([
+        [
+          { startAngle: -0, endAngle: 70.49790761089213 },
+          { startAngle: 70.49790761089213, endAngle: 204.64955096878555 },
+          { startAngle: 204.64955096878555, endAngle: 245.71458215213022 },
+        ],
+        [
+          { startAngle: -0, endAngle: 97.16923212829177 },
+          { startAngle: 97.16923212829177, endAngle: 282.0741834324203 },
+          { startAngle: 282.0741834324203, endAngle: 338.6752611471502 },
+        ],
+        [
+          { startAngle: -0, endAngle: 103.28750747160791 },
+          { startAngle: 103.28750747160791, endAngle: 299.8350268977884 },
+          { startAngle: 299.8350268977884, endAngle: 360 },
+        ],
+      ]);
+    });
+  });
+
+  describe('tests that change data array', () => {
+    const data1 = smallerData.slice(0, 2);
+    const data2 = smallerData;
+
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [data, setData] = useState(data1);
+      const changeData = () => {
+        setData(prevData => (prevData === data1 ? data2 : data1));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeData}>
+            Change data
+          </button>
+          <PieChart width={100} height={100}>
+            <Pie data={data} dataKey="amt" isAnimationActive />
+            {children}
+          </PieChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    describe('interaction after initial animation completes', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        await animationManager.completeAnimation();
+
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should animate from 2 to 3 sectors', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+        expect(angles).toEqual([
+          [
+            { startAngle: -0, endAngle: 139.0475696413116 },
+            { startAngle: 139.0475696413116, endAngle: 278.0951392826232 },
+            { startAngle: 278.0951392826232, endAngle: 360 },
+          ],
+          [
+            { startAngle: -0, endAngle: 123.55412314214162 },
+            { startAngle: 123.55412314214162, endAngle: 247.10824628428324 },
+            { startAngle: 247.10824628428324, endAngle: 360 },
+          ],
+          [
+            { startAngle: -0, endAngle: 120.00000000000001 },
+            { startAngle: 120.00000000000001, endAngle: 240 },
+            { startAngle: 240, endAngle: 360 },
+          ],
+        ]);
+      });
+    });
+
+    describe.todo('interaction in the middle of the initial animation');
+  });
+
+  describe('when the pie element hides during the animation', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      const [isVisible, setIsVisible] = useState(true);
+      const toggleVisibility = () => {
+        setIsVisible(prev => !prev);
+      };
+      return (
+        <div>
+          <button type="button" onClick={toggleVisibility}>
+            Toggle visibility
+          </button>
+          <PieChart width={100} height={100}>
+            <Pie data={smallerData} dataKey="amt" isAnimationActive hide={!isVisible} />
+            {children}
+          </PieChart>
+        </div>
+      );
+    });
+
+    it('should not crash when the pie hides during the animation', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.3);
+
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      expectPieSectors(container, []);
+    });
+
+    it('should restart the animation from the beginning when the pie appears again', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.3);
+
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      expectPieSectors(container, []);
+
+      act(() => {
+        button.click();
+      });
+
+      expectPieSectors(container, []);
+
+      const angles = await expectAnimatedPieAngles(container, animationManager, 3);
+      expect(angles).toEqual([
+        [
+          { startAngle: -0, endAngle: 81.90486071737675 },
+          { startAngle: 81.90486071737675, endAngle: 163.8097214347535 },
+          { startAngle: 163.8097214347535, endAngle: 245.71458215213022 },
+        ],
+        [
+          { startAngle: -0, endAngle: 112.89175371571675 },
+          { startAngle: 112.89175371571675, endAngle: 225.7835074314335 },
+          { startAngle: 225.7835074314335, endAngle: 338.6752611471502 },
         ],
         [
           { startAngle: -0, endAngle: 120.00000000000001 },
