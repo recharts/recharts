@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { ReactNode, useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act } from '@testing-library/react';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
 import { mockSequenceOfGetBoundingClientRect } from '../helper/mockGetBoundingClientRect';
 import { BarChart, Bar } from '../../src';
@@ -237,6 +238,280 @@ describe('Bar animation', () => {
           'M 54.5,27.8280836058796 h 36 v 67.1719163941204 h -36 Z',
         ],
         ['M 9.5,59 h 36 v 36 h -36 Z', 'M 54.5,26.495 h 36 v 68.505 h -36 Z'],
+      ]);
+    });
+  });
+
+  describe('when changing dataKey prop', () => {
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [dataKey, setDataKey] = useState('pv');
+      const changeDataKey = () => {
+        setDataKey(prev => (prev === 'pv' ? 'uv' : 'pv'));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeDataKey}>
+            Change dataKey
+          </button>
+          <BarChart width={100} height={100} data={smallerData}>
+            <Bar
+              dataKey={dataKey}
+              isAnimationActive
+              onAnimationStart={onAnimationStart}
+              onAnimationEnd={onAnimationEnd}
+            />
+            {children}
+          </BarChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    describe('interaction after initial animation completes', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
+        await animationManager.completeAnimation();
+
+        // change the dataKey prop
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+
+        // now the chart is ready for assertions
+      }
+
+      it('should animate the bar heights', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+        expect(heights).toEqual([
+          // the second bar is the same because the amt value in the data is the same
+          ['72.85718732281953', '67.81904679149197'],
+          ['86.80128917207253', '67.55953156263087'],
+          ['90', '67.5'],
+        ]);
+      });
+    });
+
+    describe('interaction in the middle of the initial animation', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        // The test begins initially with the 'pv' dataKey, so we let the animation run half way
+        await animationManager.setAnimationProgress(0.5);
+
+        // change the dataKey prop
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+
+        // now the chart is ready for assertions
+      }
+
+      it('should animate the bar heights from the intermediate state', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+        expect(heights).toEqual([
+          ['70.5989461813007', '63.52180208594345'],
+          ['86.37991955627646', '66.7577002979056'],
+          ['90', '67.5'],
+        ]);
+      });
+    });
+  });
+
+  describe('when the Bar has a key prop to force re-animation', () => {
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [dataKey, setDataKey] = useState('pv');
+      const changeDataKey = () => {
+        setDataKey(prev => (prev === 'pv' ? 'uv' : 'pv'));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeDataKey}>
+            Change dataKey
+          </button>
+          <BarChart width={100} height={100} data={smallerData}>
+            <Bar
+              key={dataKey}
+              dataKey={dataKey}
+              isAnimationActive
+              onAnimationStart={onAnimationStart}
+              onAnimationEnd={onAnimationEnd}
+            />
+            {children}
+          </BarChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+      // The test begins initially with the 'pv' dataKey, so we need to run the animation to completion.
+      await animationManager.completeAnimation();
+
+      // change the dataKey prop
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      // now the chart is ready for assertions
+    }
+
+    it('should re-run the initial animation from the beginning', async () => {
+      const { container, animationManager } = renderTestCase();
+      await prime(container, animationManager);
+
+      expectBars(container, []);
+
+      const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+      expect(heights).toEqual([
+        ['61.428645538032555', '46.071484153524416'],
+        ['84.66881528678756', '63.50161146509067'],
+        ['90', '67.5'],
+      ]);
+    });
+  });
+
+  describe('tests that change data array', () => {
+    const data1 = smallerData;
+    const data2 = PageData.slice(2, 4);
+
+    const MyTestCase = ({ children }: { children: ReactNode }) => {
+      const [data, setData] = useState(data1);
+      const changeData = () => {
+        setData(prevData => (prevData === data1 ? data2 : data1));
+      };
+      return (
+        <div>
+          <button type="button" onClick={changeData}>
+            Change data
+          </button>
+          <BarChart width={100} height={100} data={data}>
+            <Bar dataKey="pv" isAnimationActive />
+            {children}
+          </BarChart>
+        </div>
+      );
+    };
+
+    const renderTestCase = createSelectorTestCase(MyTestCase);
+
+    describe('interaction after initial animation completes', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        await animationManager.completeAnimation();
+
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should animate from 2 to 10 bars', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+        expect(heights).toEqual([
+          ['20.016266431003935', '81.94763526523946'],
+          ['13.969174262377884', '87.03335907859201'],
+          ['12.582000000000008', '88.2'],
+        ]);
+      });
+    });
+
+    describe('interaction in the middle of the initial animation', () => {
+      async function prime(container: HTMLElement, animationManager: MockProgressAnimationManager) {
+        await animationManager.setAnimationProgress(0.5);
+
+        const button = container.querySelector('button');
+        assertNotNull(button);
+        act(() => {
+          button.click();
+        });
+      }
+
+      it('should animate from 2 to 10 bars from the intermediate state', async () => {
+        const { container, animationManager } = renderTestCase();
+        await prime(container, animationManager);
+
+        const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+        expect(heights).toEqual([
+          ['17.75802528948511', '77.65039055969093'],
+          ['13.547804646581813', '86.23152781386675'],
+          ['12.582000000000008', '88.2'],
+        ]);
+      });
+    });
+  });
+
+  describe('when the bar element hides during the animation', () => {
+    const renderTestCase = createSelectorTestCase(({ children }) => {
+      const [isVisible, setIsVisible] = useState(true);
+      const toggleVisibility = () => {
+        setIsVisible(prev => !prev);
+      };
+      return (
+        <div>
+          <button type="button" onClick={toggleVisibility}>
+            Toggle visibility
+          </button>
+          <BarChart width={100} height={100} data={smallerData}>
+            <Bar dataKey="pv" isAnimationActive hide={!isVisible} />
+            {children}
+          </BarChart>
+        </div>
+      );
+    });
+
+    it('should not crash when the bar hides during the animation', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.3);
+
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      expectBars(container, []);
+    });
+
+    it('should restart the animation from the beginning when the bar appears again', async () => {
+      const { container, animationManager } = renderTestCase();
+
+      await animationManager.setAnimationProgress(0.3);
+
+      const button = container.querySelector('button');
+      assertNotNull(button);
+      act(() => {
+        button.click();
+      });
+
+      expectBars(container, []);
+
+      act(() => {
+        button.click();
+      });
+
+      expectBars(container, []);
+
+      const { heights } = await expectBarHeightAnimation(container, animationManager, 3);
+      expect(heights).toEqual([
+        ['24.571458215213024', '46.75743736203245'],
+        ['33.86752611471503', '64.44707990245979'],
+        ['36', '68.505'],
       ]);
     });
   });
