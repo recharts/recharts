@@ -7,7 +7,7 @@ import { useChartWidth, useViewBox } from '../../src/context/chartLayoutContext'
 
 import { useClipPathId } from '../../src/container/ClipPathProvider';
 import { createSelectorTestCase } from '../helper/createSelectorTestCase';
-import { expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
+import { expectPieSectorAngles, expectPieSectors, selectPieSectors } from '../helper/expectPieSectors';
 import { expectLegendLabels } from '../helper/expectLegendLabels';
 
 describe('<PieChart />', () => {
@@ -37,6 +37,37 @@ describe('<PieChart />', () => {
     );
 
     expectPieSectors(container, [{ d: 'M 285,205 A 80,80,0, 1,0, 284.9999999878153,205.00139626340152 L 205,205 Z' }]);
+  });
+
+  test('render 4 equal sectors in PieChart with 4 data points', () => {
+    const crossData = [
+      { name: 'Group A', value: 100 },
+      { name: 'Group B', value: 100 },
+      { name: 'Group C', value: 100 },
+      { name: 'Group D', value: 100 },
+    ];
+
+    const { container } = render(
+      <PieChart width={800} height={400}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          data={crossData}
+          cx={200}
+          cy={200}
+          outerRadius={80}
+          fill="#ff7300"
+          label
+        />
+      </PieChart>,
+    );
+
+    expectPieSectorAngles(container, [
+      { startAngle: -0, endAngle: 90 },
+      { startAngle: 90, endAngle: 180 },
+      { startAngle: 180, endAngle: 270 },
+      { startAngle: 270, endAngle: 360 },
+    ]);
   });
 
   test('Renders 6 sectors circles in simple PieChart', () => {

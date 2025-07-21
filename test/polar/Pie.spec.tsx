@@ -41,8 +41,18 @@ import { useAppSelector } from '../../src/state/hooks';
 import { selectTooltipAxisId } from '../../src/state/selectors/selectTooltipAxisId';
 import { selectTooltipAxisType } from '../../src/state/selectors/selectTooltipAxisType';
 import { selectTooltipAxis } from '../../src/state/selectors/selectTooltipAxis';
+import { expectPieSectors } from '../helper/expectPieSectors';
 
 type CustomizedLabelLineProps = { points?: Array<Point> };
+
+const pageDataSectorPaths = [
+  { d: 'M 455,255 A 200,200,0, 0,0, 267.6182908505558,55.398450066111025 L 255,255 Z' },
+  { d: 'M 267.6182908505558,55.398450066111025 A 200,200,0, 0,0, 79.78953094076377,158.5567963408389 L 255,255 Z' },
+  { d: 'M 79.78953094076377,158.5567963408389 A 200,200,0, 0,0, 93.10802890253103,372.43504457433596 L 255,255 Z' },
+  { d: 'M 93.10802890253103,372.43504457433596 A 200,200,0, 0,0, 217.34603747019352,451.42346882642084 L 255,255 Z' },
+  { d: 'M 217.34603747019352,451.42346882642084 A 200,200,0, 0,0, 406.3628836196429,385.72596322975187 L 255,255 Z' },
+  { d: 'M 406.3628836196429,385.72596322975187 A 200,200,0, 0,0, 455,255.00000000000006 L 255,255 Z' },
+];
 
 describe('<Pie />', () => {
   const sectorsData = [
@@ -68,7 +78,7 @@ describe('<Pie />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+    expectPieSectors(container, pageDataSectorPaths);
   });
 
   test('Render Pie in a custom component', () => {
@@ -90,7 +100,7 @@ describe('<Pie />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(PageData.length);
+    expectPieSectors(container, pageDataSectorPaths);
   });
 
   test('Renders nothing if hide=true', () => {
@@ -109,7 +119,7 @@ describe('<Pie />', () => {
       </PieChart>,
     );
 
-    expect(container.querySelectorAll('.recharts-pie-sector')).toHaveLength(0);
+    expectPieSectors(container, []);
   });
 
   test('Render customized active sector when activeShape is set to be an element', () => {
