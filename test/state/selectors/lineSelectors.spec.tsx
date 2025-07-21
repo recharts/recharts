@@ -1,39 +1,27 @@
 import { describe, expect, it, vi } from 'vitest';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { act, render } from '@testing-library/react';
 import {
   shouldReturnFromInitialState,
   shouldReturnUndefinedOutOfContext,
   useAppSelectorWithStableTest,
 } from '../../helper/selectorTestHelpers';
-import { ResolvedLineSettings, selectLinePoints } from '../../../src/state/selectors/lineSelectors';
+import { selectLinePoints } from '../../../src/state/selectors/lineSelectors';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis } from '../../../src';
 import { PageData } from '../../_data';
 import { assertNotNull } from '../../helper/assertNotNull';
 import { LinePointItem } from '../../../src/cartesian/Line';
 
-const lineSettings: ResolvedLineSettings = {
-  data: undefined,
-  dataKey: 'uv',
-};
-
 describe('selectLinePoints', () => {
-  shouldReturnUndefinedOutOfContext(state => selectLinePoints(state, 0, 0, false, lineSettings));
-  shouldReturnFromInitialState(state => selectLinePoints(state, 0, 0, false, lineSettings), undefined);
+  shouldReturnUndefinedOutOfContext(state => selectLinePoints(state, 0, 0, false, ''));
+  shouldReturnFromInitialState(state => selectLinePoints(state, 0, 0, false, ''), undefined);
 
   describe('when in Line chart', () => {
     // https://github.com/recharts/recharts/issues/5625
     it('should call one more time after re-render with different dataKey', () => {
       const spy = vi.fn();
-      const Comp = ({ dataKey }: { dataKey: string }): null => {
-        const myLineSettings = useMemo(
-          () => ({
-            ...lineSettings,
-            dataKey,
-          }),
-          [dataKey],
-        );
-        spy(useAppSelectorWithStableTest(state => selectLinePoints(state, 0, 0, false, myLineSettings)));
+      const Comp = (): null => {
+        spy(useAppSelectorWithStableTest(state => selectLinePoints(state, 0, 0, false, 'my-line-id')));
         return null;
       };
       const TestCase = () => {
@@ -52,9 +40,9 @@ describe('selectLinePoints', () => {
             <LineChart width={400} height={400} data={PageData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
-              <Line dataKey={dataKey} />
+              <Line dataKey={dataKey} id="my-line-id" />
               <Tooltip />
-              <Comp dataKey={dataKey} />
+              <Comp />
             </LineChart>
           </>
         );
@@ -220,7 +208,7 @@ describe('selectLinePoints', () => {
        *
        * Area later uses this undefined to interrupt the animation.
        */
-      expect(spy).toHaveBeenNthCalledWith(3, undefined);
+      expect(spy).toHaveBeenNthCalledWith(3, expectedResultBefore);
       /*
        * Fourth render has the new updated data with consistent dataKey.
        * Area will resume the animation from the most recent previous data

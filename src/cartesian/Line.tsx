@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import * as React from 'react';
-import { Component, MutableRefObject, PureComponent, Ref, useCallback, useMemo, useRef, useState } from 'react';
+import { Component, MutableRefObject, PureComponent, Ref, useCallback, useRef, useState } from 'react';
 
 import { clsx } from 'clsx';
 import { Curve, CurveType, Point as CurvePoint, Props as CurveProps } from '../shape/Curve';
@@ -31,7 +31,7 @@ import { GraphicalItemClipPath, useNeedsClip } from './GraphicalItemClipPath';
 import { useChartLayout } from '../context/chartLayoutContext';
 import { BaseAxisWithScale } from '../state/selectors/axisSelectors';
 import { useIsPanorama } from '../context/PanoramaContext';
-import { ResolvedLineSettings, selectLinePoints } from '../state/selectors/lineSelectors';
+import { selectLinePoints } from '../state/selectors/lineSelectors';
 import { useAppSelector } from '../state/hooks';
 import { AxisId } from '../state/cartesianAxisSlice';
 import { SetLegendPayload } from '../state/SetLegendPayload';
@@ -626,6 +626,7 @@ function LineImpl(props: WithIdRequired<Props>) {
     legendType,
     xAxisId,
     yAxisId,
+    id,
     ...everythingElse
   } = resolveDefaultProps(props, defaultLineProps);
 
@@ -633,14 +634,10 @@ function LineImpl(props: WithIdRequired<Props>) {
   const { height, width, x: left, y: top } = usePlotArea();
   const layout = useChartLayout();
   const isPanorama = useIsPanorama();
-  const lineSettings: ResolvedLineSettings = useMemo(
-    () => ({ dataKey: props.dataKey, data: props.data }),
-    [props.dataKey, props.data],
-  );
   const points: ReadonlyArray<LinePointItem> | undefined = useAppSelector(state =>
-    selectLinePoints(state, xAxisId, yAxisId, isPanorama, lineSettings),
+    selectLinePoints(state, xAxisId, yAxisId, isPanorama, id),
   );
-  if (layout !== 'horizontal' && layout !== 'vertical') {
+  if ((layout !== 'horizontal' && layout !== 'vertical') || points == null) {
     // Cannot render Line in an unsupported layout
     return null;
   }
@@ -648,6 +645,7 @@ function LineImpl(props: WithIdRequired<Props>) {
   return (
     <LineWithState
       {...everythingElse}
+      id={id}
       connectNulls={connectNulls}
       dot={dot}
       activeDot={activeDot}

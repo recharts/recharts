@@ -8,6 +8,7 @@ import { selectAxisWithScale, selectTicksOfGraphicalItem, selectUnfilteredCartes
 import { DataKey } from '../../util/types';
 import { getBandSizeOfAxis, isCategoricalAxis } from '../../util/ChartUtils';
 import { ChartData } from '../chartDataSlice';
+import { GraphicalItemId } from '../graphicalItemsSlice';
 
 export type ResolvedLineSettings = {
   data: ChartData | undefined;
@@ -36,13 +37,13 @@ const selectBandSize = createSelector(
   },
 );
 
-const pickLineSettings = (
+const pickLineId = (
   _state: RechartsRootState,
   _xAxisId: AxisId,
   _yAxisId: AxisId,
   _isPanorama: boolean,
-  lineSettings: ResolvedLineSettings,
-) => lineSettings;
+  id: GraphicalItemId,
+) => id;
 
 /*
  * There is a race condition problem because we read some data from props and some from the state.
@@ -50,38 +51,17 @@ const pickLineSettings = (
  * and so we have this weird one tick render where the displayedData in one selector have the old dataKey
  * but the new dataKey in another selector.
  *
- * A proper fix is to either move everything into the state, or read the dataKey always from props
- * - but this is a smaller change.
+ * So here instead of reading the dataKey from the props, we always read it from the state.
  */
 const selectSynchronisedLineSettings: (
   state: RechartsRootState,
   xAxisId: AxisId,
   yAxisId: AxisId,
   isPanorama: boolean,
-  lineSettings: ResolvedLineSettings,
+  id: GraphicalItemId,
 ) => ResolvedLineSettings | undefined = createSelector(
-  [selectUnfilteredCartesianItems, pickLineSettings],
-  (graphicalItems, lineSettingsFromProps) => {
-    if (
-      graphicalItems.some(
-        cgis =>
-          cgis.type === 'line' &&
-          lineSettingsFromProps.dataKey === cgis.dataKey &&
-          lineSettingsFromProps.data === cgis.data,
-      )
-    ) {
-      /*
-       * now, at least one of the lines has the same dataKey as the one in props.
-       * Is this a perfect match? Maybe not because we could theoretically have two different Lines with the same dataKey
-       * and the same stackId and the same data but still different lines, yes,
-       * but the chances of that happening are ... lowish.
-       *
-       * A proper fix would be to store the lineSettings in a state too, and compare references directly instead of enumerating the properties.
-       */
-      return lineSettingsFromProps;
-    }
-    return undefined;
-  },
+  [selectUnfilteredCartesianItems, pickLineId],
+  (graphicalItems, id: GraphicalItemId) => graphicalItems.find(x => x.id === id),
 );
 
 export const selectLinePoints: (
@@ -89,7 +69,7 @@ export const selectLinePoints: (
   xAxisId: AxisId,
   yAxisId: AxisId,
   isPanorama: boolean,
-  { dataKey, data }: ResolvedLineSettings,
+  id: GraphicalItemId,
 ) => ReadonlyArray<LinePointItem> | undefined = createSelector(
   [
     selectChartLayout,
