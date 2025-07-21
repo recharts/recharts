@@ -37,7 +37,7 @@ function typeguardBarRectangleProps(
 }
 
 export type BarRectangleProps = {
-  option: ActiveShape<BarProps, SVGPathElement>;
+  option: ActiveShape<BarProps, SVGPathElement> | undefined;
   isActive: boolean;
   onMouseEnter?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave?: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;

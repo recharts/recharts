@@ -37,7 +37,7 @@ describe('Brush in a stacked chart', () => {
             {
               id: expect.stringMatching('bar-'),
               barSize: undefined,
-              data: null,
+              data: undefined,
               dataKey: 'pv',
               errorBars: [],
               hide: false,
@@ -51,7 +51,7 @@ describe('Brush in a stacked chart', () => {
             {
               id: expect.stringMatching('bar-'),
               barSize: undefined,
-              data: null,
+              data: undefined,
               dataKey: 'uv',
               errorBars: [],
               hide: false,
@@ -118,7 +118,7 @@ describe('Brush in a stacked chart', () => {
             {
               id: expect.stringMatching('bar-'),
               barSize: undefined,
-              data: null,
+              data: undefined,
               dataKey: 'pv',
               errorBars: [],
               hide: false,
@@ -132,7 +132,7 @@ describe('Brush in a stacked chart', () => {
             {
               id: expect.stringMatching('bar-'),
               barSize: undefined,
-              data: null,
+              data: undefined,
               dataKey: 'uv',
               errorBars: [],
               hide: false,

@@ -42,7 +42,7 @@ function isSymbolsProps(shapeType: ShapeType, _elementProps: unknown): _elementP
   return shapeType === 'symbols';
 }
 
-function ShapeSelector<ShapePropsType>({
+function ShapeSelector<ShapePropsType extends React.JSX.IntrinsicAttributes>({
   shapeType,
   elementProps,
 }: {
@@ -74,7 +74,7 @@ export function getPropsFromShapeOption(option: unknown): SVGProps<SVGPathElemen
   return option;
 }
 
-export function Shape<OptionType, ExtraProps, ShapePropsType>({
+export function Shape<OptionType, ExtraProps, ShapePropsType extends React.JSX.IntrinsicAttributes>({
   option,
   shapeType,
   propTransformer = defaultPropTransformer,
