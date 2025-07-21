@@ -19,7 +19,7 @@ const finalSectorPaths = [
   { d: 'M 31.999999999999986,81.17691453623979 A 36,36,0, 0,0, 86,50.00000000000001 L 50,50 Z' },
 ];
 
-async function expectPieAnimation(
+async function expectAnimatedPiePaths(
   container: Element,
   animationManager: MockProgressAnimationManager,
   steps: number = 5,
@@ -154,7 +154,7 @@ describe('Pie animation', () => {
     it('should render sectors with animation', async () => {
       const { container, animationManager } = renderTestCase();
 
-      const pathDs = await expectPieAnimation(container, animationManager, 5);
+      const pathDs = await expectAnimatedPiePaths(container, animationManager, 5);
 
       expect(pathDs).toEqual([
         [
